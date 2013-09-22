@@ -143,13 +143,27 @@
 			<!--- Get labels --->
 			<cfset s.qry_labels = getLabels()>
 			<!--- Get files --->
-			<cfset s.qry_files = getFile(fileid=session.currentupload)>
+			<cfset s.qry_files = getFilesTemp(fileid=session.currentupload)>
 		</cfif>
 		<cfreturn s />
 	</cffunction>
 
-	<!--- loadForm --->
+	<!--- saveForm --->
 	<cffunction name="saveform" access="public" output="false" returntype="struct">
+		<cfargument name="args" required="true">
+		<!--- This calls the saveformthread now --->
+		<cfthread action="run" intstruct="#arguments.args#">
+			<cfinvoke method="saveformthread" args="#attributes.intstruct#" />
+		</cfthread>
+		<!--- Reset session --->
+		<cfset session.currentupload = 0>
+		<!--- We need to return a struct!!! --->
+		<cfset result.page = false>
+		<cfreturn result />
+	</cffunction>
+
+	<!--- saveForm Thread --->
+	<cffunction name="saveformthread" access="private" output="false" returntype="struct">
 		<cfargument name="args" required="true">
 		<!--- Loop over the fields --->
 		<cfloop list="#arguments.args.fieldnames#" delimiters="," index="i">
@@ -160,22 +174,18 @@
 				<cfset var thefield = listLast(i,"_")>
 				<!--- If thefield contains a - then we are CUSTOM FIELDS --->
 				<cfif thefield CONTAINS "-">
-					<!--- Set application values for the api --->
-					<cfset application.razuna.api.storage = application.razuna.storage>
-					<cfset application.razuna.api.dsn = application.razuna.datasource>
-					<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
-					<cfset application.razuna.api.setid = application.razuna.setid>
 					<!--- Get field --->
 					<cfset a = "#thefileid#_CF_#thefield#">
 					<!--- Get value --->
 					<cfset e = arguments.args["#a#"]>
-					<!--- Create array so we can serialize it to json and pass it to api --->
-					<cfset j = arrayNew(2)>
-					<cfset j[1][1] = thefield>
-					<cfset j[1][2] = e>
-					<cfset j = SerializeJSON(j)>
-					<!--- Call API function --->
-					<cfinvoke component="global.api2.customfield" method="setfieldvalue" api_key="#getHostID()#-108" assetid="#thefileid#" field_values="#j#" />
+					<!--- The struct field --->
+					<cfset structfield = "cf_#thefield#">
+					<!--- Put values together for the internal function --->
+					<cfset thestruct = structnew()>
+					<cfset thestruct.file_id = thefileid>
+					<cfset thestruct["#structfield#"] = e>
+					<!--- Call internal function --->
+					<cfset setCustomField(thestruct=thestruct)>
 				<!--- This is for normal fields --->
 				<cfelse>
 					<cfset a = "#thefileid#_#thefield#">
@@ -235,6 +245,10 @@
 			<cfset var theid = listFirst(i,"_")>
 			<!--- Last is type --->
 			<cfset var thetype = listLast(i,"_")>
+			<!--- Call internal function to update dates --->
+			<cfset updateDate(type=thetype,fileid=theid)>
+			<!--- Call Lucene update --->
+			<cfset updateSearch(type=thetype,fileid=theid)>
 			<!--- Now call workflow --->
 			<cfset executeWorkflow(workflow="on_file_edit",fileid=theid,thetype=thetype,folderid=session.fid)>
 		</cfloop>

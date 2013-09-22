@@ -36,6 +36,9 @@
 		<cfif thenr CONTAINS "-">
 			<cfset favid = listfirst(thenr,"-")>
 			<cfset favkind = listlast(thenr,"-")>
+		<cfelse>
+			<cfset favid = thenr>
+			<cfset favkind = arguments.thestruct.favkind>
 		</cfif>
 		<!--- Add the favorites to the user table but first check that the same one does not exist --->
 		<cfquery datasource="#variables.dsn#" name="here">

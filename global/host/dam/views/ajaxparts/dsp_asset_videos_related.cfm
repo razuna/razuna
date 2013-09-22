@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 <cfif qry_related.recordcount NEQ 0>
-	<br />
+	<br /> 
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">
@@ -37,12 +37,13 @@
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank">
 					</cfif>
 					View</a>
-					 | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid">Download</a>
+					 | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">Direct Link</a>
 					 | <a href="##" onclick="toggleslide('dive#vid_id#','inpute#vid_id#');return false;">Embed</a>
 					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#vid_id#&thetype=vid&cf_show=vid','Metadata',550,2);return false;">Metadata</a>
+					 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_videos&file_id=#vid_id#&vid_group_id=#vid_group#&thetype=vid&cf_show=vid&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 					<cfif attributes.folderaccess NEQ "R">
-						 | <a href="##" onclick="remren('#vid_id#');">Remove</a>
+						 | <a href="##" onclick="remren('#vid_id#');">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
 					</cfif>
 					<div id="divo#vid_id#" style="display:none;">
 						<input type="text" id="inputo#vid_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" />

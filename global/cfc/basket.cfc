@@ -312,6 +312,8 @@
 <!--- WRITE FILES TO SYSTEM --->
 <cffunction name="writefiles" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
 	<!--- Start the loop to get the file --->
 	<cfloop delimiters="," list="#arguments.thestruct.artoffile#" index="art">
 		<!--- Put id and art into variables --->
@@ -343,7 +345,9 @@
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+					<cfif attributes.intstruct.qry.cloud_url_org NEQ "" AND attributes.intstruct.qry.cloud_url_org CONTAINS "http">
+						<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+					</cfif>
 				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
@@ -355,7 +359,7 @@
 					</cfinvoke>
 				</cfthread>
 			<!--- Akamai --->
-			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
 					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
 				</cfthread>
@@ -383,6 +387,8 @@
 <!--- WRITE IMAGE TO SYSTEM --->
 <cffunction name="writeimages" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
 	<!--- Start the loop to get the different kinds of images --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
 		<!--- Create uuid for thread --->
@@ -526,6 +532,8 @@
 <!--- WRITE VIDEO TO SYSTEM --->
 <cffunction name="writevideos" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofvideo#" index="art">
 		<!--- Put image id and art into variables --->
@@ -635,6 +643,8 @@
 <!--- WRITE AUDIO TO SYSTEM --->
 <cffunction name="writeaudios" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofaudio#" index="art">
 		<!--- Put image id and art into variables --->

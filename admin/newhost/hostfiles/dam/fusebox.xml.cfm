@@ -61,6 +61,10 @@
 		<class alias="plugins" classpath="global.cfc.plugins" type="component" constructor="init"/>
 		<class alias="api" classpath="global.cfc.api" type="component" constructor="init"/>
 		<class alias="akamai" classpath="global.cfc.akamai" type="component" constructor="init"/>
+		<class alias="resourcemanager" classpath="global.cfc.ResourceManager" type="component" constructor="init"/>
+		<class alias="smartfolders" classpath="global.cfc.smartfolders" type="component" constructor="init"/>
+		<class alias="oauth" classpath="global.cfc.oauth" type="component" constructor="init"/>
+		<class alias="dropbox" classpath="global.cfc.dropbox" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

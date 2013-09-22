@@ -32,23 +32,29 @@
 		<cfset var thecounter = 1>
 		<!--- CREATE BACKUP STATUS DB --->
 		<cftry>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE backup_status 
-		(
-			back_id		VARCHAR(100), 
-			back_date	timestamp,
-			host_id		BIGINT
-		) 
-		</cfquery>
-		<cfcatch type="database"></cfcatch>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			CREATE TABLE backup_status 
+			(
+				back_id		VARCHAR(100), 
+				back_date	timestamp,
+				host_id		BIGINT
+			) 
+			</cfquery>
+			<cfcatch type="database">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
 		</cftry>
 		<!--- Look into the information schema and get all the tables --->
 		<cfquery datasource="#application.razuna.datasource#" name="raz_tables">
 		SELECT table_name
 		FROM information_schema.tables
-		WHERE lower(table_schema) = 'razuna'
+		WHERE <cfif application.razuna.thedatabase EQ "h2">lower(table_catalog)<cfelse>lower(table_schema)</cfif> = <cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.theschema#">
 		AND lower(table_name) != 'bddata'
 		AND lower(table_name) != 'bdglobal'
+		<cfif application.razuna.thedatabase EQ "h2">
+			AND lower(table_type) = 'table'
+		</cfif>
 		</cfquery>
 		<!--- Look into the column schema and get all the columns with types --->
 		<cfloop query="raz_tables">
@@ -66,6 +72,11 @@
 				, character_maximum_length
 				FROM <cfif application.razuna.thedatabase EQ "oracle">all_tab_columns<cfelse>information_schema.columns</cfif>
 				WHERE table_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thetablename#">
+				<cfif application.razuna.thedatabase EQ "h2">
+					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="public">
+				<cfelseif application.razuna.thedatabase EQ "mysql">
+					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.theschema#">
+				</cfif>
 				</cfquery>
 			</cfif>
 			<!--- Create table --->
@@ -73,7 +84,7 @@
 				<cfquery datasource="#arguments.thestruct.dsn#">
 				CREATE TABLE #arguments.thestruct.tschema#.#thetablename#
 				(
-					<cfloop query="raz_columns">#column_name# #data_type#<cfif isnumeric(character_maximum_length)>(#character_maximum_length#)</cfif><cfif thecounter LT raz_columns.recordcount>,</cfif>
+					<cfloop query="raz_columns">#column_name# <cfif character_maximum_length EQ "-1">CLOB<cfelse>#data_type#<cfif isnumeric(character_maximum_length)>(#character_maximum_length#)</cfif></cfif><cfif thecounter LT raz_columns.recordcount>,</cfif>
 						<cfset thecounter = thecounter + 1>
 					</cfloop>
 				)
@@ -82,17 +93,12 @@
 				<cfset thecounter = 1>
 				<!--- Catch --->
 				<cfcatch type="any">
-					<cfdump var="#cfcatch#" />
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
-			
 		</cfloop>
-		
-		
-		
 	</cffunction>
-	
-	
 		
 	<!--- OPENBD CONFIG INTERACTION --->
 	

@@ -38,7 +38,10 @@
 	<input type="hidden" name="convert_width_3gp" value="">
 	<input type="hidden" name="convert_height_3gp" value="">
 	<input type="hidden" name="link_kind" id="link_kind" value="#qry_detail.detail.link_kind#">
-	<div id="tab_detail#file_id#">
+	<!--- Show next and back within detail view --->
+	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Show tabs --->
+	<div id="tab_detail#attributes.file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<!--- Convert --->
@@ -104,7 +107,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<!--- Desc --->
 							<cfloop query="qry_langs">
@@ -112,11 +115,11 @@
 									<cfset thisid = lang_id>
 									<tr>
 										<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-										<td width="100%"><textarea name="aud_desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.aud_desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_description#</cfif></cfloop></textarea></td>
+										<td width="100%"><textarea name="aud_desc_#thisid#" id="aud_desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.aud_desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_description#</cfif></cfloop></textarea></td>
 									</tr>
 									<tr>
 										<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-										<td width="100%"><textarea name="aud_keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.aud_keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_keywords#</cfif></cfloop></textarea></td>
+										<td width="100%"><textarea name="aud_keywords_#thisid#" id="aud_keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.aud_keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_keywords#</cfif></cfloop></textarea></td>
 									</tr>
 								</cfif>
 							</cfloop>
@@ -124,14 +127,18 @@
 								<tr>
 									<td><strong>#myFusebox.getApplicationData().defaults.trans("labels")#</strong></td>
 									<td width="100%" nowrap="true" colspan="5">
-										<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_aud" onchange="razaddlabels('tags_aud','#attributes.file_id#','aud');" multiple="multiple">
-											<option value=""></option>
-											<cfloop query="attributes.thelabelsqry">
-												<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
-											</cfloop>
-										</select>
-										<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
-											<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+										<cfif attributes.folderaccess EQ "R">
+											<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>
+										<cfelse>
+											<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_aud" onchange="razaddlabels('tags_aud','#attributes.file_id#','aud');" multiple="multiple">
+												<option value=""></option>
+												<cfloop query="attributes.thelabelsqry">
+													<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
+												</cfloop>
+											</select>
+											<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+												<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+											</cfif>
 										</cfif>
 									</td>
 								</tr>
@@ -187,16 +194,17 @@
 						<!--- Filename --->
 						<tr>
 							<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-							<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+							<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
+							</td>
 						</tr>
 						<cfloop query="qry_langs">
 							<cfset thisid = lang_id>
 							<tr>
-								<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
+								<td valign="top" width="1%" nowrap="true"><strong><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 								<td width="100%"><textarea name="<cfif lang_id NEQ 1>aud_</cfif>desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.aud_desc_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_description#</cfif></cfloop></textarea></td>
 							</tr>
 							<tr>
-								<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
+								<td valign="top" width="1%" nowrap="true"><strong><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
 								<td width="100%"><textarea name="<cfif lang_id NEQ 1>aud_</cfif>keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.aud_keywords_#thisid#.value = document.form#attributes.file_id#.keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_keywords#</cfif></cfloop></textarea></td>
 							</tr>
 						</cfloop>
@@ -222,8 +230,13 @@
 				</cfif>
 				<!--- Submit Button --->
 				<cfif attributes.folderaccess NEQ "R">
-					<div stlye="clear:both;"></div>
-					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+					<!--- copy metadata link --->
+					<div style="float:left;padding-top:25px;">
+						<button onclick="showwindow('#myself#c.copy_metaData&what=#attributes.what#&file_id=#attributes.file_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("copy_meta_data")#</button>
+					</div>
+					<div style="float:right;padding-top:25px;">
+						<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+					</div>
 				</cfif>
 			</div>
 		</cfif>
@@ -259,38 +272,57 @@
 	</form>
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
-		jqtabs("tab_detail#attributes.file_id#");
-		// Load renditions
-		function loadrenaud(){
-			<cfif qry_detail.detail.link_kind NEQ "url">
-				$('##relatedaudios').load('#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">&cloud_url_org=#urlencodedformat(qry_detail.detail.cloud_url_org)#</cfif>');
+	jqtabs("tab_detail#attributes.file_id#");
+	// Load renditions
+	function loadrenaud(){
+		<cfif qry_detail.detail.link_kind NEQ "url">
+			$('##relatedaudios').load('#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">&cloud_url_org=#urlencodedformat(qry_detail.detail.cloud_url_org)#</cfif>');
+		</cfif>
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
+		<cfif cs.tab_additional_renditions>
+			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
+		</cfif>
+	};
+	// Submit form
+	function filesubmit(){
+		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+			var reqfield = false;
+			<cfif cs.req_filename>
+				var val_filename = $('##fname').val();
+				if (val_filename == '') reqfield = true;
 			</cfif>
-			$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
-			<cfif cs.tab_additional_renditions>
-				$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
+			<cfif cs.req_description>
+				var val_desc = $('##aud_desc_1').val();
+				if (val_desc == '') reqfield = true;
 			</cfif>
-		};
-		// Submit form
-		function filesubmit(){
-			$("##updatefile").css("display","");
-			loadinggif('updatefile');
-			$("##updatefile").fadeTo("fast", 100);
-			var url = formaction("form#attributes.file_id#");
-			var items = formserialize("form#attributes.file_id#");
-			// Submit Form
-	       	$.ajax({
-				type: "POST",
-				url: url,
-			   	data: items,
-			   	success: function(){
-					// Update Text
-					$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
-					$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
-			   	}
-			});
-	        return false; 
-		};
-		// Activate Chosen
-		$(".chzn-select").chosen();
+			<cfif cs.req_keywords>
+				var val_keys = $('##aud_keywords_1').val();
+				if (val_keys == '') reqfield = true;
+			</cfif>
+			if (reqfield == true){
+				alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+				return false;
+			}
+		</cfif>
+		$("##updatefile").css("display","");
+		loadinggif('updatefile');
+		$("##updatefile").fadeTo("fast", 100);
+		var url = formaction("form#attributes.file_id#");
+		var items = formserialize("form#attributes.file_id#");
+		// Submit Form
+       	$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items,
+		   	success: function(){
+				// Update Text
+				$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
+				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+		   	}
+		});
+        return false; 
+	};
+	// Activate Chosen
+	$(".chzn-select").chosen();
 	</script>
 </cfoutput>

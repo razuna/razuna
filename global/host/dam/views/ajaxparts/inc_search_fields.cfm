@@ -76,7 +76,7 @@
 				<cfelseif cf_type EQ "select">
 					<select name="cf#cfid#" style="width:300px;">
 						<option value="" selected="selected"></option>
-						<cfloop list="#cf_select_list#" index="i">
+						<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
 							<option value="#i#">#i#</option>
 						</cfloop>
 					</select>

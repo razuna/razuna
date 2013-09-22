@@ -72,10 +72,14 @@
 		<cfdefaultcase>
 			<!--- Default file name when prompted to download --->
 			<cfheader name="content-disposition" value="attachment; filename=#qry_detail.img_filename#" />
-			<!--- Nirvanix & Amazon--->
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<!--- Nirvanix--->
+			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get file --->
 				<cflocation url="#qry_detail.cloud_url_org#?disposition=attachment">
+			<!--- Amazon --->
+			<cfelseif application.razuna.storage EQ "amazon">
+				<!--- Get file --->
+				<cflocation url="#qry_detail.cloud_url_org#">
 			<!--- Akamai --->
 			<cfelseif application.razuna.storage EQ "akamai">
 				<cflocation url="#attributes.akaurl##attributes.akaimg#/#qry_detail.img_filename_org#">

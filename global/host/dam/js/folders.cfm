@@ -83,7 +83,7 @@
 					// Remove loader
 					// $("#bodyoverlay").remove();
 					// Reload Explorer
-					$('#explorer_col').load('index.cfm?fa=c.explorer_col');
+					$('#explorer').load('index.cfm?fa=c.explorer_col');
 			   	}
 			});
 		}
@@ -152,12 +152,16 @@
 			else {
 				var con1 = '\+';
 				var con2 = labels.split(' ').join(' +');
-				var labels = con1.concat(con2);
+				var labels = 'labels:(' + con1.concat(con2) + ')';
 			}
 		}
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
-			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' +value_#cfid# + ')';
+			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
+				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
+			<cfelse>
+				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id#+' + value_#cfid# + ')';
+			</cfif>
 		</cfoutput></cfloop>
 		// Create the searchtext
 		var searchtext = searchfor;

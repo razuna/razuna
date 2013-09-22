@@ -25,7 +25,15 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-
+	<!--- Save search --->
+	<div id="save_search" style="padding-bottom:10px;">
+		<cfif attributes.sf_id EQ 0>
+			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#</a>
+		<cfelseif attributes.folderaccess NEQ "R">
+			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#</a> | <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
+		</cfif>
+	</div>
+	<div style="clear:both;"></div>
 	<!--- Search Results --->
 	<div id="loading_searchagain"></div>
 	<div>
@@ -40,6 +48,8 @@
 			<input type="hidden" name="listvidid" id="s_listvidid" value="#attributes.listvidid#">
 			<input type="hidden" name="listaudid" id="s_listaudid" value="#attributes.listaudid#">
 			<input type="hidden" name="cv" id="cv" value="#attributes.cv#">
+			<input type="hidden" name="from_sf" id="from_sf" value="#attributes.from_sf#">
+			<input type="hidden" name="sf_id" id="sf_id" value="#attributes.sf_id#">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 				<tr>
 					<th colspan="5">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
@@ -155,7 +165,7 @@
 						<cfelseif cf_type EQ "select">
 							<select name="cf#cfid#">
 								<option value="" selected="selected"></option>
-								<cfloop list="#cf_select_list#" index="i">
+								<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
 									<option value="#i#">#i#</option>
 								</cfloop>
 							</select>
@@ -262,8 +272,10 @@
 				var fext = $('#s_extension').val();
 				var fmeta = $('#s_metadata').val();
 				var cv = $('#cv').val();
+				var from_sf = $('#from_sf').val();
+				var sf_id = $('#sf_id').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv}, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
 						$("#bodyoverlay").remove();
 					});
 			}

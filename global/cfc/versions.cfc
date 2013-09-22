@@ -138,11 +138,13 @@
 		<!--- Create directory --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Create folder with the version --->
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" mode="775">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" mode="775">
+			</cfif>
 			<!--- Move the file to the versions directory --->
-			<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" destination="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" move="T">
+			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" destination="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" move="T">
 			<!--- Now copy the version to the original directory --->
-			<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#">
+			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#">
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
@@ -176,7 +178,7 @@
 				</cfinvoke>
 			</cfthread>
 			<cfthread action="join" name="movec#arguments.thestruct.file_id#" />
-			<cfpause interval="10" />
+			<cfset sleep(5000)>
 			<cfthread name="mover#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<!--- Rename --->
 				<cfinvoke component="nirvanix" method="RenameFolders">
@@ -219,7 +221,7 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
-			<cfpause interval="5" />
+			<cfset sleep(5000)>
 			<!--- Wait for the move thread to finish --->
 			<cfthread action="join" name="move#arguments.thestruct.file_id#" />
 			<!--- Copy the new version to the old directory --->
@@ -233,7 +235,7 @@
 			</cfthread>
 			<!--- Wait for the move thread to finish --->
 			<cfthread action="join" name="movev#arguments.thestruct.file_id#" />
-			<cfpause interval="5" />
+			<cfset sleep(5000)>
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_thumbnail#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL original --->
@@ -484,6 +486,12 @@
 			<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
 			<cfset theheight = trim(listlast(theheight," "))>
 			<cfset thewidth = trim(listlast(thewidth," "))>
+			<cfif !isNumeric(theheight)>
+				<cfset theheight = 0>
+			</cfif>
+			<cfif !isNumeric(thewidth)>
+				<cfset thewidth = 0>
+			</cfif>
 			<!--- Remove the temp file sh --->
 			<cffile action="delete" file="#arguments.thestruct.theshw#">
 			<cffile action="delete" file="#arguments.thestruct.theshh#">
@@ -597,17 +605,16 @@
 		<!--- Create directory --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Create folder with the version --->
-			<cftry>
+			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
-				<cfcatch type="all"></cfcatch>
-			</cftry>
+			</cfif>
 			<!--- Move the file to the versions directory --->
 			<cfif directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#")>
-				<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
 			</cfif>
 			<!--- Grab the new version and move it to the old directory --->
 			<cfif directoryExists(arguments.thestruct.qryfile.path)>
-				<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
 			</cfif>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">

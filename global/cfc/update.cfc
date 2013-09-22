@@ -65,15 +65,15 @@
 	<!--- Check for a new version --->
 	<cffunction name="check_update">
 		<cfargument name="thestruct" type="struct">	
-		<cfset v = structnew()>
+		<cfset var v = structnew()>
 		<!--- Set the version file on the server --->
 		<cfset var versionfile = "http://cloud.razuna.com/installers/versionupdate.xml">
 		<!--- Get the current version --->
 		<cfinvoke component="settings" method="getconfig" thenode="version" returnvariable="currentversion">
 		<!--- Parse the version file on the server --->
 		<cftry>
-			<cfhttp url="#versionfile#" method="get" throwonerror="no" timeout="5">
-			<cfset var xmlVar=xmlParse(versionfile)/>
+			<cfhttp url="#versionfile#" method="get" throwonerror="yes" timeout="5">
+			<cfset var xmlVar=xmlParse(trim(cfhttp.filecontent))/>
 			<cfset var theversion=xmlSearch(xmlVar, "update/version[@name='version']")>
 			<cfset v.newversionnr = trim(#theversion[1].thetext.xmlText#)>
 			<!--- Count how many dots are in the version --->
@@ -84,9 +84,9 @@
 			<cfelse>
 				<cfset v.versionavailable = "F">
 			</cfif>
-		<cfcatch type="any">
-			<cfset v.versionavailable = "F">
-		</cfcatch>
+			<cfcatch type="any">
+				<cfset v.versionavailable = "F">
+			</cfcatch>
 		</cftry>
 		<!--- Return --->
 		<cfreturn v>
@@ -421,7 +421,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column custom_value #thevarchar#(100)<cfelse>change custom_value custom_value #thevarchar#(100)</cfif>
+			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column custom_value #thevarchar#(2000)<cfelse>change custom_value custom_value #thevarchar#(2000)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -430,6 +430,14 @@
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_md5check #thevarchar#(5) default 'false'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_colorspace_rgb #thevarchar#(5) default 'false'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -646,6 +654,253 @@
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> share_dl_thumb #thevarchar#(1) default 't'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			CREATE TABLE raz1_smart_folders 
+			(
+				sf_id #thevarchar#(100),
+				sf_name #thevarchar#(500),
+				sf_date_create #thetimestamp# NULL DEFAULT NULL,
+				sf_date_update #thetimestamp# NULL DEFAULT NULL,
+				sf_type #thevarchar#(100),
+				sf_description #thevarchar#(2000),
+				PRIMARY KEY (sf_id)
+			)
+			#tableoptions#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			CREATE TABLE raz1_smart_folders_prop
+			(
+				sf_id_r #thevarchar#(100),
+				sf_prop_id #thevarchar#(500),
+				sf_prop_value #thevarchar#(2000),
+				PRIMARY KEY (sf_id_r)
+			)
+			#tableoptions#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column set_id #thevarchar#(500)<cfelse>change set_id set_id #thevarchar#(500)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_audios --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_audios SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_collections --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_collections SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_collections_ct_files --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_collections_ct_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_collections_ct_files SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_files --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_files SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_folders --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_folders SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_images --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_images SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_videos --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_videos SET in_trash = 'F'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		
+		<!--- MSSQL: Drop constraints --->
+		<cfif application.razuna.thedatabase EQ "mssql">
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="con">
+				SELECT table_name, constraint_name
+				FROM information_schema.constraint_column_usage
+				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
+				</cfquery>
+				<cfloop query="con">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE #lcase(table_name)# DROP CONSTRAINT #constraint_name#
+					</cfquery>
+				</cfloop>
+				<cfcatch type="database">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		<!--- MySQL: Drop all constraints --->
+		<cfelseif application.razuna.thedatabase EQ "mysql">
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="con">
+				SELECT constraint_name
+				FROM information_schema.TABLE_CONSTRAINTS 
+				WHERE lower(TABLE_NAME) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
+				AND lower(CONSTRAINT_TYPE) = <cfqueryparam cfsqltype="cf_sql_varchar" value="foreign key">
+				</cfquery>
+				<cfloop query="con">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_collections_ct_files DROP FOREIGN KEY #constraint_name#
+					</cfquery>
+				</cfloop>
+				<cfcatch type="database">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		<!--- Oracle: Drop all constraints --->
+		<cfelseif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="con">
+				SELECT constraint_name, table_name
+				FROM user_constraints
+				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
+				</cfquery>
+				<cfloop query="con">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE #lcase(table_name)# DROP CONSTRAINT #constraint_name# CASCADE
+					</cfquery>
+				</cfloop>
+				<cfcatch type="database">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfif>
+		<!--- Add host_id to smart folders --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_smart_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> host_id #theint#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_smart_folders_prop add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> host_id #theint#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add sf_who to smart folders --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_smart_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> sf_who #thevarchar#(100)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>

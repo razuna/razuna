@@ -32,7 +32,7 @@
 <cfoutput>
 <head>
 <link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
 <cfif structKeyExists(form,"fieldnames")>

@@ -160,25 +160,24 @@
 			</cfif>
 			<!--- COPY NEWHOST DIR --->
 			<cfif !application.razuna.isp>
-				<cfinvoke method="directoryCopy">
+				<cfinvoke component="global" method="directoryCopy">
 					<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles">
 					<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#arguments.thestruct.host_path#">
+					<cfinvokeargument name="directoryrecursive" value="true">
 				</cfinvoke>
 			</cfif>
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
-			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin">
+			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin" host_id="0">
 			<cfoutput query="theadmins">
-				<cftransaction>
-					<cfquery datasource="#variables.dsn#">
-					insert into ct_users_hosts
-					(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
-					values(
-					<cfqueryparam value="#user_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-				</cftransaction>
+				<cfquery datasource="#variables.dsn#">
+				insert into ct_users_hosts
+				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
+				values(
+				<cfqueryparam value="#user_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
 			</cfoutput>
 			<!--- INSERT DEFAULT VALUES --->
 			<cfinvoke method="insert_default_values" thestruct="#arguments.thestruct#">
@@ -201,19 +200,17 @@
 			</cfinvoke> --->
 			<!--- NIRVANIX: Add child settings into settings_2 --->
 			<cfif application.razuna.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
-				<cftransaction>
-					<cfquery datasource="#variables.dsn#">
-					UPDATE #arguments.thestruct.host_db_prefix#settings_2
-					SET 
-					set2_nirvanix_name = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" cfsqltype="cf_sql_varchar">, 
-					set2_nirvanix_pass = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_pass#" cfsqltype="cf_sql_varchar">
-					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-				</cftransaction>
+				<cfquery datasource="#variables.dsn#">
+				UPDATE #arguments.thestruct.host_db_prefix#settings_2
+				SET 
+				set2_nirvanix_name = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" cfsqltype="cf_sql_varchar">, 
+				set2_nirvanix_pass = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_pass#" cfsqltype="cf_sql_varchar">
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 			</cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
-		<cfset variables.cachetoken = resetcachetoken("users")>
+		<cfset resetcachetoken("users")>
 	</cfif>
 	<cfreturn  />
 </cffunction>
@@ -498,42 +495,6 @@
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
-<!--- copy newhost dir --->
-<cffunction name="directoryCopy" output="false" hint="copy newhost dir">
-	<cfargument name="source" required="true" type="string">
-	<cfargument name="destination" required="true" type="string">
-	<cfargument name="move" required="false" type="string">
-	<!--- Check if the move param exists if not we copy --->
-	<cfif isdefined("move")>
-		<cfset theaction = "move">
-	<cfelse>
-		<cfset theaction = "copy">
-	</cfif>
-	
-	<cfset var contents = "" />
-	<cfset var dirDelim = "/">
-
-	<cfif server.OS.Name contains "Windows">
-		<cfset dirDelim = "\" />
-	</cfif>
-
-	<cfif not(directoryExists(arguments.destination))>
-		<cfdirectory action="create" directory="#arguments.destination#" mode="775">
-	</cfif>
-
-	<cfdirectory action="list" directory="#arguments.source#" name="contents">
-	
-	<cfloop query="contents">
-		<cfif type eq "file" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS "dwsync.xml">
-			<cffile action="#theaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
-		<cfelseif type EQ "dir" AND NOT name CONTAINS "CVS" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS ".git">
-			<cfset directoryCopy(arguments.source & dirDelim & name, arguments.destination & dirDelim & name, arguments.move) />
-		</cfif>
-	</cfloop>
-	<cfreturn />
-</cffunction>
-
-<!--- ------------------------------------------------------------------------------------- --->
 <!--- Update Host --->
 <cffunction name="update" output="false" access="public" returntype="void">
 	<cfargument name="thestruct" type="Struct">
@@ -549,7 +510,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken("settings")>
 	<cfreturn />
 </cffunction>
 
@@ -600,10 +561,10 @@
 			</cfquery>
 			<!--- Now remove all users but only if in one host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			DELETE u
-			FROM users u
-			INNER JOIN ct_users_hosts ct ON ct.ct_u_h_user_id = u.user_id AND ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
-			WHERE 1 NOT IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id)
+			DELETE FROM users 
+			INNER JOIN ct_users_hosts ct ON ct.CT_U_H_HOST_ID = 1 and ct.ct_u_h_user_id
+			AND 1 NOT IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id)
+			having count(u.user_id) = 1
 			</cfquery>
 			<!--- Remove any user linked to this host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -796,9 +757,10 @@
 		<cfcatch type="any"></cfcatch>
 	</cftry>
 	<!--- COPY NEWHOST DAM DIR --->
-	<cfinvoke method="directoryCopy">
+	<cfinvoke component="global" method="directoryCopy">
 		<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles/dam">
 		<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#host_path_replace#/dam">
+		<cfinvokeargument name="directoryrecursive" value="true">
 	</cfinvoke>
 	<!--- Re-Write the fusebox files --->
 		<cfinvoke method="newHostCreateApp">

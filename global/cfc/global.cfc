@@ -48,11 +48,11 @@
 	<cffunction name="switchlang" returntype="string" access="public" output="false">
 		<cfargument name="thelang" default="" required="yes" type="string">
 		<!--- Set the session lang --->
-		<cfset session.thelang = #lcase(arguments.thelang)#>
+		<cfset session.thelang = arguments.thelang>
 		<!--- Get the lang id --->
-		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#lcase(arguments.thelang)#.xml" returnvariable="theid">
+		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#lcase(arguments.thelang)#" returnvariable="theid">
 		<!--- Set the session lang id --->
-		<cfset session.thelangid = #theid#>
+		<cfset session.thelangid = theid>
 		<cfreturn />
 	</cffunction>
 
@@ -152,6 +152,8 @@
 		<!--- Detect file extension --->
 		<cfinvoke component="assets" method="getFileExtension" theFileName="#thename#" returnvariable="fileNameExt">
 		<cfset thefilename = "#fileNameExt.theName#">
+		<!--- Convert space to an underscore --->
+		<cfset thefilename = REReplaceNoCase(thefilename, " ", "_", "ALL")>
 		<!--- All foreign chars are now converted, except the - --->
 		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:alnum:]^\-\_]", "", "ALL")>
 		<!--- Danish Chars --->
@@ -262,12 +264,9 @@
 		</cfthread>
 		<!--- Wait for thread --->
 		<cfthread action="join" name="#ttresizeimage#" timeout="9000" />
-		
-		
-		<!--- <cfpause interval="10" /> --->
-		
+				
 		<cfloop condition="NOT fileexists('#arguments.destination#')">
-			<cfpause interval="5" />
+			<cfset sleep(5000)>
 		</cfloop>
 		
 		<cfreturn "done">
@@ -281,7 +280,12 @@
 	
 	<!--- Check for connecting to datasource in bd_config --->
 	<cffunction name="verifydatasource" access="public" output="false">
-		<cfinvoke component="bd_config" method="verifyDatasource" dsn="#session.firsttime.database#" returnVariable="theconnection" />
+		<cfset var theconnection = false>
+		<cftry>
+			<cfinvoke component="bd_config" method="verifyDatasource" dsn="#session.firsttime.database#" returnVariable="theconnection" />
+			<cfdump var="#theconnection#">
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<cfreturn theconnection />
 	</cffunction>
 	
@@ -291,38 +295,45 @@
 		<cfparam name="theconnectstring" default="">
 		<cfparam name="hoststring" default="">
 		<cfparam name="verificationQuery" default="">
+		<cfparam name="session.firsttime.database_type" default="">
 		<!--- Set the correct drivername --->
-		<cfif session.firsttime.database EQ "h2">
+		<cfif session.firsttime.database_type EQ "h2">
 			<cfset thedrivername = "org.h2.Driver">
 			<cfset theconnectstring = "AUTO_RECONNECT=TRUE;CACHE_TYPE=SOFT_LRU;AUTO_SERVER=TRUE">
-		<cfelseif session.firsttime.database EQ "mysql">
+		<cfelseif session.firsttime.database_type EQ "mysql">
 			<cfset thedrivername = "com.mysql.jdbc.Driver">
 			<cfset theconnectstring = "zeroDateTimeBehavior=convertToNull">
-		<cfelseif session.firsttime.database EQ "mssql">
+		<cfelseif session.firsttime.database_type EQ "mssql">
 			<cfset thedrivername = "net.sourceforge.jtds.jdbc.Driver">
-		<cfelseif session.firsttime.database EQ "oracle">
+		<cfelseif session.firsttime.database_type EQ "oracle">
 			<cfset thedrivername = "oracle.jdbc.OracleDriver">
-		<cfelseif session.firsttime.database EQ "db2">
+		<cfelseif session.firsttime.database_type EQ "db2">
 			<cfset thedrivername = "com.ibm.db2.jcc.DB2Driver">
 			<cfset hoststring = "jdbc:db2://#session.firsttime.db_server#:currentSchema=RAZUNA;">
 			<cfset verificationQuery = "select 5 from sysibm.sysdummy1">
 		</cfif>
 		<!--- Set the datasource --->
-		<cfinvoke component="bd_config" method="setDatasource">
-			<cfinvokeargument name="name" value="#session.firsttime.database#">
-			<cfinvokeargument name="databasename" value="#session.firsttime.db_name#">
-			<cfinvokeargument name="server" value="#session.firsttime.db_server#">
-			<cfinvokeargument name="port" value="#session.firsttime.db_port#">
-			<cfinvokeargument name="username" value="#session.firsttime.db_user#">
-			<cfinvokeargument name="password" value="#session.firsttime.db_pass#">
-			<cfinvokeargument name="action" value="#session.firsttime.db_action#">
-			<cfinvokeargument name="existingDatasourceName" value="#session.firsttime.database#">
-			<cfinvokeargument name="drivername" value="#thedrivername#">
-			<cfinvokeargument name="h2Mode" value="Oracle">
-			<cfinvokeargument name="connectstring" value="#theconnectstring#">
-			<cfinvokeargument name="hoststring" value="#hoststring#">
-			<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
-		</cfinvoke>
+		<cftry>
+			<cfinvoke component="bd_config" method="setDatasource">
+				<cfinvokeargument name="name" value="#session.firsttime.database#">
+				<cfinvokeargument name="databasename" value="#session.firsttime.db_name#">
+				<cfinvokeargument name="server" value="#session.firsttime.db_server#">
+				<cfinvokeargument name="port" value="#session.firsttime.db_port#">
+				<cfinvokeargument name="username" value="#session.firsttime.db_user#">
+				<cfinvokeargument name="password" value="#session.firsttime.db_pass#">
+				<cfinvokeargument name="action" value="#session.firsttime.db_action#">
+				<cfinvokeargument name="existingDatasourceName" value="#session.firsttime.database#">
+				<cfinvokeargument name="drivername" value="#thedrivername#">
+				<cfinvokeargument name="h2Mode" value="Oracle">
+				<cfinvokeargument name="connectstring" value="#theconnectstring#">
+				<cfinvokeargument name="hoststring" value="#hoststring#">
+				<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
+			</cfinvoke>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
 		<cfreturn />
 	</cffunction>
 
@@ -659,7 +670,7 @@ Comment:<br>
 		</cfquery>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url, thesize, thewidth, theheight, av_type
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1208,8 +1219,15 @@ Comment:<br>
 	</cffunction>
 
 	<!--- Get watermark templates ---------------------------------------------------------------------->
-	<cffunction name="getWMtemplatedetail" output="false">
+	<cffunction name="getWMtemplatedetail" output="false" access="remote" returnformat="JSON">
 		<cfargument name="wm_temp_id" type="string" required="true">
+		<cfargument name="thedns" type="string" required="false" default="">
+		<cfargument name="thehostid" type="string" required="false" default="">
+		<!--- Since we can call this from external sources --->
+		<cfif arguments.thedns NEQ "">
+			<cfset application.razuna.datasource = arguments.thedns>
+			<cfset session.hostid = arguments.thehostid>
+		</cfif>
 		<!--- New struct --->
 		<cfset var qry = structnew()>
 		<!--- Query --->
@@ -1337,6 +1355,56 @@ Comment:<br>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.id#" recurse="true" />
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+	</cffunction>
+
+	<!--- directorycopy --->
+	<cffunction name="directorycopy" output="false" hint="copy newhost dir">
+		<cfargument name="source" required="true" type="string">
+		<cfargument name="destination" required="true" type="string">
+		<cfargument name="fileaction" required="false" type="string" default="copy">
+		<cfargument name="directoryaction" required="false" type="string" default="copy">
+		<cfargument name="directoryrecursive" required="false" type="string" default="false">
+		<!--- Param --->
+		<cfset var contents = "" />
+		<!--- Create the new directory if it does not exists --->
+		<cfif !directoryExists(arguments.destination)>
+			<cfdirectory action="create" directory="#arguments.destination#" mode="775">
+		</cfif>
+		<!--- List content --->
+		<cfdirectory action="list" directory="#arguments.source#" name="contents">
+		<!--- Filter content --->
+		<cfquery dbtype="query" name="contents">
+		SELECT *
+		FROM contents
+		WHERE size != 0
+		AND attributes != 'H'
+		AND name != 'thumbs.db'
+		AND name NOT LIKE '.DS_STORE%'
+		AND name NOT LIKE '__MACOSX%'
+		AND name NOT LIKE '%scheduleduploads_%'
+		AND name != '.svn'
+		AND name != '.git'
+		ORDER BY name
+		</cfquery>
+		<!--- Loop --->
+		<cfoutput query="contents" startrow="1" maxrows="200">
+			<!--- Files --->
+			<cfif type EQ "file">
+				<cfif fileexists("#arguments.source#/#name#")>
+					<cffile action="#arguments.fileaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
+				</cfif>
+			<!--- Dirs but only if we recursive option is true --->
+			<cfelseif type EQ "dir" AND arguments.directoryrecursive>
+				<!--- For copy --->
+				<cfif arguments.directoryaction EQ "copy">
+					<cfset directoryCopy(source=arguments.source & "/" & name, destination=arguments.destination & "/" & name, fileaction=arguments.fileaction, directoryaction=arguments.directoryaction, directoryrecursive=arguments.directoryrecursive) />
+				<!--- For Move --->
+				<cfelse>
+					<cfdirectory action="rename" directory="#arguments.source#/#name#" newdirectory="#arguments.destination#/#name#" mode="775" />
+				</cfif>
+			</cfif>
+		</cfoutput>
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>

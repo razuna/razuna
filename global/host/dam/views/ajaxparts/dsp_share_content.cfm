@@ -94,7 +94,16 @@
 							<div class="assetbox" style="text-align:center;">
 								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&jsessionid=#session.SessionID#');">
 									<div class="theimg">
-										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+											<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
+											<cfif myDir.RecordCount>
+												<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+											</cfif>
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+										</cfif>
 									</div>
 								<strong>#folder_name#</strong></a>
 							</div>
@@ -160,10 +169,10 @@
 							<cfelse>
 								<cfif is_available>
 									<div class="theimg">
-										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
 											<img src="#cloud_url#" border="0">
-										<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
-											<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+										<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
+											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 											<cfif FileExists("#ExpandPath("../../")##thestorage##path_to_asset#/#thethumb#") IS "no">
 												-#filename_org#-<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
 											<cfelse>
@@ -269,14 +278,14 @@
 							<!--- All other files --->
 							<cfelse>
 								<!--- If it is a PDF we show the thumbnail --->
-								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
 									<img src="#cloud_url#" border="0">
-								<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
-									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+								<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
+									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 									<cfif FileExists("#ExpandPath("../../")##thestorage##path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">
+										<img src="#thestorage##path_to_asset#/#thethumb#" border="0">
 									</cfif>
 								<cfelse>
 									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0"></cfif>
@@ -313,7 +322,7 @@
 <script type="text/javascript">
 	jqtabs("tabs_shared");
 	<cfif structkeyexists(attributes,"tab")>
-		$('##tabs_shared').tabs('select',1);
+		$('##tabs_shared').tabs('option', 'active',1);
 	</cfif>
 	// Select All from Content
 	$('##checkallcontent').click(function () {

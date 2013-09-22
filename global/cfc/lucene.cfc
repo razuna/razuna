@@ -68,82 +68,381 @@
 	
 	<!--- INDEX: Update --->
 	<cffunction name="index_update" access="public" output="true">
-		<cfargument name="thestruct" type="struct">
+		<cfargument name="thestruct" type="struct" required="false">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="online" type="string" default="F" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
 		<cfargument name="fromapi" type="string" default="F" required="false">
+		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
+		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
+		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
+		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
+		<!--- Call indexing in a thread --->
+		<cfthread action="run" intstruct="#arguments#" priority="low">
+			<cfinvoke method="index_update_thread">
+				<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
+				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
+				<cfinvokeargument name="category" value="#attributes.intstruct.category#" />
+				<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
+				<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
+				<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+				<cfinvokeargument name="fromapi" value="#attributes.intstruct.fromapi#" />
+				<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
+				<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
+				<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
+				<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+			</cfinvoke>
+		</cfthread>
+	</cffunction>
+
+	<!--- INDEX: Update --->
+	<cffunction name="index_update_thread" access="public" output="true">
+		<cfargument name="thestruct" type="struct" required="false">
+		<cfargument name="assetid" type="string" required="false">
+		<cfargument name="category" type="string" required="true">
+		<cfargument name="dsn" type="string" required="true">
+		<cfargument name="online" type="string" default="F" required="false">
+		<cfargument name="notfile" type="string" default="F" required="false">
+		<cfargument name="fromapi" type="string" default="F" required="false">
+		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
+		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
+		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
+		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
-		<!--- FOR FILES --->
-		<cfif arguments.category EQ "doc">
-			<!--- Query Record --->
-			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
-		    ct.file_desc description, ct.file_keywords keywords, 
-		    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
-		    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked
-			FROM #session.hostdbprefix#files f 
-			LEFT JOIN #session.hostdbprefix#files_desc ct ON f.file_id = ct.file_id_r
-			LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Get folder path --->
-			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
-			<cfloop list="#qry_bc#" delimiters=";" index="p">
-				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
-			</cfloop>
-			<!--- Get custom fields --->
-			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
-			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND v.cf_id_r = ft.cf_id_r 
-			AND v.host_id = ft.host_id 
-			AND ft.lang_id_r = 1
-			</cfquery>
-			<!--- Add custom fields to a list --->
-			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
-			<!--- Query labels --->
-			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
-			FROM ct_labels ct, #session.hostdbprefix#labels l
-			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND l.label_id = ct.ct_label_id
-			AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Add labels to a list --->
-			<cfset var l = valuelist(qry_l.label_path," ")>
-			<cfset var l = replace(l,"/"," ","all")>
-			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
-			<!--- Add labels to the query --->
-			<cfquery dbtype="query" name="qry_all">
-			SELECT 
-			id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thekeys#' as keywords, '#thedesc#' as description,
-			rawmetadata, theext, author, rights, authorsposition, captionwriter, webstatement, rightsmarked, '#l#' as labels, 
-			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, thecategory, '#folderpath#' as folderpath
-			FROM qry_all
-			</cfquery>
-			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-				<cfscript>
+		<!--- Call to GC to clean memory --->
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
+		<cftry>
+			<!--- FOR FILES --->
+			<cfif arguments.category EQ "doc">
+				<!--- Query Record --->
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
+			    SELECT DISTINCT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
+			    ct.file_desc description, ct.file_keywords keywords, 
+			    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
+			    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked
+				FROM #arguments.prefix#files f 
+				LEFT JOIN #arguments.prefix#files_desc ct ON f.file_id = ct.file_id_r
+				LEFT JOIN #arguments.prefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Get folder path --->
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
+				<cfloop list="#qry_bc#" delimiters=";" index="p">
+					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+				</cfloop>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
+				SELECT DISTINCT l.label_path
+				FROM ct_labels ct, #arguments.prefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
+				<!--- Remove foreign chars for some columns --->
+				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT 
+				id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thekeys#' as keywords, '#thedesc#' as description,
+				rawmetadata, theext, author, rights, authorsposition, captionwriter, webstatement, rightsmarked, '#l#' as labels, 
+				'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, thecategory, '#folderpath#' as folderpath
+				FROM qry_all
+				</cfquery>
+				<!--- Indexing --->
+					<cfscript>
+						args = {
+						collection : arguments.hostid,
+						query : qry_all,
+						category : "thecategory",
+						categoryTree : "id",
+						key : "id",
+						title : "id",
+						body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath,folder",
+						custommap :{
+							id : "id",
+							filename : "filename",
+							filenameorg : "filenameorg",
+							keywords : "keywords",
+							description : "description",
+							rawmetadata : "rawmetadata",
+							extension : "theext",
+							author : "author",
+							rights : "rights",
+							authorsposition : "authorsposition", 
+							captionwriter : "captionwriter", 
+							webstatement : "webstatement", 
+							rightsmarked : "rightsmarked",
+							labels : "labels",
+							customfieldvalue : "customfieldvalue",
+							folderpath : "folderpath",
+							folder : "folder"
+							}
+						};
+						results = CollectionIndexCustom( argumentCollection=args );
+					</cfscript>
+			<!--- FOR IMAGES --->
+			<cfelseif arguments.category EQ "img">
+				<!--- Query Record --->
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
+			    SELECT DISTINCT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind, f.lucene_key,
+			    ct.img_description description, ct.img_keywords keywords, 
+				f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory,
+				x.subjectcode, x.creator, x.title, x.authorsposition, x.captionwriter, x.ciadrextadr, x.category,
+				x.supplementalcategories, x.urgency, x.ciadrcity, 
+				x.ciadrctry, x.location, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre, x.instructions, x.source,
+				x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated, x.city, x.ciadrregion, 
+				x.country, x.countrycode, x.scene, x.state, x.credit, x.rights
+				FROM #arguments.prefix#images f 
+				LEFT JOIN #arguments.prefix#images_text ct ON f.img_id = ct.img_id_r
+				LEFT JOIN #arguments.prefix#xmp x ON f.img_id = x.id_r AND x.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Get folder path --->
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
+				<cfloop list="#qry_bc#" delimiters=";" index="p">
+					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+				</cfloop>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
+				SELECT DISTINCT l.label_path
+				FROM ct_labels ct, #arguments.prefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Add query to list --->
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
+				<!--- Remove foreign chars for some columns --->
+				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT 
+				id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thedesc#' as description, '#thekeys#' as keywords,
+				theext, rawmetadata, thecategory, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, 
+				supplementalcategories, urgency, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, 
+				intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, 
+				datecreated, city, ciadrregion, country, countrycode, scene, state, credit, rights, '#l#' as labels, 
+				'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
+				FROM qry_all
+				</cfquery>
+				<!--- Indexing --->
+					<cfscript>
+						args = {
+						collection : arguments.hostid,
+						query : qry_all,
+						category : "thecategory",
+						categoryTree : "id",
+						key : "id",
+						title : "id",
+						body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath,folder",
+						custommap :{
+							id : "id",
+							filename : "filename",
+							filenameorg : "filenameorg",
+							keywords : "keywords",
+							description : "description",
+							rawmetadata : "rawmetadata",
+							extension : "theext",
+							subjectcode : "subjectcode",
+							creator : "creator",
+							title : "title", 
+							authorsposition : "authorsposition", 
+							captionwriter : "captionwriter", 
+							ciadrextadr : "ciadrextadr", 
+							category : "category",
+							supplementalcategories : "supplementalcategories", 
+							urgency : "urgency",
+							ciadrcity : "ciadrcity", 
+							ciadrctry : "ciadrctry", 
+							location : "location", 
+							ciadrpcode : "ciadrpcode", 
+							ciemailwork : "ciemailwork", 
+							ciurlwork : "ciurlwork", 
+							citelwork : "citelwork", 
+							intellectualgenre : "intellectualgenre", 
+							instructions : "instructions", 
+							source : "source",
+							usageterms : "usageterms", 
+							copyrightstatus : "copyrightstatus", 
+							transmissionreference : "transmissionreference", 
+							webstatement : "webstatement", 
+							headline : "headline", 
+							datecreated : "datecreated", 
+							city : "city", 
+							ciadrregion : "ciadrregion", 
+							country : "country", 
+							countrycode : "countrycode", 
+							scene : "scene", 
+							state : "state", 
+							credit : "credit", 
+							rights : "rights",
+							labels : "labels",
+							customfieldvalue : "customfieldvalue",
+							folderpath : "folderpath",
+							folder : "folder"
+							}
+						};
+						results = CollectionIndexCustom( argumentCollection=args );
+					</cfscript>
+			<!--- FOR VIDEOS --->
+			<cfelseif arguments.category EQ "vid">
+				<!--- Query Record --->
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
+			    SELECT DISTINCT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
+			    ct.vid_description description, ct.vid_keywords keywords, 
+				vid_meta as rawmetadata, '#arguments.category#' as thecategory,
+				f.vid_extension theext
+				FROM #arguments.prefix#videos f 
+				LEFT JOIN #arguments.prefix#videos_text ct ON f.vid_id = ct.vid_id_r
+				WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Get folder path --->
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
+				<cfloop list="#qry_bc#" delimiters=";" index="p">
+					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+				</cfloop>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
+				SELECT DISTINCT l.label_path
+				FROM ct_labels ct, #arguments.prefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
+				<!--- Remove foreign chars for some columns --->
+				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
+			    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
+				theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
+				FROM qry_all
+				</cfquery>
+			<!--- FOR AUDIOS --->
+			<cfelseif arguments.category EQ "aud">
+				<!--- Query Record --->
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
+			    SELECT DISTINCT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
+			    aut.aud_description description, aut.aud_keywords keywords, 
+				a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
+				a.aud_extension theext
+				FROM #arguments.prefix#audios a
+				LEFT JOIN #arguments.prefix#audios_text aut ON a.aud_id = aut.aud_id_r
+				WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Get folder path --->
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
+				<cfloop list="#qry_bc#" delimiters=";" index="p">
+					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+				</cfloop>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
+				SELECT DISTINCT l.label_path
+				FROM ct_labels ct, #arguments.prefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
+				<!--- Remove foreign chars for some columns --->
+				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
+			    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
+				theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
+				FROM qry_all
+				</cfquery>
+			</cfif>
+			<!--- Only for video and audio files --->
+			<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
+				<!--- Indexing --->
+					<cfscript>
 					args = {
-					collection : session.hostid,
+					collection : arguments.hostid,
 					query : qry_all,
 					category : "thecategory",
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath,folder",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -152,284 +451,25 @@
 						description : "description",
 						rawmetadata : "rawmetadata",
 						extension : "theext",
-						author : "author",
-						rights : "rights",
-						authorsposition : "authorsposition", 
-						captionwriter : "captionwriter", 
-						webstatement : "webstatement", 
-						rightsmarked : "rightsmarked",
 						labels : "labels",
 						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath"
+						folderpath : "folderpath",
+						folder : "folder"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
-				</cfscript>
-			<!--- </cflock> --->
-		<!--- FOR IMAGES --->
-		<cfelseif arguments.category EQ "img">
-			<!--- Query Record --->
-			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind, f.lucene_key,
-		    ct.img_description description, ct.img_keywords keywords, 
-			f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory,
-			x.subjectcode, x.creator, x.title, x.authorsposition, x.captionwriter, x.ciadrextadr, x.category,
-			x.supplementalcategories, x.urgency, x.ciadrcity, 
-			x.ciadrctry, x.location, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre, x.instructions, x.source,
-			x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated, x.city, x.ciadrregion, 
-			x.country, x.countrycode, x.scene, x.state, x.credit, x.rights
-			FROM #session.hostdbprefix#images f 
-			LEFT JOIN #session.hostdbprefix#images_text ct ON f.img_id = ct.img_id_r
-			LEFT JOIN #session.hostdbprefix#xmp x ON f.img_id = x.id_r AND x.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Get folder path --->
-			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
-			<cfloop list="#qry_bc#" delimiters=";" index="p">
-				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
-			</cfloop>
-			<!--- Get custom fields --->
-			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
-			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND v.cf_id_r = ft.cf_id_r 
-			AND v.host_id = ft.host_id 
-			AND ft.lang_id_r = 1
-			</cfquery>
-			<!--- Add custom fields to a list --->
-			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
-			<!--- Query labels --->
-			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
-			FROM ct_labels ct, #session.hostdbprefix#labels l
-			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND l.label_id = ct.ct_label_id
-			AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Add query to list --->
-			<cfset var l = valuelist(qry_l.label_path," ")>
-			<cfset var l = replace(l,"/"," ","all")>
-			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
-			<!--- Add labels to the query --->
-			<cfquery dbtype="query" name="qry_all">
-			SELECT 
-			id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thedesc#' as description, '#thekeys#' as keywords,
-			theext, rawmetadata, thecategory, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, 
-			supplementalcategories, urgency, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, 
-			intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, 
-			datecreated, city, ciadrregion, country, countrycode, scene, state, credit, rights, '#l#' as labels, 
-			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
-			FROM qry_all
-			</cfquery>
-			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-				<cfscript>
-					args = {
-					collection : session.hostid,
-					query : qry_all,
-					category : "thecategory",
-					categoryTree : "id",
-					key : "id",
-					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath",
-					custommap :{
-						id : "id",
-						filename : "filename",
-						filenameorg : "filenameorg",
-						keywords : "keywords",
-						description : "description",
-						rawmetadata : "rawmetadata",
-						extension : "theext",
-						subjectcode : "subjectcode",
-						creator : "creator",
-						title : "title", 
-						authorsposition : "authorsposition", 
-						captionwriter : "captionwriter", 
-						ciadrextadr : "ciadrextadr", 
-						category : "category",
-						supplementalcategories : "supplementalcategories", 
-						urgency : "urgency",
-						ciadrcity : "ciadrcity", 
-						ciadrctry : "ciadrctry", 
-						location : "location", 
-						ciadrpcode : "ciadrpcode", 
-						ciemailwork : "ciemailwork", 
-						ciurlwork : "ciurlwork", 
-						citelwork : "citelwork", 
-						intellectualgenre : "intellectualgenre", 
-						instructions : "instructions", 
-						source : "source",
-						usageterms : "usageterms", 
-						copyrightstatus : "copyrightstatus", 
-						transmissionreference : "transmissionreference", 
-						webstatement : "webstatement", 
-						headline : "headline", 
-						datecreated : "datecreated", 
-						city : "city", 
-						ciadrregion : "ciadrregion", 
-						country : "country", 
-						countrycode : "countrycode", 
-						scene : "scene", 
-						state : "state", 
-						credit : "credit", 
-						rights : "rights",
-						labels : "labels",
-						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath"
-						}
-					};
-					results = CollectionIndexCustom( argumentCollection=args );
-				</cfscript>
-			<!--- </cflock> --->
-		<!--- FOR VIDEOS --->
-		<cfelseif arguments.category EQ "vid">
-			<!--- Query Record --->
-			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
-		    ct.vid_description description, ct.vid_keywords keywords, 
-			vid_meta as rawmetadata, '#arguments.category#' as thecategory,
-			f.vid_extension theext
-			FROM #session.hostdbprefix#videos f 
-			LEFT JOIN #session.hostdbprefix#videos_text ct ON f.vid_id = ct.vid_id_r
-			WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Get folder path --->
-			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
-			<cfloop list="#qry_bc#" delimiters=";" index="p">
-				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
-			</cfloop>
-			<!--- Get custom fields --->
-			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
-			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND v.cf_id_r = ft.cf_id_r 
-			AND v.host_id = ft.host_id 
-			AND ft.lang_id_r = 1
-			</cfquery>
-			<!--- Add custom fields to a list --->
-			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
-			<!--- Query labels --->
-			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
-			FROM ct_labels ct, #session.hostdbprefix#labels l
-			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND l.label_id = ct.ct_label_id
-			AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Add labels to a list --->
-			<cfset var l = valuelist(qry_l.label_path," ")>
-			<cfset var l = replace(l,"/"," ","all")>
-			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
-			<!--- Add labels to the query --->
-			<cfquery dbtype="query" name="qry_all">
-			SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
-		    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
-			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
-			FROM qry_all
-			</cfquery>
-		<!--- FOR AUDIOS --->
-		<cfelseif arguments.category EQ "aud">
-			<!--- Query Record --->
-			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
-		    aut.aud_description description, aut.aud_keywords keywords, 
-			a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
-			a.aud_extension theext
-			FROM #session.hostdbprefix#audios a
-			LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r
-			WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Get folder path --->
-			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
-			<cfloop list="#qry_bc#" delimiters=";" index="p">
-				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
-			</cfloop>
-			<!--- Get custom fields --->
-			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
-			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND v.cf_id_r = ft.cf_id_r 
-			AND v.host_id = ft.host_id 
-			AND ft.lang_id_r = 1
-			</cfquery>
-			<!--- Add custom fields to a list --->
-			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
-			<!--- Query labels --->
-			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
-			FROM ct_labels ct, #session.hostdbprefix#labels l
-			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND l.label_id = ct.ct_label_id
-			AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Add labels to a list --->
-			<cfset var l = valuelist(qry_l.label_path," ")>
-			<cfset var l = replace(l,"/"," ","all")>
-			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
-			<!--- Add labels to the query --->
-			<cfquery dbtype="query" name="qry_all">
-			SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
-		    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
-			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
-			FROM qry_all
-			</cfquery>
-		</cfif>
-		<!--- Only for video and audio files --->
-		<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
-			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-				<cfscript>
-				args = {
-				collection : session.hostid,
-				query : qry_all,
-				category : "thecategory",
-				categoryTree : "id",
-				key : "id",
-				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath",
-				custommap :{
-					id : "id",
-					filename : "filename",
-					filenameorg : "filenameorg",
-					keywords : "keywords",
-					description : "description",
-					rawmetadata : "rawmetadata",
-					extension : "theext",
-					labels : "labels",
-					customfieldvalue : "customfieldvalue",
-					folderpath : "folderpath"
-					}
-				};
-				results = CollectionIndexCustom( argumentCollection=args );
-				</cfscript>
-			<!--- </cflock> --->
-		</cfif>
-		<!--- Index the file itself, but not video (since video throws an error) --->
-		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
+					</cfscript>
+			</cfif>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Index only doc files --->
+		<cfif qry_all.link_kind NEQ "url" AND arguments.category EQ "doc" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
 			<cftry>
 				<!--- Nirvanix or Amazon --->
-				<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
+				<cfif (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
 					<!--- Check if windows or not --->
 					<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 					<cfif !isWindows>
@@ -439,28 +479,25 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-						<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
-						<!--- </cflock> --->
+							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
 				<!--- Local Storage --->
-				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
+				<cfelseif qry_all.link_kind NEQ "lan" AND arguments.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
 				<cfcatch type="any">
-					
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
 		</cfif>
+		<!--- Call to GC to clean memory --->
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	</cffunction>
 	
 	<!--- Get custom values --->
@@ -487,6 +524,23 @@
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
+		<!--- Call indexing in a thread --->
+		<cfthread action="run" intstruct="#arguments#" priority="low">
+			<cfinvoke method="index_delete_thread">
+				<cfinvokeargument name="thestruct" value="#attributes.intstruct.thestruct#" />
+				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
+				<cfinvokeargument name="category" value="#attributes.intstruct.category#" />
+				<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+			</cfinvoke>
+		</cfthread>
+	</cffunction>
+
+	<!--- INDEX: Delete --->
+	<cffunction name="index_delete_thread" access="public" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfargument name="category" type="string" required="true">
+		<cfargument name="assetid" type="string" required="false">
+		<cfargument name="notfile" type="string" default="F" required="false">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.link_kind" default="">
 		<!--- Index: delete file --->
@@ -497,32 +551,25 @@
 				<cfif arguments.thestruct.link_kind EQ "">
 					<!--- Storage: Local --->
 					<cfif application.razuna.storage EQ "local">
-						<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
 							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
-						<!--- </cflock> --->
 					<!--- Storage: Nirvanix --->
 					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
-						<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
 							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
-						<!--- </cflock> --->
 					</cfif>
 				<!--- For linked local assets --->
 				<cfelseif arguments.thestruct.link_kind EQ "lan">
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
 						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
-					<!--- </cflock> --->
 				</cfif>
 			</cfif>
 			<!--- Index: delete records --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
-				<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
-			<!--- </cflock> --->
+			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			<cfcatch type="any">
-				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="lucene delete index">
-					<cfdump var="#cfcatch#" />
-				</cfmail>
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
+		<!--- Call to GC to clean memory --->
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	</cffunction>
 	
 	<!--- INDEX: Delete Folder --->
@@ -616,7 +663,7 @@
 	</cffunction>
 	
 	<!--- SEARCH --->
-	<cffunction name="search" access="public" output="false">
+	<cffunction name="search" access="remote" output="false" returntype="query">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
@@ -624,7 +671,7 @@
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
-		<cfelseif NOT arguments.criteria CONTAINS ":">
+		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
 			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
 		</cfif>
 		<cftry>
@@ -670,14 +717,14 @@
 		<cfoutput><strong>Removing current index...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Remove the index --->
-		<cfif application.razuna.storage EQ "local">
+		<!--- <cfif application.razuna.storage EQ "local">
 			<cfindex action="purge" collection="#session.hostid#" />
-		</cfif>
+		</cfif> --->
 		<!--- Feedback --->
 		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Get all assets --->
-		<cfquery name="qry" datasource="#variables.dsn#"> 
+		<cfquery name="qry" datasource="#application.razuna.datasource#"> 
 	    <!--- Files --->
 	    SELECT file_id id, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, 
 	    file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
@@ -734,7 +781,7 @@
 		<!--- CLOUD --->
 		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 			<!--- Params --->
-			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thispath & "/incoming/reindex_" & application.razuna.processid>
+			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thepath & "/incoming/reindex_" & application.razuna.processid>
 			<cfset arguments.thestruct.hostid = session.hostid>
 			<!--- Create a temp folder for the documents --->
 			<cfdirectory action="create" directory="#arguments.thestruct.qryfile.path#" mode="775">
@@ -765,11 +812,11 @@
 								<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 								<cfinvokeargument name="assetid" value="#id#">
 								<cfinvokeargument name="category" value="#cat#">
-								<cfinvokeargument name="dsn" value="#variables.dsn#">
+								<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 								<cfinvokeargument name="notfile" value="#notfile#">
 							</cfinvoke>
 							<!--- Update file DB with new lucene_key --->
-							<cfquery datasource="#variables.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#files
 							SET lucene_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.path#/#file_name_org#">
 							WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
@@ -785,7 +832,7 @@
 							<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 							<cfinvokeargument name="assetid" value="#id#">
 							<cfinvokeargument name="category" value="#cat#">
-							<cfinvokeargument name="dsn" value="#variables.dsn#">
+							<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 							<cfinvokeargument name="notfile" value="#notfile#">
 						</cfinvoke>
 					</cfif>
@@ -807,7 +854,7 @@
 						<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 						<cfinvokeargument name="assetid" value="#id#">
 						<cfinvokeargument name="category" value="#cat#">
-						<cfinvokeargument name="dsn" value="#variables.dsn#">
+						<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 					</cfinvoke>
 				<!---
 <cfelse>
@@ -826,16 +873,25 @@
 	</cffunction>
 	
 	<!--- INDEX: Update from API --->
-	<cffunction name="index_update_api" access="public" output="false">
+	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assetcategory" type="string" required="true">
+		<cfargument name="dsn" type="string" required="true">
+		<cfargument name="storage" type="string" required="true">
+		<cfargument name="thedatabase" type="string" required="true">
+		<cfargument name="prefix" type="string" required="true">
+		<cfargument name="hostid" type="string" required="true">
 		<!--- Call to update asset --->
 		<cfinvoke method="index_update">
 			<cfinvokeargument name="assetid" value="#arguments.assetid#">
 			<cfinvokeargument name="category" value="#arguments.assetcategory#">
-			<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
+			<cfinvokeargument name="dsn" value="#arguments.dsn#">
 			<cfinvokeargument name="fromapi" value="t">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
+			<cfinvokeargument name="prefix" value="#arguments.prefix#">
+			<cfinvokeargument name="hostid" value="#arguments.hostid#">
+			<cfinvokeargument name="storage" value="#arguments.storage#">
+			<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#">
+			<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai">
 				<cfinvokeargument name="notfile" value="f">
 			</cfif>
 		</cfinvoke>

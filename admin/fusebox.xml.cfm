@@ -35,6 +35,7 @@
 		<class alias="amazon" classpath="global.cfc.amazon" type="component" constructor="init"/>
 		<class alias="rfs" classpath="global.cfc.rfs" type="component" constructor="init"/>
 		<class alias="plugins" classpath="global.cfc.plugins" type="component" constructor="init"/>
+		<class alias="resourcemanager" classpath="global.cfc.ResourceManager" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

@@ -175,8 +175,9 @@
 	}
 	// Validate Server
 	function valserver(){
-		$("##div_valserver").css("display","");
-		loadcontent('div_valserver', '#myself#ajax.prefs_rendf_valserver&server_name=' + $('##rfs_server_name').val());
+		var thehttp = $('##rfs_server_name').val();
+		$('##div_valserver').css('display','');
+		$('##div_valserver').load('#myself#ajax.prefs_rendf_valserver', { server_name: thehttp } );
 	}
 	// Validate FTP
 	function valftp(){

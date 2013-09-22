@@ -27,7 +27,8 @@
 				<set name="attributes.host_lang" value="1" />
 				<set name="session.hostid" value="1" />
 				<xfa name="submitform" value="c.firsttimerun" />
-				<set name="attributes.thepath" value="#thispath#/newhost/hostfiles/dam/" />
+				<set name="attributes.thepath" value="#thispath#" />
+				
 				<!-- CFC: Check -->
 				<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangsadmin(attributes.thepath)" returnvariable="xml_langs" />
 				<do action="v.firsttime" />
@@ -249,6 +250,7 @@
 	<fuseaction name="first_time_paths">
 		<!-- Set sessions -->
 		<set name="session.firsttime.database" value="#attributes.db#" overwrite="false" />
+		<set name="session.firsttime.database_type" value="#attributes.db#" overwrite="false" />
 		<set name="session.firsttime.type" value="#attributes.type#" overwrite="false" />
 		<set name="session.firsttime.path_assets" value="#pathoneup#assets" />
 		<set name="session.firsttime.ecp_path" value="#pathoneup#" />
@@ -262,6 +264,7 @@
 				<set name="session.firsttime.db_schema" value="razuna" />
 				<set name="session.firsttime.db_user" value="razuna" />
 				<set name="session.firsttime.db_pass" value="razunabd" />
+				<set name="session.firsttime.database_type" value="h2" />
 				<!-- CFC: Check if there is a DB Connection -->
 				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
 				<!-- If there is no H2 datasource then create it -->
@@ -296,8 +299,9 @@
 	<fuseaction name="first_time_database_config">
 		<!-- Set sessions -->
 		<set name="session.firsttime.database" value="#attributes.db#" />
+		<set name="session.firsttime.database_type" value="#attributes.db#" />
 		<!-- If this is for H2 -->
-		<if condition="#attributes.db# EQ 'H2'">
+		<if condition="attributes.db EQ 'H2'">
 			<true>
 				<!-- Set attributes -->
 				<set name="attributes.db_name" value="razuna" />
@@ -309,7 +313,7 @@
 				<!-- CFC: Check if there is a DB Connection -->
 				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
 				<!-- If there is no H2 datasource then create it -->
-				<if condition="#arrayisempty(thedsnarray)#">
+				<if condition="arrayisempty(thedsnarray)">
 					<true>
 						<set name="session.firsttime.db_action" value="create" />
 						<set name="session.firsttime.db_name" value="razuna" />
@@ -318,6 +322,7 @@
 						<set name="session.firsttime.db_schema" value="razuna" />
 						<set name="session.firsttime.db_user" value="razuna" />
 						<set name="session.firsttime.db_pass" value="razunabd" />
+						<set name="session.firsttime.database_type" value="h2" />
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 					</true>
@@ -479,6 +484,17 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
+		<!-- Add Razuna Client db connection -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<set name="session.firsttime.database_type" value="mysql" />
+		<set name="session.firsttime.db_name" value="razuna_clients" />
+		<set name="session.firsttime.db_server" value="db.razuna.com" />
+		<set name="session.firsttime.db_port" value="3306" />
+		<set name="session.firsttime.db_user" value="razuna_client" />
+		<set name="session.firsttime.db_pass" value="D63E61251" />
+		<set name="session.firsttime.db_action" value="create" />
+		<!-- CFC: Add the datasource -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 	</fuseaction>
 	
 	<!-- Call firsttime run -->
@@ -1172,7 +1188,7 @@
 	</fuseaction>
 	<!-- Get Languages for new Host -->
 	<fuseaction name="hosts_languages">
-		<set name="attributes.thepath" value="#thispath#/newhost/hostfiles/dam/" />
+		<set name="attributes.thepath" value="#pathoneup#/global/" />
 		<!-- CFC: Check -->
 		<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangsadmin(attributes.thepath)" returnvariable="xml_langs" />
 		<!-- Show -->
@@ -1245,6 +1261,17 @@
 		<!-- Param -->
 		<set name="attributes.firsttime" value="T" overwrite="false" />
 		<set name="session.updatedb" value="false" />
+		<!-- Add Razuna Client db connection -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<set name="session.firsttime.database_type" value="mysql" />
+		<set name="session.firsttime.db_name" value="razuna_clients" />
+		<set name="session.firsttime.db_server" value="db.razuna.com" />
+		<set name="session.firsttime.db_port" value="3306" />
+		<set name="session.firsttime.db_user" value="razuna_client" />
+		<set name="session.firsttime.db_pass" value="D63E61251" />
+		<set name="session.firsttime.db_action" value="create" />
+		<!-- CFC: Add the datasource -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 		<!-- CFC: Get all Hosts -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="attributes.qryhosts" />
 		<!-- CFC: Do the DB update -->
@@ -1314,8 +1341,12 @@
 	
 	<!-- Load -->
 	<fuseaction name="pref_global_wl">
+		<!-- Params -->
+		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<!-- Get options -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options()" returnvariable="qry_options" />
+		<!-- Check if CSS directory exists -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_css(attributes.pathoneup)" />
 		<!-- Show -->
 		<do action="ajax.pref_global_wl" />
 	</fuseaction>

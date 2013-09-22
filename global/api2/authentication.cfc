@@ -30,6 +30,8 @@
 	<cfset application.razuna.datasource = application.razuna.api.dsn>
 	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
 	<cfset application.razuna.setid = application.razuna.api.setid>
+	<cfset application.razuna.api.thehttp = "http://">
+	<cfparam name="application.razuna.api.lucene" default="global.cfc.lucene">
 
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">
@@ -65,18 +67,12 @@
 		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
 		<!--- If timeout is within the last 30 minutes then extend it again --->
-		<cfif qry.recordcount EQ 0 AND theapikey NEQ 108>
+		<cfif qry.recordcount EQ 0>
 			<!--- Set --->
 			<cfset var status = false>
 		<cfelse>
 			<!--- Set --->
 			<cfset var status = true>
-			<!--- If we got the special api key --->
-			<cfif theapikey EQ 108>
-				<cfset queryAddRow(qry,1)>
-				<cfset querySetCell(qry, "user_id", "1")>
-				<cfset querySetCell(qry, "hostid", thehostid)>
-			</cfif>
 			<!--- Get Host prefix --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group
@@ -137,6 +133,109 @@
 		<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetokenall" />
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+
+	<!--- Execute Workflow --->
+	<cffunction name="executeworkflow" output="false" returntype="void">
+		<cfargument name="api_key" type="string">
+		<cfargument name="action" type="string">
+		<cfargument name="fileid" type="string">
+		<cfargument name="folder_id" type="string">
+		<!--- For Workflow --->
+		<cfset arguments.comingfrom = cgi.http_referer>
+		<!--- Query --->
+		<cfif arguments.action NEQ "on_folder_add">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
+			SELECT folder_id_r, img_filename AS thefilename, 'img' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+			WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, vid_filename AS thefilename, 'vid' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+			WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, aud_name AS thefilename, 'aud' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+			WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, file_name AS thefilename, 'doc' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			</cfquery>
+			<!--- Set vars --->
+			<cfset arguments.folder_id = qry_forwf.folder_id_r>
+			<cfset arguments.thefiletype = qry_forwf.thefiletype>
+			<cfset arguments.file_name = qry_forwf.thefilename>
+			<!--- Call workflow --->
+			<cfset arguments.folder_action = false>
+			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+			<!--- Call workflow --->
+			<cfset arguments.folder_action = true>
+		</cfif>
+		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Update Search --->
+	<cffunction name="updateSearch" output="false" returntype="void">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assetcategory" required="true">
+		<cfargument name="api_key" required="true">
+		<!--- Thread --->
+		<cfthread action="run" intstruct="#arguments#">
+			<cfinvoke method="updateSearch_Thread">
+				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
+				<cfinvokeargument name="assetcategory" value="#attributes.intstruct.assetcategory#" />
+				<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
+			</cfinvoke>
+		</cfthread>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Update Search --->
+	<cffunction name="updateSearch_Thread" output="false" returntype="void">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assetcategory" required="true">
+		<cfargument name="api_key" required="true">
+		<!--- Call Lucene --->
+		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
+			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api" assetid="#arguments.assetid#" assetcategory="#arguments.assetcategory#" dsn="#application.razuna.api.dsn#" storage="#application.razuna.api.storage#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" thedatabase="#application.razuna.api.thedatabase#">
+		<cfelse>
+			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
+				<cfhttpparam name="method" value="index_update_api" type="url" />
+				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
+				<cfhttpparam name="assetcategory" value="#arguments.assetcategory#" type="url" />
+				<cfhttpparam name="dsn" value="#application.razuna.api.dsn#" type="url" />
+				<cfhttpparam name="storage" value="#application.razuna.api.storage#" type="url" />
+				<cfhttpparam name="thedatabase" value="#application.razuna.api.thedatabase#" type="url" />
+				<cfhttpparam name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" type="url" />
+				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />
+			</cfhttp>
+		</cfif>
+	</cffunction>
+
+	<!--- Search --->
+	<cffunction name="search" output="false">
+		<cfargument name="criteria" required="true">
+		<cfargument name="category" required="true">
+		<cfargument name="hostid" required="true">
+		<!--- Call Lucene --->
+		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
+			<cfinvoke component="#application.razuna.api.lucene#" method="search" criteria="#arguments.criteria#" category="#arguments.category#" hostid="#arguments.hostid#" returnvariable="qrylucene">
+		<cfelse>
+			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
+				<cfhttpparam name="method" value="search" type="url" />
+				<cfhttpparam name="criteria" value="#arguments.criteria#" type="url" />
+				<cfhttpparam name="category" value="#arguments.category#" type="url" />
+				<cfhttpparam name="hostid" value="#arguments.hostid#" type="url" />
+			</cfhttp>
+			<!--- Set the return --->
+			<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="qrylucene" />
+		</cfif>
+		<!--- Return --->
+		<cfreturn qrylucene>
 	</cffunction>
 
 </cfcomponent>

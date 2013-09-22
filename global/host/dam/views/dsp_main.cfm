@@ -29,6 +29,7 @@
 		<cfif cs.folder_redirect EQ "0" OR attributes.redirectmain> 
 			<!--- Show if Firebug is enabled --->
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
+			
 			<!--- Storage Check --->
 			<cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">
@@ -59,9 +60,9 @@
 				<tr>
 					<td width="50%" valign="top">
 						<div class="panelsnew">
-							<h1>Upload now</h1>
+							<h1>#myFusebox.getApplicationData().defaults.trans("upload_now")#</h1>
 							<a href="##" onclick="showwindow('#myself#c.choose_folder&folder_id=x','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
-								<button class="awesome super green">Add your files</button>
+								<button class="awesome super green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button>
 							</a>
 						</div>
 					</td>
@@ -71,7 +72,7 @@
 							<!--- Search here --->
 							<div id="tab_search">
 								<div class="panelsnew">
-									<h1>Search Panel</h1>
+									<h1>#myFusebox.getApplicationData().defaults.trans("search_panel")#</h1>
 									<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 									<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all">
 									<div style="float:left;padding-top:4px;">
@@ -84,13 +85,13 @@
 										<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 										<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
 										<p><hr></p>
-										<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
+										<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("help_with_search")#</a></p>
 									</div>
 									<div style="float:left;">
 										<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:250px;" placeholder="Quick Search">
 									</div>
 									<div style="float:left;">
-										<button class="awesome big green">Search</button>
+										<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("header_search")#</button>
 									</div>
 									<div style="float:right;padding-left:20px;padding-top:4px;">
 										<a href="##" onclick="showwindow('#myself#c.search_advanced','#myFusebox.getApplicationData().defaults.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a>
@@ -103,8 +104,8 @@
 							<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 								<div id="tab_admin">
 									<div class="panelsnew">
-										<h1>Administrator Panel</h1>
-										<a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">Go to Administration</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
+										<h1>#myFusebox.getApplicationData().defaults.trans("administrator_panel")#</h1>
+										<a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("go_to_administration")#</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
 									</div>
 								</div>
 							</cfif>
@@ -119,16 +120,16 @@
 							</cfif>
 						<cfelse>
 							<div class="panelsnew">
-								<h1>How to get the most out of Razuna</h1>
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to add files to Razuna');return false;">&gt; How to add files to Razuna</a>
+								<h1>#myFusebox.getApplicationData().defaults.trans("razuna_main_video_header")#</h1>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to share files with Razuna');return false;">&gt; How to share files with Razuna</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;">&gt; Make good use of widgets</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Manage users and groups');return false;">&gt; Manage users and groups</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
 							</div>
 							<br />
 						</cfif>
@@ -154,7 +155,9 @@
 						<!--- If WL we show the news section here --->
 						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
-								<h1>Announcements</h1>
+								<cfif attributes.qry_news.recordcount NEQ 0>
+									<h1>#myFusebox.getApplicationData().defaults.trans("announcements")#</h1>
+								</cfif>
 								<!--- News --->
 								<cfif attributes.wl_news_rss EQ "">
 									<cfloop query="attributes.qry_news">

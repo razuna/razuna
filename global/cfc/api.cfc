@@ -192,17 +192,29 @@
 		<cfreturn qrycfv />
 	</cffunction>
 
+	<!--- Set CustomFields --->
+	<cffunction name="setCustomField" access="public" returntype="void">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<cfinvoke component="custom_fields" method="savevalues" thestruct="#arguments.thestruct#" />
+		<cfreturn />
+	</cffunction>
+
 	<!--- Get PluginID --->
 	<cffunction name="getMyID" access="public" returntype="string">
 		<cfargument name="pluginname" type="string" required="true" />
-		<!--- Set path --->
-		<cfif structkeyexists(session,"thisapp") AND session.thisapp EQ "admin">
-			<cfset var thepath = expandPath("..")>
-		<cfelse>
-			<cfset var thepath = expandpath("../..")>
-		</cfif>
-		<!--- Get id from config file --->
-		<cfset var plugID = getProfileString("#thepath#/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+		<!--- Param --->
+		<cfset var plugID = "">
+		<!--- Doing a error exception since this is also called within the admin (we don't need the id anyhow) --->
+		<cftry>
+			<!--- Set path --->
+			<cfset var thepath = expandpath("..")>
+			<!--- Get id from config file --->
+			<cfset var plugID = getProfileString("#thepath#/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
 		<cfreturn plugID />
 	</cffunction>
 
@@ -357,9 +369,34 @@
 		<cfreturn r />
 	</cffunction>
 
+	<!--- Get temp files --->
+	<cffunction name="getFilesTemp" access="public" returntype="query">
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT 
+		t.tempid AS id,
+		t.filename,
+		t.folder_id,
+		CASE
+			WHEN (f.type_type IS NULL) THEN 'doc'
+			ELSE f.type_type
+		END AS type
+		FROM #getHostPrefix()#assets_temp t LEFT JOIN file_types f ON lower(f.type_id) = lower(t.extension)
+		WHERE t.tempid IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
+		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getFile" access="public" returntype="query">
 		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<!--- Param --->
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT
@@ -374,8 +411,13 @@
 		CAST(i.img_width AS CHAR) as width,
 		CAST(i.img_height AS CHAR) as height,
 		i.img_size size,
-		i.img_extension extension
-		FROM #getHostPrefix()#images i 
+		i.img_extension extension,
+		x.colorspace,
+		x.xres AS xdpi,
+		x.yres AS ydpi,
+		x.resunit AS unit,
+		i.hashtag AS md5hash
+		FROM #getHostPrefix()#images i LEFT JOIN #getHostPrefix()#xmp x ON x.id_r = i.img_id
 		WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
@@ -391,7 +433,12 @@
 		CAST(v.vid_width AS CHAR) as width,
 		CAST(v.vid_height AS CHAR) as height,
 		v.vid_size size,
-		v.vid_extension extension
+		v.vid_extension extension,
+		'' AS colorspace,
+		'' AS xdpi,
+		'' AS ydpi,
+		'' AS unit,
+		v.hashtag AS md5hash
 		FROM #getHostPrefix()#videos v 
 		WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -408,7 +455,12 @@
 		'0' as width,
 		'0' as height,
 		a.aud_size size,
-		a.aud_extension extension
+		a.aud_extension extension,
+		'' AS colorspace,
+		'' AS xdpi,
+		'' AS ydpi,
+		'' AS unit,
+		a.hashtag AS md5hash
 		FROM #getHostPrefix()#audios a
 		WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -425,7 +477,12 @@
 		'0' as width,
 		'0' as height,
 		f.file_size size,
-		f.file_extension extension
+		f.file_extension extension,
+		'' AS colorspace,
+		'' AS xdpi,
+		'' AS ydpi,
+		'' AS unit,
+		f.hashtag AS md5hash
 		FROM #getHostPrefix()#files f 
 		WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -440,11 +497,12 @@
 		<cfargument name="thetype" type="string" required="true" />
 		<cfargument name="workflow" type="string" required="true" />
 		<cfargument name="folderid" type="string" required="true" />
-		<!--- Params --->
+		<!-- Variables for workflow -->
 		<cfset var s = {}>
 		<cfset s.fileid = arguments.fileid>
 		<cfset s.thefiletype = arguments.thetype>
 		<cfset s.folder_id = arguments.folderid>
+		<cfset s.comingfrom = cgi.http_referer>
 		<!--- Loop over fileid and execute workflow for each file --->
 		<cfset s.folder_action = true>
 		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
@@ -452,6 +510,30 @@
 		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+
+	<!--- Update Dates on files --->
+	<cffunction name="updateDate" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<!--- Call function --->
+		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" />
+	</cffunction>
+
+	<!--- Update Search Index --->
+	<cffunction name="updateSearch" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<!--- Call function --->
+		<cfinvoke component="lucene" method="index_update_api">
+			<cfinvokeargument name="assetid" value="#arguments.fileid#" />
+			<cfinvokeargument name="assetcategory" value="#arguments.type#" />
+			<cfinvokeargument name="dsn" value="#getDatasource()#" />
+			<cfinvokeargument name="storage" value="#getStorage()#" />
+			<cfinvokeargument name="thedatabase" value="#getDatabase()#" />
+			<cfinvokeargument name="prefix" value="#getHostPrefix()#" />
+			<cfinvokeargument name="hostid" value="#getHostID()#" />
+		</cfinvoke>
 	</cffunction>
 
 </cfcomponent>

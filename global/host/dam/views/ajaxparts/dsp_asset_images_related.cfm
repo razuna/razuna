@@ -35,11 +35,12 @@
 		</cfif>
 		View
 		</a> 
-		 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">Download</a> 
+		 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a> 
 		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;">Direct Link</a>
 		 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
+		 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_images&file_id=#img_id#&img_group_id=#img_group#&thetype=img&cf_show=img&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 		<cfif attributes.folderaccess NEQ "R">
-			 | <a href="##" onclick="remren('#img_id#');return false;">Remove</a>
+			 | <a href="##" onclick="remren('#img_id#');return false;">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
 		</cfif>
 		<div id="divo#img_id#" style="display:none;">
 			<input type="text" id="inputo#img_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />

@@ -44,6 +44,14 @@
 	<fuseaction name="remove_email">
   		<include template="win_remove_email" />
 	</fuseaction>
+	<!-- WINDOW: Trash Record -->
+	<fuseaction name="trash_record">
+  		<include template="win_trash_record" />
+	</fuseaction>
+	<!-- WINDOW: Restore Record -->
+	<fuseaction name="restore_record">
+  		<include template="win_restore_record" />
+	</fuseaction>
 	
 	<!-- Dummy empty page -->
 	<fuseaction name="dummy">
@@ -108,13 +116,33 @@
 	<fuseaction name="remove_folder">
   		<include template="win_remove_folder" />
 	</fuseaction>
+	<!-- Folder: Trash Folder -->
+	<fuseaction name="trash_folder">
+  		<include template="win_trash_folder" />
+	</fuseaction>
 	<!-- Folder: Confirm removal of folder -->
 	<fuseaction name="remove_folder_confirm">
   		<include template="dsp_folder_remove_confirm" />
 	</fuseaction>
+	<!-- Folder: Confirm removal of folder -->
+	<fuseaction name="remove_collection_confirm">
+  		<include template="dsp_folder_remove_confirm" />
+	</fuseaction>
+	<!-- Folder: Confirm trash of folder -->
+	<fuseaction name="trash_folder_confirm">
+  		<include template="dsp_folder_trash_confirm" />
+	</fuseaction>
 	<!-- Folder: Content -->
 	<fuseaction name="folder_content">
   		<include template="dsp_folder_content" />
+	</fuseaction>
+	<!-- Copy Metadata -->
+	<fuseaction name="copy_metaData">
+  		<include template="dsp_copy_metaData" />
+	</fuseaction>
+	<!-- Copy Metadata Do -->
+	<fuseaction name="copy_metaData_do">
+  		<include template="dsp_copy_metaData_do" />
 	</fuseaction>
 	<!-- Folder: Content LIST -->
 	<fuseaction name="folder_content_list">
@@ -136,6 +164,10 @@
 	<fuseaction name="folder_videos">
   		<include template="dsp_folder_videos" />
 	</fuseaction>
+	<!-- Trash: Records -->
+	<fuseaction name="trash_assets">
+  		<include template="dsp_trash_assets" />
+	</fuseaction>
 	<!-- Folder: Load Video -->
 	<fuseaction name="folder_videos_show">
   		<include template="dsp_folder_videos_show" />
@@ -152,6 +184,14 @@
 	<fuseaction name="folder_settings">
   		<include template="dsp_folder_settings" />
 	</fuseaction>
+	<!-- Assets: trash -->
+    <fuseaction name="folder_trash">
+		<include template="dsp_folder_trash" />
+    </fuseaction>
+	<!-- Folder: trash -->
+    <fuseaction name="trash_folder_all">
+		<include template="dsp_trash_folder_all" />
+    </fuseaction>
 	<!-- Folder: samefoldernamecheck -->
 	<fuseaction name="folder_namecheck">
   		<include template="dsp_folder_namecheck" />
@@ -169,8 +209,30 @@
 	<fuseaction name="collection_chooser">
   		<include template="dsp_collection_chooser" />
 	</fuseaction>
-	
-	
+	<!-- collection: trash -->
+    <fuseaction name="collection_trash">
+		<include template="dsp_collection_trash" />
+    </fuseaction>
+	<!-- WINDOW: Restore Collection -->
+	<fuseaction name="restore_collection">
+  		<include template="win_restore_collection" />
+	</fuseaction>
+	<!-- Collections: List -->
+	<fuseaction name="collections_trash_item">
+  		<include template="win_trash_col_item" />
+	</fuseaction>
+	<!-- collection: collections in trash -->
+    <fuseaction name="collection_item_trash">
+		<include template="dsp_trash_col" />
+    </fuseaction>
+	<!-- collection: folders in trash -->
+    <fuseaction name="col_folder_trash">
+		<include template="dsp_col_folder_trash" />
+    </fuseaction>
+	<!-- collection: files in trash -->
+    <fuseaction name="col_file_trash">
+		<include template="dsp_col_file_trash" />
+    </fuseaction>
 	<!-- Assets: Add -->
 	<fuseaction name="asset_add">
   		<include template="dsp_asset_add" />
@@ -245,6 +307,10 @@
 	<fuseaction name="videos_detail_related">
   		<include template="dsp_asset_videos_related" />
 	</fuseaction>
+	<!-- Videos: Renditions -->
+	<fuseaction name="exist_rendition_videos">
+  		<include template="dsp_exist_rendition_videos" />
+	</fuseaction>	
 	<!-- Images: Detail -->
 	<fuseaction name="images_detail">
   		<include template="dsp_asset_images_detail" />
@@ -252,6 +318,10 @@
 	<!-- Images: Related -->
 	<fuseaction name="images_detail_related">
   		<include template="dsp_asset_images_related" />
+	</fuseaction>
+	<!-- Images: Renditions -->
+	<fuseaction name="exist_rendition_images">
+  		<include template="dsp_exist_rendition_images" />
 	</fuseaction>
 	<!-- Images: Serve -->
 	<fuseaction name="serve_image">
@@ -269,7 +339,10 @@
 	<fuseaction name="audios_detail_related">
   		<include template="dsp_asset_audios_related" />
 	</fuseaction>
-	
+	<!-- Audios: Renditions -->
+	<fuseaction name="exist_rendition_audios">
+  		<include template="dsp_exist_rendition_audios" />
+	</fuseaction>
 	<!-- eMail: eMail Send -->
 	<fuseaction name="email_send">
   		<include template="dsp_email_send" />
@@ -417,6 +490,10 @@
 	<fuseaction name="prefs_loadloginimg">
   		<include template="dsp_admin_settings_loadloginimg" />
 	</fuseaction>
+	<!-- ADMIN: Load Favicon Image -->
+	<fuseaction name="prefs_loadfavicon">
+  		<include template="dsp_admin_settings_loadfavicon" />
+	</fuseaction>
 	<!-- Users Randompass -->
 	<fuseaction name="randompass">
   		<include template="dsp_randompass" />
@@ -424,6 +501,10 @@
 	<!-- ADMIN: Integration -->
 	<fuseaction name="admin_integration">
   		<include template="dsp_admin_integration" />
+	</fuseaction>
+	<!-- ADMIN: Integration -->
+	<fuseaction name="admin_integration_s3">
+  		<include template="dsp_admin_integration_s3" />
 	</fuseaction>
 	<!-- ADMIN: Customization -->
 	<fuseaction name="admin_customization">
@@ -662,6 +743,16 @@
   		<include template="win_widget_download" />
 	</fuseaction>
 	
+	<!-- Folder Thumbnail -->
+	<fuseaction name="folder_thumbnail">
+  		<include template="dsp_folder_thumbnail" />
+	</fuseaction>
+	
+	<fuseaction name="folder_thumbnail_save">
+  		<include template="inc_folder_thumbnail_save" />
+	</fuseaction>
+	
+	
 	<!-- Additional versions -->
 	<fuseaction name="adi_versions">
   		<include template="dsp_additional_versions" />
@@ -735,6 +826,21 @@
   		<include template="win_collection_copy" />
 	</fuseaction>
 
-
+	<!-- Smart Folders: List -->
+	<fuseaction name="smart_folders">
+  		<include template="dsp_smart_folders" />
+	</fuseaction>
+	<!-- Smart Folders: Settings -->
+	<fuseaction name="smart_folders_settings">
+  		<include template="dsp_smart_folders_settings" />
+	</fuseaction>
+	<!-- Smart Folders: Content -->
+	<fuseaction name="smart_folders_content">
+  		<include template="dsp_smart_folders_content" />
+	</fuseaction>
+	<!-- Smart Folders: Account Content -->
+	<fuseaction name="sf_load_account">
+  		<include template="dsp_sf_load_account" />
+	</fuseaction>
 
 </circuit>

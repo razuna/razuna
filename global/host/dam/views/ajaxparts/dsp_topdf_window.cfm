@@ -71,9 +71,10 @@
 		<cfif attributes.kind NEQ "detail">
 			<tr>
 				<td>#myFusebox.getApplicationData().defaults.trans("view")#</td>
-				<td><input type="radio" name="view" value="thumbnails" checked="true"> #myFusebox.getApplicationData().defaults.trans("thumbnails")# <input type="radio" name="view" value="list"> #myFusebox.getApplicationData().defaults.trans("list")#</td>
+				<td><input type="radio" name="view" value="list" checked="true"> #myFusebox.getApplicationData().defaults.trans("list")# <input type="radio" name="view" value="thumbnails"> #myFusebox.getApplicationData().defaults.trans("thumbnails")#</td>
 			</tr>
-			<tr>
+			<input type="hidden" name="format" value="9" />
+			<!--- <tr>
 				<td>#myFusebox.getApplicationData().defaults.trans("pdf_format")#</td>
 				<td>
 					<select name="format" style="width:200px;font-size:11px;">
@@ -84,7 +85,7 @@
 						<!--- <option value="custom">Custom</option> --->
 					</select>
 				</td>
-			</tr>
+			</tr> --->
 		</cfif>
 		<tr>
 			<td valign="top">#myFusebox.getApplicationData().defaults.trans("pdf_header")#</td>

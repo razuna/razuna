@@ -31,6 +31,19 @@
 	<!--- Application Settings --->
 	<cffunction name="onApplicationStart" returnType="boolean" output="false">
 		
+		<!--- Set where Lucene is located --->
+		<cfset application.razuna.api.lucene = "global.cfc.lucene">
+
+		<!--- Check for config file --->
+		<cfif fileexists("#ExpandPath(".")#/config/config.cfm")>
+			<!--- Get value --->
+			<cfset loc = trim(getProfileString("#ExpandPath(".")#/config/config.cfm", "default", "location"))>
+			<!--- If value is empty then reset --->
+			<cfif loc NEQ "">
+				<cfset application.razuna.api.lucene = loc>
+			</cfif>
+		</cfif>
+
 		<!--- Set HTTP or HTTPS --->
 		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
 			<cfset application.razuna.api.thehttp = "https://">
@@ -61,6 +74,7 @@
 		<!--- Session vars --->
 		<cfparam name="session.offset" default="0">
 		<cfparam name="session.rowmaxpage" default="25">
+		<cfparam name="session.sortby" default="name">
 	</cffunction>
 
 	<cffunction name="onError" returntype="string">

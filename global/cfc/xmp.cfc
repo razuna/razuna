@@ -28,8 +28,11 @@
 <!--- Read XMP DB --->
 <cffunction name="readxmpdb" output="false">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="xmp">
-		SELECT 
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("images")>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="xmp" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#readxmpdb */ 
 		subjectcode iptcsubjectcode, 
 		creator, 
 		title, 
@@ -306,7 +309,7 @@
 		<cftry>
 			<cfsavecontent variable="thexmp">-xmp:all=<!--- Remove all fileds first --->
 <!--- Keywords ---><cfif ltrim(rereplace(arguments.thestruct.img_keywords,"\,","","all")) EQ "">-xmp:subject=
-keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.img_keywords#"><cfif ltrim(key) NEQ "">-xmp:subject=#ltrim(key)#
+-keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.img_keywords#"><cfif ltrim(key) NEQ "">-xmp:subject=#ltrim(key)#
 -keywords=#ltrim(key)#</cfif>
 </cfloop></cfif><!--- Creator --->
 -xmp:creator=#arguments.thestruct.xmp_author#
@@ -390,7 +393,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cftry>
 		</cfoutput>
 		<!--- Save XMP to DB --->
-		<cftransaction>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#xmp
 			SET
@@ -432,7 +434,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-		</cftransaction>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("search")>
@@ -472,7 +473,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 				</cfif>
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -524,7 +525,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Wait --->
 			<cfthread action="join" name="#remtt#" />
 			<!--- Write XMP to image with Exiftool --->
-			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
 			<!--- MD5 hash file again since it has changed now --->
 			<cfif FileExists(arguments.thestruct.thesource)>
 				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
@@ -550,21 +551,27 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			</cfif>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
-		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET 
-			lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-		</cftransaction>
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#images
+		SET 
+		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
 	</cfloop>
 </cffunction>
 
-<!--- READ THE KEYWORDS AND DESCRIPION AND WRITE IT TO THE DB --->
+<!--- Prepare thread --->
 <cffunction name="xmpwritekeydesc" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="xmpwritekeydesc_thread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+</cffunction>
+
+<!--- READ THE KEYWORDS AND DESCRIPION AND WRITE IT TO THE DB --->
+<cffunction name="xmpwritekeydesc_thread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Declare Function Variables --->
 	<cfset var keywords = "">
@@ -590,7 +597,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Set script --->
 			<cfset thesh = gettempdirectory() & "/#thescript#.sh">
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -666,7 +673,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 					</cfif>
 					<cftry>
 						<!--- Append to DB --->
-						<cftransaction>
 							<cfquery datasource="#arguments.thestruct.dsn#">
 							UPDATE #session.hostdbprefix#images_text
 							SET 
@@ -679,7 +685,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 							WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
 							</cfquery>
-						</cftransaction>
 						<cfcatch type="any">
 							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
 								<cfdump var="#cfcatch#" />
@@ -690,9 +695,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			</cfloop>
 		</cfif>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpwritekeydesc">
-				<cfdump var="#cfcatch#" />
-			</cfmail>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -747,6 +751,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfset xmp.filetype = "">
 	<cfset var thecoma = "">
 	<cfset var themeta = "">
+	<cfset var orientation = "">
 	<cftry>
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
@@ -759,14 +764,14 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfset theasset = arguments.thestruct.thesource>
 		<!--- On Windows a bat --->
 		<cfif isWindows>
-			<cfexecute name="#theexe#" arguments="-X #theasset#" timeout="60" variable="themeta" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -X #theasset#" timeout="60" variable="themeta" />
 		<cfelse>
 			<!--- New parsing code --->
 			<cfset var thescript = createuuid()>
 			<!--- Set script --->
 			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -776,6 +781,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- <cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))> --->
 		<cfset var thexml = xmlparse(themeta)>
 		<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
+		<!--- orientation --->
+		<cftry>
+			<cfset orientation = trim(#thexml[1]["IFD0:Orientation"].xmltext#)>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<!--- iptcsubjectcode --->
 		<cftry>
 			<cfset xmp.iptcsubjectcode = trim(#thexml[1]["XMP-iptcCore:SubjectCode"].xmltext#)>
@@ -1256,15 +1266,21 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				</cftry>
 			</cfif>
 		</cfif>
+		<!--- If orientation contain "rotate" then revert Width and Height --->
+		<cfif orientation CONTAINS "rotate">
+			<!--- Store width and height in temp vars first --->
+			<cfset var w = xmp.orgwidth>
+			<cfset var h = xmp.orgheight>
+			<cfset xmp.orgwidth = h>
+			<cfset xmp.orgheight = w>
+		</cfif>
 		<!--- Catch the error --->
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpparse">
-				<cfdump var="#cfcatch#" />
-				<cfdump var="#arguments.thestruct#">
-			</cfmail>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
-<!--- Return variable --->
+	<!--- Return variable --->
 	<cfreturn xmp>
 </cffunction>
 
@@ -1390,18 +1406,18 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfif application.razuna.storage EQ "local">
 		<cftry>
 			<!--- Clear keywords from PDF (this should solve issues where keywords is shown multiple times in Acrobat) --->
-			<cfexecute name="#theexe#" arguments="-XMP-pdf:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
-			<cfexecute name="#theexe#" arguments="-XMP-dc:subject= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
-			<cfexecute name="#theexe#" arguments="-PDF:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -XMP-pdf:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -XMP-dc:subject= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -PDF:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
 			<!--- On Windows a .bat --->
 			<cfif iswindows>
-				<cfexecute name="#theexe#" arguments="-PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+				<cfexecute name="#theexe#" arguments="-fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
 			<cfelse>
 				<!--- Write the sh script file --->
 				<cfset thescript = createuuid()>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -1444,7 +1460,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Write XMP to image with Exiftool --->
-		<cfexecute name="#theexe#" arguments="-PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
+		<cfexecute name="#theexe#" arguments="-fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
 		<!--- Upload file again to its original position --->
 		<!--- NIRVANIX --->
 		<cfif application.razuna.storage EQ "nirvanix">
@@ -1483,16 +1499,14 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 	</cfif>
 	<!--- Update images db with the new Lucene_Key --->
-	<cftransaction>
-		<cfquery datasource="#variables.dsn#">
-		UPDATE #session.hostdbprefix#files
-		SET 
-		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
-		WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#variables.dsn#">
+	UPDATE #session.hostdbprefix#files
+	SET 
+	lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+	hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+	</cfquery>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("files")>
 </cffunction>
@@ -1568,7 +1582,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Param --->
-	<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+	<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
 	<!--- Add another query structure for gettext --->
@@ -1591,17 +1605,21 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfloop>
 	<!--- If we export all assets from folder --->
 	<cfelseif arguments.thestruct.what EQ "folder">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Set local var --->
 		<cfset var qry = "">
 		<!--- Get id from folder with type --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name, cloud_url_org
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
+		img_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
 		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#videos
@@ -1610,6 +1628,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
 		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#audios
@@ -1618,10 +1637,12 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
 		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
@@ -1673,8 +1694,12 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Images --->
 		<cfcase value="img">
 			<!--- Get asset detail --->
-			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org" returnVariable="qry_image" />
+			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r" returnVariable="qry_image" />
 			<cfset arguments.thestruct.filename = qry_image.img_filename>
+			<cfset arguments.thestruct.folder_id_r = qry_image.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
@@ -1687,7 +1712,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1695,8 +1720,12 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Videos --->
 		<cfcase value="vid">
 			<!--- Get asset detail --->
-			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org" returnVariable="qry_video" />
+			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org, v.folder_id_r" returnVariable="qry_video" />
 			<cfset arguments.thestruct.filename = qry_video.vid_filename>
+			<cfset arguments.thestruct.folder_id_r = qry_video.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
@@ -1706,7 +1735,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1716,6 +1745,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Get asset detail --->
 			<cfinvoke component="audios" method="detail" thestruct="#arguments.thestruct#" returnVariable="qry_audio" />
 			<cfset arguments.thestruct.filename = qry_audio.detail.aud_name>
+			<cfset arguments.thestruct.folder_id_r = qry_audio.detail.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<cftry>
 				<cfset var audarray = ArrayNew(1)>
 				<cfset audarray[1] = qry_audio.desc.aud_keywords>
@@ -1728,16 +1761,16 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				</cfcatch>
 			</cftry>
 			<cfset arguments.thestruct.qry_text = qry_audio.desc>
-			<!--- Get Lables --->
+			<!--- Get Labels --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
 			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif application.razuna.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.path_to_asset#/#qry_audio.filenameorg#">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1745,8 +1778,12 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- All other files --->
 		<cfdefaultcase>
 			<!--- Get asset detail --->
-			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name, file_name_org AS filenameorg, path_to_asset, cloud_url_org" returnVariable="qry_doc" />
+			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name, file_name_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r" returnVariable="qry_doc" />
 			<cfset arguments.thestruct.filename = qry_doc.file_name>
+			<cfset arguments.thestruct.folder_id_r = qry_doc.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
@@ -1758,7 +1795,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_doc.path_to_asset#/#qry_doc.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_doc.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1777,7 +1814,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
@@ -1840,7 +1877,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 <!--- Add to query --->
 <cffunction name="add_to_query" output="false">
 	<cfargument name="thestruct" type="struct">
-	
 	<!--- Add row local query --->
 	<cfset QueryAddRow(arguments.thestruct.tq,1)>
 	<!--- Add id --->
@@ -1851,6 +1887,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
 	<!--- Add file_url --->
 	<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
+	<!--- Add folder_id_r --->
+	<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
+	<!--- Add folder_name --->
+	<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
 	<!--- Add Labels --->
 	<cfif arguments.thestruct.qry_labels NEQ "">
 		<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
@@ -2065,10 +2105,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			</cfloop>
 		</cfif>
 		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" hostid="#session.hostid#" prefix="#session.hostdbprefix#" assetid="#theid#" assetcategory="#lucenecategory#" userid="#session.theuserid#">
+		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetid="#theid#" assetcategory="#lucenecategory#" thedatabase="#application.razuna.thedatabase#">
 	</cfloop>
 	<!--- Flush cache --->
 	<cfset resetcachetoken(cachetype)>
+	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2078,6 +2119,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfargument name="fileid" required="true">
 	<cfargument name="type" required="true">
 	<cfargument name="metadata" required="true">
+	<!--- Param --->
+	<cfset var qry_custom = "">
 	<!--- Loop over the assetid --->
 	<cfloop list="#arguments.fileid#" index="i" delimiters=",">
 		<!--- Set i into var --->
@@ -2087,28 +2130,50 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Get the list items --->
 			<cfset f = listFirst(i,":")>
 			<cfset v = listLast(i,":")>
-			<!--- Remove any existing data first --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#custom_fields_values
-			WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
-			AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Insert --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#custom_fields_values
-			(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-			VALUES(
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
-			)
-			</cfquery>
+			<!--- Insert or update --->
+			<cftransaction>
+				<cfquery datasource="#application.razuna.datasource#" name="qry_custom">
+				SELECT rec_uuid 
+				FROM #session.hostdbprefix#custom_fields_values
+				WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
+				AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- If record is NOT here --->
+				<cfif qry_custom.recordcount EQ 0>
+					<!--- Insert --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
+					)
+					</cfquery>
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#custom_fields_values
+					SET cf_value = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">
+					WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
+					AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				</cfif>
+			</cftransaction>
 		</cfloop>
 		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" hostid="#session.hostid#" prefix="#session.hostdbprefix#" assetid="#theid#" assetcategory="#arguments.type#" userid="#session.theuserid#">
+		<cfinvoke component="lucene" method="index_update_api">
+			<cfinvokeargument name="assetid" value="#theid#" />
+			<cfinvokeargument name="assetcategory" value="#arguments.type#" />
+			<cfinvokeargument name="dsn" value="#application.razuna.datasource#" />
+			<cfinvokeargument name="storage" value="#application.razuna.storage#" />
+			<cfinvokeargument name="thedatabase" value="#application.razuna.thedatabase#" />
+			<cfinvokeargument name="prefix" value="#session.hostdbprefix#" />
+			<cfinvokeargument name="hostid" value="#session.hostid#" />
+		</cfinvoke>
 	</cfloop>
 	<!--- Flush cache --->
 	<cfif arguments.type EQ "img">
@@ -2121,6 +2186,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfset resetcachetoken("files")>
 	</cfif>
 	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>	

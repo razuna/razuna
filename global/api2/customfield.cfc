@@ -63,7 +63,6 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfpause interval="2" />
 			<!--- Set Values --->
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
@@ -98,7 +97,6 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfpause interval="2" />
 			<!--- Deserialize the JSON back into a struct --->
 			<cfset thejson = DeserializeJSON(arguments.field_values)>
 			<!--- Loop over the assetid --->
@@ -110,9 +108,10 @@
 					SELECT cf_id_r
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
 					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
 					</cfquery>
-					<!--- Insert --->
+					<!--- ORIGINAL CODE
+					INSERT COMMENT
 					<cfif qry.recordcount EQ 0>
 						<cfquery datasource="#application.razuna.api.dsn#">
 						INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
@@ -125,7 +124,7 @@
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
 						)
 						</cfquery>
-					<!--- Update --->
+					UPDATE COMMENT
 					<cfelse>
 						<cfquery datasource="#application.razuna.api.dsn#">
 						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
@@ -134,6 +133,52 @@
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 						</cfquery>
 					</cfif>
+					--->
+					<!--- Anthony Rodriguez Edit --->
+					<!--- Insert --->
+					<cfif qry.recordcount EQ 0>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+						(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+						VALUES(
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+						)
+						</cfquery>
+					<!--- Update --->
+					<cfelse>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">
+						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
+						</cfquery>
+					</cfif>
+					<!--- End Anthony Rodriguez Edit --->
+					<!--- Nick Ryan Edit --->
+					<!--- Check to see if item is part of select list --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qry2">
+					SELECT cf_id, cf_select_list
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
+					WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+					</cfquery>
+					<cfset oldselectlist = listFind(qry2.cf_select_list, "#ReplaceNoCase(f[2],',','&##44;')#")>
+					<!--- If not in list, update it --->
+					<cfif oldselectlist is 0>
+						<cfif len(trim(f[2]))>
+							<cfset newselectlist =  listAppend(qry2.cf_select_list, "#ReplaceNoCase(f[2],',','&##44;')#", ",")>
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
+							SET cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newselectlist#">
+							WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+							AND cf_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="select">
+							</cfquery>
+						</cfif>						
+					</cfif>
+					<!--- End Nick Ryan Edit --->
 				</cfloop>
 				<!--- update change date (since we don't know the type we simply update all) --->
 				<cfquery datasource="#application.razuna.api.dsn#">
@@ -165,10 +210,12 @@
 				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<!--- Initiate the index --->
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="img">
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="vid">
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="aud">
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="doc">
+				<cfset updateSearch(assetid=i,assetcategory="img",api_key=arguments.api_key)>
+				<cfset updateSearch(assetid=i,assetcategory="vid",api_key=arguments.api_key)>
+				<cfset updateSearch(assetid=i,assetcategory="aud",api_key=arguments.api_key)>
+				<cfset updateSearch(assetid=i,assetcategory="doc",api_key=arguments.api_key)>
+				<!--- Call workflow --->
+				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>
 			<!--- Reset cache --->
 			<cfset resetcachetoken(arguments.api_key,"images")>
@@ -188,6 +235,43 @@
 		<cfreturn thexml>
 	</cffunction>
 	
+	<!--- Set Custom Field Value in bulk --->
+	<cffunction name="setfieldvaluebulk" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="field_values" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Set thread --->
+			<cfthread action="run" name="#createuuid()#" intstruct="#arguments#">
+				<!--- Grab the json and deserialize it --->
+				<cfset j = DeserializeJSON(attributes.intstruct.field_values)>
+				<!--- Loop over the array --->
+				<cfloop array="#j#" index="id">
+					<!--- This is the first array containing the assetid --->
+					<cfset assetid = id[1]>
+					<!--- This is the second value containing another array --->
+					<cfset fieldvalues = SerializeJSON(id[2])>
+					<!--- Call internal function --->
+					<cfinvoke method="setfieldvalue">
+						<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
+						<cfinvokeargument name="assetid" value="#assetid#" />
+						<cfinvokeargument name="field_values" value="#fieldvalues#" />
+					</cfinvoke>
+				</cfloop>
+			</cfthread>
+			<!--- Return --->
+			<cfset thexml.responsecode = 0>
+			<cfset thexml.message = "Custom field values successfully added">
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
 	<!--- get custom fields from asset --->
 	<cffunction name="getfieldsofasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -197,17 +281,15 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Get Cachetoken --->
-			<cfset cachetoken = getcachetoken(arguments.api_key,"general")>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT DISTINCT /* #cachetoken#getfieldsofasset */ 
-			ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value, c.cf_order
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+			SELECT DISTINCT ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value, c.cf_order, cv.asset_id_r file_id
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_text ct, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields c, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values cv
 			WHERE cv.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.asset_id#" list="Yes">)
-			AND ct.cf_id_r = cv.cf_id_r
+			AND cv.cf_id_r = ct.cf_id_r
+			AND c.cf_id = ct.cf_id_r
 			AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.lang_id#">
-			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			AND cv.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			ORDER BY c.cf_order
 			</cfquery>
 		<!--- No session found --->

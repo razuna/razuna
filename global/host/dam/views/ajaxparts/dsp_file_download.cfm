@@ -151,5 +151,21 @@
 				</td>
 			</tr>
 		</cfif>
+		<!--- Additional versions --->
+		<cfif attributes.folderaccess NEQ "R">
+			<cfloop query="qry_av.assets">
+				<cfif application.razuna.storage EQ "local">
+					<cfset thelinkurl = UrlEncodedformat("http://#cgi.http_host##cgi.context_path#/assets/#session.hostid##av_link_url#?#hashtag#")>
+				<cfelse>
+					<cfset thelinkurl = UrlEncodedformat("#av_link_url#?#hashtag#")>
+				</cfif>
+				<tr>
+					<td><strong>#av_link_title#</strong><br />(#myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB)</td>
+					<td valign="top">
+						<a href="#myself#c.serve_file&av=true&file_id=0&theavname=#UrlEncodedformat(av_link_title)#&theavdl=#thelinkurl#" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+					</td>
+				</tr>
+			</cfloop>
+		</cfif>
 	</table>
 </cfoutput>

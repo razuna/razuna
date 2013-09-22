@@ -2,8 +2,6 @@
 <cfset myself = myFusebox.getMyself() />
 <cfset theaction = application.fusebox.fuseactionVariable />
 
-<cfinvoke component="global.cfc.settings" method="getconfigdefault" />
-
 <!--- The WEBROOT --->
 <cfset webroot = rereplacenocase(cgi.PATH_INFO, "[a-z_]+.cfm", "", "ALL")>
 
@@ -31,8 +29,9 @@
 <cfparam name="session.sortby" default="name">
 
 <!--- Set the session for the language --->
-<cfparam name="session.thelang" default="english">
+<cfparam name="session.thelang" default="English">
 <cfparam name="session.thelangid" default="1">
+<cfparam name="session.locale" type="string" default="en">
 
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">

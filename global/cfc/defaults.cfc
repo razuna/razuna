@@ -93,10 +93,10 @@
 <cffunction name="getlangsadmin" output="false">
 	<cfargument name="thepath" default="" required="yes" type="string">
 	<!--- Get the xml files in the translation dir --->
-	<cfdirectory action="list" directory="#arguments.thepath#/translations" name="thelangs" filter="*.xml">
+	<cfdirectory action="list" directory="#arguments.thepath#/translations" name="thelangs" >
 	<cfquery dbtype="query" name="thelangs">
 	SELECT *
-	FROM thelangs
+	FROM thelangs where TYPE = 'Dir' and name != 'Custom'
 	ORDER BY name
 	</cfquery>
 	<cfreturn thelangs>
@@ -105,14 +105,16 @@
 <!--- PARSE THE LANGUAGE AND TRANSLATION FROM THE XML FILE --->
 <cffunction name="trans" output="false" returntype="string" hint="Get the correct translation">
 	<cfargument name="transid" default="" required="yes" type="string">
-	<cfargument name="thetransfile" default="#session.thelang#.xml" required="yes" type="string">
+	<cfargument name="values" hint="Array of values to substitute for $1, $2 etc in the resource string" type="array" required="false" default="#arrayNew(1)#" />
+	<cfargument name="thetransfile" default="#session.thelang#" required="false" type="string">
 	<!--- init function internal vars --->
-	<cfset var xmlFile=expandpath("translations/#arguments.thetransfile#")/>
+	<!---<cfset var xmlFile=expandpath("translations/#arguments.thetransfile#")/>
 	<cfset var xmlVar = "">
 	<cffile action="read" file="#xmlFile#" variable="xmlVar" charset="utf-8">
 	<cfset xmlVar=xmlParse(xmlVar)/>
 	<cfset xmlVar=xmlSearch(xmlVar, "translations/transid[@name='#arguments.transid#']")>
-	<cfreturn trim(#xmlVar[1].transtext.xmlText#)>
+	<cfreturn trim(#xmlVar[1].transtext.xmlText#)>--->
+	<cfreturn application.razuna.trans.getString(resourceBundleName = 'HomePage', key = arguments.transid, locale = arguments.thetransfile, values = arguments.values)>
 </cffunction>
 
 <!--- PARSE THE LANGUAGE ID FOR ADMIN --->
@@ -125,6 +127,16 @@
 	<cfset xmlVar=xmlSearch(xmlVar, "translations/transid[@name='thisid']")>
 	<cfreturn trim(#xmlVar[1].transtext.xmlText#)>
 </cffunction>
+
+<cffunction name="propertiesfilelangid" output="false" returntype="string" hint="Get the correct translation">
+	<cfargument name="thetransfile" required="yes" type="string">
+
+	<cfset propertyFile = createObject('java', 'java.util.Properties') />
+	<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( #arguments.thetransfile# ),'utf-8' ) ) />
+	<cfreturn propertyFile.getProperty( 'thisid')>
+</cffunction>
+
+
 
 <!--- Get absolute path from relative path --->
 <cffunction name="getAbsolutePath" returntype="string"

@@ -46,7 +46,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
@@ -54,10 +54,11 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-migrate-1.2.1.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jqtree/lib/jquery.cookie.js?_v=#attributes.cachetag#"></script>
@@ -68,8 +69,15 @@
 <script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.lazyload.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.scrollstop.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
-<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+<cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
+<cfelse>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+</cfif>
+<link rel="apple-touch-icon" href="#dynpath#/global/host/dam/images/razuna_icon_114.png" />
 <!--- tooltip styling --->
 <style>
 ##demotip {
@@ -117,6 +125,10 @@
 }
 </cfif>
 </style>
+<!--- Custom CSS --->
+<cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css?_v=#attributes.cachetag#" />
+</cfif>
 </head>
 <body>
 <cfif cgi.http_host CONTAINS "razuna.com" AND res_account.account_type EQ 0>
@@ -157,6 +169,16 @@
 		<cfif cs.show_top_part>
 			<div id="apDiv1">#trim( headercontent )#</div>
 		</cfif>
+		<div style="padding-top:50px;">
+			<div id="slide_off">
+				<a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a>
+			</div>
+			<div id="slide_on" style="display:none;">
+				<a href="##" onclick="hideshow('on');">
+					<img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15">
+				</a>
+			</div>
+		</div>
 		<div id="apDiv3">#trim( leftcontent )#</div>
 		<div id="apDiv4">#trim( maincontent )#</div>
 		<!--- <div id="apDiv5">#trim( showcontent )#</div> --->
@@ -185,23 +207,18 @@
 	background:url(#dynpath#/global/js/tooltip_images/black.png);
 }
 </style>
-<!--- GS Code --->
+<!--- Forum Code --->
 <script type="text/javascript" charset="utf-8">
-  var is_ssl = ("https:" == document.location.protocol);
-  var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
-  document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+var hostURL = "//css.zohostatic.com/discussions/v1";//NO OUTPUTENCODING
+document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E")); //No I18N
 </script>
-<script type="text/javascript" charset="utf-8">
-  var feedback_widget_options = {};
-  feedback_widget_options.display = "overlay";  
-  feedback_widget_options.company = "razuna";
-  feedback_widget_options.placement = "hidden";
-  feedback_widget_options.color = "##222";
-  feedback_widget_options.style = "question";
-  try{
-	var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
-  }
-  catch(e) {};
+<script type="text/javascript">
+var zdFBWSettings = {};
+zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
+zdFBWSettings.fbURL = "http://forums.razuna.org/fbw?fbwId=125591000000015005";
+zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
+zdFBWSettings.display = "popout";
+var zdFBW = new ZDiscussions.loadZDFeedbackTab;
 </script>
 <cfif cgi.http_host CONTAINS "razuna.com">
 <script type="text/javascript">

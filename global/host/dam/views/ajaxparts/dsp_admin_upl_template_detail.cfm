@@ -30,6 +30,14 @@
 <form action="#self#" method="post" name="formupltemp" id="formupltemp">
 <input type="hidden" name="#theaction#" value="c.upl_template_save">
 <input type="hidden" name="upl_temp_id" value="#attributes.upl_temp_id#">
+<input type="hidden" name="convert_width_3gp" value="">
+<input type="hidden" name="convert_height_3gp" value="">
+<input type="hidden" name="convert_bitrate_3gp" value="">
+<cfloop from="2" to="6" index="idx" >
+	<input type="hidden" name="convert_width_3gp_#idx#" value="">
+	<input type="hidden" name="convert_height_3gp_#idx#" value="">
+	<input type="hidden" name="convert_bitrate_3gp_#idx#" value="">
+</cfloop>
 <div id="tab_upl_temp">
 	<ul>
 		<li><a href="##tab_upl_temp_all">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
@@ -75,7 +83,7 @@
 					<input type="checkbox" name="convert_to" value="img-jpg"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',0);return false;" style="text-decoration:none;">JPG</a>
 				</td>
 				<td width="100%">
-					<input type="text" size="4" name="convert_width_jpg" id="convert_width_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg','convert_height_jpg');"> x <input type="text" size="4" name="convert_height_jpg" id="convert_height_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg','convert_width_jpg');">  or <input type="text" size="4" name="convert_dpi_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<input type="text" size="4" name="convert_width_jpg" id="convert_width_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg','convert_height_jpg');" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg" id="convert_height_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg','convert_width_jpg');" maxlength="4">  or <input type="text" size="4" name="convert_dpi_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_jpg" id="convert_wm_jpg">
@@ -100,7 +108,7 @@
 									<input type="checkbox" name="convert_to" value="img-jpg_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg_2"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',1);return false;" style="text-decoration:none;">JPG</a>
 								</td>
 								<td width="100%">
-									<input type="text" size="4" name="convert_width_jpg_2" id="convert_width_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_2','convert_height_jpg_2');"> x <input type="text" size="4" name="convert_height_jpg_2" id="convert_height_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_2','convert_width_jpg_2');"> or <input type="text" size="4" name="convert_dpi_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_jpg_2" id="convert_width_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_2','convert_height_jpg_2');" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg_2" id="convert_height_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_2','convert_width_jpg_2');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_2">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_2" id="convert_wm_jpg_2">
@@ -119,7 +127,7 @@
 									<input type="checkbox" name="convert_to" value="img-jpg_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg_3"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',2);return false;" style="text-decoration:none;">JPG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_jpg_3" id="convert_width_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_3','convert_height_jpg_3');"> x <input type="text" size="4" name="convert_height_jpg_3" id="convert_height_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_3','convert_width_jpg_3');"> or <input type="text" size="4" name="convert_dpi_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_jpg_3" id="convert_width_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_3','convert_height_jpg_3');" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg_3" id="convert_height_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_3','convert_width_jpg_3');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_3">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_3" id="convert_wm_jpg_3">
@@ -138,7 +146,7 @@
 									<input type="checkbox" name="convert_to" value="img-jpg_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg_4"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',3);return false;" style="text-decoration:none;">JPG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_jpg_4" id="convert_width_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_4','convert_height_jpg_4');"> x <input type="text" size="4" name="convert_height_jpg_4" id="convert_height_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_4','convert_width_jpg_4');"> or <input type="text" size="4" name="convert_dpi_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_jpg_4" id="convert_width_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_4','convert_height_jpg_4');" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg_4" id="convert_height_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_4','convert_width_jpg_4');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_4">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_4" id="convert_wm_jpg_4">
@@ -157,7 +165,7 @@
 									<input type="checkbox" name="convert_to" value="img-jpg_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg_5"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',4);return false;" style="text-decoration:none;">JPG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_jpg_5" id="convert_width_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_5','convert_height_jpg_5');"> x <input type="text" size="4" name="convert_height_jpg_5" id="convert_height_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_5','convert_width_jpg_5');"> or <input type="text" size="4" name="convert_dpi_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_jpg_5" id="convert_width_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_5','convert_height_jpg_5');" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg_5" id="convert_height_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_5','convert_width_jpg_5');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_5">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_5" id="convert_wm_jpg_5">
@@ -176,7 +184,7 @@
 									<input type="checkbox" name="convert_to" value="img-jpg_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg_6"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',5);return false;" style="text-decoration:none;">JPG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_jpg_6" id="convert_width_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_6','convert_height_jpg_6');"> x <input type="text" size="4" name="convert_height_jpg_6" id="convert_height_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_6','convert_width_jpg_6');"> or <input type="text" size="4" name="convert_dpi_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_jpg_6" id="convert_width_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_6','convert_height_jpg_6');" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg_6" id="convert_height_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_6','convert_width_jpg_6');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_6">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_6" id="convert_wm_jpg_6">
@@ -199,7 +207,7 @@
 					<input type="checkbox" name="convert_to" value="img-gif"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',6);return false;" style="text-decoration:none;">GIF </a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_gif" id="convert_width_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif','convert_height_gif');"> x <input type="text" size="4" name="convert_height_gif" id="convert_height_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif','convert_width_gif');"> or <input type="text" size="4" name="convert_dpi_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<input type="text" size="4" name="convert_width_gif" id="convert_width_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif','convert_height_gif');" maxlength="4"> x <input type="text" size="4" name="convert_height_gif" id="convert_height_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif','convert_width_gif');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_gif" id="convert_wm_gif">
@@ -224,7 +232,7 @@
 									<input type="checkbox" name="convert_to" value="img-gif_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif_2"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',7);return false;" style="text-decoration:none;">GIF </a>
 								</td>
 								<td width="100%">
-									<input type="text" size="4" name="convert_width_gif_2" id="convert_width_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_2','convert_height_gif_2');"> x <input type="text" size="4" name="convert_height_gif_2" id="convert_height_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_2','convert_width_gif_2');"> or <input type="text" size="4" name="convert_dpi_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_gif_2" id="convert_width_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_2','convert_height_gif_2');" maxlength="4"> x <input type="text" size="4" name="convert_height_gif_2" id="convert_height_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_2','convert_width_gif_2');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_2">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_2" id="convert_wm_gif_2">
@@ -243,7 +251,7 @@
 									<input type="checkbox" name="convert_to" value="img-gif_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif_3"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',8);return false;" style="text-decoration:none;">GIF </a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_gif_3" id="convert_width_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_3','convert_height_gif_3');"> x <input type="text" size="4" name="convert_height_gif_3" id="convert_height_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_3','convert_width_gif_3');"> or <input type="text" size="4" name="convert_dpi_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_gif_3" id="convert_width_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_3','convert_height_gif_3');" maxlength="4"> x <input type="text" size="4" name="convert_height_gif_3" id="convert_height_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_3','convert_width_gif_3');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_3">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_3" id="convert_wm_gif_3">
@@ -262,7 +270,7 @@
 									<input type="checkbox" name="convert_to" value="img-gif_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif_4"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',9);return false;" style="text-decoration:none;">GIF </a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_gif_4" id="convert_width_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_4','convert_height_gif_4');"> x <input type="text" size="4" name="convert_height_gif_4" id="convert_height_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_4','convert_width_gif_4');"> or <input type="text" size="4" name="convert_dpi_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_gif_4" id="convert_width_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_4','convert_height_gif_4');" maxlength="4"> x <input type="text" size="4" name="convert_height_gif_4" id="convert_height_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_4','convert_width_gif_4');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_4">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_4" id="convert_wm_gif_4">
@@ -281,7 +289,7 @@
 									<input type="checkbox" name="convert_to" value="img-gif_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif_5"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',10);return false;" style="text-decoration:none;">GIF </a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_gif_5" id="convert_width_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_5','convert_height_gif_5');"> x <input type="text" size="4" name="convert_height_gif_5" id="convert_height_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_5','convert_width_gif_5');"> or <input type="text" size="4" name="convert_dpi_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_gif_5" id="convert_width_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_5','convert_height_gif_5');" maxlength="4"> x <input type="text" size="4" name="convert_height_gif_5" id="convert_height_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_5','convert_width_gif_5');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_5">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_5" id="convert_wm_gif_5">
@@ -300,7 +308,7 @@
 									<input type="checkbox" name="convert_to" value="img-gif_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif_6"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',11);return false;" style="text-decoration:none;">GIF </a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_gif_6" id="convert_width_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_6','convert_height_gif_6');"> x <input type="text" size="4" name="convert_height_gif_6" id="convert_height_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_6','convert_width_gif_6');"> or <input type="text" size="4" name="convert_dpi_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_gif_6" id="convert_width_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_6','convert_height_gif_6');" maxlength="4"> x <input type="text" size="4" name="convert_height_gif_6" id="convert_height_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_6','convert_width_gif_6');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_6">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_6" id="convert_wm_gif_6">
@@ -323,7 +331,7 @@
 					<input type="checkbox" name="convert_to" value="img-png"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',12);return false;" style="text-decoration:none;">PNG</a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_png" id="convert_width_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png','convert_height_png');"> x <input type="text" size="4" name="convert_height_png" id="convert_height_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png','convert_width_png');"> or <input type="text" size="4" name="convert_dpi_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<input type="text" size="4" name="convert_width_png" id="convert_width_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png','convert_height_png');" maxlength="4"> x <input type="text" size="4" name="convert_height_png" id="convert_height_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png','convert_width_png');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_png" id="convert_wm_png">
@@ -348,7 +356,7 @@
 									<input type="checkbox" name="convert_to" value="img-png_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png_2"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',13);return false;" style="text-decoration:none;">PNG</a>
 								</td>
 								<td width="100%">
-									<input type="text" size="4" name="convert_width_png_2" id="convert_width_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_2','convert_height_png_2');"> x <input type="text" size="4" name="convert_height_png_2" id="convert_height_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_2','convert_width_png_2');"> or <input type="text" size="4" name="convert_dpi_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_png_2" id="convert_width_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_2','convert_height_png_2');" maxlength="4"> x <input type="text" size="4" name="convert_height_png_2" id="convert_height_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_2','convert_width_png_2');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_2" id="convert_wm_png_2">
@@ -367,7 +375,7 @@
 									<input type="checkbox" name="convert_to" value="img-png_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png_3"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',14);return false;" style="text-decoration:none;">PNG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_png_3" id="convert_width_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_3','convert_height_png_3');"> x <input type="text" size="4" name="convert_height_png_3" id="convert_height_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_3','convert_width_png_3');"> or <input type="text" size="4" name="convert_dpi_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_png_3" id="convert_width_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_3','convert_height_png_3');" maxlength="4"> x <input type="text" size="4" name="convert_height_png_3" id="convert_height_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_3','convert_width_png_3');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_3">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_3" id="convert_wm_png_3">
@@ -386,7 +394,7 @@
 									<input type="checkbox" name="convert_to" value="img-png_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png_4"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',15);return false;" style="text-decoration:none;">PNG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_png_4" id="convert_width_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_4','convert_height_png_4');"> x <input type="text" size="4" name="convert_height_png_4" id="convert_height_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_4','convert_width_png_4');"> or <input type="text" size="4" name="convert_dpi_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_png_4" id="convert_width_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_4','convert_height_png_4');" maxlength="4"> x <input type="text" size="4" name="convert_height_png_4" id="convert_height_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_4','convert_width_png_4');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_4">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_4" id="convert_wm_png_4">
@@ -405,7 +413,7 @@
 									<input type="checkbox" name="convert_to" value="img-png_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png_5"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',16);return false;" style="text-decoration:none;">PNG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_png_5" id="convert_width_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_5','convert_height_png_5');"> x <input type="text" size="4" name="convert_height_png_5" id="convert_height_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_5','convert_width_png_5');"> or <input type="text" size="4" name="convert_dpi_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_png_5" id="convert_width_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_5','convert_height_png_5');" maxlength="4"> x <input type="text" size="4" name="convert_height_png_5" id="convert_height_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_5','convert_width_png_5');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_5">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_5" id="convert_wm_png_5">
@@ -424,7 +432,7 @@
 									<input type="checkbox" name="convert_to" value="img-png_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png_6"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',17);return false;" style="text-decoration:none;">PNG</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_png_6" id="convert_width_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_6','convert_height_png_6');"> x <input type="text" size="4" name="convert_height_png_6" id="convert_height_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_6','convert_width_png_6');"> or <input type="text" size="4" name="convert_dpi_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_png_6" id="convert_width_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_6','convert_height_png_6');" maxlength="4"> x <input type="text" size="4" name="convert_height_png_6" id="convert_height_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_6','convert_width_png_6');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_6">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_6" id="convert_wm_png_6">
@@ -447,7 +455,7 @@
 					<input type="checkbox" name="convert_to" value="img-tif"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',18);return false;" style="text-decoration:none;">TIFF</a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_tif" id="convert_width_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif','convert_height_tif');"> x <input type="text" size="4" name="convert_height_tif" id="convert_height_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif','convert_width_tif');"> or <input type="text" size="4" name="convert_dpi_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<input type="text" size="4" name="convert_width_tif" id="convert_width_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif','convert_height_tif');" maxlength="4"> x <input type="text" size="4" name="convert_height_tif" id="convert_height_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif','convert_width_tif');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_tif" id="convert_wm_tif">
@@ -472,7 +480,7 @@
 									<input type="checkbox" name="convert_to" value="img-tif_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif_2"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',19);return false;" style="text-decoration:none;">TIFF</a>
 								</td>
 								<td width="100%">
-									<input type="text" size="4" name="convert_width_tif_2" id="convert_width_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_2','convert_height_tif_2');"> x <input type="text" size="4" name="convert_height_tif_2" id="convert_height_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_2','convert_width_tif_2');"> or <input type="text" size="4" name="convert_dpi_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_tif_2" id="convert_width_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_2','convert_height_tif_2');" maxlength="4"> x <input type="text" size="4" name="convert_height_tif_2" id="convert_height_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_2','convert_width_tif_2');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_2">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_2" id="convert_wm_tif_2">
@@ -491,7 +499,7 @@
 									<input type="checkbox" name="convert_to" value="img-tif_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif_3"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',20);return false;" style="text-decoration:none;">TIFF</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_tif_3" id="convert_width_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_3','convert_height_tif_3');"> x <input type="text" size="4" name="convert_height_tif_3" id="convert_height_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_3','convert_width_tif_3');"> or <input type="text" size="4" name="convert_dpi_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_tif_3" id="convert_width_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_3','convert_height_tif_3');" maxlength="4"> x <input type="text" size="4" name="convert_height_tif_3" id="convert_height_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_3','convert_width_tif_3');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_3">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_3" id="convert_wm_tif_3">
@@ -510,7 +518,7 @@
 									<input type="checkbox" name="convert_to" value="img-tif_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif_4"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',21);return false;" style="text-decoration:none;">TIFF</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_tif_4" id="convert_width_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_4','convert_height_tif_4');"> x <input type="text" size="4" name="convert_height_tif_4" id="convert_height_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_4','convert_width_tif_4');"> or <input type="text" size="4" name="convert_dpi_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_tif_4" id="convert_width_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_4','convert_height_tif_4');" maxlength="4"> x <input type="text" size="4" name="convert_height_tif_4" id="convert_height_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_4','convert_width_tif_4');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_4">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_4" id="convert_wm_tif_4">
@@ -529,7 +537,7 @@
 									<input type="checkbox" name="convert_to" value="img-tif_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif_5"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',22);return false;" style="text-decoration:none;">TIFF</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_tif_5" id="convert_width_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_5','convert_height_tif_5');"> x <input type="text" size="4" name="convert_height_tif_5" id="convert_height_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_5','convert_width_tif_5');"> or <input type="text" size="4" name="convert_dpi_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_tif_5" id="convert_width_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_5','convert_height_tif_5');" maxlength="4"> x <input type="text" size="4" name="convert_height_tif_5" id="convert_height_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_5','convert_width_tif_5');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_5">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_5" id="convert_wm_tif_5">
@@ -548,7 +556,7 @@
 									<input type="checkbox" name="convert_to" value="img-tif_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif_6"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',23);return false;" style="text-decoration:none;">TIFF</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_tif_6" id="convert_width_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_6','convert_height_tif_6');"> x <input type="text" size="4" name="convert_height_tif_6" id="convert_height_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_6','convert_width_tif_6');"> or <input type="text" size="4" name="convert_dpi_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_tif_6" id="convert_width_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_6','convert_height_tif_6');" maxlength="4"> x <input type="text" size="4" name="convert_height_tif_6" id="convert_height_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_6','convert_width_tif_6');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_6">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_6" id="convert_wm_tif_6">
@@ -571,7 +579,7 @@
 					<input type="checkbox" name="convert_to" value="img-bmp"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',24);return false;" style="text-decoration:none;">BMP</a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_bmp" id="convert_width_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp','convert_height_bmp');"> x <input type="text" size="4" name="convert_height_bmp" id="convert_height_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp','convert_width_bmp');"> or <input type="text" size="4" name="convert_dpi_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<input type="text" size="4" name="convert_width_bmp" id="convert_width_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp','convert_height_bmp');" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp" id="convert_height_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp','convert_width_bmp');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_bmp" id="convert_wm_bmp">
@@ -596,7 +604,7 @@
 									<input type="checkbox" name="convert_to" value="img-bmp_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp_2"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',25);return false;" style="text-decoration:none;">BMP</a>
 								</td>
 								<td width="100%">
-									<input type="text" size="4" name="convert_width_bmp_2" id="convert_width_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_2','convert_height_bmp_2');"> x <input type="text" size="4" name="convert_height_bmp_2" id="convert_height_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_2','convert_width_bmp_2');"> or <input type="text" size="4" name="convert_dpi_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_bmp_2" id="convert_width_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_2','convert_height_bmp_2');" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp_2" id="convert_height_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_2','convert_width_bmp_2');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_2">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_2" id="convert_wm_bmp_2">
@@ -615,7 +623,7 @@
 									<input type="checkbox" name="convert_to" value="img-bmp_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp_3"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',26);return false;" style="text-decoration:none;">BMP</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_bmp_3" id="convert_width_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_3','convert_height_bmp_3');"> x <input type="text" size="4" name="convert_height_bmp_3" id="convert_height_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_3','convert_width_bmp_3');"> or <input type="text" size="4" name="convert_dpi_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_bmp_3" id="convert_width_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_3','convert_height_bmp_3');" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp_3" id="convert_height_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_3','convert_width_bmp_3');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_3">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_3" id="convert_wm_bmp_3">
@@ -634,7 +642,7 @@
 									<input type="checkbox" name="convert_to" value="img-bmp_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp_4"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',27);return false;" style="text-decoration:none;">BMP</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_bmp_4" id="convert_width_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_4','convert_height_bmp_4');"> x <input type="text" size="4" name="convert_height_bmp_4" id="convert_height_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_4','convert_width_bmp_4');"> or <input type="text" size="4" name="convert_dpi_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_bmp_4" id="convert_width_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_4','convert_height_bmp_4');" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp_4" id="convert_height_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_4','convert_width_bmp_4');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_4">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_4" id="convert_wm_bmp_4">
@@ -653,7 +661,7 @@
 									<input type="checkbox" name="convert_to" value="img-bmp_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp_5"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',28);return false;" style="text-decoration:none;">BMP</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_bmp_5" id="convert_width_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_5','convert_height_bmp_5');"> x <input type="text" size="4" name="convert_height_bmp_5" id="convert_height_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_5','convert_width_bmp_5');"> or <input type="text" size="4" name="convert_dpi_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_bmp_5" id="convert_width_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_5','convert_height_bmp_5');" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp_5" id="convert_height_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_5','convert_width_bmp_5');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_5">#upl_temp_value#</cfif></cfloop>" maxlength="3"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_5" id="convert_wm_bmp_5">
@@ -672,7 +680,7 @@
 									<input type="checkbox" name="convert_to" value="img-bmp_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp_6"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',29);return false;" style="text-decoration:none;">BMP</a>
 								</td>
 								<td>
-									<input type="text" size="4" name="convert_width_bmp_6" id="convert_width_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_6','convert_height_bmp_6');"> x <input type="text" size="4" name="convert_height_bmp_6" id="convert_height_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_6','convert_width_bmp_6');"> or <input type="text" size="4" name="convert_dpi_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<input type="text" size="4" name="convert_width_bmp_6" id="convert_width_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_6','convert_height_bmp_6');" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp_6" id="convert_height_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_6','convert_width_bmp_6');" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> dpi 
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_6" id="convert_wm_bmp_6">
@@ -717,7 +725,7 @@
 					<cfset incval.theformat = "ogv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="100%"><input type="text" size="3" name="convert_width_ogv" id="convert_width_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_ogv" id="convert_height_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##ogv_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td width="100%"><input type="text" size="3" name="convert_width_ogv" id="convert_width_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv" id="convert_height_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##ogv_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_ogv"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_ogv" value="#bit#">kb/s</td> --->
 			</tr>
@@ -732,7 +740,7 @@
 									<cfset incval.theformat = "ogv_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_ogv_2" id="convert_width_ogv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_ogv_2" id="convert_height_ogv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_ogv_2" id="convert_width_ogv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv_2" id="convert_height_ogv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-ogv_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "ogv_3"> checked="checked"</cfif></cfloop>></td>
@@ -741,7 +749,7 @@
 									<cfset incval.theformat = "ogv_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_ogv_3" id="convert_width_ogv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_ogv_3" id="convert_height_ogv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_ogv_3" id="convert_width_ogv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv_3" id="convert_height_ogv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-ogv_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "ogv_4"> checked="checked"</cfif></cfloop>></td>
@@ -750,7 +758,7 @@
 									<cfset incval.theformat = "ogv_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_ogv_4" id="convert_width_ogv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_ogv_4" id="convert_height_ogv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_ogv_4" id="convert_width_ogv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv_4" id="convert_height_ogv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-ogv_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "ogv_5"> checked="checked"</cfif></cfloop>></td>
@@ -759,7 +767,7 @@
 									<cfset incval.theformat = "ogv_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_ogv_5" id="convert_width_ogv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_ogv_5" id="convert_height_ogv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_ogv_5" id="convert_width_ogv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv_5" id="convert_height_ogv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-ogv_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "ogv_6"> checked="checked"</cfif></cfloop>></td>
@@ -768,7 +776,7 @@
 									<cfset incval.theformat = "ogv_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_ogv_6" id="convert_width_ogv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_ogv_6" id="convert_height_ogv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_ogv_6" id="convert_width_ogv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv_6" id="convert_height_ogv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -783,7 +791,7 @@
 					<cfset incval.theformat = "webm">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_webm" id="convert_width_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_webm" id="convert_height_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##webm_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_webm" id="convert_width_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm" id="convert_height_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##webm_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_webm"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_webm" value="#bit#">kb/s</td> --->
 			</tr>
@@ -798,7 +806,7 @@
 									<cfset incval.theformat = "webm_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_webm_2" id="convert_width_webm_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_webm_2" id="convert_height_webm_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_webm_2" id="convert_width_webm_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm_2" id="convert_height_webm_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-webm_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "webm_3"> checked="checked"</cfif></cfloop>></td>
@@ -807,7 +815,7 @@
 									<cfset incval.theformat = "webm_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_webm_3" id="convert_width_webm_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_webm_3" id="convert_height_webm_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_webm_3" id="convert_width_webm_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm_3" id="convert_height_webm_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-webm_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "webm_4"> checked="checked"</cfif></cfloop>></td>
@@ -816,7 +824,7 @@
 									<cfset incval.theformat = "webm_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_webm_4" id="convert_width_webm_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_webm_4" id="convert_height_webm_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_webm_4" id="convert_width_webm_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm_4" id="convert_height_webm_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-webm_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "webm_5"> checked="checked"</cfif></cfloop>></td>
@@ -825,7 +833,7 @@
 									<cfset incval.theformat = "webm_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_webm_5" id="convert_width_webm_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_webm_5" id="convert_height_webm_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_webm_5" id="convert_width_webm_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm_5" id="convert_height_webm_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-webm_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "webm_6"> checked="checked"</cfif></cfloop>></td>
@@ -834,7 +842,7 @@
 									<cfset incval.theformat = "webm_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_webm_6" id="convert_width_webm_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_webm_6" id="convert_height_webm_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_webm_6" id="convert_width_webm_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm_6" id="convert_height_webm_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -849,7 +857,7 @@
 					<cfset incval.theformat = "flv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_flv" id="convert_width_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_flv" id="convert_height_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##flv_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_flv" id="convert_width_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv" id="convert_height_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##flv_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_flv"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_flv" value="#bit#">kb/s</td> --->
 			</tr>
@@ -864,7 +872,7 @@
 									<cfset incval.theformat = "flv_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_flv_2" id="convert_width_flv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_flv_2" id="convert_height_flv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_flv_2" id="convert_width_flv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv_2" id="convert_height_flv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-flv_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "flv_3"> checked="checked"</cfif></cfloop>></td>
@@ -873,7 +881,7 @@
 									<cfset incval.theformat = "flv_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_flv_3" id="convert_width_flv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_flv_3" id="convert_height_flv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_flv_3" id="convert_width_flv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv_3" id="convert_height_flv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-flv_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "flv_4"> checked="checked"</cfif></cfloop>></td>
@@ -882,7 +890,7 @@
 									<cfset incval.theformat = "flv_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_flv_4" id="convert_width_flv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_flv_4" id="convert_height_flv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_flv_4" id="convert_width_flv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv_4" id="convert_height_flv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-flv_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "flv_5"> checked="checked"</cfif></cfloop>></td>
@@ -891,7 +899,7 @@
 									<cfset incval.theformat = "flv_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_flv_5" id="convert_width_flv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_flv_5" id="convert_height_flv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_flv_5" id="convert_width_flv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv_5" id="convert_height_flv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-flv_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "flv_6"> checked="checked"</cfif></cfloop>></td>
@@ -900,7 +908,7 @@
 									<cfset incval.theformat = "flv_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_flv_6" id="convert_width_flv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_flv_6" id="convert_height_flv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_flv_6" id="convert_width_flv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv_6" id="convert_height_flv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -915,7 +923,7 @@
 					<cfset incval.theformat = "mp4">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mp4" id="convert_width_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mp4" id="convert_height_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##mp4_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_mp4" id="convert_width_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4" id="convert_height_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mp4_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_mp4"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mp4" value="#bit#">kb/s</td> --->
 			</tr>
@@ -930,7 +938,7 @@
 									<cfset incval.theformat = "mp4_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_mp4_2" id="convert_width_mp4_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mp4_2" id="convert_height_mp4_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_mp4_2" id="convert_width_mp4_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4_2" id="convert_height_mp4_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mp4_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mp4_3"> checked="checked"</cfif></cfloop>></td>
@@ -939,7 +947,7 @@
 									<cfset incval.theformat = "mp4_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mp4_3" id="convert_width_mp4_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mp4_3" id="convert_height_mp4_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mp4_3" id="convert_width_mp4_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4_3" id="convert_height_mp4_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mp4_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mp4_4"> checked="checked"</cfif></cfloop>></td>
@@ -948,7 +956,7 @@
 									<cfset incval.theformat = "mp4_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mp4_4" id="convert_width_mp4_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mp4_4" id="convert_height_mp4_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mp4_4" id="convert_width_mp4_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4_4" id="convert_height_mp4_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mp4_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mp4_5"> checked="checked"</cfif></cfloop>></td>
@@ -957,7 +965,7 @@
 									<cfset incval.theformat = "mp4_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mp4_5" id="convert_width_mp4_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mp4_5" id="convert_height_mp4_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mp4_5" id="convert_width_mp4_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4_5" id="convert_height_mp4_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mp4_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mp4_6"> checked="checked"</cfif></cfloop>></td>
@@ -966,7 +974,7 @@
 									<cfset incval.theformat = "mp4_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mp4_6" id="convert_width_mp4_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mp4_6" id="convert_height_mp4_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mp4_6" id="convert_width_mp4_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4_6" id="convert_height_mp4_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -981,7 +989,7 @@
 					<cfset incval.theformat = "wmv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" id="convert_width_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_wmv" id="convert_height_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##wmv_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" id="convert_width_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv" id="convert_height_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##wmv_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_wmv"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td width="100%" nowrap="true"><input type="text" size="4" name="convert_bitrate_wmv" value="#bit#">kb/s</td> --->
 			</tr>
@@ -996,7 +1004,7 @@
 									<cfset incval.theformat = "wmv_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_wmv_2" id="convert_width_wmv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_wmv_2" id="convert_height_wmv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_wmv_2" id="convert_width_wmv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv_2" id="convert_height_wmv_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-wmv_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "wmv_3"> checked="checked"</cfif></cfloop>></td>
@@ -1005,7 +1013,7 @@
 									<cfset incval.theformat = "wmv_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_wmv_3" id="convert_width_wmv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_wmv_3" id="convert_height_wmv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_wmv_3" id="convert_width_wmv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv_3" id="convert_height_wmv_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-wmv_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "wmv_4"> checked="checked"</cfif></cfloop>></td>
@@ -1014,7 +1022,7 @@
 									<cfset incval.theformat = "wmv_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_wmv_4" id="convert_width_wmv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_wmv_4" id="convert_height_wmv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_wmv_4" id="convert_width_wmv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv_4" id="convert_height_wmv_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-wmv_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "wmv_5"> checked="checked"</cfif></cfloop>></td>
@@ -1023,7 +1031,7 @@
 									<cfset incval.theformat = "wmv_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_wmv_5" id="convert_width_wmv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_wmv_5" id="convert_height_wmv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_wmv_5" id="convert_width_wmv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv_5" id="convert_height_wmv_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-wmv_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "wmv_6"> checked="checked"</cfif></cfloop>></td>
@@ -1032,7 +1040,7 @@
 									<cfset incval.theformat = "wmv_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_wmv_6" id="convert_width_wmv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_wmv_6" id="convert_height_wmv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_wmv_6" id="convert_width_wmv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv_6" id="convert_height_wmv_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -1047,7 +1055,7 @@
 					<cfset incval.theformat = "avi">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_avi" id="convert_width_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_avi" id="convert_height_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##avi_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_avi" id="convert_width_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi" id="convert_height_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##avi_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_avi"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1062,7 +1070,7 @@
 									<cfset incval.theformat = "avi_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_avi_2" id="convert_width_avi_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_avi_2" id="convert_height_avi_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_avi_2" id="convert_width_avi_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi_2" id="convert_height_avi_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-avi_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "avi_3"> checked="checked"</cfif></cfloop>></td>
@@ -1071,7 +1079,7 @@
 									<cfset incval.theformat = "avi_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_avi_3" id="convert_width_avi_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_avi_3" id="convert_height_avi_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_avi_3" id="convert_width_avi_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi_3" id="convert_height_avi_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-avi_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "avi_4"> checked="checked"</cfif></cfloop>></td>
@@ -1080,7 +1088,7 @@
 									<cfset incval.theformat = "avi_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_avi_4" id="convert_width_avi_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_avi_4" id="convert_height_avi_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_avi_4" id="convert_width_avi_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi_4" id="convert_height_avi_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-avi_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "avi_5"> checked="checked"</cfif></cfloop>></td>
@@ -1089,7 +1097,7 @@
 									<cfset incval.theformat = "avi_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_avi_5" id="convert_width_avi_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_avi_5" id="convert_height_avi_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_avi_5" id="convert_width_avi_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi_5" id="convert_height_avi_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-avi_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "avi_6"> checked="checked"</cfif></cfloop>></td>
@@ -1098,7 +1106,7 @@
 									<cfset incval.theformat = "avi_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_avi_6" id="convert_width_avi_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_avi_6" id="convert_height_avi_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_avi_6" id="convert_width_avi_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi_6" id="convert_height_avi_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -1113,7 +1121,7 @@
 					<cfset incval.theformat = "mov">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mov" id="convert_width_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mov" id="convert_height_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##mov_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_mov" id="convert_width_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov" id="convert_height_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mov_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_mov"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1128,7 +1136,7 @@
 									<cfset incval.theformat = "mov_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_mov_2" id="convert_width_mov_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mov_2" id="convert_height_mov_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_mov_2" id="convert_width_mov_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov_2" id="convert_height_mov_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mov_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mov_3"> checked="checked"</cfif></cfloop>></td>
@@ -1137,7 +1145,7 @@
 									<cfset incval.theformat = "mov_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mov_3" id="convert_width_mov_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mov_3" id="convert_height_mov_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mov_3" id="convert_width_mov_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov_3" id="convert_height_mov_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mov_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mov_4"> checked="checked"</cfif></cfloop>></td>
@@ -1146,7 +1154,7 @@
 									<cfset incval.theformat = "mov_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mov_4" id="convert_width_mov_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mov_4" id="convert_height_mov_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mov_4" id="convert_width_mov_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov_4" id="convert_height_mov_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mov_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mov_5"> checked="checked"</cfif></cfloop>></td>
@@ -1155,7 +1163,7 @@
 									<cfset incval.theformat = "mov_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mov_5" id="convert_width_mov_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mov_5" id="convert_height_mov_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mov_5" id="convert_width_mov_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov_5" id="convert_height_mov_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mov_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mov_6"> checked="checked"</cfif></cfloop>></td>
@@ -1164,7 +1172,7 @@
 									<cfset incval.theformat = "mov_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mov_6" id="convert_width_mov_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mov_6" id="convert_height_mov_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mov_6" id="convert_width_mov_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov_6" id="convert_height_mov_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
@@ -1179,7 +1187,7 @@
 					<cfset incval.theformat = "mpg">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mpg" id="convert_width_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mpg" id="convert_height_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg">#upl_temp_value#</cfif></cfloop>"> <a href="##" onclick="$('##mpg_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_mpg" id="convert_width_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg" id="convert_height_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mpg_more').slideToggle('slow');return false;">additional conversions</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_mpg"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mpg" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1194,7 +1202,7 @@
 									<cfset incval.theformat = "mpg_2">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td width="100%"><input type="text" size="3" name="convert_width_mpg_2" id="convert_width_mpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mpg_2" id="convert_height_mpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<td width="100%"><input type="text" size="3" name="convert_width_mpg_2" id="convert_width_mpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg_2" id="convert_height_mpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_2">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mpg_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mpg_3"> checked="checked"</cfif></cfloop>></td>
@@ -1203,7 +1211,7 @@
 									<cfset incval.theformat = "mpg_3">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mpg_3" id="convert_width_mpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_3">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mpg_3" id="convert_height_mpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_3">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mpg_3" id="convert_width_mpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg_3" id="convert_height_mpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_3">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mpg_4"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mpg_4"> checked="checked"</cfif></cfloop>></td>
@@ -1212,7 +1220,7 @@
 									<cfset incval.theformat = "mpg_4">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mpg_4" id="convert_width_mpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_4">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mpg_4" id="convert_height_mpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_4">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mpg_4" id="convert_width_mpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg_4" id="convert_height_mpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_4">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mpg_5"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mpg_5"> checked="checked"</cfif></cfloop>></td>
@@ -1221,7 +1229,7 @@
 									<cfset incval.theformat = "mpg_5">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mpg_5" id="convert_width_mpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_5">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mpg_5" id="convert_height_mpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_5">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mpg_5" id="convert_width_mpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg_5" id="convert_height_mpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_5">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-mpg_6"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "mpg_6"> checked="checked"</cfif></cfloop>></td>
@@ -1230,19 +1238,18 @@
 									<cfset incval.theformat = "mpg_6">
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
-								<td><input type="text" size="3" name="convert_width_mpg_6" id="convert_width_mpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_mpg_6" id="convert_height_mpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_6">#upl_temp_value#</cfif></cfloop>"></td>
+								<td><input type="text" size="3" name="convert_width_mpg_6" id="convert_width_mpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg_6" id="convert_height_mpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg_6">#upl_temp_value#</cfif></cfloop>" maxlength="4"></td>
 							</tr>
 						</table>
 					</div>
 				</td>
 			</tr>
 			<!--- 3GP --->
-			<!---
 			<tr>
 				<td align="center"><input type="checkbox" name="convert_to" value="vid-3gp" onclick="clickset3gp('formupltemp');"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp"> checked="checked"</cfif></cfloop>></td>
-				<td><a href="##" onclick="clickcbk('formupltemp','convert_to',78);return false;" style="text-decoration:none;">3GP</a><br /><a href="##" onclick="$('##3gp_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><a href="##" onclick="clickcbk('formupltemp','convert_to',78);return false;" style="text-decoration:none;">3GP</a><br /></td>
 				<td nowrap="true">
-				<select name="convert_wh_3gp" onChange="javascript:set3gp('form');">
+				<select name="convert_wh_3gp" onChange="javascript:set3gp('formupltemp');">
 				<option value="0"></option>
 				<option value="1" selected="true">128x96 (MMS 64K)</option>
 				<option value="2">128x96 (MMS 95K)</option>
@@ -1258,6 +1265,9 @@
 				<option value="12">1408x1152 (No size limit)</option>
 				</select>
 				</td>
+				<td>
+					<a href="##" onclick="$('##3gp_more').slideToggle('slow');return false;">additional conversions</a>
+				</td>
 				<!--- <cfset b3gp = 64>
 				<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_3gp"><cfset b3gp = upl_temp_value></cfif></cfloop>
 				<td nowrap="true"><input type="text" size="4" name="convert_bitrate_3gp" value="#b3gp#">kb/s</td> --->
@@ -1266,16 +1276,32 @@
 				<td colspan="4">
 					<div id="3gp_more" style="display:none;">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+							<cfloop from="2" to="6" index="i" >
 							<tr>
-								<td align="center"><input type="checkbox" name="convert_to" value="vid-3gp_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp_2"> checked="checked"</cfif></cfloop>></td>
-								<td><a href="##" onclick="clickcbk('formupltemp','convert_to',79);return false;" style="text-decoration:none;">3GP</a></td>
-								<td>
-									<cfset incval.theformat = "3gp_2">
-									<cfinclude template="inc_video_presets.cfm" />
-								</td>
-								<td><input type="text" size="3" name="convert_width_3gp_2" id="convert_width_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_2" id="convert_height_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<cfset incval.theformat = "3gp_#i#">
+									<td align="center" style="width:20px;"><input type="checkbox" name="convert_to" value="vid-3gp_#i#" onclick="clickset3gp_additional('formupltemp','#i#');"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp_#i#"> checked="checked"</cfif></cfloop>></td>
+									<td style="width:55px;"><a href="##" onclick="clickcbk('formupltemp','convert_to',79);return false;" style="text-decoration:none;">3GP</a><br /></td>
+									<td nowrap="true">
+									<select name="convert_wh_3gp_#i#" onChange="javascript:set3gp_additional('formupltemp','#i#');">
+									<option value="0"></option>
+									<option value="1" selected="true">128x96 (MMS 64K)</option>
+									<option value="2">128x96 (MMS 95K)</option>
+									<option value="3">176x144 (MMS 95K)</option>
+									<option value="4">128x96 (200K)</option>
+									<option value="5">176x144 (200K)</option>
+									<option value="6">128x96 (300K)</option>
+									<option value="7">176x144 (300K)</option>
+									<option value="8">128x96 (No size limit)</option>
+									<option value="9">176x144 (No size limit)</option>
+									<option value="10">352x288 (No size limit)</option>
+									<option value="11">704x576 (No size limit)</option>
+									<option value="12">1408x1152 (No size limit)</option>
+									</select>
+									</td>
+								<!---<td><input type="text" size="3" name="convert_width_3gp_2" id="convert_width_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_2" id="convert_height_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_2">#upl_temp_value#</cfif></cfloop>"></td>--->
 							</tr>
-							<tr>
+							</cfloop>
+							<!---<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-3gp_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp_3"> checked="checked"</cfif></cfloop>></td>
 								<td><a href="##" onclick="clickcbk('formupltemp','convert_to',80);return false;" style="text-decoration:none;">3GP</a></td>
 								<td>
@@ -1310,12 +1336,11 @@
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
 								<td><input type="text" size="3" name="convert_width_3gp_6" id="convert_width_3gp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_6" id="convert_height_3gp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_6">#upl_temp_value#</cfif></cfloop>"></td>
-							</tr>
+							</tr>--->
 						</table>
 					</div>
 				</td>
 			</tr>
-			--->
 			<!--- RM
 			<!--- <cfset bit = 600> --->
 			<tr>

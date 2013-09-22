@@ -42,7 +42,7 @@
 			<table border="0">
 				<tr>
 					<cfloop query="qry_basket">
-						<cfset myid = #cart_product_id#>
+						<cfset myid = cart_product_id>
 						<td width="90">
 							<cfswitch expression="#cart_file_type#">
 								<cfcase value="img">

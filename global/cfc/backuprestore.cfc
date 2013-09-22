@@ -36,6 +36,7 @@
 	<!--- Backup to internal DB --->
 	<cffunction name="backuptodb" output="true">
 		<cfargument name="thestruct" type="struct">
+		<cfsetting RequestTimeout = "3600">
 		<!--- Params --->
 		<cfset arguments.thestruct.dsn = "razuna_backup">
 		<cfset arguments.thestruct.fromimport = "T">
@@ -242,7 +243,7 @@
 		</cfoutput>
 		<!--- Return --->
 		<cfreturn />
-	</cffunction>
+	</cffunction> 
 	
 	<!--- Write XML --->
 	<cffunction name="writebackupdb" output="true">
@@ -891,6 +892,7 @@
 	<!--- Restore --->
 	<cffunction name="restorexml" output="true">
 		<cfargument name="thestruct" type="struct">
+		<cfsetting RequestTimeout = "3600">
 		<!--- Get the backed up tables --->
 		<cfquery dataSource="razuna_backup" name="backup_tables">
 		SELECT lower(table_name) as thetable, table_schema

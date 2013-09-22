@@ -13,7 +13,7 @@
 <!--- Page Decision --->
 <cfswitch expression="#attributes.format#">
 	<cfcase value="9,12">
-		<cfset thebreak = 3>
+		<cfset thebreak = 2>
 	</cfcase>
 	<cfcase value="16">
 		<cfset thebreak = 4>
@@ -51,7 +51,7 @@ table {
 					<!--- Images --->
 					<cfif kind EQ "img">
 						<tr>
-							<td height="100%" colspan="2" align="center"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0"></cfif></td>
+							<td height="100%" colspan="2" align="center"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0" width="200px"></cfif></td>
 						</tr>
 						<tr>
 							<td colspan="2">#left(filename,25)#</td>
@@ -62,7 +62,7 @@ table {
 					<!--- Videos --->
 					<cfelseif kind EQ "vid">
 						<tr>
-							<td height="100%" colspan="2" align="center"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="160"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160"></cfif>
+							<td height="100%" colspan="2" align="center"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="200px"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="200px"></cfif>
 							<br>#myFusebox.getApplicationData().defaults.trans("file_detail")#</td>
 							</tr>
 						<tr>
@@ -126,10 +126,10 @@ table {
 				<!--- Icon/Image --->
 				<td valign="top" style="padding-bottom:20px;padding-right:20px;">
 					<cfif kind EQ "img">
-						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0"></cfif>
+						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="300px"><cfelse><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0" width="300px"></cfif>
 					<!--- Videos --->
 					<cfelseif kind EQ "vid">
-						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="160"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160"></cfif>
+						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="300px"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="300px"></cfif>
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
 						<img src="#thisurl#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">

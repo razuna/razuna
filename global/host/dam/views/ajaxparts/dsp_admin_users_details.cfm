@@ -102,6 +102,12 @@
 				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_mobile")#</strong></td>
 				<td><input name="user_mobile" type="text" style="width:300px;" value="#qry_detail.user_mobile#"></td>
 			</tr>
+			<cfif attributes.add EQ "f">
+				<tr>
+					<td><strong>ID</strong></td>
+					<td>#qry_detail.user_id#</td>
+				</tr>
+			</cfif>
 		</table>
 		<!--- Custom fields --->
 		<cfif qry_cf.recordcount NEQ 0>
@@ -121,29 +127,33 @@
 				<td valign="top">
 					<!--- Since this can now be viewed by the user himself we only show selection for admins --->
 					<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
-						<!--- If SysAdmin or Admin --->
-						<!--- <cfif Request.securityobj.CheckSystemAdminUser(qry_groups_admin.grp_id) OR Request.securityobj.CheckAdministratorGroup(qry_groups_admin.grp_id)> --->
-							<cfif Request.securityobj.CheckAdministratorUser() AND attributes.myinfo>
+						<!--- We come from myinfo --->
+						<cfif attributes.myinfo>
+							<!--- If SysAdmin or Admin --->
+							<cfif Request.securityobj.CheckSystemAdminUser()>
+								<input type="hidden" name="admin_group_1" value="1">
+								You are a System-Administrator. Full access granted!
+							<cfelseif Request.securityobj.CheckAdministratorUser()>
 								<input type="hidden" name="admin_group_2" value="2">
 								You are an Administrator. Full access granted!
 							</cfif>
-							<cfif Request.securityobj.CheckSystemAdminUser() AND attributes.myinfo>
-								<input type="hidden" name="admin_group_1" value="1">
-								You are a System-Administrator. Full access granted!
-							</cfif>
-							<!--- (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND  --->
-							<cfif !attributes.myinfo>
-								<cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id>
-									<input type="hidden" name="admin_group_2" value="2" />
-									You are an Administrator. Full access granted!
-								<cfelse>
-									<input type="checkbox" name="admin_group_2" value="2"<cfif grpnrlist EQ 2> checked</cfif>> Administrator
+						<!--- Called within detail page --->
+						<cfelseif !attributes.myinfo>
+							<!--- If this is the only admin --->
+							<cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id>
+								<cfif listfind(grpnrlist,"1",",")>
+									<input type="hidden" name="admin_group_1" value="1">
 								</cfif>
-								<br /><br />
+								<cfif listfind(grpnrlist,"2",",")>
+									<input type="hidden" name="admin_group_2" value="2">
+								</cfif>
+								You are an Administrator. Full access granted!
+							<!--- There are more admin accounts thus show checkbox for admin --->
+							<cfelse>
+								<input type="checkbox" name="admin_group_2" value="2"<cfif listfind(grpnrlist,"2",",")> checked</cfif>> Administrator
 							</cfif>
-						<!--- </cfif> --->
-						<!--- (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND  --->
-						<cfif !attributes.myinfo>
+							<br /><br />
+							<!--- Show the rest of the groups  --->
 							<cfloop query="qry_groups">
 								<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
 								<br />

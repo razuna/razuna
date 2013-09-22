@@ -182,6 +182,22 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
+		<!-- ResourceManager -->
+		<instantiate class="resourcemanager" object="application.razuna.trans" overwrite="true">
+			<argument name="resourcePackagePath" value="translations" />
+			<argument name="baseLocale" value="en" />
+		</instantiate>
+		<!-- SmartFolders -->
+		<instantiate class="smartfolders" object="myFusebox.getApplicationData().smartfolders" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
+		<!-- Oauth -->
+		<instantiate class="oauth" object="myFusebox.getApplicationData().oauth" overwrite="true">
+		</instantiate>
+		<!-- Oauth -->
+		<instantiate class="dropbox" object="myFusebox.getApplicationData().dropbox" overwrite="true">
+		</instantiate>
 	</fuseaction>
 	
 </circuit>

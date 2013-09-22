@@ -39,12 +39,13 @@
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank">
 					</cfif>
 					View</a> 
-					| <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud">Download</a> 
+					| <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud">#myFusebox.getApplicationData().defaults.trans("download")#</a> 
 					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');return false;">Direct Link</a>
 					| <a href="##" onclick="toggleslide('dive#aud_id#','inpute#aud_id#');return false;">Embed</a>
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">Metadata</a>
+					| <a href="##" onclick="showwindow('#myself#c.exist_rendition_audios&file_id=#aud_id#&aud_group_id=#aud_group#&thetype=aud&cf_show=aud&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 					<cfif attributes.folderaccess NEQ "R">
-						 | <a href="##" onclick="remrenaud('#aud_id#');">Remove</a>
+						 | <a href="##" onclick="remrenaud('#aud_id#');">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
 					</cfif>
 					<!--- Direct link --->
 					<div id="divo#aud_id#" style="display:none;">
@@ -99,7 +100,7 @@ function remrenaud(id){
 		buttons: {
 			"Yes, remove rendition": function() {
 				$( this ).dialog( "close" );
-				$('##relatedvideos').load('#myself#c.audios_remove_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadrenaud(); });
+				$('##relatedaudios').load('#myself#c.audios_remove_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadrenaud(); });
 			},
 			Cancel: function() {
 				$( this ).dialog( "close" );

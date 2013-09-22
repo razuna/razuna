@@ -1336,6 +1336,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (FOLDER_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1405,6 +1406,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		   VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (FILE_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1484,6 +1486,7 @@
 		  HASHTAG			  VARCHAR(100),
 		  IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1590,7 +1593,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings
 		(
-		  SET_ID    VARCHAR(100) NOT NULL,
+		  SET_ID    VARCHAR(500) NOT NULL,
 		  SET_PREF  VARCHAR(4000),
 		  HOST_ID	INT,
 		  rec_uuid			VARCHAR(100),
@@ -1678,6 +1681,7 @@
 		  SET2_AKA_VID					VARCHAR(200),
 		  SET2_AKA_AUD					VARCHAR(200),
 		  SET2_AKA_DOC					VARCHAR(200),
+		  SET2_COLORSPACE_RGB			VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
@@ -1719,6 +1723,7 @@
 		  col_released		VARCHAR(5) DEFAULT 'false',
 		  col_copied_from	VARCHAR(100),
 		  HOST_ID			INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (COL_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1753,10 +1758,9 @@
 		  COL_FILE_FORMAT  	VARCHAR(100),
 		  HOST_ID			INT,
 		  rec_uuid			VARCHAR(100),
-		  PRIMARY KEY (rec_uuid),
-		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  PRIMARY KEY (rec_uuid)
 		)
-		
 		</cfquery>
 		
 		<!--- COLLECTIONS GROUPS --->
@@ -1844,6 +1848,7 @@
 		HASHTAG			   		VARCHAR(100),
 		IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		CLOUD_URL_EXP		   INT,
+		IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2090,6 +2095,7 @@
 		  	HASHTAG			   VARCHAR(100),
 		  	IS_AVAILABLE		 VARCHAR(1) DEFAULT 0,
 		  	CLOUD_URL_EXP		   INT,
+		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 			PRIMARY KEY (aud_ID),
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2207,6 +2213,7 @@
 		  thesize 				varchar(100) DEFAULT '0',
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
+  		  hashtag			   	VARCHAR(100),
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
@@ -2272,7 +2279,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar(200),
-		custom_value		varchar(100),
+		custom_value		varchar(2000),
 		host_id				int
 		)
 		</cfquery>
@@ -2317,6 +2324,34 @@
 		host_id 			int,
 		rec_uuid 			varchar(100),
 		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
+
+		<!--- Smart Folders --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders 
+		(
+			sf_id 			varchar(100),
+			sf_name 		varchar(500),
+			sf_date_create 	timestamp,
+			sf_date_update 	timestamp,
+			sf_type 		varchar(100),
+			sf_description 	varchar(2000),
+			sf_who	 		varchar(100),
+			host_id 		int,
+			PRIMARY KEY (sf_id)
+		)
+		</cfquery>
+
+		<!--- Smart Folders Properties --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders_prop
+		(
+			sf_id_r 		varchar(100),
+			sf_prop_id 		varchar(500),
+			sf_prop_value 	varchar(2000),
+			host_id 		int,
+			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>
 

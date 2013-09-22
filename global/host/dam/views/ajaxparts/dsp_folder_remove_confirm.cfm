@@ -24,12 +24,5 @@
 *
 --->
 <cfoutput>
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
-		<tr>
-			<th>#myFusebox.getApplicationData().defaults.trans("remove_folder_confirm")#</th>
-		</tr>
-		<tr>
-			<td>#myFusebox.getApplicationData().defaults.trans("remove_folder_confirm_desc")#</td>
-		</tr>
-	</table>
+	<span style="color:green;font-weight:bold;padding-left:10px;">#myFusebox.getApplicationData().defaults.trans("remove_folder_confirm_desc")#</span>
 </cfoutput>

@@ -136,7 +136,7 @@
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
 						<cfelse>
-							<a href="##" onClick="feedback_widget.show();">Feedback</a>
+							<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a>
 						</cfif>
 					</p>
 					<p><hr></p>
@@ -169,25 +169,25 @@
 			document.form_account.target='myWin';
 			document.form_account.submit();
 		}
-		$(function() {
-			var cache = {}, lastXhr;
-			$( "##simplesearchtext" ).autocomplete({
-				minLength: 3,
-				source: function( request, response ) {
-					var term = request.term;
-					if ( term in cache ) {
-						response( cache[ term ] );
-						return;
-					}
+		// $(function() {
+		// 	var cache = {}, lastXhr;
+		// 	$( "##simplesearchtext" ).autocomplete({
+		// 		minLength: 3,
+		// 		source: function( request, response ) {
+		// 			var term = request.term;
+		// 			if ( term in cache ) {
+		// 				response( cache[ term ] );
+		// 				return;
+		// 			}
 
-					lastXhr = $.getJSON( "#myself#c.search_suggest", request, function( data, status, xhr ) {
-						cache[ term ] = data;
-						if ( xhr === lastXhr ) {
-							response( data );
-						}
-					});
-				}
-			});
-		});
+		// 			lastXhr = $.getJSON( "#myself#c.search_suggest", request, function( data, status, xhr ) {
+		// 				cache[ term ] = data;
+		// 				if ( xhr === lastXhr ) {
+		// 					response( data );
+		// 				}
+		// 			});
+		// 		}
+		// 	});
+		// });
 	</script>
 </cfoutput>

@@ -1319,6 +1319,7 @@
 		  share_order			varchar2(1 char) DEFAULT 'f',
 		  share_order_user		VARCHAR2(100 CHAR),
 		  HOST_ID				NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDER_PK PRIMARY KEY (FOLDER_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1388,6 +1389,7 @@
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1469,6 +1471,7 @@
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1577,7 +1580,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings
 		(
-		  SET_ID    VARCHAR2(100 CHAR) NOT NULL,
+		  SET_ID    VARCHAR2(500 CHAR) NOT NULL,
 		  SET_PREF  CLOB,
 		  HOST_ID	NUMBER,
 		  rec_uuid			VARCHAR(100),
@@ -1665,6 +1668,7 @@
 		  SET2_AKA_VID					VARCHAR2(200 CHAR),
 		  SET2_AKA_AUD					VARCHAR2(200 CHAR),
 		  SET2_AKA_DOC					VARCHAR2(200 CHAR),
+		  SET2_COLORSPACE_RGB			VARCHAR2(5 CHAR) DEFAULT 'false',
 		  rec_uuid						VARCHAR2(100 CHAR),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_PK PRIMARY KEY (rec_uuid) ENABLE,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
@@ -1706,6 +1710,7 @@
 		  col_released		VARCHAR2(5 CHAR) DEFAULT 'false',
 		  col_copied_from	VARCHAR2(100 CHAR),
 		  HOST_ID			NUMBER,
+		  IN_TRASH			VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_PK PRIMARY KEY (COL_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1741,9 +1746,8 @@
 		  COL_FILE_FORMAT  	VARCHAR2(100 CHAR),
 		  HOST_ID		 	NUMBER,
 		  rec_uuid			VARCHAR2(100 CHAR),
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE,
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
-	      REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE ENABLE
+		  IN_TRASH			VARCHAR2(2 CHAR) DEFAULT 'F',
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		
 		</cfquery>
@@ -1830,11 +1834,12 @@
 		VID_META				CLOB,
 		HOST_ID					NUMBER,
 		PATH_TO_ASSET		    VARCHAR2(500 CHAR),
-		CLOUD_URL			VARCHAR2(500 CHAR),
+		CLOUD_URL				VARCHAR2(500 CHAR),
 		  CLOUD_URL_ORG		   VARCHAR2(500 CHAR),
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -2054,6 +2059,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#AUDIOS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -2167,9 +2173,10 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  av_link_url 			varchar2(500 CHAR) DEFAULT NULL,
 		  host_id 				number DEFAULT NULL,
 		  av_link 				varchar2(2 CHAR) DEFAULT '1',
-		  thesize 				varchar(100) DEFAULT '0',
-  		  thewidth 				varchar(50) DEFAULT '0',
-  		  theheight				varchar(50) DEFAULT '0',
+		  thesize 				varchar2(100 CHAR) DEFAULT '0',
+  		  thewidth 				varchar2(50 CHAR) DEFAULT '0',
+  		  theheight				varchar2(50 CHAR) DEFAULT '0',
+  		  hashtag			   	VARCHAR2(100 CHAR),
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
@@ -2235,7 +2242,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar2(200 char),
-		custom_value		varchar2(100 char),
+		custom_value		varchar2(2000 char),
 		host_id				number
 		)
 		</cfquery>
@@ -2258,7 +2265,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 	  	wm_temp_id 			varchar2(100 char),
 	  	wm_name				varchar2(200 char),
 		wm_active			varchar2(6 char) DEFAULT 'false',
-		host_id 			int,
+		host_id 			number,
 		PRIMARY KEY (wm_temp_id)
 		)
 		</cfquery>
@@ -2277,9 +2284,37 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		wm_text_font 		varchar2(100 char),
 		wm_text_font_size 	varchar2(5 char),
 		wm_image_path 		varchar2(300 char),
-		host_id 			int,
+		host_id 			number,
 		rec_uuid 			varchar2(100 char),
 		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
+
+		<!--- Smart Folders --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders 
+		(
+			sf_id 			varchar2(100 char),
+			sf_name 		varchar2(500 char),
+			sf_date_create 	timestamp,
+			sf_date_update 	timestamp,
+			sf_type 		varchar2(100 char),
+			sf_description 	varchar2(2000 char),
+			sf_who	 		varchar2(100 char),
+			host_id 		number,
+			PRIMARY KEY (sf_id)
+		)
+		</cfquery>
+
+		<!--- Smart Folders Properties --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders_prop
+		(
+			sf_id_r 		varchar2(100 char),
+			sf_prop_id 		varchar2(500 char),
+			sf_prop_value 	varchar2(2000 char),
+			host_id 		number,
+			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>
 		

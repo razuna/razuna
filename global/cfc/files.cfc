@@ -149,6 +149,7 @@
 							)
 						</cfif>
 					</cfif>
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					ORDER BY #sortby#
 					)
@@ -186,6 +187,7 @@
 						)
 					</cfif>
 				</cfif>
+				AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 			)
@@ -200,9 +202,24 @@
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
+			<!--- MSSQL --->
+			<cfif variables.database EQ "mssql">
+				SELECT * FROM (
+				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+			</cfif>
+			
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
 			file_create_time date_create, file_change_date date_change
-			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
+			<!--- custom metadata fields to show --->
+			<cfif arguments.thestruct.cs.files_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">ft
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+					<cfelse>x
+					</cfif>.#m#
+				</cfloop>
+			</cfif>
+			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = #session.hostdbprefix#files.file_id
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
 				AND
@@ -223,6 +240,7 @@
 					)
 				</cfif>
 			</cfif>
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<!--- MySQL --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
@@ -233,32 +251,9 @@
 				</cfif>
 			<!--- MSSQL --->
 			<cfelseif variables.database EQ "mssql">
-				AND file_id NOT IN (
-					SELECT TOP #min# file_id
-					FROM #session.hostdbprefix#files
-					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-					AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					<cfif Len(Arguments.file_extension)>
-						AND
-						<!--- if doc or xls also add office 2007 format to query --->
-						<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
-							(
-							LOWER(isnull(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-							OR LOWER(isnull(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
-							)
-						<!--- query all formats if not other --->
-						<cfelseif Arguments.file_extension neq "other">
-							LOWER(isnull(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-						<!--- query all files except the ones in the list --->
-						<cfelse>
-							(
-							LOWER(isnull(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
-							OR (file_extension IS NULL OR file_extension = '')
-							)
-						</cfif>
-					</cfif>
-				)
-				ORDER BY #sortby#
+					) sorted_inline_view
+				 ) resultSet
+			 	 WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 			</cfif>
 			</cfquery>
 		</cfif>
@@ -283,7 +278,9 @@
 				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#file_id#">
 				</cfquery>
 				<!--- Add labels query --->
-				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				<cfif qry_l.recordcount NEQ 0>
+					<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				</cfif>
 			</cfloop>
 		</cfif>
 		<!--- Return --->
@@ -310,71 +307,272 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Get file detail for log --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.id#" thecolumn="file_name, folder_id_r, file_name_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
-		<!--- Execute workflow --->
-		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-		<cfset arguments.thestruct.file_name = thedetail.file_name>
-		<cfset arguments.thestruct.thefiletype = "doc">
-		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-		<cfset arguments.thestruct.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		<cfset arguments.thestruct.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		<!--- Log --->
-		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#session.theuserid#">
-			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
-			<cfinvokeargument name="logfiletype" value="doc">
-			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
-		</cfinvoke>
-		<!--- Delete from files DB (including referenced data)--->
+		<cfif thedetail.recordcount NEQ 0>
+			<!--- Execute workflow --->
+			<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+			<cfset arguments.thestruct.file_name = thedetail.file_name>
+			<cfset arguments.thestruct.thefiletype = "doc">
+			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<!--- Log --->
+			<cfinvoke component="extQueryCaching" method="log_assets">
+				<cfinvokeargument name="theuserid" value="#session.theuserid#">
+				<cfinvokeargument name="logaction" value="Delete">
+				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
+				<cfinvokeargument name="logfiletype" value="doc">
+				<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+			</cfinvoke>
+			<!--- Delete from files DB (including referenced data)--->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#files
+			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- Delete from collection --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_file_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Delete from favorites --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#users_favorites
+			WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND fav_kind = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+			AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Delete from Versions --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#versions
+			WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND ver_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Delete from Share Options --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#share_options
+			WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Delete labels --->
+			<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+			<!--- Custom field values --->
+			<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
+			<!--- Delete from file system --->
+			<cfset arguments.thestruct.hostid = session.hostid>
+			<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+			<cfset arguments.thestruct.qrydetail = thedetail>
+			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+			</cfthread>
+			<!--- Flush Cache --->
+			<cfset variables.cachetoken = resetcachetoken("files")>
+			<cfset resetcachetoken("folders")>
+			<cfset resetcachetoken("search")>
+		</cfif>
+		<cfreturn />
+	</cffunction>
+	
+	<!--- TRASH THE FILE --->
+	<cffunction name="trashfile" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#files
-		WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Delete from collection --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#collections_ct_files
-		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND col_file_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- Delete from favorites --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#users_favorites
-		WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND fav_kind = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-		AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
-		<!--- Delete from Versions --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#versions
-		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND ver_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- Delete from Share Options --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#share_options
-		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
-		<!--- Delete labels --->
-		<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
-		<!--- Custom field values --->
-		<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
-		<!--- Delete from file system --->
-		<cfset arguments.thestruct.hostid = session.hostid>
-		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
-		<cfset arguments.thestruct.qrydetail = thedetail>
-		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
-		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-		</cfthread>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
+		<!--- return --->
+		<cfreturn />
+	</cffunction>
+	
+	<!--- TRASH MANY FILE --->
+	<cffunction name="trashfilemany" output="true">
+		<cfargument name="thestruct" type="struct">
+		<!--- Loop --->
+		<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+			<cfset i = listfirst(i,"-")>
+			<!--- Update in_trash --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files 
+				SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+				WHERE file_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
 		<cfreturn />
+	</cffunction>
+	
+	<!--- Get files from trash --->
+	<cffunction name="gettrashfile" output="false" returntype="Query">
+		<!--- Param --->
+		<cfset var qry_file = "">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
+		<!--- Query --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_file" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#gettrashfile */ 
+				f.file_id AS id, 
+				f.file_name AS filename, 
+				f.folder_id_r, 
+				f.file_extension AS ext,
+				f.file_name_org AS filename_org, 
+				'doc' AS kind, 
+				f.link_kind, 
+				f.path_to_asset, 
+				f.cloud_url, 
+				f.cloud_url_org,
+				f.hashtag, 
+				'false' AS in_collection, 
+				'files' as what, 
+				'' AS folder_main_id_r
+					<!--- Permfolder --->
+					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+						, 'X' as permfolder
+					<cfelse>
+						,
+						CASE
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = f.folder_id_r
+							AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = f.folder_id_r
+							AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = f.folder_id_r
+							AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+							<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+								WHEN (SELECT DISTINCT fg5.grp_permission
+								FROM #session.hostdbprefix#folders_groups fg5
+								WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND fg5.folder_id_r = f.folder_id_r
+								AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+								WHEN (SELECT DISTINCT fg5.grp_permission
+								FROM #session.hostdbprefix#folders_groups fg5
+								WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND fg5.folder_id_r = f.folder_id_r
+								AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+								WHEN (SELECT DISTINCT fg5.grp_permission
+								FROM #session.hostdbprefix#folders_groups fg5
+								WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND fg5.folder_id_r = f.folder_id_r
+								AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+							</cfloop>
+							ELSE 'R'
+						END as permfolder
+					</cfif>
+				FROM 
+					#session.hostdbprefix#files f 
+				WHERE 
+					f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif qry_file.RecordCount NEQ 0>
+				<cfset myArray = arrayNew( 1 )>
+				<cfset temp= ArraySet(myArray, 1, qry_file.RecordCount, "False")>
+				<cfloop query="qry_file">
+					<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+					SELECT file_id_r
+					FROM #session.hostdbprefix#collections_ct_files
+					WHERE file_id_r = <cfqueryparam value="#qry_file.id#" cfsqltype="CF_SQL_VARCHAR"> 
+					</cfquery>
+					<cfif alert_col.RecordCount NEQ 0>
+						<cfset temp = QuerySetCell(qry_file, "in_collection", "True", currentRow  )>
+					</cfif>
+				</cfloop>
+			</cfif>
+			<cfreturn qry_file />
+	</cffunction>
+
+	<!--- Get trash files form trash directory --->
+	<cffunction name="thetrashfiles" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/')>
+			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">
+		<cfelse>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/">
+			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">
+		</cfif>
+		<cfreturn getfilestrash />
+	</cffunction>
+	
+	<!--- RESTORE THE FILE --->
+	<cffunction name="restorefile" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfset local = structNew()>
+		<cfset var thedetail = "">
+		<cfset var dir_parent_id = "">
+		<cfset var get_qry = "">
+		<!--- check the parent folder is exist --->
+		<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		
+		<cfif thedetail.RecordCount EQ 0>
+			<cfset local.istrash = "trash">
+		<cfelse>
+			<!---<cfquery datasource="#application.razuna.datasource#" name="theparentdetail">
+				SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>--->
+			<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfloop query="dir_parent_id">
+				<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif get_qry.in_trash EQ 'T'>
+					<cfset local.istrash = "trash">
+				<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+					<cfset local.root = "yes">
+					<!--- Update in_trash --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files 
+					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+					WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				</cfif>
+			</cfloop>
+			<!--- Flush Cache --->
+			<cfset variables.cachetoken = resetcachetoken("files")>
+			<cfset resetcachetoken("folders")>
+			<cfset resetcachetoken("search")>
+		</cfif>
+	
+		<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+			<cfset var is_trash = "intrash">
+		<cfelse>
+			<cfset var is_trash = "notrash">
+		</cfif>
+		<cfreturn is_trash />
 	</cffunction>
 	
 	<!--- REMOVE MANY FILES --->
@@ -396,26 +594,26 @@
 			WHERE file_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
-			<!--- Execute workflow --->
-			<cfif !arguments.thestruct.fromfolderremove>
-				<cfset arguments.thestruct.fileid = i>
-				<cfset arguments.thestruct.file_name = thedetail.file_name>
-				<cfset arguments.thestruct.thefiletype = "doc">
-				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-				<cfset arguments.thestruct.folder_action = false>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-				<cfset arguments.thestruct.folder_action = true>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			</cfif>
-			<!--- Log --->
-			<cfinvoke component="extQueryCaching" method="log_assets">
-				<cfinvokeargument name="theuserid" value="#session.theuserid#">
-				<cfinvokeargument name="logaction" value="Delete">
-				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
-				<cfinvokeargument name="logfiletype" value="doc">
-				<cfinvokeargument name="assetid" value="#i#">
-			</cfinvoke>
-			<cftransaction>
+			<cfif thedetail.recordcount NEQ 0>
+				<!--- Execute workflow --->
+				<cfif !arguments.thestruct.fromfolderremove>
+					<cfset arguments.thestruct.fileid = i>
+					<cfset arguments.thestruct.file_name = thedetail.file_name>
+					<cfset arguments.thestruct.thefiletype = "doc">
+					<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+					<cfset arguments.thestruct.folder_action = false>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+					<cfset arguments.thestruct.folder_action = true>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+				</cfif>
+				<!--- Log --->
+				<cfinvoke component="extQueryCaching" method="log_assets">
+					<cfinvokeargument name="theuserid" value="#session.theuserid#">
+					<cfinvokeargument name="logaction" value="Delete">
+					<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
+					<cfinvokeargument name="logfiletype" value="doc">
+					<cfinvokeargument name="assetid" value="#i#">
+				</cfinvoke>
 				<!--- Remove --->
 				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM #arguments.thestruct.hostdbprefix#files
@@ -446,20 +644,20 @@
 				DELETE FROM #arguments.thestruct.hostdbprefix#share_options
 				WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
-			</cftransaction>
-			<!--- Delete labels --->
-			<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
-			<!--- Custom field values --->
-			<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
-			<!--- Delete from file system --->
-			<cfset arguments.thestruct.id = i>
-			<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
-			<cfset arguments.thestruct.qrydetail = thedetail>
-			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
-			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-			</cfthread>
+				<!--- Delete labels --->
+				<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
+				<!--- Custom field values --->
+				<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
+				<!--- Delete from file system --->
+				<cfset arguments.thestruct.id = i>
+				<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+				<cfset arguments.thestruct.qrydetail = thedetail>
+				<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+				<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+				</cfthread>
+			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -505,7 +703,6 @@
 				<!--- <cfinvoke component="amazon" method="deletefolder" folderpath="versions/doc/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" /> --->
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error on removing a file from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#)" dump="#cfcatch#">
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -515,6 +712,8 @@
 	<cffunction name="filedetail" output="false">
 		<cfargument name="theid" type="string">
 		<cfargument name="thecolumn" type="string">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#filedetailfiles */ #arguments.thecolumn#
 		FROM #session.hostdbprefix#files
@@ -530,6 +729,7 @@
 		<!--- Params --->
 		<cfset var theassetsize = "">
 		<cfset var qry = structnew()>
+		<cfset var details = "">
 		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
@@ -547,7 +747,9 @@
 		<!--- Get proper folderaccess --->
 		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 		<!--- Add labels query --->
-		<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfif theaccess NEQ "">
+			<cfset QuerySetCell(details, "perm", theaccess)>
+		</cfif>
 		<!--- Get descriptions and keywords --->
 		<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detaildescfiles */ lang_id_r, file_keywords, file_desc
@@ -733,7 +935,7 @@
 			<!--- Update main record with dates --->
 			<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.file_id#" />
 			<!--- Query --->
-			<cfquery datasource="#variables.dsn#" name="qry">
+			<cfquery datasource="#variables.dsn#" name="qryfileupdate">
 			SELECT file_name_org, file_name, path_to_asset
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -741,15 +943,15 @@
 			</cfquery>
 			<!--- Select the record to get the original filename or assign if one is there --->
 			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
-				<cfset arguments.thestruct.qrydetail.filenameorg = qry.file_name_org>
-				<cfset arguments.thestruct.filenameorg = qry.file_name_org>
-				<cfset arguments.thestruct.file_name = qry.file_name>
+				<cfset arguments.thestruct.qrydetail.filenameorg = qryfileupdate.file_name_org>
+				<cfset arguments.thestruct.filenameorg = qryfileupdate.file_name_org>
+				<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
 			<cfelse>
 				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 			</cfif>
 			<!--- Lucene --->
 			<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
-			<cfset arguments.thestruct.qrydetail.path_to_asset = qry.path_to_asset>
+			<cfset arguments.thestruct.qrydetail.path_to_asset = qryfileupdate.path_to_asset>
 			<cfif application.razuna.storage EQ "local">
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
@@ -759,7 +961,7 @@
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
 			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qry.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -782,21 +984,28 @@
 			<!--- Query version --->
 			<cfquery name="qFile" datasource="#variables.dsn#">
 			SELECT av_link_url AS path_to_asset, av_link_url AS cloud_url, av_link_url AS cloud_url_org, 
-			'' AS link_kind, av_link_title AS filenameorg, av_link_title AS thefilename
+			'' AS link_kind, av_link_title AS filenameorg, av_link_title AS thefilename, thesize
 			FROM #session.hostdbprefix#additional_versions
 			WHERE av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Set filename --->
 			<cfset qry.thefilename = qFile.thefilename>
+			<!--- Correct download URL --->
+			<cfif qFile.path_to_asset NEQ "http">
+				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid##qFile.path_to_asset#">
+			<cfelse>
+				<cfset qry.theurl = qFile.cloud_url_org>
+			</cfif>
 			<!--- Set av value --->
 			<cfset qry.av = true>
 		<cfelse>
 			<!--- Images --->
 			<cfif arguments.thestruct.type EQ "img">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefileimg */ img_id, img_filename, img_extension, thumb_extension, img_filename_org filenameorg, folder_id_r,
-				link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefileimg */ img_id, img_filename, img_extension, 
+				thumb_extension, img_filename_org filenameorg, folder_id_r, link_kind, link_path_url, path_to_asset, 
+				cloud_url, cloud_url_org, img_size as thesize
 				FROM #session.hostdbprefix#images
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -810,8 +1019,8 @@
 			<!--- Videos --->
 			<cfelseif arguments.thestruct.type EQ "vid">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefilevid */ vid_filename, vid_extension, vid_name_org filenameorg, folder_id_r, link_kind, link_path_url,
-				path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefilevid */ vid_filename, vid_extension, vid_name_org filenameorg, 
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vid_size as thesize
 				FROM #session.hostdbprefix#videos
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -821,8 +1030,8 @@
 			<!--- Audios --->
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, folder_id_r, link_kind, link_path_url,
-				path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, 
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aud_size as thesize
 				FROM #session.hostdbprefix#audios
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -832,8 +1041,9 @@
 			<!--- Documents --->
 			<cfelse>
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefilefile */ file_name, file_extension, file_name_org filenameorg, folder_id_r, link_path_url, link_kind, 
-				link_path_url, path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefilefile */ file_name, file_extension, file_name_org filenameorg, 
+				folder_id_r, link_path_url, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org,
+				file_size as thesize
 				FROM #session.hostdbprefix#files
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -931,15 +1141,15 @@
 		<cfargument name="thestruct" type="struct">
 		<cfparam name="arguments.thestruct.doc_id" default="">
 		<!--- Loop over files --->
-		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-			<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
-				<cfset arguments.thestruct.doc_id = "">
-				<cfset arguments.thestruct.doc_id = listfirst(fileid,"-")>
-				<cfif arguments.thestruct.doc_id NEQ "">
-					<cfinvoke method="move" thestruct="#arguments.thestruct#" />
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
+				<cfset attributes.intstruct.doc_id = "">
+				<cfset attributes.intstruct.doc_id = listfirst(fileid,"-")>
+				<cfif attributes.intstruct.doc_id NEQ "">
+					<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 				</cfif>
 			</cfloop>
-		<!--- </cfthread> --->
+		</cfthread>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("files")>
@@ -952,28 +1162,32 @@
 			<!--- Get file details --->
 			<cfinvoke method="filedetail" theid="#arguments.thestruct.doc_id#" thecolumn="file_name, folder_id_r, file_name_org filenameorg, lucene_key, link_kind, path_to_asset" returnvariable="arguments.thestruct.qrydoc">
 			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
+			<cfif arguments.thestruct.qrydoc.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
-				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				SET 
+				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<cfthread intstruct="#arguments.thestruct#">
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="doc" fileid="#attributes.intstruct.doc_id#" />
+					<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.doc_id#" category="doc" notfile="T">
 					<!--- Execute workflow --->
-					<cfset attributes.intstruct.fileid = attributes.intstruct.doc_id>
-					<cfset attributes.intstruct.file_name = attributes.intstruct.qrydoc.file_name>
-					<cfset attributes.intstruct.thefiletype = "doc">
-					<cfset attributes.intstruct.folder_id = attributes.intstruct.folder_id>
-					<cfset attributes.intstruct.folder_action = false>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-					<cfset attributes.intstruct.folder_action = true>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#attributes.intstruct#" />
-				</cfthread>
+					<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
+					<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
+					<cfset arguments.thestruct.thefiletype = "doc">
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+					<cfset arguments.thestruct.folder_action = false>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfset arguments.thestruct.folder_action = true>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+				<!--- </cfthread> --->
 				<!--- Log --->
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id)>
 			</cfif>
@@ -1059,23 +1273,45 @@
 		</cfif>
 		</cfquery>
 		<!--- Get proper folderaccess --->
-		<cfloop query="qry">
-			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-			<!--- Add labels query --->
-			<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
-		</cfloop>
+		<cfif arguments.thestruct.fa NEQ "c.basket" AND arguments.thestruct.fa NEQ "c.basket_put">
+			<cfloop query="qry">
+				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+				<!--- Add labels query --->
+				<cfif theaccess NEQ "">
+					<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+				</cfif>
+			</cfloop>
+		</cfif>
 		<cfreturn qry>
 	</cffunction>
 
 	<!--- Get description and keywords for print --->
 	<cffunction name="gettext" output="false">
 		<cfargument name="qry" type="query">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
+		<!--- Get how many loop --->
+		<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
+		<!--- Set outer loop --->
+		<cfset var pos_start = 1>
+		<cfset var pos_end = howmanyloop>
+		<!--- Set inner loop --->
+		<cfset var q_start = 1>
+		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
-		FROM #session.hostdbprefix#files_desc
-		WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
-		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+			<cfloop from="#pos_start#" to="#pos_end#" index="i">
+				<cfif q_start NEQ 1>
+					UNION ALL
+				</cfif>
+				SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
+				FROM #session.hostdbprefix#files_desc
+				WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
+				AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfset q_start = q_end + 1>
+		    	<cfset q_end = q_end + 990>
+		    </cfloop>
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qryintern>
@@ -1086,12 +1322,27 @@
 		<cfargument name="qry" type="query">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
+		<!--- Get how many loop --->
+		<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
+		<!--- Set outer loop --->
+		<cfset var pos_start = 1>
+		<cfset var pos_end = howmanyloop>
+		<!--- Set inner loop --->
+		<cfset var q_start = 1>
+		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettextrm */ file_meta rawmetadata
-		FROM #session.hostdbprefix#files
-		WHERE file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfloop from="#pos_start#" to="#pos_end#" index="i">
+				<cfif q_start NEQ 1>
+					UNION ALL
+				</cfif>
+				SELECT /* #variables.cachetoken#gettextrm */ file_meta rawmetadata
+				FROM #session.hostdbprefix#files
+				WHERE file_id IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfset q_start = q_end + 1>
+		    	<cfset q_end = q_end + 990>
+		    </cfloop>
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qryintern>
@@ -1134,13 +1385,131 @@
 	<!--- Check for existing MD5 mash records --->
 	<cffunction name="checkmd5" output="false">
 		<cfargument name="md5hash" type="string">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
+		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#checkmd5 */ file_id
 		FROM #session.hostdbprefix#files
 		WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfquery>
 		<cfreturn qry />
+	</cffunction>
+	
+	<!--- Update all copy Metadata --->
+	<cffunction name="copymetadataupdate" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- select file name --->
+		<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
+			SELECT file_name 
+			FROM #session.hostdbprefix#files
+			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery> --->
+		<!--- select file detail --->
+		<cfquery datasource="#application.razuna.datasource#" name="thefiletext">
+			SELECT file_desc,file_keywords 
+			FROM #session.hostdbprefix#files_desc
+			WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfif arguments.thestruct.insert_type EQ 'replace'>
+			<cfloop list="#arguments.thestruct.idlist#" index="i">
+				<!--- update file name --->
+				<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+					UPDATE #session.hostdbprefix#files
+					SET file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.file_name#">
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery> --->
+				<cfquery datasource="#application.razuna.datasource#" name="checkid">
+					SELECT file_id_r
+					FROM #session.hostdbprefix#files_desc
+					WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif checkid.RecordCount>
+					<!--- update file detail --->
+					<cfquery datasource="#application.razuna.datasource#" name="updatefiletext">
+						UPDATE #session.hostdbprefix#files_desc
+						SET file_desc = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefiletext.file_desc#">,
+						file_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefiletext.file_keywords#">
+						WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#files_desc
+						(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
+						VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">,
+						<cfqueryparam value="#thefiletext.file_desc#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam value="#thefiletext.file_keywords#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+					</cfquery>
+				</cfif>
+			</cfloop>
+		<cfelse>
+			<cfloop list="#arguments.thestruct.idlist#" index="i">
+				<!--- <cfquery datasource="#application.razuna.datasource#" name="thefiledetail">
+					SELECT file_name 
+					FROM #session.hostdbprefix#files
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery> --->
+				<cfquery datasource="#application.razuna.datasource#" name="thefiletextdetail">
+					SELECT file_desc,file_keywords 
+					FROM #session.hostdbprefix#files_desc
+					WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+					UPDATE #session.hostdbprefix#files
+					SET file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefiledetail.file_name# #thedetail.file_name#">
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery> --->
+				<cfif thefiletextdetail.RecordCount>
+					<cfquery datasource="#application.razuna.datasource#" name="updatefiletext">
+						UPDATE #session.hostdbprefix#files_desc
+						SET file_desc = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefiletextdetail.file_desc# #thefiletext.file_desc#">,
+						file_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefiletextdetail.file_keywords# #thefiletext.file_keywords#">
+						WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#files_desc
+						(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
+						VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">,
+						<cfqueryparam value="#thefiletext.file_desc#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam value="#thefiletext.file_keywords#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+					</cfquery>
+				</cfif>
+			</cfloop>
+		</cfif>
+	</cffunction>
+	
+	<!--- Get all asset from folder --->
+	<cffunction name="getAllFolderAsset" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#variables.dsn#" name="qry_data">
+			SELECT file_id AS id,file_name AS filename
+			FROM #session.hostdbprefix#files
+			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfreturn qry_data>
 	</cffunction>
 	
 </cfcomponent>

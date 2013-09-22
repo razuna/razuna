@@ -39,14 +39,15 @@
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" />
+<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" /> --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css" />
 <!--- Cache JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js"></script>
@@ -54,6 +55,7 @@
 <script type="text/javascript" src="js/global.js"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <style>
+.ui-dialog .ui-dialog-titlebar-close{ margin:0px; }
 .ui-widget { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 12px; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 1em; }
 </style>
@@ -67,21 +69,19 @@
 </div>
 <div id="footer">#trim( footercontent )#</div>
 <!--- Window Div --->
-<div id="thewindowcontent1" style="padding:10px;"></div>
-<!--- GS Code --->
+<div id="thewindowcontent1" style="padding:10px;display:none;"></div>
+<!--- Forum Code --->
 <script type="text/javascript" charset="utf-8">
-  var is_ssl = ("https:" == document.location.protocol);
-  var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
-  document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+var hostURL = "//css.zohostatic.com/discussions/v1";//NO OUTPUTENCODING
+document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E")); //No I18N
 </script>
-<script type="text/javascript" charset="utf-8">
-  var feedback_widget_options = {};
-  feedback_widget_options.display = "overlay";  
-  feedback_widget_options.company = "razuna";
-  feedback_widget_options.placement = "hidden";
-  feedback_widget_options.color = "##222";
-  feedback_widget_options.style = "question";
-  var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+<script type="text/javascript">
+var zdFBWSettings = {};
+zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
+zdFBWSettings.fbURL = "http://forums.razuna.org/fbw?fbwId=125591000000015005";
+zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
+zdFBWSettings.display = "popout";
+var zdFBW = new ZDiscussions.loadZDFeedbackTab;
 </script>
 <!--- Dummy div --->
 <div id="loaddummy" style="display:none;"></div>

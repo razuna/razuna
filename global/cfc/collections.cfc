@@ -60,6 +60,7 @@
 	FROM #session.hostdbprefix#collections c
 	LEFT JOIN #session.hostdbprefix#collections_text ct ON c.col_id = ct.col_id_r 
 	WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND c.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	<cfif structkeyexists(arguments.thestruct,"withfolder")>
 		AND c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 	</cfif>
@@ -428,11 +429,543 @@
 		END as theextension
 	FROM #session.hostdbprefix#collections_ct_files ct
 	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	GROUP BY ct.col_id_r, ct.file_id_r, ct.col_file_type, ct.col_item_order, ct.col_file_format
 	ORDER BY ct.col_item_order
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
+</cffunction>
+
+<!--- MOVE COLLECTION ASSET TO TRASH--->
+<cffunction name="col_asset_move_trash" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#Variables.dsn#" name="move_trash">
+		UPDATE #session.hostdbprefix#collections_ct_files 
+		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">,
+		col_item_order = <cfqueryparam cfsqltype="cf_sql_integer" value="1">
+		WHERE col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+		AND file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+</cffunction>
+
+<!--- MOVE COLLECTION TO TRASH--->
+<cffunction name="col_move_trash" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#Variables.dsn#" name="move_trash">
+		UPDATE #session.hostdbprefix#collections 
+		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+</cffunction>
+
+<!--- GET COLLECTION FILES FROM TRASH --->
+<cffunction name="get_trash_files" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT c.col_id_r AS col_id, col.folder_id_r AS folder_id, i.img_filename AS filename, c.file_id_r AS file_id, i.folder_id_r, '' AS folder_main_id_r, 
+		c.col_item_order, i.img_id AS id, i.thumb_extension AS ext, i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind AS link_kind,
+		i.path_to_asset, i.cloud_url, i.cloud_url_org, i.hashtag
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = i.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = i.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = i.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = i.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = i.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = i.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#collections_ct_files AS c
+		INNER JOIN  #session.hostdbprefix#images i ON c.file_id_r = i.img_id
+		LEFT JOIN  #session.hostdbprefix#collections AS col ON c.col_id_r = col.col_id
+		WHERE c.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND c.col_file_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<!--- Audios --->
+		UNION ALL
+		SELECT c.col_id_r AS col_id, col.folder_id_r AS folder_id, a.aud_name AS filename, c.file_id_r AS file_id, a.folder_id_r, '' AS folder_main_id_r, 
+		c.col_item_order, a.aud_id AS id, a.aud_extension AS ext, a.aud_name_org AS filename_org, 'aud' AS kind, a.link_kind,
+		a.path_to_asset, a.cloud_url, a.cloud_url_org, a.hashtag
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = a.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = a.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = a.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = a.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = a.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = a.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#collections_ct_files AS c
+		INNER JOIN  #session.hostdbprefix#audios a  ON c.file_id_r = a.aud_id
+		LEFT JOIN  #session.hostdbprefix#collections AS col ON c.col_id_r = col.col_id
+		WHERE c.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND c.col_file_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="aud">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<!--- Videos --->
+		UNION ALL
+		SELECT c.col_id_r AS col_id, col.folder_id_r AS folder_id, v.vid_filename AS filename, c.file_id_r AS file_id, v.folder_id_r, '' AS folder_main_id_r, 
+		c.col_item_order, v.vid_id AS id, v.vid_extension AS ext, v.vid_name_image AS filename_org, 'vid' AS kind, v.link_kind, v.path_to_asset, 
+		v.cloud_url, v.cloud_url_org, v.hashtag
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = v.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = v.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = v.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = v.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = v.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = v.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#collections_ct_files AS c
+		INNER JOIN  #session.hostdbprefix#videos v ON c.file_id_r = v.vid_id
+		LEFT JOIN  #session.hostdbprefix#collections AS col ON c.col_id_r = col.col_id
+		WHERE c.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND c.col_file_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="vid">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<!--- Files --->
+		UNiON ALL
+		SELECT c.col_id_r AS col_id, col.folder_id_r AS folder_id, f.file_name AS filename, c.file_id_r AS file_id, f.folder_id_r, '' AS folder_main_id_r, 
+		c.col_item_order, f.file_id AS id,
+		f.file_extension AS ext, f.file_name_org AS filename_org, 'doc' AS kind, f.link_kind, f.path_to_asset, f.cloud_url, 
+		f.cloud_url_org, f.hashtag
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = f.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = f.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = f.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#collections_ct_files AS c
+		INNER JOIN  #session.hostdbprefix#files f  ON c.file_id_r = f.file_id
+		LEFT JOIN  #session.hostdbprefix#collections AS col ON c.col_id_r = col.col_id
+		WHERE c.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND c.col_file_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="doc">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
+<!--- GET COLLECTION FOLDERS FROM TRASH --->
+<cffunction name="get_trash_folders" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT '' AS col_id, f.folder_id,f.folder_level,f.folder_name AS filename, f.folder_id AS file_id, f.folder_id_r, f.folder_main_id_r, '' AS col_item_order, 
+		f.folder_id AS id, '' AS ext, '' AS filename_org, 'folder' AS kind, '' AS link_kind, '' AS path_to_asset, '' AS cloud_url, 
+		'' AS cloud_url_org, '' AS hashtag
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = f.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = f.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = f.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#folders f 
+		WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND f.folder_is_collection = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
+<!--- GET COLLECTION FROM TRASH  --->
+<cffunction name="get_trash_collection" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var qry = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT c.col_id AS col_id, c.folder_id_r AS folder_id, col_text.col_name AS filename, '' AS file_id, c.folder_id_r, '' AS folder_main_id_r, 
+		'' AS col_item_order, c.col_id AS id, '' AS ext, '' AS filename_org, 'collection' AS kind, '' AS link_kind, '' AS path_to_asset, 
+		'' AS cloud_url, '' AS cloud_url_org, '' AS hashtag
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = c.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = c.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = c.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = c.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = c.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = c.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#collections AS c
+		INNER JOIN #session.hostdbprefix#collections_text AS col_text ON col_text.col_id_r = c.col_id
+		WHERE c.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
+<!--- RESTORE COLLECTION ASSET--->
+<cffunction name="restore_col_asset" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#Variables.dsn#" name="thedetail">
+	SELECT col_id,folder_id_r AS folder_id FROM #session.hostdbprefix#collections 
+	WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<cfquery datasource="#Variables.dsn#" name="thefolderdetail">
+		SELECT folder_id,folder_id_r,folder_main_id_r FROM #session.hostdbprefix#folders
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		</cfquery>
+		<cfquery datasource="#Variables.dsn#" name="dir_parent_id">
+		SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+		WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefolderdetail.folder_main_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+				<cfbreak />
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+				<cfquery datasource="#Variables.dsn#" name="update_trash">
+				UPDATE #session.hostdbprefix#collections_ct_files 
+				SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				WHERE col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+				AND file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("general")>
+	</cfif>
+	<cfif isDefined('local.istrash') AND local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
+</cffunction>
+
+<!--- CHECK PARENT DIRECTORY FOR RESTORE COLLECTION --->
+<cffunction name="restore_collection" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#Variables.dsn#" name="thedetail">
+	SELECT folder_id_r,folder_main_id_r FROM #session.hostdbprefix#folders
+	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<cfquery datasource="#Variables.dsn#" name="dir_parent_id">
+		SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders
+		WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+				<cfbreak />
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+				<cfquery datasource="#Variables.dsn#" name="qry_update">
+				UPDATE #session.hostdbprefix#collections 
+				SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+				AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("folder")>
+	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
+</cffunction>
+
+<!--- RESTORE ASSET COLLECTION --->
+<cffunction name="restoreasset" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#Variables.dsn#" name="qry_restore">
+		UPDATE #session.hostdbprefix#collections_ct_files 
+		SET col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">,
+			in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+</cffunction>
+
+<!--- RESTORE COLLECTION --->
+<cffunction name="restorecollection" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#Variables.dsn#" name="qry_restore">
+		UPDATE #session.hostdbprefix#collections
+		SET folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">,
+			in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- COLLECTION TRASH COUNT IN COLLECTIONS--->
+<cffunction name="get_col_count" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_count">
+		SELECT COUNT(col_id) AS cnt
+		FROM #session.hostdbprefix#collections 
+		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry_count>
+</cffunction>
+
+<!--- FOLDER TRASH COUNT IN COLLECTIONS--->
+<cffunction name="getCollectionFolderCount" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_count">
+		SELECT COUNT(folder_id) AS cnt
+		FROM #session.hostdbprefix#folders WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND folder_is_collection = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry_count>
+</cffunction>
+
+<!---  FILE TRASH COUNT COLLECTION--->
+<cffunction name="getCollectionFileCount" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_count">
+		SELECT COUNT(col_id_r) AS cnt
+		FROM #session.hostdbprefix#collections_ct_files 
+		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry_count>
 </cffunction>
 
 <!--- MOVE COLLECTION ITEMS --->
@@ -481,11 +1014,35 @@
 <!--- REMOVE ITEM FROM COLLECTION --->
 <cffunction name="removeitem" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#collections_ct_files
 	WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
+	<!--- Rearrange the order --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#collections_ct_files
+	SET col_item_order = col_item_order - 1
+	WHERE col_item_order > <cfqueryparam value="#arguments.thestruct.order#" cfsqltype="cf_sql_numeric">
+	AND col_item_order <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 1
+	AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
+</cffunction>
+
+<!--- TRASH ITEM FROM COLLECTION --->
+<cffunction name="trashitem" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Update in_trash --->
+	<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#collections_ct_files 
+		SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Rearrange the order --->
 	<cfquery datasource="#variables.dsn#">
 	UPDATE #session.hostdbprefix#collections_ct_files
@@ -501,24 +1058,57 @@
 <!--- REMOVE COLLECTION --->
 <cffunction name="remove" output="false">
 	<cfargument name="thestruct" type="struct">
-	<!--- delete collection db --->
-	<cfquery datasource="#variables.dsn#">
-	DELETE FROM #session.hostdbprefix#collections
-	WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<!--- MSSQL: Drop all constraints --->
+	<cfif application.razuna.thedatabase EQ "mssql">
+		<!--- <cfquery datasource="#application.razuna.datasource#">
+		ALTER TABLE #application.razuna.theschema#.#session.hostdbprefix#folders DROP CONSTRAINT
+		</cfquery> --->
+	<!--- MySQL --->
+	<cfelseif application.razuna.thedatabase EQ "mysql">
+		<cfquery datasource="#application.razuna.datasource#">
+		SET foreign_key_checks = 0
+		</cfquery>
+	<!--- H2 --->
+	<cfelseif application.razuna.thedatabase EQ "h2">
+		<cfquery datasource="#application.razuna.datasource#">
+		ALTER TABLE #session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
+		</cfquery>
+	</cfif>
+	<!--- delete collection files db --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#collections_ct_files
+	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	</cfquery>
 	<!--- delete collection_text db --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#collections_text
 	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
-	<!--- delete collection files db --->
-	<cfquery datasource="#variables.dsn#">
-	DELETE FROM #session.hostdbprefix#collections_ct_files
-	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+	<!--- delete collection db --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#collections
+	WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	</cfquery>
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
+</cffunction>
+
+
+<!--- TRASH COLLECTION --->
+<cffunction name="trash" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Update in_trash --->
+	<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#collections 
+		SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
 </cffunction>
@@ -943,5 +1533,211 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Remove all from Trash --->
+<cffunction name="trash_remove_all" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Files --->
+	<cfif arguments.thestruct.trashkind EQ "files">
+		<!--- Get all trash files--->
+		<cfinvoke method="get_trash_files" returnvariable="arguments.qry" />
+		<!--- Thread --->
+		<cfthread instruct="#arguments#">
+			<cfloop query="attributes.instruct.qry">
+				<cfset attributes.instruct.thestruct.id = id>
+				<cfset attributes.instruct.thestruct.col_id = col_id>
+				<cfset attributes.instruct.thestruct.order = col_item_order>
+				<!--- Remove --->
+				<cfinvoke method="removeitem" thestruct="#attributes.instruct.thestruct#" />
+			</cfloop>
+		</cfthread>
+	<!--- Collections --->
+	<cfelseif arguments.thestruct.trashkind EQ "collections">
+		<!--- Get all trash collections--->
+		<cfinvoke method="get_trash_collection" returnvariable="arguments.qry" />
+		<!--- Thread --->
+		<cfthread instruct="#arguments#">
+			<cfloop query="attributes.instruct.qry">
+				<cfset attributes.instruct.thestruct.id = id>
+				<!--- Remove --->
+				<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
+			</cfloop>
+		</cfthread>
+	<!--- Folders --->
+	<cfelse>
+		<!--- Get all trash folders --->
+		<cfinvoke method="get_trash_folders" returnvariable="arguments.qry" />
+		<!--- Thread --->
+		<cfthread instruct="#arguments#">
+			<cfloop query="attributes.instruct.qry">
+				<cfset attributes.instruct.thestruct.folder_id = folder_id>
+				<!--- Remove --->
+				<cfinvoke component="folders" method="remove" thestruct="#attributes.instruct.thestruct#" />
+			</cfloop>
+		</cfthread>
+	</cfif>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Set all collection files ids in the session --->
+<cffunction name="restoreallcollectionfiles" output="false">
+	<!--- Set file id --->
+	<cfset session.file_id ="">
+	<!--- Get collection files in the trash --->
+	<cfinvoke method="get_trash_files" returnvariable="qry_trash" />
+	<cfloop list="#valueList(qry_trash.file_id)#" index="i">
+		<!--- set session file ids --->
+		<cfset session.file_id = listAppend(session.file_id,i)>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Restore all collection files in the trash --->
+<cffunction name="restore_col_file" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfloop list="#arguments.thestruct.file_id#" index="i">
+		<cfif i CONTAINS "-">
+			<cfset arguments.thestruct.file_id = listFirst(i,'-')>
+		<cfelse>
+			<cfset arguments.thestruct.file_id = i>
+		</cfif>
+		<cfdump var="#arguments.thestruct.file_id#">
+		<!--- update the collection files --->
+		<cfinvoke method="restoreasset" thestruct="#arguments.thestruct#">
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Set all collections ids in the session --->
+<cffunction name="restoreallcollections" output="false">
+	<!--- Set file id --->
+	<cfset session.file_id ="">
+	<!--- Get all trash collections--->
+	<cfinvoke method="get_trash_collection" returnvariable="qry" />
+	<cfloop list="#valueList(qry.col_id)#" index="i">
+		<!--- set session col ids --->
+		<cfset session.file_id = listAppend(session.file_id,i)>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
+
+<!--- Restore all collections in the trash --->
+<cffunction name="restore_all_collections" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfloop list="#arguments.thestruct.col_id#" index="i">
+		<cfset arguments.thestruct.col_id = i>
+		<!--- update the collection  --->
+		<cfinvoke method="restorecollection" thestruct="#arguments.thestruct#" />
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
+
+<!--- Store selected collection file ids --->
+<cffunction name="trash_file_values" output="false">
+	<!--- Set file id --->
+	<cfset session.file_id ="">
+	<!--- Get collection files in the trash --->
+	<cfinvoke method="get_trash_files" returnvariable="qry_trash" />
+	<cfloop list="#valueList(qry_trash.file_id)#" index="i">
+		<!--- set session file ids --->
+		<cfset session.file_id = listAppend(session.file_id,i)>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
+<!--- Remove selectedcollection files --->
+<cffunction name="remove_selected_col_files" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfloop list="#arguments.thestruct.file_id#" index="i">
+		<cfif i CONTAINS "-">
+			<cfset file_id = listFirst(i,'-')>
+		<cfelse>
+			<cfset file_id = i>
+		</cfif>
+		<!--- Get the details --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT col_id_r AS col_id,file_id_r AS id,col_item_order 
+			FROM #session.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#file_id#" cfsqltype="cf_sql_varchar">
+			AND in_trash = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfif qry.RecordCount GTE 1>
+			<cfloop query="qry">
+				<cfset arguments.thestruct.id = id>
+				<cfset arguments.thestruct.col_id = col_id>
+				<cfset arguments.thestruct.order = col_item_order>
+				<!--- Remove --->
+				<cfinvoke method="removeitem" thestruct="#arguments.thestruct#" />
+			</cfloop>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
+
+<!--- Store collection ids in session --->
+<cffunction name="trash_col_values" output="false">
+	<!--- Set col id --->
+	<cfset session.file_id ="">
+	<!--- Get all trash collections--->
+	<cfinvoke method="get_trash_collection" returnvariable="qry" />
+	<cfloop list="#valueList(qry.col_id)#" index="i">
+		<!--- set session col ids --->
+		<cfset session.file_id = listAppend(session.file_id,i)>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
+
+<!--- Restore selected collections --->
+<cffunction name="restore_selected_collections" output="false">
+<cfargument name="thestruct" type="struct">
+	<cfloop list="#arguments.thestruct.col_id#" index="i">
+		<cfif i CONTAINS "-">
+			<cfset arguments.thestruct.col_id = listFirst(i,'-')>
+		<cfelse>
+			<cfset arguments.thestruct.col_id = i>
+		</cfif>
+		<!--- update the collection  --->
+		<cfinvoke method="restorecollection" thestruct="#arguments.thestruct#" />
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
+
+<!--- Remove selected collections --->
+<cffunction name="selected_collection_remove" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfloop list="#arguments.thestruct.col_id#" index="i">
+		<cfif i CONTAINS "-">
+			<cfset arguments.thestruct.id = listFirst(i,'-')>
+		<cfelse>
+			<cfset arguments.thestruct.id = i>
+		</cfif>
+		<!--- Remove --->
+		<cfinvoke method="remove" thestruct="#arguments.thestruct#" />
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Store folder ids in session--->
+<cffunction name="trash_folder_values" output="false">
+	<!--- Set col id --->
+	<cfset session.file_id ="">
+	<!--- Get all trash folders--->
+	<cfinvoke method="get_trash_folders" returnvariable="qry" />
+	<cfloop list="#valueList(qry.folder_id)#" index="i">
+		<!--- set session col ids --->
+		<cfset session.file_id = listAppend(session.file_id,i)>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />	
+</cffunction>
 
 </cfcomponent>

@@ -116,6 +116,7 @@
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
+				AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 				)
@@ -136,6 +137,7 @@
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
+			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY #sortby#
 		)
@@ -150,26 +152,34 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsvid */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+			SELECT * FROM (
+			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+		</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+				<cfelse>v
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
+		AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
-			AND v.vid_id NOT IN (
-				SELECT TOP #min# vid_id
-				FROM #session.hostdbprefix#videos
-				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-				AND (vid_group IS NULL OR vid_group = '')
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
+			) sorted_inline_view
+			 ) resultSet
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 		</cfif>
-		ORDER BY #sortby#
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #mysqloffset#, #session.rowmaxpage#
+				ORDER BY #sortby# LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
@@ -195,7 +205,9 @@
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#vid_id#">
 			</cfquery>
 			<!--- Add labels query --->
-			<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			<cfif qry_l.recordcount NEQ 0>
+				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -559,74 +571,250 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
 	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, v.lucene_key, v.link_kind, v.link_path_url, v.path_to_asset, v.vid_group" returnvariable="thedetail">
-	<!--- Execute workflow --->
-	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-	<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-	<cfset arguments.thestruct.thefiletype = "vid">
-	<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-	<cfset arguments.thestruct.folder_action = false>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-	<cfset arguments.thestruct.folder_action = true>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-	<!--- Update main record with dates --->
-	<cfinvoke component="global" method="update_dates" type="vid" fileid="#thedetail.vid_group#" />
-	<!--- Log --->
-	<cfinvoke component="extQueryCaching" method="log_assets">
-		<cfinvokeargument name="theuserid" value="#session.theuserid#">
-		<cfinvokeargument name="logaction" value="Delete">
-		<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
-		<cfinvokeargument name="logfiletype" value="vid">
-		<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
-	</cfinvoke>
-	<!--- Delete from files DB (including referenced data)--->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#videos
-	WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
-	<!--- Delete from collection --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#collections_ct_files
-	WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-	</cfquery>
-	<!--- Delete from favorites --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#users_favorites
-	WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-	AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-	</cfquery>
-	<!--- Delete from Versions --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#versions
-	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-	</cfquery>
-	<!--- Delete from Share Options --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#share_options
-	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	</cfquery>
-	<!--- Delete labels --->
-	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
-	<!--- Custom field values --->
-	<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
-	<!--- Delete from file system --->
-	<cfset arguments.thestruct.hostid = session.hostid>
-	<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
-	<cfset arguments.thestruct.qrydetail = thedetail>
-	<cfset arguments.thestruct.link_kind = thedetail.link_kind>
-	<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-	<cfthread intstruct="#arguments.thestruct#">
-		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-	</cfthread>
+	<cfif thedetail.recordcount NEQ 0>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+		<cfset arguments.thestruct.thefiletype = "vid">
+		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="vid" fileid="#thedetail.vid_group#" />
+		<!--- Log --->
+		<cfinvoke component="extQueryCaching" method="log_assets">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
+			<cfinvokeargument name="logaction" value="Delete">
+			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
+			<cfinvokeargument name="logfiletype" value="vid">
+			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+		</cfinvoke>
+		<!--- Delete from files DB (including referenced data)--->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#videos
+		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Delete from collection --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#collections_ct_files
+		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from favorites --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#users_favorites
+		WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+		AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete from Versions --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#versions
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from Share Options --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#share_options
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete labels --->
+		<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+		<!--- Custom field values --->
+		<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("videos")>
+		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<!--- Delete from file system --->
+		<cfset arguments.thestruct.hostid = session.hostid>
+		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+		<cfset arguments.thestruct.qrydetail = thedetail>
+		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+		</cfthread>
+	</cfif>
 	<cfreturn />
 </cffunction>
 
+<!--- TRASH THE VIDEO --->
+<cffunction name="trashvideo" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Update in_trash --->
+	<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#videos SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<!--- return --->
+	<cfreturn />
+</cffunction>
+
+<!--- TRASH MANY VIDEO --->
+<cffunction name="trashvideomany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop --->
+	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfreturn />
+</cffunction>
+
+<!--- Get videos from trash --->
+<cffunction name="gettrashvideos" output="false" returntype="Query">
+		<!--- Param --->
+		<cfset var qry_video = "">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("videos")>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#gettrashvideos */ 
+			v.vid_id AS id, 
+			v.vid_filename AS filename, 
+			v.folder_id_r AS folder_id_r, 
+			v.vid_extension AS ext, 
+			v.vid_name_image AS filename_org, 
+			'vid' AS kind, 
+			v.link_kind, 
+			v.path_to_asset, 
+			v.cloud_url, 
+			v.cloud_url_org, 
+			v.hashtag, 
+			'false' AS in_collection, 
+			'videos' as what, 
+			'' AS folder_main_id_r
+				<!--- Permfolder --->
+				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+					, 'X' as permfolder
+				<cfelse>
+					,
+					CASE
+						WHEN (SELECT DISTINCT fg5.grp_permission
+						FROM #session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg5.folder_id_r = v.folder_id_r
+						AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+						WHEN (SELECT DISTINCT fg5.grp_permission
+						FROM #session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg5.folder_id_r = v.folder_id_r
+						AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+						WHEN (SELECT DISTINCT fg5.grp_permission
+						FROM #session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg5.folder_id_r = v.folder_id_r
+						AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+						<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = v.folder_id_r
+							AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = v.folder_id_r
+							AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = v.folder_id_r
+							AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+						</cfloop>
+						ELSE 'R'
+					END as permfolder
+				</cfif>
+			FROM #session.hostdbprefix#videos v 
+			WHERE v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfif qry_video.RecordCount NEQ 0>
+			<cfset myArray = arrayNew( 1 )>
+			<cfset temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
+			<cfloop query="qry_video">
+				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+				SELECT file_id_r
+				FROM #session.hostdbprefix#collections_ct_files
+				WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				</cfquery>
+				<cfif alert_col.RecordCount NEQ 0>
+					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", currentRow  )>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<cfreturn qry_video />
+</cffunction>
+
+<!--- RESTORE THE VIDEO --->
+<cffunction name="restorevideos" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- check the parent folder is exist --->
+	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+					<!--- Update in_trash --->
+					<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#videos 
+						SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+						WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+			</cfif>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("videos")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
+	</cfif>
+	<!--- set is trash --->
+	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
+</cffunction>
 <!--- REMOVE MANY VIDEO --->
 <cffunction name="removevideomany" output="true">
 	<cfargument name="thestruct" type="struct">
@@ -640,27 +828,26 @@
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
 		<cfinvoke method="getdetails" vid_id="#i#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
-		<!--- Execute workflow --->
-		<cfif !arguments.thestruct.fromfolderremove>
-			<cfset arguments.thestruct.fileid = i>
-			<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-			<cfset arguments.thestruct.thefiletype = "vid">
-			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-			<cfset arguments.thestruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		</cfif>
-		<!--- Log --->
-		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#session.theuserid#">
-			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
-			<cfinvokeargument name="logfiletype" value="vid">
-			<cfinvokeargument name="assetid" value="#i#">
-		</cfinvoke>
-		<cftransaction>
-			<!--- Delete from files DB (including referenced data)--->
+		<cfif thedetail.recordcount NEQ 0>
+			<!--- Execute workflow --->
+			<cfif !arguments.thestruct.fromfolderremove>
+				<cfset arguments.thestruct.fileid = i>
+				<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+				<cfset arguments.thestruct.thefiletype = "vid">
+				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			</cfif>
+			<!--- Log --->
+			<cfinvoke component="extQueryCaching" method="log_assets">
+				<cfinvokeargument name="theuserid" value="#session.theuserid#">
+				<cfinvokeargument name="logaction" value="Delete">
+				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
+				<cfinvokeargument name="logfiletype" value="vid">
+				<cfinvokeargument name="assetid" value="#i#">
+			</cfinvoke>
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #arguments.thestruct.hostdbprefix#videos
 			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
@@ -690,24 +877,25 @@
 			DELETE FROM #arguments.thestruct.hostdbprefix#share_options
 			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
-		</cftransaction>
-		<!--- Delete labels --->
-		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
-		<!--- Custom field values --->
-		<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
-		<!--- Delete from file system --->
-		<cfset arguments.thestruct.id = i>
-		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
-		<cfset arguments.thestruct.qrydetail = thedetail>
-		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
-		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-		</cfthread>
+			<!--- Delete labels --->
+			<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
+			<!--- Custom field values --->
+			<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
+			<!--- Delete from file system --->
+			<cfset arguments.thestruct.id = i>
+			<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+			<cfset arguments.thestruct.qrydetail = thedetail>
+			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+			</cfthread>
+		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 
@@ -808,11 +996,15 @@
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Get proper folderaccess --->
-	<cfloop query="qry">
-		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-		<!--- Add labels query --->
-		<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
-	</cfloop>
+	<cfif arguments.thestruct.fa NEQ "c.basket" AND arguments.thestruct.fa NEQ "c.basket_put">
+		<cfloop query="qry">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfif theaccess NEQ "">
+				<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+			</cfif>
+		</cfloop>
+	</cfif>
 	<cfreturn qry>
 </cffunction>
 
@@ -821,6 +1013,8 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset var qry = structnew()>
+	<cfset var details = "">
+	<cfset var desc = "">
 	<!--- Get details --->
 	<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailvid */ v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_extension, v.vid_online, v.vid_owner,
@@ -840,7 +1034,9 @@
 	<!--- Get proper folderaccess --->
 	<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 	<!--- Add labels query --->
-	<cfset QuerySetCell(details, "perm", theaccess)>
+	<cfif theaccess NEQ "">
+		<cfset QuerySetCell(details, "perm", theaccess)>
+	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescvid */ vid_description, vid_keywords, lang_id_r, vid_description as thedesc, vid_keywords as thekeys
@@ -988,6 +1184,17 @@
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
+			<!--- MD5 video --->
+			<cfif FileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+				<cfset var md5hash = hashbinary("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+				<!--- Update DB --->
+				<cfquery datasource="#variables.dsn#">
+				UPDATE #session.hostdbprefix#videos
+				SET hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 		<!--- Nirvanix --->
@@ -1407,56 +1614,58 @@
 					<cfthread action="join" name="uploadconvert#ttexe##theformat#" />
 				</cfif>
 				<!--- Add to shared options --->
-				<cftransaction>
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#share_options
-					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-					VALUES(
-					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#arguments.thestruct.qrydetail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-					<!--- Update the video record with other information --->
-					<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#videos
-					SET 
-					vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
-					vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">,
-					vid_custom_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">,
-					vid_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-					vid_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-					vid_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-					vid_create_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					vid_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">,
-					<!--- vid_preview_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thewidth#">, --->
-					<!--- vid_preview_heigth = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theheight#">, --->
-					vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thewidth#">,
-					vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theheight#">,
-					vid_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">,
-					vid_name_image  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewimage#">,
-					<!--- vid_name_pre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">, --->
-					<!--- vid_name_pre_img  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewimage#">, --->
-					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qrydetail.folder_id_r#">,
-				 	vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-				 	vid_prev_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-				 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#">,
-				 	cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">,
-				 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
-					cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
-					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-					hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
-					WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-				</cftransaction>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#share_options
+				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.thestruct.qrydetail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+				<!--- Update the video record with other information --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#videos
+				SET 
+				<cfif isDefined('arguments.thestruct.vid_group_id') AND arguments.thestruct.vid_group_id NEQ ''>
+					vid_group = <cfqueryparam value="#arguments.thestruct.vid_group_id#" cfsqltype="cf_sql_varchar">,
+				<cfelse>
+					vid_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
+				</cfif>
+				vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">,
+				vid_custom_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">,
+				vid_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+				vid_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+				vid_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+				vid_create_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				vid_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">,
+				<!--- vid_preview_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thewidth#">, --->
+				<!--- vid_preview_heigth = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theheight#">, --->
+				vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thewidth#">,
+				vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theheight#">,
+				vid_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">,
+				vid_name_image  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewimage#">,
+				<!--- vid_name_pre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">, --->
+				<!--- vid_name_pre_img  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewimage#">, --->
+				folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qrydetail.folder_id_r#">,
+			 	vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			 	vid_prev_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#">,
+			 	cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">,
+			 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
+				cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
+				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 				<!--- Log --->
 				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
 				<!--- Call Plugins --->
@@ -1494,6 +1703,10 @@
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Put the video id into a variable --->
 	<cfset thevideoid = #arguments.thestruct.file_id#>
+	<!--- set session.artofimage value if it is empty  --->
+	<cfif session.artofimage EQ "">
+		<cfset session.artofimage = arguments.thestruct.artofimage>
+	</cfif>
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
@@ -1622,15 +1835,15 @@
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over files --->
-	<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
-			<cfset arguments.thestruct.vid_id = "">
-			<cfset arguments.thestruct.vid_id = listfirst(fileid,"-")>
-			<cfif arguments.thestruct.vid_id NEQ "">
-				<cfinvoke method="move" thestruct="#arguments.thestruct#" />
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
+			<cfset attributes.intstruct.vid_id = "">
+			<cfset attributes.intstruct.vid_id = listfirst(fileid,"-")>
+			<cfif attributes.intstruct.vid_id NEQ "">
+				<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 			</cfif>
 		</cfloop>
-	<!--- </cfthread> --->
+	</cfthread>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("videos")>
@@ -1646,29 +1859,33 @@
 			<!--- Move --->
 			<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
 			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
+			<cfif arguments.thestruct.qryvid.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
-				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				SET 
+				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<cfthread intstruct="#arguments.thestruct#">
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="vid" fileid="#attributes.intstruct.vid_id#" />
+					<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.vid_id#" category="vid" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-					<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
+					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 					<!--- Execute workflow --->
-					<cfset attributes.intstruct.fileid = attributes.intstruct.vid_id>
-					<cfset attributes.intstruct.file_name = attributes.intstruct.qryvid.vid_filename>
-					<cfset attributes.intstruct.thefiletype = "vid">
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-					<cfset attributes.intstruct.folder_action = true>
-					<cfset attributes.intstruct.folder_id = attributes.intstruct.folder_id>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#attributes.intstruct#" />
-				</cfthread>
+					<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
+					<cfset arguments.thestruct.file_name = arguments.thestruct.qryvid.vid_filename>
+					<cfset arguments.thestruct.thefiletype = "vid">
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfset arguments.thestruct.folder_action = true>
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+				<!--- </cfthread> --->
 				<!--- Log --->
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id)>
 			</cfif>
@@ -1702,6 +1919,8 @@
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#vid_id#" category="vid" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />
@@ -1712,12 +1931,27 @@
 	<cfargument name="qry" type="query">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("videos")>
+	<!--- Get how many loop --->
+	<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
+	<!--- Set outer loop --->
+	<cfset var pos_start = 1>
+	<cfset var pos_end = howmanyloop>
+	<!--- Set inner loop --->
+	<cfset var q_start = 1>
+	<cfset var q_end = 990>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#gettextvid */ vid_id_r tid, vid_description description, vid_keywords keywords
-	FROM #session.hostdbprefix#videos_text
-	WHERE vid_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
-	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+		<cfloop from="#pos_start#" to="#pos_end#" index="i">
+			<cfif q_start NEQ 1>
+				UNION ALL
+			</cfif>
+			SELECT /* #variables.cachetoken#gettextvid */ vid_id_r tid, vid_description description, vid_keywords keywords
+			FROM #session.hostdbprefix#videos_text
+			WHERE vid_id_r IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
+			AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+			<cfset q_start = q_end + 1>
+	    	<cfset q_end = q_end + 990>
+	    </cfloop>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>
@@ -1728,12 +1962,27 @@
 	<cfargument name="qry" type="query">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("videos")>
+	<!--- Get how many loop --->
+	<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
+	<!--- Set outer loop --->
+	<cfset var pos_start = 1>
+	<cfset var pos_end = howmanyloop>
+	<!--- Set inner loop --->
+	<cfset var q_start = 1>
+	<cfset var q_end = 990>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#gettextrm */ vid_meta rawmetadata
-	FROM #session.hostdbprefix#videos
-	WHERE vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfloop from="#pos_start#" to="#pos_end#" index="i">
+			<cfif q_start NEQ 1>
+				UNION ALL
+			</cfif>
+			SELECT /* #variables.cachetoken#gettextrm */ vid_meta rawmetadata
+			FROM #session.hostdbprefix#videos
+			WHERE vid_id IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfset q_start = q_end + 1>
+	    	<cfset q_end = q_end + 990>
+	    </cfloop>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>
@@ -1758,13 +2007,134 @@
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
+	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#checkmd5 */ vid_id
 	FROM #session.hostdbprefix#videos
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfquery>
 	<cfreturn qry />
+</cffunction>
+
+<!--- Update all copy Metadata --->
+<cffunction name="copymetadataupdate" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- select video name --->
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT vid_filename 
+		FROM #session.hostdbprefix#videos
+		WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery> --->
+	<!--- select video details --->
+	<cfquery datasource="#application.razuna.datasource#" name="thevidtext">
+		SELECT vid_keywords,vid_description
+		FROM #session.hostdbprefix#videos_text
+		WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfif arguments.thestruct.insert_type EQ 'replace'>
+		<!--- update video name --->
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#videos 
+				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.vid_filename#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="checkid">
+				SELECT vid_id_r
+				FROM #session.hostdbprefix#videos_text
+				WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update video details --->
+			<cfif checkid.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updatevidtext">
+					UPDATE #session.hostdbprefix#videos_text
+					SET vid_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtext.vid_keywords#">,
+					vid_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtext.vid_description#">
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#videos_text
+						(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+					VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+						<cfqueryparam value="#thevidtext.vid_description#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#thevidtext.vid_keywords#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	<cfelse>
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="theviddetail">
+				SELECT vid_filename 
+				FROM #session.hostdbprefix#videos
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="thevidtextdetail">
+				SELECT vid_keywords,vid_description
+				FROM #session.hostdbprefix#videos_text
+				WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update video name --->
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#videos 
+				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theviddetail.vid_filename# #thedetail.vid_filename#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<!--- update video details --->
+			<cfif thevidtextdetail.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updatevidtext">
+					UPDATE #session.hostdbprefix#videos_text
+					SET vid_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtextdetail.vid_keywords# #thevidtext.vid_keywords#">,
+					vid_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtextdetail.vid_description# #thevidtext.vid_description#">
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#videos_text
+							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+						VALUES(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+							<cfqueryparam value="#thevidtext.vid_description#" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#thevidtext.vid_keywords#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>	
+</cffunction>
+
+<!--- Get all asset from folder --->
+<cffunction name="getAllFolderAsset" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#variables.dsn#" name="qry_data">
+		SELECT vid_id AS id,vid_filename AS filename
+		FROM #session.hostdbprefix#videos
+		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND vid_group IS NULL
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry_data>
 </cffunction>
 
 </cfcomponent>

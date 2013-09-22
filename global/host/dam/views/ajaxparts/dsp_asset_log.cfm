@@ -51,9 +51,11 @@
 						<option value="0">-------</option>
 						<option value="add">Add</option>
 						<option value="update">Update</option>
-						<option value="delete">Delete</option>
 						<option value="move">Move</option>
-						<option value="convert">Convert</option>
+						<cfif cs.tab_convert_files>
+							<option value="convert">Renditions</option>
+						</cfif>
+						<option value="delete">Delete</option>
 					</select>
 					<a href="##" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.id#');">#myFusebox.getApplicationData().defaults.trans("reset")#</a>
 				</div>

@@ -29,12 +29,11 @@
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT sched_id, sched_name, sched_method, sched_status
-		FROM #session.hostdbprefix#schedules
-		WHERE set2_id_r  = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
-		AND sched_user = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		ORDER BY sched_name, sched_method
+	SELECT sched_id, sched_name, sched_method, sched_status
+	FROM #session.hostdbprefix#schedules
+	WHERE set2_id_r  = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	ORDER BY sched_name, sched_method
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -97,7 +96,7 @@
 		 <cfqueryparam value="#schedData.interval#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.serverFolder#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.serverFolderRecurse#" cfsqltype="cf_sql_numeric">, 
-		 <cfqueryparam value="#schedData.serverFiles#" cfsqltype="cf_sql_numeric">, 
+		 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
 		 <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">, 
@@ -127,7 +126,7 @@
 					endTime="#schedData.endTime#"
 					interval="#schedData.interval#">
 		<!--- Log the insert --->
-		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Upload successfully saved">
+		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved">
 		<cfcatch>
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from Scheduler" dump="#cfcatch#">
 		</cfcatch>
@@ -283,6 +282,8 @@
 <!--- GET DETAIL OF ONE SCHEDULED EVENT ---------------------------------------------------------->
 <cffunction name="detail" returntype="query" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes">
+	<!--- Param --->
+	<cfset var qSchedDetail = "">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qSchedDetail">
 	SELECT s.sched_id, s.set2_id_r, s.sched_user, s.sched_status, s.sched_method, s.sched_name,
@@ -291,10 +292,8 @@
 	s.sched_ftp_folder, s.sched_interval, s.sched_start_date, s.sched_start_time, s.sched_end_date,
 	s.sched_end_time, s.sched_ftp_passive, s.sched_server_recurse, s.sched_server_files, s.sched_upl_template,
 	f.folder_name as folder_name
-	FROM #session.hostdbprefix#schedules s, #session.hostdbprefix#folders f
+	FROM #session.hostdbprefix#schedules s LEFT JOIN #session.hostdbprefix#folders f ON s.sched_folder_id_r = f.folder_id AND f.host_id = s.host_id
 	WHERE s.sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND s.sched_folder_id_r = f.folder_id
-	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qSchedDetail>
@@ -329,7 +328,7 @@
 		sched_interval = <cfqueryparam value="#schedData.interval#" cfsqltype="cf_sql_varchar">,
 		sched_server_folder = <cfqueryparam value="#schedData.serverFolder#" cfsqltype="cf_sql_varchar">,
 		sched_server_recurse = <cfqueryparam value="#schedData.serverFolderRecurse#" cfsqltype="cf_sql_numeric">,
-		sched_server_files = <cfqueryparam value="#schedData.serverFiles#" cfsqltype="cf_sql_numeric">, 
+		<!--- sched_server_files = <cfqueryparam value="#schedData.serverFiles#" cfsqltype="cf_sql_numeric">, ---> 
 		sched_mail_pop = <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">, 
 		sched_mail_user = <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">, 
 		sched_mail_pass = <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">, 
@@ -384,7 +383,7 @@
 			endTime="#schedData.endTime#"
 			interval="#schedData.interval#">
 		<!--- Log the update --->
-		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#session.theuserid#" theaction="Update" thedesc="Scheduled Upload successfully updated">
+		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#session.theuserid#" theaction="Update" thedesc="Scheduled Task successfully updated">
 		<cfcatch>
 			<!--- Log the error --->
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from Scheduler" dump="#cfcatch#">
@@ -442,10 +441,10 @@
 		<!--- Run --->
 		<cfschedule action="run" task="RazScheduledUploadEvent[#arguments.sched_id#]">
 		<!--- Log --->
-		<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Upload successfully run">
+		<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task successfully run">
 		<cfcatch>
 			<!--- Log the error --->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Upload failed while running [#cfcatch.type# - #cfcatch.message#]">
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]">
 			<cfset returncode = "sched_error">
 		</cfcatch>
 	</cftry>
@@ -476,53 +475,127 @@
 </cffunction>
 
 <!--- RUN SCHEDULE -------------------------------------------------------->
-<cffunction name="doit" output="true" access="public">
-	<cfargument name="sched_id" type="string" required="yes" default="">
+<cffunction name="doit" output="true" access="public" >
+	<cfargument name="sched_id" type="string" required="yes">
+	<cfargument name="incomingpath" type="string" required="yes">
+	<cfargument name="sched" type="string" required="yes">
+	<cfargument name="thepath" type="string" required="yes">
+	<cfargument name="langcount" type="string" required="yes">
+	<cfargument name="rootpath" type="string" required="yes">
+	<cfargument name="assetpath" type="string" required="yes">
+	<cfargument name="dynpath" type="string" required="yes">
+	<!--- Param --->
 	<cfset var doit = structnew()>
+	<cfset var x = structnew()>
 	<cfset doit.dirlist = "">
-	<!--- <cfset var tempid = "sched-" & createuuid()> --->
+	<cfset doit.directoryList = "">
+	<cfset var dorecursive = false>
+	<cfset var dirhere = "">
+	<!--- Set arguments into new struct --->
+	<cfset x.sched_id = arguments.sched_id>
+	<cfset x.incomingpath = arguments.incomingpath>
+	<cfset x.sched = arguments.sched>
+	<cfset x.thepath = arguments.thepath>
+	<cfset x.langcount = arguments.langcount>
+	<cfset x.rootpath = arguments.rootpath>
+	<cfset x.assetpath = arguments.assetpath>
+	<cfset x.dynpath = arguments.dynpath>
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
+	<!-- Set return into scope -->
+	<cfset x.folder_id = doit.qry_detail.sched_folder_id_r>
+	<cfset x.sched_action = doit.qry_detail.sched_server_files>
+	<cfset x.upl_template = doit.qry_detail.sched_upl_template>
+	<cfset x.directory = doit.qry_detail.sched_server_folder>
+	<cfset x.recurse = doit.qry_detail.sched_server_recurse>
+	<cfset x.zip_extract = doit.qry_detail.sched_zip_extract>
+	<cfset session.theuserid = doit.qry_detail.sched_user>
 	<!--- If no record found simply abort --->
 	<cfif doit.qry_detail.recordcount EQ 0>
 		<cfabort>
-	</cfif>
-	<!--- List all files from the server directory --->
-	<cfif doit.qry_detail.sched_method EQ "server">
-		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#" type="file">
-		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
-		<cfquery dbtype="query" name="doit.serverdir">
-		SELECT *
-		FROM doit.serverdir
-		WHERE size != 0
-		AND attributes != 'H'
-		AND name != 'thumbs.db'
-		AND name NOT LIKE '.DS_STORE%'
-		AND name NOT LIKE '__MACOSX%'
-		AND name NOT LIKE '%scheduleduploads_%'
-		ORDER BY name
-		</cfquery>
-		<!--- Loop over the query and append to assets_temp for sorting correctly --->
-		<cfloop query="doit.serverdir">
-			<cfset doit.dirlist = directory & "/" & name & "," & doit.dirlist>
-			<!--- Get file extension --->
+	<!--- Record found --->
+	<cfelse>
+		<!--- SERVER --->
+		<cfif doit.qry_detail.sched_method EQ "server">
 			<!--- 
-			<cfset theextension = listlast("#name#",".")>
-			<!--- Insert into temp db --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#assets_temp
-			(tempid, filename, extension, path)
-			VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#name#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#directory#">
-			)
-			</cfquery> 
-			--->
-		</cfloop>
+			<!--- Look into the directory --->
+			<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" recurse="false" name="dirhere" />
+			<!--- Filter content --->
+			<cfquery dbtype="query" name="dirhere">
+			SELECT *
+			FROM dirhere
+			WHERE size != 0
+			AND attributes != 'H'
+			AND name != 'thumbs.db'
+			AND name NOT LIKE '.DS_STORE%'
+			AND name NOT LIKE '__MACOSX%'
+			AND name != '.svn'
+			AND name != '.git'
+			</cfquery>
+			<!--- NO files here simply abort --->
+			<cfif dirhere.recordcount EQ 0>
+				<cfabort>
+			</cfif>
+			<!--- Files here thus... --->
+			<!--- Get the name of the original directory --->
+			<cfset var thedirname = listlast(doit.qry_detail.sched_server_folder,"/\")>
+			<!--- The path without the name --->
+			<cfset var thedirpath = replacenocase(doit.qry_detail.sched_server_folder,thedirname,"","one")>
+			<!--- Create a temp directory name --->
+			<cfset var tempid = createuuid("")>
+			<cfset var tempdir = thedirpath & "task_" & tempid>
+			<!--- Now rename the original directory --->
+			<cfdirectory action="rename" directory="#doit.qry_detail.sched_server_folder#" newdirectory="#tempdir#" mode="775" />
+			<!--- and recreate the original directory --->
+			<cfif !directoryExists(doit.qry_detail.sched_server_folder)>
+				<cfdirectory action="create" directory="#doit.qry_detail.sched_server_folder#" mode="775" />
+			</cfif>
+			<!--- Set the qry to the new directory --->
+			<cfset QuerySetcell( doit.qry_detail, "sched_server_folder", "#tempdir#" )>
+			<!--- Sleep the process (just making sure that the rename had enough time) --->
+			<cfset sleep(5000)>
+			 --->
+			<!-- CFC: Log start -->
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
+			<!-- Set params for adding assets -->
+			<cfset x.thefile = doit.dirlist>
+			<!-- CFC: Add to system -->
+			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
+		<!--- FTP --->
+		<cfelseif doit.qry_detail.sched_method EQ "ftp">
+			<!-- Params -->
+			<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
+			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
+			<cfset session.ftp_pass = doit.qry_detail.sched_ftp_pass>
+			<cfset session.ftp_passive = doit.qry_detail.sched_ftp_passive>
+			<!-- CFC: Get FTP directory for adding to the system -->
+			<cfinvoke component="ftp" method="getdirectory" thestruct="#x#" returnvariable="thefiles" />
+			<cfset x.thefile = valuelist(thefiles.ftplist.name) />
+			<!-- CFC: Add to system -->
+			<cfinvoke component="assets" method="addassetftpthread" thestruct="#x#" />
+		<!--- MAIL --->
+		<cfelseif doit.qry_detail.sched_method EQ "mail">
+			<!-- Params -->
+			<cfset x.email_server = doit.qry_detail.sched_mail_pop>
+			<cfset x.email_address = doit.qry_detail.sched_mail_user>
+			<cfset x.email_pass = doit.qry_detail.sched_mail_pass>
+			<cfset x.email_subject = doit.qry_detail.sched_mail_subject>
+			<cfset session.email_server = doit.qry_detail.sched_mail_pop>
+			<cfset session.email_address = doit.qry_detail.sched_mail_user>
+			<cfset session.email_pass = doit.qry_detail.sched_mail_pass>
+			<!-- CFC: Get the email ids for adding to the system -->
+			<cfinvoke component="email" method="emailheaders" thestruct="#x#" returnvariable="themails" />
+			<cfset x.emailid = valuelist(themails.qryheaders.messagenumber)>
+			<!-- CFC: Add to system -->
+			<cfinvoke component="assets" method="addassetemail" thestruct="#x#" />
+		<!--- Rebuild search index --->
+		<cfelseif doit.qry_detail.sched_method EQ "rebuild">
+			<!-- CFC: Call rebuild function -->
+			<cfthread action="run" intstruct="#arguments#">
+				<cfinvoke component="lucene" method="rebuild" thestruct="#attributes.intstruct#" />
+			</cfthread>
+		</cfif>
 	</cfif>
-	<!--- Return --->
 	<cfreturn doit>
 </cffunction>
 

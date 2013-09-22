@@ -32,9 +32,11 @@
 			<th class="textbold" colspan="2" style="padding-top:15px;padding-bottom:15px;">You are currently using the #ucase(gprefs.conf_database)# database.</th>
 		</tr>
 		<tr>
-			<td style="padding-top:15px;"><div style="background-color:yellow;padding:10px;">By clicking on the button below you will be redirected to the initial setup where you will be able to choose the database and import your settings!</div><br>
-			<input type="button" value="I'm ready to change the database now" onclick="location.href='#myself#c.prefs_change_db'" class="button"></td>
+			<td style="padding-top:15px;">
+				<div style="background-color:yellow;padding:10px;">By clicking on the button below you will be redirected to the initial setup where you will be able to choose the database and import your settings!</div>
+				<br>
+				<input type="button" value="I'm ready to change the database now" onclick="if (confirm('Did you do a backup of your current setup? \n\nIf you confirm your instance will load the first time wizard where you are able to change the database and import your backup!')) location.href='#myself#c.prefs_change_db';return false;" class="button">
+			</td>
 		</tr>
-			
 	</table>
 </cfoutput>

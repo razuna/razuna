@@ -32,6 +32,7 @@
 	<input type="hidden" name="file_id" value="#attributes.file_id#">
 	<input type="hidden" name="file_ids" value="#session.thefileid#">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 		<div id="tabs_batch">
 			<ul>
 				<li tabindex="0"><a href="##batch_desc">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</a></li>
@@ -43,8 +44,8 @@
 					<cfif cs.tab_iptc_status><li tabindex="5"><a href="##iptc_status">IPTC Status</a></li></cfif>
 					<cfif cs.tab_origin><li tabindex="6"><a href="##iptc_origin">Origin</a></li></cfif>
 				</cfif>
-				<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
-				<!--- <li tabindex="8"><a href="##batch_custom">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li> --->
+				<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels" onclick="activatechosen();">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
+				<cfif cs.tab_custom_fields AND qry_cf.recordcount><li tabindex="8"><a href="##batch_custom">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li></cfif>
 			</ul>
 			<!--- Descriptions & Keywords --->
 			<div id="batch_desc">
@@ -103,7 +104,7 @@
 			<cfif cs.tab_labels>
 				<div id="batch_labels" style="min-height:200px;">
 					<strong>Choose #myFusebox.getApplicationData().defaults.trans("labels")#</strong><br />
-					<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="batch_labels" multiple="multiple">
+					<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" name="labels" id="tags_labels" multiple="multiple">
 						<option value=""></option>
 						<cfloop query="qry_labels">
 							<cfset l = replace(label_path," "," AND ","all")>
@@ -114,7 +115,16 @@
 				</div>
 			</cfif>
 			<!--- Custom Fields --->
-			<!--- <div id="batch_custom"></div> --->
+			<div id="batch_custom">
+				<!--- Custom Fields --->
+				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+					<div id="customfields" style="padding-top:10px;">
+						<cfinclude template="inc_batch_custom_fields.cfm">
+					</div>
+					<div stlye="clear:both;"></div>
+				</cfif>
+			</div>
+			
 		</div>
 		<!--- Submit Button --->
 		<div style="float:right;padding:10px;">New values will <input type="radio" name="batch_replace" value="true" /> replace or <input type="radio" name="batch_replace" value="false" checked="checked" /> append to existing records. <input type="submit" name="submit" value="Batch records now" class="button"></div>
@@ -124,8 +134,6 @@
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs
 		jqtabs("tabs_batch");
-		// Activate Chosen
-		$(".chzn-select").chosen();
 		// Submit Form
 		$("##form0").submit(function(e){
 			// Show
@@ -145,6 +153,15 @@
 			   	}
 			});
 			return false;
-		})
+		});
+		// Activate Chosen
+		function activatechosen(){
+			setTimeout(function() {
+		    	activatechosendelay();
+			}, 10)
+		};
+		function activatechosendelay(){
+			$(".chzn-select").chosen();
+		}
 	</script>
 </cfoutput>

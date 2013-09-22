@@ -26,7 +26,7 @@
 <cfoutput>
 	<div><strong><cfif attributes.iscol EQ "F">Choose from the folder list below:<cfelse>Choose a collection folder first...</cfif></strong></div>
 	<div id="win_choosefolder"></div>
-	<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+	<cfif session.type EQ "movefolder" OR session.type EQ "restorefolder" OR session.type EQ "restoreselectedfolders" OR session.type EQ "restorefolderall" OR session.type EQ "restorecolfolder" OR session.type EQ 'restorecolfolderall' OR session.type EQ 'restoreselectedcolfolder' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 		<div style="clear:both;padding-top:15px;" />
 		<div><a href="##" onclick="movethisfolder();return false;">Move the folder to the top level</a></div>
 	</cfif>
@@ -67,7 +67,7 @@
 				data : { 
 					async : true,
 					opts : {
-						url : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#"
+						url : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#&fromtrash=#attributes.fromtrash#"
 					}
 				}
 			});
@@ -84,7 +84,17 @@
 			catch(e) {};
 		}
 		function delayfolderload(){
-			$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+			<cfif structKeyExists(attributes,"fromtrash") AND attributes.fromtrash>
+				<cfif structKeyExists(attributes,"restoreall") AND attributes.restoreall>
+					$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&restoreall=true&trashkind=folders<cfelse>folder_explorer_trash<cfif attributes.restoreall>&restorefolderall=#attributes.restoreall#</cfif>&trashkind=#attributes.loaddiv#</cfif>');
+				<cfelse>
+					$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=#attributes.loaddiv#</cfif>');
+				</cfif>
+			//<cfelse>
+				//$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=folders</cfif>');
+				//loadcontent('folders','#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash<cfelse>trash_folder_all&trashkind=folders</cfif>');
+			</cfif>
 		}
 	</script>
 </cfoutput>

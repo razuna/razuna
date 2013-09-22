@@ -37,10 +37,21 @@
 	<table border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td nowrap="true">
+				<cfif application.razuna.isp>
+					<cfset thename = cgi.http_host>
+					<cfset thecount = findoneof(".",thename) - 1>
+					<cfset thesubdomain = mid(cgi.http_host,1,thecount)>
+					<cfset thehostpath = replaceNoCase(cgi.http_host,thesubdomain,"","one")>
+				</cfif>
 				<select name="gotodam" id="gotodam" onChange="javascript:gotodam_choose();" style="width:100px;">
 					<option id="gotodamselect" value="0" selected="true">#defaultsObj.trans("goto")#</option>
 					<cfloop query="qry_allhosts">
-						<option value="../#host_path#/dam">#ucase(host_name)#</option>
+						<cfif application.razuna.isp>
+							<option value="http://#host_name##thehostpath#/#host_path#/dam">
+						<cfelse>
+							<option value="../#host_path#/dam">
+						</cfif>
+						#ucase(host_name)#</option>
 					</cfloop>
 				</select>
 			</td>
@@ -54,7 +65,7 @@
 					</cfloop>
 				</select>
 			</td>
-			<td nowrap="true" style="padding-left:7px;"><a href="##" onClick="feedback_widget.show();">Feedback</a></td>
+			<td nowrap="true" style="padding-left:7px;"><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a></td>
 			<td nowrap="true" style="padding-left:7px;"><a href="http://wiki.razuna.com" target="_blank">Documentation</a></td>
 			<td nowrap="true" style="padding-left:7px;"><a href="#myself#c.logoff">#defaultsObj.trans("logoff")#</a></td>
 		</tr>

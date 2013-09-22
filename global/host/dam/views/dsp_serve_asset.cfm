@@ -25,10 +25,21 @@
 --->
 <cfparam default="F" name="attributes.download">
 <cfparam default="" name="qry_binary.qfile.link_kind">
+<cfparam default="false" name="attributes.av">
+<!--- This is for additional versions --->
+<cfif attributes.av>
+	<!--- Default file name when prompted to download --->
+	<cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#" />
+	<!--- Get file --->
+	<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
+	<!--- Serve the file --->
+	<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
+</cfif>
 <!--- Storage Decision --->
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <!--- Default file name when prompted to download --->
 <cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#" />
+<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
 <!--- File is external --->
 <cfif qry_binary.qfile.link_kind EQ "url">
 	<!--- Get file --->

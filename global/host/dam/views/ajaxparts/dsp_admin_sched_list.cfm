@@ -49,7 +49,7 @@
 			<cfloop query="qry_schedules">
 				<tr class="list">
 					<td nowrap="true"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&sched_id=#sched_id#','#sched_name#',650,1);">#sched_name#</a></td>
-					<td nowrap="true" align="center">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_#sched_method#")#</td>
+					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_#sched_method#")#</td>
 					<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.scheduler_log&sched_id=#sched_id#','#myFusebox.getApplicationData().defaults.trans("log")#: #sched_name#',650,1);">#myFusebox.getApplicationData().defaults.trans("log")#</a></td>
 					<td nowrap="true">
 						<a href="##" onclick="loadcontent('sched_status','#myself#c.scheduler_run&sched_id=#sched_id#');document.getElementById('sched_status').style.visibility = 'visible';"><img src="#dynpath#/global/host/dam/images/run.png" border="0" /></a>

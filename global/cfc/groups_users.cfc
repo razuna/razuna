@@ -158,17 +158,15 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- insert --->
 	<cfloop list="#arguments.thestruct.grp_id_assigneds#" delimiters="," index="i">
-		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO	ct_groups_users
-			(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-			VALUES(
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-			)
-			</cfquery>
-		</cftransaction>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO	ct_groups_users
+		(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+		VALUES(
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+		)
+		</cfquery>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("users")>
@@ -212,9 +210,10 @@
 	<cfargument name="list_grp_id" type="string" required="false">
 	<cfargument name="list_grp_name" type="string" required="false">
 	<cfargument name="list_delim" type="string" required="false" default=",">
-	<cfargument name="host_id" type="numeric" required="false">
+	<cfargument name="host_id" type="numeric" required="false" default="">
 	<cfargument name="mod_id" type="numeric" required="false" hint="modules.mod_id">
 	<cfargument name="orderBy" type="string" required="false" default="u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_id" hint="""ORDER BY #yourtext#""">
+	<!--- Since this is also called from external we need to set some vars here --->
 	<cfif structkeyexists(session,"hostid") AND arguments.host_id EQ "">
 		<cfset arguments.host_id = session.hostid>
 	</cfif>

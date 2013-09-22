@@ -25,32 +25,33 @@
 --->
 <!--- Define variables --->
 <cfparam name="attributes.id" default="0">
+<cfparam name="attributes.folder_id" default="0">
+<cfparam name="attributes.iswin" default="">
+<cfparam name="attributes.order" default="">
+<cfparam name="attributes.many" default="F">
+<cfparam name="attributes.file_id" default="0">
+<cfparam name="attributes.col_id" default="0">
+<cfparam name="attributes.type" default="">
+<cfparam name="attributes.rowmaxpage" default="">
+<cfparam name="attributes.showsubfolders" default="F">
+<cfparam name="attributes.iscol" default="F">
+<cfparam name="attributes.released" default="false">
+<cfparam name="attributes.view" default="">
+<cfparam name="attributes.selected" default="false">
 <cfoutput>
-<table border="0" cellpadding="5" cellspacing="5" width="100%">
-	<tr>
-		<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("remove_folder_desc")#</td>
-	</tr>
-	<tr>
-		<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="remfolder();" class="button"></td>
-	</tr>
-</table>
-
-<script type="text/javascript">
-	function remfolder(){
-		// Show loading bar
-		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
-		$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.folder_remove&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>', function() {
-			setTimeout("remfolderdelay()", 1000);
-		});
-	}
-	function remfolderdelay(){
-		$('##rightside').load('#myself#ajax.remove_folder_confirm');
-		destroywindow(1);
-		$("##bodyoverlay").remove();
-	}
-</script>
+		<table border="0" cellpadding="5" cellspacing="5" width="100%">
+			<tr>
+				<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("remove_folder_desc")#</td>
+			</tr>
+			<tr>
+				<td align="right" style="padding-top:10px;">
+					<cfif attributes.selected>
+						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection_explorer_trash&selected=folders<cfelse>folder_explorer_trash&selected=folders</cfif>');" class="button">
+					<cfelse>
+						<!---<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);loadcontent('div_forall','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection<cfelse>folder</cfif>_explorer_trash');" class="button">--->
+						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);loadcontent('div_forall','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=folders</cfif>');" class="button">
+					</cfif>
+				</td>
+			</tr>
+		</table>
 </cfoutput>
-<!---
-
-onclick="destroywindow(1);loadcontent('explorer<cfif attributes.iscol EQ "T">_col</cfif>','#myself#c.folder_remove&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>');loadcontent('rightside','#myself#ajax.remove_folder_confirm');"
---->

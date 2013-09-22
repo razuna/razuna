@@ -1376,6 +1376,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (FOLDER_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_hostid (HOST_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_id (folder_id),
@@ -1460,6 +1461,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		   VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (FILE_ID),
 		KEY #arguments.thestruct.host_db_prefix#files_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#files_name (FILE_NAME),
@@ -1551,6 +1553,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (IMG_ID),
 		KEY #arguments.thestruct.host_db_prefix#img_name (IMG_FILENAME),
 	  	KEY #arguments.thestruct.host_db_prefix#img_name_org (IMG_FILENAME_ORG),
@@ -1678,7 +1681,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings
 		(
-		  SET_ID    VARCHAR(100) NOT NULL,
+		  SET_ID    VARCHAR(500) NOT NULL,
 		  SET_PREF  text,
 		  HOST_ID	INT,
 		  rec_uuid			VARCHAR(100),
@@ -1768,6 +1771,7 @@
 		  SET2_AKA_VID					VARCHAR(200),
 		  SET2_AKA_AUD					VARCHAR(200),
 		  SET2_AKA_DOC					VARCHAR(200),
+		  SET2_COLORSPACE_RGB			VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),
@@ -1811,6 +1815,7 @@
 		  col_released		VARCHAR(5) DEFAULT 'false',
 		  col_copied_from	VARCHAR(100),
 		  host_id			INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (COL_ID),
 		KEY #arguments.thestruct.host_db_prefix#co_hostid (HOST_ID),
  		KEY #arguments.thestruct.host_db_prefix#co_fid_r (folder_id_r),
@@ -1849,12 +1854,12 @@
 		  COL_FILE_FORMAT  	VARCHAR(100),
 		  HOST_ID			INT,
 		  rec_uuid			VARCHAR(100),
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#col_idr (col_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_fileid (file_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_filetype (COL_FILE_TYPE),
-		  KEY #arguments.thestruct.host_db_prefix#col_hostid (HOST_ID),
-		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
+		  KEY #arguments.thestruct.host_db_prefix#col_hostid (HOST_ID)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -1950,6 +1955,7 @@
 		HASHTAG			   		VARCHAR(100),
 		IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		CLOUD_URL_EXP		   INT,
+		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (VID_ID),
 		KEY #arguments.thestruct.host_db_prefix#vid_group (vid_group),
 	    KEY #arguments.thestruct.host_db_prefix#vid_folderid (folder_id_r),
@@ -2195,6 +2201,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 			PRIMARY KEY (aud_ID),
 			KEY #arguments.thestruct.host_db_prefix#aud_hostid (HOST_ID),
 	     	KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
@@ -2338,6 +2345,7 @@
 		  thesize 				varchar(100) DEFAULT '0',
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
+  		  hashtag			   	VARCHAR(100),
 		  PRIMARY KEY (av_id),
 		  KEY #arguments.thestruct.host_db_prefix#av_id_r (asset_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#av_fid_r (folder_id_r),
@@ -2415,7 +2423,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar(200),
-		custom_value		varchar(100),
+		custom_value		varchar(2000),
 		host_id				int,
 		KEY #arguments.thestruct.host_db_prefix#custom_id (custom_id)
 		)
@@ -2464,6 +2472,36 @@
 		host_id 			int,
 		rec_uuid 			varchar(100),
 		PRIMARY KEY (rec_uuid)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- Smart Folders --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders 
+		(
+			sf_id 			varchar(100),
+			sf_name 		varchar(500),
+			sf_date_create 	timestamp DEFAULT '0000-00-00 00:00:00',
+			sf_date_update 	timestamp DEFAULT '0000-00-00 00:00:00',
+			sf_type 		varchar(100),
+			sf_description 	varchar(2000),
+			sf_who	 		varchar(100),
+			host_id 		int,
+			PRIMARY KEY (sf_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- Smart Folders Properties --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders_prop
+		(
+			sf_id_r 		varchar(100),
+			sf_prop_id 		varchar(500),
+			sf_prop_value 	varchar(2000),
+			host_id 		int,
+			PRIMARY KEY (sf_id_r)
 		)
 		#this.tableoptions#
 		</cfquery>

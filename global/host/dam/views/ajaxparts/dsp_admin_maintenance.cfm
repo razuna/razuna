@@ -82,7 +82,7 @@ Please choose the database cache to flush:<br />
 			<tr>
 				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner")#</th>
 			</tr>
-			<tr class="list">
+			<tr>
 				<td>
 				#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_desc")#<br /><br />
 				<input type="button" name="cleaner" value="#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_link")#" onclick="docleaner();" class="button" />
@@ -91,7 +91,7 @@ Please choose the database cache to flush:<br />
 			</tr>
 		</table>
 		<!--- Backup --->
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+		<!--- <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_backup_desc")#</th>
 			</tr>
@@ -99,7 +99,7 @@ Please choose the database cache to flush:<br />
 				<td>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_backup_desc2")#<br /><br />
 				Save to: <input type="radio" name="tofiletype" id="tofiletype" value="sql" checked="checked"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file <input type="button" name="backup" value="Export Now" class="button" onclick="dobackup();" style="margin-left:30px;"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
 			</tr>
-		</table>
+		</table> --->
 		
 		<div id="dummy_maintenance"></div>
 		<!--- Load Progress --->

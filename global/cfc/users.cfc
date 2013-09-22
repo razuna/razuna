@@ -229,45 +229,41 @@
 		<!--- Hash Password --->
 		<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
 		<!--- Insert the User into the DB --->
-		<cftransaction>
-			<cfset newid = createuuid()>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO users
-			(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
-			user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp)
-			VALUES(
-			<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.thestruct.user_login_name#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_email#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_first_name#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_last_name#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.adminuser#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-			<cfqueryparam value="#arguments.thestruct.user_active#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_company#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_phone#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_mobile#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_fax#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.vpuser#" cfsqltype="cf_sql_varchar">
-			)
-			</cfquery>
-		</cftransaction>
+		<cfset newid = createuuid()>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO users
+		(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
+		user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp)
+		VALUES(
+		<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#arguments.thestruct.user_login_name#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_email#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_first_name#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_last_name#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.adminuser#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+		<cfqueryparam value="#arguments.thestruct.user_active#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_company#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_phone#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_mobile#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_fax#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.vpuser#" cfsqltype="cf_sql_varchar">
+		)
+		</cfquery>
 		<!--- Insert the user to the user host cross table --->
 		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
-			<cftransaction>
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO ct_users_hosts
-				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#thehostid#" cfsqltype="cf_sql_integer">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
-			</cftransaction>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO ct_users_hosts
+			(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
+			VALUES(
+			<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#thehostid#" cfsqltype="cf_sql_integer">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
 		</cfloop>
 		<!--- Log --->
 		<cfif structkeyexists(arguments.thestruct,"dam")>
@@ -599,8 +595,13 @@
 	<cfargument name="theqry" type="query">
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.theqry)>
+	<!--- Check the directory already exists --->
+	<cfif ! directoryExists("#arguments.thepath#/outgoing")>
+		<!--- create directory --->
+		<cfdirectory action="create" directory="#arguments.thepath#/outgoing" mode="777">
+	</cfif>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
+	<cffile action="write" file="#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Feedback --->
 	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	<cfflush>
@@ -635,6 +636,11 @@
 	<!--- Add orders from query --->
 	<cfset SpreadsheetAddRows(sxls, arguments.theqry, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<!--- Check the directory already exists --->
+	<cfif ! directoryExists("#arguments.thepath#/outgoing")>
+		<!--- create directory --->
+		<cfdirectory action="create" directory="#arguments.thepath#/outgoing" mode="777">
+	</cfif>
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#",true)>
 	<!--- Feedback --->

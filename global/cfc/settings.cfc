@@ -76,7 +76,7 @@
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check, set2_email_from
+	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check, set2_email_from, set2_colorspace_rgb
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -99,7 +99,8 @@
 	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
 	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">,
 	set2_md5check = <cfqueryparam value="#arguments.thestruct.set2_md5check#" cfsqltype="cf_sql_varchar">,
-	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">
+	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">,
+	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -158,8 +159,9 @@
 <cffunction name="prefs_image">
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web, set2_img_format, set2_img_thumb_width, 
-	set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth
+	SELECT /* #variables.cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web, 
+	set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth,
+	set2_colorspace_rgb
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -237,47 +239,41 @@
 <!--- Add File Type --->
 <cffunction name="prefs_types_add">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO file_types
-		(type_id, type_type, type_mimecontent, type_mimesubcontent)
-		VALUES(
-		<cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
-		)
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO file_types
+	(type_id, type_type, type_mimecontent, type_mimesubcontent)
+	VALUES(
+	<cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
+	)
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
 <!--- Remove File Type --->
 <cffunction name="prefs_types_del">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM file_types
-		WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM file_types
+	WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
 <!--- Update File Type --->
 <cffunction name="prefs_types_update">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE file_types
-		SET
-		type_id = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
-		type_type = <cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
-		type_mimecontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">, 
-		type_mimesubcontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
-		WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE file_types
+	SET
+	type_id = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
+	type_type = <cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
+	type_mimecontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">, 
+	type_mimesubcontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
+	WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
@@ -297,14 +293,19 @@
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Get the xml files in the translation dir --->
-	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/translations" name="thelangs" filter="*.xml" />
+	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/global/translations" name="thelangs" />
+	<cfquery dbtype="query" name="thelangs">
+	SELECT *
+	FROM thelangs where TYPE = 'Dir' and name != 'Custom'
+	ORDER BY name
+	</cfquery>
 	<!--- Loop over languages --->
 	<cfloop query="thelangs">
 		<!--- Get name and language id --->
-		<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>
+		<cfset thislang = thelangs.name>
 		<!--- If we come from admin then take another method --->
 		<cfif structkeyexists(arguments.thestruct,"fromadmin")>
-			<cfinvoke component="defaults" method="xmllangid" thetransfile="#arguments.thestruct.thepath#/translations/#name#" returnvariable="langid">
+			<cfinvoke component="defaults" method="propertiesfilelangid" thetransfile="#arguments.thestruct.thepath#/global/translations/#name#/HomePage.properties" returnvariable="langid">
 		<cfelse>
 			<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#name#" returnvariable="langid">
 		</cfif>
@@ -588,7 +589,6 @@
 <!--- Save Settings --->
 <cffunction hint="Save Settings" name="update">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
 		<!--- save all settings which are language relevant. loop trough the form fields which begin with set_ --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
 			<cfif #myform# CONTAINS "set_">
@@ -896,7 +896,6 @@
 		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-	</cftransaction>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
@@ -906,22 +905,23 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.loginimg" default="false" />
-	<!--- Logo or loginimg --->
-	<cfif !arguments.thestruct.loginimg>
+	<cfparam name="arguments.thestruct.favicon" default="false" />
+	<!--- Logo or favicon or loginimg --->
+	<cfif !arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "logo">
-	<cfelse>
+	<cfelseif arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "login">
+	<cfelse>
+		<cfset var theimgpath = "favicon">
 		<!--- just remove any previous directory (like this we prevent having more the one image) --->
-		<cftry>
+		<cfif directoryExists("#arguments.thestruct.thepathup#/global/host/#theimgpath#/#session.hostid#")>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
-			<cfcatch type="any"></cfcatch>
-		</cftry>
+		</cfif>
 	</cfif>
 	<!--- Create directory if not there already to hold this logo --->
-	<cftry>
+	<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#")>
 		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" mode="775">
-		<cfcatch type="any"></cfcatch>
-	</cftry>
+	</cfif>
 	<!---  Upload file --->
 	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" result="result" nameconflict="overwrite" mode="775">
 	<!--- Set variables that show the file in the GUI --->
@@ -955,6 +955,56 @@
 	<cfset s.imgpath = "global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#/#result.serverFile#">
 	<!--- Return --->
 	<cfreturn s />
+</cffunction>
+
+<!--- Folder Thumbnail --->
+<cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
+	<cfargument name="thestruct" type="Struct">
+	<!--- Check that vars are not empty --->
+	<cfif arguments.thestruct.thumb_folder_file NEQ "" OR arguments.thestruct.thumb_folder NEQ "">
+		<!--- Create directory if not there already to hold this folderthumbnail --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/">
+		</cfif>
+		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" type="file">
+		<cfif myDir.recordcount>
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#myDir.name#">
+		</cfif>
+		<!--- If we choose a thumbnail from the list --->
+		<cfif arguments.thestruct.thumb_folder_file eq "">
+			<!--- Get extension --->
+			<cfset var img_ext = listLast(arguments.thestruct.thumb_folder,'.')> 
+			<!--- Set vars --->
+			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+				<!--- Set http --->
+				<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#">
+			<cfelse>
+				<!--- Set http --->
+				<cfset var thehttp = arguments.thestruct.thumb_folder>
+			</cfif>
+			<!--- Get the thumbnail --->
+			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
+			<!--- Set filename --->
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#img_ext#">
+		</cfif>
+		<!--- If the user uploads an image --->
+		<cfif arguments.thestruct.thumb_folder_file neq "">
+			<!--- Upload --->
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" filefield="thumb_folder_file" result="result">
+			<!--- Rename --->
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#arguments.thestruct.folderId#.#result.serverfileext#" source="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#result.serverFile#" >
+			<!--- Set filename --->
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#result.serverfileext#">
+		</cfif>
+		<!--- Return --->
+		<cfreturn this />	
+	</cfif>
+</cffunction>
+
+<!--- Delete folder thumbnail --->
+<cffunction name="folderthumbnail_reset" access="public" output="false" returntype="void">
+	<cfargument name="folder_id" type="string">
+	<cfdirectory action="delete" directory="#expandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.folder_id#" recurse="true" />
 </cffunction>
 
 <!--- Get API key --->
@@ -1202,10 +1252,8 @@
 		UPDATE razuna_config
 		SET conf_serverid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 		</cfquery>
-		<!--- Alter query --->
-		<cfset querySetCell(qry, "conf_serverid", theid)>
 		<!--- Set the ID into application scope --->
-		<!--- <cfset application.razuna.serverid = theid> --->
+		<cfset application.razuna.serverid = theid>
 	</cfif>
 	<!--- Check for config file --->
 	<cfif fileExists("#arguments.pathoneup#/global/config/keys.cfm")>
@@ -1224,13 +1272,6 @@
 		UPDATE razuna_config
 		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 		</cfquery>
-	<cfelse>
-		<!--- Update --->
-		<cfquery datasource="razuna_default">
-		UPDATE razuna_config
-		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
-		</cfquery>
-		<cfset QuerySetCell(qry, "conf_wl", false)>
 	</cfif>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>
@@ -1303,6 +1344,8 @@
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.dynpath = cgi.context_path>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<cfset application.razuna.dropbox.url_oauth = "https://www.dropbox.com/1">
+	<cfset application.razuna.dropbox.url_api = "https://api.dropbox.com/1">
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -1806,6 +1849,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.share_comments = false>
 	<cfset v.share_uploading = false>
 	<cfset v.request_access = true>
+	<cfset v.req_filename = true>
+	<cfset v.req_description = false>
+	<cfset v.req_keywords = false>
+	<cfset v.images_metadata = "">
+	<cfset v.videos_metadata = "">
+	<cfset v.files_metadata = "">
+	<cfset v.audios_metadata = "">
+	<cfset v.assetbox_height = "">
+	<cfset v.assetbox_width = "">
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2004,6 +2056,33 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfif custom_id EQ "request_access" AND !custom_value>
 				<cfset v.request_access = false>
 			</cfif>
+			<cfif custom_id EQ "req_filename" AND !custom_value>
+				<cfset v.req_filename = false>
+			</cfif>
+			<cfif custom_id EQ "req_description" AND custom_value>
+				<cfset v.req_description = true>
+			</cfif>
+			<cfif custom_id EQ "req_keywords" AND custom_value>
+				<cfset v.req_keywords = true>
+			</cfif>
+			<cfif custom_id EQ "images_metadata">
+				<cfset v.images_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "videos_metadata">
+				<cfset v.videos_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "files_metadata">
+				<cfset v.files_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "audios_metadata">
+				<cfset v.audios_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "assetbox_height">
+				<cfset v.assetbox_height = custom_value>
+			</cfif>
+			<cfif custom_id EQ "assetbox_width">
+				<cfset v.assetbox_width = custom_value>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -2019,6 +2098,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfinvoke component="hosts" method="getall" returnvariable="t" />
 		<!--- Loop --->
 		<cfloop query="t">
+			<cfif session.hostid NEQ host_id>
+				<!--- Check & delete if directory is already exists --->
+				<cfif directoryExists("#arguments.thestruct.thepathup#global/host/favicon/#host_id#")>
+					<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" recurse="true">
+				</cfif>
+				<!--- Create directory --->
+				<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" mode="777">
+				<!--- copy the favicon.ico file --->
+				<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" source="#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico"/>
+			</cfif>
 			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
 		</cfloop>
 	<!--- For a single tenant --->
@@ -2157,12 +2246,24 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q.opt_value />
 </cffunction>
 
-<!--- Get options --->
+<!--- Set CSS --->
 <cffunction name="set_css" output="false" returntype="void">
 	<cfargument name="thecss" type="string" required="true">
 	<cfargument name="pathoneup" type="string" required="true">
 	<!--- Write file --->
-	<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/main.css" output="#arguments.thecss#" charset="utf-8" mode="775" />
+	<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/custom/custom.css" output="#arguments.thecss#" charset="utf-8" mode="775" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Get CSS --->
+<cffunction name="get_css" output="false" returntype="void">
+	<cfargument name="pathoneup" type="string" required="true">
+	<!--- Check if custom folder exists --->
+	<cfif !directoryExists("#arguments.pathoneup#/global/host/dam/views/layouts/custom")>
+		<cfdirectory action="create" directory="#arguments.pathoneup#/global/host/dam/views/layouts/custom" mode="775" />
+		<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/custom/custom.css" output="" mode="775" charset="utf-8" />
+	</cfif>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2240,5 +2341,76 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
+	<!--- Check for app key --->
+	<cffunction name="getappkey">
+		<cfargument name="account" type="string">
+		<!--- Param --->
+		<cfset var qry_keys = "">
+		<!--- Connect to DB and retrieve keys --->
+		<cftry>
+			<!--- Query --->
+			<cfquery datasource="razuna_client" name="qry_keys">
+			SELECT app_key_name, app_key_value
+			FROM appkeys
+			WHERE app_key_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
+			</cfquery>
+			<!--- Put keys into session scope --->
+			<cfloop query="qry_keys">
+				<cfif app_key_name EQ "#arguments.account#_appkey">
+					<cfset "session.#arguments.account#.appkey" = app_key_value>
+				<cfelseif app_key_name EQ "#arguments.account#_appsecret">
+					<cfset "session.#arguments.account#.appsecret" = app_key_value>
+				</cfif>
+			</cfloop>
+			<!--- Output --->
+			<!--- <cfoutput><span style="font-weight:bold;color:green;">Got the codes please authenticate now!</span></cfoutput> --->
+			<cfcatch type="any">
+				<cfoutput><span style="font-weight:bold;color:red;">Error occured: #cfcatch.message# - #cfcatch.detail#</span></cfoutput>
+				<cfabort>
+			</cfcatch>
+		</cftry>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="get_s3" returntype="Query">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT set_id, set_pref
+		FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		ORDER BY lower(set_id)
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="set_s3" returntype="void">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Remove all aws fields in DB first --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		</cfquery>
+		<!--- Remove all sessions with AWS --->
+		<cfset structClear(session.aws)>
+		<!--- Loop over fields and call savesettings --->
+		<cfloop collection="#arguments.thestruct#" item="i">
+			<cfif i CONTAINS "aws_">
+				<cfif arguments.thestruct["#i#"] EQ "">
+					<cfbreak>
+				</cfif>
+				<cfinvoke method="savesetting" thefield="#i#" thevalue="#arguments.thestruct["#i#"]#" />
+			</cfif>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+		
 
 </cfcomponent>

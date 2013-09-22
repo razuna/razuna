@@ -43,7 +43,7 @@
 <link rel="stylesheet" type="text/css" href="views/layouts/login.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="js/login.js"></script>

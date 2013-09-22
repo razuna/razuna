@@ -26,7 +26,10 @@ function showwindow(theurl,thetitle,thew,thewin) {
 }
 // Destroy Window
 function destroywindow(numb) {
-	$('#thewindowcontent' + numb).dialog('destroy');
+	try{
+		$('#thewindowcontent' + numb).dialog('destroy');
+	}
+	catch(e) {};
 }
 // Load Tabs
 function jqtabs(tabs){
@@ -205,6 +208,8 @@ function aspectwidth(inp,out,theform){
 }
 // Enable folderselection in list
 function enablesub(myform,nostore) {
+	// Remove ui-selected class
+	$('.assetbox').removeClass('ui-selected');
 	// Set nostore to false
 	if (nostore == ''){
 		var nostore = false;
@@ -213,17 +218,17 @@ function enablesub(myform,nostore) {
 	var anyselect = $('div').hasClass('ui-selected'); 
 	if (!anyselect) {
 		// Check state of selection box
-	    var isclosed = $("#folderselection" + myform).is(':hidden');
+	    // var isclosed = $("#folderselection" + myform).is(':hidden');
 	    // get how many are selected
 	    var n = $('#' + myform + ' input:checked').length;
 	    // Open or close selection
-	    if (n > 0 && isclosed) {
-			$("#folderselection" + myform).slideToggle('slow');
-			$("#folderselectionb" + myform).slideToggle('slow');
+	    if (n > 0) {
+			$("#folderselection" + myform).slideDown('slow');
+			$("#folderselectionb" + myform).slideDown('slow');
 		}
-		if (n == 0 && !isclosed) {
-			$("#folderselection" + myform).slideToggle('slow');
-			$("#folderselectionb" + myform).slideToggle('slow');
+		if (n == 0) {
+			$("#folderselection" + myform).slideUp('slow');
+			$("#folderselectionb" + myform).slideUp('slow');
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
@@ -231,9 +236,9 @@ function enablesub(myform,nostore) {
 		}
 		// if selection is here
 		if (n != 0) {
-			// Show select all desc
-			$("#selectstore" + myform).css("display","");
-			$("#selectstoreb" + myform).css("display","");
+			// Hide the selectall desc
+			$("#selectstore" + myform).css("display","none");
+			$("#selectstoreb" + myform).css("display","none");
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
@@ -323,9 +328,6 @@ $(document).bind('click', function(e) {
 	}
 // Flash footer_tabs
 function flash_footer(what){
-	// $("#tabs_footer").effect('pulsate');
-	//$("#tabs_footer").effect('highlight',{'color':'orange'},1000);
-	//$('#tabs_footer').tabs('select','#thedropfav');
 	// Display notification
 	if(what == "basket"){
 		$.sticky('<span style="color:green;font-weight:bold;">Item is now in your basket</span>');
@@ -456,10 +458,10 @@ function storeids(theform){
            		fileids += document.forms[theform].elements[i].value + ',';
            		// filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
            	}
-           	// else {
-           	// 	del_fileids += document.forms[theform].elements[i].value + ',';
+           	else {
+           	 	del_fileids += document.forms[theform].elements[i].value + ',';
            	// 	// del_filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
-           	// }
+           	 }
       	}
    	}
    	// Only continue if there is something selected
@@ -474,16 +476,12 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
 	// Loop over checkboxes and check all
-	$('#' + myform + ' :checkbox').each( function() {
-		$(this).attr('checked', true);
-	})
-	// Depending on the var set or unset
-	if($("#folderselection" + myform).is(':hidden')){
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
-		// $('#select' + thediv).slideToggle('slow');
-		// $('#non' + thediv).slideToggle('slow');
-	}
+	$('#' + myform + ' :checkbox').attr('checked', true);
+	// Show drop down
+	$("#folderselection" + myform).slideDown('slow');
+	$("#folderselectionb" + myform).slideDown('slow');
+	// Remove ui-selected class
+	$('.assetbox').removeClass('ui-selected');
 	// Decide if this is from the search
 	if(folderid != 'x'){
 		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind );
@@ -497,12 +495,10 @@ function CheckAll(myform,folderid,thediv,thekind) {
 
 function CheckAllNot(myform){
 	// Loop over checkboxes and check/uncheck and set var
-	$('#' + myform + ' :checkbox').each( function() {
-		$(this).attr('checked', false);
-	})
+	$('#' + myform + ' :checkbox').attr('checked', false);
 	// Hide bar
-	$("#folderselection" + myform).slideToggle('slow');
-	$("#folderselectionb" + myform).slideToggle('slow');
+	$("#folderselection" + myform).slideUp('slow');
+	$("#folderselectionb" + myform).slideUp('slow');
 	// Hide the selectall desc
 	$("#selectstore" + myform).css("display","none");
 	$("#selectstoreb" + myform).css("display","none");
@@ -662,12 +658,15 @@ function set3gp(theform){
 		case 3: case 5: case 7: case 9:
 		document.forms[theform].convert_width_3gp.value = '176';
 		document.forms[theform].convert_height_3gp.value = '144';
+		break;
 		case 10:
 		document.forms[theform].convert_width_3gp.value = '352';
 		document.forms[theform].convert_height_3gp.value = '288';
+		break;
 		case 11:
 		document.forms[theform].convert_width_3gp.value = '704';
 		document.forms[theform].convert_height_3gp.value = '576';
+		break;
 		case 12:
 		document.forms[theform].convert_width_3gp.value = '1408';
 		document.forms[theform].convert_height_3gp.value = '1152';	
@@ -688,6 +687,55 @@ function set3gp(theform){
 		break;
 		case 8: case 9: case 10: case 11: case 12:
 		document.forms[theform].convert_bitrate_3gp.value = '600';
+		break;
+	}
+}
+// Set values for the Additional rendition for 3GP format correct for rendition template
+function clickset3gp_additional(theform,idx){
+	document.forms[theform]["convert_width_3gp_"+idx].value = '128';
+	document.forms[theform]["convert_height_3gp_"+idx].value = '96';
+}
+function set3gp_additional(theform,index){
+	var thissize = document.forms[theform]["convert_wh_3gp_"+index].selectedIndex;
+	switch(thissize){
+		//all values which are 128x96
+		case 1: case 2: case 4: case 6: case 8:
+		document.forms[theform]["convert_width_3gp_"+index].value = '128';
+		document.forms[theform]["convert_height_3gp_"+index].value = '96';
+		break;
+		//all values which are 176x144
+		case 3: case 5: case 7: case 9:
+		document.forms[theform]["convert_width_3gp_"+index].value = '176';
+		document.forms[theform]["convert_height_3gp_"+index].value = '144';
+		break;
+		case 10:
+		document.forms[theform]["convert_width_3gp_"+index].value = '352';
+		document.forms[theform]["convert_height_3gp_"+index].value = '288';
+		break;
+		case 11:
+		document.forms[theform]["convert_width_3gp_"+index].value = '704';
+		document.forms[theform]["convert_height_3gp_"+index].value = '576';
+		break;
+		case 12:
+		document.forms[theform]["convert_width_3gp_"+index].value = '1408';
+		document.forms[theform]["convert_height_3gp_"+index].value = '1152';	
+		break;
+	}
+	switch(thissize){
+		case 1:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '64';
+		break;
+		case 2: case 3:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '95';
+		break;
+		case 4: case 5:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '200';
+		break;
+		case 6: case 7:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '300';
+		break;
+		case 8: case 9: case 10: case 11: case 12:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '600';
 		break;
 	}
 }
@@ -862,28 +910,50 @@ function updategrp(grpid){
 // SCHEDULER
 
 // Upload method: Server, Mail, FTP
-function showConnectDetail(fld, kind) {
-	var method = fld[fld.selectedIndex].value;
+function showConnectDetail(kind) {
+	// Get method
+	var method = $("#method option:selected").val();
+	// Set folder_id by default
+	$("#folder_id").val('');
+	// Show lower part
+	$("#task_lower_part").css('display','');
+	// Show frequency onetime
+	$("#freq_onetime").css('display','');
+	// Evaluate
 	if (method == "server") { 
-		document.getElementById("detailsServer_"+kind).style.display = "block";
-		document.getElementById("detailsMail_"+kind).style.display = "none"; 
-		document.getElementById("detailsFtp_"+kind).style.display = "none"; 
+		$("#detailsServer_"+kind).css('display','block');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','none');
 	}
 	else if (method == "mail") {
-		document.getElementById("detailsServer_"+kind).style.display = "none"; 
-		document.getElementById("detailsMail_"+kind).style.display = "block"; 
-		document.getElementById("detailsFtp_"+kind).style.display = "none"; 
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','block');
+		$("#detailsFtp_"+kind).css('display','none');
 	}
 	else if (method == "ftp") {
-		document.getElementById("detailsServer_"+kind).style.display = "none"; 
-		document.getElementById("detailsMail_"+kind).style.display = "none"; 
-		document.getElementById("detailsFtp_"+kind).style.display = "block";
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','block');
+	}
+	else if (method == "rebuild") {
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','none');
+		// Set folderid to 0 so we don't get errors
+		$("#folder_id").val('0');
+		// Hide lower part
+		$("#task_lower_part").css('display','none');
+		// Hide frequency onetime
+		$("#freq_onetime").css('display','none');
+		// Set the element at index 2 to be selected
+		$("#frequency option:eq(1)").attr("selected", "selected");
+		showFrequencyDetail('new');
 	}
 }
 
 // Frequency: One-Time, Recurring, Daily
-function showFrequencyDetail(fld, kind) {
-	var frequency = fld[fld.selectedIndex].value;
+function showFrequencyDetail(kind) {
+	var frequency = $("#frequency option:selected").val();
 	if (frequency == "1") { 
 		document.getElementById("detailsOneTime_"+kind).style.display = "block"; 
 		document.getElementById("detailsRecurring_"+kind).style.display = "none"; 
@@ -1054,14 +1124,14 @@ function searchadv_files(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1094,14 +1164,14 @@ function searchadv_videos(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1136,14 +1206,14 @@ function searchadv_images(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1176,14 +1246,14 @@ function searchadv_audios(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1216,14 +1286,15 @@ function searchadv_all(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+			
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1233,6 +1304,19 @@ function searchadv_all(theform, thefa, folderid) {
 			destroywindow(1);
 		});
 	}
+}
+
+function addTab(tabs, id, label){
+	li = "<li><a href='#"+ id +"'>"+ label +"</a></li>";
+	tabs.find( ".ui-tabs-nav" ).append( li );
+	tabs.append( "<div id='" + id + "'><p></p></div>" );
+	tabs.tabs( "refresh" );
+} 
+
+function removeTab(tabContainerID,tabID){
+	$('#'+tabContainerID+' li a[href="#'+tabID+'"]').remove();
+	$('#'+tabContainerID+' div#'+tabID).remove();
+	$('#'+tabContainerID).tabs( "refresh" );
 }
 function getIndexForId( tabsDivId, searchedId )
 {
@@ -1251,7 +1335,7 @@ function getIndexForId( tabsDivId, searchedId )
 }
 function emptybasket(){
 	loadcontent('rightside','index.cfm?fa=c.basket_full_remove_all');
-	setTimeout("loadbasket()", 1250);
+	// setTimeout("loadbasket()", 1250);
 	destroywindow(1);
 }
 function loadbasket(){
@@ -1689,3 +1773,49 @@ function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	$('#' + thestatusddiv + '_thumb').html('Reset all individual download setting successfully');
 	$('#' + thestatusddiv + '_org').html('Reset all individual download setting successfully');
 }
+// Switch section
+function switchmainselection(thetype,thelinktext){
+	// Load section
+	if (thetype == 'folders'){
+		$('#explorer').load('index.cfm?fa=c.explorer');
+	}
+	else if (thetype == 'collections'){
+		$('#explorer').load('index.cfm?fa=c.explorer_col');
+	}
+	else if (thetype == 'labels'){
+		$('#explorer').load('index.cfm?fa=c.labels_list');
+	}
+	else if (thetype == 'smart_folders'){
+		$('#explorer').load('index.cfm?fa=c.smart_folders');
+	}
+	// Toogle
+	$('#mainselection').toggle();
+	// Remove the image in all marks
+	$('#section_folders').html('&nbsp;');
+	$('#section_smart_folders').html('&nbsp;');
+	$('#section_collections').html('&nbsp;');
+	$('#section_labels').html('&nbsp;');
+	// Now set the correct CSS
+	$('#section_folders').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_smart_folders').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_collections').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_labels').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	// Now mark the div
+	$('#section_' + thetype).css({'float':'left','padding-right':'3px'});
+	$('#section_' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
+	// Change the link text itself
+	$('#mainsectionchooser').text(thelinktext);
+}
+// Image Tooltip
+$(document).tooltip({
+	items: "[img-tt]",
+	content: function() {
+		 var element = $( this );
+		 var theimg = element.attr("src");
+		 return "<img src='" + theimg + "' border='0'>";
+	},
+	position: {
+		my: "center bottom",
+		at: "center top"
+	}
+});

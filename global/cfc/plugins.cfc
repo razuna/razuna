@@ -34,6 +34,12 @@
 		<cfset var pp = "#arguments.pathoneup#global/plugins">
 		<!--- List plugins in this directory --->
 		<cfdirectory action="list" directory="#pp#" name="plugindirs" recurse="false" type="dir" />
+		<!--- Filter out the skeleton --->
+		<cfquery dbtype="query" name="plugindirs">
+		SELECT *
+		FROM plugindirs
+		WHERE name != 'skeleton'
+		</cfquery>
 		<!--- Loop over directory list and add to db --->
 		<cfloop query="plugindirs">
 			<!--- If conf directory exists --->
