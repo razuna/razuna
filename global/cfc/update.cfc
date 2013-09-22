@@ -1002,7 +1002,10 @@
 			 sched_method, 
 			 sched_name,
 			 sched_interval,
-			 host_id
+			 host_id,
+			 sched_start_time,
+			 sched_end_time,
+			 sched_start_date
 			)
 			VALUES 
 			(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
@@ -1011,7 +1014,10 @@
 			 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
 			 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
 			 <cfqueryparam value="120" cfsqltype="cf_sql_varchar">,
-			 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
+			 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">,
+			 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 00:01">,
+			 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 23:59">,
+			 <cfqueryparam cfsqltype="cf_sql_date" value="#LSDateFormat(now(), "yyyy-mm-dd")#">
 			 )
 			</cfquery>
 			<!--- Save scheduled event in CFML scheduling engine --->
