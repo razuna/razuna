@@ -745,6 +745,10 @@
 	<!--- set variables which we need in the create app files below --->
 	<cfset var thisid = arguments.thestruct.host_id>
 	<cfset var host_path_replace = qrythishost.host_path>
+	<!--- If ISP we reaplce the host path with the raz1 foler since only one folder exists --->
+	<cfif application.razuna.isp>
+		<cfset var host_path_replace = "raz1">
+	</cfif>
 	<cfset var host_db_prefix_replace = qrythishost.host_shard_group>
 	<cfset var thefiles = 0>
 	<cfset var sqlStmt = "">
