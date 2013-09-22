@@ -116,6 +116,9 @@
 			<cfset var thevarchar = "varchar2">
 		</cfif>
 
+		<!--- Read config file for dbupdate number --->
+		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
+
 		<!--- Core DB --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
@@ -413,7 +416,9 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			update raz1_labels set label_path = label_text where label_id_r = '0'
+			update raz1_labels 
+			set label_path = label_text 
+			where label_id_r = '0'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -714,12 +719,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_audios SET in_trash = 'F'
 			</cfquery>
@@ -732,12 +731,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_collections SET in_trash = 'F'
 			</cfquery>
@@ -750,12 +743,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_collections_ct_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_collections_ct_files SET in_trash = 'F'
 			</cfquery>
@@ -768,12 +755,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_files SET in_trash = 'F'
 			</cfquery>
@@ -786,12 +767,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_folders SET in_trash = 'F'
 			</cfquery>
@@ -804,12 +779,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_images SET in_trash = 'F'
 			</cfquery>
@@ -822,12 +791,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update in_trash (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_videos SET in_trash = 'F'
 			</cfquery>
@@ -1044,8 +1007,7 @@
 		</cftry>
 		 --->
 
-		<!--- Read config file for dbupdate number --->
-		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
+		
 		<!--- Update value in db --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE options
