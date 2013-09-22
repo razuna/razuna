@@ -967,6 +967,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
 		SELECT host_id, host_path, host_shard_group
 		FROM hosts
+		WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
 		</cfquery>
 		<!--- Loop over hosts --->
 		<cfloop query="qry_hosts">
