@@ -987,7 +987,7 @@
 		
 		<!--- Query host table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
-		SELECT host_id, host_path
+		SELECT host_id, host_path, host_shard_group
 		FROM hosts
 		</cfquery>
 		<!--- Loop over hosts --->
@@ -995,7 +995,7 @@
 			<cfset var newschid = createuuid()>
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#schedules 
+			INSERT INTO #host_shard_group#schedules 
 			(sched_id, 
 			 set2_id_r, 
 			 sched_user, 
