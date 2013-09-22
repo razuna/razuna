@@ -1129,6 +1129,12 @@
 					</cfquery>
 					<cfcatch type="database"></cfcatch>
 				</cftry>
+				<cftry>
+					<cfquery datasource="razuna_default">
+					alter table razuna_config add conf_serverid varchar(100)
+					</cfquery>
+					<cfcatch type="database"></cfcatch>
+				</cftry>
 			<cfelse>
 				<!--- Create the config DB on the filesystem --->
 				<cfinvoke component="db_h2" method="BDsetDatasource">
