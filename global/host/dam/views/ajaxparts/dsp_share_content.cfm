@@ -53,7 +53,7 @@
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
 							<cfif listlen(qry_breadcrumb)>
-								| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&jsessionid=#session.SessionID#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+								| <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&jsessionid=#session.SessionID#');" style="padding-left:10px;">Home</a> <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&jsessionid=#session.SessionID#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 							</cfif>
 						</cfif>
 					</div>
