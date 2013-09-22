@@ -53,7 +53,7 @@
 					<tr>
 						<td width="100" valign="top">
 							<select name="method" id="method" class="text" onChange="showConnectDetail('new');">
-								<cfif NOT application.razuna.isp>
+								<cfif !application.razuna.isp>
 									<option value="server"<cfif qry_detail.sched_method EQ "server"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_server")#</option>
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
@@ -62,7 +62,9 @@
 								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ADServer")#</option>
 								</cfif>
 								<option>---</option>
-								<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
+								<cfif !application.razuna.isp>
+									<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
+								</cfif>
 								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
 							</select>
 						</td>

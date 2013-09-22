@@ -2183,7 +2183,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="ad_server_password" type="string">
 	<cfargument name="ad_server_filter" type="string">
 	<cfargument name="ad_server_start" type="string">
-	
 	<!--- Delete & Insert --->
 	<cfinvoke method="savesetting" thefield="ad_server_name" thevalue="#arguments.ad_server_name#" />
 	<cfinvoke method="savesetting" thefield="ad_server_port" thevalue="#arguments.ad_server_port#" />
@@ -2221,6 +2220,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	UPDATE razuna_config
 	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
 	</cfquery>
+	<!--- If this is for ISP we do a general scheduler task for indexing files --->
+	<cfif arguments.thestruct.conf_isp>
+		<cfset CronSetDirectory("/cron")>
+		<cfset CronEnable(True)>
+	<cfelse>
+		<cfset CronEnable(False)>
+	</cfif>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings","true")>
 	<!--- Return --->

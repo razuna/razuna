@@ -925,54 +925,55 @@
 		</cftry>
 
 		<!--- Add indexing to scheduler --->
-		
-		<!--- Query host table --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
-		SELECT host_id, host_path, host_shard_group
-		FROM hosts
-		WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
-		</cfquery>
-		<!--- Loop over hosts --->
-		<cfloop query="qry_hosts">
-			<cfset var newschid = createuuid()>
-			<!--- Insert --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #host_shard_group#schedules 
-			(sched_id, 
-			 set2_id_r, 
-			 sched_user, 
-			 sched_method, 
-			 sched_name,
-			 sched_interval,
-			 host_id,
-			 sched_start_time,
-			 sched_end_time,
-			 sched_start_date
-			)
-			VALUES 
-			(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
-			 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-			 <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">, 
-			 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
-			 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
-			 <cfqueryparam value="120" cfsqltype="cf_sql_varchar">,
-			 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">,
-			 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 00:01">,
-			 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 23:59">,
-			 <cfqueryparam cfsqltype="cf_sql_date" value="#LSDateFormat(now(), "yyyy-mm-dd")#">
-			 )
+		<cfif !application.razuna.isp>
+			<!--- Query host table --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
+			SELECT host_id, host_path, host_shard_group
+			FROM hosts
+			WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
 			</cfquery>
-			<!--- Save scheduled event in CFML scheduling engine --->
-			<cfschedule action="update"
-				task="RazScheduledUploadEvent[#newschid#]" 
-				operation="HTTPRequest"
-				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
-				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-				startTime="00:01 AM"
-				endTime="23:59 PM"
-				interval="120"
-			>
-		</cfloop>
+			<!--- Loop over hosts --->
+			<cfloop query="qry_hosts">
+				<cfset var newschid = createuuid()>
+				<!--- Insert --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #host_shard_group#schedules 
+				(sched_id, 
+				 set2_id_r, 
+				 sched_user, 
+				 sched_method, 
+				 sched_name,
+				 sched_interval,
+				 host_id,
+				 sched_start_time,
+				 sched_end_time,
+				 sched_start_date
+				)
+				VALUES 
+				(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
+				 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+				 <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">, 
+				 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
+				 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
+				 <cfqueryparam value="120" cfsqltype="cf_sql_varchar">,
+				 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">,
+				 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 00:01">,
+				 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 23:59">,
+				 <cfqueryparam cfsqltype="cf_sql_date" value="#LSDateFormat(now(), "yyyy-mm-dd")#">
+				 )
+				</cfquery>
+				<!--- Save scheduled event in CFML scheduling engine --->
+				<cfschedule action="update"
+					task="RazScheduledUploadEvent[#newschid#]" 
+					operation="HTTPRequest"
+					url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="120"
+				>
+			</cfloop>
+		</cfif>
 		
 		<!--- Add to internal table --->
 		<cftry>

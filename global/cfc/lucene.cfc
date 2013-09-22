@@ -71,17 +71,6 @@
 		<cfargument name="hostid" default="#session.hostid#" required="false">
 		<cfargument name="storage" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
-		<!--- Check if there is a thread already running if so abort --->
-		<cfif arguments.assetid EQ 0>
-			<cftry>
-				<cfloop array="#getallthreads()#" index="i">
-					<cfif i.name EQ "search_reindex">
-						<cfabort>
-					</cfif>
-				</cfloop>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
-		</cfif>
 		<!--- If the assetid is all it means a complete rebuild --->
 		<cfif arguments.assetid EQ "all">
 			<!--- Set all records to non indexed --->
@@ -125,7 +114,7 @@
 		<!--- Put qry into arguments --->
 		<cfset arguments.qry = qry>
 		<!--- Loop over the recordset --->
-		<cfthread name="search_reindex" action="run" intstruct="#arguments#" priority="low">
+		<cfthread action="run" intstruct="#arguments#" priority="low">
 			<cfloop query="attributes.intstruct.qry">
 				<cfinvoke method="index_update_thread">
 					<cfinvokeargument name="thestruct" value="#attributes.intstruct.thestruct#" />
