@@ -7354,13 +7354,10 @@
 	<fuseaction name="share_login">
 		<!-- Param -->
 		<set name="session.iscol" value="F" overwrite="false" />
+		<set name="attributes.loginto" value="dam" />
+		<set name="attributes.from_share" value="t" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" method="login" returnvariable="logindone">
-			<argument name="name" value="#attributes.name#" />
-			<argument name="pass" value="#attributes.pass#" />
-			<argument name="loginto" value="dam" />
-			<argument name="from_share" value="t" />
-		</invoke>
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- User is found -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>

@@ -36,15 +36,7 @@
 
 <!--- FUNCTION: LOGIN --->
 	<cffunction name="login" access="public" output="false" returntype="struct">
-		<cfargument name="thestruct" required="yes" type="struct">
-		
-		<!---<cfargument name="name" required="yes" type="string">
-		<cfargument name="pass" required="yes" type="string">
-		<cfargument name="loginto" required="yes" type="string">
-		<cfargument name="rem_login" required="no" type="string">
-		<cfargument name="from_share" required="no" type="string">
-		<cfargument name="ad_server_name" required="no" type="string">--->
-		
+		<cfargument name="thestruct" required="true" type="struct">		
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.rem_login" default="F">
 		<cfparam name="arguments.thestruct.from_share" default="F">
