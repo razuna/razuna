@@ -46,6 +46,7 @@
 				to all assets in the folder
 			</cfif>
 		</div>
+		<!---
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">File Format</div>
 		<div style="float:left;">
@@ -55,6 +56,7 @@
 				<option value="xlsx">XLSX</option>
 			</select>
 		</div>
+		--->
 		<!--- First Row --->
 		<!---
 <div style="clear:both;padding-bottom:10px;"></div>

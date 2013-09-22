@@ -58,6 +58,11 @@
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
 								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
+								<cfif (attributes.ad_server_name NEQ "") AND (attributes.ad_server_username NEQ "") AND (attributes.ad_server_password NEQ "")>
+								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ADServer")#</option>
+								</cfif>
+								<option>---</option>
+								<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
 							</select>
 						</td>
@@ -111,6 +116,20 @@
 								<tr>
 									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail_subject")#</td>
 									<td><input type="text" name="mailSubject" size="25" value="#qry_detail.sched_mail_subject#" /></td>
+								</tr>
+							</table>
+							<!--- AD Server add user group --->
+							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsADUserGroup_new" style="display: <cfif qry_detail.sched_method EQ "ADServer">block<cfelse>none</cfif>">
+								<tr>
+									<td valign="top">Group by:</td>
+									<td>
+										<select name="grp_id_assigneds" id="grp_id_assigneds" multiple="multiple" size="5" style="width:150px;">
+							    			<cfloop query="qry_groups">
+			    								<option value="#grp_id#" <cfif ListFindNoCase(qry_detail.sched_ad_user_groups,grp_id) >selected</cfif>>#grp_name#</option>
+											</cfloop>
+										</select>
+									</td>
+									<td></td>
 								</tr>
 							</table>
 
@@ -187,8 +206,7 @@
 								</cfdefaultcase>
 							</cfswitch>
 							<select name="frequency" id="frequency" class="text" onChange="showFrequencyDetail('new')">
-							<!--- 	<option value="server"<cfif #set2_date_format# EQ "server"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("server")#</option> --->
-								<option id="freq_onetime" value="1"<cfif frequency EQ "1"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_onetime")#</option>
+								<option value="1"<cfif frequency EQ "1"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_onetime")#</option>
 								<option value="2"<cfif frequency EQ "2"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_recurring")#</option>
 								<option value="3"<cfif frequency EQ "3"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_daily_every")#</option>
 							</select>
@@ -211,7 +229,7 @@
 										</select>
 									</td>
 									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_at")#</td>
-									<td><input type="text" name="startTime2" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(Now(), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
+									<td><input type="text" name="startTime2" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(DateAdd("n", 10, Now()), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsDaily_new" style="display: <cfif #frequency# EQ "3">block<cfelse>none</cfif>">
@@ -281,9 +299,12 @@
 		$('#detailsServer_new').css('display','none');
 		$('#detailsMail_new').css('display','none');
 		$('#detailsFtp_new').css('display','block');
+		$('#detailsADUserGroup_new').css('display','none');
+		
 	</script>
-<cfelseif qry_detail.sched_method EQ "rebuild">
+<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing" OR qry_detail.sched_method EQ "ADServer">
 	<script type="text/javascript">
 		showConnectDetail('new');
+		// showFrequencyDetail('new');
 	</script>
 </cfif>

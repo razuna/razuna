@@ -207,8 +207,13 @@
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
 		<cfif i CONTAINS "cf_">
+			<!--- <cfif arguments.thestruct[i] EQ "">
+				<cfcontinue>
+			</cfif> --->
 			<!--- Remove the cf_ part so we only get the id --->
 			<cfset theid = replacenocase("#i#", "cf_", "", "ALL")>
+			<!--- Remove carriage return and new line --->
+			<cfset thevalue = REReplace(arguments.thestruct[i], "\r\n|\n\r|\n|\r", "", "all")>
 			<!--- Insert or update --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT cf_id_r
@@ -224,7 +229,7 @@
 				VALUES(
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct[i]#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
@@ -233,7 +238,7 @@
 			<cfelse>
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#custom_fields_values
-				SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct[i]#">
+				SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">
 				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				</cfquery>
@@ -243,7 +248,6 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
-	<!--- Lucene is indexing these values in the video.cfc already thus we are done here --->
 </cffunction>
 
 <!--- Save batch field values --->
@@ -257,59 +261,59 @@
 			<cfset list="">
 			<cfif StructKeyExists(arguments.thestruct,"file_id")>
 				<cfloop list="#arguments.thestruct.file_id#" index="idx">
-						<cfset list = listAppend(list,'#idx#')>
+					<cfset list = listAppend(list,'#idx#')>
 				</cfloop>
 			</cfif>
 			<cfif list NEQ ''>
 				<cfloop list="#list#" index="index" delimiters="," >
-				<cfquery datasource="#application.razuna.datasource#" name="q">
-				SELECT cf_show
-				FROM #session.hostdbprefix#custom_fields
-				WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-				AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
-				</cfquery>	
-				<!--- Insert or update --->
-				<cfquery datasource="#application.razuna.datasource#" name="qry">
-				SELECT cf_id_r,cf_value
-				FROM #session.hostdbprefix#custom_fields_values
-				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(index,"-")#">
-				AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
-				</cfquery>
-				<cfset appendValue = ''>
-				<cfif arguments.thestruct.batch_replace EQ 'false' AND q.cf_show EQ listlast(index,"-")>
-					<cfif qry.cf_value NEQ ''>
-						<cfset appendValue = qry.cf_value &' '& arguments.thestruct[i]>
+					<cfquery datasource="#application.razuna.datasource#" name="q">
+					SELECT cf_show
+					FROM #session.hostdbprefix#custom_fields
+					WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+					AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
+					</cfquery>	
+					<!--- Insert or update --->
+					<cfquery datasource="#application.razuna.datasource#" name="qry">
+					SELECT cf_id_r,cf_value
+					FROM #session.hostdbprefix#custom_fields_values
+					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(index,"-")#">
+					AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
+					</cfquery>
+					<cfset appendValue = ''>
+					<cfif arguments.thestruct.batch_replace EQ 'false' AND q.cf_show EQ listlast(index,"-")>
+						<cfif qry.cf_value NEQ ''>
+							<cfset appendValue = qry.cf_value &' '& arguments.thestruct[i]>
+						<cfelse>
+							<cfset appendValue = arguments.thestruct[i]>
+						</cfif>
 					<cfelse>
 						<cfset appendValue = arguments.thestruct[i]>
 					</cfif>
-				<cfelse>
-						<cfset appendValue = arguments.thestruct[i]>
-				</cfif>
-				<cfif q.cf_show EQ 'all' OR q.cf_show EQ listlast(index,"-")>
-				<!--- Insert --->
-				<cfif qry.recordcount EQ 0>
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#custom_fields_values
-					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-					VALUES(
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(index,"-")#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct[i]#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-				<!--- Update --->
-				<cfelse>
-					<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#custom_fields_values
-					SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#appendValue#">
-					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(index,"-")#">
-					</cfquery>
-				</cfif>
-				</cfif>
+					<cfif q.cf_show EQ 'all' OR q.cf_show EQ listlast(index,"-")>
+						<!--- Insert --->
+						<cfif qry.recordcount EQ 0>
+							<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#custom_fields_values
+							(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+							VALUES(
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(index,"-")#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct[i]#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+							)
+							</cfquery>
+						<!--- Update --->
+						<cfelse>
+							<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#custom_fields_values
+							SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#appendValue#">
+							WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+							AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(index,"-")#">
+							</cfquery>
+						</cfif>
+					</cfif>
 				</cfloop>
 			</cfif>
 		</cfif>
@@ -330,6 +334,8 @@
 		<cfif !structKeyExists(arguments.thestruct,"cf_edit")>
 			<cfset arguments.thestruct.cf_edit = "true">
 		</cfif>
+		<!--- Remove carriage return and new line --->
+		<cfset var theselectvalue = REReplace(arguments.thestruct.cf_select_list, "\r\n|\n\r|\n|\r", "", "all")>
 		<!--- Update record --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#custom_fields
@@ -338,7 +344,7 @@
 		cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">, 
 		cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">, 
 		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
-		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">,
+		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theselectvalue#">,
 		cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_in_form#">,
 		cf_edit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
 		WHERE cf_id = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">

@@ -45,6 +45,7 @@
 			</cfif>
 			<!--- <li><a href="##admin_api" onclick="loadcontent('admin_api','#myself#c.admin_api');">API</a></li> --->
 			<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">#myFusebox.getApplicationData().defaults.trans("system_information")#</a></li>
+			<li><a href="##ad_Services" onclick="loadcontent('ad_Services','#myself#c.ad_Services');">AD Services</a></li>
 			<!--- Plugins --->
 			<cfif qry_plugins.recordcount NEQ 0>
 				<li><a href="##admin_plugins">#myFusebox.getApplicationData().defaults.trans("plugins")#</a></li>
@@ -95,6 +96,8 @@
 		<!--- <div id="admin_api">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div> --->
 		<!--- System Information --->
 		<div id="admin_system">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<div id="ad_Services">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<!---<div id="admin_system">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>--->
 		<!--- Plugins --->
 		<cfif qry_plugins.recordcount NEQ 0>
 			<div id="admin_plugins">

@@ -666,7 +666,7 @@
 							<br />
 							<select name="images_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
-								<option>--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<option value="img_id AS cs_img_id"<cfif listFind(qry_customization.images_metadata,"img_id AS cs_img_id")> selected="selected"</cfif>>ID</option>
 								<option value="img_filename AS cs_img_filename"<cfif listFind(qry_customization.images_metadata,"img_filename AS cs_img_filename")> selected="selected"</cfif>>Filename</option>
 								<option value="img_description AS cs_img_description"<cfif listFind(qry_customization.images_metadata,"img_description AS cs_img_description")> selected="selected"</cfif>>Description</option>
@@ -676,7 +676,7 @@
 								<option value="img_width AS cs_img_width"<cfif listFind(qry_customization.images_metadata,"img_width AS cs_img_width")> selected="selected"</cfif>>Width</option>
 								<option value="img_height AS cs_img_height"<cfif listFind(qry_customization.images_metadata,"img_height AS cs_img_height")> selected="selected"</cfif>>Height</option>
 								<option value="img_size AS cs_img_size"<cfif listFind(qry_customization.images_metadata,"img_size AS cs_img_size")> selected="selected"</cfif>>Size</option>
-								<option>--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 								<cfloop list="#attributes.meta_img#" index="i">
 									<!--- Upper case the first char --->
 									<cfset l = len(i) - 1>
@@ -704,15 +704,15 @@
 							<br />
 							<select name="files_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
-								<option>--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<option value="file_id AS cs_file_id"<cfif listFind(qry_customization.files_metadata,"file_id AS cs_file_id")> selected="selected"</cfif>>ID</option>
-								<option value="file_filename AS cs_file_filename"<cfif listFind(qry_customization.files_metadata,"file_filename AS cs_file_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="file_description AS cs_file_description"<cfif listFind(qry_customization.files_metadata,"file_description AS cs_file_description")> selected="selected"</cfif>>Description</option>
+								<option value="file_name AS cs_file_filename"<cfif listFind(qry_customization.files_metadata,"file_name AS cs_file_filename")> selected="selected"</cfif>>Filename</option>
+								<option value="file_desc AS cs_file_description"<cfif listFind(qry_customization.files_metadata,"file_desc AS cs_file_description")> selected="selected"</cfif>>Description</option>
 								<option value="file_keywords AS cs_file_keywords"<cfif listFind(qry_customization.files_metadata,"file_keywords AS cs_file_keywords")> selected="selected"</cfif>>Keywords</option>
 								<option value="file_create_time AS cs_file_create_time"<cfif listFind(qry_customization.files_metadata,"file_create_time AS cs_file_create_time")> selected="selected"</cfif>>Create Date</option>
 								<option value="file_change_time AS cs_file_change_time"<cfif listFind(qry_customization.files_metadata,"file_change_time AS cs_file_change_time")> selected="selected"</cfif>>Change Date</option>
 								<option value="file_size AS cs_file_size"<cfif listFind(qry_customization.files_metadata,"file_size AS cs_file_size")> selected="selected"</cfif>>Size</option>
-								<option>--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 								<cfloop list="#attributes.meta_doc#" index="i">
 									<!--- Upper case the first char --->
 									<cfset l = len(i) - 1>
@@ -730,8 +730,6 @@
 								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>Keywords</option>
 								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>Create Date</option>
 								<option value="aud_change_time AS cs_aud_change_time"<cfif listFind(qry_customization.audios_metadata,"aud_change_time AS cs_aud_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="aud_width AS cs_aud_width"<cfif listFind(qry_customization.audios_metadata,"aud_width AS cs_aud_width")> selected="selected"</cfif>>Width</option>
-								<option value="aud_height AS cs_aud_height"<cfif listFind(qry_customization.audios_metadata,"aud_height AS cs_aud_height")> selected="selected"</cfif>>Height</option>
 								<option value="aud_size AS cs_aud_size"<cfif listFind(qry_customization.audios_metadata,"aud_size AS cs_aud_size")> selected="selected"</cfif>>Size</option>
 							</select>
 						</td>

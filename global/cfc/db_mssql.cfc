@@ -1420,9 +1420,10 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		   VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
-		PRIMARY KEY (FILE_ID),
-		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
+		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
+		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
+		  PRIMARY KEY (FILE_ID),
+		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
 		</cfquery>
@@ -1500,7 +1501,8 @@
 		  HASHTAG			  VARCHAR(100),
 		  IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		  INT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
+		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1862,7 +1864,8 @@
 		HASHTAG			   		VARCHAR(100),
 		IS_AVAILABLE		  	VARCHAR(1) DEFAULT 0,
 		CLOUD_URL_EXP		   	INT,
-		IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1917,6 +1920,7 @@
 			SCHED_END_TIME       DATETIME,
 			HOST_ID				 INT,
 			sched_upl_template	 VARCHAR(100),
+			sched_ad_user_groups nvarchar(max),
 		PRIMARY KEY (SCHED_ID),
 		FOREIGN KEY (SCHED_USER) REFERENCES #arguments.thestruct.theschema#.users (USER_ID) ON DELETE SET NULL,
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
@@ -2082,6 +2086,7 @@
 		  	IS_AVAILABLE		VARCHAR(1) DEFAULT 0,
 		  	CLOUD_URL_EXP		INT,
 		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  	IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
 			PRIMARY KEY (aud_ID),
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)

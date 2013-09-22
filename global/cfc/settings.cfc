@@ -2169,6 +2169,26 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn />
 </cffunction>
 
+<!--- Save AD Server --->
+<cffunction name="set_ad_server" output="false">
+	<cfargument name="ad_server_name" type="string">
+	<cfargument name="ad_server_port" type="string">
+	<cfargument name="ad_server_username" type="string">
+	<cfargument name="ad_server_password" type="string">
+	<cfargument name="ad_server_filter" type="string">
+	<cfargument name="ad_server_start" type="string">
+	
+	<!--- Delete & Insert --->
+	<cfinvoke method="savesetting" thefield="ad_server_name" thevalue="#arguments.ad_server_name#" />
+	<cfinvoke method="savesetting" thefield="ad_server_port" thevalue="#arguments.ad_server_port#" />
+	<cfinvoke method="savesetting" thefield="ad_server_username" thevalue="#arguments.ad_server_username#" />
+	<cfinvoke method="savesetting" thefield="ad_server_password" thevalue="#arguments.ad_server_password#" />
+	<cfinvoke method="savesetting" thefield="ad_server_filter" thevalue="#arguments.ad_server_filter#" />
+	<cfinvoke method="savesetting" thefield="ad_server_start" thevalue="#arguments.ad_server_start#" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 <!--- Save options --->
 <cffunction name="set_options" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
@@ -2398,7 +2418,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
-		<cfset structClear(session.aws)>
+		<cfif structKeyExists(session,"aws")>
+			<cfset structClear(session.aws)>
+		</cfif>
 		<!--- Loop over fields and call savesettings --->
 		<cfloop collection="#arguments.thestruct#" item="i">
 			<cfif i CONTAINS "aws_">
@@ -2410,6 +2432,41 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+	
+	<!--- Get AD Server --->
+	<cffunction name="get_ad_server" returntype="Query">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT set_id, set_pref
+		FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="ad_server_%">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		ORDER BY lower(set_id)
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+	
+	<!--- Get AD users --->
+	<cffunction name="get_ad_server_userlist" returntype="Query">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
+			<cfldap   server = "#arguments.thestruct.ad_server_name#"  
+			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
+			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
+			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
+		<cfelse>
+			<cfldap   server = "#arguments.thestruct.ad_server_name#"  
+			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+			filter="(&(objectClass=user))" 
+			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
+			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
+		</cfif>
+		<cfreturn results/>
 	</cffunction>
 		
 

@@ -486,10 +486,6 @@
 				<cfif FileExists(arguments.thestruct.thesource)>
 					<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 				</cfif>
-				<!--- Lucene: Delete Records --->
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
-				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 				<cfcatch type="any">
 					<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="error in xmp writing xml file line 400" dump="#cfcatch#">
 				</cfcatch>
@@ -541,10 +537,6 @@
 			</cfthread>
 			<!--- Wait --->
 			<cfthread action="join" name="#uptt#" />
-			<!--- Lucene: Delete Records --->
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
-			<!--- Lucene: Update Records --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 			<!--- Remove the tempfolder but only if image has been uploaded already --->
 			<cfif directoryExists("#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#")>
 				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
@@ -555,7 +547,8 @@
 		UPDATE #session.hostdbprefix#images
 		SET 
 		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
+		is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -673,18 +666,18 @@
 					</cfif>
 					<cftry>
 						<!--- Append to DB --->
-							<cfquery datasource="#arguments.thestruct.dsn#">
-							UPDATE #session.hostdbprefix#images_text
-							SET 
-							<cfif newkeywords EQ ",">
-								img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
-							<cfelse>
-								img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
-							</cfif>,
-							img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
-							WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
-							</cfquery>
+						<cfquery datasource="#arguments.thestruct.dsn#">
+						UPDATE #session.hostdbprefix#images_text
+						SET 
+						<cfif newkeywords EQ ",">
+							img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+						<cfelse>
+							img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
+						</cfif>,
+						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
+						WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+						</cfquery>
 						<cfcatch type="any">
 							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
 								<cfdump var="#cfcatch#" />
@@ -770,7 +763,7 @@
 			<cfset var thescript = createuuid()>
 			<!--- Set script --->
 			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
-				<!--- Write files --->
+			<!--- Write files --->
 			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
@@ -1243,6 +1236,12 @@
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
+			<cfif xmp.xres EQ "">
+				<cftry>
+					<cfset xmp.xres = trim(#thexml[1]["Photoshop:XResolution"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
 			<!--- Yresolution --->
 			<cftry>
 				<cfset xmp.yres = trim(#thexml[1]["IFD0:YResolution"].xmltext#)>
@@ -1251,6 +1250,12 @@
 			<cfif xmp.yres EQ "">
 				<cftry>
 					<cfset xmp.yres = trim(#thexml[1]["JFIF:YResolution"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<cfif xmp.yres EQ "">
+				<cftry>
+					<cfset xmp.yres = trim(#thexml[1]["Photoshop:YResolution"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
@@ -1427,10 +1432,6 @@
 			<cfif FileExists(arguments.thestruct.thesource)>
 				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 			</cfif>
-			<!--- Lucene: Delete Records --->
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
-			<!--- Lucene: Update Records --->
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="error in metadata writing for files" dump="#cfcatch#">
 			</cfcatch>
@@ -1490,10 +1491,6 @@
 		<cfif FileExists(arguments.thestruct.thesource)>
 			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 		</cfif>
-		<!--- Lucene: Delete Records --->
-		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
-		<!--- Lucene: Update Records --->
-		<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 		<!--- Remove the tempfolder but only if image has been uploaded already --->
 		<!--- <cfthread action="join" name="upload#arguments.thestruct.file_id#" /> --->
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
@@ -1503,7 +1500,8 @@
 	UPDATE #session.hostdbprefix#files
 	SET 
 	lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-	hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+	hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
+	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 	WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 	</cfquery>
@@ -1989,6 +1987,7 @@
 	<cfif arguments.type EQ "img">
 		<cfset var thedb = "images_text">
 		<cfset var theid = "img_id">
+		<cfset var thedbid = "img_id">
 		<cfset var theidr = "img_id_r">
 		<cfset var lucenecategory = "img">
 		<cfset var cachetype = "images">
@@ -1997,6 +1996,7 @@
 	<cfelseif arguments.type EQ "vid">
 		<cfset var thedb = "videos_text">
 		<cfset var theid = "vid_id">
+		<cfset var thedbid = "vid_id">
 		<cfset var theidr = "vid_id_r">
 		<cfset var lucenecategory = "vid">
 		<cfset var cachetype = "videos">
@@ -2005,6 +2005,7 @@
 	<cfelseif arguments.type EQ "aud">
 		<cfset var thedb = "audios_text">
 		<cfset var theid = "aud_id">
+		<cfset var thedbid = "aud_id">
 		<cfset var theidr = "aud_id_r">
 		<cfset var lucenecategory = "aud">
 		<cfset var cachetype = "audios">
@@ -2013,6 +2014,7 @@
 	<cfelse>
 		<cfset var thedb = "files_desc">
 		<cfset var theid = "file_id">
+		<cfset var thedbid = "file_id">
 		<cfset var theidr = "file_id_r">
 		<cfset var lucenecategory = "doc">
 		<cfset var cachetype = "files">
@@ -2104,8 +2106,13 @@
 				</cfif>
 			</cfloop>
 		</cfif>
-		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetid="#theid#" assetcategory="#lucenecategory#" thedatabase="#application.razuna.thedatabase#">
+		<!--- Set for indexing --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix##cachetype#
+		SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		WHERE #thedbid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
 	</cfloop>
 	<!--- Flush cache --->
 	<cfset resetcachetoken(cachetype)>
@@ -2163,17 +2170,41 @@
 					</cfquery>
 				</cfif>
 			</cftransaction>
+			<!--- Set for indexing --->
+			<cfif arguments.type EQ "img">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE img_id = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelseif arguments.type EQ "vid">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#videos
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE vid_id = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelseif arguments.type EQ "aud">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#audios
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE aud_id = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelseif arguments.type EQ "doc">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE file_id = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
 		</cfloop>
-		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api">
-			<cfinvokeargument name="assetid" value="#theid#" />
-			<cfinvokeargument name="assetcategory" value="#arguments.type#" />
-			<cfinvokeargument name="dsn" value="#application.razuna.datasource#" />
-			<cfinvokeargument name="storage" value="#application.razuna.storage#" />
-			<cfinvokeargument name="thedatabase" value="#application.razuna.thedatabase#" />
-			<cfinvokeargument name="prefix" value="#session.hostdbprefix#" />
-			<cfinvokeargument name="hostid" value="#session.hostid#" />
-		</cfinvoke>
 	</cfloop>
 	<!--- Flush cache --->
 	<cfif arguments.type EQ "img">

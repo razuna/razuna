@@ -122,7 +122,7 @@
 						</cfif>
 						<select name="cf_#cf_id#" style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
 							<option value=""></option>
-							<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
+							<cfloop list="#ltrim(ListSort(cf_select_list, 'text', 'asc', ','))#" index="i">
 								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
 							</cfloop>
 						</select>

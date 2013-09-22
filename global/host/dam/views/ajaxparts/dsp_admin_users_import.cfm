@@ -46,6 +46,9 @@
 			<!--- Loading Bars --->
 		<div style="float:left;padding:10px;color:green;font-weight:bold;display:none;" id="importstatus"></div>
 		<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="Import users" class="button"></div>
+		<cfif (attributes.ad_server_name NEQ "") AND (attributes.ad_server_username NEQ "") AND (attributes.ad_server_password NEQ "")>
+			<div style="float:right;padding:10px;"><button onclick="showwindow('#myself#c.ad_server_users_list','AD Server Users List',600,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("Import_AD_Users")#</button></div>
+		</cfif>
 		</form>
 	</div>
 </cfoutput>

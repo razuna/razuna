@@ -768,11 +768,15 @@ function aspectwidth(inp,out,theform,theaspect){
 	document.forms[theform].elements[out].value = mynum;
 }
 // Save Comment
-function addcomment(fileid,type,folderid){
+function addcomment(fileid,type,folderid,iscol){
 	var thecomment = $('#assetComment').val();
 	$('#comlist').load('index.cfm?fa=c.comments_add', { folder_id:folderid, file_id:fileid, type:type, comment:thecomment } );
 	// Reload comment section to re-issue new id
-	loadcontent('divcomments','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
+	if(iscol == 'T'){
+		loadcontent('divcommentscol','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
+	}else{
+		loadcontent('divcomments','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
+	}
 }
 // Update Comment
 function updatecomment(fileid,comid,type,folderid){
@@ -917,36 +921,45 @@ function showConnectDetail(kind) {
 	$("#folder_id").val('');
 	// Show lower part
 	$("#task_lower_part").css('display','');
-	// Show frequency onetime
-	$("#freq_onetime").css('display','');
 	// Evaluate
 	if (method == "server") { 
 		$("#detailsServer_"+kind).css('display','block');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 	}
 	else if (method == "mail") {
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','block');
 		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 	}
 	else if (method == "ftp") {
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','block');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 	}
-	else if (method == "rebuild") {
+	else if (method == "ADServer"){
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','block');
 		// Set folderid to 0 so we don't get errors
 		$("#folder_id").val('0');
 		// Hide lower part
 		$("#task_lower_part").css('display','none');
-		// Hide frequency onetime
-		$("#freq_onetime").css('display','none');
-		// Set the element at index 2 to be selected
-		$("#frequency option:eq(1)").attr("selected", "selected");
+	}
+	else if (method == "rebuild" || method == "indexing" ) {
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','none');
+		// Set folderid to 0 so we don't get errors
+		$("#folder_id").val('0');
+		// Hide lower part
+		$("#task_lower_part").css('display','none');
+		// Show frequency
 		showFrequencyDetail('new');
 	}
 }
@@ -1702,7 +1715,7 @@ function toggleslide(theclickid,thefield){
 	});
 };
 function SetVideo(source, title) {
-	$('#videoPlayerDiv').dialog('destroy');
+	//$('#videoPlayerDiv').dialog('destroy');
 	$('#videoPlayerDiv').dialog({
 		title: title,
 		modal: true,

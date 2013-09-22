@@ -35,7 +35,7 @@
 	</cfif>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
-	<cfif qry_filecount.thetotal EQ 0>
+	<cfif qry_filecount.thetotal EQ 0 OR qry_filecount.thetotal EQ ''>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
@@ -46,6 +46,9 @@
 		</table>
 	<!--- Show content of this folder --->
 	<cfelse>
+		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
+			<div id="#attributes.thediv#">
+		</cfif>
 		<form name="searchform#attributes.thetype#" id="searchform#attributes.thetype#" action="#self#">
 		<input type="hidden" name="thetype" value="all">
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
@@ -61,14 +64,15 @@
 					<!--- Folder Navigation (add file/tools/view) --->
 					<div style="float:right;">
 						<div style="float:right;padding-top:3px;">
-							<div style="float:left;" id="tooltip">
+							<!---<div style="float:left;" id="tooltip">
 								<a href="##" onclick="loadviewsearch('');return false;" title="Thumbnail View"><img src="#dynpath#/global/host/dam/images/view-list-icons.png" border="0" width="24" height="24"></a>
 								<a href="##" onclick="loadviewsearch('list');return false;" title="List View"><img src="#dynpath#/global/host/dam/images/view-list-text-3.png" border="0" width="24" height="24"></a>
 								<a href="##" onclick="loadviewsearch('combined');return false;" title="Combined/Quick Edit View"><img src="#dynpath#/global/host/dam/images/view-list-details-4.png" border="0" width="24" height="24"></a>
-							</div>
+							</div>--->
 						</div>
 						<script type="text/javascript">
 							function loadviewsearch(theview){
+								
 								// Show loading bar
 								$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 								$('###attributes.thediv#').load('#myself#c.search_simple', { view: theview, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "view">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
@@ -80,18 +84,19 @@
 				</th>
 			</tr>
 		</cfif>
+		
 		<!--- Icon Bar --->
-		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
+		<!---<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">--->
 			<tr>
 				<td colspan="6" style="border:0px;"><cfinclude template="dsp_icon_bar_search.cfm"></td>
 			</tr>
-		</cfif>
+		<!---</cfif>--->
 		<!--- Thumbnail --->
 		<cfset mysqloffset = session.offset * session.rowmaxpage>
 		<cfif session.view EQ "">
 			<tr>
 				<td style="border:0px;">
-				<cfoutput query="qry_files.qall" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
+				<cfoutput query="qry_files.qall" >
 					<cfif groupid NEQ "">
 						<cfset theid = groupid>
 					<cfelse>
@@ -880,7 +885,7 @@
 				<cfif kind EQ "img">
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -895,7 +900,7 @@
 				<cfelseif kind EQ "vid">
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -910,7 +915,7 @@
 				<cfelseif kind EQ "aud">
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -925,7 +930,7 @@
 				<cfelse>
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -948,6 +953,9 @@
 	</table>
 
 	</form>
+	<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
+		</div>
+	</cfif>
 	</cfif>
 	<!--- JS for the combined view --->
 	<script language="JavaScript" type="text/javascript">

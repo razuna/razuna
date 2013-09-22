@@ -118,6 +118,8 @@
 	<script language="JavaScript" type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen();
+		//set width
+		$('##thumb_folder_chosen').width(400);
 		// Show image
 		$('##thumb_folder').change(function(){
 			var image=$('##thumb_folder').val();

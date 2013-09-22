@@ -237,8 +237,6 @@
 <!--- INSERT SCHEDULED ASSETS FROM SERVER  --->
 <cffunction name="addassetscheduledserverthread" output="false">
 	<cfargument name="thestruct" type="struct">
-	<!--- Call to GC to clean memory --->
-	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Name of lock file --->
 	<cfset var lockfile = ".lock">
 	<cfif iswindows()>
@@ -433,7 +431,7 @@
 						CASE
 							WHEN EXISTS(
 								SELECT s.folder_id
-								FROM raz1_folders s
+								FROM #session.hostdbprefix#folders s
 								WHERE s.folder_id = f.folder_id_r
 								AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							) THEN 1
@@ -543,8 +541,6 @@
 		<cffile action="delete" file="#arguments.thestruct.directory#/#lockfile#" />
 		<cfcatch type="any"></cfcatch>
 	</cftry>
-	<!--- Call to GC to clean memory --->
-	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 </cffunction>
 
 <!--- INSERT FROM EMAIL --->
@@ -1143,8 +1139,6 @@
 				</cfquery>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("images")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="img">
 			<!--- VIDEOS --->
 			<cfelseif qry_mime.type_type EQ "vid">
 				<!--- Insert record --->		
@@ -1200,8 +1194,6 @@
 				</cfif>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("videos")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="vid">
 			<!--- AUDIOS --->
 			<cfelseif qry_mime.type_type EQ "aud">
 				<!--- Add record --->
@@ -1223,8 +1215,6 @@
 				</cfquery>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("audios")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="aud">
 			<!--- DOCUMENTS --->
 			<cfelse>
 				<!--- Insert --->
@@ -1246,8 +1236,6 @@
 				</cfquery>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("files")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="doc">
 			</cfif>
 			<!--- Flush the rest of the cache --->
 			<cfset resetcachetoken("folders")>
@@ -1447,6 +1435,10 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 <!--- This is the new threaded one --->
 <cffunction name="addasset" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
+	<!--- Limit threads --->
+	<cfif arraylen(getallthreads()) GT 200>
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	</cfif>
 	<!--- Call method to send email within that we also query the tempdb and return it here to pass it on --->
 	<cfset arguments.thestruct.emailwhat = "start_adding">
 	<cfset arguments.thestruct.dsn = application.razuna.datasource>
@@ -1458,7 +1450,7 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 	</cfif>
 	<!--- Thread --->
 	<cfif arguments.thestruct.qryfile.tempid NEQ "">
-		<cfthread name="addasset#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#" action="run" priority="high">
+		<cfthread name="addasset#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#" action="run">
 			<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 	</cfif>
@@ -1483,8 +1475,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam default="" name="arguments.thestruct.assetmetadata">
 	<cfparam default="" name="arguments.thestruct.assetmetadatacf">
 	<cfset arguments.thestruct.theimagepath = "#arguments.thestruct.thepath#/images">
-	<!--- Call to GC to clean memory --->
-	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- If zip_extract is undefined --->
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
@@ -1613,8 +1603,6 @@ This is the main function called directly by a single upload else from addassets
 <!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- Call to GC to clean memory --->
-	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Thread --->
 	<cfthread action="run" intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
@@ -2011,8 +1999,6 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Move thumbnail --->
 				<cffile action="move" source="#arguments.thestruct.thepdfimage#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimagename#" mode="775">
 			</cfif>
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- NIRVANIX --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<cfset var ttu = createuuid("")>
@@ -2092,8 +2078,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- AMAZON --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
@@ -2172,8 +2156,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
@@ -2187,12 +2169,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfinvoke>
 			</cfthread>
 			<cfthread action="join" name="#upd#" />
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
-		<!--- Link_kind is URL --->
-		<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		</cfif>
 		<!--- Update DB to make asset available --->
 		<cfif !application.razuna.rfs>
@@ -2302,10 +2278,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
-			<!--- Add to Lucene --->
-			<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="img">
-			</cfif>
 			<!--- Put below in thread --->
 			<cfthread action="run" intstruct="#arguments.thestruct#">
 				<!--- Add to shared options --->
@@ -2812,7 +2784,7 @@ This is the main function called directly by a single upload else from addassets
 <cfset var theidentifyresult = "">
 <cfset var thescript = createuuid()>
 <!--- check if file ends with ".gif" --->
-<cfif	Right(arguments.imagepath, 4) eq ".gif">
+<cfif Right(arguments.imagepath, 4) eq ".gif">
 	<!--- Check the platform and then decide on the ImageMagick tag --->
 	<cfif isWindows()>
 		<cfset var theidentify = """#Arguments.thepathim#/identify.exe""">
@@ -2968,12 +2940,16 @@ This is the main function called directly by a single upload else from addassets
 		<cffile action="delete" file="#arguments.thestruct.theshht#">
 		<cffile action="delete" file="#arguments.thestruct.theshwt#">
 		<!--- Sometimes identify does not get height and width thus we set it here --->
-		<cfif arguments.thestruct.thexmp.orgwidth EQ "">
+		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR NOT isnumeric(arguments.thestruct.thexmp.orgwidth)>
 			<cfset arguments.thestruct.thexmp.orgwidth = 0>
+		</cfif>
+		<cfif arguments.thestruct.thexmp.orgheight EQ "" OR NOT isnumeric(arguments.thestruct.thexmp.orgheight)>
+			<cfset arguments.thestruct.thexmp.orgheight = 0>
+		</cfif>
+		<cfif thumbwidth EQ "" OR NOT isnumeric(thumbwidth)>
 			<cfset var thumbwidth = 0>
 		</cfif>
-		<cfif arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset arguments.thestruct.thexmp.orgheight = 0>
+		<cfif thumbheight EQ "" OR NOT isnumeric(thumbheight)>
 			<cfset var thumbheight = 0>
 		</cfif>
 		<!--- Set original and thumbnail width and height --->
@@ -3357,10 +3333,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfinvoke>
 			</cfif>
 		</cfif>
-		<!--- Add to Lucene --->
-		<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.thisvid.newid#" category="vid" online="#arguments.thestruct.vid_online#">
-		</cfif>
 		<!--- Log --->
 		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid=arguments.thestruct.thisvid.newid)>
 		<!--- Flush Cache --->
@@ -3567,7 +3539,7 @@ This is the main function called directly by a single upload else from addassets
 					CASE
 						WHEN EXISTS(
 							SELECT s.folder_id
-							FROM raz1_folders s
+							FROM #session.hostdbprefix#folders s
 							WHERE s.folder_id = f.folder_id_r
 							AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						) THEN 1
@@ -3994,16 +3966,12 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3")>
 					<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.filenamenoext4copy#.mp3" mode="775">
 				</cfif>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 			<!--- NIRVANIX --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
 				<!--- Unique --->
 				<cfset var upa = Createuuid("")>
 				<cfset var upaw = "w" & upa>
 				<cfset var upam = "m" & upa>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audupstruct="#arguments.thestruct#" action="run">
@@ -4064,8 +4032,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var upa = Createuuid("")>
 				<cfset var upw = "w" & upa>
 				<cfset var upmp = "m" & upa>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audstruct="#arguments.thestruct#" action="run">
@@ -4127,8 +4093,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var upa = Createuuid("")>
 				<cfset var upw = "w" & upa>
 				<cfset var upmp = "m" & upa>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audstruct="#arguments.thestruct#" action="run">
@@ -4163,10 +4127,6 @@ This is the main function called directly by a single upload else from addassets
 					</cfthread>
 					<cfthread action="join" name="#upmp#" />
 				</cfif> --->
-			<!--- link_kind is url --->
-			<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 			</cfif>
 		<!--- Update DB to make asset available --->
 		<cfif !application.razuna.rfs>
@@ -4900,8 +4860,6 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 		</cfif>
 	</cfloop>
-	<!--- Call to GC to clean memory --->
-	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Feedback --->
 	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 	<cfflush>
@@ -4987,8 +4945,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 				</cfif>
 			</cfloop>
-			<!--- Call to GC to clean memory --->
-			<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
@@ -5085,8 +5041,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 				</cfif>
 			</cfloop>
-			<!--- Call to GC to clean memory --->
-			<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
@@ -5182,8 +5136,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5277,8 +5229,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5372,8 +5322,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5467,8 +5415,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5562,8 +5508,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!---
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
@@ -5758,8 +5702,6 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke method="addassetav" thestruct="#arguments.thestruct#" />
 		</cfif>
 	</cfloop>
-	<!--- Call to GC to clean memory --->
-	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Feedback --->
 	<cfoutput><span style="color:green;font-weight:bold;">Successfully added the asset(s)!</span><br><br></cfoutput>
 	<cfflush>

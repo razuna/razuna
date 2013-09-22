@@ -1211,7 +1211,7 @@
 	<cfelse>
 		<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">
 	</cfif>,
-	<cfif Val(arguments.thestruct.rid)>
+	<cfif arguments.thestruct.rid NEQ 0>
 		<cfqueryparam value="#arguments.thestruct.rid#" cfsqltype="CF_SQL_VARCHAR">
 	<cfelse>
 		<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">
@@ -1688,7 +1688,7 @@
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush cache --->
-				<cfset arguments.thestruct.folder_id = id>
+				<cfset attributes.instruct.thestruct.folder_id = id>
 				<cfinvoke component="extQueryCaching" method="resetcachetoken" type="folders" />
 				<!--- Call remove function --->
 				<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
@@ -2720,6 +2720,8 @@
 		<cfif thefolderlist NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
+		AND	(lower(file_extension) = <cfqueryparam value="#arguments.thestruct.kind#" cfsqltype="cf_sql_varchar">
+			OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.kind#x" cfsqltype="cf_sql_varchar">)
 		<cfif session.customfileid NEQ "">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3484,7 +3486,7 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">ft
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
 				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
 				<cfelse>x
 				</cfif>.#m#
@@ -4230,7 +4232,9 @@
 				<!--- Finally update the record --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
-				SET img_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				img_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4280,14 +4284,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfinvoke component="images" method="filedetail" theid="#attributes.intstruct.theid#" thecolumn="path_to_asset, link_kind, img_filename_org filenameorg, lucene_key, link_path_url" returnvariable="attributes.intstruct.qrydetail">
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="img" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="img" notfile="F">
-				</cfthread>
 			</cfif>
 		<!--- Videos --->
 		<cfelseif myform CONTAINS "vid_">
@@ -4303,7 +4299,9 @@
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#videos
-				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4354,14 +4352,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfinvoke component="videos" method="getdetails" vid_id="#attributes.intstruct.theid#" ColumnList="v.path_to_asset, v.link_kind, v.vid_name_org filenameorg, v.lucene_key, v.link_path_url" returnvariable="attributes.intstruct.qrydetail">
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="vid" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="vid" notfile="F">
-				</cfthread>
 			</cfif>
 		<!--- Audios --->
 		<cfelseif myform CONTAINS "aud_">
@@ -4377,7 +4367,9 @@
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#audios
-				SET aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4427,19 +4419,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfquery datasource="#application.razuna.datasource#" name="attributes.intstruct.qrydetail">
-					SELECT link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset
-					FROM #session.hostdbprefix#audios
-					WHERE aud_id = <cfqueryparam value="#attributes.intstruct.theid#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="aud" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="aud" notfile="F">
-				</cfthread>
 			</cfif>
 		<!--- Files --->
 		<cfelseif myform CONTAINS "doc_">
@@ -4455,7 +4434,9 @@
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#files
-				SET file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4505,14 +4486,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfinvoke component="files" method="filedetail" theid="#attributes.intstruct.theid#" thecolumn="path_to_asset, link_kind, file_name_org filenameorg, lucene_key, link_path_url" returnvariable="attributes.intstruct.qrydetail">
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="doc" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="doc" notfile="F">
-				</cfthread>
 			</cfif>
 		</cfif>
 	</cfloop>
@@ -4937,6 +4910,7 @@
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND (img_group IS NULL OR img_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfif>
 	<cfif arguments.thestruct.thekind EQ "ALL">
 		UNION ALL
@@ -4947,6 +4921,7 @@
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND (vid_group IS NULL OR vid_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfif>
 	<cfif arguments.thestruct.thekind EQ "ALL">
 		UNION ALL
@@ -4957,6 +4932,7 @@
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND (aud_group IS NULL OR aud_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfif>
 	<cfif arguments.thestruct.thekind EQ "ALL">
 		UNION ALL
@@ -4966,6 +4942,7 @@
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.thekind EQ "other">
 			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 		<cfelseif arguments.thestruct.thekind NEQ "all">
@@ -5143,7 +5120,7 @@
 		</cfif>
 		<!--- Set the order by --->
 		<cfif session.sortby EQ "name">
-			<cfset var sortby = "lower(filename_forsort)">
+			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "kind">
 			<cfset var sortby = "type">
 		<cfelseif session.sortby EQ "sizedesc">
@@ -5192,7 +5169,6 @@
 			AND (img_group IS NULL OR img_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-
 			UNION ALL
 			SELECT 
 			vid_id as file_id,
@@ -5207,7 +5183,6 @@
 			AND (vid_group IS NULL OR vid_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			
 			UNION ALL
 			SELECT 
 			aud_id as file_id,
@@ -5222,7 +5197,6 @@
 			AND (aud_group IS NULL OR aud_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			
 			UNION ALL
 			SELECT 
 			file_id as file_id,
@@ -5257,7 +5231,6 @@
 				WHERE ROWNUM = #detailrow+1#
 			</cfif>
 			</cfquery>
-			
 		<!--- We query below for within the same file type group --->
 		<cfelse>
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -5333,7 +5306,6 @@
 				WHERE ROWNUM = #detailrow+1#
 			</cfif>
 			</cfquery>
-			
 		</cfif>
 		<!--- Set returned fileid into struct --->
 		<cfset f.fileid = qry.file_id>

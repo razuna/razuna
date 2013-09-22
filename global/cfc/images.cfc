@@ -666,11 +666,13 @@
 		</cftry>
 	</cfloop>
 	<!--- Delete related images in db as well --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#images
-	WHERE img_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	<cfif qry.recordcount NEQ 0>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#images
+		WHERE img_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+	</cfif>
 	<cfreturn />
 </cffunction>
 
@@ -1591,15 +1593,14 @@
 			UPDATE #session.hostdbprefix#images
 			SET 
 			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-			in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 				<!--- Update Dates --->
 				<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.img_id#" />
-				<!--- Update Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.img_id#" category="img" notfile="T">
 				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 				<!--- Execute workflow --->
@@ -1635,12 +1636,12 @@
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			SET 
+			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE img_id = <cfqueryparam value="#img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Update Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#img_id#" category="img" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />

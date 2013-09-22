@@ -64,7 +64,7 @@
 			SELECT /* #cachetoken#getlabel */ label_id, label_text, label_path
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
 			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
-			AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#argument.label_id#" list="Yes">)
+			AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.label_id#" list="Yes">)
 			ORDER BY label_path
 			</cfquery>
 		<!--- No session found --->
@@ -211,7 +211,7 @@
 			<cfloop list="#arguments.label_id#" index="i" delimiters=",">
 				<cfquery datasource="#application.razuna.api.dsn#">
 				DELETE FROM ct_labels
-				WHERE label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
+				WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
 				AND ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
 				</cfquery>
 			</cfloop>
@@ -244,7 +244,7 @@
 			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path
+			SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path, ct.ct_id_r as assetid
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
 			WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
 			AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
@@ -273,6 +273,7 @@
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+			<cfset session.sortby = "name">
 			<!--- Call internal function --->
 			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="thexml">
 		<!--- No session found --->

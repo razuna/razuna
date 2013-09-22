@@ -40,7 +40,7 @@
 			<td colspan="2">#defaultsObj.trans("global_storage_local_desc")#</td>
 		</tr>
 		<!--- Nirvanix Storage --->
-		<tr>
+		<!--- <tr>
 			<th class="textbold" colspan="3">Nirvanix Storage</th>
 		</tr>
 		<tr>
@@ -66,7 +66,7 @@
 			<td></td>
 			<td></td>
 			<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidate','#myself#c.prefs_nvx_validate_master&nvxname=' + escape($('##conf_nirvanix_master_name').val()) + '&nvxpass=' + escape($('##conf_nirvanix_master_pass').val()) + '&nvxkey=' + escape($('##conf_nirvanix_appkey').val()));" /><div id="divvalidate"></div></td>
-		</tr>
+		</tr> --->
 		<!--- Amazon --->
 		<tr>
 			<th class="textbold" colspan="3">Amazon S3 or Eucalyptus Storage</th>

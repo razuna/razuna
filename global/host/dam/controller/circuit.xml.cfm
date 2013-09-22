@@ -56,9 +56,17 @@
 		<!-- Params -->
 		<set name="attributes.rem_login" value="F" overwrite="false" />
 		<set name="attributes.redirectto" value="" overwrite="false" />
+		<set name="attributes.loginto" value="dam" overwrite="false" />
 		<set name="session.indebt" value="false" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes.name,attributes.pass,'dam',attributes.rem_login)" returnvariable="logindone" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- Log this action -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
@@ -285,13 +293,12 @@
 	 			<!-- Set that we are in custom view -->
 				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix'">
+				<!-- <if condition="application.razuna.storage EQ 'nirvanix'">
 					<true>
-						<!-- Action: Check storage -->
 						<do action="storage" />
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
-				</if>
+				</if> -->
 	 			<!-- If ISP (for now) -->
 				<if condition="cgi.http_host CONTAINS 'razuna.com'">
 					<true>
@@ -1989,7 +1996,12 @@
 		<set name="attributes.iscol" value="F" overwrite="false" />
 		<set name="attributes.trash" value="F" overwrite="false" />
 		<set name="attributes.trashkind" value="assets" overwrite="false" />
-		<set name="attributes.showsubfolders" value="F" overwrite="false" />
+		<if condition="structkeyexists(attributes,'showsubfolders')">
+			<true>
+				<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+				<set name="attributes.showsubfolders" value="#session.showsubfolders#" />
+			</true>
+		</if>
 		<!-- XFA -->
 		<xfa name="fproperties" value="c.folder_edit" />
 		<xfa name="fsharing" value="c.folder_sharing" />
@@ -2317,8 +2329,12 @@
 		<set name="url.kind" value="all" />
 		<set name="attributes.json" value="f" overwrite="false" />
 		<set name="attributes.trash" value="F" overwrite="false" />
-		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
-		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+		<if condition="structkeyexists(attributes,'showsubfolders')">
+			<true>
+				<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+			</true>
+		</if>
+		<set name="attributes.showsubfolders" value="#session.showsubfolders#" />
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.issearch" value="false" overwrite="false" />
@@ -2381,7 +2397,11 @@
 		<set name="url.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.issearch" value="true" />
 		<!-- The total of found records is within the query itself -->
-		<set name="qry_filecount.thetotal" value="#qry_files.qall.recordcount#" />
+		<if condition="!structkeyexists(attributes,'search_simple')">
+			<true>
+				<set name="qry_filecount.thetotal" value="#qry_files.qall.recordcount#" />
+			</true>
+		</if>
 		<!-- Get Include -->
 		<do action="folder_content_include" />
 		<!-- Overwrite params from the include above -->
@@ -4587,6 +4607,30 @@
 		<!-- For smart folders -->
 		<set name="attributes.from_sf" value="false" overwrite="false" />
 		<set name="attributes.sf_id" value="0" overwrite="false" />
+		<!-- For search with in search -->
+		<set name="session.search.newsearch" value="#attributes.newsearch#" />
+		<set name="session.search.folder_id"	value="#attributes.folder_id#" />
+		<set name="session.search.iscol"	value="#attributes.iscol#" />
+		<set name="session.search.showsubfolders"	value="#attributes.showsubfolders#" />
+		<set name="session.search.listdocid"	value="#attributes.listdocid#" />
+		<set name="session.search.listimgid"	value="#attributes.listimgid#" />
+		<set name="session.search.listvidid"	value="#attributes.listvidid#" />
+		<set name="session.search.listaudid"	value="#attributes.listaudid#" />
+		<set name="session.search.filename"	value="#attributes.filename#" />
+		<set name="session.search.keywords"	value="#attributes.keywords#" />
+		<set name="session.search.description"	value="#attributes.description#" />
+		<set name="session.search.extension"	value="#attributes.extension#" />
+		<set name="session.search.metadata"	value="#attributes.metadata#" />
+		<set name="session.search.andor"	value="#attributes.andor#" />
+		<set name="session.search.flabel"	value="#attributes.flabel#" />
+		<set name="session.search.on_day"	value="#attributes.on_day#" />
+		<set name="session.search.on_month"	value="#attributes.on_month#" />
+		<set name="session.search.on_year"	value="#attributes.on_year#" />
+		<set name="session.search.change_day"	value="#attributes.change_day#" />
+		<set name="session.search.change_month"	value="#attributes.change_month#" />
+		<set name="session.search.change_year"	value="#attributes.change_year#" />
+		<set name="session.search.thetype"	value="#attributes.thetype#" />
+		<set name="session.search.kind"	value="#attributes.kind#" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -4628,6 +4672,13 @@
 
 	<!-- Simple Search -->
 	<fuseaction name="search_simple">
+		<!-- Set search simple  -->
+		<set name="attributes.search_simple" value="true" />
+		<!-- Set database  -->
+		<set name="attributes.database" value="#application.razuna.thedatabase#" />
+		<!-- set default search count call -->
+		<set name="attributes.isCountOnly" value="0" />
+		
 		<!-- Include the aearch include -->
 		<do action="search_include" />
 		<!-- If we come from saved search we query folderaccess -->
@@ -4640,75 +4691,224 @@
 		<!-- ACTION: Search all -->
 		<if condition="attributes.thetype EQ 'all'">
 			<true>
-				<!-- ACTION: Search Files -->
-				<do action="search_files" />
-				<!-- ACTION: Search Images -->
-				<do action="search_images" />
-				<!-- ACTION: Search Videos -->
-				<do action="search_videos" />
-				<!-- ACTION: Search Audios -->
-				<do action="search_audios" />
-				<!-- CFC: Combine searches -->
-				<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(qry_results_files,qry_results_images,qry_results_videos,qry_results_audios)" returnvariable="qry_files" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
-				<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
-				<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
-				<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
-				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.thetotal#" />
+					<!-- XFA -->
+					<xfa name="filedetail" value="c.files_detail" />
+					<xfa name="imagedetail" value="c.images_detail" />
+					<xfa name="videodetail" value="c.videos_detail" />
+					<xfa name="fvideosloader" value="c.folder_videos_show" />
+					<xfa name="audiodetail" value="c.audios_detail" />
+					<!-- CFC: Customization -->
+					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+					<set name="attributes.cs" value="#cs#" />
+					<!-- Check the DataBase  -->
+					<if condition="attributes.database EQ 'mysql'">
+						<true>
+							<!-- set search count call -->
+							<set name="attributes.isCountOnly" value="1" />
+							<!-- CFC: Combine search total count call -->
+							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+							<!-- Set the total -->
+							<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+							<!-- Set the session offset -->
+							<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+								<true>
+									<set name="session.offset" value="0" />
+								</true>
+							</if>
+							<!-- set search count call -->
+							<set name="attributes.isCountOnly" value="0" />
+							<!-- CFC: Combine searches -->
+							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
+						</true>
+						<false>
+							<!-- CFC: Combine searches -->
+							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
+							<!-- Set results into different variable name -->
+							<set name="qry_files_count.qall" value="#qry_files.qall#" />
+							<!-- Set the total -->
+							<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						</false>
+					</if>
 			</true>
 		</if>
 		<!-- ACTION: Search Files -->
 		<if condition="attributes.thetype EQ 'doc'">
 			<true>
-				<!-- Search -->
-				<do action="search_files" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_files#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
-				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_files" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_files#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_files" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_files#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- ACTION: Search Images -->
 		<if condition="attributes.thetype EQ 'img'">
 			<true>
-				<!-- Search -->
-				<do action="search_images" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_images#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
-				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_images" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_images#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_images" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_images#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- ACTION: Search Videos -->
 		<if condition="attributes.thetype EQ 'vid'">
 			<true>
-				<!-- Search -->
-				<do action="search_videos" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_videos#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
-				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_videos" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_videos#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />		
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_videos" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_videos#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- ACTION: Search Audios -->
 		<if condition="attributes.thetype EQ 'aud'">
 			<true>
-				<!-- Search -->
-				<do action="search_audios" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_audios#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
-				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_audios" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_audios#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_audios" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_audios#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- Show -->
@@ -5709,6 +5909,51 @@
 		<!-- Show  -->
 		<do action="ajax.admin_users" />
 	</fuseaction>
+	<!-- AD Services -->
+	<fuseaction name="ad_Services">
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="ad_server_start" />
+		<!-- Show -->
+		<do action="ajax.admin_ad_services" />
+	</fuseaction>
+	<!-- For saving AD Server customization -->
+	<fuseaction name="admin_ad_services_save">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_filter,attributes.ad_server_start)" />
+	</fuseaction>
+	<!-- Users Search -->
+	<fuseaction name="ad_server_users_list">
+		<!-- Show  -->
+		<do action="ajax.ad_server_users_list" />
+	</fuseaction>
+	<fuseaction name="ad_server_users_list_do">
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_ad_server()" returnvariable="qry_ad_server" />
+		<!-- CFC: Load groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="orderBy" value="grp_name ASC" />
+		</invoke>
+		<!-- Show  -->
+		<do action="ajax.ad_server_users_list_do" />
+	</fuseaction>
+
+	<!-- Save AD server Users -->
+	<fuseaction name="ad_server_users_save">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Users" methodcall="ad_server_user(attributes)" />
+	</fuseaction>
+	
 	<!-- Users Search -->
 	<fuseaction name="users_search">
 		<!-- Param -->
@@ -5816,6 +6061,15 @@
 				<do action="custom_fields_save" />
 			</true>
 		</if>
+	</fuseaction>
+	<!-- Import Users -->
+	<fuseaction name="users_import">
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<!-- Show  -->
+		<do action="ajax.users_import" />
 	</fuseaction>
 	<!-- Delete -->
 	<fuseaction name="users_remove">
@@ -5983,6 +6237,15 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="detail(attributes.sched_id)" returnvariable="qry_detail" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Load groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="orderBy" value="grp_name ASC" />
+		</invoke>
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
 		<!-- Show -->
 		<do action="ajax.scheduler_detail" />
 	</fuseaction>
@@ -6043,6 +6306,13 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="doit" returnvariable="thetask">
 			<argument name="sched_id" value="#attributes.sched_id#" />
@@ -6053,6 +6323,12 @@
 			<argument name="rootpath" value="#ExpandPath('../..')#" />
 			<argument name="assetpath" value="#attributes.assetpath#" />
 			<argument name="dynpath" value="#dynpath#" />
+			<argument name="ad_server_name" value="#attributes.ad_server_name#" />
+			<argument name="ad_server_port" value="#attributes.ad_server_port#" />
+			<argument name="ad_server_username" value="#attributes.ad_server_username#" />
+			<argument name="ad_server_password" value="#attributes.ad_server_password#" />
+			<argument name="ad_server_filter" value="#attributes.ad_server_filter#" />
+			<argument name="ad_server_start" value="#attributes.ad_server_start#" />
 		</invoke>
 	</fuseaction>
 		
@@ -6436,7 +6712,7 @@
 		!-- Param -->
 		<set name="attributes.meta_keys" value="id,filename" />
 		<set name="attributes.meta_default" value="labels,keywords,description,type" />
-		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,colorspace,xres,yres,resunit" />
+		<set name="attributes.meta_img" value="subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,colorspace,xres,yres,resunit" />
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
 		<!-- CFC: Get Customization -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_customization()" returnvariable="qry_customization" />
@@ -6530,7 +6806,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get all the asset -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="rebuild(attributes)" />
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update(thestruct=attributes)" />
 	</fuseaction>
 	<!-- For System Information -->
 	<fuseaction name="admin_system">
@@ -7078,13 +7354,10 @@
 	<fuseaction name="share_login">
 		<!-- Param -->
 		<set name="session.iscol" value="F" overwrite="false" />
+		<set name="attributes.loginto" value="dam" />
+		<set name="attributes.from_share" value="t" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" method="login" returnvariable="logindone">
-			<argument name="name" value="#attributes.name#" />
-			<argument name="pass" value="#attributes.pass#" />
-			<argument name="loginto" value="dam" />
-			<argument name="from_share" value="t" />
-		</invoke>
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- User is found -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
@@ -8203,11 +8476,11 @@
 				<!-- Action: Storage -->
 				<do action="storage" />
 				<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
+				<!-- <if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
 					<true>
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
-				</if>
+				</if> -->
 				<!-- CFC: Get customization -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 				<set name="attributes.cs" value="#cs#" />
@@ -8612,6 +8885,8 @@
 
 	<!-- Set view and maxpage and offset -->
 	<fuseaction name="set_view">
+		<!-- Param -->
+		<set name="session.offset" value="0" />
 		<!-- Set the rowmaxpage -->
 		<if condition="structkeyexists(attributes,'rowmaxpage')">
 			<true>
@@ -8816,6 +9091,7 @@
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
+		<set name="attributes.showsubfolders" value="F" overwrite="false" />
 		<!-- Reset the rowmax and offset values -->
 		<set name="session.rowmaxpage" value="25" />
 		<set name="session.offset" value="0" />

@@ -102,7 +102,7 @@
 			<!--- If we SHOW = ALL then we need to combine --->
 			<cfif arguments.show EQ "ALL">
 				<!--- Call combine all function --->
-				<cfinvoke component="global.cfc.search" method="search_combine" qimg="#qimg#" qvid="#qvid#" qaud="#qaud#" qdoc="#qdoc#" returnvariable="qry_combined">
+				<cfinvoke component="global.cfc.search" method="search_combine_api" qimg="#qimg#" qvid="#qvid#" qaud="#qaud#" qdoc="#qdoc#" returnvariable="qry_combined">
 				<!--- Add the total to our internal one --->
 				<cfset querysetcell(q,"totalassetscount",qry_combined.thetotal)>
 				<!--- Set var --->
@@ -1001,6 +1001,26 @@
 		</cfif>
 		<!--- Return --->
 		<cfreturn sd />
+	</cffunction>
+
+	<!--- Handle indexing --->
+	<cffunction name="searchIndex" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="false" default="0">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<cfset updateSearch(api_key=arguments.api_key,assetid=arguments.assetid)>
+			<!--- Feedback --->
+			<cfset thexml.responsecode = 0>
+			<cfset thexml.message = "Indexing successfully triggered">
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
 	</cffunction>
 
 </cfcomponent>
