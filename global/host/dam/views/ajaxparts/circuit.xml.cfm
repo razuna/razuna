@@ -137,12 +137,12 @@
   		<include template="dsp_folder_content" />
 	</fuseaction>
 	<!-- Copy Metadata -->
-	<fuseaction name="copy_metaData">
-  		<include template="dsp_copy_metaData" />
+	<fuseaction name="copy_metadata">
+  		<include template="dsp_copy_metadata" />
 	</fuseaction>
 	<!-- Copy Metadata Do -->
-	<fuseaction name="copy_metaData_do">
-  		<include template="dsp_copy_metaData_do" />
+	<fuseaction name="copy_metadata_do">
+  		<include template="dsp_copy_metadata_do" />
 	</fuseaction>
 	<!-- Folder: Content LIST -->
 	<fuseaction name="folder_content_list">
