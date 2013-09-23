@@ -1479,7 +1479,6 @@
 <cffunction name="assetpath" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfset variables.cachetoken = getcachetoken("settings")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qLocal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#assetpath */ set2_path_to_assets

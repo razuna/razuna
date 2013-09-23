@@ -112,7 +112,12 @@
 			</cfinvoke>
 		</cfif>
 		<!--- Grab assetpath --->
-		<cfinvoke component="settings" method="assetpath" returnvariable="arguments.thestruct.assetpath" />
+		<cfquery datasource="#arguments.dsn#" name="qry_path" cachedwithin="1">
+		SELECT set2_path_to_assets
+		FROM #arguments.prefix#settings_2
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		</cfquery>
+		<cfset arguments.thestruct.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Put qry into arguments --->
 		<cfset arguments.qry = qry>
 		<!--- Loop over the recordset --->
