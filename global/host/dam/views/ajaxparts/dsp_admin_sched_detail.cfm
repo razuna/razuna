@@ -302,9 +302,9 @@
 		$('#detailsMail_new').css('display','none');
 		$('#detailsFtp_new').css('display','block');
 		$('#detailsADUserGroup_new').css('display','none');
-		
 	</script>
-<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing" OR qry_detail.sched_method EQ "ADServer">
+</cfif>
+<cfif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing" OR qry_detail.sched_method EQ "ADServer">
 	<script type="text/javascript">
 		showConnectDetail('new');
 		// showFrequencyDetail('new');
