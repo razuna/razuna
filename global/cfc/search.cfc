@@ -49,6 +49,7 @@
 		
 		<!--- Only applicable for files --->
 		<cfparam default="" name="arguments.thestruct.doctype">
+		<cfparam default="False" name="arguments.thestruct.avoidpagination">
 		
 		<!--- Set sortby variable --->
 		<cfset var sortby = session.sortby>
@@ -144,11 +145,10 @@
 			<!--- Grab the result and query file db --->
 			<!---<cftransaction>--->
 				<cfquery datasource="#application.razuna.datasource#" name="qry" >
-				
-				<cfif application.razuna.thedatabase EQ "mssql">
-				with myresult as (
-					SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.*   FROM (
-				</cfif>
+					<cfif application.razuna.thedatabase EQ "mssql">
+					with myresult as (
+						SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.*   FROM (
+					</cfif>
 				<cfif application.razuna.thedatabase EQ "mysql">
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
 						SELECT COUNT(t.id) AS individualCount,kind FROM (
@@ -790,45 +790,47 @@
 						AND permfolder IS NOT NULL
 					</cfif>
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
-						LIMIT #mysqloffset#,#session.rowmaxpage#
+						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
+							LIMIT #mysqloffset#,#session.rowmaxpage#
+						</cfif>
 					<cfelse>
 						GROUP BY kind
 					</cfif>
 				</cfif>
-				<cfif application.razuna.thedatabase EQ "mssql">
-						) sorted_inline_view
-						)select *,  
-				    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
-				    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
-				    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult 
-						WHERE 
-						
-						RowNum >
-							CASE WHEN 
-								(
-									SELECT count(RowNum) FROM myresult 
-									<cfif arguments.thestruct.thetype NEQ "all" >
-										where kind='#arguments.thestruct.thetype#'
-									</cfif>
-								) > #mysqloffset#
-								 
-								THEN #mysqloffset#
-								ELSE 0
-								END
-						AND 
-						RowNum <= 
-							CASE WHEN 
-								(
-									SELECT count(RowNum) FROM myresult 
-									<cfif arguments.thestruct.thetype NEQ "all" >
-										where kind='#arguments.thestruct.thetype#'
-									</cfif>
-								) > #mysqloffset#
-								 
-								THEN #mysqloffset+session.rowmaxpage#
-								ELSE #session.rowmaxpage#
-								END
-						 
+					<cfif application.razuna.thedatabase EQ "mssql">
+							) sorted_inline_view
+							)select *,  
+					    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
+					    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
+					    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult 
+							<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
+									WHERE 
+									RowNum >
+										CASE WHEN 
+											(
+												SELECT count(RowNum) FROM myresult 
+												<cfif arguments.thestruct.thetype NEQ "all" >
+													where kind='#arguments.thestruct.thetype#'
+												</cfif>
+											) > #mysqloffset#
+											 
+											THEN #mysqloffset#
+											ELSE 0
+											END
+									AND 
+									RowNum <= 
+										CASE WHEN 
+											(
+												SELECT count(RowNum) FROM myresult 
+												<cfif arguments.thestruct.thetype NEQ "all" >
+													where kind='#arguments.thestruct.thetype#'
+												</cfif>
+											) > #mysqloffset#
+											 
+											THEN #mysqloffset+session.rowmaxpage#
+											ELSE #session.rowmaxpage#
+											END
+							</cfif>		 
 				</cfif>
 			</cfquery>
 			<!--- Select only records that are unlocked --->

@@ -4912,13 +4912,21 @@
 			</true>
 		</if>
 		<!-- Show -->
-		<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+		<if condition="structkeyexists(attributes,'fid')">
 			<true>
-				<do action="ajax.search" />
+				<!-- Set result variable for folder and common search -->
+				<set name="qry_results" value="#qry_files.qall#" />
+				<do action="ajax.copy_metaData_do" />
 			</true>
 			<false>
-				<!-- Do -->
-				<do action="folder_content_results" />
+				<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+					<true>
+						<do action="ajax.search" />
+					</true>
+					<false>
+						<do action="folder_content_results" />
+					</false>
+				</if>
 			</false>
 		</if>
 	</fuseaction>
@@ -5395,31 +5403,33 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<set name="attributes.avoidpagination" value="True" />
 		<!-- CFC:search images-->
 		<if condition="attributes.thetype EQ 'images'">
 			<true>
-				<invoke object="myFusebox.getApplicationData().search" methodcall="search_images(attributes)" returnvariable="qry_results" />
+				<set name="attributes.thetype" value="img" />
 			</true>
 		</if>
 		<!-- CFC:search audios-->
 		<if condition="attributes.thetype EQ 'audios'">
 			<true>
-				<invoke object="myFusebox.getApplicationData().search" methodcall="search_audios(attributes)" returnvariable="qry_results" />
+				<set name="attributes.thetype" value="aud" />
 			</true>
 		</if>
 		<!-- CFC:search videos-->
 		<if condition="attributes.thetype EQ 'videos'">
 			<true>
-				<invoke object="myFusebox.getApplicationData().search" methodcall="search_videos(attributes)" returnvariable="qry_results" />
+				<set name="attributes.thetype" value="vid" />
 			</true>
 		</if>
 		<!-- CFC:search files-->
 		<if condition="attributes.thetype EQ 'files'">
 			<true>
-				<invoke object="myFusebox.getApplicationData().search" methodcall="search_files(attributes)" returnvariable="qry_results" />
+				<set name="attributes.thetype" value="doc" />
 			</true>
 		</if>
-		<do action="ajax.copy_metaData_do" />
+		<!-- do -->
+		<do action="search_simple" />
 	</fuseaction>
 	
 	<!-- Update the metadata to selected image assets-->
