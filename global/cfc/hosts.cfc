@@ -93,7 +93,7 @@
 		<cfset arguments.thestruct.dsn = variables.dsn>
 		<cfparam name="arguments.thestruct.host_name_custom" default="" />
 		<!--- NIRVANIX --->
-		<cfif application.razuna.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
+		<!--- <cfif application.razuna.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
 			<!--- Create a random password --->
 			<cfset var passrand = createuuid()>
 			<!--- Get master account --->
@@ -107,7 +107,7 @@
 				<cfinvokeargument name="username" value="#hostid.id#">
 				<cfinvokeargument name="password" value="#passrand#">
 			</cfinvoke>
-		</cfif>
+		</cfif> --->
 		<cftransaction>
 			<!--- Insert into Host db --->
 			<cfquery datasource="#variables.dsn#">

@@ -11,6 +11,8 @@ from hosts
 WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif conf.conf_database EQ "oracle" OR conf.conf_database EQ "db2"><><cfelse>!=</cfif> '' )
 </cfquery>
 
+<cfset application.razuna.datasource = conf.conf_datasource>
+
 <cfloop query="hosts">
 	<cfinvoke component="global.cfc.lucene" method="index_update_api">
 	        <cfinvokeargument name="assetid" value="0">
