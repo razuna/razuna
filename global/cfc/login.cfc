@@ -78,36 +78,39 @@
 		</cfif>
 		</cfquery>
 		
-		<cfif qryuser.recordcount EQ 0>
-			<!--- Get LDAP User list --->
-			<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments.thestruct#">
-			<cfquery dbtype="query" name="qryAdUser" >
-				SELECT * from results where (SamAccountname='#arguments.thestruct.name#' OR mail='#arguments.thestruct.name#')
-			</cfquery> 
-			<cfif qryAdUser.RecordCount NEQ 0>
-				<!--- Check for the user --->
-				<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
-				FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
-				WHERE (
-					lower(u.user_login_name) = <cfqueryparam value="#lcase(qryAdUser.SamAccountname)#" cfsqltype="cf_sql_varchar"> 
-					OR lower(u.user_email) = <cfqueryparam value="#lcase(qryAdUser.mail)#" cfsqltype="cf_sql_varchar">
-					)
-				AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
-				<cfif arguments.thestruct.loginto EQ "admin">
-					AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-					AND ctg.ct_g_u_user_id = u.user_id
-				<cfelseif arguments.thestruct.loginto EQ "dam">
-					AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+		<!--- Check the AD user --->
+		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
+			<cfif qryuser.recordcount EQ 0>
+				<!--- Get LDAP User list --->
+				<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments.thestruct#">
+				<cfquery dbtype="query" name="qryAdUser" >
+					SELECT * from results where (SamAccountname='#arguments.thestruct.name#' OR mail='#arguments.thestruct.name#')
+				</cfquery> 
+				<cfif qryAdUser.RecordCount NEQ 0>
+					<!--- Check for the user --->
+					<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
+					SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
+					WHERE (
+						lower(u.user_login_name) = <cfqueryparam value="#lcase(qryAdUser.SamAccountname)#" cfsqltype="cf_sql_varchar"> 
+						OR lower(u.user_email) = <cfqueryparam value="#lcase(qryAdUser.mail)#" cfsqltype="cf_sql_varchar">
+						)
+					AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+					<cfif arguments.thestruct.loginto EQ "admin">
+						AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+						AND ctg.ct_g_u_user_id = u.user_id
+					<cfelseif arguments.thestruct.loginto EQ "dam">
+						AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+					</cfif>
+					AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+					<cfif arguments.thestruct.loginto NEQ "admin">
+						AND ct.ct_u_h_user_id = u.user_id
+						AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+					</cfif>
+					</cfquery>
+					<!--- AD user name --->
+					<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
 				</cfif>
-				AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-				<cfif arguments.thestruct.loginto NEQ "admin">
-					AND ct.ct_u_h_user_id = u.user_id
-					AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
-				</cfif>
-				</cfquery>
-				<!--- AD user name --->
-				<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
 			</cfif>
 		</cfif>
 		

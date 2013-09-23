@@ -60,7 +60,7 @@
 			<tr>
 				<td width="180"><strong>#myFusebox.getApplicationData().defaults.trans("user_name")#*</strong></td>
 				<td width="420">
-				<cfif attributes.user_id NEQ 0 AND qry_detail.user_pass EQ "" >
+				<cfif structKeyExists(attributes,"user_id") AND attributes.user_id NEQ 0 AND qry_detail.user_pass EQ "" >
 					<input type="text" name="user_login_name_show" id="user_login_name_show" style="width:300px;" value="#qry_detail.user_login_name#"  disabled>
 					<input type="hidden" name="user_login_name" id="user_login_name"  value="#qry_detail.user_login_name#"  >
 				<cfelse>
