@@ -9058,7 +9058,7 @@
 			</true>
 		</if>
 		<!-- Lucene -->
-		<if condition="application.razuna.storage EQ 'local'">
+		<!-- <if condition="application.razuna.storage EQ 'local'">
 			<true>
 				<invoke object="myFusebox.getApplicationData().lucene" method="index_delete">
 					<argument name="thestruct" value="#attributes#" />
@@ -9075,7 +9075,7 @@
 					<argument name="notfile" value="T" />
 				</invoke>
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 
 	<!-- Show custom Razuna -->

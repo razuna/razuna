@@ -46,17 +46,26 @@
 		<!--- Delete collection --->
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
 			<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
 		</cftry>
 		<!--- Create collection --->
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
 		</cftry>
 	</cffunction>
 	
