@@ -4916,7 +4916,7 @@
 			<true>
 				<!-- Set result variable for folder and common search -->
 				<set name="qry_results" value="#qry_files.qall#" />
-				<do action="ajax.copy_metaData_do" />
+				<do action="ajax.copy_metadata_do" />
 			</true>
 			<false>
 				<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
@@ -5396,7 +5396,7 @@
 				<xfa name="save" value="c.copy_metadata_files_do" />
 			</true>
 		</if>
-		<do action="ajax.copy_metaData" />
+		<do action="ajax.copy_metadata" />
 	</fuseaction>
 	<!-- Copy Metadata to assign asset -->
 	<fuseaction name="copy_metadata_do">
@@ -5484,7 +5484,7 @@
 				<invoke object="myFusebox.getApplicationData().files" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
 			</true>
 		</if>
-		<do action="ajax.copy_metaData_do" />
+		<do action="ajax.copy_metadata_do" />
 	</fuseaction>
 	
 	<!-- Move the file into the desired folder -->
