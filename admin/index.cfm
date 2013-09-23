@@ -25,6 +25,6 @@
 --->
 <cfset thecfapp = hash(right(REReplace(getDirectoryFromPath(getCurrentTemplatePath()),'[^A-Za-z]','','all'),64))>
 <cfapplication name="#thecfapp#" sessionmanagement="Yes" sessiontimeout="#CreateTimeSpan(0,3,0,0)#" setClientCookies="yes">
-<cflock scope="session" timeout="30">
+<cflock scope="session" timeout="120">
 <cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 </cflock>

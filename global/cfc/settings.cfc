@@ -110,10 +110,13 @@
 
 <!--- Settings for Globals Preferences --->
 <cffunction name="prefs_global">
+	<!--- Get host --->
+	<cfset x.host_id = session.hostid>
+	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER, 
 	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT
-	FROM #session.hostdbprefix#settings_2
+	FROM #qry_host.host_shard_group#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -122,9 +125,12 @@
 
 <!--- Settings for Meta --->
 <cffunction name="prefs_meta">
+	<!--- Get host --->
+	<cfset x.host_id = session.hostid>
+	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_meta */ set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
-	FROM #session.hostdbprefix#settings_2
+	FROM #qry_host.host_shard_group#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -133,11 +139,14 @@
 
 <!--- Settings for DAM --->
 <cffunction name="prefs_dam">
+	<!--- Get host --->
+	<cfset x.host_id = session.hostid>
+	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails, 
 	set2_intranet_reg_emails_sub, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing,
 	set2_path_to_assets
-	FROM #session.hostdbprefix#settings_2
+	FROM #qry_host.host_shard_group#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -589,16 +598,19 @@
 <!--- Save Settings --->
 <cffunction hint="Save Settings" name="update">
 	<cfargument name="thestruct" type="Struct">
+		<!--- Get host --->
+		<cfset x.host_id = session.hostid>
+		<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 		<!--- save all settings which are language relevant. loop trough the form fields which begin with set_ --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
 			<cfif #myform# CONTAINS "set_">
 				<cfquery datasource="#application.razuna.datasource#">
-				DELETE FROM #session.hostdbprefix#settings
+				DELETE FROM #qry_host.host_shard_group#settings
 				WHERE lower(set_id) = <cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#settings
+				INSERT INTO #qry_host.host_shard_group#settings
 				(set_pref, set_id, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#form["#myform#"]#" cfsqltype="cf_sql_varchar">,
@@ -612,13 +624,13 @@
 		<!--- Check that there is a record with ID 1 if not then do an insert --->
 		<cfquery datasource="#application.razuna.datasource#" name="ishere">
 		SELECT set2_id
-		FROM #session.hostdbprefix#settings_2
+		FROM #qry_host.host_shard_group#settings_2
 		WHERE set2_id = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfif ishere.recordcount EQ 0>
 			<cfquery datasource="#application.razuna.datasource#" name="ishere">
-			INSERT INTO #session.hostdbprefix#settings_2
+			INSERT INTO #qry_host.host_shard_group#settings_2
 			(set2_id, host_id, rec_uuid)
 			VALUES
 			(
@@ -631,7 +643,7 @@
 		<!--- Update Settings_2 --->
 		<cfset commad = "F">
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#settings_2
+		UPDATE #qry_host.host_shard_group#settings_2
 		SET 
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_date_format")>
 			set2_date_format = <cfqueryparam value="#arguments.thestruct.set2_date_format#" cfsqltype="cf_sql_varchar">
