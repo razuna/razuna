@@ -111,6 +111,8 @@
 				<cfinvokeargument name="qry" value="#qry#" />
 			</cfinvoke>
 		</cfif>
+		<!--- Grab assetpath --->
+		<cfinvoke component="settings" method="assetpath" returnvariable="arguments.thestruct.assetpath" />
 		<!--- Put qry into arguments --->
 		<cfset arguments.qry = qry>
 		<!--- Loop over the recordset --->
