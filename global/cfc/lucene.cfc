@@ -105,7 +105,7 @@
 			<cfinvokeargument name="assetid" value="#arguments.assetid#" />
 		</cfinvoke>
 		<!--- Need to call this if storage is cloud based --->
-		<cfif qry.recordcount NEQ 0 AND (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
+		<cfif qry.recordcount NEQ 0 AND (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
 			<cfinvoke method="files_in_cloud">
 				<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
 				<cfinvokeargument name="qry" value="#qry#" />
