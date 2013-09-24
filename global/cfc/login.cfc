@@ -475,6 +475,7 @@ Password: #randompassword#
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.rem_login" default="F">
 		<cfparam name="arguments.thestruct.from_share" default="F">
+		<cfparam name="arguments.thestruct.loginto" default="dam">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Query --->
@@ -499,13 +500,9 @@ Password: #randompassword#
 		<cfif theuser.recordcount EQ 1>
 			<!--- Set session hostid --->
 			<cfset session.hostid = theuser.host_id>
+			<cfset arguments.thestruct.name = arguments.thestruct.theemail>
 			<!--- Now do the login. Function on top --->
-			<cfinvoke method="login" returnVariable="thelogin">
-				<cfinvokeargument name="name" value="#arguments.thestruct.theemail#">
-				<cfinvokeargument name="pass" value="#arguments.thestruct.pass#">
-				<cfinvokeargument name="loginto" value="dam">
-				<cfinvokeargument name="rem_login" value="#arguments.thestruct.rem_login#">
-			</cfinvoke>
+			<cfinvoke method="login" thestruct="#arguments.thestruct#" returnVariable="thelogin" />
 			<!--- If the login returns true we let user in --->
 			<cfif thelogin.notfound EQ "f">
 				<cflocation url="index.cfm?fa=c.mini_browser">
