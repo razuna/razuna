@@ -267,7 +267,7 @@
 			<cfif list NEQ ''>
 				<cfloop list="#list#" index="index" delimiters="," >
 					<cfquery datasource="#application.razuna.datasource#" name="q">
-					SELECT cf_show
+					SELECT cf_show, cf_type
 					FROM #session.hostdbprefix#custom_fields
 					WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 					AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
@@ -281,9 +281,13 @@
 					AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
 					</cfquery>
 					<cfset appendValue = ''>
-					<cfif arguments.thestruct.batch_replace EQ 'false' AND q.cf_show EQ listlast(index,"-")>
+					<cfif arguments.thestruct.batch_replace EQ 'false' AND (q.cf_show EQ listlast(index,"-") OR q.cf_show EQ 'all')>
 						<cfif qry.cf_value NEQ ''>
-							<cfset appendValue = qry.cf_value &' '& arguments.thestruct[i]>
+							<cfif q.cf_type EQ "radio" OR q.cf_type EQ "select">
+								<cfset appendValue = arguments.thestruct[i]>
+							<cfelse>
+								<cfset appendValue = qry.cf_value &' '& arguments.thestruct[i]>
+							</cfif>
 						<cfelse>
 							<cfset appendValue = arguments.thestruct[i]>
 						</cfif>
