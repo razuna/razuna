@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent output="false" namespace="user" extends="authentication">
+<cfcomponent output="false" namespace="group" extends="authentication">
 
 	<!--- Get group --->
 	<cffunction name="getone" access="remote" output="false" returntype="query" returnformat="json">
@@ -33,7 +33,7 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the user --->
+			<!--- Query the group --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
 			SELECT grp_id, grp_name
 			FROM groups
@@ -62,13 +62,13 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the user --->
+			<!--- Query the group --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
 			SELECT grp_id, grp_name
 			FROM groups
 			WHERE grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 			</cfquery>
-			<!--- If user does not exist do the insert --->
+			<!--- If group does not exist do the insert --->
 			<cfif qry.recordcount EQ 0>
 				<cfset thexml = querynew("responsecode,message")>
 				<cfset queryaddrow(thexml,1)>
@@ -91,7 +91,7 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the user --->
+			<!--- Query the group --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
 			SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
 			FROM users u, ct_users_hosts ct
@@ -123,7 +123,7 @@
 		<cfreturn thexml>
 	</cffunction>
 	
-	<!--- Add the user --->
+	<!--- Add the group --->
 	<cffunction name="add" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="grp_name" required="true" type="string">
@@ -138,11 +138,11 @@
 			WHERE lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="CF_SQL_VARCHAR">
 			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 			</cfquery>
-			<!--- If user does not exist do the insert --->
+			<!--- If group does not exist do the insert --->
 			<cfif qry_samegrp.recordcount EQ 0>
 				<!--- Create new ID --->
 				<cfset newgrpid = createuuid()>
-				<!--- Insert the User into the DB --->
+				<!--- Insert the group into the DB --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				INSERT INTO	groups
 				(grp_id, grp_name, grp_host_id, grp_mod_id)
@@ -157,7 +157,7 @@
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "Group has been added successfully">
 				<cfset thexml.grp_id = newgrpid>
-			<!--- User exist thus fail message --->
+			<!--- group exist thus fail message --->
 			<cfelse>
 				<cfset thexml.responsecode = 1>
 				<cfset thexml.message = "Group already exists">
@@ -171,7 +171,7 @@
 		<cfreturn thexml>
 	</cffunction>
 
-	<!--- Update user --->
+	<!--- Update group --->
 	<cffunction name="update" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="grp_name" required="true" type="string">
@@ -180,7 +180,7 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the user --->
+			<!--- Query the group --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 			SELECT grp_id
 			FROM groups
@@ -188,7 +188,7 @@
 			AND grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 			</cfquery>
-			<!--- User found --->
+			<!--- group found --->
 			<cfif qry.recordcount EQ 1>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				UPDATE groups
@@ -214,7 +214,7 @@
 		<cfreturn thexml>
 	</cffunction>
 	
-	<!--- Delete user --->
+	<!--- Delete group --->
 	<cffunction name="delete" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="grp_id" required="true" type="string">
