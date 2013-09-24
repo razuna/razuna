@@ -489,7 +489,7 @@
 <!--- THREAD: CREATE THE PREVIEW IMAGE AND VIDEO --------------------------------------------------------->
 <cffunction name="create_previews" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- If we are MP4 run it trough MP4Box --->
+	<!--- If we are MP4 run it trough MP4Box (but only if MP4Box is present) --->
 	<cfif arguments.thestruct.qryfile.extension EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
 		<cfset var ttmp4 = createuuid("")>
 		<cfif arguments.thestruct.isWindows>

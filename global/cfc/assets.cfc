@@ -3050,7 +3050,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<!--- Create the directory --->
 				<cfdirectory action="create" directory="#arguments.thestruct.thisvid.finalpath#" mode="775">
-				<!--- Move original --->
+				<!--- Move original (used to be in a thread) --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cffile action="copy" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#" mode="775">
 				</cfif>
