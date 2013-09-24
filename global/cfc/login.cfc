@@ -497,7 +497,7 @@ Password: #randompassword#
 		</cfif>
 		</cfquery>
 		<!--- Do we have one domain --->
-		<cfif theuser.recordcount EQ 1>
+		<cfif theuser.recordcount NEQ 0>
 			<!--- Set session hostid --->
 			<cfset session.hostid = theuser.host_id>
 			<cfset arguments.thestruct.name = arguments.thestruct.theemail>

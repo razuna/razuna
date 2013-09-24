@@ -4912,22 +4912,21 @@
 			</true>
 		</if>
 		<!-- Show -->
-		<if condition="structkeyexists(attributes,'fid')">
+		<if condition="!structkeyexists(attributes,'mobile_view')">
 			<true>
-				<!-- Set result variable for folder and common search -->
-				<set name="qry_results" value="#qry_files.qall#" />
-				<do action="ajax.copy_metadata_do" />
-			</true>
-			<false>
-				<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+				<if condition="!structkeyexists(attributes,'iscopymetadata')">
 					<true>
-						<do action="ajax.search" />
+						<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+							<true>
+								<do action="ajax.search" />
+							</true>
+							<false>
+								<do action="folder_content_results" />
+							</false>
+						</if>
 					</true>
-					<false>
-						<do action="folder_content_results" />
-					</false>
 				</if>
-			</false>
+			</true>
 		</if>
 	</fuseaction>
 	<!-- Search: Files only -->
@@ -5403,6 +5402,7 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<set name="attributes.iscopymetadata" value="True" />
 		<set name="attributes.avoidpagination" value="True" />
 		<!-- CFC:search images-->
 		<if condition="attributes.thetype EQ 'images'">
@@ -5430,6 +5430,9 @@
 		</if>
 		<!-- do -->
 		<do action="search_simple" />
+		<!-- Set result variable for folder and common search -->
+		<set name="qry_results" value="#qry_files.qall#" />
+		<do action="ajax.copy_metadata_do" />
 	</fuseaction>
 	
 	<!-- Update the metadata to selected image assets-->
@@ -8579,23 +8582,12 @@
 	</fuseaction>
 	<!-- Mini Search -->
 	<fuseaction name="mini_search">
-		<!-- ACTION: Search Files -->
-		<do action="search_files" />
-		<!-- ACTION: Search Images -->
-		<do action="search_images" />
-		<!-- ACTION: Search Videos -->
-		<do action="search_videos" />
-		<!-- ACTION: Search Audios -->
-		<do action="search_audios" />
-		<!-- CFC: Combine searches -->
-		<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(qry_results_files,qry_results_images,qry_results_videos,qry_results_audios)" returnvariable="qry_files" />
-		<!-- Put id's into lists -->
-		<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
-		<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
-		<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
-		<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
-		<!-- Set the total -->
-		<set name="qry_filecount.thetotal" value="#qry_files.thetotal#" />
+		<!-- Params -->
+		<set name="attributes.mobile_view" value="true"  />
+		<set name="attributes.thetype" value="all"  />
+		<set name="attributes.avoidpagination" value="True" />
+		<!-- ACTION: Search simple -->
+		<do action="search_simple" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Show -->
