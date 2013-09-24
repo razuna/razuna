@@ -25,7 +25,14 @@
 --->
 <cfoutput>
 	<div style="float:left;">
-		<a href="#myself#c.sharep&fid=#session.fid#">
+		<cfif shared.everyone NEQ 'T'>
+			<cfset thelocation = "sharep">
+		<cfelseif session.iscol EQ 'F' AND shared.everyone EQ 'T'>
+			<cfset thelocation = "share">
+		<cfelseif session.iscol EQ 'T' AND shared.everyone EQ 'T'>
+			<cfset thelocation = "sharec">
+		</cfif>
+		<a href="#myself#c.#thelocation#&fid=#session.fid#">
 			<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
 				<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;" />
 			<cfelse>
