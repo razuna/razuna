@@ -184,8 +184,7 @@
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 			SELECT grp_id
 			FROM groups
-			WHERE lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="CF_SQL_VARCHAR">
-			AND grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 			</cfquery>
 			<!--- group found --->
@@ -193,8 +192,7 @@
 				<cfquery datasource="#application.razuna.api.dsn#">
 				UPDATE groups
 				SET grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="CF_SQL_VARCHAR">
-				WHERE lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="CF_SQL_VARCHAR">
-				AND grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- Response --->
