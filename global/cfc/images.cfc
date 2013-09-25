@@ -1028,6 +1028,8 @@
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 		<!--- Create tempid --->
 		<cfset arguments.thestruct.newid = createuuid("")>
+		<!--- Watermark variable might not always exists thus create it here --->
+		<cfparam name="convert_wm_#theformat#" default="" />
 		<!--- Put together the name --->
 		<cfset arguments.thestruct.thenamenoext = arguments.thestruct.thenamenoext & "_" & arguments.thestruct.newid>
 		<!--- If from upload templates we select with and height of image --->
