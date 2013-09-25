@@ -923,6 +923,14 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column img_custom_id <cfif application.razuna.thedatabase EQ "mssql">nvarchar<cfelse>#thevarchar#</cfif>(100)<cfelse>change img_custom_id img_custom_id #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 		<!--- Add indexing to scheduler --->
 		<cfif !application.razuna.isp>
