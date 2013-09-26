@@ -1168,7 +1168,7 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#videos
 		SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		WHERE vid_id = <cfqueryparam value="#found.img_id#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Update main record with dates --->
