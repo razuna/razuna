@@ -539,6 +539,13 @@
 				results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
 			</cfif>
+			<!--- Flush Cache --->
+			<cfquery dataSource="#arguments.dsn#">
+			UPDATE cache
+			SET cache_token = <cfqueryparam value="#createuuid('')#" CFSQLType="cf_sql_varchar">
+			WHERE cache_type = <cfqueryparam value="search" CFSQLType="cf_sql_varchar">
+			AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
+			</cfquery>
 			<cfcatch type="any">
 				<cfset consoleoutput(true)>
 				<cfset console(cfcatch)>
@@ -558,24 +565,17 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
 				<!--- Local Storage --->
 				<cfelseif qry_all.link_kind NEQ "lan" AND arguments.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
+					<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
+					<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
-				<!--- Flush Cache --->
-				<cfquery dataSource="#arguments.dsn#">
-				UPDATE cache
-				SET cache_token = <cfqueryparam value="#createuuid('')#" CFSQLType="cf_sql_varchar">
-				WHERE cache_type = <cfqueryparam value="search" CFSQLType="cf_sql_varchar">
-				AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
-				</cfquery>
 				<cfcatch type="any">
 					<cfset consoleoutput(true)>
 					<cfset console(cfcatch)>
