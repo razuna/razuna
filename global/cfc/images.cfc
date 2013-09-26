@@ -1085,14 +1085,26 @@
 				<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#qry_wm.upl_temp_value#" returnvariable="thewm" />
 			</cfif>
 		<cfelse>
-			<!--- Set image width and height --->
-			<cfset var newImgWidth  = evaluate("convert_width_#theformat#")>
-			<cfset var newImgHeight = evaluate("convert_height_#theformat#")>
-			<cfset var thedpi = evaluate("convert_dpi_#theformat#")>
-			<!--- If there is a watermark being selected grab it here --->
-			<cfif "convert_wm_#theformat#" NEQ "">
-				<cfset var wmid = evaluate("convert_wm_#theformat#")>
-				<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#wmid#" returnvariable="thewm" />
+			<!--- Set image width and height for API rendition --->
+			<cfif structKeyExists(arguments.thestruct,"api_key") AND arguments.thestruct.api_key NEQ "">
+				<cfset var newImgWidth = #arguments.thestruct["convert_width_" & #theformat#]#>
+				<cfset var newImgHeight = #arguments.thestruct["convert_height_" & #theformat#]#>
+				<cfset var thedpi = #arguments.thestruct["convert_dpi_" & #theformat#]#>
+				<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
+					<cfset "convert_wm_#theformat#" = #arguments.thestruct["convert_wm_" & #theformat#]#>
+					<cfset var wmid = #arguments.thestruct["convert_wm_" & #theformat#]#>
+					<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#wmid#" returnvariable="thewm" />
+				</cfif>
+			<cfelse>
+				<!--- Set image width and height --->
+				<cfset var newImgWidth  = evaluate("convert_width_#theformat#")>
+				<cfset var newImgHeight = evaluate("convert_height_#theformat#")>
+				<cfset var thedpi = evaluate("convert_dpi_#theformat#")>
+				<!--- If there is a watermark being selected grab it here --->
+				<cfif "convert_wm_#theformat#" NEQ "">
+					<cfset var wmid = evaluate("convert_wm_#theformat#")>
+					<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#wmid#" returnvariable="thewm" />
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- From here on we need to remove the number of the format (if any) --->
@@ -1167,7 +1179,8 @@
 		<cffile action="delete" file="#arguments.thestruct.thesht#">
 		<cffile action="delete" file="#arguments.thestruct.theshtt#">
 		<!--- If we need to watermark this image then --->
-		<cfif "convert_wm_#theformat#" NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
+		<cfif "convert_wm_#theformat#" NEQ "" >
 			<cfif thewm.wmval.wm_use_image>
 				<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" />
 			</cfif>
@@ -1191,6 +1204,7 @@
 				<!--- Delete it --->
 				<cffile action="delete" file="#arguments.thestruct.theshwm#">
 			</cfif>
+		</cfif>
 		</cfif>
 		<!--- Add the metadata from the source to the converted one. If DPI is there we need to add new DPI information --->
 		<cfif thedpi EQ "">
@@ -1387,11 +1401,13 @@
 	<cfif directoryexists(thisfolder)>
 		<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
 	</cfif>
+	<!--- Return renditioned file id for API rendition --->
+	<cfset var newid = arguments.thestruct.newid>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("images")>
 	<!--- Return --->
-	<cfreturn />
+	<cfreturn newid>
 </cffunction>
 
 <!--- GET RELATED IMAGES --->

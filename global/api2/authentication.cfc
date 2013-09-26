@@ -75,11 +75,12 @@
 			<cfset var status = true>
 			<!--- Get Host prefix --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
-			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group
+			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group,host_path
 			FROM hosts
 			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">
 			</cfquery>
 			<!--- Set Host information --->
+			<cfset application.razuna.api.host_path = pre.host_path>
 			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
