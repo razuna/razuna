@@ -922,7 +922,7 @@
 	</cffunction>
 	
 	<!--- Convert assets to other formats --->
-	<cffunction name="createrenditions" access="remote" output="false" returntype="Any" returnformat="json">
+	<cffunction name="createrenditions" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assettype" type="string" required="true">
