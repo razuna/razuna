@@ -920,5 +920,108 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
+	
+	<!--- Convert assets to other formats --->
+	<cffunction name="createrenditions" access="remote" output="false" returntype="Any" returnformat="json">
+		<cfargument name="api_key" type="string" required="true">
+		<cfargument name="assetid" type="string" required="true">
+		<cfargument name="assettype" type="string" required="true">
+		<cfargument name="convertdata" type="string" required="true" hint="JSON with fields to for renditions">
+		<cfparam name="arguments.link_kind" default="">
+		<cfset var convertToList = "">
+		<cfset arguments.thedpi = "">
+		<!--- Check api key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Set file id --->
+			<cfset arguments.file_id = arguments.assetid>
+			<!--- Deserialize the JSON back into an array --->
+			<cfset thejson = DeserializeJSON(arguments.convertdata)>
+			<cfset arguments.assetpath = expandPath("../../assets")>
+			<cfset arguments.thepath = expandPath("../../#application.razuna.api.host_path#/dam")>
+			<!---<cfset arguments.link_path_url = expandPath("../../#application.razuna.api.host_path#/dam\incoming\api#arguments.assetid#")>--->
+			<!--- Check the assettype --->
+			<cfif arguments.assettype EQ "img">
+				<!--- Get the data from array (loop over the passed array) --->
+				<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+					<cfloop index="y" from="1" to="#arrayLen(thejson)#">
+						<cfif arrayIsDefined(thejson[x],y) AND y EQ 1>
+							<cfset convertToList = listAppend(convertToList,"#thejson[x][y][2]#")>
+							<cfset StructInsert(arguments, "#thejson[x][y+1][1]#", #thejson[x][y+1][2]#)>
+							<cfset StructInsert(arguments, "#thejson[x][y+2][1]#", #thejson[x][y+2][2]#)>
+							<cfset StructInsert(arguments, "#thejson[x][y+3][1]#", #thejson[x][y+3][2]#)>
+							<cfset StructInsert(arguments, "#thejson[x][y+4][1]#", #thejson[x][y+4][2]#)>
+						</cfif>
+					</cfloop>
+				</cfloop>
+				<cfset arguments.convert_to = convertToList>
+				<!--- Get image settings --->
+				<cfinvoke component="global.cfc.settings" method="prefs_image" thestruct="#arguments#" returnvariable="arguments.qry_settings_image" />
+				<!--- Convert images --->
+				<cfinvoke component="global.cfc.images" method="convertImagethread" thestruct="#arguments#" returnvariable="thefileid" />
+				<!--- Feedback --->
+				<cfif thefileid NEQ "">
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "Asset has been converted successfully">
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Whoops! Set a valid URL!">
+				</cfif>
+			<cfelseif arguments.assettype EQ "aud">
+				<!--- Get the data from array (loop over the passed array) --->
+				<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+					<cfloop index="y" from="1" to="#arrayLen(thejson)#">
+						<cfif arrayIsDefined(thejson[x],y) AND x LTE #arrayLen(thejson)# AND y EQ 1>
+							<cfset convertToList = listAppend(convertToList,"#thejson[x][y][2]#")>
+							<cfset StructInsert(arguments, "#thejson[x][y+1][1]#", #thejson[x][y+1][2]#)>
+						</cfif>
+					</cfloop>
+				</cfloop>
+				<cfset arguments.convert_to = convertToList>
+				<!--- Get audio settings --->
+				<cfinvoke component="global.cfc.settings" method="prefs_video" thestruct="#arguments#" returnvariable="arguments.qry_settings_audio" />
+				<!--- Convert audios --->
+				<cfinvoke component="global.cfc.audios" method="convertaudiothread" thestruct="#arguments#" returnvariable="thefileid" />
+				<!--- Feedback --->
+				<cfif thefileid NEQ "">
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "Asset has been converted successfully">
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Whoops! Set a valid URL!">
+				</cfif>
+			<cfelseif arguments.assettype EQ "vid">
+				<!--- Get the data from array (loop over the passed array) --->
+				<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+					<cfloop index="y" from="1" to="#arrayLen(thejson)#">
+						<cfif arrayIsDefined(thejson[x],y) AND x LTE #arrayLen(thejson)# AND y EQ 1>
+							<cfset convertToList = listAppend(convertToList,"#thejson[x][y][2]#")>
+							<cfset StructInsert(arguments, "#thejson[x][y+1][1]#", #thejson[x][y+1][2]#)>
+							<cfset StructInsert(arguments, "#thejson[x][y+2][1]#", #thejson[x][y+2][2]#)>
+						</cfif>
+					</cfloop>
+				</cfloop>
+				<cfset arguments.convert_to = convertToList>
+				<!--- Get video settings --->
+				<cfinvoke component="global.cfc.settings" method="prefs_video" thestruct="#arguments#" returnvariable="arguments.qry_settings_video" />
+				<!--- Convert videos --->
+				<cfinvoke component="global.cfc.videos" method="convertvideo" thestruct="#arguments#" returnvariable="thefileid" />
+				<!--- Feedback --->
+				<cfif thefileid NEQ "">
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "Asset has been converted successfully">
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Whoops! Set a valid URL!">
+				</cfif>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
     
 </cfcomponent>

@@ -1681,6 +1681,8 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
+		<!--- Set file id for API rendition --->
+		<cfset var newid = arguments.thestruct.newid>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("videos")>
@@ -1691,6 +1693,7 @@
 			</cfmail>
 		</cfcatch>
 	</cftry>
+	<cfreturn newid>
 </cffunction>
 
 <!--- WRITE VIDEO TO SYSTEM --->

@@ -976,7 +976,7 @@
 </cffunction>
 
 <!--- CONVERT AUDIO --->
-<cffunction name="convertaudiothread" output="false" returntype="void">
+<cffunction name="convertaudiothread" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<cftry>
 		<!--- Param --->
@@ -1331,6 +1331,9 @@
 			</cfmail>
 		</cfcatch>
 	</cftry>
+	<!--- Return file id for API rendition --->
+	<!--- Return --->
+	<cfreturn newid.id>
 </cffunction>
 
 <!--- GET RELATED AUDIOS --->
