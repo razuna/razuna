@@ -313,9 +313,9 @@
 	function loadpass(){
 		$("##div_forall").load('#myself#c.randompass', function() {
 	  		var thepass = $('##div_forall').html();
-	  		$('##randompass').css('display','').html('Generate password is:' + ' ' + thepass);
-	  		$('##user_pass').val(thepass);
-	  		$('##user_pass_confirm').val(thepass);
+	  		$('##randompass').css('display','').html('Generated password is: ' + trim(thepass));
+	  		$('##user_pass').val(trim(thepass));
+	  		$('##user_pass_confirm').val(trim(thepass));
 		})
 	}
 	
