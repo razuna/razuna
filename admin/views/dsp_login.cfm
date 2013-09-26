@@ -30,9 +30,8 @@ Page output starts here
 <!--- #application.razuna.trans.getString('HomePage', 'username')# --->
 <div id="logindiv" style="text-align:center;">
 	<span class="loginform_header">
-		<img src="#dynpath#/global/host/dam/images/razuna-logo-blue-300.png" width="300" height="47" border="0">
+		<img src="#dynpath#/global/host/dam/images/razuna-logo-blue-300.png" width="300" height="47" border="0" style="padding:5px 0px 5px 0px;">
 	</span>
-	<br />
 	<br />
 	<div id="login_feedback">
 		<form action="#self#" method="post" name="form_login" id="form_login">

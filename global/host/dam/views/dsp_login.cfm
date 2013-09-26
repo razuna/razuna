@@ -30,15 +30,15 @@ Page output starts here
 <div id="login_div" style="text-align:center;">
 	<span class="loginform_header">
 		<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
-			<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
+			<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" style="padding:5px 0px 5px 0px;" />
 		<cfelse>
-			<img src="#dynpath#/global/host/dam/images/razuna-logo-blue-300.png" width="300" height="47" border="0">
+			<img src="#dynpath#/global/host/dam/images/razuna-logo-blue-300.png" width="300" height="47" border="0" style="padding:5px 0px 5px 0px;">
 		</cfif>
 	</span>
 	<cfif nohost EQ "F">
 		<!--- <br />
 		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("headerlogin")#</span> --->
-		<br />
+		
 		<br />
 		<div id="login_feedback">
 			<form action="//#cgi.http_host##self#" method="post" name="form_login" id="form_login">
