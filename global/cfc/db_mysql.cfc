@@ -1453,7 +1453,7 @@
 		  SHARED			   VARCHAR(2) DEFAULT 'F',
 		  LINK_KIND			   VARCHAR(20),
 		  LINK_PATH_URL		   VARCHAR(2000),
-		  FILE_META			   MEDIUMTEXT,
+		  FILE_META			   TEXT,
 		  HOST_ID			   INT,
 		  PATH_TO_ASSET		   VARCHAR(500),
 		  CLOUD_URL			   VARCHAR(500),
@@ -1546,7 +1546,7 @@
 		  SHARED			  VARCHAR(2) DEFAULT 'F',
 		  LINK_KIND			  VARCHAR(20),
 		  LINK_PATH_URL		  VARCHAR(2000),
-		  IMG_META			  MEDIUMTEXT,
+		  IMG_META			  TEXT,
 		  HOST_ID			  INT,
 		  PATH_TO_ASSET		  VARCHAR(500),
 		  CLOUD_URL			  VARCHAR(500),
@@ -1949,7 +1949,7 @@
 	 	SHARED			  		VARCHAR(2) DEFAULT 'F',
 	 	LINK_KIND				VARCHAR(20),
 		LINK_PATH_URL			VARCHAR(2000),
-		VID_META				MEDIUMTEXT,
+		VID_META				TEXT,
 		HOST_ID					INT,
 		PATH_TO_ASSET		    VARCHAR(500),
 		CLOUD_URL			    VARCHAR(500),
@@ -2148,7 +2148,7 @@
 			HOST_ID				INT,
 			cloud_url_org		VARCHAR(500),
 			ver_thumbnail		VARCHAR(200),
-			meta_data			MEDIUMTEXT,
+			meta_data			TEXT,
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
@@ -2195,7 +2195,7 @@
 			aud_size			VARCHAR(100),
 			LUCENE_KEY		   	VARCHAR(2000),
 			SHARED			   	VARCHAR(2) DEFAULT 'F',
-			aud_meta			MEDIUMTEXT,
+			aud_meta			TEXT,
 			LINK_KIND			VARCHAR(20),
 		    LINK_PATH_URL		VARCHAR(2000),
 		    HOST_ID				INT,
@@ -2268,7 +2268,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#errors
 		(
 			id				int,
-			err_text		mediumtext,
+			err_text		TEXT,
 			err_date		timestamp DEFAULT '0000-00-00 00:00:00',
 			host_id			int,
 			PRIMARY KEY (id)
