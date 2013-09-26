@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent output="true" extends="extQueryCaching">
+<cfcomponent output="false" extends="extQueryCaching">
 
 	<!--- Check if collection exists for this host --->
 	<cffunction name="exists" access="public" output="false">
@@ -80,6 +80,9 @@
 		<cfargument name="hostid" default="#session.hostid#" required="false">
 		<cfargument name="storage" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
+		<!--- Params --->
+		<cfset var qry = "">
+		<cfset var qry_path = "">
 		<!--- If the assetid is all it means a complete rebuild --->
 		<cfif arguments.assetid EQ "all">
 			<!--- Set all records to non indexed --->
@@ -128,28 +131,28 @@
 		</cfquery>
 		<cfset arguments.thestruct.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Put qry into arguments --->
-		<cfset arguments.qry = qry>
+		<!--- <cfset arguments.qry = qry> --->
 		<!--- Loop over the recordset --->
-		<cfthread action="run" intstruct="#arguments#" priority="low">
-			<cfloop query="attributes.intstruct.qry">
+		<!--- <cfthread action="run" intstruct="#arguments#" priority="low"> --->
+			<cfloop query="qry">
 				<cfinvoke method="index_update_thread">
-					<cfinvokeargument name="thestruct" value="#attributes.intstruct.thestruct#" />
+					<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
 					<cfinvokeargument name="assetid" value="#theid#" />
 					<cfinvokeargument name="category" value="#cat#" />
-					<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
-					<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
-					<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
-					<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
-					<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
-					<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
-					<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+					<cfinvokeargument name="dsn" value="#arguments.dsn#" />
+					<cfinvokeargument name="online" value="#arguments.online#" />
+					<cfinvokeargument name="notfile" value="#arguments.notfile#" />
+					<cfinvokeargument name="prefix" value="#arguments.prefix#" />
+					<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+					<cfinvokeargument name="storage" value="#arguments.storage#" />
+					<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
 				</cfinvoke>
 			</cfloop>
-		</cfthread>
+		<!--- </cfthread> --->
 	</cffunction>
 
 	<!--- INDEX: Update --->
-	<cffunction name="index_update_thread" access="public" output="true">
+	<cffunction name="index_update_thread" access="public" output="false">
 		<cfargument name="thestruct" required="false">
 		<cfargument name="assetid" required="false">
 		<cfargument name="category" required="true">
@@ -258,9 +261,6 @@
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("files")>
-				<cfset resetcachetoken("search")>
 			<!--- FOR IMAGES --->
 			<cfelseif arguments.category EQ "img">
 				<!--- Query Record --->
@@ -389,9 +389,6 @@
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("images")>
-				<cfset resetcachetoken("search")>
 			<!--- FOR VIDEOS --->
 			<cfelseif arguments.category EQ "vid">
 				<!--- Query Record --->
@@ -541,10 +538,6 @@
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("videos")>
-				<cfset resetcachetoken("audios")>
-				<cfset resetcachetoken("search")>
 			</cfif>
 			<cfcatch type="any">
 				<cfset consoleoutput(true)>
@@ -577,8 +570,12 @@
 						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
 				<!--- Flush Cache --->
-				<cfset resetcachetoken("files")>
-				<cfset resetcachetoken("search")>
+				<cfquery dataSource="#arguments.dsn#">
+				UPDATE cache
+				SET cache_token = <cfqueryparam value="#createuuid('')#" CFSQLType="cf_sql_varchar">
+				WHERE cache_type = <cfqueryparam value="search" CFSQLType="cf_sql_varchar">
+				AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
+				</cfquery>
 				<cfcatch type="any">
 					<cfset consoleoutput(true)>
 					<cfset console(cfcatch)>
