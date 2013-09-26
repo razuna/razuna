@@ -2009,6 +2009,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			HOST_ID		 		NUMBER,
 			cloud_url_org		VARCHAR2(500 CHAR),
 			ver_thumbnail		VARCHAR2(200 CHAR),
+			meta_data			CLOB,
 			hashtag				VARCHAR2(100 CHAR),
 			rec_uuid			VARCHAR2(100 CHAR),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#versions_PK PRIMARY KEY (rec_uuid) ENABLE
