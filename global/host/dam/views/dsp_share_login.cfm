@@ -32,12 +32,12 @@ Page output starts here
 		<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
 			<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
 		<cfelse>
-			<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
+			<img src="#dynpath#/global/host/dam/images/razuna-logo-blue-300.png" width="300" height="47" border="0">
 		</cfif>
 	</span>
 	<cfif attributes.shared EQ "T">
-		<br />
-		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("share_header_login")#</span>
+		<!--- <br />
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("share_header_login")#</span> --->
 		<br />
 		<br />
 		<form action="#self#" method="post" name="form_login_<cfif attributes.wid EQ 0>share<cfelse>widget</cfif>" id="form_login_<cfif attributes.wid EQ 0>share<cfelse>widget</cfif>">

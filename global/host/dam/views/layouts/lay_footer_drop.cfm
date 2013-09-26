@@ -47,7 +47,7 @@
 			<cfif application.razuna.whitelabel>
 				#wl_content#
 			<cfelse>
-				<a href="http://www.razuna.com" target="_blank"><img src="../../global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;"></a>
+				<a href="http://www.razuna.com" target="_blank"><img src="../../global/host/dam/images/razuna_logo-200.png" width="220" height="34" border="0" style="padding:3px 0px 0px 5px;"></a>
 				<br>
 				<cfif !application.razuna.isp>
 					<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#<br>

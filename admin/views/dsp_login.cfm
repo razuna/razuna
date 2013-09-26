@@ -30,7 +30,7 @@ Page output starts here
 <!--- #application.razuna.trans.getString('HomePage', 'username')# --->
 <div id="logindiv" style="text-align:center;">
 	<span class="loginform_header">
-		<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
+		<img src="#dynpath#/global/host/dam/images/razuna-logo-blue-300.png" width="300" height="47" border="0">
 	</span>
 	<br />
 	<br />
