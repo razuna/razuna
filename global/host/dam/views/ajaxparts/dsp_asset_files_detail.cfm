@@ -104,7 +104,7 @@
 										<cfelse>
 											<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#" border="0">
 										</cfif>
-									<cfelseif application.razuna.storage EQ "amazon">
+									<cfelseif application.razuna.storage EQ "amazon" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
 										<img src="#qry_detail.detail.cloud_url#" border="0">
 									<cfelse>
 										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" width="128" height="128" border="0"></cfif>

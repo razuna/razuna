@@ -522,6 +522,14 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_versions add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> meta_data #theclob#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> thesize #thevarchar#(100) DEFAULT '0'
 			</cfquery>
 			<cfcatch type="any">

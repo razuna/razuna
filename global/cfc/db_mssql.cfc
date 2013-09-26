@@ -2030,6 +2030,7 @@
 			HOST_ID				INT,
 			cloud_url_org		VARCHAR(500),
 			ver_thumbnail		VARCHAR(200),
+			meta_data			NVARCHAR(max),
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
