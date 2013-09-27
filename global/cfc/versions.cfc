@@ -538,6 +538,12 @@
 		<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 		<cfset arguments.thestruct.theexeff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 	</cfif>	
+	<!--- Write the sh script files --->
+	<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.therandom#.sh">
+	<!--- On Windows a .bat --->
+	<cfif iswindows>
+		<cfset arguments.thestruct.theshd = GetTempDirectory() & "/#arguments.thestruct.therandom#.bat">
+	</cfif>
 	<cftry> 
 		<!--- We need to query the existing file --->
 		<!--- Images --->
