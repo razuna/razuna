@@ -219,7 +219,7 @@
 									<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
 								</tr>
 								<tr>
-									<td><a href="https://getsatisfaction.com/razuna" target="_blank">Join the Razuna Customer Community</a></td>
+									<td><a href="http://forums.razuna.org" target="_blank">Join the Razuna Customer Community</a></td>
 								</tr>
 								<tr>
 									<td><a href="http://issues.razuna.com/" target="_blank">Razuna Issue Platform</a></td>

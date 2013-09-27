@@ -23,4 +23,4 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<iframe id="fdbk_iframe_inline" allowTransparency="true" width="100%" height="450" scrolling="no" frameborder="0" src="http://getsatisfaction.com/razuna/feedback/topics/new?display=inline&amp;style=idea"></iframe>
+<iframe id="fdbk_iframe_inline" allowTransparency="true" width="100%" height="450" scrolling="no" frameborder="0" src="http://forums.razuna.org"></iframe>

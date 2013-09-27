@@ -47,7 +47,7 @@
 		<class alias="log" classpath="global.cfc.log" type="component" constructor="init"/>
 		<class alias="lucene" classpath="global.cfc.lucene" type="component" constructor="init"/>
 		<class alias="custom_fields" classpath="global.cfc.custom_fields" type="component" constructor="init"/>
-		<class alias="nirvanix" classpath="global.cfc.nirvanix" type="component" constructor="init"/>
+		<!-- <class alias="nirvanix" classpath="global.cfc.nirvanix" type="component" constructor="init"/> -->
 		<class alias="amazon" classpath="global.cfc.amazon" type="component" constructor="init"/>
 		<class alias="comments" classpath="global.cfc.comments" type="component" constructor="init"/>
 		<class alias="versions" classpath="global.cfc.versions" type="component" constructor="init"/>

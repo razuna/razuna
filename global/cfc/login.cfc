@@ -424,7 +424,7 @@ Password: #randompassword#
 		<!--- The password is finished. --->
 		<!--- <cfoutput>#strPassword#</cfoutput> --->
 		<!--- Return --->
-		<cfreturn strPassword />
+		<cfreturn trim(strPassword) />
 	</cffunction>
 	
 	<!--- FUNCTION: RazunaUpload SessionToken --->
