@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-	We've found #qry_filecount.thetotal# file(s).
+	We've found <cfif #qry_filecount.thetotal# EQ ''> 0 <cfelse>  #qry_filecount.thetotal# </cfif> file(s).
 	<br /><br />
 		<cfloop query="qry_files.qall">
 			<div id="files">
@@ -78,7 +78,9 @@
 									<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
 								</cfif>
 							<cfelse>
-								<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
+								<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "Yes">
+									<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0">
+								</cfif>
 							</cfif>
 						</cfif>
 					</a>
