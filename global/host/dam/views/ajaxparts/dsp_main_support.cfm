@@ -39,7 +39,7 @@
 			<td><a href="http://wiki.razuna.com/">Razuna #myFusebox.getApplicationData().defaults.trans("online_help_link")#</a></td>
 		</tr>
 		<tr>
-			<td><a href="https://getsatisfaction.com/razuna" target="_blank">Join our Customer Community</a></td>
+			<td><a href="http://forums.razuna.org/" target="_blank">Join our Customer Community</a></td>
 		</tr>
 		<tr>
 			<td><a href="http://issues.razuna.com/" target="_blank">Razuna Bug Tracking/Knowledge Base</a></td>

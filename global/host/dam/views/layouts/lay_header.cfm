@@ -112,7 +112,7 @@
 					<cfif application.razuna.whitelabel>
 						#wl_link_support#
 					<cfelse>
-						<a href="https://getsatisfaction.com/razuna" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
+						<a href="http://forums.razuna.org/" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
 					</cfif>
 				</p>
 				<p>

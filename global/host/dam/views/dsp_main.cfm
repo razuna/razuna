@@ -105,7 +105,7 @@
 								<div id="tab_admin">
 									<div class="panelsnew">
 										<h1>#myFusebox.getApplicationData().defaults.trans("administrator_panel")#</h1>
-										<a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("go_to_administration")#</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
+										<a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("go_to_administration")#</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://forums.razuna.org/" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
 									</div>
 								</div>
 							</cfif>
