@@ -105,7 +105,7 @@
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>
 									</div>
-								<strong>#folder_name#</strong></a>
+								<strong>#left(folder_name,50)#</strong></a>
 							</div>
 						</cfloop>
 					</cfif>
@@ -131,9 +131,9 @@
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
-									<strong>#filename#</strong>
+									<strong>#left(filename,50)#</strong>
 								<cfelse>
-									The upload of "#filename#" is still in progress!
+									The upload of "#left(filename,50)#" is still in progress!
 								</cfif>
 							<!--- Videos --->
 							<cfelseif kind EQ "vid">
@@ -146,9 +146,9 @@
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
-									<strong>#filename#</strong>
+									<strong>#left(filename,50)#</strong>
 								<cfelse>
-									The upload of "#filename#" is still in progress!
+									The upload of "#left(filename,50)#" is still in progress!
 								</cfif>
 							<!--- Audios --->
 							<cfelseif kind EQ "aud">
@@ -161,9 +161,9 @@
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
-									<strong>#filename#</strong>
+									<strong>#left(filename,50)#</strong>
 								<cfelse>
-									The upload of "#filename#" is still in progress!
+									The upload of "#left(filename,50)#" is still in progress!
 								</cfif>
 							<!--- All other files --->
 							<cfelse>
@@ -187,9 +187,9 @@
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
-									<strong>#filename#</strong>
+									<strong>#left(filename,50)#</strong>
 								<cfelse>
-									The upload of "#filename#" is still in progress!
+									The upload of "#left(filename,50)#" is still in progress!
 								</cfif>
 							</cfif>
 						</div>
