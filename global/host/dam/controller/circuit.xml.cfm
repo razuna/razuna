@@ -4701,7 +4701,7 @@
 					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 					<set name="attributes.cs" value="#cs#" />
 					<!-- Check the DataBase  -->
-					<if condition="attributes.database EQ 'mysql'">
+					<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 						<true>
 							<!-- set search count call -->
 							<set name="attributes.isCountOnly" value="1" />
@@ -4735,7 +4735,7 @@
 		<if condition="attributes.thetype EQ 'doc'">
 			<true>
 				<!-- Check the DataBase  -->
-				<if condition="attributes.database EQ 'mysql'">
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 					<true>
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
@@ -4780,7 +4780,7 @@
 		<if condition="attributes.thetype EQ 'img'">
 			<true>
 				<!-- Check the DataBase  -->
-				<if condition="attributes.database EQ 'mysql'">
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 					<true>
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
@@ -4825,7 +4825,7 @@
 		<if condition="attributes.thetype EQ 'vid'">
 			<true>
 				<!-- Check the DataBase  -->
-				<if condition="attributes.database EQ 'mysql'">
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 					<true>
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
@@ -4870,7 +4870,7 @@
 		<if condition="attributes.thetype EQ 'aud'">
 			<true>
 				<!-- Check the DataBase  -->
-				<if condition="attributes.database EQ 'mysql'">
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 					<true>
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />

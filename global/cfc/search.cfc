@@ -74,6 +74,7 @@
 		<!--- Search in Lucene  --->
 		<cfif arguments.thestruct.thetype EQ "all">
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc,vid,img,aud" hostid="#session.hostid#" returnvariable="qryluceneAll">
+			
 			<cfif qryluceneAll.recordcount NEQ "0">
 				<cfset session.search.file_id = valuelist(qryluceneAll.categorytree) >
 				<cfset var assetTypesArr = ["doc","img","aud","vid"]>
@@ -149,7 +150,7 @@
 					with myresult as (
 						SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.*   FROM (
 					</cfif>
-				<cfif application.razuna.thedatabase EQ "mysql">
+				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
 						SELECT COUNT(t.id) AS individualCount,kind FROM (
 					<cfelse>		
@@ -341,7 +342,7 @@
 						'0' as vwidth, '0' as vheight, '0' as theformat, lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
 						fo.folder_name,
 						'' as labels,
-						'' as width, '' as height, '' as xres, '' as yres, '' as colorspace,
+						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							'unlocked' as perm,
 						<cfelse>
@@ -500,7 +501,7 @@
 						v.hashtag,
 						fo.folder_name,
 						'' as labels,
-						'' as width, '' as height, '' as xres, '' as yres, '' as colorspace,
+						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,
 						<!--- Check if this folder belongs to a user and lock/unlock --->
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							'unlocked' as perm,
@@ -659,7 +660,7 @@
 						a.hashtag,
 						fo.folder_name,
 						'' as labels,
-						'' as width, '' as height, '' as xres, '' as yres, '' as colorspace,
+						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,
 						<!--- Check if this folder belongs to a user and lock/unlock --->
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							'unlocked' as perm,
@@ -779,10 +780,7 @@
 				    GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash
 				</cfif><!--- Audio search end here --->
 				<!--- MySql OR H2 --->
-				<cfif application.razuna.thedatabase EQ "h2">
-					LIMIT #mysqloffset#,#session.rowmaxpage#
-				</cfif>
-				<cfif application.razuna.thedatabase EQ "mysql">
+				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 					ORDER BY #sortby#
 					) as t 
 					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
@@ -834,7 +832,7 @@
 				</cfif>
 			</cfquery>
 			<!--- Select only records that are unlocked --->
-			<cfif application.razuna.thedatabase EQ "mysql" >
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
 					SELECT found_rows() as total
 				</cfquery>--->
