@@ -745,7 +745,7 @@
 	</cffunction>
 	
 	<!--- SEARCH --->
-	<cffunction name="search" access="remote" output="false" returntype="query">
+	<cffunction name="search" access="remote" output="false" returntype="query" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,30)#">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
