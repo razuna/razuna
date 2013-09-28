@@ -145,7 +145,7 @@
 			
 			<!--- Grab the result and query file db --->
 			<!---<cftransaction>--->
-				<cfquery datasource="#application.razuna.datasource#" name="qry" >
+				<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 					<cfif application.razuna.thedatabase EQ "mssql">
 					with myresult as (
 						SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.*   FROM (
