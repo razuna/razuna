@@ -232,21 +232,20 @@
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset arguments.thestruct.qrycurrentversion.ver_filename_org = qrycurrentversion.ver_filename_org> 
 			<cfset arguments.thestruct.qry = qry>
-			<cfset arguments.thestruct.hostid = session.hostid>
 			<cfif arguments.thestruct.type EQ 'img'>
 				<!--- Create folder with the version --->
-				<cfif !directoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" mode="775">
+				<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" mode="775">
 				</cfif>
 				<!--- Download the original file --->
 				<cfinvoke component="amazon" method="Download">
 					<cfinvokeargument name="key" value="/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
-					<cfinvokeargument name="theasset" value="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
+					<cfinvokeargument name="theasset" value="#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
 					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
 				<!--- Params for resizeimage --->
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
-				<cfset arguments.thestruct.destination = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
+				<cfset arguments.thestruct.destination = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
 				<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 				<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
 				<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
@@ -273,7 +272,7 @@
 			<!--- Get SignedURL original --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_filename_org#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" awsbucket="#arguments.thestruct.awsbucket#">
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#variables.dsn#">
@@ -342,9 +341,9 @@
 		</cfquery>
 		<cfif qryv.RecordCount NEQ 0>
 			<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			<cfelse>
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			</cfif>
 		</cfif>
 		<!--- Update asset db with playbacked version --->
