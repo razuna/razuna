@@ -31,7 +31,11 @@
 <input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 <div id="tab_admin_user">
 	<ul>
-		<li><a href="##tab_user">#myFusebox.getApplicationData().defaults.trans("user_edit")#</a></li>
+		<cfif #attributes.user_id# eq 0>
+			<li><a href="##tab_user">#myFusebox.getApplicationData().defaults.trans("user_add")#</a></li>
+		<cfelse>
+			<li><a href="##tab_user">#myFusebox.getApplicationData().defaults.trans("user_edit")#</a></li>
+		</cfif>
 		<li><a href="##tab_groups">#myFusebox.getApplicationData().defaults.trans("groups")#</a></li>
 		<cfif jr_enable EQ "true"><li><a href="##tab_logins">#myFusebox.getApplicationData().defaults.trans("tab_users_social_accounts")#</a></li></cfif>
 		<cfif attributes.add EQ "f" AND grpnrlist EQ 2>

@@ -30,7 +30,11 @@
 
 <div id="theuser">
 	<ul>
-		<li><a href="##user">#defaultsObj.trans("user_edit")#</a></li>
+		<cfif #attributes.user_id# eq 0>
+			<li><a href="##user">#defaultsObj.trans("user_add")#</a></li>
+		<cfelse>
+			<li><a href="##user">#defaultsObj.trans("user_edit")#</a></li>
+		</cfif>
 		<li><a href="##groups">#defaultsObj.trans("groups")#</a></li>
 		<li><a href="##user_hosts">Tenants/Hosts</a></li>
 	</ul>
