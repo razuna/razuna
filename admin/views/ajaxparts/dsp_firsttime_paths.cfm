@@ -29,13 +29,13 @@
 	<cfset ff = "/usr/local/bin">
 	<cfset dc = "/usr/local/bin">
 	<cfset mp = "/usr/local/bin">
-	<cfset ex = "/usr/bin">
+	<cfset ex = "/usr/local/bin">
 <cfelseif server.os.name CONTAINS "Windows">
 	<cfset im = "C:\ImageMagick">
 	<cfset ff = "C:\FFMpeg\bin">
 	<cfset ex = "C:\Exiftool">
 	<cfset dc = "C:\dcraw">
-	<cfset mp = "C:\MP4Box">
+	<cfset mp = "C:\gpac">
 <cfelse>
 	<cfset im = "/usr/bin">
 	<cfset ff = "/usr/local/bin">
