@@ -138,6 +138,45 @@
 	<script type="text/javascript">
 		// Create tabs
 		jqtabs("sf_tab");
+		 //check the drobox and amazon account when loading the page
+               $(document).ready(function(){
+                       //check the drobox
+                       if($('input[name="sf_type"]:checked' ).val()=='dropbox'){
+                                       <cfif chk_dropbox.recordcount NEQ 0>
+                                               $('.button').removeAttr('disabled');
+                                       <cfelse>
+                                               $('.button').attr('disabled', 'true');
+                                       </cfif>
+                               }
+                               //check the amazon
+                               else if($('input[name="sf_type"]:checked' ).val()=='amazon'){
+                                       <cfif chk_s3.recordcount NEQ 0>
+                                               $('.button').removeAttr('disabled');
+                                       <cfelse>
+                                               $('.button').attr('disabled', 'true');
+                                       </cfif>
+                               }
+                       //check the drobox and amazon account when change the radio button
+                       $('input[name="sf_type"]').change(function(){
+					   			//check the drobox
+                               if($('input[name="sf_type"]:checked' ).val()=='dropbox'){
+                                       <cfif chk_dropbox.recordcount NEQ 0>
+                                               $('.button').removeAttr('disabled');
+                                       <cfelse>
+                                               $('.button').attr('disabled', 'true');
+                                       </cfif>
+                               }
+							    //check the amazon
+                               else if($('input[name="sf_type"]:checked' ).val()=='amazon'){
+                                       <cfif chk_s3.recordcount NEQ 0>
+                                               $('.button').removeAttr('disabled');
+                                       <cfelse>
+                                               $('.button').attr('disabled', 'true');
+                                       </cfif>
+                               }
+                       });
+                       
+               });
 		// Submit form
 		function sf_submit_form(){
 			// Check name
