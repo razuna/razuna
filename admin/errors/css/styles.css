@@ -1,0 +1,9 @@
+
+td{font-size: 14px}
+
+.strip1 {background-color: #f9f9f9}
+.strip2 {background-color: #ffffff}
+
+a:link {color:#5f4d28;}      /* unvisited link */
+a:visited {color:silver;}  /* visited link */
+a:hover {color:grey;}  /* mouse over link */
