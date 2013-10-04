@@ -557,7 +557,7 @@
 		<!-- Get all hosts -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
 		<!-- CFC: Get all plugins from DB only -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb('true')" returnvariable="qry_plugins" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb(active='true')" returnvariable="qry_plugins" />
 		<!-- CFC: Get all plugins who are selected for the hosts -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getpluginshosts()" returnvariable="qry_plugins_hosts" />
 		<!-- Show -->

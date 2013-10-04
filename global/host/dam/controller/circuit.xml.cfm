@@ -5858,7 +5858,7 @@
 	<!-- Calling the main admin -->
 	<fuseaction name="admin">
 		<!-- Check on activated plugins here -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb('true')" returnvariable="qry_plugins" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb(dam='true')" returnvariable="qry_plugins" />
 		<!-- Do -->
 		<do action="ajax.admin" />
 	</fuseaction>
