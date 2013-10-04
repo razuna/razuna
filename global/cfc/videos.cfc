@@ -1360,10 +1360,11 @@
 			<!--- Insert record --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#videos
-			(vid_id, host_id)
+			(vid_id, host_id, vid_create_time)
 			VALUES( 
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 			)
 			</cfquery>
 			<!--- If from upload templates we select with and height of image --->
