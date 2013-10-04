@@ -29,6 +29,9 @@
 	<!--- STANDARD --->
 	<!---  --->
 	
+	<!--- Errors Object --->
+	<cfobject component="global.cfc.errors" name="errobj">
+
 	<!--- FUNCTION: INIT --->
 	<cffunction name="init" returntype="amazon" access="public" output="false">
 		<!--- Return --->
@@ -307,6 +310,8 @@
 				<!--- Error --->
 				<cfcatch type="any">
 					<cfoutput>An error has occured connecting to your Amazon S3 account<br />Message: #cfcatch.message# <br />Detail: #cfcatch.detail#</cfoutput>
+					<cfset cfcatch.custom_message = "An error has occured connecting to your Amazon S3 account in function amazon.awssourcecheck">
+					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -357,8 +362,8 @@
 				<!--- Call internal function to add the file --->
 				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
 				<cfcatch type="any">
-					<cfset consoleoutput(true)>
-					<cfset console(cfcatch)>
+					<cfset custom_message = "Error in function amazon.downloadfilesthread">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfloop>

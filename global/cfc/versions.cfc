@@ -432,9 +432,8 @@
 				WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				</cfquery>
 				<cfcatch type="any">
-					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
-						<cfdump var="#cfcatch#" />
-					</cfmail>
+					<cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.playback">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		<!--- Videos --->
@@ -503,9 +502,8 @@
 		<cfset arguments.thestruct.qrydetail.folder_id_r = qry.folder_id_r>
 		<cfset arguments.thestruct.filenameorg = qry.filenameorg>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error in playback of a version">
-				<cfdump var="#cfcatch#" />
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error in function versions.playback">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1025,9 +1023,8 @@
 				WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 				</cfquery>
 				<cfcatch type="any">
-					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
-						<cfdump var="#cfcatch#" />
-					</cfmail>
+					<cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.create">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		<!--- Videos --->
@@ -1116,9 +1113,8 @@
 		<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error in creating a new version">
-				<cfdump var="#cfcatch#" />
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error in function versions.create">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry> 
 	<!--- Return --->

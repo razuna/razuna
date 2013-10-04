@@ -1003,10 +1003,9 @@
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error moving item in collection">
-				<cfdump var="#arguments.thestruct#" />
-				<cfdump var="#cfcatch#">
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error while moviing item in collection in function collections.move">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>

@@ -426,9 +426,8 @@
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="general" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
 		<cfcatch type="any">
-			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error during inserting default values" type="html">
-				<cfdump var="#cfcatch#">
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error while inserting default values in function hosts.insert_default_values">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>	
 	</cftry>
 	<cfreturn />
@@ -622,9 +621,8 @@
 			</cfquery>
 			
 			<cfcatch type="any">
-				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error removing tables">
-					<cfdump var="#cfcatch#" />
-				</cfmail>
+				<cfset cfcatch.custom_message = "Error while removing tables in function hosts.remove">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Since 1.4 we only remove records in the DB and don't drop tables anymore --->

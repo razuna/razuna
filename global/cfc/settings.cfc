@@ -2411,6 +2411,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<!--- <cfoutput><span style="font-weight:bold;color:green;">Got the codes please authenticate now!</span></cfoutput> --->
 			<cfcatch type="any">
 				<cfoutput><span style="font-weight:bold;color:red;">Error occured: #cfcatch.message# - #cfcatch.detail#</span></cfoutput>
+				<cfset cfcatch.custom_message = "Error in function settings.getappkey">
+				<cfset errobj.logerrors(cfcatch,false)/>
 				<cfabort>
 			</cfcatch>
 		</cftry>

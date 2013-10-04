@@ -118,8 +118,8 @@
 			<cfinvoke method="addassetserverthread" thestruct="#arguments.thestruct#" />
 		</cfif>
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
+			<cfset cfcatch.custom_message = "Error in function assets.addassetserver">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	
@@ -529,8 +529,8 @@
 						<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 					</cfif>
 					<cfcatch type="any">
-						<cfset consoleoutput(true)>
-						<cfset console(cfcatch)>
+						<cfset cfcatch.custom_message = "Error in function assets.addassetscheduledserverthread">
+						<cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -539,7 +539,10 @@
 	<!--- Remove lock file --->
 	<cftry>
 		<cffile action="delete" file="#arguments.thestruct.directory#/#lockfile#" />
-		<cfcatch type="any"></cfcatch>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error deleting lock file in function assets.addassetscheduledserverthread">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
 	</cftry>
 </cffunction>
 
@@ -635,7 +638,10 @@
 					<!--- Remove the attachment from the email folder. This is on purpose outside of the if so that we remove unwanted attachments as well --->
 					<cftry>
 						<cffile action="delete" file="#arguments.thestruct.thepath#/incoming/emails/#arguments.thestruct.thefilename#">
-						<cfcatch type="any"></cfcatch>
+						<cfcatch type="any">
+							<cfset cfcatch.custom_message = "Error removing attachment from email folder in function assets.addassetemail">
+							<cfset errobj.logerrors(cfcatch)/>
+						</cfcatch>
 					</cftry>
 				</cfloop>
 			</cfif>
@@ -762,7 +768,8 @@
 				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -1058,7 +1065,6 @@
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
 				<cflocation url="#arguments.thestruct.redirectto#?responsecode=1&message=htmleditformat(Upload failed #xmlformat(cfcatch.Detail)# #xmlformat(cfcatch.Message)#)" addToken="yes">
 			<cfelse>
-				<!--- <cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from API upload" dump="#cfcatch#"> --->
 				<!--- Return Message --->
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 	<Response>
@@ -1067,6 +1073,8 @@
 	</Response></cfoutput>
 				</cfsavecontent>
 			</cfif>
+			<cfset cfcatch.custom_message = "Error in API upload in function assets.addassetapi">
+			<cfset errobj.logerrors(cfcatch,false)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1243,8 +1251,8 @@
 			<cfset resetcachetoken("general")>
 		</cfif>
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error in function assets.create_inserts">
+				<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1353,7 +1361,8 @@
 		</cfif>
 		<!--- Catch --->
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from LINK upload" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error from LINK upload in function assets.addassetlink">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1424,7 +1433,8 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 		<cftry>
 			<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#thesubject#" themessage="#mailmessage#">
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error sending email in function assets.addassetemail">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 		</cftry>
 	</cfif>
@@ -1658,6 +1668,8 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfloop>
 			<cfcatch type="any">
+				<cfset cfcatch.custom_message ="Error in function assets.removeasset">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfthread>
@@ -2569,9 +2581,8 @@ This is the main function called directly by a single upload else from addassets
 			WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
 			</cfquery>
 			<cfcatch type="any">
-				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
-					<cfdump var="#cfcatch#" />
-				</cfmail>
+				<cfset cfcatch.custom_message = "Error in images text table for jpg in function assets.importimagesthread"/>
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Move or upload to the right places --->
@@ -2625,7 +2636,8 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 					</cfinvoke>
 					<cfcatch type="any">
-						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
+						<cfset cfcatch.custom_message = "Error in uploading original image to Nirvanix in function assets.importimagesthread">
+						<cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -2642,7 +2654,8 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Wait for thread to finish --->
 					<cfthread action="join" name="upload#arguments.thestruct.newid#" />
 					<cfcatch type="any">
-						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
+						<cfset cfcatch.custom_message = "Error in uploading thumbnail image to Nirvanix in function assets.importimagesthread">
+						<cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 				<!--- Get thumb file size --->
@@ -2696,7 +2709,8 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Get signed URLS original --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 				<cfcatch type="any">
-					<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
+					<cfset cfcatch.custom_message = "Error in image upload to amazon in function assets.importimagesthread">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		<!--- AKAMAI --->
@@ -2739,7 +2753,8 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Get size of original --->
 				<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 				<cfcatch type="any">
-					<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to akamai" dump="#cfcatch#">
+					<cfset cfcatch.custom_message = "Error in image upload to akamai in function assets.importimagesthread">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -2963,9 +2978,8 @@ This is the main function called directly by a single upload else from addassets
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="assets.cfc resizeImage">
-				<cfdump var="#cfcatch#" />
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error in function assets.resizeImage">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -3672,10 +3686,9 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error in Zipextract within assets.cfc">
-				<cfdump var="#cfcatch#" label="Catch" />
-				<cfdump var="#arguments.thestruct#" label="Arguments" />
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error in function assets.extractFromZip">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -4580,7 +4593,8 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfif>
 			<cfcatch type="all">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug recreating preview" type="html"><cfdump var="#cfcatch#"></cfmail>
+				<cfset cfcatch.custom_message = "Error in function assets.recreatepreviewimagethread">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -4974,7 +4988,10 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath>
 			<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid>
 			<cfset arguments.thestruct.level = arguments.thestruct.thislevel>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error in function assets.addassetpath2">
+				<cfset errobj.logerrors(cfcatch)/>
+			</cfcatch>
 		</cftry>
 	</cfloop>
 	<!--- Return --->
@@ -5070,7 +5087,10 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath2>
 			<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid2>
 			<cfset arguments.thestruct.level = arguments.thestruct.thislevel2>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error in function assets.addassetpath3">
+				<cfset errobj.logerrors(cfcatch)/>
+			</cfcatch>
 		</cftry>
 	</cfloop>
 	<!--- Return --->
@@ -5616,6 +5636,8 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		<cfcatch type="any">
 			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
+			<cfset cfcatch.custom_message = "The file '#arguments.thestruct.filename#' could not be proccessed in function assets.addassetpathfiles!">
+			<cfset errobj.logerrors(cfcatch,false)/>
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -5668,6 +5690,8 @@ This is the main function called directly by a single upload else from addassets
 				<p>Details: #cfcatch.detail#</p>
 				<p>#cfcatch.message#</p>
 			</cfoutput>
+			<cfset cfcatch.custom_message = "Error in function assets.add_av_from_path">	
+			<cfset errobj.logerrors(cfcatch)/>
 			<cfflush>
 			<cfabort>
 		</cfcatch>

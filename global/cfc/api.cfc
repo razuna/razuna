@@ -215,8 +215,8 @@
 			<!--- Get id from config file --->
 			<cfset var plugID = getProfileString("#thepath#/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error in function api.getMyID">
+				<cfset errObj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn plugID />

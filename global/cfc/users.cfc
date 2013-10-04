@@ -710,7 +710,10 @@
 				<cffile action="delete" file="#arguments.thepath#/outgoing/#name#">
 			</cfif>
 		</cfloop>
-		<cfcatch type="any"></cfcatch>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error in function users.remove_files">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
 	</cftry>
 </cffunction>
 
@@ -808,6 +811,8 @@
 				<cfcatch type="any">
 					<!--- Feedback --->
 					<cfoutput><span style="color:red;">Something's wrong here: #cfcatch.detail# - #cfcatch.message#</span><br></cfoutput>
+					<cfset cfcatch.custom_message = "Error in function users.users_import">
+					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfflush>
 				</cfcatch>
 			</cftry>

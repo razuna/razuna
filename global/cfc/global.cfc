@@ -330,8 +330,8 @@
 				<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
 			</cfinvoke>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error while calling setDatasource in bd_config in function global.setdatasource">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />

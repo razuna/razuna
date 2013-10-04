@@ -254,8 +254,10 @@
 			<cfset thesize = 0>
 		</cfif>
 		<cfcatch type="any">
-			<cfdump var="#details#"><cfabort>
-			<cfdump var="#cfcatch#"><cfdump var="#details.aud_size#"><cfabort>
+			<cfset cfcatch.custom_message = "Error getting audio details in function audios.detail">
+			<cfset cfcatch.aud_details = details>
+			<cfset errobj.logerrors(cfcatch)/>
+			<cfabort>
 		</cfcatch>
 	</cftry>
 	<!--- Put into struct --->
@@ -807,7 +809,10 @@
 				<cfelseif application.razuna.storage EQ "amazon" AND path_to_asset NEQ "">
 					<cfinvoke component="amazon" method="deletefolder" awsbucket="#arguments.thestruct.awsbucket#" folderpath="#path_to_asset#">
 				</cfif>
-				<cfcatch type="any"></cfcatch>
+				<cfcatch type="any">
+					<cfset cfcatch.custom_message = "Error while looping over records in function audios.deletefromfilesystem">
+					<cfset errobj.logerrors(cfcatch)/>
+				</cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Delete related videos as well --->
@@ -819,7 +824,8 @@
 			</cfquery>
 		</cfif>
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error on removing a audio from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#)" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error while removing a audio from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#) in function audios.deletefromfilesystem">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -884,7 +890,8 @@
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id)>
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving audio" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error while moving audio in function audios.move">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->
@@ -1325,10 +1332,9 @@
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("audios")>
 		<cfcatch type="any">
-			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error on convert audio" type="html">
-				<cfdump var="#cfcatch#">
-				<cfdump var="#arguments.thestruct#">
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error while converting audio in function audios.convertaudiothread">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>	
 		</cfcatch>
 	</cftry>
 	<!--- Return file id for API rendition --->
@@ -1474,7 +1480,10 @@
 	<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 	<cftry>
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#zipname#">
-		<cfcatch type="any"></cfcatch>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error while deleting file in function audios.writeaudio">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
 	</cftry>
 	<!--- Zip the folder --->
 	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#zipname#" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#" recurse="true" timeout="300" />

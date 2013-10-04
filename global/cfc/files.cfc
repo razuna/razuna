@@ -703,6 +703,8 @@
 				<!--- <cfinvoke component="amazon" method="deletefolder" folderpath="versions/doc/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" /> --->
 			</cfif>
 			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error in function files.deletefromfilesystem">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />

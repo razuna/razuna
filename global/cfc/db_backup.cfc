@@ -24,6 +24,9 @@
 *
 --->
 <cfcomponent output="false">
+
+	<!--- Errors Object --->
+	<cfobject component="global.cfc.errors" name="errobj">
 	
 	<!--- Setup the DB if DB is not here --->
 	<cffunction name="setup" access="public" output="false">
@@ -41,8 +44,8 @@
 			) 
 			</cfquery>
 			<cfcatch type="database">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error while setting up database in function db_backup.setup">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Look into the information schema and get all the tables --->
@@ -93,8 +96,8 @@
 				<cfset thecounter = 1>
 				<!--- Catch --->
 				<cfcatch type="any">
-					<cfset consoleoutput(true)>
-					<cfset console(cfcatch)>
+					<cfset cfcatch.custom_message = "Error while creating table in function db_backup.setup">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfloop>

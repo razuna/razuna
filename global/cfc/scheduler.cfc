@@ -133,8 +133,8 @@
 		<!--- Log the insert --->
 		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved">
 		<cfcatch>
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
+			<cfset cfcatch.custom_message = "Error in function scheduler.add">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -256,7 +256,10 @@
 		)
 		</cfquery>
 		<cfset variables.cachetoken = resetcachetoken("logs")>
-		<cfcatch type="database"></cfcatch>
+		<cfcatch type="database">
+			<cfset cfcatch.custom_message = "Database error in function scheduler.tolog">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
 	</cftry>
 </cffunction>
 
@@ -386,7 +389,8 @@
 		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#session.theuserid#" theaction="Update" thedesc="Scheduled Task successfully updated">
 		<cfcatch>
 			<!--- Log the error --->
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from Scheduler" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error in function scheduler.update">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -446,6 +450,8 @@
 			<!--- Log the error --->
 			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]">
 			<cfset returncode = "sched_error">
+			<cfset cfcatch.custom_message = "Error in function scheduler.run">
+			<cfset errobj.logerrors(cfcatch)/>		
 		</cfcatch>
 	</cftry>
 	<cfreturn returncode>

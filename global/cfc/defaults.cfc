@@ -81,10 +81,8 @@
 		<!--- Return --->
 		<cfreturn thelangs>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error with database">
-				<cfdump var="#cfcatch#" label="error">
-				<cfdump var="#session#" label="sessions">
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error with database in function defaults.getlangs">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>
