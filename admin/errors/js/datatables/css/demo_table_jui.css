@@ -295,7 +295,7 @@ tr.even {
 
 tfoot input {
 	margin: 0.5em 0;
-	width: 100%;
+	width: 85%;
 	color: #444;
 }
 
@@ -345,11 +345,11 @@ td.details {
 }
 
 table.display tr.even.row_selected td {
-	background-color: #B0BED9;
+	background-color: #d9d9d9;
 }
 
 table.display tr.odd.row_selected td {
-	background-color: #9FAFD1;
+	background-color: #d9d9d9;
 }
 
 

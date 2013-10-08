@@ -3,25 +3,55 @@
 <meta charset="utf-8" />
 <head>
 	<link rel="stylesheet" type="text/css" href="js/datatables/css/jquery.dataTables.css">
-	<link rel="stylesheet" type="text/css" href="js/datatables/jquery-ui.custom/css/jquery-ui.custom.min.css">
-	<link rel="stylesheet" type="text/css" href="css/styles.css">
-	<style type="text/css" title="currentStyle"> 
+	<link rel="stylesheet" type="text/css" href="js/datatables/jquery-ui.custom/css/jquery-ui.custom.min.css">	
+	<style type="text/css" title="currentStyle">
 		@import "js/datatables/css/demo_table_jui.css";	
     </style>
-
 	<script src="js/datatables/js/jquery.js" type="text/javascript"></script>
 	<script src="js/datatables/js/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="js/datatables/js/jquery.dataTables.columnFilter.js" type="text/javascript"></script>
+	<script src="js/datatables/js/jquery.dataTables.editable.js" type="text/javascript"></script>
+	<script src="js/datatables/js/jquery.jeditable.js" type="text/javascript"></script>
+	<script src="js/datatables/js/jquery-ui.js" type="text/javascript"></script>
+	<cfsavecontent variable="dt_settings">
+			"bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "iDisplayLength":25,
+            "aaSorting": []
+	</cfsavecontent>
 	<script>	 
     $(document).ready(function() {		  
-        oTable = $('table').dataTable({	
-            "bJQueryUI": true,
-            "sPaginationType": "full_numbers",
-            "iDisplayLength":10,
-            "asStripeClasses": [],
-            "aaSorting": [[0,'desc']],
-            "asStripeClasses": [ 'strip1', 'strip2']
-        });	
+    	var id = -1;//simulation of id
+    	oTable1 = $("#dberrtbl")
+    	// Initialise datatable woth default settings
+    	.dataTable({"sDom": '<"H"<"#tableOne"flr>>t<"F"p>',<cfoutput>#dt_settings#</cfoutput>})
+    	// Make datatable editable and allow selection and deletion of rows. This is achieved using the datatables data manager addon
+    	// http://jquery-datatables-editable.googlecode.com/svn/trunk/index.html
+    	.makeEditable({
+				   		sReadOnlyCellClass: "read_only",
+				   		sDeleteRowButtonId: "btnDeleteErr",	
+				        sDeleteHttpMethod: "GET",
+						sDeleteURL: "myfunctions.cfc?method=delete_err",
+						sUpdateURL: "myfunctions.cfc?method=update_err",
+						oDeleteRowButtonOptions: {label: "Delete",icons: {primary:'ui-icon-trash'}},
+						sAddDeleteToolbarSelector: "#tableOne"								
+		})
+		// Allow column level filtering in datatables using the Column Filter addon
+		// http://jquery-datatables-column-filter.googlecode.com/svn/trunk/index.html
+		.columnFilter();	
+    
+    	oTable2 = $("#bderrtbl").dataTable({"sDom": '<"H"<"#tableTwo"flr>>t<"F"p>',<cfoutput>#dt_settings#</cfoutput>})
+    	.makeEditable({
+				   		sReadOnlyCellClass: "read_only",
+				   		sDeleteRowButtonId: "btnDeleteLog",
+				        sDeleteHttpMethod: "GET",
+						sDeleteURL: "myfunctions.cfc?method=delete_log",
+						oDeleteRowButtonOptions: {label: "Delete",icons: {primary:'ui-icon-trash'}},
+						sAddDeleteToolbarSelector: "#tableTwo"								
+		});	
+        $("[id*=btnDelete]").attr("style","font-size:0.9em;");//make remove button text smaller
     } );	
+
 	</script>
 </head>
 
@@ -54,45 +84,52 @@
 </cfif>
 
 <!--- Get errors stored in user database --->
-<cfquery datasource="#session.datasource#" name="dberrors">
-	select id, err_date, host_id
-	from #session.shard_group#errors
-</cfquery> 
+<cfquery datasource="#session.datasource#" name="dberrors" ><!--- cachedwithin="#CreateTimeSpan(0,0,0,10)#" --->
+	select e.id, e.err_header, e.err_date, e.host_id, h.host_name
+	from #session.shard_group#errors e left join hosts h
+	on e.host_id = h.host_id
+	order by e.id desc
+</cfquery>
 
 <!--- Output errors logged in database --->
-<div style="width:49%;float:left">
-<h2 style="color:#5f4d28">Errors Logged in Database</h2>
+<div>
+<h2 class="inline">Errors Logged in Database</h2><br>
+<span class="fineprint">Double click any cell in error column to edit and hit enter to save changes to database</span><br/>
 <form method="post" onsubmit="return confirm('Do you really want to delete these errors? This process is undoable!');">
-	<input type="submit" name="deldberr" value="Delete All Errors" class="ui-state-default ui-corner-tr ui-corner-tl">
+	<input type="submit" name="deldberr" id="delbderr" value="Delete All Errors" class="ui-state-default ui-corner-tr ui-corner-tl">
 </form>
-<table class="display">
+<table class="display" id="dberrtbl">
 	<thead>
-		<tr><th>ID</th><th>Timestamp</th><th>Error</th><th>HostID</th></tr>
+		<tr><th>ID</th><th>Timestamp</th><th>Error</th><th>HostName</th><th>HostID</th></tr>
 	</thead>
-	<tbody style="color:#5f4d28">
+	<tbody>
 		<cfoutput query="dberrors">
-		<tr>
-			<td>#id#</td>
-			<td>#dateformat(err_date,"mm/dd/yyyy")# #timeformat(err_date,"hh:mm tt")#</td>
-			<td><a href="dsp_viewdberr.cfm?id=#id#" target="_blank">View Error</a></td>	
-			<td>#host_id#</td>
+		<tr id="#id#">
+			<td class="read_only">#id#</td>
+			<td class="read_only"><a href="dsp_viewdberr.cfm?id=#id#" target="_blank">#dateformat(err_date,"mm/dd/yyyy")# #timeformat(err_date,"hh:mm tt")#</a></td>
+			<td>#err_header#</td>	
+			<td class="read_only">#host_name#</td>
+			<td class="read_only">#host_id#</td>
 		</tr>
 		</cfoutput>
 	</tbody>
+	<tfoot>
+		<tr><th>ID</th><th>Timestamp</th><th>Error</th><th>HostName</th><th>HostID</th></tr>
+	</tfoot>
 </table>
 </div>
 
 <!--- Get list of error logs in Bluedragon --->
-<cfdirectory action="list" directory="#expandpath(session.BDlogdir)#" name="BDloglist" filter="*.html" sort="desc"/>
-<div style="width:49%;float:right;">
-<h2 style="color:#5f4d28">Errors logged in Bluedragon</h2>
+<cfdirectory action="list" directory="#expandpath(session.BDlogdir)#" name="BDloglist" filter="*.html" sort="datelastmodified desc"/>
+<div>
+<h2>Errors logged in Bluedragon</h2>
 <form method="post" onsubmit="return confirm('Do you really want to delete these errors? This process is undoable!');">
-	<input type="submit" name="delbderr" value="Delete All Errors" class="ui-state-default ui-corner-tr ui-corner-tl">
+	<input type="submit" name="delbderr" id="delbderr" value="Delete All Errors" class="ui-state-default ui-corner-tr ui-corner-tl">
 </form>
 <!--- Output errors logged in Bluedragon --->
-<table class="display">
+<table class="display" id="bderrtbl">
 	<thead>
-		<tr><th>Timestamp</th><th>Error</th></tr>
+		<tr><th>Timestamp</th></tr>
 	</thead>	
 	<tbody>
 		<cfoutput query="BDloglist">
@@ -100,9 +137,8 @@
 			<cfif not fileExists("#expandpath('./temp')#/#name#")>
 				<cffile action="copy" source="#expandpath(session.BDlogdir)#/#name#" destination="#expandpath('./temp')#">
 			</cfif>
-			<tr>
-				<td>#dateformat(datelastmodified,"mm/dd/yyyy")# #timeformat(datelastmodified,"hh:mm tt")#</td>
-				<td><a href="temp/#name#" target="_blank">View Error</a></td>
+			<tr id="#name#">
+				<td class="read_only"><a href="temp/#name#" target="_blank">#dateformat(datelastmodified,"mm/dd/yyyy")# #timeformat(datelastmodified,"hh:mm tt")#</a></td>
 			</tr>
 		</cfif>		
 		</cfoutput>
