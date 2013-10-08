@@ -38,6 +38,8 @@
 	<cffunction name="logerrors" access="public" returntype="void">
 		<cfargument name="cfcatch" required="true" type="any" hint="cfcatch structure with error details">
 		<cfargument name="showmsg" required="false" type="boolean" default="true" hint="display message to user or not">
+		<cfparam name="arguments.cfcatch.custom_message" default="N/A">
+
 		<cfif arguments.showmsg>
 			<!--- Output to user --->
 			<h2 style="color:red;">We are so sorry. Something went wrong. <cfif application.razuna.isp OR cgi.http_host CONTAINS "razunabd.local">We have been notified of this error and will fix it asap.<cfelse>We saved the error and you or your administrator can notify us of this error within the Administration.</cfif></h2>
@@ -63,9 +65,10 @@
 		<!--- Add to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#errors
-		(id, err_text, err_date, host_id)
+		(id, err_header,err_text, err_date, host_id)
 		VALUES(
 		<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#qryid.theid#">,
+		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.cfcatch.custom_message#">,
 		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#errortext#">,
 		<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
 		<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
