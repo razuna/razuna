@@ -2131,6 +2131,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#errors
 		(
 			id				INT,
+			err_header		NVARCHAR(500),
 			err_text		NVARCHAR(max),
 			err_date		DATETIME,
 			host_id			INT,

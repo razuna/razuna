@@ -2109,6 +2109,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#errors
 		(
 			id				NUMBER,
+			err_header		CLOB,
 			err_text		CLOB,
 			err_date		timestamp,
 			host_id			NUMBER,
