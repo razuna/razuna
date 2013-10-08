@@ -20,6 +20,8 @@
 <cfparam name="session.rowmaxpage" default="25">
 <cfparam name="session.offset_log" default="0">
 <cfparam name="session.rowmaxpage_log" default="25">
+<cfparam name="session.offset_sched" default="0">
+<cfparam name="session.rowmaxpage_sched" default="25">
 <cfparam name="session.showsubfolders" default="F">
 <cfparam name="nohost" default="F">
 <cfparam name="cookie.loginname" default="">

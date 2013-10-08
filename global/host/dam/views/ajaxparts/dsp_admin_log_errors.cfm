@@ -25,6 +25,7 @@
 --->
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+		<!--- Back and Forth --->
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 		<tr>
 			<th width="1%" nowrap="true">Detail</th>
@@ -41,6 +42,8 @@
 				<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.log_errors_win&id=#id#','Send Report',450,1);return false;">Send report to Razuna</a></td>
 			</tr>
 		</cfloop>
+		<!--- Back and Forth --->
+		<cfset attributes.bot = "true">
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 	</table>
 </cfoutput>

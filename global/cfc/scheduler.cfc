@@ -38,6 +38,51 @@
 	<cfreturn qry>
 </cffunction>
 
+<!--- GET SCHEDULED EVENTS ------------------------------------------------------------------>
+<cffunction name="getEvents" returntype="query" output="true" access="public">
+	<!--- Query to get records for paging --->
+	<cfinvoke method="getAllEvents" returnvariable="thetotal">
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif thetotal.recordcount LTE session.rowmaxpage_sched>
+		<cfset session.offset_sched = 0>
+	</cfif>
+	<cfif session.offset_sched EQ 0>
+		<cfset var min = 0>
+		<cfset var max = session.rowmaxpage_sched>
+	<cfelse>
+		<cfset var min = session.offset_sched * session.rowmaxpage_sched>
+		<cfset var max = (session.offset_sched + 1) * session.rowmaxpage_sched>
+	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset_sched * session.rowmaxpage_sched>
+	<!--- Query to get records --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT <cfif variables.database EQ "mssql"> TOP #session.rowmaxpage_sched#</cfif> sched_id, sched_name, sched_method, sched_status,
+		(
+			SELECT count(sched_id)
+			FROM #session.hostdbprefix#schedules
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		) as thetotal
+		FROM #session.hostdbprefix#schedules
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif variables.database EQ "mssql">
+			AND sched_id NOT IN 
+			(
+				SELECT TOP #min# sched_id
+				FROM #session.hostdbprefix#schedules
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				ORDER BY sched_name, sched_method DESC
+			)
+		</cfif>
+		GROUP BY sched_id, sched_name, sched_method, sched_status, host_id
+		ORDER BY sched_name, sched_method DESC
+		<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+			LIMIT #mysqloffset#, #session.rowmaxpage_sched#
+		</cfif>
+	</cfquery>
+	<cfreturn qry>
+</cffunction>
+
 <!--- SAVE SCHEDULED EVENT ----------------------------------------------------------------------->
 <cffunction name="add" returntype="string" output="true" access="public">
 	<cfargument name="thestruct" type="struct" required="yes">
