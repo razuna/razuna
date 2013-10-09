@@ -930,6 +930,11 @@
 		<cfparam name="arguments.link_kind" default="">
 		<cfset var convertToList = "">
 		<cfset arguments.thedpi = "">
+		<!--- Put values into struct to be compatible with global cfcs --->
+		<cfset orgstruct = structnew()>
+		<cfset orgstruct.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+		<cfset orgstruct.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+		<cfset orgstruct.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 		<!--- Check api key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -938,9 +943,16 @@
 			<cfset arguments.file_id = arguments.assetid>
 			<!--- Deserialize the JSON back into an array --->
 			<cfset thejson = DeserializeJSON(arguments.convertdata)>
-			<cfset arguments.assetpath = expandPath("../../assets")>
+			<!--- Get assetpath --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT set2_path_to_assets
+				FROM #orgstruct.hostdbprefix#settings_2
+				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgstruct.hostid#">
+			</cfquery>
+			<!--- Set assetpath --->
+			<cfset arguments.assetpath = trim(qry.set2_path_to_assets)>
 			<cfset arguments.thepath = expandPath("../../#application.razuna.api.host_path#/dam")>
-			<!---<cfset arguments.link_path_url = expandPath("../../#application.razuna.api.host_path#/dam\incoming\api#arguments.assetid#")>--->
 			<!--- Check the assettype --->
 			<cfif arguments.assettype EQ "img">
 				<!--- Get the data from array (loop over the passed array) --->

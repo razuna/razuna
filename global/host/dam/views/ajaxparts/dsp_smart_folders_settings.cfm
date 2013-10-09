@@ -77,7 +77,7 @@
 					<em>(#myFusebox.getApplicationData().defaults.trans("sf_settings_desc_search")#)</em>
 				</cfif>
 				<br /><br />
-				<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans("button_save")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_update")#</cfif>" class="button">
+				<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans('button_save')#<cfelse>#myFusebox.getApplicationData().defaults.trans('button_update')#</cfif>" class="sfsubmit button">
 				<!--- Only show delete folder on detail page --->
 				<cfif attributes.sf_id NEQ 0>
 					<br /><br />
@@ -124,7 +124,7 @@
 					</cfloop>
 				</table>
 				<br /><br />
-				<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans("button_save")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_update")#</cfif>" class="button">
+				<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans('button_save')#<cfelse>#myFusebox.getApplicationData().defaults.trans('button_update')#</cfif>" class="sfsubmit button">
 			</div>
 		</form>
 	</div>
@@ -138,6 +138,54 @@
 	<script type="text/javascript">
 		// Create tabs
 		jqtabs("sf_tab");
+		//check the drobox and amazon S3
+       $(document).ready(function(){
+   			<cfif chk_dropbox.recordcount EQ 0 AND chk_s3.recordcount EQ 0>
+				$('.sfsubmit').removeClass('button');
+			</cfif>
+              
+			//check the drobox
+            if($('input[name="sf_type"]:checked' ).val()=='dropbox'){
+	        	<cfif chk_dropbox.recordcount NEQ 0>
+                	$('.sfsubmit').removeAttr('disabled');
+				   	$('.sfsubmit').addClass('button');
+           		<cfelse>
+                	$('.sfsubmit').attr('disabled', 'true');
+				   	$('.sfsubmit').removeClass('button');
+           		</cfif>
+             }
+             //check the amazon
+             else if($('input[name="sf_type"]:checked' ).val()=='amazon'){
+             	<cfif chk_s3.recordcount NEQ 0>
+                	$('.sfsubmit').removeAttr('disabled');
+					$('.sfsubmit').addClass('button');
+                <cfelse>
+                	$('.sfsubmit').attr('disabled', 'true');
+					$('.sfsubmit').removeClass('button');
+                 </cfif>
+             }
+               
+             $('input[name="sf_type"]').change(function(){
+             	if($('input[name="sf_type"]:checked' ).val()=='dropbox'){
+                	<cfif chk_dropbox.recordcount NEQ 0>
+                    	$('.sfsubmit').removeAttr('disabled');
+						$('.sfsubmit').addClass('button');
+                    <cfelse>
+                    	$('.sfsubmit').attr('disabled', 'true');
+						$('.sfsubmit').removeClass('button');
+                    </cfif>
+                 }
+                 else if($('input[name="sf_type"]:checked' ).val()=='amazon'){
+                 	<cfif chk_s3.recordcount NEQ 0>
+                    	$('.sfsubmit').removeAttr('disabled');
+						$('.sfsubmit').addClass('button');
+                    <cfelse>
+                        $('.sfsubmit').attr('disabled', 'true');
+					  	$('.sfsubmit').removeClass('button');
+                    </cfif>
+                 }
+             });
+       	});
 		// Submit form
 		function sf_submit_form(){
 			// Check name

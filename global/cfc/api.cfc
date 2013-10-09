@@ -207,10 +207,10 @@
 		<!--- Doing a error exception since this is also called within the admin (we don't need the id anyhow) --->
 		<cftry>
 			<!--- Set path --->
-			<cfif listlast(expandpath("."),"/") EQ "cfc">
-				<cfset var thepath = expandpath("../")>
+			<cfif listlast(expandpath("."),FileSeparator()) EQ "admin">
+				<cfset var thepath = expandpath("../") & "global">
 			<cfelse>
-				<cfset var thepath = expandpath("../..") & "global">
+				<cfset var thepath = expandpath("../../") & "global">
 			</cfif>
 			<!--- Get id from config file --->
 			<cfset var plugID = getProfileString("#thepath#/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>

@@ -74,14 +74,22 @@
 	<!--- Get all plugins --->
 	<cffunction name="getalldb" returntype="query">
 		<cfargument name="active" default="false" type="string" required="false">
+		<cfargument name="dam" default="false" type="string" required="false">
+		<!--- Param --->
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_active,p_description
-		FROM plugins
-		<cfif arguments.active>
-			WHERE p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+			SELECT p.p_id, p.p_name, p.p_url, p.p_version, p.p_author, p.p_author_url, p.p_path, p.p_active, p.p_description
+			FROM plugins p
+		<cfif arguments.dam>
+			, ct_plugins_hosts ct
+			WHERE p.p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+			AND ct.ct_host_id_r = #session.hostid# 
+			AND ct.ct_pl_id_r = p.p_id
+		<cfelseif arguments.active>
+			WHERE p.p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 		</cfif>
-		ORDER BY p_name
+		ORDER BY p.p_name
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry>
@@ -274,6 +282,8 @@
 
 	<!--- getpluginshosts --->
 	<cffunction name="getpluginshosts" returntype="query">
+		<!--- Param --->
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT ct_pl_id_r, ct_host_id_r
