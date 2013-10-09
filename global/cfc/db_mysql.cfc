@@ -2268,7 +2268,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#errors
 		(
 			id				int,
-			err_header		TEXT,
+			err_header		varchar(2000),
 			err_text		TEXT,
 			err_date		timestamp DEFAULT '0000-00-00 00:00:00',
 			host_id			int,

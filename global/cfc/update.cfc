@@ -940,6 +940,16 @@
 			</cfcatch>
 		</cftry>
 
+		<!--- Add err_header column to raz1_errors--->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_errors add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> err_header #thevarchar#(2000)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+
 		<!--- Add indexing to scheduler --->
 		<cfif !application.razuna.isp>
 			<!--- Query host table --->
