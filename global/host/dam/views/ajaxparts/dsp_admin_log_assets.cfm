@@ -45,7 +45,7 @@
 			<td colspan="6">
 				<div style="float:left;padding-top:3px;">
 					#myFusebox.getApplicationData().defaults.trans("show_only")#
-					<select id="actionsassets" onchange="loadcontent('log_show','#myself#c.log_assets&logaction=' + document.getElementById('actionsassets').options[document.getElementById('actionsassets').selectedIndex].value);">
+					<select id="actionsassets" onchange="loadcontent('log_show','#myself#c.log_assets&offset_log=0&logaction=' + document.getElementById('actionsassets').options[document.getElementById('actionsassets').selectedIndex].value);">
 						<option selected="true" value="0">#myFusebox.getApplicationData().defaults.trans("action")#</option>
 						<option value="0">-------</option>
 						<option value="add">Add</option>
