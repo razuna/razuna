@@ -62,18 +62,35 @@
 		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(id),0) + 1 as theid
 		FROM #session.hostdbprefix#errors
 		</cfquery>
-		<!--- Add to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#errors
-		(id, err_header,err_text, err_date, host_id)
-		VALUES(
-		<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#qryid.theid#">,
-		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.cfcatch.custom_message#">,
-		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#errortext#">,
-		<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
-		<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-		)
-		</cfquery>
+		<cftry>
+			<!--- Add to DB assuming err_header column is present --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#errors
+			(id, err_header,err_text, err_date, host_id)
+			VALUES(
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#qryid.theid#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.cfcatch.custom_message#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#errortext#">,
+			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+			)
+			</cfquery>
+		<cfcatch type="database">
+			<!--- Add to DB assuming err_header column is not present if error occurs above --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#errors
+			(id, err_text, err_date, host_id)
+			VALUES(
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#qryid.theid#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#errortext#">,
+			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+			)
+			</cfquery>
+		</cfcatch>
+
+		</cftry>
+
 		<!--- Flush Cache --->
 		<cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" />
 		<!--- eMail --->

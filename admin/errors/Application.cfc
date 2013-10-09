@@ -33,7 +33,13 @@
 	
 	<!--- Run before the request is processed --->
 	<cffunction name="onRequestStart">
-		<cfargument name = "request" required="true"/> 
+		<cfargument name = "request" required="true"/>
+		<!--- Check if database is up to date. 'Dbupdate' flag in 'options' table must be on version 15 or higher as it contains the err_header column change. --->
+		<cfif not session.dbuptodate>
+			Database is not up to date. It must be on version 15 or above. It is currently on version <cfoutput>#session.dbver#</cfoutput>.<br>
+			Please login to Razuna and update your database then restart this browser session for changes to take effect.
+			<cfabort>
+		</cfif>	
 		<!--- Include global styles --->
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
 	    <!--- Begin authentication code --->
@@ -113,6 +119,17 @@
 			from hosts
 			WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif conf.conf_database EQ "oracle" OR conf.conf_database EQ "db2"><><cfelse>!=</cfif> '' )
 		</cfquery>
+		<!--- Get database update version, ony version 15 and above are compatible with this applicaiton --->
+		<cfquery datasource="#conf.conf_datasource#" name="dbver">
+			select opt_value
+			from options
+		</cfquery>
+		<cfif dbver.opt_value lt 15>
+			<cfset session.dbuptodate = false>
+		<cfelse>
+			<cfset session.dbuptodate = true>
+		</cfif>
+		<cfset session.dbver = dbver.opt_value>
 		<cfset session.datasource = conf.conf_datasource>
 		<cfset session.shard_group = "#hosts.host_shard_group#"> 
 	</cffunction>
