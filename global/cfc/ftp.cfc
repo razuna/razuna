@@ -39,12 +39,12 @@
     <cfif o.succeeded>    
         <cfif NOT structkeyexists(arguments.thestruct,"folderpath")>
             <!--- Get the current directory name --->
-            <cfset thedirname = Ftpgetcurrentdir(o)>
+            <cfset thedirname = ftpgetcurrentdir(o)>
             <!--- Get a listing of the directory --->
-            <cfset dirlist = ftplist(o,thedirname)>
+            <cfset dirlist = ftplist(o,thedirname,session.ftp_passive)>
         <cfelse>
         	<cftry>
-                <cfset dirlist = Ftplist(o,arguments.thestruct.folderpath)>
+                <cfset dirlist = ftplist(o,arguments.thestruct.folderpath,session.ftp_passive)>
             	<cfcatch type="any">
             		<cfparam name="folder_id" default="0" />
             		<cfoutput>
