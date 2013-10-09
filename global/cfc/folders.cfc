@@ -385,64 +385,67 @@
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.link_path,"/\")>
 		<!--- Add the folder --->
-		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
-		<cfoutput>#trim(newfolderid)#</cfoutput>
-		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			</cfif>
-			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			</cfif>
-			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			</cfif>
-			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			</cfif>
-			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
-				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
-			</cfif>
-		</cfif>
-		<!--- Now add all assets of this folder --->
-		<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="arguments.thestruct.thefiles" type="file">
-		<!--- Filter out hidden files --->
-		<cfquery dbtype="query" name="arguments.thestruct.thefiles">
-		SELECT *
-		FROM arguments.thestruct.thefiles
-		WHERE attributes != 'H'
-		</cfquery>
-		<!--- Param --->
-		<cfset arguments.thestruct.folder_id = newfolderid>
-		<!--- Thread for adding files of this folder --->
 		<cfthread intstruct="#arguments.thestruct#">
-			<!--- Loop over the assets --->
-			<cfloop query="attributes.intstruct.thefiles">
-				<!--- Params --->
-				<cfset attributes.intstruct.link_path_url = directory & "/" & name>
-				<cfset attributes.intstruct.orgsize = size>
-				<!--- Now add the asset --->
-				<cfinvoke component="assets" method="addassetlink" thestruct="#attributes.intstruct#">
-			</cfloop>
+			<cfinvoke method="fnew_detail" thestruct="#attributes.intstruct#" returnvariable="attributes.intstruct.newfolderid">
+			<!--- <cfoutput>#trim(arguments.thestruct.newfolderid)#</cfoutput> --->
+			<!--- If we store on the file system we create the folder here --->
+		
+			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#")>
+						<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#" mode="775">
+				</cfif>
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/img")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/img" mode="775">
+				</cfif>
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/vid")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/vid" mode="775">
+				</cfif>
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/doc")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/doc" mode="775">
+				</cfif>
+				<cfif !directoryexists("#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/aud")>
+					<cfdirectory action="create" directory="#attributes.intstruct.assetpath#/#session.hostid#/#attributes.intstruct.newfolderid#/aud" mode="775">
+				</cfif>
+			</cfif>
+			<!--- Now add all assets of this folder --->
+			<cfdirectory action="list" directory="#attributes.intstruct.link_path#" name="thefiles" type="file">
+			<!--- Filter out hidden files --->
+			<cfquery dbtype="query" name="thefiles">
+			SELECT *
+			FROM thefiles
+			WHERE attributes != 'H'
+			</cfquery>
+			<!--- Param --->
+			<cfset attributes.intstruct.folder_id = attributes.intstruct.newfolderid>
+			<!--- Thread for adding files of this folder --->
+			<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+				<!--- Loop over the assets --->
+				<cfloop query="thefiles">
+					<!--- Params --->
+					<cfset attributes.intstruct.link_path_url = directory & "/" & name>
+					<cfset attributes.intstruct.orgsize = size>
+					<!--- Now add the asset --->
+					<cfinvoke component="assets" method="addassetlink" thestruct="#attributes.intstruct#">
+				</cfloop>
+			<!--- </cfthread> --->
+			<!--- Check if folder has subfolders if so add them recursively --->
+			<cfdirectory action="list" directory="#attributes.intstruct.link_path#" name="thedir" type="dir">
+			<!--- Filter out hidden dirs --->
+			<cfquery dbtype="query" name="thesubdirs">
+			SELECT *
+			FROM thedir
+			WHERE attributes != 'H'
+			</cfquery>
+			<!--- Call rec function --->
+			<cfif thesubdirs.recordcount NEQ 0>
+				<!--- Put folderid into struct --->
+				<cfset attributes.intstruct.theid = attributes.intstruct.newfolderid>
+				<!--- Call function --->
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+					<cfinvoke method="folder_link_rec" thestruct="#attributes.intstruct#">
+				<!--- </cfthread> --->
+			</cfif>
 		</cfthread>
-		<!--- Check if folder has subfolders if so add them recursively --->
-		<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="thedir" type="dir">
-		<!--- Filter out hidden dirs --->
-		<cfquery dbtype="query" name="thesubdirs">
-		SELECT *
-		FROM thedir
-		WHERE attributes != 'H'
-		</cfquery>
-		<!--- Call rec function --->
-		<cfif thesubdirs.recordcount NEQ 0>
-			<!--- Put folderid into struct --->
-			<cfset arguments.thestruct.theid = newfolderid>
-			<!--- Call function --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="folder_link_rec" thestruct="#attributes.intstruct#">
-			</cfthread>
-		</cfif>
 	</cfif>
 </cffunction>
 
