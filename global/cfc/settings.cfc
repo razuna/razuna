@@ -2232,9 +2232,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	UPDATE razuna_config
 	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
 	</cfquery>
+	<!--- Enable cron directory --->
+	<cfset CronSetDirectory("/cron")>
 	<!--- If this is for ISP we do a general scheduler task for indexing files --->
 	<cfif arguments.thestruct.conf_isp>
-		<cfset CronSetDirectory("/cron")>
 		<cfset CronEnable(True)>
 	<cfelse>
 		<cfset CronEnable(False)>
