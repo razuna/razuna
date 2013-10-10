@@ -34,6 +34,8 @@
 <input type="hidden" name="fa" value="c.apiupload">
 <input type="hidden" name="api_key" value="(put your apikey here)">
 <input type="hidden" name="destfolderid" value="(put the folderid here)">
+<!--- For additional rendition you should give the valid assetid otherwise leave empty --->
+<input type="hidden" name="assetid" value="(put your assetid here for additional rendition otherwise leave empty)">
 <input type="file" id="filedata" name="filedata">
 <input type="submit" value="send it">
 </form>

@@ -3,7 +3,8 @@
 <cfset apikey = "">
 <cfset folderid = "">
 <cfset urlserver = "">
-
+<!--- For additional rendition you should give the valid assetid otherwise leave empty --->
+<cfset assetid = "">
 
 
 <!--- Below is the standard swfupload code --->
@@ -32,7 +33,7 @@ SWFUpload.onload = function () {
 	var settings = {
 		flash_url : "swfupload/swfupload.swf",
 		upload_url: "<cfoutput>#urlserver#</cfoutput>/index.cfm",
-		post_params: {"api_key" : "<cfoutput>#apikey#</cfoutput>", "destfolderid" : "<cfoutput>#folderid#</cfoutput>" , "fa" : "c.apiupload"},
+		post_params: {"api_key" : "<cfoutput>#apikey#</cfoutput>", "destfolderid" : "<cfoutput>#folderid#</cfoutput>" , "assetid" : "<cfoutput>#assetid#</cfoutput>" , "fa" : "c.apiupload"},
 		file_size_limit : "100 MB",
 		file_types : "*.*",
 		file_types_description : "All Files",

@@ -4635,6 +4635,13 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = createuuid("")>
 	<cfset arguments.thestruct.thewidth = 0>
 	<cfset arguments.thestruct.theheight = 0>
+	<!--- For API additional rendition OR version --->
+	<cfif structkeyexists(arguments.thestruct,'destfolderid') AND arguments.thestruct.destfolderid NEQ ''>
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.destfolderid>
+		<cfset file_field = "filedata">
+	<cfelse>
+		<cfset file_field = "file">
+	</cfif>
 	<cfset var thefile = structNew()>
 	<!--- Create a unique name for the temp directory to hold the file --->
 	<cfif !arguments.thestruct.frompath>
@@ -4643,7 +4650,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Create a temp directory to hold the file --->
 		<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
 		<!--- Upload file --->
-		<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="file" result="thefile">
+		<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#file_field#" result="thefile">
 		<!--- File Extension --->
 		<cfset thefile.serverFileExt = lcase(thefile.serverFileExt)>
 		<!--- File Size --->
