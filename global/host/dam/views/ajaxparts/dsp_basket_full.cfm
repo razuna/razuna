@@ -211,10 +211,12 @@
 									<cfloop query="qry_addition_version.assets">
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
-											<tr>
-												<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" /></td>
-												<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
-											</tr>
+											<cfif qry_share_options CONTAINS "#av_id#-av-1">
+												<tr>
+													<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" /></td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+												</tr>
+											</cfif>
 										</cfif>
 									</cfloop>
 								</table>
@@ -293,10 +295,12 @@
 									<cfloop query="qry_addition_version.assets">
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
-											<tr>
-												<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" /></td>
-												<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
-											</tr>
+											<cfif qry_share_options CONTAINS "#av_id#-av-1">
+												<tr>
+													<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" /></td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+												</tr>
+											</cfif>
 										</cfif>
 									</cfloop>
 								</table>
@@ -367,10 +371,12 @@
 									<cfloop query="qry_addition_version.assets">
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
-											<tr>
-												<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" /></td>
-												<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
-											</tr>
+											<cfif qry_share_options CONTAINS "#av_id#-av-1">
+												<tr>
+													<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" /></td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+												</tr>
+											</cfif>
 										</cfif>
 									</cfloop>
 								</table>
@@ -433,10 +439,12 @@
 									<cfloop query="qry_addition_version.assets">
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
-											<tr>
-												<td><input type="checkbox" name="artoffile" id="docv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','docv#myid#','doc');" /></td>
-												<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
-											</tr>
+											<cfif qry_share_options CONTAINS "#av_id#-av-1">
+												<tr>
+													<td><input type="checkbox" name="artoffile" id="docv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','docv#myid#','doc');" /></td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+												</tr>
+											</cfif>
 										</cfif>
 									</cfloop>
 								</table>

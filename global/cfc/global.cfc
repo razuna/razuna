@@ -688,6 +688,10 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.thewidth" default="0">
 		<cfparam name="arguments.thestruct.theheight" default="0">
 		<cfparam name="arguments.thestruct.md5hash" default="">
+		<cfparam name="arguments.thestruct.format" default="av">
+        <cfparam name="arguments.thestruct.download" default="1">
+        <cfparam name="arguments.thestruct.order" default="1">
+        <cfparam name="arguments.thestruct.selected" default="0">
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
@@ -707,6 +711,24 @@ Comment:<br>
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.md5hash#">
 		)
 		</cfquery>
+		
+		<!--- Set Sharing Options --->
+       <cfquery datasource="#application.razuna.datasource#">
+	       INSERT INTO #session.hostdbprefix#share_options
+	       			(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, asset_selected, rec_uuid)
+	       VALUES(
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+			       <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.type#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.format#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.download#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.order#">,
+			       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.selected#">,
+			       <cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+	       		)
+       </cfquery>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />
