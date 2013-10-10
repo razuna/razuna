@@ -159,7 +159,7 @@
 			</cfloop>
 			
 		</cfif>
-		
+               
 		<cfif structKeyExists(attributes,'qry_additional_versions') AND attributes.qry_additional_versions.recordcount NEQ 0>
 			<!--- LIST ADDITIONAL VERSIONS --->
 			<cfloop query="attributes.qry_additional_versions">
@@ -184,9 +184,9 @@
 				</cfloop>
 				<tr class="list"> 
 					<td width="100%">#ucase(thef)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB <cfif attributes.type NEQ "aud">(#thew#x#theh# pixel)</cfif></td>
-					<td align="center"><input type="checkbox" name="#theid#_dl" id="#theid#_dl" value="1" onclick="save_share('av','#theid#','av','#attributes.type#','dl','#thegroupid#');" <cfif dl>checked</cfif> /></td>
-					<td align="center"><input type="checkbox" name="#theid#_or" id="#theid#_or" value="1" onclick="save_share('av','#theid#','av','#attributes.type#','or','#thegroupid#');" <cfif order>checked</cfif> /></td>
-					<td align="center"><input type="radio" name="#thegroupid#_selected" id="#thegroupid#_selected" value="1" onclick="save_share('#theid#','#theid#','#theid#','#attributes.type#','se','#thegroupid#');" <cfif selected>checked</cfif> /></td>
+					<td align="center"><input type="checkbox" name="#theid#_dl" id="#theid#_dl" value="1" onclick="save_share('#theid#','#theid#','av','#attributes.type#','dl','#thegroupid#');" <cfif dl>checked</cfif> /></td>
+					<td align="center"><input type="checkbox" name="#theid#_or" id="#theid#_or" value="1" onclick="save_share('#theid#','#theid#','av','#attributes.type#','or','#thegroupid#');" <cfif order>checked</cfif> /></td>
+					<td align="center"><input type="radio" name="#thegroupid#_selected" id="#thegroupid#_selected" value="1" onclick="save_share('#theid#','#theid#','av','#attributes.type#','se','#thegroupid#');" <cfif selected>checked</cfif> /></td>
 				</tr>
 			</cfloop>
 		</cfif>
