@@ -4678,7 +4678,9 @@
 		<set name="attributes.database" value="#application.razuna.thedatabase#" />
 		<!-- set default search count call -->
 		<set name="attributes.isCountOnly" value="0" />
-		
+		<!-- set share attribute  -->
+		<set name="attributes.share" value="F" overwrite="false"/>
+
 		<!-- Include the aearch include -->
 		<do action="search_include" />
 		<!-- If we come from saved search we query folderaccess -->
