@@ -48,19 +48,25 @@
 				url: url,
 			   	data: items,
 			   	success: function(data, textStatus, jqXHR){
-			   		// Set var for the folderid and trim it
-			   		var fid = trim(data);
-					// Jump into the folder
-					if (isdetail == 'F'){
-						$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + fid);
+			   		if (nocheck != true){
+				   		// Set var for the folderid and trim it
+				   		var fid = trim(data);
+						// Jump into the folder
+						if (isdetail == 'F'){
+							$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + fid);
+						}
+						else{
+							$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
+						}
+						// Remove loader
+						// $("#bodyoverlay").remove();
+						// Reload Explorer
+						if (noreload != true) $('#explorer').load('index.cfm?fa=c.explorer');
 					}
 					else{
-						$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
+						$('#linkbutton').css('display','none');
+						alert('We are in the process of linking your folder(s). Please refresh your folder list.');
 					}
-					// Remove loader
-					// $("#bodyoverlay").remove();
-					// Reload Explorer
-					if (noreload != true) $('#explorer').load('index.cfm?fa=c.explorer');
 			   	}
 			});
 		}

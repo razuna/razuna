@@ -167,7 +167,7 @@
 				<div id="addlinkstatus" style="display:none;"></div>
 				<div style="clear:both;"></div>
 				<div style="float:right;padding-top:10px;padding-right:10px;">
-					<input type="button" name="linkbutton" value="Establish link" class="button" onclick="foldersubmit('#attributes.theid#','#attributes.isdetail#','<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">T<cfelse>F</cfif>','false',true);return false;">
+					<input type="button" name="linkbutton" id="linkbutton" value="Establish link" class="button" onclick="foldersubmit('#attributes.theid#','#attributes.isdetail#','<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">T<cfelse>F</cfif>','false',true);return false;">
 				</div>
 			</div>
 		</cfif>
