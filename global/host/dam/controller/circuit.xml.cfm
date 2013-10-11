@@ -2386,7 +2386,7 @@
 		<!-- <set name="session.file_id" value="" /> -->
 		<!-- <set name="session.thefileid" value="" /> -->
 		<!-- Get Include -->
-		<!--- <do action="flushcache"/> --->
+		<!-- <do action="flushcache"/> -->
 		<do action="folder_content_include" />
 		<!-- Show -->
 		<do action="ajax.folder_content" />
