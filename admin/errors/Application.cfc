@@ -34,10 +34,35 @@
 	<!--- Run before the request is processed --->
 	<cffunction name="onRequestStart">
 		<cfargument name = "request" required="true"/>
+		<!--- Get information about user database from user configuration stored in razuna_default H2 databse --->
+		<cfquery datasource="razuna_default" name="conf" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
+		SELECT conf_database, conf_datasource, conf_storage
+		FROM razuna_config
+		</cfquery>
+		<!--- Get hosts information from user database --->
+		<cfquery datasource="#conf.conf_datasource#" name="hosts" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
+		SELECT host_id, host_shard_group
+		FROM hosts
+		WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif conf.conf_database EQ "oracle" OR conf.conf_database EQ "db2"><><cfelse>!=</cfif> '' )
+		</cfquery>
+		<!--- Get database update version, ony version 15 and above are compatible with this applicaiton --->
+		<cfquery datasource="#conf.conf_datasource#" name="dbver">
+		SELECT opt_value
+		FROM options
+		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
+		</cfquery>
+		<cfif dbver.opt_value LT 15>
+			<cfset session.dbuptodate = false>
+		<cfelse>
+			<cfset session.dbuptodate = true>
+		</cfif>
+		<cfset session.dbver = dbver.opt_value>
+		<cfset session.datasource = conf.conf_datasource>
+		<cfset session.shard_group = "#hosts.host_shard_group#"> 
 		<!--- Check if database is up to date. 'Dbupdate' flag in 'options' table must be on version 15 or higher as it contains the err_header column change. --->
 		<cfif !session.dbuptodate>
-			Database is not up to date. It must be on version 15 or above. It is currently on version <cfoutput>#session.dbver#</cfoutput>.<br>
-			Please login to Razuna and update your database then restart this browser session for changes to take effect.
+			<h4 style="color:indianred">Database is not up to date. It must be on version 15 or above. It is currently on version <cfoutput>#session.dbver#</cfoutput>.<br>
+			Please login to Razuna and update your database.</h4>
 			<cfabort>
 		</cfif>	
 		<!--- Include global styles --->
@@ -108,31 +133,6 @@
 
 	<!--- Runs when your session starts --->
 	<cffunction name="onSessionStart" returnType="void" output="false">
-		<!--- Get information about user database from user configuration stored in razuna_default H2 databse --->
-		<cfquery datasource="razuna_default" name="conf" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
-		SELECT conf_database, conf_datasource, conf_storage
-		FROM razuna_config
-		</cfquery>
-		<!--- Get hosts information from user database --->
-		<cfquery datasource="#conf.conf_datasource#" name="hosts" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
-		SELECT host_id, host_shard_group
-		FROM hosts
-		WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif conf.conf_database EQ "oracle" OR conf.conf_database EQ "db2"><><cfelse>!=</cfif> '' )
-		</cfquery>
-		<!--- Get database update version, ony version 15 and above are compatible with this applicaiton --->
-		<cfquery datasource="#conf.conf_datasource#" name="dbver">
-		SELECT opt_value
-		FROM options
-		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
-		</cfquery>
-		<cfif dbver.opt_value LT 15>
-			<cfset session.dbuptodate = false>
-		<cfelse>
-			<cfset session.dbuptodate = true>
-		</cfif>
-		<cfset session.dbver = dbver.opt_value>
-		<cfset session.datasource = conf.conf_datasource>
-		<cfset session.shard_group = "#hosts.host_shard_group#"> 
 	</cffunction>
 
 	<!--- Runs when session ends --->
