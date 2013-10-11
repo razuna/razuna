@@ -25,6 +25,7 @@
 --->
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+		<!--- Back and Forth --->
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 		<tr>
 			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
@@ -45,6 +46,8 @@
 				<td nowrap="true" align="center">#user_first_name# #user_last_name#</td>
 			</tr>
 		</cfloop>
+		<!--- Back and Forth --->
+		<cfset attributes.bot = "true">
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 	</table>
 </cfoutput>

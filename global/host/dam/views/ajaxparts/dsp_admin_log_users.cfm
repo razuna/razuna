@@ -61,6 +61,7 @@
 				</div>
 			</td>
 		</tr>
+		<!--- Back and Forth --->
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 		<tr>
 			<th width="1%" nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("date")#</th>
@@ -77,6 +78,8 @@
 				<td nowrap="true">#log_action#</td>
 			</tr>
 		</cfloop>
+		<!--- Back and Forth --->
+		<cfset attributes.bot = "true">
 		<cfinclude template="dsp_admin_log_backnext.cfm"> 
 	</table>
 	<script type="text/javascript">

@@ -348,6 +348,8 @@
 					</cfquery>
 					<cfcatch type="database">
 						<h2>Oops... #cfcatch.message#</h2>
+						<cfset cfcatch.custom_message = "Database error in function import.doimportimages">
+						<cfset errobj.logerrors(cfcatch,false)/>
 						<cfabort>
 					</cfcatch>
 				</cftry>
@@ -1120,6 +1122,8 @@
 				<cfcatch type="any">
 					<!--- Feedback --->
 					<cfoutput>Following error occurred:<br /><cfdump var="#cfcatch#"><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
+					<cfset cfcatch.custom_message = "Error in function import.doimportimages">
+					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfflush>
 				</cfcatch>
 			</cftry>
@@ -1176,6 +1180,8 @@
 				</cfquery>
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
+					<cfset cfcatch.custom_message = "Database error in function import.doimportvideos">
+					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -1336,6 +1342,8 @@
 				</cfquery>
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
+					<cfset cfcatch.custom_message = "Database error in function import.doimportaudios">
+					<cfset errobj.logerrors(cfcatch)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -1503,6 +1511,8 @@
 				</cfquery>
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
+					<cfset cfcatch.custom_message = "Database error in function import.doimportdocs">
+					<cfset errobj.logerrors(cfcatch)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>

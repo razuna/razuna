@@ -640,7 +640,10 @@
 				<!--- <cfinvoke component="amazon" method="deletefolder" folderpath="versions/img/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" /> --->
 			</cfif>
 		</cfif>
-		<cfcatch type="any"></cfcatch>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error while deleting in function images.deletefromfilesystem">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
 	</cftry>
 	<!--- REMOVE RELATED FOLDERS ALSO!!!! --->
 	<!--- Get all that have the same img_id as related --->
@@ -662,7 +665,10 @@
 			<cfelseif application.razuna.storage EQ "amazon" AND path_to_asset NEQ "">
 				<cfinvoke component="amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 			</cfif>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error while deleting related folders in function images.deletefromfilesystem">
+				<cfset errobj.logerrors(cfcatch)/>
+			</cfcatch>
 		</cftry>
 	</cfloop>
 	<!--- Delete related images in db as well --->

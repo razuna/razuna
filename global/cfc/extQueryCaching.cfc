@@ -24,6 +24,9 @@
 *
 --->
 <cfcomponent hint="Serves as parent only!" output="false">
+	
+<!--- Errors Object --->
+<cfobject component="global.cfc.errors" name="errobj">
 
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
@@ -144,8 +147,8 @@
 		<!--- Flush Cache --->
 		<cfinvoke method="resetcachetoken" type="logs" />
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
+			<cfset cfcatch.custom_message = "Error in function extQueryCaching.log_assets">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>

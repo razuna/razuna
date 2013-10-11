@@ -47,24 +47,24 @@
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error while deleting collection in function lucene.setup">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
 			<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error while deleting path on disk in function lucene.setup">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Create collection --->
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error while creating collection in function lucene.setup">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -547,8 +547,8 @@
 			AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
 			</cfquery>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error in function lucene.index_update_thread">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Index only doc files --->
@@ -577,8 +577,8 @@
 					<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
 				<cfcatch type="any">
-					<cfset consoleoutput(true)>
-					<cfset console(cfcatch)>
+					<cfset cfcatch.custom_message = "Error while indexing doc files in function lucene.index_update_thread">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -648,8 +648,8 @@
 			<!--- Index: delete records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Error while deleting records in function lucene.index_delete_thread">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cffunction>

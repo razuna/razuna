@@ -28,7 +28,9 @@
 	<!---  --->
 	<!--- STANDARD --->
 	<!---  --->
-	
+	<!--- Errors Object --->
+	<cfobject component="global.cfc.errors" name="errobj">
+
 	<!--- FUNCTION: INIT --->
 	<cffunction name="init" returntype="nirvanix" access="public" output="false">
 		<cfargument name="appkey" type="string" required="true" />
@@ -187,13 +189,11 @@
 					<cfabort>
 				</cfif>
 				<cfcatch type="any">
-					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
-						<cfdump var="#cfhttp#" label="cfhttp response">
-						<cfdump var="#storagenode#" label="storagenode">
-						<cfdump var="#arguments#" label="arguments">
-						<cfdump var="#cfcatch#" label="the catch">
-						<cfdump var="#session#" label="sessions">
-					</cfmail>
+					<cfset cfcatch.custom_message = "Error while uploading in function nirvanix.upload">
+					<cfset cfcatch.cfhttp_response = cfhttp>
+					<cfset cfcatch.storagenode = storagenode>
+					<cfset cfcatch.func_arguments = arguments>
+					<cfset errobj.logerrors(cfcatch)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -244,6 +244,10 @@
 					<cfdump var="#arguments#" label="arguments">
 					<cfdump var="#cfcatch#" label="catch">
 				</cfmail>
+				<cfset cfcatch.custom_message = "Error in function nirvanix.GetStorageNode">
+				<cfset cfcatch.cfhttp_filecontent = cfhttp.filecontent>
+				<cfset cfcatch.func_arguments = arguments>
+				<cfset errobj.logerrors(cfcatch)/>
 				<cfabort>
 			</cfcatch>
 		</cftry>
@@ -276,7 +280,8 @@
 				<cfinvoke method="CreateFolders" folderpath="#arguments.folderpath#" thecounter="1" />
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug nirvanix create folder" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function nirvanix.CreateFolders">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -318,7 +323,8 @@
 				<cfinvoke method="RenameFolders" folderpath="#arguments.folderpath#" newFolderName="#arguments.newFolderName#" thecounter="1" />
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Nirvanix error - renamefolder" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function nirvanix.RenameFolders">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -347,7 +353,8 @@
 				<cfinvoke method="CopyFolders" srcFolderPath="#arguments.srcFolderPath#" destFolderPath="#arguments.destFolderPath#" thecounter="1" />
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Nirvanix error - copyfolder" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function nirvanix.CopyFolders">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -376,7 +383,8 @@
 				<cfinvoke method="MoveFolders" srcFolderPath="#arguments.srcFolderPath#" destFolderPath="#arguments.destFolderPath#" thecounter="1" />
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Nirvanix error - movefolder" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function nirvanix.MoveFolders">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -484,7 +492,8 @@
 				<cfinvoke method="DeleteFiles" filePath="#arguments.filePath#" thecounter="1" />
 			</cfif>
 			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="debug in Nirvanix deletefiles" type="html"><cfdump var="#cfcatch#"></cfmail>
+				<cfset cfcatch.custom_message = "Error in function nirvanix.DeleteFiles">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -534,6 +543,8 @@
 				<cfhttpparam name="sharePath" value="#arguments.sharePath#" type="url">
 			</cfhttp>
 			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error in function nirvanix.RemoveHostedItem">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -555,9 +566,8 @@
 				<cfhttpparam name="sharePath" value="#arguments.sharePath#" type="url">
 			</cfhttp>
 			<cfcatch type="any">
-				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error on CreateHostedItem">
-					<cfdump var="#cfcatch#" />
-				</cfmail>
+				<cfset cfcatch.custom_message = "Error in function nirvanix.CreateHostedItem">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -675,15 +685,24 @@
 				<!--- Set the Usage Amount into struct --->
 				<cftry>
 					<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>
-					<cfcatch type="any"></cfcatch>
+					<cfcatch type="any">
+						<cfset cfcatch.custom_message = "Error setting usage amount in function nirvanix.GetAccountUsage">
+						<cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
 				</cftry>
 				<cftry>
 					<cfset x.UBU = nvxUBU[1].TotalUsageAmount.xmlText>
-					<cfcatch type="any"></cfcatch>
+					<cfcatch type="any">
+						<cfset cfcatch.custom_message = "Error setting usage amount in function nirvanix.GetAccountUsage">
+						<cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
 				</cftry>
 				<cftry>
 					<cfset x.TSU = nvxTSU[1].TotalUsageAmount.xmlText>
-					<cfcatch type="any"></cfcatch>
+					<cfcatch type="any">
+						<cfset cfcatch.custom_message = "Error setting usage amount in function nirvanix.GetAccountUsage">
+						<cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
 				</cftry>
 				<!--- Add bandwidth together --->
 				<cfset x.band = x.DBU + x.UBU>
@@ -727,7 +746,8 @@
 					</cfif>
 				</cfif>
 				<cfcatch type="any">
-					<cfmail from="server@razuna.com" to="support@razuna.com" subject="Error in GetAccountUsage" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
+					<cfset cfcatch.custom_message = "Error in function nirvanix.GetAccountUsage">
+					<cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -862,10 +882,9 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
-					<cfdump var="#cfcatch#">
-					<cfdump var="#arguments.thestruct#">
-				</cfmail>
+				<cfset cfcatch.custom_message = "Error in function nirvanix.signedurlthread">
+				<cfset cfcatch.thestruct = arguments.thestruct>
+				<cfset errobj.logerrors(cfcatch)/>
 				<!--- Set Downloadtoken --->
 				<cfset var theurl = "node1.nirvanix.com">
 			</cfcatch>

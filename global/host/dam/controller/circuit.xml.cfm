@@ -6238,8 +6238,16 @@
 	<!-- Scheduler List -->
 	<fuseaction name="scheduler_list">
 		<set name="qry_sched_status" value="sched_actions" overwrite="false" />
+		<!-- Set the offset -->
+		<if condition="structkeyexists(attributes,'offset_sched')">
+			<true>
+				<set name="session.offset_sched" value="#attributes.offset_sched#" />
+			</true>
+		</if>
 		<!-- CFC: Get all schedules -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getAllEvents()" returnvariable="qry_schedules" />
+		<!-- CFC: Get schedules -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="getEvents()" returnvariable="qry_sched" />
 		<!-- Show -->
 		<do action="ajax.scheduler_list" />
 	</fuseaction>

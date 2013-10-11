@@ -82,6 +82,8 @@
 				<td nowrap="true" align="center" valign="top">#user_first_name# #user_last_name#</td>
 			</tr>
 		</cfloop>
+		<!--- Back and Forth --->
+		<cfset attributes.bot = "true">
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 	</table>
 	<script type="text/javascript">

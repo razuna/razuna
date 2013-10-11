@@ -37,6 +37,8 @@
 			<tr>
 				<td colspan="4">#myFusebox.getApplicationData().defaults.trans("sched_task_intro")#</td>
 			</tr>
+			<!--- Back and Forth --->
+			<cfinclude template="dsp_admin_sched_backnext.cfm">
 			<cfif qry_schedules.recordcount NEQ 0>
 				<tr>
 					<th width="100%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_name")#</th>
@@ -46,7 +48,7 @@
 				</tr>
 			</cfif>
 			<!--- Loop over all scheduled events in database table --->
-			<cfloop query="qry_schedules">
+			<cfloop query="qry_sched">
 				<tr class="list">
 					<td nowrap="true"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&sched_id=#sched_id#','#sched_name#',650,1);">#sched_name#</a></td>
 					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_#sched_method#")#</td>
@@ -63,6 +65,9 @@
 					</td>
 				</tr>
 			</cfloop>
+			<!--- Back and Forth --->
+			<cfset attributes.bot = "true">
+			<cfinclude template="dsp_admin_sched_backnext.cfm">
 		</table>
 		<div id="sched_status" style="float:left;margin:10px;color:green;visibility:hidden;"></div>
 	</cfif>

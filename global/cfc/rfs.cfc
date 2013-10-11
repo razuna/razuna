@@ -275,7 +275,8 @@
 				</cfquery>
 			</cfif>
 			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="error pickup from rfs" type="html"><cfdump var="#cfcatch#"></cfmail>
+				<cfset cfcatch.custom_message = "Error in function rfs.pickup">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->

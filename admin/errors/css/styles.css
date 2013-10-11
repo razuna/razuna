@@ -1,0 +1,28 @@
+body {font-size:10pt;color:grey;}
+td{font-size: 9pt}
+tbody, h2, h3{color:#5f4d28}
+.fineprint{font-size: 8pt;}
+.inline {display: inline;}
+.error {color:indianred;}
+
+a:link {color:#5f4d28;}      /* unvisited link */
+a:visited {color:silver;}  /* visited link */
+a:hover {color:grey;}  /* mouse over link */
+
+#deldberr, #delbderr{margin-bottom: -18}
+
+input {
+    border: 2px solid white; 
+    -webkit-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 8px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 8px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 8px rgba(0,0,0,0.1); 
+    padding: 5px;
+    background: rgba(255,255,255,0.5);
+}
+.ui-widget{font-size: 0.1em}!important

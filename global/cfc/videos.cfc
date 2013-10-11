@@ -559,7 +559,8 @@
 			</cfif>
 			<!--- cfcatch --->
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function videos.create_previews">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfif>
@@ -953,7 +954,10 @@
 				<cfelseif application.razuna.storage EQ "amazon" AND path_to_asset NEQ "">
 					<cfinvoke component="amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 				</cfif>
-				<cfcatch type="any"></cfcatch>
+				<cfcatch type="any">
+					<cfset cfcatch.custom_message = "Error while deleting related folders in function videos.deletefromfilesystem">
+					<cfset errobj.logerrors(cfcatch)/>
+				</cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Delete related videos as well --->
@@ -965,7 +969,8 @@
 			</cfquery>
 		</cfif>
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error on removing a video from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#)" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error on removing a video from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#) in function videos.deletefromfilesystem">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -1688,10 +1693,9 @@
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("videos")>
 		<cfcatch type="any">
-			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error on convert video" type="html">
-				<cfdump var="#cfcatch#">
-				<cfdump var="#arguments.thestruct#">
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error in function videos.convertvideo">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn newid>
@@ -1896,7 +1900,8 @@
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id)>
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function videos.move">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->

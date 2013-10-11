@@ -389,7 +389,10 @@
 </cfif>
 -xmp:UsageTerms=#replacenocase(ParagraphFormat(arguments.thestruct.iptc_status_rights_usage_terms),"<p>","","all")#
 			</cfsavecontent>
-			<cfcatch type="any"><cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in writing the XML file to savecontent - CFC: XMP Line 320" dump="#cfcatch#"></cfcatch>
+			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
+				<cfset errobj.logerrors(cfcatch)/>
+			</cfcatch>
 		</cftry>
 		</cfoutput>
 		<!--- Save XMP to DB --->
@@ -487,7 +490,8 @@
 					<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 				</cfif>
 				<cfcatch type="any">
-					<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="error in xmp writing xml file line 400" dump="#cfcatch#">
+				    <cfset cfcatch.custom_message = "Error writing xml file in function xmp.xmpwrite">
+					<cfset errobj.logerrors(cfcatch)/> 
 				</cfcatch>
 			</cftry>
 		<!--- Storage: Nirvanix --->
@@ -679,17 +683,16 @@
 						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
 						</cfquery>
 						<cfcatch type="any">
-							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
-								<cfdump var="#cfcatch#" />
-							</cfmail>
+							<cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
+							<cfset errobj.logerrors(cfcatch)/>
 						</cfcatch>
 					</cftry>
 				</cfif>
 			</cfloop>
 		</cfif>
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
+			<cfset cfcatch.custom_message = "Error in function xmp.xmpwritekeydesc_thread">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -1293,8 +1296,8 @@
 		</cfif>
 		<!--- Catch the error --->
 		<cfcatch type="any">
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
+			<cfset cfcatch.custom_message = "Error in function xmp.xmpparse">
+		 	<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return variable --->
@@ -1445,7 +1448,8 @@
 				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="error in metadata writing for files" dump="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in metadata writing for files in function xmp.metatofilethread">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	<!--- Storage: Nirvanix --->
@@ -2077,8 +2081,8 @@
 					WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 					</cfquery>
 					<cfcatch type="database">
-						<cfset consoleoutput(true)>
-						<cfset console(cfcatch)>
+						<cfset cfcatch.custom_message = "Database error while adding keywords and description to asset in function xmp.setmetadata">
+						<cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>

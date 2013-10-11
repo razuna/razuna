@@ -207,7 +207,8 @@
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in removing outgoing folders" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function basket.writebasket">
+			<cfset errObj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Feedback --->
@@ -788,7 +789,8 @@
 	<cftry>
 		<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#thesubject#" themessage="#mailmessage#">
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error while sending email in function basket.basket_order">
+			<cfset errObj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Flush Cache --->

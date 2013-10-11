@@ -1770,6 +1770,7 @@
 		CREATE TABLE #arguments.thestruct.host_db_prefix#errors
 		(
 			id				BIGINT,
+			err_header		varchar(2000),
 			err_text		CLOB,
 			err_date		timestamp,
 			host_id			BIGINT,

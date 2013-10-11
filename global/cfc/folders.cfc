@@ -369,7 +369,8 @@
 				<cfreturn this.action2>
 			</cfif>
 			<cfcatch type="any">
-				<cfdump var="#cfcatch#">
+				<cfset cfcatch.custom_message = "Error in function folders.add">
+				<cfset errobj.logerrors(cfcatch)/>
 				<cfabort>
 			</cfcatch>
 		</cftry>
@@ -1436,10 +1437,9 @@
 			</cfthread>
 		</cfif>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error removing folder - #cgi.http_host#">
-				<cfdump var="#cfcatch#" />
-				<cfdump var="#arguments.thestruct#" />
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error while removing folder - #cgi.http_host# in function folders.remove_folder_thread">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -3027,10 +3027,9 @@
 		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#)')>
 		<!--- Ups something went wrong --->
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error folder move - #cgi.HTTP_HOST#">
-				<cfdump var="#arguments.thestruct#" />
-				<cfdump var="#cfcatch#">
-			</cfmail>
+			<cfset cfcatch.custom_message = "Error while moving folder - #cgi.http_host# in function folders.move">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -4718,7 +4717,8 @@
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in removing outgoing folders" dump="#cfcatch#">
+			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
+			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Create directory --->
@@ -4843,10 +4843,8 @@
 						<cfhttp url="#thiscloudurl#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
 					</cfif>
 					<cfcatch type="any">
-						<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix error on download in folder download" type="html">
-							<cfdump var="#cfcatch#">
-							<cfdump var="#session#">
-						</cfmail>
+						<cfset cfcatch.custom_message = "Nirvanix error on download in folder download in function folders.download_selected">
+						<cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			<!--- Akamai --->
@@ -4868,10 +4866,8 @@
 					<cftry>
 						<cfhttp url="#arguments.thestruct.akaurl##akatype#/#thefinalname#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
 						<cfcatch type="any">
-							<cfmail from="server@razuna.com" to="support@razuna.com" subject="Akamai error on download in folder download" type="html">
-								<cfdump var="#cfcatch#">
-								<cfdump var="#session#">
-							</cfmail>
+							<cfset cfcatch.custom_message = "Akamai error on download in folder download in function folders.download_selected">
+							<cfset errobj.logerrors(cfcatch)/>
 						</cfcatch>
 					</cftry>
 				</cfif>

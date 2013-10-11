@@ -139,8 +139,8 @@
 			<!--- Reset cache --->
 			<!--- <cfset resetcachetoken("settings")> --->
 			<cfcatch type="database">
-				<cfset consoleoutput(true)>
-				<cfset console(cfcatch)>
+				<cfset cfcatch.custom_message = "Database error in function plugins.setplugin">
+				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
