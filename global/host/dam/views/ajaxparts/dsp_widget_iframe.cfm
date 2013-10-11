@@ -322,7 +322,16 @@
 										FROM #session.hostdbprefix#images
 										WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theformat#">
 										</cfquery>
-										<cfset thefile = thisformat.cloud_url_org>
+										<cfif thisformat.recordcount NEQ 0>
+											<cfset thefile = thisformat.cloud_url_org>
+										<cfelse>
+											<cfquery dataSource="#application.razuna.datasource#" name="thisformat">
+											SELECT av_link_url, av_link_title
+											FROM #session.hostdbprefix#additional_versions
+											WHERE av_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theformat#">
+											</cfquery>	
+											<cfset thefile = thisformat.av_link_url >
+										</cfif>
 									</cfif>
 									<img src="#thefile#" border="0" rel="###id#">
 								<cfelse>
@@ -336,7 +345,16 @@
 										FROM #session.hostdbprefix#images
 										WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theformat#">
 										</cfquery>
-										<cfset thefile = thestorage & thisformat.path_to_asset & "/" & thisformat.img_filename_org>
+										<cfif thisformat.recordcount NEQ 0>
+											<cfset thefile = thestorage & thisformat.path_to_asset & "/" & thisformat.img_filename_org>
+										<cfelse>
+											<cfquery dataSource="#application.razuna.datasource#" name="thisformat">
+											SELECT av_link_url, av_link_title
+											FROM #session.hostdbprefix#additional_versions
+											WHERE av_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theformat#">
+											</cfquery>	
+											<cfset thefile = thestorage & thisformat.av_link_url >
+										</cfif>
 									</cfif>
 									<img src="#thefile#" border="0" rel="###id#">
 								</cfif>

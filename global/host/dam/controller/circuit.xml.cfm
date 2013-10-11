@@ -1047,6 +1047,8 @@
 				</if>
 			</true>
 		</if>
+		<!-- CFC: Get Additional Versions -->
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="additional_versions()" returnvariable="qry_addition_version" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 	</fuseaction>
@@ -2862,6 +2864,12 @@
 		<set name="attributes.av" value="0" overwrite="false" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<if condition="structkeyexists(attributes,'assetid') AND attributes.assetid NEQ ''">
+			<true>
+				<set name="session.asset_id_r" value="#attributes.assetid#" />
+				<set name="attributes.av" value="1" />
+			</true>
+		</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -7735,6 +7743,7 @@
 					<argument name="ColumnList" value="thumb_extension, thumb_size, thumb_width, thumb_height, img_extension, img_size, img_width, img_height, link_kind" />
 				</invoke>
 				<invoke object="myFusebox.getApplicationData().images" methodcall="relatedimages(attributes)" returnvariable="attributes.qry_related" />
+				<invoke object="myFusebox.getApplicationData().global" methodcall="getAdditionalVersions(attributes)" returnvariable="attributes.qry_additional_versions" />
 			</true>
 		</if>
 		<!-- CFC: Get related video records -->
@@ -7746,6 +7755,7 @@
 					<argument name="columnlist" value="v.vid_extension, v.vid_width, v.vid_height, v.vid_size, v.link_kind" />
 				</invoke>
 				<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="attributes.qry_related" />
+				<invoke object="myFusebox.getApplicationData().global" methodcall="getAdditionalVersions(attributes)" returnvariable="attributes.qry_additional_versions" />
 			</true>
 		</if>
 		<!-- CFC: Get related audio records -->
@@ -7754,6 +7764,7 @@
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="attributes.qry_related" />
+				<invoke object="myFusebox.getApplicationData().global" methodcall="getAdditionalVersions(attributes)" returnvariable="attributes.qry_additional_versions" />
 			</true>
 		</if>
 		<!-- CFC: Get related audio records -->
@@ -7764,6 +7775,7 @@
 					<argument name="theid" value="#attributes.file_id#" />
 					<argument name="thecolumn" value="file_extension, file_size, link_kind" />
 				</invoke>
+				<invoke object="myFusebox.getApplicationData().global" methodcall="getAdditionalVersions(attributes)" returnvariable="attributes.qry_additional_versions" />
 			</true>
 		</if>
 		<!-- CFC: Get share options -->
@@ -8293,6 +8305,8 @@
 				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
 			</true>
 		</if>
+		<!-- CFC: Get Additional versions -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 		<!-- Show -->
