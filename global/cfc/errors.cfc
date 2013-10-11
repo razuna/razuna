@@ -75,27 +75,25 @@
 			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 			)
 			</cfquery>
-		<cfcatch type="database">
-			<!--- Add to DB assuming err_header column is not present if error occurs above --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#errors
-			(id, err_text, err_date, host_id)
-			VALUES(
-			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#qryid.theid#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#errortext#">,
-			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
-			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			)
-			</cfquery>
-		</cfcatch>
-
+			<cfcatch type="database">
+				<!--- Add to DB assuming err_header column is not present if error occurs above --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#errors
+				(id, err_text, err_date, host_id)
+				VALUES(
+				<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#qryid.theid#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#errortext#">,
+				<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+				<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfcatch>
 		</cftry>
-
 		<!--- Flush Cache --->
 		<cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" />
 		<!--- eMail --->
 		<cfif cgi.http_host CONTAINS "razuna.com" OR cgi.http_host CONTAINS "razunabd.local">
-			<cfmail to="bugs@razuna.com" from="server@razuna.com" subject="Razuna Error: #cgi.server_name# - #error.message#" type="html">
+			<cfmail to="bugs@razuna.com" from="server@razuna.com" subject="Razuna Error: #cgi.server_name#" type="html">
 			#errortext#
 			</cfmail>
 		</cfif>
