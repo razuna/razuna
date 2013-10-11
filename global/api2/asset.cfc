@@ -1035,5 +1035,308 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
+	
+	<!--- Regenerate metedata for assets --->
+	<cffunction name="regeneratemetadata" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" type="string" required="true">
+		<cfargument name="assetid" type="string" required="true">
+		<cfargument name="assettype" type="string" required="true">
+		<!--- Param --->
+		<cfset arguments.newid = createuuid()>
+		<cfset thexml = structNew()>
+		<cfset thesuccess = 0>
+		<cfset theunsuccess = 0>
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Get exiftool.exe file path --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qryexif">
+				SELECT  thepath
+				FROM tools
+				WHERE thetool = <cfqueryparam value="exiftool" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Set the path of exiftool --->
+			<cfif FindNoCase("Windows", server.os.name)>
+				<cfset theexif = """#qryexif.thepath#/exiftool.exe""">
+			<cfelse>
+				<!--- Create directory --->
+				<cfif !directoryExists("#application.razuna.api.thispath#/metadata")>
+					<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata" mode="775">
+				</cfif>
+				<cfset theexif = "#qryexif.thepath#/exiftool">
+				<!--- Set scripts --->
+				<cfset thesh = "#application.razuna.api.thispath#/metadata/#arguments.newid#.sh">
+			</cfif>
+			<!--- Get assetpath --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qryassetpath">
+				SELECT set2_path_to_assets
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid['#arguments.api_key#']#">
+			</cfquery>
+			<!--- Set assetpath --->
+			<cfset assetpath = trim(qryassetpath.set2_path_to_assets)>
+			<!--- IMAGES --->
+			<cfif arguments.assettype EQ "img">
+				<!--- Loop --->
+				<cfloop list="#arguments.assetid#" index="i">
+					<!--- Get details of asset --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
+						SELECT img_filename_org AS filename,path_to_asset,cloud_url_org 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+						WHERE img_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+					<!--- Check success --->
+					<cfif qrydetail.RecordCount NEQ 0>
+						<cfset thesuccess = 1>
+					<cfelse>
+						<cfset theunsuccess = 1>
+					</cfif>
+					<!--- Set source --->
+					<cfif application.razuna.api.storage EQ "local">
+						<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+					<cfelse>
+						<!--- Create directory --->
+						<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
+							<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+						</cfif>
+						<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
+						<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+					</cfif>
+					<!--- Check windows --->
+					<cfif FindNoCase("Windows", server.os.name)>
+						<!--- Execute Script --->
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="img_meta" />
+					<cfelse>
+						<!--- Write Script --->
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<!--- Execute Script --->
+						<cfexecute name="#thesh#" timeout="60" variable="img_meta" />
+						<!--- Delete scripts --->
+						<cffile action="delete" file="#thesh#">
+					</cfif>
+					<!--- Update metadata in images DB --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
+						SET	img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
+						WHERE img_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+					<cfset "arguments.thetools.exiftool" = qryexif.thepath>
+					<cfset arguments.thesource = thesource>
+					<cfinvoke component="global.cfc.xmp" method="xmpparse" thestruct="#arguments#" returnvariable="arguments.thexmp" />
+					<!--- Store XMP values in DB --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#xmp
+						SET 
+								asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">, 
+								subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcsubjectcode#">, 
+								creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.creator#">, 
+								title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.title#">, 
+								authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.authorstitle#">, 
+								captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.descwriter#">, 
+								ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcaddress#">, 
+								category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.category#">, 
+								supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.categorysub#">, 
+								urgency = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.urgency#">,
+								description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.description#">, 
+								ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccity#">, 
+								ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccountry#">, 
+								location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptclocation#">, 
+								ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptczip#">, 
+								ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcemail#">, 
+								ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcwebsite#">, 
+								citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcphone#">, 
+								intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcintelgenre#">, 
+								instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcinstructions#">, 
+								source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcsource#">, 
+								usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcusageterms#">, 
+								copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copystatus#">, 
+								transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcjobidentifier#">, 
+								webstatement  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copyurl#">, 
+								headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcheadline#">, 
+								datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcdatecreated#">, 
+								city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecity#">, 
+								ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagestate#">, 
+								country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecountry#">, 
+								countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcimagecountrycode#">, 
+								scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcscene#">, 
+								state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptcstate#">, 
+								credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.iptccredit#">, 
+								rights = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.copynotice#">, 
+								colorspace = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.colorspace#">, 
+								xres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.xres#">, 
+								yres = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.yres#">, 
+								resunit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thexmp.resunit#">, 
+								host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+						WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
+					</cfquery>
+				</cfloop>
+			<!--- VIDEOS --->
+			<cfelseif arguments.assettype EQ "vid">
+				<!--- Loop --->
+				<cfloop list="#arguments.assetid#" index="i">
+					<!--- Get details of asset --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
+						SELECT vid_name_org AS filename,path_to_asset,cloud_url_org 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+						WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+					<!--- Check success --->
+					<cfif qrydetail.RecordCount NEQ 0>
+						<cfset thesuccess = 1>
+					<cfelse>
+						<cfset theunsuccess = 1>
+					</cfif>
+					<!--- Set source --->
+					<cfif application.razuna.api.storage EQ "local">
+						<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+					<cfelse>
+						<!--- Create directory --->
+						<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
+							<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+						</cfif>
+						<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
+						<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+					</cfif>
+					<!--- Check windows --->
+					<cfif FindNoCase("Windows", server.os.name)>
+						<!--- Execute Script --->
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="vid_meta" />
+					<cfelse>
+						<!--- Write Script --->
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<!--- Execute Script --->
+						<cfexecute name="#thesh#" timeout="60" variable="vid_meta" />
+						<!--- Delete scripts --->
+						<cffile action="delete" file="#thesh#">
+					</cfif>
+					<!--- Update metadata in videos DB --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
+						SET	vid_meta = <cfqueryparam value="#vid_meta#" cfsqltype="cf_sql_varchar">
+						WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+				</cfloop>
+			<!--- AUDIOS --->
+			<cfelseif arguments.assettype EQ "aud">
+				<!--- Loop --->
+				<cfloop list="#arguments.assetid#" index="i">
+					<!--- Get details of asset --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
+						SELECT aud_name_org AS filename,path_to_asset,cloud_url_org 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+						WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+					<!--- Check success --->
+					<cfif qrydetail.RecordCount NEQ 0>
+						<cfset thesuccess = 1>
+					<cfelse>
+						<cfset theunsuccess = 1>
+					</cfif>
+					<!--- Set source --->
+					<cfif application.razuna.api.storage EQ "local">
+						<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+					<cfelse>
+						<!--- Create directory --->
+						<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
+							<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+						</cfif>
+						<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
+						<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+					</cfif>
+					<!--- Check windows --->
+					<cfif FindNoCase("Windows", server.os.name)>
+						<!--- Execute Script --->
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="aud_meta" />
+					<cfelse>
+						<!--- Write Script --->
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<!--- Execute Script --->
+						<cfexecute name="#thesh#" timeout="60" variable="aud_meta" />
+						<!--- Delete scripts --->
+						<cffile action="delete" file="#thesh#">
+					</cfif>
+					<!--- Update metadata in audios DB --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
+						SET	aud_meta = <cfqueryparam value="#aud_meta#" cfsqltype="cf_sql_varchar">
+						WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+				</cfloop>
+			<!--- FILES --->
+			<cfelseif arguments.assettype EQ "doc">
+				<!--- Loop --->
+				<cfloop list="#arguments.assetid#" index="i">
+					<!--- Get details of asset --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qrydetail">
+						SELECT file_name_org AS filename,path_to_asset,cloud_url_org 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+						WHERE file_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+					<!--- Check success --->
+					<cfif qrydetail.RecordCount NEQ 0>
+						<cfset thesuccess = 1>
+					<cfelse>
+						<cfset theunsuccess = 1>
+					</cfif>
+					<!--- Set source --->
+					<cfif application.razuna.api.storage EQ "local">
+						<cfset thesource = "#assetpath#/#application.razuna.api.hostid['#arguments.api_key#']#/#qrydetail.path_to_asset#/#qrydetail.filename#">
+					<cfelse>
+						<!--- Create directory --->
+						<cfif !directoryExists("#application.razuna.api.thispath#/metadata/#i#")>
+							<cfdirectory action="create" directory="#application.razuna.api.thispath#/metadata/#i#" mode="775">
+						</cfif>
+						<cfhttp method="get" url="#qrydetail.cloud_url_org#" file="#qrydetail.filename#" path="#application.razuna.api.thispath#/metadata/#i#">
+						<cfset thesource = "#application.razuna.api.thispath#/metadata/#i#/#qrydetail.filename#">
+					</cfif>
+					<!--- Check windows --->
+					<cfif FindNoCase("Windows", server.os.name)>
+						<!--- Execute Script --->
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="file_meta" />
+					<cfelse>
+						<!--- Write Script --->
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<!--- Execute Script --->
+						<cfexecute name="#thesh#" timeout="60" variable="file_meta" />
+						<!--- Delete scripts --->
+						<cffile action="delete" file="#thesh#">
+					</cfif>
+					<!--- Update metadata in files DB --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
+						SET	file_meta = <cfqueryparam value="#aud_meta#" cfsqltype="cf_sql_varchar">
+						WHERE file_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+				</cfloop>
+			</cfif>
+			<!--- Remove directory --->
+			<cfif directoryExists("#application.razuna.api.thispath#/metadata")>
+				<cfdirectory action="delete" directory="#application.razuna.api.thispath#/metadata" recurse="true">
+			</cfif>
+			<!--- Feedback --->
+			<cfif thesuccess AND theunsuccess EQ 0>
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Metadata successfully stored">
+			<cfelse>
+				<cfset thexml.responsecode = 1>
+				<cfset thexml.message = "Whoops! Set a valid URL!">
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml />	
+	</cffunction>
     
 </cfcomponent>
