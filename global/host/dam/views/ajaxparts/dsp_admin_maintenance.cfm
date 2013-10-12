@@ -47,16 +47,16 @@
 		<!--- Database Cache --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>Flush Database Cache</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushdb_header")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-				Razuna keeps an internal cache for accessing the database. If you feel that there is an error or have been instructed by us to do so, you can flush the cache for all the database caches with the button below.<br /><br />
+				#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushdb_desc")#<br /><br />
 				<!---
 Please choose the database cache to flush:<br />
 				<input type="checkbox" name="images" id="dbf_img" value="images" /> Images <input type="checkbox" name="videos" id="dbf_vid" value="videos" /> Videos <input type="checkbox" name="audios" id="dbf_aud" value="audios" /> Audios <input type="checkbox" name="files"  id="dbf_doc" value="files" /> Documents <input type="checkbox" name="folders" id="dbf_fol" value="folders" /> Folders <input type="checkbox" name="users" id="dbf_users" value="users" /> Users <input type="checkbox" name="logs" id="dbf_logs" value="logs" /> Logs <br />
 --->
-				<input type="button" name="flushdb" value="Flush database cache" onclick="dodbflush();" class="button" />
+				<input type="button" name="flushdb" value="#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushdb_link")#" onclick="dodbflush();" class="button" />
 				<br /><br />
 				<div id="flush_db_feedback" style="display_none;"></div>
 				</td>
@@ -66,12 +66,13 @@ Please choose the database cache to flush:<br />
 			<!--- Clear Cache --->
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
-					<th>Flush Template Cache</th>
+					<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushtemplate_header")#</th>
 				</tr>
 				<tr class="list">
 					<td>
-					Razuna keeps an internal template cache to speed things up. If you feel that there is an error or have been instructed by us to do so, you can re-built the cache with the button below.<br /><br />
-					<a href="#session.thehttp##cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank" style="text-decoration:none;"><input type="button" name="rebuiltcache" value="Flush template cache" class="button" /></a>
+					#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushtemplate_desc")#<br /><br />
+					<a href="#session.thehttp##cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank" style="text-decoration:none;">
+					<input type="button" name="rebuiltcache" value="#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushtemplate_link")#" class="button" /></a>
 					<br /><br />
 					</td>
 				</tr>
