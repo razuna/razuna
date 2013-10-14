@@ -272,7 +272,6 @@
 				x.yres AS ydpi,
 				x.resunit AS unit,
 				i.hashtag AS md5hash,
-				fo.folder_name,
 				lower(i.img_filename) filename_forsort
 				<!--- for UI --->
 				<cfif arguments.istruct.ui>
@@ -465,7 +464,6 @@
 				'' AS ydpi,
 				'' AS unit,
 				v.hashtag AS md5hash,
-				fo.folder_name,
 				lower(v.vid_filename) filename_forsort
 				<!--- for UI --->
 				<cfif arguments.vstruct.ui>
@@ -652,7 +650,6 @@
 				'' AS ydpi,
 				'' AS unit,
 				a.hashtag AS md5hash,
-				fo.folder_name,
 				lower(a.aud_name) filename_forsort
 				<!--- for UI --->
 				<cfif arguments.astruct.ui>
@@ -849,7 +846,6 @@
 				'' AS ydpi,
 				'' AS unit,
 				f.hashtag AS md5hash,
-				fo.folder_name,
 				lower(f.file_name) filename_forsort
 				<!--- for UI --->
 				<cfif arguments.fstruct.ui>
