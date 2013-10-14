@@ -40,6 +40,7 @@
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qrylist" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released,
+	lower(ct.col_name) AS namesort,
 	<!--- Permission follow but not for sysadmin and admin --->
 	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
 		CASE
@@ -66,13 +67,13 @@
 	</cfif>
 	AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.released#">
 	GROUP BY c.col_id, c.change_date, ct.col_name, c.col_released
-	ORDER BY lower(ct.col_name)
 	</cfquery>
 	<!--- Query to get unlocked collections only --->
 	<cfquery dbtype="query" name="qry.collist">
 	SELECT *
 	FROM qrylist
 	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+	ORDER BY namesort
 	</cfquery>
 	<!--- Get descriptions --->
 	<cfif qry.collist.recordcount NEQ 0>
