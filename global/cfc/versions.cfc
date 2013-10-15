@@ -754,7 +754,7 @@
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#')>
+			<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
 			<!--- Remove the filename from the path --->
 			<cfset arguments.thestruct.qryfile.path = replacenocase(arguments.thestruct.qryfile.path,"/#arguments.thestruct.qryfile.filename#","","one")>
 		</cfif>
