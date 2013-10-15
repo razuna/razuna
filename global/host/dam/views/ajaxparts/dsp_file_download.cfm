@@ -28,22 +28,34 @@
 	<table border="0" cellpadding="5" cellspacing="5" width="100%" class="grid">
 		<!--- Images --->
 		<cfif attributes.kind EQ "img">
-			<!--- Preview --->
-			<tr>
-				<td><strong>Preview</strong><br>(#attributes.qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
-				<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
-			</tr>
-			<!--- Original --->
-			<tr>
-				<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
-				<td valign="top">
-					<cfif attributes.folderaccess NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
-						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-					<cfelse>
-						Not available
-					</cfif>
-				</td>
-			</tr>
+			<cfloop query="qry_share_options">
+				<!--- Preview --->
+				<cfif asset_format EQ "thumb">
+					<tr>
+						<td><strong>Preview</strong><br>(#attributes.qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
+						<td valign="top">
+							<cfif asset_dl>
+								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+							<cfelse>
+								Not available
+							</cfif>
+						</td>
+					</tr>
+				</cfif>
+				<!--- Show original if allowed --->
+				<cfif asset_format EQ "org">
+					<tr>
+						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
+						<td valign="top">
+							<cfif asset_dl>
+								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+							<cfelse>
+								Not available
+							</cfif>
+						</td>
+					</tr>
+				</cfif>
+			</cfloop>
 			<!--- Show converted --->
 			<cfloop query="attributes.qry_related">
 				<cfset theid = img_id>
@@ -56,7 +68,7 @@
 						<tr>
 							<td><strong>#ucase(theext)#</strong><br><cfif theilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
 							<td valign="top">
-								<cfif attributes.folderaccess NEQ "R" OR asset_dl>
+								<cfif asset_dl>
 									<a href="#myself#c.serve_file&file_id=#theid#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 								<cfelse>
 									Not available
@@ -70,16 +82,20 @@
 		<!--- Videos --->
 		<cfif attributes.kind EQ "vid">
 			<!--- Show original if allowed --->
-			<tr>
-				<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
-				<td valign="top">
-					<cfif attributes.folderaccess NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
-						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-					<cfelse>
-						Not available
-					</cfif>
-				</td>
-			</tr>
+			<cfloop query="qry_share_options">
+				<cfif asset_format EQ "org">
+					<tr>
+						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
+						<td valign="top">
+							<cfif asset_dl>
+								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+							<cfelse>
+								Not available
+							</cfif>
+						</td>
+					</tr>
+				</cfif>
+			</cfloop>
 			<!--- Show converted --->
 			<cfloop query="attributes.qry_related">
 				<cfset theid = vid_id>
@@ -92,7 +108,7 @@
 						<tr>
 							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB) #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
 							<td valign="top">
-								<cfif attributes.folderaccess NEQ "R" OR asset_dl>
+								<cfif asset_dl>
 									<a href="#myself#c.serve_file&file_id=#theid#&type=vid&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 								<cfelse>
 									Not available
@@ -105,17 +121,21 @@
 		</cfif>
 		<!--- Audios --->
 		<cfif attributes.kind EQ "aud">
-			<!--- Show original if allowed --->
-			<tr>
-				<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
-				<td valign="top">
-					<cfif attributes.folderaccess NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
-						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-					<cfelse>
-						Not available
-					</cfif>
-				</td>
-			</tr>			
+			<cfloop query="qry_share_options">
+				<!--- Show original if allowed --->
+				<cfif asset_format EQ "org">
+					<tr>
+						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
+						<td valign="top">
+							<cfif asset_dl>
+								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+							<cfelse>
+								Not available
+							</cfif>
+						</td>
+					</tr>
+				</cfif>
+			</cfloop>
 			<!--- Show converted --->
 			<cfloop query="attributes.qry_related">
 				<cfset theid = aud_id>
@@ -126,7 +146,7 @@
 						<tr>
 							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</td>
 							<td valign="top">
-								<cfif attributes.folderaccess NEQ "R" OR asset_dl>
+								<cfif asset_dl>
 									<a href="#myself#c.serve_file&file_id=#theid#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 								<cfelse>
 									Not available
@@ -139,43 +159,45 @@
 		</cfif>
 		<!--- Documents --->
 		<cfif attributes.kind EQ "doc" OR attributes.kind EQ "other">
-			<!--- Show original if allowed --->
-			<tr>
-				<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.file_extension)#</td>
-				<td valign="top">
-					<cfif attributes.folderaccess NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
-						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-					<cfelse>
-						Not available
-					</cfif>
-				</td>
-			</tr>
-		</cfif>
-		<!--- Additional versions --->
-		<cfif attributes.folderaccess NEQ "R">
-			<cfloop query="qry_av.assets">
-				<cfset avid = av_id>
-				<cfset av_link_url = av_link_url>
-				<cfset av_link_title = av_link_title>
-				<cfset hashtag = hashtag>
-				<cfset thesize = thesize>
-				<cfloop query="qry_share_options">
-					<cfif asset_id_r EQ avid>
-						<!--- Set correct download path --->
-						<cfset thelinkurl = "http://#cgi.http_host##cgi.context_path#/assets/#session.hostid##av_link_url#">
-						<tr>
-							<td><strong>#av_link_title#</strong><br />(#myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB)</td>
-							<td valign="top">
-								<cfif attributes.folderaccess NEQ "R" OR qry_share_options.asset_dl>
-									<a href="#thelinkurl#" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-								<cfelse>
-									Not available
-								</cfif>
-							</td>
-						</tr>
-					</cfif>
-				</cfloop>
+			<cfloop query="qry_share_options">
+				<!--- Show original if allowed --->
+				<cfif asset_format EQ "org">
+					<tr>
+						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.file_extension)#</td>
+						<td valign="top">
+							<cfif asset_dl>
+								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+							<cfelse>
+								Not available
+							</cfif>
+						</td>
+					</tr>
+				</cfif>
 			</cfloop>
 		</cfif>
+		<!--- Additional versions --->
+		<cfloop query="qry_av.assets">
+			<cfset avid = av_id>
+			<cfset av_link_url = av_link_url>
+			<cfset av_link_title = av_link_title>
+			<cfset hashtag = hashtag>
+			<cfset thesize = thesize>
+			<cfloop query="qry_share_options">
+				<cfif asset_id_r EQ avid>
+					<!--- Set correct download path --->
+					<cfset thelinkurl = "http://#cgi.http_host##cgi.context_path#/assets/#session.hostid##av_link_url#">
+					<tr>
+						<td><strong>#av_link_title#</strong><br />(#myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB)</td>
+						<td valign="top">
+							<cfif asset_dl>
+								<a href="#thelinkurl#" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+							<cfelse>
+								Not available
+							</cfif>
+						</td>
+					</tr>
+				</cfif>
+			</cfloop>
+		</cfloop>
 	</table>
 </cfoutput>
