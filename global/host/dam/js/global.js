@@ -901,6 +901,13 @@ function checksel(theid,theckb,kind){
 	}
 }
 function addgrp(){
+	//Check to ensure group name is entered
+	var checkgrp= $('#grpnew').val();
+	if(checkgrp=="")
+	{
+		alert('Please enter the group name!');
+		return false;
+	}
 	// Add the new group and show the updated list
 	loadcontent('admin_groups', 'index.cfm?fa=c.groups_add&kind=ecp&loaddiv=admin_groups&newgrp=' + encodeURIComponent($("#grpnew").val()));
 }
