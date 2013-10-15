@@ -1046,6 +1046,8 @@
 		<cfset thexml = structNew()>
 		<cfset thesuccess = 0>
 		<cfset theunsuccess = 0>
+		<cfset var invalid_assets = ""> <!--- intialize list to store invalid asset id's passed to function --->
+
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -1093,6 +1095,7 @@
 						<cfset thesuccess = 1>
 					<cfelse>
 						<cfset theunsuccess = 1>
+						<cfset invalid_assets = listappend(invalid_assets,i)>
 					</cfif>
 					<!--- Set source --->
 					<cfif application.razuna.api.storage EQ "local">
@@ -1190,6 +1193,7 @@
 						<cfset thesuccess = 1>
 					<cfelse>
 						<cfset theunsuccess = 1>
+						<cfset invalid_assets = listappend(invalid_assets,i)>
 					</cfif>
 					<!--- Set source --->
 					<cfif application.razuna.api.storage EQ "local">
@@ -1238,6 +1242,7 @@
 						<cfset thesuccess = 1>
 					<cfelse>
 						<cfset theunsuccess = 1>
+						<cfset invalid_assets = listappend(invalid_assets,i)>
 					</cfif>
 					<!--- Set source --->
 					<cfif application.razuna.api.storage EQ "local">
@@ -1286,6 +1291,7 @@
 						<cfset thesuccess = 1>
 					<cfelse>
 						<cfset theunsuccess = 1>
+						<cfset invalid_assets = listappend(invalid_assets,i)>
 					</cfif>
 					<!--- Set source --->
 					<cfif application.razuna.api.storage EQ "local">
@@ -1329,7 +1335,11 @@
 				<cfset thexml.message = "Metadata successfully stored">
 			<cfelse>
 				<cfset thexml.responsecode = 1>
-				<cfset thexml.message = "Whoops! Set a valid URL!">
+				<cfif len(invalid_assets) neq 0>
+					<cfset thexml.message = "The following assetid's were not found: #invalid_assets#. For the rest the metadata was successfully regenerated and stored">
+				<cfelse>
+					<cfset thexml.message = "Whoops! Set a valid URL!">
+				</cfif>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
