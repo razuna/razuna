@@ -85,7 +85,7 @@
 				</cfquery>
 				<!--- Insert into group --->
 				<cfif arguments.groupid NEQ 0>
-					<cfif application.razuna.api.isp AND arguments.groupid NEQ 1>
+					<cfif arguments.groupid NEQ 1>
 						<cfquery datasource="#application.razuna.api.dsn#">
 						INSERT INTO	ct_groups_users
 						(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
