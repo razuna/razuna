@@ -1159,6 +1159,27 @@
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="x" mode="777">
 			</cfdefaultcase>
 		</cfswitch>
+		<!--- For API rendition with colorspace --->
+		<cfif structKeyExists(arguments.thestruct,"api_key") AND arguments.thestruct.api_key NEQ "">
+			<!--- IM commands for set colorspace --->
+			<cfif structKeyExists(arguments.thestruct,"colorspace") AND arguments.thestruct.colorspace NEQ "">
+				<!--- original --->
+				<cfset var theimargumentscs = "#theoriginalasset# -set colorspace #arguments.thestruct.colorspace# #theflatten##theformatconv#">
+				<!--- thumbnail --->
+				<cfset var theimargumentsthumbcs = "#theformatconv# -set colorspace #arguments.thestruct.colorspace# #theflatten##thethumbtconv#">
+				<!--- Create script files --->
+				<cfset arguments.thestruct.theshcs = GetTempDirectory() & "/#thescript#cs.sh">
+				<cfset arguments.thestruct.theshthumbcs = GetTempDirectory() & "/#thescript#thumbcs.sh">
+				<!--- On Windows a .bat --->
+				<cfif iswindows>
+					<cfset arguments.thestruct.theshcs = GetTempDirectory() & "/#thescript#cs.bat">
+					<cfset arguments.thestruct.theshthumbcs = GetTempDirectory() & "/#thescript#thumbcs.bat">
+				</cfif>
+				<!--- Write files --->
+				<cffile action="write" file="#arguments.thestruct.theshcs#" output="#theexe# #theimargumentscs#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshthumbcs#" output="#theexe# #theimargumentsthumbcs#" mode="777">
+			</cfif>
+		</cfif>
 		<!--- Convert image to desired format --->
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
@@ -1174,6 +1195,24 @@
 			<cfexecute name="#attributes.intstruct.theshtt#" timeout="60" />
 		</cfthread>
 		<cfthread action="join" name="3#thescript#" />
+		<!--- API rendition with colorspace --->
+		<cfif structKeyExists(arguments.thestruct,"api_key") AND arguments.thestruct.api_key NEQ "">
+			<cfif structKeyExists(arguments.thestruct,"colorspace") AND arguments.thestruct.colorspace NEQ "">
+				<!--- original with colorspace --->
+				<cfthread name="4#thescript#" intstruct="#arguments.thestruct#">
+					<cfexecute name="#attributes.intstruct.theshcs#" timeout="60" />
+				</cfthread>
+				<cfthread action="join" name="4#thescript#" />
+				<!--- thumbnail with colorspace --->
+				<cfthread name="5#thescript#" intstruct="#arguments.thestruct#">
+					<cfexecute name="#attributes.intstruct.theshthumbcs#" timeout="60" />
+				</cfthread>
+				<cfthread action="join" name="5#thescript#" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.theshcs#">
+				<cffile action="delete" file="#arguments.thestruct.theshthumbcs#">
+			</cfif>
+		</cfif>
 		<!--- Delete scripts --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">
