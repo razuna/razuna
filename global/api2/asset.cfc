@@ -698,7 +698,7 @@
 					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
-					WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE i.img_group in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND i.img_group IS NOT NULL
 					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
@@ -724,7 +724,7 @@
 					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
-					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE i.img_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
 					SELECT /* #cachetokenimg#getrenditionsimg */
@@ -749,7 +749,7 @@
 					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
-					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE i.img_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				<cfelseif arguments.assettype EQ "vid">
 					SELECT /* #cachetokenvid#getrenditionsvid */
@@ -769,7 +769,7 @@
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + vid_name_org AS local_url_org
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
-					WHERE vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE vid_group in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND vid_group IS NOT NULL
 					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
@@ -790,7 +790,7 @@
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + vid_name_org AS local_url_org
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
-					WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE vid_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND vid_group IS NULL
 					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				<cfelseif arguments.assettype EQ "aud">
@@ -811,7 +811,7 @@
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + aud_name_org AS local_url_org
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
-					WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE aud_group in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND aud_group IS NOT NULL
 					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
@@ -832,7 +832,7 @@
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + aud_name_org AS local_url_org
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
-					WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					WHERE aud_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND aud_group IS NULL
 					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfif>
@@ -857,7 +857,7 @@
 					'' AS unit
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
-				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				WHERE asset_id_r in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
