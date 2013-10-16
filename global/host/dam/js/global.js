@@ -914,6 +914,13 @@ function addgrp(){
 function updategrp(grpid){
 	// Hide Window
 	destroywindow(2);
+	//Check to ensure group name is entered
+	var checkgrp= $('#grpname').val();
+	if(checkgrp=="")
+	{
+		alert('Group name can not be empty!');
+		return false;
+	}
 	// Add the new group and show the updated list
 	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val()));
 }
