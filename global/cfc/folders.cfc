@@ -3839,7 +3839,7 @@
 			<cfquery dbtype="query" name="qry">
 			SELECT *
 			FROM qry
-			WHERE folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+			WHERE (folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="f"> OR folder_of_user IS NULL)
 			OR (lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="my folder"> AND folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">)
 			OR folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 			OR folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
