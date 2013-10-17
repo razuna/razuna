@@ -84,17 +84,25 @@
 			<cfset arguments.thestruct.grp_id_assigneds_ecp = ListAppend(arguments.thestruct.grp_id_assigneds_ecp, Right(myForm, Len(myForm) - Len("webgroup_")))>
 		</cfif>
 	</cfloop>
+	<!--- If we find group 1 or 2 in the list then reset the list to the found groupid --->
+	<cfif StructKeyExists(arguments.thestruct,"admin_group_1")>
+		<cfset arguments.thestruct.grp_id_assigneds_adm = 1>
+		<cfset arguments.thestruct.grp_id_assigneds_ecp = "">
+	<cfelseif StructKeyExists(arguments.thestruct,"admin_group_2")>
+		<cfset arguments.thestruct.grp_id_assigneds_adm = 2>
+		<cfset arguments.thestruct.grp_id_assigneds_ecp = "">
+	</cfif>
 	<!--- If there is no web group then dont go further --->
 	<cfif arguments.thestruct.grp_id_assigneds_ecp NEQ "">
 		<cfset arguments.thestruct.grp_id_assigneds = arguments.thestruct.grp_id_assigneds_ecp>
 		<cfinvoke method="resetUser" thestruct="#arguments.thestruct#">
 	</cfif>
 	<!--- Insert the selected group to the admin group cross table --->
-	<cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
+	<!--- <cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
 		<cfif Left(myform, Len("admin_group_")) eq "admin_group_">
 			<cfset arguments.thestruct.grp_id_assigneds_adm = ListAppend(arguments.thestruct.grp_id_assigneds_adm, Right(myForm, Len(myForm) - Len("admin_group_")))>
 		</cfif>
-	</cfloop>
+	</cfloop> --->
 	<!--- If there is no admin group then dont go further --->
 	<cfif arguments.thestruct.grp_id_assigneds_adm NEQ "">
 		<cfset arguments.thestruct.grp_id_assigneds = arguments.thestruct.grp_id_assigneds_adm>
@@ -170,35 +178,6 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("users")>
-	<!---
-
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO	ct_groups_users
-		(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-		SELECT g.grp_id, u.user_id, '#createuuid()#'
-		FROM groups g
-		INNER JOIN users u ON NOT EXISTS(
-			SELECT ct_g_u_grp_id, ct_g_u_user_id
-			FROM ct_groups_users
-			WHERE ct_g_u_grp_id = g.grp_id
-			AND ct_g_u_user_id = u.user_id
-			)
-		WHERE grp_id IN (<cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-		AND(
-			grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
-			OR grp_host_id IS NULL
-		)
-		AND u.user_id IN (<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-		AND EXISTS(
-			SELECT ct_u_h_user_id, ct_u_h_host_id
-			FROM ct_users_hosts
-			WHERE ct_u_h_user_id = u.user_id
-			AND ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
-		)
-		</cfquery>
-	</cftransaction>
---->
 	<cfreturn />
 </cffunction>
 
