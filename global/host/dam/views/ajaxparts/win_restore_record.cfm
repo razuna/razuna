@@ -45,9 +45,23 @@
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);$('##<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>').load('#myself#c.#attributes.what#_restore<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelseif attributes.kind EQ "folder">folder<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&iscol=#attributes.iscol#<cfif attributes.kind EQ "folder">&folder_level=#attributes.folder_level#</cfif>&fromtrash=true');" class="button">
+					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);$('##<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>').load('#myself#c.#attributes.what#_restore<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelseif attributes.kind EQ "folder">folder<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&iscol=#attributes.iscol#<cfif attributes.kind EQ "folder">&folder_level=#attributes.folder_level#</cfif>&fromtrash=true');loadtrashdelay();" class="button">
 				</td>
 			</tr>
 		</table>
 	</div>
+	<!--- JS --->
+	<script type="text/javascript">
+		function loadtrashdelay(){
+			try {
+				setTimeout(function() {
+			    	delayfolderload();
+				}, 2000)
+			}
+			catch(e) {};
+		};
+		function delayfolderload(){
+			$('##rightside').load('#myself#c.folder_explorer_trash&trashkind=assets');
+		};
+	</script>
 </cfoutput>

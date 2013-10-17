@@ -369,7 +369,7 @@
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("files")>
+			<cfset resetcachetoken("files")>
 			<cfset resetcachetoken("folders")>
 			<cfset resetcachetoken("search")>
 		</cfif>
@@ -381,12 +381,12 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
-			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
 		<!--- return --->
@@ -562,11 +562,10 @@
 				</cfif>
 			</cfloop>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("files")>
+			<cfset resetcachetoken("files")>
 			<cfset resetcachetoken("folders")>
 			<cfset resetcachetoken("search")>
 		</cfif>
-	
 		<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
 			<cfset var is_trash = "intrash">
 		<cfelse>

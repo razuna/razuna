@@ -185,7 +185,7 @@
 		</cfloop>
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<!--- Return the col id --->
 	<cfreturn newcolid>
 </cffunction>
@@ -237,7 +237,7 @@
 			)
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("general")>
+			<cfset resetcachetoken("general")>
 		</cfif>
 	</cfloop>
 	
@@ -313,7 +313,7 @@
 		<cfinvoke method="add_assets_single" thestruct="#arguments.thestruct#">
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- LIST COLLECTION DETAIL --->
@@ -442,12 +442,12 @@
 <cffunction name="col_asset_move_trash" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#Variables.dsn#" name="move_trash">
-		UPDATE #session.hostdbprefix#collections_ct_files 
-		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">,
-		col_item_order = <cfqueryparam cfsqltype="cf_sql_integer" value="1">
-		WHERE col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
-		AND file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UPDATE #session.hostdbprefix#collections_ct_files 
+	SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">,
+	col_item_order = <cfqueryparam cfsqltype="cf_sql_integer" value="1">
+	WHERE col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+	AND file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 </cffunction>
 
@@ -455,12 +455,15 @@
 <cffunction name="col_move_trash" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#Variables.dsn#" name="move_trash">
-		UPDATE #session.hostdbprefix#collections 
-		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
-		AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UPDATE #session.hostdbprefix#collections 
+	SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+	AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- GET COLLECTION FILES FROM TRASH --->
@@ -844,7 +847,7 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("general")>
+		<cfset resetcachetoken("general")>
 	</cfif>
 	<cfif isDefined('local.istrash') AND local.istrash EQ "trash">
 		<cfset var is_trash = "intrash">
@@ -894,9 +897,9 @@
 		</cfloop>
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<cfset resetcachetoken("folder")>
-	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+	<cfif isDefined('local.istrash') AND local.istrash EQ "trash">
 		<cfset var is_trash = "intrash">
 	<cfelse>
 		<cfset var is_trash = "notrash">
@@ -908,11 +911,12 @@
 <cffunction name="restoreasset" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#Variables.dsn#" name="qry_restore">
-		UPDATE #session.hostdbprefix#collections_ct_files 
-		SET col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">,
-			in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UPDATE #session.hostdbprefix#collections_ct_files 
+	SET 
+	col_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">,
+	in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 </cffunction>
 
@@ -920,12 +924,15 @@
 <cffunction name="restorecollection" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#Variables.dsn#" name="qry_restore">
-		UPDATE #session.hostdbprefix#collections
-		SET folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">,
-			in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UPDATE #session.hostdbprefix#collections
+	SET 
+	folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">,
+	in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	WHERE col_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.col_id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1002,7 +1009,7 @@
 		AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("general")>
+		<cfset resetcachetoken("general")>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while moviing item in collection in function collections.move">
 			<cfset cfcatch.thestruct = arguments.thestruct>
@@ -1028,7 +1035,7 @@
 	AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- TRASH ITEM FROM COLLECTION --->
@@ -1042,7 +1049,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<!--- Rearrange the order --->
 	<cfquery datasource="#variables.dsn#">
 	UPDATE #session.hostdbprefix#collections_ct_files
@@ -1052,7 +1059,7 @@
 	AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- REMOVE COLLECTION --->
@@ -1095,7 +1102,8 @@
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("folders")>
 </cffunction>
 
 
@@ -1104,13 +1112,14 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Update in_trash --->
 	<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#collections 
-		SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
-		WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UPDATE #session.hostdbprefix#collections 
+	SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+	WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("folders")>
 </cffunction>
 
 <!--- UPDATE --->
@@ -1257,7 +1266,7 @@
 		</cfloop>
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- GET THE GROUPS FOR THIS COLLECTION --->
@@ -1489,7 +1498,7 @@
 		</cfquery>
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1570,7 +1579,7 @@
 		<cfset dorelease(arguments.thestruct)>
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1648,6 +1657,9 @@
 		<!--- update the collection files --->
 		<cfinvoke method="restoreasset" thestruct="#arguments.thestruct#">
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("folders")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

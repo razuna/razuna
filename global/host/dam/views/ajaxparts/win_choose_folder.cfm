@@ -75,13 +75,10 @@
 		// Move folder call
 		function movethisfolder(){
 			$('##div_forall').load('#myself##session.savehere#&intofolderid=#session.thefolderorg#&intolevel=1&iscol=#attributes.iscol#');
+			// Destroy window
 			destroywindow(1);
-			try {
-				setTimeout(function() {
-			    	delayfolderload();
-				}, 1500)
-			}
-			catch(e) {};
+			// Delay load of list
+			delayloadingoflist();
 		}
 		function delayfolderload(){
 			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
@@ -91,10 +88,15 @@
 				<cfelse>
 					$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=#attributes.loaddiv#</cfif>');
 				</cfif>
-			//<cfelse>
-				//$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=folders</cfif>');
-				//loadcontent('folders','#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash<cfelse>trash_folder_all&trashkind=folders</cfif>');
 			</cfif>
+		}
+		function delayloadingoflist(){
+			try {
+				setTimeout(function() {
+			    	delayfolderload();
+				}, 1500)
+			}
+			catch(e) {};
 		}
 	</script>
 </cfoutput>

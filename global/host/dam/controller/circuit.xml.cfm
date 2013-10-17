@@ -567,8 +567,6 @@
 		<set name="attributes.id" value="0" overwrite="false" />
 		<set name="attributes.actionismove" value="F" overwrite="false" />
 		<set name="session.showmyfolder" value="F" overwrite="false" />
-		<!-- Clear cache -->
-		<do action="flushcache"/>
 		<!-- Get folder record -->
 		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
 			<argument name="thestruct" value="#attributes#" />
@@ -746,6 +744,8 @@
 	<fuseaction name="restore_selected_files">
 		<!-- Param -->
 		<set name="session.type" value="#attributes.type#" />
+		<set name="attributes.fromtrash" value="true" />
+		<set name="attributes.loaddiv" value="assets" />
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
@@ -762,7 +762,7 @@
 		<!-- CFC: Restore files-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="restoreselectedfiles(attributes)" />
 		<!-- Show -->
-		<do action="folder_explorer_trash" />
+		<!-- <do action="folder_explorer_trash" /> -->
 	</fuseaction>
 	<!-- Include for getting all files and folders in trash -->
 	<fuseaction name="get_all_in_trash">
@@ -879,6 +879,7 @@
 	<fuseaction name="folder_restore">
 		<!-- Param -->
 		<set name="attributes.type" value="restorefolder" />
+		<set name="attributes.fromtrash" value="true" />
 		<set name="session.type" value="#attributes.type#" />
 		<!-- Put folder id into session if the attribute exsists -->
 		<set name="session.thefolderorg" value="#attributes.folder_id#" />
@@ -1578,8 +1579,6 @@
 	<fuseaction name="col_move_trash">
 		<!-- CFC:move collection to trash-->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="col_move_trash(attributes)" />
-		<!-- Get Include -->
-		<do action="flushcache"/>
 		<!-- Show -->
 		<do action="collections" />
 	</fuseaction>
@@ -1804,8 +1803,6 @@
 		<set name="attributes.col_id" value="#session.col_id#" />
 		<!-- CFC:Update collection -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="restorecollection(attributes)"/>
-		<!-- Get Include -->
-		<do action="flushcache"/>
 		<!-- Show trash collection -->
 		<!--<do action="col_get_trash" />-->
 	</fuseaction>
@@ -2234,8 +2231,6 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
-		<!-- Get Include -->
-        <do action="flushcache"/>
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -2308,8 +2303,6 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
-		<!-- Get Include -->
-        <do action="flushcache"/>
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -2387,8 +2380,6 @@
 		<!-- Reset session -->
 		<!-- <set name="session.file_id" value="" /> -->
 		<!-- <set name="session.thefileid" value="" /> -->
-		<!-- Get Include -->
-		<!-- <do action="flushcache"/> -->
 		<do action="folder_content_include" />
 		<!-- Show -->
 		<do action="ajax.folder_content" />
@@ -2984,8 +2975,6 @@
 		<set name="attributes.trash" value="T" />
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="trashfile(attributes)" />
-		<!-- Clear cache -->
-		<do action="flushcache"/>
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
@@ -3054,8 +3043,6 @@
 		<set name="attributes.trash" value="T" overwrite="false" />
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="trashimage(attributes)" />
-		<!-- Clear cache -->
-		<do action="flushcache"/>
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
@@ -3071,7 +3058,7 @@
 		</if>
 	</fuseaction>
 	<!-- Restore images-->
-<fuseaction name="images_restore">
+	<fuseaction name="images_restore">
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.trash" value="F" overwrite="false" />
@@ -3121,8 +3108,6 @@
 		<set name="attributes.trash" value="T" />
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="trashvideo(attributes)" />
-		<!-- Clear cache -->
-		<do action="flushcache"/>
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
@@ -3145,14 +3130,6 @@
 		<set name="attributes.trashkind" value="assets" />
 		<!-- CFC: Restore -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="restorevideos(attributes)" returnvariable="attributes.is_trash" />
-		<!-- Show the folder listing -->
-		<set name="attributes.thetype" value="vid" />
-		<set name="attributes.type" value="restorefile" />
-		<set name="attributes.kind" value="videos" />
-		<set name="session.thetype" value="#attributes.thetype#" />
-		<set name="seesion.type" value="#attributes.type#" />
-		<!-- Action: Get trash-->
-		<do action="trash_assets" />
 	</fuseaction>
 	<!-- Remove videos -->
 	<fuseaction name="videos_remove">
@@ -3197,8 +3174,6 @@
 		<set name="attributes.trash" value="T" overwrite="false"/>
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="trashaudio(attributes)" />
-		<!-- Clear cache -->
-		<do action="flushcache"/>
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
@@ -8422,37 +8397,6 @@
 	
 	<!--  -->
 	<!-- ADDITIONAL VERSIONS: STOP -->
-	<!--  -->
-	
-	<!--  -->
-	<!-- FLUSHCACHE: START -->
-	<!--  -->
-	
-	<fuseaction name="flushcache">
-		<!-- Images -->
-		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
-			<argument name="theaction" value="flushall" />
-			<argument name="thedomain" value="#session.theuserid#_images" />
-		</invoke>
-		<!-- Videos -->
-		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
-			<argument name="theaction" value="flushall" />
-			<argument name="thedomain" value="#session.theuserid#_videos" />
-		</invoke>
-		<!-- Audios -->
-		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
-			<argument name="theaction" value="flushall" />
-			<argument name="thedomain" value="#session.theuserid#_audios" />
-		</invoke>
-		<!-- Files -->
-		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
-			<argument name="theaction" value="flushall" />
-			<argument name="thedomain" value="#session.theuserid#_files" />
-		</invoke>
-	</fuseaction>
-	
-	<!--  -->
-	<!-- FLUSHCACHE: STOP -->
 	<!--  -->
 	
 	<!--  -->
