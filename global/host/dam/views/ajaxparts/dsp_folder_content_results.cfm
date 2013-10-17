@@ -175,7 +175,7 @@
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<!--- custom metadata fields to show --->
 									<cfif attributes.cs.images_metadata EQ "">
-										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,30)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
@@ -197,7 +197,7 @@
 								</cfif>
 								<cfif attributes.folder_id EQ 0>
 									<br>
-									Folder: <a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a>
+									Folder: <a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#left(folder_name,10)#</a>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
