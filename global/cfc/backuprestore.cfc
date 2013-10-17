@@ -118,6 +118,7 @@
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+					OR lower(object_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -170,6 +171,7 @@
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+					OR lower(tabname) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -222,6 +224,7 @@
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+					OR lower(table_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -898,6 +901,7 @@
 		SELECT lower(table_name) as thetable, table_schema
 		FROM information_schema.tables
 		WHERE lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.back_id)#">
+		AND lower(table_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 		GROUP BY table_name, table_schema
 		ORDER BY table_name
 		</cfquery>
