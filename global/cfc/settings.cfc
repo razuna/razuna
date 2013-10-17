@@ -984,8 +984,6 @@
 		</cfif>
 		<!--- If we choose a thumbnail from the list --->
 		<cfif arguments.thestruct.thumb_folder_file eq "">
-			<!--- Get extension --->
-			<cfset var img_ext = listLast(arguments.thestruct.thumb_folder,'.')> 
 			<!--- Set vars --->
 			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 				<!--- Set http --->
@@ -995,9 +993,9 @@
 				<cfset var thehttp = arguments.thestruct.thumb_folder>
 			</cfif>
 			<!--- Get the thumbnail --->
-			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
+			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.jpg" />
 			<!--- Set filename --->
-			<cfset this.thefilename = "#arguments.thestruct.folderId#.#img_ext#">
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.jpg">
 		</cfif>
 		<!--- If the user uploads an image --->
 		<cfif arguments.thestruct.thumb_folder_file neq "">

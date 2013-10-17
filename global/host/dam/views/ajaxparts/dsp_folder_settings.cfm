@@ -46,7 +46,7 @@
 			<div id="widgets">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 			<!--- Thumbnail --->
 			<div id="thumbnail">
-				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:380px;overflow:hidden;"></iframe>
+				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" style="border:0px;width:100%;height:380px;"></iframe>
 			</div>
 		</cfif>
 	</div>
