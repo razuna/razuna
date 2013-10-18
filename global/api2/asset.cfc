@@ -1000,7 +1000,7 @@
 			<cfquery datasource="#application.razuna.api.dsn#" name="getgrp">
 				SELECT #arguments.assettype#_group
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]##assettable#
-				WHERE #arguments.assettype#_id = '#arguments.assetid#'
+				WHERE #arguments.assettype#_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			</cfquery>
 			<!--- Set the groupid variable if asset is a rendition. This will be stored in the group column for the asset later on.--->
 			<cfset var grpid= evaluate("getgrp.#arguments.assettype#_group")>
