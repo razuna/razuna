@@ -988,14 +988,18 @@
 			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 				<!--- Set http --->
 				<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#">
+				<!--- Set image extension --->
+				<cfset var img_ext = listLast(arguments.thestruct.thumb_folder,'.')>
 			<cfelse>
 				<!--- Set http --->
 				<cfset var thehttp = arguments.thestruct.thumb_folder>
+				<!--- Set image extension --->
+				<cfset var img_ext = listLast(listFirst(arguments.thestruct.thumb_folder,'?'),'.')>
 			</cfif>
 			<!--- Get the thumbnail --->
-			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.jpg" />
+			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
 			<!--- Set filename --->
-			<cfset this.thefilename = "#arguments.thestruct.folderId#.jpg">
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#img_ext#">
 		</cfif>
 		<!--- If the user uploads an image --->
 		<cfif arguments.thestruct.thumb_folder_file neq "">
