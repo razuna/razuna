@@ -984,6 +984,30 @@
 			<!--- Set assetpath --->
 			<cfset arguments.assetpath = trim(qry.set2_path_to_assets)>
 			<cfset arguments.thepath = expandPath("../../#application.razuna.api.host_path#/dam")>
+
+			<cfif arguments.assettype eq "img">
+				<cfset var assettable = "images">
+			<cfelseif arguments.assettype eq "aud">
+				<cfset var assettable= "audios">
+			<cfelseif arguments.assettype eq "vid">
+				<cfset var assettable = "videos">
+			<cfelse>
+				<cfset thexml.responsecode = 1>
+				<cfset thexml.message = "Assettype '#arguments.assettype#' is not supported for this method. Valid assetypes are 'img','aud 'and 'vid'">
+				<cfreturn thexml>
+			</cfif>
+			<!--- Get group for asset --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="getgrp">
+				SELECT #arguments.assettype#_group
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]##assettable#
+				WHERE #arguments.assettype#_id = '#arguments.assetid#'
+			</cfquery>
+			<!--- Set the groupid variable if asset is a rendition. This will be stored in the group column for the asset later on.--->
+			<cfset var grpid= evaluate("getgrp.#arguments.assettype#_group")>
+			<cfif grpid neq "">
+				<cfset "arguments.#arguments.assettype#_group_id" = grpid>
+			</cfif>  
+
 			<!--- Check the assettype --->
 			<cfif arguments.assettype EQ "img">
 				<!--- Get the data from array (loop over the passed array) --->
