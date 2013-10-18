@@ -166,6 +166,8 @@
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
+		<cfset var thedesc = "">
+		<cfset var thekeys = "">
 		<cftry>
 			<!--- FOR FILES --->
 			<cfif arguments.category EQ "doc">
@@ -212,8 +214,11 @@
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
+				<cfloop query="qry_all">
+					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
+				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT 
@@ -310,8 +315,11 @@
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
+				<cfloop query="qry_all">
+					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
+				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT 
@@ -433,8 +441,11 @@
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
+				<cfloop query="qry_all">
+					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
+				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
@@ -493,8 +504,11 @@
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-				<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
-				<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
+				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
+				<cfloop query="qry_all">
+					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
+				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
