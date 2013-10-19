@@ -85,7 +85,7 @@
 					<argument name="host_id" value="#Session.hostid#" />
 				</invoke> -->
 				<!-- CFC: Check for collection -->
-				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
+				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
 				<!-- set host again with real value -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
 				<!-- Redirect request -->
@@ -149,7 +149,7 @@
 							<argument name="host_id" value="#Session.hostid#" />
 						</invoke>
 						<!-- CFC: Check for collection -->
-						<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
+						<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
 						<!-- set host again with real value -->
 						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
 						<!-- Relocate -->
@@ -8418,7 +8418,7 @@
 		<if condition="#session.hostid# NEQ ''">
 			<true>
 				<!-- CFC: Check for collection -->
-				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
+				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
 				<!-- CFC: Get languages -->
 				<do action="languages" />
 			</true>

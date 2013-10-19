@@ -27,16 +27,15 @@
 
 	<!--- Check if collection exists for this host --->
 	<cffunction name="exists" access="public" output="false">
-		<cfthread>
-			<cftry>
-				<!--- Get the collection --->
-				<cfset CollectionStatus(session.hostid)>
-				<!--- Collection does NOT exists, thus create it --->
-				<cfcatch>
-			    	<cfinvoke method="setup" colname="#session.hostid#">
-				</cfcatch>
-			</cftry>
-		</cfthread>
+		<cfargument name="colname" type="string">
+		<cftry>
+			<!--- Get the collection --->
+			<cfset CollectionStatus(arguments.colname)>
+			<!--- Collection does NOT exists, thus create it --->
+			<cfcatch>
+		    	<cfinvoke method="setup" colname="#arguments.colname#">
+			</cfcatch>
+		</cftry>
 	</cffunction>
 	
 	<!--- Setup the Collection for the first time --->
@@ -80,6 +79,8 @@
 		<cfargument name="hostid" default="#session.hostid#" required="false">
 		<cfargument name="storage" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
+		<!--- Check if collection exists --->
+		<cfinvoke method="exists" colname="#arguments.hostid#" />
 		<!--- Params --->
 		<cfset var qry = "">
 		<cfset var qry_path = "">
