@@ -23,22 +23,16 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfapplication
-	name="#attributes.cfapplicationname#"
-	sessionmanagement="Yes"
-	sessiontimeout="#CreateTimeSpan(0,3,0,0)#"
-	setClientCookies="yes"
->
-<cferror type="exception" template="error.cfm">
-<cferror type="request" template="error_request.cfm">
-
+<cfapplication name="#attributes.cfapplicationname#" sessionmanagement="Yes" sessiontimeout="#CreateTimeSpan(0,3,0,0)#" setClientCookies="yes" />
+<cferror type="exception" template="error.cfm" />
+<cferror type="request" template="error_request.cfm" />
 <!--- Decide on production or dev mode for FB --->
-<cfif structKeyExists(application,"fusebox") AND cgi.http_host DOES NOT CONTAIN "local">
-	<cfset application.fusebox.mode = "production">
-	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
-<cfelse>
+<cfif cgi.http_host CONTAINS ".local">
 	<cfset application.fusebox.mode = "development-full-load">
 	<cflock name="#attributes.cfapplicationname#" timeout="120" type="exclusive">
 		<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 	</cflock>
+<cfelse>
+	<cfset application.fusebox.mode = "production">
+	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 </cfif>
