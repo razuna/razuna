@@ -1154,6 +1154,7 @@
 	<fuseaction name="hosts_detail">
 		<!-- CFC: Get host -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(attributes)" returnvariable="qry_hostsdetail" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="gethostsize(qry_hostsdetail.host_id)" returnvariable="hostsize" />
 		<!-- Show -->
 		<do action="ajax.hosts_detail" />
 	</fuseaction>

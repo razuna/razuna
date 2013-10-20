@@ -52,6 +52,10 @@
 				<td>#qry_hostsdetail.host_path#</td>
 			</tr>
 		</cfif>
+		<tr>
+			<td nowrap="true">#defaultsObj.trans("hosts_size")#</td>
+			<td>#hostsize#</td>
+		</tr>
 		<!--- <tr>
 			<td nowrap="true">#defaultsObj.trans("db_prefix")#</td>
 			<td>#qry_hostsdetail.host_db_prefix#</td>

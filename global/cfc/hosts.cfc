@@ -925,4 +925,30 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Function to return host size. Can be called from application and also from API. --->
+<cffunction name="gethostsize" returntype="string" hint="return size of host">
+	<cfargument name="hostid" required="true" type="numeric">
+	<cfset var hostsize = -1>
+	<cfobject component="global.cfc.global" name="gobj"> <!--- Instantiate files object for access to file manipulation functions --->
+	<!--- Get path to asset directory--->
+	<cfquery datasource="#application.razuna.datasource#" name="getassetdir" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
+		SELECT set2_path_to_assets AS dir
+		FROM #session.hostdbprefix#settings_2
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.hostid#"> 
+	</cfquery>
+	<cfset var assetdir = getassetdir.dir>		
+	<cfif !FindNoCase("Windows", server.os.name)> <!--- For non windows platforms use the native 'du' command to calculate size --->
+		<!--- Create script files --->
+		<cfset var thescript = createuuid() & "_hostsize">
+		<cfset thesh = GetTempDirectory() & "/#thescript#.sh">
+		<cffile action="write" file="#thesh#" output="du -sh #assetdir#/#arguments.hostid#" mode="777"><!--- Write out script file to disk --->
+		<cfexecute name="#thesh#" variable="size" timeout="60"/> <!--- Execute the script --->
+		<cfset hostsize = gettoken(size,1,"#chr(9)#")> <!--- Store result --->	
+		<cffile action="delete" file="#thesh#"> <!--- Delete file after done executing --->
+	<cfelse> <!--- For windows use the java io file operations to calculate size --->	
+	 	<cfset hostsize = gobj.convertbytes(gobj.getsize ("#assetdir#/#arguments.hostid#"))>
+	</cfif>
+	<cfreturn hostsize>
+</cffunction>
+
 </cfcomponent>

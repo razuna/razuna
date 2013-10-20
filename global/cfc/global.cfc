@@ -146,6 +146,45 @@
 		--->
 	</cffunction>
 
+	<!--- Get size of a folder or file in bytes --->
+	<cffunction name="getsize" returntype="numeric" hint="returns size of a directory or file using java io functions in bytes">
+		<cfargument name="file" type="any" required="true">
+		<cfset var size = 0>
+		<cfset var oFile = arguments.file>
+		<cfset var fileList = "">
+		<cfset var i = 0>
+		<cfif isSimpleValue(oFile)>
+			<cfset oFile = CreateObject("java", "java.io.File").init(arguments.file)>
+		</cfif>
+		<cfif oFile.isDirectory()>
+			<cfset fileList = oFile.listFiles()>
+			<cfif isarray(filelist)>
+				<cfloop from="1" to="#ArrayLen(fileList)#" index="thisfile">
+					<cfset size = size + getSize(fileList[thisfile])>
+				</cfloop>
+			</cfif>
+		<cfelse>
+			<cfset  size = size + oFile.length()>
+		</cfif>
+		<cfreturn size>
+	</cffunction>
+	<!--- Convert  bytes to human readable format. Mimics 'du -sh' command on non windows platforms  --->
+	<cffunction name="convertbytes" returntype="String" hint="converts bytes into appropriate kb, mb, gb or tb size.">
+		<cfargument name="bytes" required="true" type="numeric">
+		<cfif arguments.bytes gte 1099511627776>
+			<cfset size = round(arguments.bytes/1099511627776) & "T">
+		<cfelseif arguments.bytes gte 1073741824>
+			<cfset size = round(arguments.bytes/1073741824) & "G">
+		<cfelseif arguments.bytes gte 1048576>
+			<cfset size = round(arguments.bytes/1048576)  & "M">	
+		<cfelseif arguments.bytes gte 1024>
+			<cfset size = round(arguments.bytes/1024) & "K">
+		<cfelse>
+			<cfset size = arguments.bytes & "B">				
+		</cfif>
+		<cfreturn size>
+	</cffunction>
+
 <!--- CONVERT ILLEGAL CHARS ---------------------------------------------------------------------->
 	<cffunction hint="CONVERT ILLEGAL CHARS" name="convertname" output="false">
 		<cfargument name="thename" required="yes" type="string">
@@ -1445,5 +1484,4 @@ Comment:<br>
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction> 
-
 </cfcomponent>

@@ -66,4 +66,48 @@
 		<cfreturn thexml>
 	</cffunction>
 	
+	<cffunction name="gethostsize" access="remote" output="false" returntype="struct" returnformat="JSON" hint="return size of host(s)">
+		<cfargument name="api_key" required="true" type="string">
+		<cfargument name="hostid" required="true" type="numeric">
+		<cfargument name="hostsaccess" required="false" type="boolean" hint="grant access to all hosts requested or not">
+		<cfparam name="hostsaccessgranted" required="false" default="false" type="boolean" hint="access to all hosts granted or not">
+		<cfset var thestruct = structnew()>
+		<cfobject component="global.cfc.hosts" name="hobj"> <!--- Instantiate hosts object for access to its functions --->
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset pathoneup = ExpandPath("../")>
+		<!--- If user has requested access to all hosts then validate that he has the proper authorization key defined in keys.cfm	for it --->
+		<cfif isdefined("arguments.hostsaccess") and arguments.hostsaccess and fileExists("#pathoneup#/config/keys.cfm")>
+			<cfset var iniFile = "#pathoneup#/config/keys.cfm">
+	 		<cfset var iniValue = getProfileString(iniFile, "default", "hostsaccesskey")>
+	 		<cfif hash(iniValue,"MD5") EQ "D0B385E81BEED19D085DCF39792B381C">
+	 			<cfset hostsaccessgranted = true>
+	 		</cfif>
+ 		</cfif>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Get list of hosts --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="gethosts" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
+				SELECT host_id
+				FROM hosts
+				<cfif !hostsaccessgranted>
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.hostid#">
+				</cfif>
+			</cfquery>
+			<cftry>
+			<cfloop query="gethosts">
+				<cfset thestruct["#gethosts.host_id#"] = hobj.gethostsize(gethosts.host_id)> 
+			</cfloop>
+			<cfcatch type="any">
+				<cfset thestruct.responsecode = 1>
+				<cfset thestruct.message = "Error occurred: #cfcatch.message#, #cfcatch.detail#">
+			</cfcatch>
+			</cftry>
+		<!--- No session found --->
+		<cfelse>
+			<cfset thestruct = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thestruct>
+	</cffunction>
 </cfcomponent>
