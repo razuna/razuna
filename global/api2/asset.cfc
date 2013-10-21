@@ -958,14 +958,10 @@
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assettype" type="string" required="true">
 		<cfargument name="convertdata" type="string" required="true" hint="JSON with fields to for renditions">
+		<cfargument name="colorspace" type="string" required="false">
 		<cfparam name="arguments.link_kind" default="">
 		<cfset var convertToList = "">
 		<cfset arguments.thedpi = "">
-		<!--- Put values into struct to be compatible with global cfcs --->
-		<cfset orgstruct = structnew()>
-		<cfset orgstruct.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-		<cfset orgstruct.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-		<cfset orgstruct.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 		<!--- Check api key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -977,9 +973,9 @@
 			<!--- Get assetpath --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 				SELECT set2_path_to_assets
-				FROM #orgstruct.hostdbprefix#settings_2
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
 				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgstruct.hostid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid['#arguments.api_key#']#">
 			</cfquery>
 			<!--- Set assetpath --->
 			<cfset arguments.assetpath = trim(qry.set2_path_to_assets)>
