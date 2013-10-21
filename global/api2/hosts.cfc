@@ -68,7 +68,7 @@
 	
 	<cffunction name="gethostsize" access="remote" output="false" returntype="struct" returnformat="JSON" hint="return size of host(s)">
 		<cfargument name="api_key" required="true" type="string">
-		<cfargument name="hostid" required="true" type="numeric">
+		<cfargument name="host_id" required="true" type="numeric">
 		<cfargument name="hostsaccess" required="false" type="boolean" hint="grant access to all hosts requested or not">
 		<cfparam name="hostsaccessgranted" required="false" default="false" type="boolean" hint="access to all hosts granted or not">
 		<cfset var thestruct = structnew()>
@@ -91,7 +91,7 @@
 				SELECT host_id
 				FROM hosts
 				<cfif !hostsaccessgranted>
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.hostid#">
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.host_id#">
 				</cfif>
 			</cfquery>
 			<cftry>
