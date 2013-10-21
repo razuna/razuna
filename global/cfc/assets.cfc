@@ -2466,27 +2466,24 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesourceraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 		</cfif>
 		<!--- GET RAW METADATA --->
-		<cfthread action="run" intstruct="#arguments.thestruct#" priority="low">
-			<cfif attributes.intstruct.isWindows>
-				<!--- Execute Script --->
-				<cfexecute name="#attributes.intstruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #attributes.intstruct.thesource#" timeout="60" variable="img_meta" />
-			<cfelse>
-				<!--- Write Script --->
-				<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #attributes.intstruct.thesource#" mode="777">
-				<!--- Execute Script --->
-				<cfexecute name="#attributes.intstruct.thesh#" timeout="60" variable="img_meta" />
-				<!--- Delete scripts --->
-				<cffile action="delete" file="#attributes.intstruct.thesh#">
-			</cfif>
+		<!--- <cfthread action="run" intstruct="#arguments.thestruct#" priority="low"> --->
+
+			<!--- Write Script --->
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+			<!--- Execute Script --->
+			<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="img_meta" />
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#arguments.thestruct.thesh#">
+			
 			<!--- DB update --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
 			SET
-			img_filename_org = <cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
+			img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
 			img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
-			WHERE img_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
 			</cfquery>
-		</cfthread>
+		<!--- </cfthread> --->
 		<!--- check if image is an anmiated GIF --->
 		<cfset var isAnimGIF = isAnimatedGIF("#arguments.thestruct.thesource#", arguments.thestruct.thetools.imagemagick)>
 		<!--- animated GIFs can only be converted to GIF --->
