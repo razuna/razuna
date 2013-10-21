@@ -96,6 +96,7 @@
 			</cfquery>
 			<cftry>
 			<cfloop query="gethosts">
+				<!--- Get host size  --->
 				<cfset thestruct["#gethosts.host_id#"] = hobj.gethostsize(gethosts.host_id)> 
 			</cfloop>
 			<cfcatch type="any">
