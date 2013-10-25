@@ -123,7 +123,7 @@
 										<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											<cfif m CONTAINS "_filename">
-												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											<cfelseif m CONTAINS "_time">
