@@ -23,7 +23,7 @@
 *
 --->
 <cfcontent reset="true">
-<!DOCTYPE html  >
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <cfoutput>
 <head>

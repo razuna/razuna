@@ -24,7 +24,7 @@
 *
 --->
 <cfcontent reset="true">
-<!DOCTYPE html  >
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <cfparam name="attributes.file_id" default="0">
 <cfparam name="attributes.preview" default="false">

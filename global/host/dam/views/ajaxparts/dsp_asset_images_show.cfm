@@ -43,7 +43,7 @@
 	<!--- Serve directly for PSD, AI and EPS --->
 	<cfswitch expression="#theext#">
 		<cfcase value="jpg,gif,png">
-			<!DOCTYPE html  >
+			<!DOCTYPE html>
 			<html><head><title></title></head>
 			<body>
 				<div style="padding-top:20px;">
