@@ -864,7 +864,7 @@
 		SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize
 		FROM #arguments.prefix#images
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0>
+		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
 			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		<cfelse>
 			AND img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
@@ -878,7 +878,7 @@
 		SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize
 		FROM #arguments.prefix#videos
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0>
+		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
 			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		<cfelse>
 			AND vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
@@ -892,7 +892,7 @@
 		SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize
 		FROM #arguments.prefix#audios
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0>
+		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
 			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		<cfelse>
 			AND aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
@@ -906,7 +906,7 @@
 		SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
 		FROM #arguments.prefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0>
+		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
 			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		<cfelse>
 			AND file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
