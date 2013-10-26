@@ -1736,7 +1736,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var getlast = listlast(arguments.thestruct.qryfile.path,"/\")>
 			<cfset arguments.thestruct.thepdfimage = replacenocase(getlast,".pdf",".jpg","all")>
 		<!--- For importpath --->
-		<cfelseif arguments.thestruct.importpath>
+		<cfelseif arguments.thestruct.importpath NEQ "" AND arguments.thestruct.importpath>
 			<!--- Create var with temp directory to hold the thumbnail and images --->
 			<cfset arguments.thestruct.thetempdirectory = "#arguments.thestruct.thepath#/incoming/#createuuid('')#">
 			<cfset arguments.thestruct.theorgfileflat = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#[0]">

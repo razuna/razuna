@@ -219,7 +219,7 @@
 					</cfif>.#m#
 				</cfloop>
 			</cfif>
-			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = #session.hostdbprefix#files.file_id
+			FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
 				AND
@@ -241,7 +241,7 @@
 				</cfif>
 			</cfif>
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<!--- MySQL --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				ORDER BY #sortby#
