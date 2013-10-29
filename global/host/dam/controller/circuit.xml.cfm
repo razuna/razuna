@@ -9093,6 +9093,8 @@
 		<do action="search_include" />
 		<!-- Call search API -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_api(attributes)" returnvariable="qry_files" />
+		<!-- Set results into different variable name -->
+		<set name="qry_files_count" value="#qry_files#" />
 		<!-- Put id's into lists -->
 		<set name="attributes.listdocid" value="#session.listdocid#" />
 		<set name="attributes.listimgid" value="#session.listimgid#" />
