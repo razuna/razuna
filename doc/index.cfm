@@ -52,12 +52,12 @@
 				<cfoutput>
 					<!--- Display name --->
 					<h1>#meta.fullname#</h1>
+					<p>Extends: #meta.extends.fullname#</p>
+					<h2>Functions</h2>
 					<!--- Print out function list --->
 					<cfloop array="#meta.functions#" index="a">
 						<a href="###a.name#">#a.name#</a> | 
 					</cfloop>
-					<p>Extends: #meta.extends.fullname#</p>
-					<h2>Functions</h2>
 					<cfloop array="#meta.functions#" index="a">
 						<h3><a name="#a.name#">#a.name#</a></h3>
 						<table>
