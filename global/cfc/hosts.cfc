@@ -558,14 +558,23 @@
 			DELETE FROM hosts
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
 			</cfquery>
-			<!--- Now remove all users but only if in one host --->
-			<cfquery datasource="#arguments.thestruct.dsn#">
-			DELETE u.* FROM users u
-			LEFT JOIN ct_users_hosts ct ON ct.ct_u_h_host_id = #arguments.thestruct.id#
-			WHERE EXISTS (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id AND ct_g_u_grp_id != '1')
-			AND 1 IN (SELECT count(cts.ct_u_h_host_id) FROM ct_users_hosts cts WHERE cts.ct_u_h_user_id = u.user_id AND cts.ct_u_h_host_id = #arguments.thestruct.id#)
+			<!--- Select users to remove but only if in one host and not SystemAdmin --->
+			<cfquery datasource="#arguments.thestruct.dsn#" name="qry_user">
+			SELECT u.* 
+			FROM users u, ct_users_hosts ct
+			WHERE ct.ct_u_h_host_id = #arguments.thestruct.id#
+			AND u.user_id = ct.ct_u_h_user_id
+			AND 1 = (SELECT count(cts.ct_u_h_host_id) FROM ct_users_hosts cts WHERE cts.ct_u_h_user_id = u.user_id)
+			AND u.user_id NOT IN (SELECT ct_g_u_user_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id AND ct_g_u_grp_id = '1')
 			GROUP BY u.user_id
 			</cfquery>
+			<!--- Remove user --->
+			<cfloop query="qry_user">
+				<cfquery datasource="#arguments.thestruct.dsn#">
+				DELETE FROM users
+				WHERE user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#user_id#">
+				</cfquery>
+			</cfloop>
 			<!--- Remove any user linked to this host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM ct_users_hosts
