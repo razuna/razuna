@@ -1340,6 +1340,12 @@
 	<cfset application.razuna.api.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.api.isp = qry.conf_isp>
 	<cfset application.razuna.api.akatoken = qry.conf_aka_token>
+	<cfset application.razuna.api.thehttp = "http://">
+	<!--- Set razuna scopes also --->
+	<cfset application.razuna.storage = application.razuna.api.storage>
+	<cfset application.razuna.datasource = application.razuna.api.dsn>
+	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+	<cfset application.razuna.setid = application.razuna.api.setid>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
