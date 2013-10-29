@@ -14,9 +14,11 @@
 			#left {
 				float: left;
 				padding-right: 40px;
+				white-space: nowrap;
 			}
 			#right {
 				float: left;
+				width: 700px;
 			}
 		</style>
 	</head>
@@ -47,13 +49,17 @@
 				</cfif>
 				<!--- Read metadata --->
 				<cfset meta = GetComponentmetadata("#p#.#url.cfc#")>
-				<!--- Display name --->
 				<cfoutput>
+					<!--- Display name --->
 					<h1>#meta.fullname#</h1>
+					<!--- Print out function list --->
+					<cfloop array="#meta.functions#" index="a">
+						<a href="###a.name#">#a.name#</a> | 
+					</cfloop>
 					<p>Extends: #meta.extends.fullname#</p>
 					<h2>Functions</h2>
 					<cfloop array="#meta.functions#" index="a">
-						<h3>#a.name#</h3>
+						<h3><a name="#a.name#">#a.name#</a></h3>
 						<table>
 							<cfif structKeyExists(a,"hint")>
 								<tr>
