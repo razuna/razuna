@@ -692,7 +692,7 @@ Comment:<br>
 		<cfreturn />
 	</cffunction>
 
-<!--- Query additional versions link ---------------------------------------------------------------------->
+	<!--- Query additional versions link ---------------------------------------------------------------------->
 	<cffunction name="get_versions_link" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Get the cachetoken for here --->
@@ -701,7 +701,7 @@ Comment:<br>
 		<cfset var qry = structnew()>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link */ av_id,asset_id_r, av_link_title, av_link_url
+		SELECT /* #variables.cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -709,7 +709,7 @@ Comment:<br>
 		</cfquery>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id,asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -718,7 +718,7 @@ Comment:<br>
 		<cfreturn qry />
 	</cffunction>
 
-<!--- Save new additional versions link ---------------------------------------------------------------------->
+	<!--- Save new additional versions link ---------------------------------------------------------------------->
 	<cffunction name="save_add_versions_link" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Param --->
@@ -731,12 +731,13 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.download" default="1">
 		<cfparam name="arguments.thestruct.order" default="1">
 		<cfparam name="arguments.thestruct.selected" default="0">
+		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
 		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight, hashtag)
 		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid("")#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_title#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_url#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
@@ -754,9 +755,9 @@ Comment:<br>
 		<!--- Set Sharing Options --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#share_options
-					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, asset_selected, rec_uuid)
+		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, asset_selected, rec_uuid)
 		VALUES(
-		       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid("")#">,
+		       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 		       <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
 		       <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
