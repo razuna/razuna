@@ -51,10 +51,15 @@
 		<strong>Time:</strong> #dateFormat(now(), "short")# #timeFormat(now(), "short")#<br />
 
 		<cfdump var="#arguments.cfcatch#" label="Error">
-		<cfdump var="#session#" label="Session">
-		<cfdump var="#form#" label="Form">
-		<cfdump var="#url#" label="URL">
-
+		<cfif IsStruct("session")>
+			<cfdump var="#session#" label="Session">	
+		</cfif>
+		<cfif isStruct("form")>
+			<cfdump var="#form#" label="Form">
+		</cfif>
+		<cfif isStruct("url")>
+			<cfdump var="#url#" label="URL">
+		</cfif>
 		</cfoutput>
 		</cfsavecontent>
 		<!--- Increment ID --->
