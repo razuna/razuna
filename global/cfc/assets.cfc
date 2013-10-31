@@ -2440,13 +2440,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesourceraw = arguments.thestruct.qryfile.path>
 		<!--- If coming from a import path --->
 		<cfelseif arguments.thestruct.importpath NEQ "">
-			<cfif arguments.thestruct.isWindows>
-				<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#""">
-			<cfelse>
-				<cfset arguments.thestruct.thesource = replacenocase("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#"," ","\ ","all")>
-				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource,"&","\&","all")>
-				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource,"'","\'","all")>
-			</cfif>
+			<!--- Double quote path so that exiftool will escape any special characters in folder names --->
+			<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#""">
 			<!--- Create var with temp directory --->
 			<cfset arguments.thestruct.thetempdirectory = "#arguments.thestruct.thepath#/incoming/#createuuid('')#">
 			<!--- Create temp folder --->
