@@ -107,7 +107,7 @@
 		<!--- Map different types according to database --->
 		<cfif application.razuna.thedatabase EQ "mysql">
 			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
-			<cfset var theclob = "text">
+			<cfset var theclob = "longtext">
 		<cfelseif application.razuna.thedatabase EQ "mssql">
 			<cfset var theclob = "NVARCHAR(max)">
 			<cfset var thetimestamp = "datetime">
@@ -934,6 +934,46 @@
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column img_custom_id <cfif application.razuna.thedatabase EQ "mssql">nvarchar<cfelse>#thevarchar#</cfif>(100)<cfelse>change img_custom_id img_custom_id #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column img_meta #theclob#<cfelse>change img_meta img_meta #theclob#</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_videos <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column vid_meta #theclob#<cfelse>change vid_meta vid_meta #theclob#</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_audios <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column aud_meta #theclob#<cfelse>change aud_meta aud_meta #theclob#</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_files <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column file_meta #theclob#<cfelse>change file_meta file_meta #theclob#</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column meta_data #theclob#<cfelse>change meta_data meta_data #theclob#</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
