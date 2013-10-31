@@ -338,7 +338,7 @@
 		<!--- Set the correct drivername --->
 		<cfif session.firsttime.database_type EQ "h2">
 			<cfset thedrivername = "org.h2.Driver">
-			<cfset theconnectstring = "AUTO_RECONNECT=TRUE;CACHE_TYPE=SOFT_LRU;AUTO_SERVER=TRUE">
+			<cfset theconnectstring = "AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE">
 		<cfelseif session.firsttime.database_type EQ "mysql">
 			<cfset thedrivername = "com.mysql.jdbc.Driver">
 			<cfset theconnectstring = "zeroDateTimeBehavior=convertToNull">
