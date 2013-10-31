@@ -39,7 +39,7 @@
 		<!--- Filename --->
 		<tr>
 			<td width="130" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-			<td width="320" nowrap="true"><input type="text" style="width:300px;" name="file_name" value="#attributes.filename#"></td>
+			<td width="320" nowrap="true"><input type="text" style="width:300px;" name="fname" value="#attributes.filename#"></td>
 		</tr>
 		<!--- Description & Keywords --->
 		<cfloop query="qry_langs">
