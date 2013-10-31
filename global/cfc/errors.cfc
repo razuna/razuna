@@ -32,10 +32,7 @@
 		<cfreturn this />
 	</cffunction>
 
-	<!--- FUNCTION:LOGERRORS 
-	Accepts data from cfcatch and logs it in the database along with other debug information
-	Meant to be called inside a cfcatch block --->
-	<cffunction name="logerrors" access="public" returntype="void">
+	<cffunction name="logerrors" access="public" returntype="void" hint="Accepts data from cfcatch and logs it in the database along with other debug information. Meant to be called inside a cfcatch block ">
 		<cfargument name="cfcatch" required="true" type="any" hint="cfcatch structure with error details">
 		<cfargument name="showmsg" required="false" type="boolean" default="true" hint="display message to user or not">
 		<cfparam name="arguments.cfcatch.custom_message" default="N/A">
@@ -51,10 +48,15 @@
 		<strong>Time:</strong> #dateFormat(now(), "short")# #timeFormat(now(), "short")#<br />
 
 		<cfdump var="#arguments.cfcatch#" label="Error">
-		<cfdump var="#session#" label="Session">
-		<cfdump var="#form#" label="Form">
-		<cfdump var="#url#" label="URL">
-
+		<cfif IsStruct("session")>
+			<cfdump var="#session#" label="Session">	
+		</cfif>
+		<cfif isStruct("form")>
+			<cfdump var="#form#" label="Form">
+		</cfif>
+		<cfif isStruct("url")>
+			<cfdump var="#url#" label="URL">
+		</cfif>
 		</cfoutput>
 		</cfsavecontent>
 		<!--- Increment ID --->
@@ -92,7 +94,7 @@
 		<!--- Flush Cache --->
 		<cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" />
 		<!--- eMail --->
-		<cfif cgi.http_host CONTAINS "razuna.com" OR cgi.http_host CONTAINS "razunabd.local">
+		<cfif cgi.http_host CONTAINS "razuna.com">
 			<cfmail to="bugs@razuna.com" from="server@razuna.com" subject="Razuna Error: #cgi.server_name#" type="html">
 			#errortext#
 			</cfmail>
