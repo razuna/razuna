@@ -1399,5 +1399,54 @@
 		<!--- Return --->
 		<cfreturn thexml />	
 	</cffunction>
-    
+
+	<cffunction name="getpdfimages" returntype="query" returnformat="JSON" access="remote" hint="Returns data for PDF images that have been extracted from PDF pages">
+		<cfargument name="api_key" required="true" type="string" hint="API Key of user">
+		<cfargument name="assetid" required="true" type="string" hint="Unique ID of asset">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfif thesession>
+			<!--- Instantiate local vars --->
+			<cfset var thestruct = structnew()>
+			<cfset var theqry= querynew("responsecode,message")>
+			<!--- Initialize the query object with a default responsecode. Query object will be overwritten if no errors are encountered. --->
+			<cfset queryaddrow(theqry,1)>
+			<cfset querysetcell(theqry,"responsecode","1")>
+
+			<cfobject component="global.cfc.files" name="fobj"> <!--- Instantiate a files object --->
+			<cfobject component="global.cfc.settings" name="sobj"> <!--- Instantiate a setting object --->
+			<cfset thestruct.assetpath = sobj.assetpath()><!--- Get path of asset --->
+			<cfset thestruct.file_id = arguments.assetid><!---  Put assetid in struct to pass to main function pdfjpgs --->
+			<!--- Make query to get the Local URL for asset --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="getfileinfo" cachedwithin="1" region="razcache">
+				SELECT file_extension, path_to_asset	
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
+				WHERE f.file_id =<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+			</cfquery>
+			
+			<cfif getfileinfo.recordcount eq 0><!--- Check if file could not be found --->	
+				<cfset querysetcell(theqry,"message","Asset with the given assetid could not be found. Please check assetid and try again.")>
+				<cfreturn theqry><!--- Check if file is not of type pdf --->
+			<cfelseif getfileinfo.file_extension neq 'pdf'>	
+				<cfset querysetcell(theqry,"message","Asset has to be of type PDF")>
+				<cfreturn theqry>
+			</cfif>
+			<cftry>
+				<cfset var pdfqry = fobj.pdfjpgs(thestruct)> <!--- Call function to retrieve jpg information for the pdf --->
+				<cfcatch type="any">
+					<cfset querysetcell(theqry,"message","Error Occurred: #cfcatch.message#, Detail: #cfcatch.detail#")>
+					<cfreturn theqry>
+				</cfcatch>
+			</cftry>
+			<!--- Form the URL path to asset  --->
+			<cfset localurl = application.razuna.api.thehttp & cgi.HTTP_HOST & application.razuna.api.dynpath & "/assets/" & application.razuna.api.hostid['#arguments.api_key#'] & "/" & getfileinfo.path_to_asset & "/razuna_pdf_images/">
+			<!--- Finally query the pdf jpg information retrieved and extract the information to be returned from it --->
+			<cfquery name="theqry" dbtype="query">
+				SELECT '#arguments.assetid#' assetid, name, directory local_directory, size, '#localurl#' + name as local_url_org  FROM pdfqry.qry_pdfjpgs
+			</cfquery>
+		<cfelse><!---  if session not validated --->
+			<cfset theqry = timeout()>
+		</cfif>
+		<cfreturn theqry>
+	</cffunction>	    
 </cfcomponent>
