@@ -690,6 +690,7 @@
 							<select name="videos_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata,"vid_id AS cs_vid_id")> selected="selected"</cfif>>ID</option>
+								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>Filename</option>
 								<option value="vid_description AS cs_vid_description"<cfif listFind(qry_customization.videos_metadata,"vid_description AS cs_vid_description")> selected="selected"</cfif>>Description</option>
 								<option value="vid_keywords AS cs_vid_keywords"<cfif listFind(qry_customization.videos_metadata,"vid_keywords AS cs_vid_keywords")> selected="selected"</cfif>>Keywords</option>
 								<option value="vid_create_time AS cs_vid_create_time"<cfif listFind(qry_customization.videos_metadata,"vid_create_time AS cs_vid_create_time")> selected="selected"</cfif>>Create Date</option>
@@ -726,6 +727,7 @@
 							<select name="audios_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata,"aud_id AS cs_aud_id")> selected="selected"</cfif>>ID</option>
+								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>Filename</option>
 								<option value="aud_description AS cs_aud_description"<cfif listFind(qry_customization.audios_metadata,"aud_description AS cs_aud_description")> selected="selected"</cfif>>Description</option>
 								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>Keywords</option>
 								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>Create Date</option>
