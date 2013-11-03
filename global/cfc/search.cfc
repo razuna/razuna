@@ -781,7 +781,8 @@
 				</cfif><!--- Audio search end here --->
 				<!--- MySql OR H2 --->
 				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-					ORDER BY #sortby#
+					<!--- Order by does not work with H2 as it needs the proper column name --->
+					<cfif application.razuna.thedatabase NEQ "h2">ORDER BY #sortby#</cfif>
 					) as t 
 					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
