@@ -37,6 +37,8 @@
 	<!--- Params --->
 	<cfparam default="0" name="arguments.thestruct.folder_id">
 	<cfparam default="false" name="arguments.thestruct.released">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("general")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qrylist" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released,
