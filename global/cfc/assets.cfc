@@ -3038,6 +3038,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
 		<!--- Put together the filenames --->
 		<cfset arguments.thestruct.thisvid.theorgimage = replacenocase(arguments.thestruct.qryfile.filename,".#arguments.thestruct.qryfile.extension#",".jpg","one")>
+		<!--- If filename does not contain an extension e.g. when the user specifies a filename in lieu of the actual filename then append with .jpg so ffmepg does not throw an error while creating thumbs --->
+		<cfif arguments.thestruct.thisvid.theorgimage does not contain ".jpg">
+			<cfset arguments.thestruct.thisvid.theorgimage = arguments.thestruct.thisvid.theorgimage & ".jpg">
+		</cfif>
 		<!--- All below only if NOT from a link --->
 		<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- if importpath --->
