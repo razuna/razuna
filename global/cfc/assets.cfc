@@ -2479,8 +2479,9 @@ This is the main function called directly by a single upload else from addassets
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 		<!--- </cfthread> --->
-		<!--- check if image is an anmiated GIF --->
-		<cfset var isAnimGIF = isAnimatedGIF("#arguments.thestruct.thesource#", arguments.thestruct.thetools.imagemagick)>
+		<!--- Check if image is an animated GIF. Remove double quotes from path if present --->
+		<cfset var isAnimGIF = isAnimatedGIF("#replace(arguments.thestruct.thesource,'"','','ALL')#", arguments.thestruct.thetools.imagemagick)>
+
 		<!--- animated GIFs can only be converted to GIF --->
 		<cfif isAnimGIF>
 			<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
@@ -2815,8 +2816,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfexecute name="#thesh#" timeout="60" variable="theidentifyresult" />
 	<!--- Delete scripts --->
 	<cffile action="delete" file="#thesh#">
-	<!--- check if first char after file-path is "[" --->
-	<cfif Mid(theidentifyresult, Len(arguments.imagepath)+1, 1) eq "[">
+	<!--- Check if result from imagemagick contains [0]. For animated gifs output for all individual images that compromise the gif is returned as test.gif[0], test.gif[1] etc. So checking for existing of [0] means gif is animated --->
+	<cfif theidentifyresult contains "[0]">
 		<cfreturn 1>
 	</cfif>
 </cfif>
