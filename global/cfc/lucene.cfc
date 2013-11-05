@@ -46,24 +46,27 @@
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while deleting collection in function lucene.setup">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfset consoleoutput(true)>
+				<cfset console("Error while deleting collection in function lucene.setup")>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
 			<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while deleting path on disk in function lucene.setup">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfset consoleoutput(true)>
+				<cfset console("Error while deleting path on disk in function lucene.setup")>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 		<!--- Create collection --->
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while creating collection in function lucene.setup">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfset consoleoutput(true)>
+				<cfset console("Error while creating collection in function lucene.setup")>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -558,8 +561,9 @@
 			AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
 			</cfquery>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in function lucene.index_update_thread">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfset consoleoutput(true)>
+				<cfset console("Error in function lucene.index_update_thread")>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 		<!--- Index only doc files --->
@@ -588,8 +592,9 @@
 					<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
 				<cfcatch type="any">
-					<cfset cfcatch.custom_message = "Error while indexing doc files in function lucene.index_update_thread">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfset consoleoutput(true)>
+					<cfset console("Error while indexing doc files in function lucene.index_update_thread")>
+					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
 		</cfif>
