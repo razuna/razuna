@@ -131,25 +131,21 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 		</cfquery>
 		<cfset arguments.thestruct.assetpath = trim(qry_path.set2_path_to_assets)>
-		<!--- Put qry into arguments --->
-		<!--- <cfset arguments.qry = qry> --->
 		<!--- Loop over the recordset --->
-		<!--- <cfthread action="run" intstruct="#arguments#" priority="low"> --->
-			<cfloop query="qry">
-				<cfinvoke method="index_update_thread">
-					<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
-					<cfinvokeargument name="assetid" value="#theid#" />
-					<cfinvokeargument name="category" value="#cat#" />
-					<cfinvokeargument name="dsn" value="#arguments.dsn#" />
-					<cfinvokeargument name="online" value="#arguments.online#" />
-					<cfinvokeargument name="notfile" value="#arguments.notfile#" />
-					<cfinvokeargument name="prefix" value="#arguments.prefix#" />
-					<cfinvokeargument name="hostid" value="#arguments.hostid#" />
-					<cfinvokeargument name="storage" value="#arguments.storage#" />
-					<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
-				</cfinvoke>
-			</cfloop>
-		<!--- </cfthread> --->
+		<cfloop query="qry">
+			<cfinvoke method="index_update_thread">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
+				<cfinvokeargument name="assetid" value="#theid#" />
+				<cfinvokeargument name="category" value="#cat#" />
+				<cfinvokeargument name="dsn" value="#arguments.dsn#" />
+				<cfinvokeargument name="online" value="#arguments.online#" />
+				<cfinvokeargument name="notfile" value="#arguments.notfile#" />
+				<cfinvokeargument name="prefix" value="#arguments.prefix#" />
+				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+				<cfinvokeargument name="storage" value="#arguments.storage#" />
+				<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
+			</cfinvoke>
+		</cfloop>
 	</cffunction>
 
 	<!--- INDEX: Update --->
