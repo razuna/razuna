@@ -1953,38 +1953,54 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Put file_meta into struct for api --->
 		<cfset arguments.thestruct.file_meta = file_meta>
 		<!--- append to the DB --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#files
-			SET
-			folder_id_r = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-			file_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-			file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-			file_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-			file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-			file_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-			file_type = <cfqueryparam value="#arguments.thestruct.thefiletype#" cfsqltype="cf_sql_varchar">, 
-			file_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
-			file_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">, 				
-			file_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
-			file_name_org = 
-				<cfif arguments.thestruct.link_kind EQ "lan">
-					<cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">,
-				<cfelse>
-					<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-				</cfif>
-			file_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_varchar">, 
-			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
-			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">, 
-			host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">, 
-			file_meta = <cfqueryparam value="#file_meta#" cfsqltype="cf_sql_varchar">,
-			path_to_asset =  <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
-			hashtag =  <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
-			<cfif application.razuna.storage NEQ "local">
-				,
-				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#files
+		SET
+		folder_id_r = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		file_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+		file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+		file_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+		file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+		file_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
+		file_type = <cfqueryparam value="#arguments.thestruct.thefiletype#" cfsqltype="cf_sql_varchar">, 
+		file_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
+		file_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">, 				
+		file_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
+		file_name_org = 
+			<cfif arguments.thestruct.link_kind EQ "lan">
+				<cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">,
+			<cfelse>
+				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 			</cfif>
-			WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
+		file_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_varchar">, 
+		link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
+		link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">, 
+		host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">, 
+		file_meta = <cfqueryparam value="#file_meta#" cfsqltype="cf_sql_varchar">,
+		path_to_asset =  <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
+		hashtag =  <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
+		<cfif application.razuna.storage NEQ "local">
+			,
+			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">
+		</cfif>
+		WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Insert to share_options --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#share_options
+		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+		VALUES(
+		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="doc" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+		)
+		</cfquery>
 		<!--- Move the file to its own directory --->
 		<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Create folder with the asset id --->
