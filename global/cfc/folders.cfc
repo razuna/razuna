@@ -3184,10 +3184,12 @@
 				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
-				)
-			WHERE ROWNUM <= <cfqueryparam cfsqltype="cf_sql_numeric" value="#max#">
-			)
-		WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
+				<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
+						)
+					WHERE ROWNUM <= <cfqueryparam cfsqltype="cf_sql_numeric" value="#max#">
+					)
+				WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
+				</cfif>
 		</cfquery>
 	<!--- DB2 --->
 	<cfelseif variables.database EQ "db2">
@@ -3278,7 +3280,9 @@
 		)
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-			WHERE rownr between #min# AND #max#
+			<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
+				WHERE rownr between #min# AND #max#
+			</cfif>
 		</cfif>
 		</cfquery>
 	<!--- Other DB's --->
@@ -3289,8 +3293,10 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
 		<cfif application.razuna.thedatabase EQ "mssql">
-			SELECT * FROM (
-			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+			<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
+				SELECT * FROM (
+				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+			</cfif>
 		</cfif>
 		SELECT /* #variables.cachetoken#getallassets */ i.img_id as id, 
 		i.img_filename as filename, i.in_trash, i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
@@ -3466,15 +3472,20 @@
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- MSSQL --->
 		<cfif application.razuna.thedatabase EQ "mssql">
-			) sorted_inline_view
-			 ) resultSet
-			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
+			<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
+				) sorted_inline_view
+				 ) resultSet
+				  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
+			</cfif>
 		</cfif>
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<!--- MySQL / H2 --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				ORDER BY #sortby# LIMIT #mysqloffset#,#session.rowmaxpage#
+				ORDER BY #sortby#
+				<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
+					 LIMIT #mysqloffset#,#session.rowmaxpage#
+				</cfif>
 			</cfif>
 		</cfif>
 	</cfquery>

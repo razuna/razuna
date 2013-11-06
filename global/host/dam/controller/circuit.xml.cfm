@@ -8215,6 +8215,8 @@
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<set name="attributes.folder_id" value="#qry_widget.folder_id_r#" />
 		<set name="attributes.fid" value="#qry_widget.folder_id_r#" />
+		<!-- set widget style-->
+		<set name="attributes.widget_style" value="#qry_widget.widget_style#" />
 		<!-- Depending if there is a collection or not we call the content -->
 		<if condition="#session.iscol# EQ 'F'">
 			<true>
