@@ -82,6 +82,14 @@
 		<cfargument name="hostid" default="#session.hostid#" required="false">
 		<cfargument name="storage" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
+		<!--- Name of lock file --->
+		<cfset var lockfile = "lucene.lock">
+		<!--- Check for the lock file --->
+		<cfif fileExists("#GetTempDirectory()#/#lockfile#")>
+			<cfabort>
+		<cfelse>
+			<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		</cfif>
 		<!--- Check if collection exists --->
 		<cfinvoke method="exists" colname="#arguments.hostid#" />
 		<!--- Params --->
@@ -133,22 +141,36 @@
 		FROM #arguments.prefix#settings_2
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 		</cfquery>
-		<cfset arguments.thestruct.assetpath = trim(qry_path.set2_path_to_assets)>
+		<cfset arguments.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Loop over the recordset --->
 		<cfloop query="qry">
-			<cfinvoke method="index_update_thread">
-				<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
-				<cfinvokeargument name="assetid" value="#theid#" />
-				<cfinvokeargument name="category" value="#cat#" />
-				<cfinvokeargument name="dsn" value="#arguments.dsn#" />
-				<cfinvokeargument name="online" value="#arguments.online#" />
-				<cfinvokeargument name="notfile" value="#arguments.notfile#" />
-				<cfinvokeargument name="prefix" value="#arguments.prefix#" />
-				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
-				<cfinvokeargument name="storage" value="#arguments.storage#" />
-				<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
-			</cfinvoke>
+			<!--- Create tt for thread --->
+			<cfset tt = createUUID("")>
+			<!--- Put vars into struct --->
+			<cfset arguments.theid = theid>
+			<cfset arguments.cat = cat>
+			<cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low">
+				<cfinvoke method="index_update_thread">
+					<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
+					<cfinvokeargument name="assetid" value="#attributes.intstruct.theid#" />
+					<cfinvokeargument name="category" value="#attributes.intstruct.cat#" />
+					<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
+					<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
+					<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+					<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
+					<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
+					<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
+					<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+				</cfinvoke>
+			</cfthread>
+			<!--- Wait and join thread --->
+			<cfthread name="#tt#" action="join" />
 		</cfloop>
+		<!--- Remove lock file --->
+		<cftry>
+			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 	</cffunction>
 
 	<!--- INDEX: Update --->
