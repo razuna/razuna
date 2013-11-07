@@ -28,8 +28,10 @@
 <cfparam default="false" name="attributes.av">
 <!--- This is for additional versions --->
 <cfif attributes.av>
+	<!--- Grab theurl and get filename --->
+	<cfset theext = listlast(qry_binary.theurl, ".")>
 	<!--- Default file name when prompted to download --->
-	<cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#" />
+	<cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#.#theext#" />
 	<!--- Get file --->
 	<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
 	<!--- Serve the file --->
