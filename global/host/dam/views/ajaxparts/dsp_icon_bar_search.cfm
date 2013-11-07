@@ -99,8 +99,8 @@
 		<td align="right" width="1%" nowrap="true">
 			<cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25>
 				<select name="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerowmaxsearch('selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
-					<option value="javascript:return false;">Show how many...</option>
-					<option value="javascript:return false;">---</option>
+					<option value="0">Show how many...</option>
+					<option value="0">---</option>
 					<option value="25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
 					<option value="50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
 					<option value="75"<cfif session.rowmaxpage EQ 75> selected="selected"</cfif>>75</option>
@@ -170,19 +170,25 @@
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Get selected option
 		var thesortby = $('##' + theselect + ' option:selected').val();
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+		$('###attributes.thediv#').load('#myself#c.search_simple', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
 	}
 	// Change the rowmax
 	function changerowmaxsearch(theselect){
-		// Show loading bar
-		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
-		// Get selected option
-		var themax = $('##' + theselect + ' option:selected').val();
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
-				$("##bodyoverlay").remove();
-			});
+		// Selecting 'Show how many...' or '---'
+		if($('##' + theselect + ' option:selected').val()==0){
+			return false;
+		}
+		else{
+			// Show loading bar
+			$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+			// Get selected option
+			var themax = $('##' + theselect + ' option:selected').val();
+			$('###attributes.thediv#').load('#myself#c.search_simple', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+					$("##bodyoverlay").remove();
+				}); 
+		}
 	}
 	// Change the pagelist
 	function pagelist(theselect){
@@ -190,7 +196,7 @@
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Get selected option
 		var themax = $('##' + theselect + ' option:selected').val();
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+		$('###attributes.thediv#').load('#myself#c.search_simple', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
 	}
@@ -199,7 +205,7 @@
 		// Show loading bar
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Load
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', 
+		$('###attributes.thediv#').load('#myself#c.search_simple', 
 			{ offset: theoffset, 
 				fcall: true, 
 				share: "#attributes.share#",
