@@ -187,7 +187,7 @@
 			var themax = $('##' + theselect + ' option:selected').val();
 			$('###attributes.thediv#').load('#myself#c.search_simple', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 					$("##bodyoverlay").remove();
-				});
+				}); 
 		}
 	}
 	// Change the pagelist
