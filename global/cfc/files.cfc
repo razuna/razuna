@@ -1118,6 +1118,10 @@
 				<cffile action="copy" source="#attributes.intstruct.getbin.link_path_url#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.newname#" mode="775">
 			</cfthread>
 		</cfif>
+		<!--- Check that the zip name contains no spaces --->
+		<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+		<cfset zipname = replace(zipname,"\","-","all")>
+		<cfset zipname = replace(zipname, " ", "_", "All")>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
@@ -1125,11 +1129,26 @@
 			<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip">
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+			<!--- Delete if any folder exists in same name and create the new directory --->
+			<cfif directoryExists("#arguments.thestruct.thepath#/outgoing/#zipname#")>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#zipname#" recurse="true">
+			</cfif>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#zipname#">
+			<cffile action="move" destination="#arguments.thestruct.thepath#/outgoing/#zipname#" source="#arguments.thestruct.thepath#/outgoing/#newname#" >
+		<cfelse>
+			<cfif listLast(arguments.thestruct.newname,'.') NEQ "zip">
 		<!--- Zip the file --->	
 		<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip" source="#arguments.thestruct.thepath#/outgoing/#newname#" recurse="true" timeout="300" />
 		<!--- Remove the file --->
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newname#">
+			</cfif>
+		</cfif>
+		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+			<cfset newname="#newnamenoext#">
+		<cfelse>
 		<cfset newname="#newnamenoext#.zip">
+		</cfif>
 		<!--- Return --->
 		<cfreturn newname>
 	</cffunction>

@@ -140,12 +140,19 @@
 				</td>
 			</tr>
 		</cfif>
+		<!--- check zip file --->
+		<cfif listLast(attributes.filename,'.') NEQ "zip">
+		<tr>
+			<td>#myFusebox.getApplicationData().defaults.trans("create_zip")#</td>
+			<td><input name="createzip" type="radio" value="no" checked="true">#myFusebox.getApplicationData().defaults.trans("no")# <input name="createzip" type="radio" value="yes">#myFusebox.getApplicationData().defaults.trans("yes")#</td>
+		</tr>
+		</cfif>
 		<tr>
 			<td valign="top">#myFusebox.getApplicationData().defaults.trans("attachment")#</td>
 			<td>
 				<table border="0" cellpadding="0" cellspacing="0" class="gridno">
 					<tr>
-						<td colspan="2"><input type="text" size="50" name="zipname" id="zipname" value="#rereplace(attributes.filename,"[\\/.+]","","all")#">.zip</td>
+						<td colspan="2"><input type="text" size="50" name="zipname" id="zipname" value="#rereplace(attributes.filename,"[\\/.+]","","all")#"></td>
 					</tr>
 						<input type="hidden" name="sendaszip" value="T">
 				</table>
@@ -172,6 +179,19 @@
 	            	}
 	        	}
 	    	}
+			//Get createzip selection and check the file ext
+			<cfif structkeyexists(attributes,"filename") AND listLast(attributes.filename,'.') NEQ "zip">
+				for (var i = 0; i<document.sendftpform.elements.length; i++) {
+		        if ((document.sendftpform.elements[i].name.indexOf('createzip') > -1)) {
+		            if (document.sendftpform.elements[i].checked) {
+		                var createzip = document.sendftpform.elements[i].value;
+		            	}
+		        	}
+		    	}
+			<cfelse>
+			// Set defult value
+				var createzip = "";
+			</cfif>
 	    	// Get the checked values (file id's)
 			var artimg = '';
 			var artvid = '';
@@ -199,10 +219,10 @@
 					url: url,
 				   	data: items
 				});
-				$('##thewindowcontent2').load('<cfoutput>#myself#</cfoutput>c.ftp_gologin', { file_id: document.sendftpform.file_id.value, ftp_server: document.sendftpform.ftp_server.value, ftp_user: document.sendftpform.ftp_user.value, ftp_pass: document.sendftpform.ftp_pass.value, ftp_passive: passive, thetype: document.sendftpform.thetype.value, thepath: document.sendftpform.thepath.value, zipname: document.sendftpform.zipname.value, sendaszip: document.sendftpform.sendaszip.value } );
+				$('##thewindowcontent2').load('<cfoutput>#myself#</cfoutput>c.ftp_gologin', { file_id: document.sendftpform.file_id.value, ftp_server: document.sendftpform.ftp_server.value, ftp_user: document.sendftpform.ftp_user.value, ftp_pass: document.sendftpform.ftp_pass.value, ftp_passive: passive, thetype: document.sendftpform.thetype.value, thepath: document.sendftpform.thepath.value, zipname: document.sendftpform.zipname.value, sendaszip: document.sendftpform.sendaszip.value,createzip: createzip } );
 			<cfelse>
 				// Load the FTP window
-				$('##thewindowcontent1').load('<cfoutput>#myself#</cfoutput>c.ftp_gologin', { sendaszip:"T", thetype:"", frombasket:"T", file_id: document.sendftpform.file_id.value, ftp_server: document.sendftpform.ftp_server.value, ftp_user: document.sendftpform.ftp_user.value, ftp_pass: document.sendftpform.ftp_pass.value, ftp_passive: passive, thepath: document.sendftpform.thepath.value });
+				$('##thewindowcontent1').load('<cfoutput>#myself#</cfoutput>c.ftp_gologin', { sendaszip:"T", thetype:"", frombasket:"T", file_id: document.sendftpform.file_id.value, ftp_server: document.sendftpform.ftp_server.value, ftp_user: document.sendftpform.ftp_user.value, ftp_pass: document.sendftpform.ftp_pass.value, ftp_passive: passive, thepath: document.sendftpform.thepath.value,createzip: createzip });
 			</cfif>
 		}
 		return false;
