@@ -1105,6 +1105,8 @@
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.getbin.file_name_org#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
+				<!--- Rename the file --->
+				<cffile action="rename" source="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.getbin.file_name_org#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.newname#" >
 			</cfthread>
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai" AND getbin.link_kind EQ "">
@@ -1138,10 +1140,10 @@
 			<cffile action="move" destination="#arguments.thestruct.thepath#/outgoing/#zipname#" source="#arguments.thestruct.thepath#/outgoing/#newname#" >
 		<cfelse>
 			<cfif listLast(arguments.thestruct.newname,'.') NEQ "zip">
-		<!--- Zip the file --->	
-		<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip" source="#arguments.thestruct.thepath#/outgoing/#newname#" recurse="true" timeout="300" />
-		<!--- Remove the file --->
-		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newname#">
+				<!--- Zip the file --->	
+				<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip" source="#arguments.thestruct.thepath#/outgoing/#newname#" recurse="true" timeout="300" />
+				<!--- Remove the file --->
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newname#">
 			</cfif>
 		</cfif>
 		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
