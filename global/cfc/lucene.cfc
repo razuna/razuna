@@ -42,20 +42,19 @@
 	<!--- When adding a new host, creating one on the first time setup --->
 	<cffunction name="setup" access="public" output="false" returntype="void">
 		<cfargument name="colname" type="string">
+		<cfset consoleoutput(true)>
 		<!--- Delete collection --->
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
 				<cfset console("Error while deleting collection in function lucene.setup")>
 				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
-			<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
+			<cfdirectory action="delete" directory="#expandpath("../")#WEB-INF/collections/#arguments.colname#" recurse="true" />
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
 				<cfset console("Error while deleting path on disk in function lucene.setup")>
 				<cfset console(cfcatch)>
 			</cfcatch>
@@ -64,7 +63,6 @@
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
 				<cfset console("Error while creating collection in function lucene.setup")>
 				<cfset console(cfcatch)>
 			</cfcatch>
