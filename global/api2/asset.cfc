@@ -770,6 +770,10 @@
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + vid_name_org AS local_url_org
 					</cfif>,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit,
 					hashtag AS md5hash,
 					vid_group AS parentid
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
@@ -792,6 +796,10 @@
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + vid_name_org AS local_url_org
 					</cfif>,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit,
 					hashtag AS md5hash,
 					vid_group AS parentid
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
@@ -814,6 +822,10 @@
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + aud_name_org AS local_url_org
 					</cfif>,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit,
 					hashtag AS md5hash,
 					aud_group AS parentid
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
@@ -836,6 +848,10 @@
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + aud_name_org AS local_url_org
 					</cfif>,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit,
 					hashtag AS md5hash,
 					aud_group AS parentid
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
@@ -858,13 +874,16 @@
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + file_name_org AS local_url_org
 					</cfif>,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit,
 					hashtag AS md5hash,
 					''AS parentid
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
 					WHERE file_id in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">	
 				</cfif>
-
 				UNION ALL
 				SELECT 
 				'rendition' AS type,
@@ -876,19 +895,15 @@
 				av_link_title AS filename_org,
 				av_type AS extension,
 				'0' AS size,
-				av_link_url AS local_url_org
-				<cfif arguments.assettype EQ "img">
-					,
-					'' AS colorspace,
-					'' AS xdpi,
-					'' AS ydpi,
-					'' AS unit
-				</cfif>,
+				av_link_url AS local_url_org,
+				'' AS colorspace,
+				'' AS xdpi,
+				'' AS ydpi,
+				'' AS unit,
 				hashtag AS md5hash,
 				asset_id_r AS parentid
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
 				WHERE asset_id_r in (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
-				AND av_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assettype#">
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
