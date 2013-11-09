@@ -23,5 +23,11 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfset attributes.cfapplicationname = getCurrentTemplatePath()>
+<!--- For custom views make a new application so that the session and application scopes don't get mixed with regular DAM scopes --->
+<cfif cgi.http_referer contains 'c.view_custom' or cgi.query_string contains 'c.view_custom' >
+	<cfset appname = '_cv'>
+<cfelse> 
+	<cfset appname = "">	
+</cfif>
+<cfset attributes.cfapplicationname = getCurrentTemplatePath() & appname>
 <cfinclude template="/global/host/dam/index.cfm" />

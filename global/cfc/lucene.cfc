@@ -42,20 +42,19 @@
 	<!--- When adding a new host, creating one on the first time setup --->
 	<cffunction name="setup" access="public" output="false" returntype="void">
 		<cfargument name="colname" type="string">
+		<cfset consoleoutput(true)>
 		<!--- Delete collection --->
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
 				<cfset console("Error while deleting collection in function lucene.setup")>
 				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
-			<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
+			<cfdirectory action="delete" directory="#expandpath("../")#WEB-INF/collections/#arguments.colname#" recurse="true" />
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
 				<cfset console("Error while deleting path on disk in function lucene.setup")>
 				<cfset console(cfcatch)>
 			</cfcatch>
@@ -64,7 +63,6 @@
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
 				<cfset console("Error while creating collection in function lucene.setup")>
 				<cfset console(cfcatch)>
 			</cfcatch>
@@ -792,7 +790,7 @@
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
+			<cfset arguments.criteria = "id:(""#arguments.criteria#"") filename:(""#arguments.criteria#"") filenameorg:(""#arguments.criteria#"") keywords:(""#arguments.criteria#"") description:(""#arguments.criteria#"") rawmetadata:(""#arguments.criteria#"") id:(""#arguments.criteria#"") labels:(""#arguments.criteria#"")">
 		</cfif>
 		<cftry>
 			<cfsearch collection="#arguments.hostid#" criteria="#arguments.criteria#" name="qrylucene" category="#arguments.category#">
