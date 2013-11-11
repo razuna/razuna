@@ -1600,9 +1600,10 @@
 				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#" name="myFile" type="file">
 				<!--- Rename the files --->
 				<cfset new_name = replace(myFile.name, " ", "_", "All")>
-				<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.zipname#/#myDir.name#/#myFile.name#">
-				<cfif myDir.name EQ "thumb">
-					<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/thumb_#myFile.name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.zipname#/#myDir.name#/#myFile.name#">
+				<cfif myDir.name NEQ "thumb">
+					<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#myFile.name#">
+				<cfelse>
+					<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/thumb_#new_name#" source="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#myFile.name#">
 				</cfif>
 			</cfloop>
 		</cfif>
