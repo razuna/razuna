@@ -3316,7 +3316,7 @@
 		i.hashtag,
 		'' as labels
 		<!--- custom metadata fields to show --->
-		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
 				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename">i
@@ -3324,17 +3324,17 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
@@ -3363,24 +3363,24 @@
 		v.hashtag,
 		'' as labels
 		<!--- custom metadata fields to show --->
-		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
 				<cfelse>v
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
@@ -3409,22 +3409,22 @@
 		a.hashtag,
 		'' as labels
 		<!--- custom metadata fields to show --->
-		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND  arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
 				<cfelse>a
@@ -3443,17 +3443,17 @@
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
 		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
 		<!--- custom metadata fields to show --->
-		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
 				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
@@ -3461,7 +3461,7 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
@@ -3845,6 +3845,13 @@
 						<cfif session.thefolderorg NEQ folder_id>
 							<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.<cfif iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');</cfif>});destroywindow(1);return false;">
 						</cfif>
+					<!--- Copyfolder --->
+					<cfelseif session.type EQ "copyfolder">
+						<cfif session.thefolderorg NEQ folder_id>
+							<a href="##" onclick="loadcontent('div_forall','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){
+								<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.<cfif iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');</cfif>
+							});$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');destroywindow(1);return false;">
+						</cfif>
 					<!--- restorefolder --->
 					<cfelseif session.type EQ "restorefolder">
 						<cfif session.thefolderorg NEQ folder_id>
@@ -3933,6 +3940,8 @@
 			</cfif>
 		</cfoutput>
 	</cfif>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -4504,6 +4513,7 @@
 <cffunction name="getsubfolders" output="false">
 	<cfargument name="folder_id" type="string" required="true">
 	<cfargument name="external" type="string" required="false">
+	<cfargument name="folder_name" type="string" required="false">
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
@@ -4568,6 +4578,10 @@
 	</cfif>
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	<cfif structkeyexists(arguments,"folder_name") AND arguments.folder_name NEQ ''>
+   	 	AND f.folder_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_name#%">
+	</cfif>
+
 	ORDER BY lower(folder_name)
 	</cfquery>
 	<!--- Query to get unlocked folders only --->
@@ -5314,6 +5328,711 @@
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry_folder />
+</cffunction>
+
+<!--- Copy THE FOLDER TO THE GIVEN POSITION --->
+<cffunction hint="COPY THE FOLDER TO THE GIVEN POSITION" name="copy" output="true">
+	<cfargument name="thestruct" type="struct">
+	<cftry>
+		<!--- Get the reocord of the folder to be copied --->
+		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
+			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+		</cfinvoke>
+		<!--- Get the reocord of the folder into which the folder is to be copied --->
+		<cfinvoke method="getfolder" returnvariable="intofolderdetails">
+			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.intofolderid#">
+		</cfinvoke>
+		<!--- Check and change the into level --->
+		<cfif arguments.thestruct.INTOLEVEL EQ 1 AND arguments.thestruct.intofolderid EQ arguments.thestruct.tocopyfolderid>
+			<!--- Intolevel if copy into root --->
+			<cfset arguments.thestruct.intolevel = 1>
+		<cfelse>
+			<!--- Intolevel if copy into Another folder --->
+			<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel+1>
+		</cfif>
+		<!--- Naming the new folder as 'xxxx copy' --->
+		<cfif arguments.thestruct.count EQ 0>
+			<cfset tocopyfolderdetails.folder_name = tocopyfolderdetails.folder_name &' copy'>
+			<!--- Get sub folders --->
+			<cfinvoke method="getsubfolders" returnvariable="subfolders">
+				<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.intofolderid#">
+				<cfinvokeargument name="FOLDER_NAME" value="#tocopyfolderdetails.folder_name#">
+			</cfinvoke>
+			<!--- Duplicate folder name --->
+			<cfif subfolders.recordcount NEQ 0>
+				<cfset tocopyfolderdetails.folder_name = tocopyfolderdetails.folder_name &'('& #subfolders.recordcount#+1 &')'>
+			</cfif>
+		</cfif>
+		<!--- Copy the folder --->
+		<cfset var newfolderid = "#createuuid('')#">
+		<cfset var uid = "#createuuid('')#">
+		<cfif application.razuna.storage EQ "local">
+			<cfzip action="create" zipfile="#GetTempDirectory()##uid#.zip" recurse="yes" source="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.tocopyfolderid#" />
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#">
+			<cfzip action="extract" zipfile="#GetTempDirectory()##uid#.zip" destination="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" />
+			<cffile action="delete" file="#GetTempDirectory()##uid#.zip">
+			<!--- Check the directories are created correctly --->
+			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud')>
+				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud')>
+			</cfif>
+			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img')>
+				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img')>
+			</cfif>
+			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid')>
+				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid')>
+			</cfif>
+			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc')>
+				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc')>
+			</cfif>
+		</cfif>
+		
+		<!--- Insert into folders table --->
+		<cfquery datasource="#variables.dsn#" name="insert_folder">
+			INSERT INTO #session.hostdbprefix#folders
+			(folder_id, folder_name, folder_level, folder_main_id_r, folder_id_r, folder_owner, folder_create_date, folder_change_date,
+			folder_create_time, folder_change_time, host_id
+			<cfif arguments.thestruct.ISCOL EQ "T">, folder_is_collection</cfif>)
+			VALUES (
+			<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#tocopyfolderdetails.folder_name#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.thestruct.intolevel#" cfsqltype="cf_sql_numeric">,
+			<cfif arguments.thestruct.INTOLEVEL EQ 1>
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfelse>
+				<cfqueryparam value="#intofolderdetails.rid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR">,
+			</cfif>
+			<cfqueryparam value="#Session.theUserID#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif arguments.thestruct.ISCOL EQ "T">
+				,<cfqueryparam value="T" cfsqltype="cf_sql_varchar">
+			</cfif>
+			)
+		</cfquery>
+		<!--- Assign arguments --->
+		<cfset arguments.thestruct.dsn = variables.dsn>
+		<cfset arguments.thestruct.setid = variables.setid>
+		<cfset arguments.thestruct.database = variables.database>
+		
+		<!--- Get all assets of the current folder --->
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.tocopyfolderid>
+		<cfset arguments.thestruct.qry_filecount = 0>
+		<cfset arguments.thestruct.showsubfolders = 'F'>
+		<cfset arguments.thestruct.sortby = 'name'>
+		<cfset arguments.thestruct.pages = 'copy'>
+		<cfinvoke method="getallassets" returnvariable="assets">
+			<cfinvokeargument name="thestruct" value="#arguments.thestruct#" >
+		</cfinvoke>
+		<!--- Rename the assets and inserting into the appropriate table by loop --->
+		<cfloop query="assets" >
+			<cfset var cloud_url = structnew()>
+			<cfset var cloud_url_org = structnew()>
+			<cfif kind EQ 'img'>
+				<cfset var newimgid = "#createuuid('')#">
+				<!--- get the asset record from the image table --->
+				<cfquery name="select_images" datasource="#application.razuna.datasource#">
+					SELECT * FROM #session.hostdbprefix#images
+					WHERE img_id = <cfqueryparam value="#id#" cfsqltype="cf_sql_varchar" >
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				</cfquery>
+				<cfset arguments.thestruct.select_images = select_images> 
+				<cfset arguments.thestruct.newfolderid = newfolderid>
+				<cfset arguments.thestruct.newimgid = newimgid>
+				<!--- Rename the folder and thumbnail image --->
+				<cfif application.razuna.storage EQ "local">
+					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#" >
+					<cffile action="rename" source="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#/thumb_#id#.#select_images.thumb_extension#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#/thumb_#newimgid#.#select_images.thumb_extension#" >
+				</cfif>
+				<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
+					SELECT * FROM #session.hostdbprefix#images_text
+					WHERE img_id_r = <cfqueryparam value="#id#" cfsqltype="cf_sql_varchar" >
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfquery name="select_xmp" datasource="#application.razuna.datasource#">
+					SELECT * FROM #session.hostdbprefix#xmp
+					WHERE id_r = <cfqueryparam value="#id#" cfsqltype="cf_sql_varchar" >
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				
+				<cfif application.razuna.storage EQ "amazon">
+					<cfset var upt = newimgid>
+					<!--- Copy the folder to the old directory --->
+					<cfthread name="copyfolderimg#newimgid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="copyfolder">
+							<cfinvokeargument name="folderpath" value="#attributes.intupstruct.folder_id#/img/#attributes.intupstruct.select_images.img_id#">
+							<cfinvokeargument name="folderpathdest" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intupstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfolderimg#newimgid#"  />
+					<cfpause interval="5" />
+					<cfthread name="renamethumb#newimgid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="s3" method="renameObject">
+							<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
+							<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
+							<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.select_images.img_id#.jpg">
+							<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.newimgid#.jpg">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="renamethumb#newimgid#" />
+					<cfpause interval="5" />
+					<!--- Get SignedURL thumbnail --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#newfolderid#/img/#newimgid#/thumb_#newimgid#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+					<!--- Get SignedURL original --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#newfolderid#/img/#newimgid#/#select_images.img_filename_org#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfelseif application.razuna.storage EQ "nirvanix">
+					<!--- Copy --->
+					<cfthread name="copyfolderimg#newimgid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="nirvanix" method="CopyFolders">
+							<cfinvokeargument name="srcFolderPath" value="#attributes.intupstruct.folder_id#/img/#attributes.intupstruct.select_images.img_id#">
+							<cfinvokeargument name="destFolderPath" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfolderimg#newimgid#"  />
+					<cfpause interval="5" />
+					<!--- Rename Thumb --->
+					<cfthread name="renamethumb#newimgid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="nirvanix" method="RenameFile">
+							<cfinvokeargument name="filePath" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#">
+							<cfinvokeargument name="newFileName" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.newimgid#.jpg">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="renamethumb#newimgid#" />
+					<cfpause interval="5" />
+					<!--- Get SignedURL thumbnail --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#newfolderid#/img/#newimgid#/thumb_#newimgid#.jpg" >
+					<!--- Get SignedURL original --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#newfolderid#/img/#newimgid#/#select_images.img_filename_org#" >
+				</cfif>
+				<!--- Change the link path and reinsert with changing the root id --->
+				<cfset link_path = '#arguments.thestruct.path#raz#session.hostid#/dam/incoming/api#newimgid#'>
+				<cfquery name="updateimages" datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#images
+					(IMG_ID,METABLOB,METAEXIF,METAIPTC,METAXMP,IMAGE,THUMB,COMP,COMP_UW,IMG_GROUP,IMG_PUBLISHER,IMG_FILENAME,FOLDER_ID_R,IMG_CUSTOM_ID,IMG_ONLINE,IMG_OWNER,IMG_CREATE_DATE,IMG_CREATE_TIME,IMG_CHANGE_DATE,IMG_CHANGE_TIME,IMG_RANKING,IMG_SINGLE_SALE,IMG_IS_NEW,IMG_SELECTION,IMG_IN_PROGRESS,IMG_ALIGNMENT,IMG_LICENSE,IMG_DOMINANT_COLOR,IMG_COLOR_MODE,IMG_IMAGE_TYPE,IMG_CATEGORY_ONE,IMG_REMARKS,IMG_EXTENSION,THUMB_EXTENSION,THUMB_WIDTH,THUMB_HEIGHT,IMG_FILENAME_ORG,IMG_WIDTH,IMG_HEIGHT,IMG_SIZE,THUMB_SIZE,LUCENE_KEY,SHARED,LINK_KIND,LINK_PATH_URL,IMG_META,HOST_ID,PATH_TO_ASSET,CLOUD_URL,CLOUD_URL_ORG,HASHTAG,IS_AVAILABLE,CLOUD_URL_EXP)
+					VALUES(<cfqueryparam value="#newimgid#" cfsqltype="cf_sql_varchar" >,
+					<cfqueryparam value="#select_images.METABLOB#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.METABLOB)#">,
+					<cfqueryparam value="#select_images.METAEXIF#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.METAEXIF)#">,
+					<cfqueryparam value="#select_images.METAIPTC#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.METAIPTC)#">,
+					<cfqueryparam value="#select_images.METAXMP#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.METAXMP)#">,
+					<cfqueryparam value="#select_images.IMAGE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMAGE)#">,
+					<cfqueryparam value="#select_images.THUMB#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.THUMB)#">,
+					<cfqueryparam value="#select_images.COMP#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.COMP)#">,
+					<cfqueryparam value="#select_images.COMP_UW#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.COMP_UW)#">,
+					<cfqueryparam value="#select_images.IMG_GROUP#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_GROUP)#">,
+					<cfqueryparam value="#select_images.IMG_PUBLISHER#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_PUBLISHER)#">,
+					<cfqueryparam value="#select_images.IMG_FILENAME#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_FILENAME)#">,
+					<cfqueryparam value="#newfolderid#" cfsqltype="cf_sql_varchar" >,
+					<cfqueryparam value="#select_images.IMG_CUSTOM_ID#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_CUSTOM_ID)#">,
+					<cfqueryparam value="#select_images.IMG_ONLINE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_ONLINE)#">,
+					<cfqueryparam value="#select_images.IMG_OWNER#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_OWNER)#">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+					<cfqueryparam value="#select_images.IMG_RANKING#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_images.IMG_RANKING)#">,
+					<cfqueryparam value="#select_images.IMG_SINGLE_SALE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_SINGLE_SALE)#">,
+					<cfqueryparam value="#select_images.IMG_IS_NEW#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_IS_NEW)#">,
+					<cfqueryparam value="#select_images.IMG_SELECTION#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_SELECTION)#">,
+					<cfqueryparam value="#select_images.IMG_IN_PROGRESS#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_IN_PROGRESS)#">,
+					<cfqueryparam value="#select_images.IMG_ALIGNMENT#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_ALIGNMENT)#">,
+					<cfqueryparam value="#select_images.IMG_LICENSE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_LICENSE)#">,
+					<cfqueryparam value="#select_images.IMG_DOMINANT_COLOR#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_DOMINANT_COLOR)#">,
+					<cfqueryparam value="#select_images.IMG_COLOR_MODE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_COLOR_MODE)#">,
+					<cfqueryparam value="#select_images.IMG_IMAGE_TYPE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_IMAGE_TYPE)#">,
+					<cfqueryparam value="#select_images.IMG_CATEGORY_ONE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_CATEGORY_ONE)#">,
+					<cfqueryparam value="#select_images.IMG_REMARKS#" cfsqltype="cf_sql_longvarchar" null="#NOT LEN(select_images.IMG_REMARKS)#">,
+					<cfqueryparam value="#select_images.IMG_EXTENSION#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_EXTENSION)#">,
+					<cfqueryparam value="#select_images.THUMB_EXTENSION#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.THUMB_EXTENSION)#">,
+					<cfqueryparam value="#select_images.THUMB_WIDTH#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_images.THUMB_WIDTH)#">,
+					<cfqueryparam value="#select_images.THUMB_HEIGHT#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_images.THUMB_HEIGHT)#">,
+					<cfqueryparam value="#select_images.IMG_FILENAME_ORG#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_FILENAME_ORG)#">,
+					<cfqueryparam value="#select_images.IMG_WIDTH#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_images.IMG_WIDTH)#">,
+					<cfqueryparam value="#select_images.IMG_HEIGHT#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_images.IMG_HEIGHT)#">,
+					<cfqueryparam value="#select_images.IMG_SIZE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_SIZE)#">,
+					<cfqueryparam value="#select_images.THUMB_SIZE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.THUMB_SIZE)#">,
+					<cfqueryparam value="#select_images.LUCENE_KEY#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.LUCENE_KEY)#">,
+					<cfqueryparam value="#select_images.SHARED#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.SHARED)#">,
+					<cfqueryparam value="#select_images.LINK_KIND#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.LINK_KIND)#">,
+					<cfqueryparam value="#LINK_PATH#" cfsqltype="cf_sql_varchar" >,
+					<cfqueryparam value="#select_images.IMG_META#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IMG_META)#">,
+					<cfqueryparam value="#session.HOSTID#" cfsqltype="cf_sql_integer" >,
+					<cfqueryparam value="#newfolderid#/img/#newimgid#" cfsqltype="cf_sql_varchar" >,
+					<cfif structKeyExists(cloud_url,"theurl") AND cloud_url.theurl NEQ ''>
+						<cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar" >,
+					<cfelse>
+						<cfqueryparam value="" cfsqltype="cf_sql_varchar" null="true" >,
+					</cfif>
+					<cfif structKeyExists(cloud_url_org,"theurl") AND cloud_url_org.theurl NEQ '' >
+						<cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar" >,
+					<cfelse>
+						<cfqueryparam value="" cfsqltype="cf_sql_varchar" null="true">,
+					</cfif>
+					
+					<cfqueryparam value="#select_images.hashtag#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.hashtag)#">,
+					<cfqueryparam value="#select_images.IS_AVAILABLE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images.IS_AVAILABLE)#">,
+					<cfif structKeyExists(cloud_url_org,"newepoch") AND cloud_url_org.newepoch NEQ ''>
+						<cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="cf_sql_integer" >
+					<cfelse>
+						<cfqueryparam value="" cfsqltype="cf_sql_integer" null="true" >
+					</cfif>
+					)
+				</cfquery> 
+				<cfquery name="updateimges_text" datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#images_text 
+					(ID_INC,IMG_ID_R,LANG_ID_R,IMG_KEYWORDS,IMG_DESCRIPTION,HOST_ID)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="cf_sql_varchar" >,
+					<cfqueryparam value="#newimgid#" cfsqltype="cf_sql_varchar" >,
+					<cfqueryparam value="#select_images_text.LANG_ID_R#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_images_text.LANG_ID_R)#">,
+					<cfqueryparam value="#select_images_text.IMG_KEYWORDS#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images_text.IMG_KEYWORDS)#">,
+					<cfqueryparam value="#select_images_text.IMG_DESCRIPTION#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_images_text.IMG_DESCRIPTION)#">,
+					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_integer" >
+					)
+				</cfquery>
+				<cfquery name="updateimges_text" datasource="#application.razuna.datasource#" >
+					INSERT INTO #session.hostdbprefix#xmp
+					(id_r,asset_type,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,description,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,colorspace,xres,yres,resunit,host_id)
+					VALUES(
+					<cfqueryparam value="#newimgid#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#select_xmp.subjectcode#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.subjectcode)#">,
+					<cfqueryparam value="#select_xmp.creator#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.creator)#">,
+					<cfqueryparam value="#select_xmp.title#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.title)#">,
+					<cfqueryparam value="#select_xmp.authorsposition#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.authorsposition)#">,
+					<cfqueryparam value="#select_xmp.captionwriter#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.captionwriter)#">,
+					<cfqueryparam value="#select_xmp.ciadrextadr#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciadrextadr)#">,
+					<cfqueryparam value="#select_xmp.category#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.category)#">,
+					<cfqueryparam value="#select_xmp.supplementalcategories#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.supplementalcategories)#">,
+					<cfqueryparam value="#select_xmp.urgency#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.urgency)#">,
+					<cfqueryparam value="#select_xmp.description#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.description)#">,
+					<cfqueryparam value="#select_xmp.ciadrcity#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciadrcity)#">,
+					<cfqueryparam value="#select_xmp.ciadrctry#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciadrctry)#">,
+					<cfqueryparam value="#select_xmp.location#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.location)#">,
+					<cfqueryparam value="#select_xmp.ciadrpcode#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciadrpcode)#">,
+					<cfqueryparam value="#select_xmp.ciemailwork#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciemailwork)#">,
+					<cfqueryparam value="#select_xmp.ciurlwork#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciurlwork)#">,
+					<cfqueryparam value="#select_xmp.citelwork#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.citelwork)#">,
+					<cfqueryparam value="#select_xmp.intellectualgenre#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.intellectualgenre)#">,
+					<cfqueryparam value="#select_xmp.instructions#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.instructions)#">,
+					<cfqueryparam value="#select_xmp.source#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.source)#">,
+					<cfqueryparam value="#select_xmp.usageterms#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.usageterms)#">,
+					<cfqueryparam value="#select_xmp.copyrightstatus#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.copyrightstatus)#">,
+					<cfqueryparam value="#select_xmp.transmissionreference#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.transmissionreference)#">,
+					<cfqueryparam value="#select_xmp.webstatement#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.webstatement)#">,
+					<cfqueryparam value="#select_xmp.headline#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.headline)#">,
+					<cfqueryparam value="#select_xmp.datecreated#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.datecreated)#">,
+					<cfqueryparam value="#select_xmp.city#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.city)#">,
+					<cfqueryparam value="#select_xmp.ciadrregion#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.ciadrregion)#">,
+					<cfqueryparam value="#select_xmp.country#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.country)#">,
+					<cfqueryparam value="#select_xmp.countrycode#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.countrycode)#">,
+					<cfqueryparam value="#select_xmp.scene#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.scene)#">,
+					<cfqueryparam value="#select_xmp.state#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.state)#">,
+					<cfqueryparam value="#select_xmp.credit#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.credit)#">,
+					<cfqueryparam value="#select_xmp.rights#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.rights)#">,
+					<cfqueryparam value="#select_xmp.colorspace#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.colorspace)#">,
+					<cfqueryparam value="#select_xmp.xres#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.xres)#">,
+					<cfqueryparam value="#select_xmp.yres#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.yres)#">,
+					<cfqueryparam value="#select_xmp.resunit#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_xmp.resunit)#">,
+					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_integer" >
+					)
+				</cfquery>
+			<cfelseif kind EQ 'doc' OR kind EQ 'other'>
+				<cfset var newfileid = "#createuuid('')#">
+				<!--- Get the document records --->
+				<cfquery datasource="#application.razuna.datasource#" name="select_files">
+					SELECT * FROM #session.hostdbprefix#files
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				</cfquery>
+				<cfset arguments.thestruct.select_files = select_files> 
+				<cfset arguments.thestruct.newfolderid = newfolderid>
+				<cfset arguments.thestruct.newfileid = newfileid>
+				<!--- Rename the folder --->
+				<cfif application.razuna.storage EQ "local">
+					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc/#newfileid#" >
+				</cfif>
+				<cfquery datasource="#application.razuna.datasource#" name="select_files_desc">
+					SELECT * FROM #session.hostdbprefix#files_desc
+					WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif application.razuna.storage EQ "amazon">
+					<cfset var upt = newfileid>
+					<!--- Amazon Copyfolder  --->
+					<cfthread name="copyfolderdoc#newfileid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="copyfolder">
+							<cfinvokeargument name="folderpath" value="#attributes.intupstruct.folder_id#/doc/#attributes.intupstruct.select_files.file_id#">
+							<cfinvokeargument name="folderpathdest" value="#attributes.intupstruct.newfolderid#/doc/#attributes.intupstruct.newfileid#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intupstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfolderdoc#newfileid#"  />
+					<cfpause interval="5" />
+					<!--- PDF file Thumbnail  --->
+					<cfif assets.ext EQ "pdf">
+						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#newfolderid#/doc/#newfileid#/#select_files.file_name_noext#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+					</cfif>
+					<!--- Get SignedURL original --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#newfolderid#/doc/#newfileid#/#select_files.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfelseif application.razuna.storage EQ "nirvanix">
+					<!--- Nirvanix CopyFolders --->
+					<cfthread name="copyfolderdoc#newfileid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="nirvanix" method="CopyFolders">
+							<cfinvokeargument name="srcFolderPath" value="#attributes.intupstruct.folder_id#/doc/#attributes.intupstruct.select_files.file_id#">
+							<cfinvokeargument name="destFolderPath" value="#attributes.intupstruct.newfolderid#/doc/#attributes.intupstruct.newfileid#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfolderdoc#newfileid#"  />
+					<cfpause interval="5" />
+					<!--- PDF file Thumbnail  --->
+					<cfif assets.file_extension EQ "pdf">
+						<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#newfolderid#/doc/#newfileid#/#select_files.file_name_noext#.jpg" >
+					</cfif>
+					<!--- Get SignedURL original --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#newfolderid#/doc/#newfileid#/#select_files.file_name_org#" >
+				</cfif>
+				<!--- Insert into tables --->
+				<cfset link_path = '#arguments.thestruct.path#raz#session.hostid#/dam/incoming/api#newfileid#'>
+				<cfquery datasource="#application.razuna.datasource#" name="update_files" >
+					INSERT INTO #session.hostdbprefix#files
+					(FILE_ID,FOLDER_ID_R,FILE_CREATE_DATE,FILE_CREATE_TIME,FILE_CHANGE_DATE,FILE_CHANGE_TIME,FILE_OWNER,FILE_TYPE,FILE_NAME,FILE_EXTENSION,FILE_NAME_NOEXT,FILE_CONTENTTYPE,FILE_CONTENTSUBTYPE,FILE_REMARKS,FILE_ONLINE,FILE_NAME_ORG,FILE_SIZE,LUCENE_KEY,SHARED,LINK_KIND,LINK_PATH_URL,FILE_META,HOST_ID,PATH_TO_ASSET,CLOUD_URL,CLOUD_URL_ORG,HASHTAG,IS_AVAILABLE,CLOUD_URL_EXP)
+					VALUES(
+						<cfqueryparam value="#newfileid#" cfsqltype="cf_sql_varchar" >,
+						<cfqueryparam value="#newfolderid#" cfsqltype="cf_sql_varchar" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam value="#session.theuserid#" cfsqltype="cf_sql_varchar" >,
+						<cfqueryparam value="#select_files.FILE_TYPE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_TYPE)#">,
+						<cfqueryparam value="#select_files.FILE_NAME#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_NAME)#">,
+						<cfqueryparam value="#select_files.FILE_EXTENSION#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_EXTENSION)#">,
+						<cfqueryparam value="#select_files.FILE_NAME_NOEXT#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_NAME_NOEXT)#">,
+						<cfqueryparam value="#select_files.FILE_CONTENTTYPE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_CONTENTTYPE)#">,
+						<cfqueryparam value="#select_files.FILE_CONTENTSUBTYPE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_CONTENTSUBTYPE)#">,
+						<cfqueryparam value="#select_files.FILE_REMARKS#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_REMARKS)#">,
+						<cfqueryparam value="#select_files.FILE_ONLINE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_ONLINE)#">,
+						<cfqueryparam value="#select_files.FILE_NAME_ORG#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_NAME_ORG)#">,
+						<cfqueryparam value="#select_files.FILE_SIZE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_SIZE)#">,
+						<cfqueryparam value="#select_files.LUCENE_KEY#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.LUCENE_KEY)#">,
+						<cfqueryparam value="#select_files.SHARED#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.SHARED)#">,
+						<cfqueryparam value="#select_files.LINK_KIND#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.LINK_KIND)#">,
+						<cfqueryparam value="#LINK_PATH#" cfsqltype="cf_sql_varchar" >,
+						<cfqueryparam value="#select_files.FILE_META#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.FILE_META)#">,
+						<cfqueryparam value="#session.HOSTID#" cfsqltype="cf_sql_integer" >,
+						<cfqueryparam value="#newfolderid#/doc/#newfileid#" cfsqltype="cf_sql_varchar" >,
+						<cfif structKeyExists(cloud_url,"theurl") AND cloud_url.theurl NEQ '' >
+							<cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar" >,
+						<cfelse>
+							<cfqueryparam value="" cfsqltype="cf_sql_varchar" null="true">,
+						</cfif>
+						<cfif structKeyExists(cloud_url_org,"theurl") AND cloud_url_org.theurl NEQ '' >
+							<cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar" >,
+						<cfelse>
+							<cfqueryparam value="" cfsqltype="cf_sql_varchar" null="true" >,
+						</cfif>
+						<cfqueryparam value="#select_files.hashtag#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.hashtag)#">,
+						<cfqueryparam value="#select_files.IS_AVAILABLE#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files.IS_AVAILABLE)#">,
+						<cfif structKeyExists(cloud_url_org,"newepoch") AND cloud_url_org.newepoch NEQ ''>
+							<cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="cf_sql_integer" >
+						<cfelse>
+							<cfqueryparam value="" cfsqltype="cf_sql_integer" null="true" >
+						</cfif>
+					)
+				</cfquery>
+				<cfif select_files_desc.recordcount>
+					<cfquery datasource="#application.razuna.datasource#" name="update_files_desc" >
+						INSERT INTO #session.hostdbprefix#files_desc
+						(ID_INC,FILE_ID_R,LANG_ID_R,FILE_DESC,FILE_KEYWORDS,HOST_ID)
+						VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="cf_sql_varchar" >,
+						<cfqueryparam value="#newfileid#" cfsqltype="cf_sql_varchar" >,
+						<cfqueryparam value="#select_files_desc.LANG_ID_R#" cfsqltype="cf_sql_integer" null="#NOT LEN(select_files_desc.LANG_ID_R)#">,
+						<cfqueryparam value="#select_files_desc.FILE_DESC#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files_desc.FILE_DESC)#">,
+						<cfqueryparam value="#select_files_desc.FILE_KEYWORDS#" cfsqltype="cf_sql_varchar" null="#NOT LEN(select_files_desc.FILE_KEYWORDS)#">,
+						<cfqueryparam value="#session.HOSTID#" cfsqltype="cf_sql_integer" >
+						)
+					</cfquery>
+				</cfif>
+			<cfelseif kind EQ 'aud'>
+				<cfset var newaudid = "#createuuid('')#">
+				<!--- Get audio records --->
+				<cfquery datasource="#application.razuna.datasource#" name="select_audios">
+					SELECT * FROM #session.hostdbprefix#audios
+					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				</cfquery>
+				<cfset arguments.thestruct.select_audios = select_audios> 
+				<cfset arguments.thestruct.newfolderid = newfolderid>
+				<cfset arguments.thestruct.newaudid = newaudid>
+				<!--- Rename the directory --->
+				<cfif application.razuna.storage EQ "local">
+					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud/#newaudid#" >
+				</cfif>
+				<cfquery datasource="#application.razuna.datasource#" name="select_audios_text">
+					SELECT * FROM #session.hostdbprefix#audios_text
+					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#"> 
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif application.razuna.storage EQ "amazon">
+					<cfset var upt = newaudid>
+					<!--- Amazon Copyfolder  --->
+					<cfthread name="copyfolderaud#newaudid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="copyfolder">
+							<cfinvokeargument name="folderpath" value="#attributes.intupstruct.folder_id#/aud/#attributes.intupstruct.select_audios.aud_id#">
+							<cfinvokeargument name="folderpathdest" value="#attributes.intupstruct.newfolderid#/aud/#attributes.intupstruct.newaudid#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intupstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfolderaud#newaudid#"  />
+					<cfpause interval="5" />
+					<!--- Get SignedURL original --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#newfolderid#/aud/#newaudid#/#select_audios.aud_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfelseif application.razuna.storage EQ "nirvanix">
+					<!--- Nirvanix CopyFolders --->
+					<cfthread name="copyfolderaud#newaudid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="nirvanix" method="CopyFolders">
+							<cfinvokeargument name="srcFolderPath" value="#attributes.intupstruct.folder_id#/aud/#attributes.intupstruct.select_audios.aud_id#">
+							<cfinvokeargument name="destFolderPath" value="#attributes.intupstruct.newfolderid#/aud/#attributes.intupstruct.newaudid#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfolderaud#newaudid#"  />
+					<cfpause interval="5" />
+					<!--- Get SignedURL original --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#newfolderid#/aud/#newaudid#/#select_audios.aud_name_org#" >
+				</cfif>
+				<!--- Insert new audio records --->
+				<cfset link_path = '#arguments.thestruct.path#raz#session.hostid#/dam/incoming/api#newaudid#'>
+				<cfquery datasource="#application.razuna.datasource#" name="update_audios">
+					INSERT INTO #session.hostdbprefix#audios
+					(aud_ID,FOLDER_ID_R,aud_CREATE_DATE,aud_CREATE_TIME,aud_CHANGE_DATE,aud_CHANGE_TIME,aud_OWNER,aud_TYPE,aud_NAME,aud_EXTENSION,aud_NAME_NOEXT,aud_CONTENTTYPE,aud_CONTENTSUBTYPE,aud_ONLINE,aud_NAME_ORG,aud_GROUP,aud_size,LUCENE_KEY,SHARED,aud_meta,LINK_KIND,LINK_PATH_URL,HOST_ID,PATH_TO_ASSET,CLOUD_URL,CLOUD_URL_2,CLOUD_URL_ORG,HASHTAG,IS_AVAILABLE,CLOUD_URL_EXP)
+					VALUES(
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newaudid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newfolderid#">,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_TYPE#" null="#NOT LEN(select_audios.aud_TYPE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_NAME#" null="#NOT LEN(select_audios.aud_NAME)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_EXTENSION#" null="#NOT LEN(select_audios.aud_EXTENSION)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_NAME_NOEXT#" null="#NOT LEN(select_audios.aud_NAME_NOEXT)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_CONTENTTYPE#" null="#NOT LEN(select_audios.aud_CONTENTTYPE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_CONTENTSUBTYPE#" null="#NOT LEN(select_audios.aud_CONTENTSUBTYPE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_ONLINE#" null="#NOT LEN(select_audios.aud_ONLINE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_NAME_ORG#" null="#NOT LEN(select_audios.aud_NAME_ORG)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_GROUP#" null="#NOT LEN(select_audios.aud_GROUP)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_size#" null="#NOT LEN(select_audios.aud_size)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.LUCENE_KEY#" null="#NOT LEN(select_audios.LUCENE_KEY)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.SHARED#" null="#NOT LEN(select_audios.SHARED)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.aud_meta#" null="#NOT LEN(select_audios.aud_meta)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.LINK_KIND#" null="#NOT LEN(select_audios.LINK_KIND)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#LINK_PATH#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#session.HOSTID#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newfolderid#/aud/#newaudid#">,
+						<cfif structKeyExists(cloud_url_org,"theurl") AND cloud_url_org.theurl NEQ '' >
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true" >,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_org.theurl#">,
+						<cfelse>
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true" >,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true">,	
+						</cfif>
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.hashtag#" null="#NOT LEN(select_audios.hashtag)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios.IS_AVAILABLE#" null="#NOT LEN(select_audios.IS_AVAILABLE)#">,
+						<cfif structKeyExists(cloud_url_org,"newepoch") AND cloud_url_org.newepoch NEQ ''>
+							<cfqueryparam cfsqltype="cf_sql_integer" value="#cloud_url_org.newepoch#">
+						<cfelse>
+							<cfqueryparam cfsqltype="cf_sql_integer" value="" null="true" >
+						</cfif>
+					)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#" name="update_audios_text">
+					INSERT INTO #session.hostdbprefix#audios_text
+					(id_inc,aud_ID_R,LANG_ID_R,aud_DESCRIPTION,aud_KEYWORDS,HOST_ID)
+					VALUES(
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newaudid#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_audios_text.LANG_ID_R#" null="#NOT LEN(select_audios_text.LANG_ID_R)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios_text.aud_DESCRIPTION#" null="#NOT LEN(select_audios_text.aud_DESCRIPTION)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_audios_text.aud_KEYWORDS#" null="#NOT LEN(select_audios_text.aud_KEYWORDS)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#session.HOSTID#">
+					)
+				</cfquery>
+			<cfelseif kind EQ 'vid'>
+				<cfset var newvidid = "#createuuid('')#">
+				<!--- Get video records --->
+				<cfquery datasource="#application.razuna.datasource#" name="select_videos">
+					SELECT * FROM #session.hostdbprefix#videos
+					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				</cfquery>
+				<cfset arguments.thestruct.select_videos = select_videos> 
+				<cfset arguments.thestruct.newfolderid = newfolderid>
+				<cfset arguments.thestruct.newvidid = newvidid>
+				<!--- Rename the folder --->
+				<cfif application.razuna.storage EQ "local">
+					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid/#newvidid#" >
+				</cfif>
+				<cfquery datasource="#application.razuna.datasource#" name="select_videos_text">
+					SELECT * FROM #session.hostdbprefix#videos_text
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif application.razuna.storage EQ "amazon">
+					<cfset var upt = newvidid>
+					<!--- Amazon Copyfolder  --->
+					<cfthread name="copyfoldervid#newvidid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="copyfolder">
+							<cfinvokeargument name="folderpath" value="#attributes.intupstruct.folder_id#/vid/#attributes.intupstruct.select_videos.vid_id#">
+							<cfinvokeargument name="folderpathdest" value="#attributes.intupstruct.newfolderid#/vid/#attributes.intupstruct.newvidid#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intupstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfoldervid#newvidid#"  />
+					<cfpause interval="5" />
+					<!--- Get SignedURL Thumb --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#newfolderid#/vid/#newvidid#/#select_videos.vid_name_image#" awsbucket="#arguments.thestruct.awsbucket#">
+					<!--- Get SignedURL original --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#newfolderid#/vid/#newvidid#/#select_videos.vid_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+					
+				<cfelseif application.razuna.storage EQ "nirvanix">
+					<!--- Nirvanix CopyFolders --->
+					<cfthread name="copyfoldervid#newvidid#" intupstruct="#arguments.thestruct#">
+						<cfinvoke component="nirvanix" method="CopyFolders">
+							<cfinvokeargument name="srcFolderPath" value="#attributes.intupstruct.folder_id#/vid/#attributes.intupstruct.select_videos.vid_id#">
+							<cfinvokeargument name="destFolderPath" value="#attributes.intupstruct.newfolderid#/vid/#attributes.intupstruct.newvidid#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="copyfoldervid#newvidid#"  />
+					<cfpause interval="5" />
+					<!--- Get SignedURL thumbnail --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#newfolderid#/vid/#newvidid#/#select_videos.vid_name_image#" >
+					<!--- Get SignedURL original --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#newfolderid#/vid/#newvidid#/#select_videos.vid_name_org#" >
+				</cfif>
+				<cfset link_path = '#arguments.thestruct.path#raz#session.hostid#/dam/incoming/api#newvidid#'>
+				<!--- Insert video details --->
+				<cfquery datasource="#application.razuna.datasource#" name="update_videos">
+					INSERT INTO #session.hostdbprefix#videos
+					(VID_ID,VID_FILENAME,FOLDER_ID_R,VID_CUSTOM_ID,VID_ONLINE,VID_OWNER,VID_CREATE_DATE,VID_CREATE_TIME,VID_CHANGE_DATE,VID_CHANGE_TIME,VID_RANKING,VID_SINGLE_SALE,VID_IS_NEW,VID_SELECTION,VID_IN_PROGRESS,VID_LICENSE,VID_CATEGORY_ONE,VID_REMARKS,VID_WIDTH,VID_HEIGHT,VID_FRAMERESOLUTION,VID_FRAMERATE,VID_VIDEODURATION,VID_COMPRESSIONTYPE,VID_BITRATE,VID_EXTENSION,VID_MIMETYPE,VID_PREVIEW_WIDTH,VID_PREVIEW_HEIGTH,VID_GROUP,VID_PUBLISHER,VID_NAME_ORG,VID_NAME_IMAGE,VID_NAME_PRE,VID_NAME_PRE_IMG,VID_SIZE,VID_PREV_SIZE,LUCENE_KEY,SHARED,LINK_KIND,LINK_PATH_URL,VID_META,HOST_ID,PATH_TO_ASSET,CLOUD_URL,CLOUD_URL_ORG,HASHTAG,IS_AVAILABLE,CLOUD_URL_EXP)
+					VALUES(
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newvidid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_FILENAME#" null="#NOT LEN(select_videos.VID_FILENAME)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newfolderid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_ONLINE#" null="#NOT LEN(select_videos.VID_ONLINE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date" >,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_RANKING#" null="#NOT LEN(select_videos.VID_RANKING)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_SINGLE_SALE#" null="#NOT LEN(select_videos.VID_SINGLE_SALE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_IS_NEW#" null="#NOT LEN(select_videos.VID_IS_NEW)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_SELECTION#" null="#NOT LEN(select_videos.VID_SELECTION)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_IN_PROGRESS#" null="#NOT LEN(select_videos.VID_IN_PROGRESS)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_LICENSE#" null="#NOT LEN(select_videos.VID_LICENSE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_CATEGORY_ONE#" null="#NOT LEN(select_videos.VID_CATEGORY_ONE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_REMARKS#" null="#NOT LEN(select_videos.VID_REMARKS)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_WIDTH#" null="#NOT LEN(select_videos.VID_WIDTH)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_HEIGHT#" null="#NOT LEN(select_videos.VID_HEIGHT)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_FRAMERESOLUTION#" null="#NOT LEN(select_videos.VID_FRAMERESOLUTION)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_FRAMERATE#" null="#NOT LEN(select_videos.VID_FRAMERATE)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_VIDEODURATION#" null="#NOT LEN(select_videos.VID_VIDEODURATION)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_COMPRESSIONTYPE#" null="#NOT LEN(select_videos.VID_COMPRESSIONTYPE)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_BITRATE#" null="#NOT LEN(select_videos.VID_BITRATE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_EXTENSION#" null="#NOT LEN(select_videos.VID_EXTENSION)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_MIMETYPE#" null="#NOT LEN(select_videos.VID_MIMETYPE)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_PREVIEW_WIDTH#" null="#NOT LEN(select_videos.VID_PREVIEW_WIDTH)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos.VID_PREVIEW_HEIGTH#" null="#NOT LEN(select_videos.VID_PREVIEW_HEIGTH)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_GROUP#" null="#NOT LEN(select_videos.VID_GROUP)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_PUBLISHER#" null="#NOT LEN(select_videos.VID_PUBLISHER)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_NAME_ORG#" null="#NOT LEN(select_videos.VID_NAME_ORG)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_NAME_IMAGE#" null="#NOT LEN(select_videos.VID_NAME_IMAGE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_NAME_PRE#" null="#NOT LEN(select_videos.VID_NAME_PRE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_NAME_PRE_IMG#" null="#NOT LEN(select_videos.VID_NAME_PRE_IMG)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_SIZE#" null="#NOT LEN(select_videos.VID_SIZE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_PREV_SIZE#" null="#NOT LEN(select_videos.VID_PREV_SIZE)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.LUCENE_KEY#" null="#NOT LEN(select_videos.LUCENE_KEY)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.SHARED#" null="#NOT LEN(select_videos.SHARED)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.LINK_KIND#" null="#NOT LEN(select_videos.LINK_KIND)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#LINK_PATH#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.VID_META#" null="#NOT LEN(select_videos.VID_META)#">,
+						<cfqueryparam cfsqltype="cf_sql_integer" value="#session.HOSTID#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#newfolderid#/vid/#newvidid#">,
+						<cfif structKeyExists(cloud_url,"theurl") AND cloud_url.theurl NEQ '' >
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url.theurl#" >,
+						<cfelse>
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true" >,
+						</cfif>
+						<cfif structKeyExists(cloud_url_org,"theurl") AND cloud_url_org.theurl NEQ '' >
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_org.theurl#">,
+						<cfelse>
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="" null="true" >,
+						</cfif>
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.HASHTAG#" null="#NOT LEN(select_videos.HASHTAG)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos.IS_AVAILABLE#" null="#NOT LEN(select_videos.IS_AVAILABLE)#">,
+						<cfif structKeyExists(cloud_url_org,"newepoch") AND cloud_url_org.newepoch NEQ ''>
+							<cfqueryparam cfsqltype="cf_sql_integer" value="#cloud_url_org.newepoch#">
+						<cfelse>
+							<cfqueryparam cfsqltype="cf_sql_integer" value="" null="true" >
+						</cfif>
+						
+					)
+				</cfquery>
+				<cfif select_videos_text.RecordCount>
+					<cfquery datasource="#application.razuna.datasource#" name="update_videos_text">
+						INSERT INTO #session.hostdbprefix#videos_text
+						(ID_INC,VID_ID_R,LANG_ID_R,VID_KEYWORDS,VID_DESCRIPTION,VID_TITLE,HOST_ID)
+						VALUES(
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#newvidid#">,
+							<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos_text.LANG_ID_R#"  null="#NOT LEN(select_videos_text.LANG_ID_R)#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.aud_KEYWORDS#"  null="#NOT LEN(select_videos_text.aud_KEYWORDS)#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.aud_DESCRIPTION#"  null="#NOT LEN(select_videos_text.aud_DESCRIPTION)#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.VID_DESCRIPTION#"  null="#NOT LEN(select_videos_text.VID_DESCRIPTION)#">,
+							<cfqueryparam cfsqltype="cf_sql_integer" value="#session.HOSTID#">
+						)
+					</cfquery>
+				</cfif>
+			</cfif>
+		</cfloop>
+		<!--- Increment the count --->
+		<cfset arguments.thestruct.count = arguments.thestruct.count + 1>
+		<!--- Get sub folders --->
+		<cfinvoke method="getsubfolders" returnvariable="tocopyfolderdetails">
+			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+		</cfinvoke>
+		<!--- Loop the subfolder records and call the same function again --->
+		<cfif tocopyfolderdetails.recordcount>
+			<cfloop query="tocopyfolderdetails">
+				<cfset arguments.thestruct.tocopyfolderid = folder_id>
+				<cfset arguments.thestruct.intofolderid = newfolderid>
+				<cfinvoke method="copy" returnvariable="done">
+					<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+				</cfinvoke>
+			</cfloop>
+		</cfif>
+		<cfcatch type="any">
+			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error copy folder - #cgi.http_host#">
+				<cfdump var="#cfcatch#" />
+				<cfdump var="#arguments.thestruct#" />
+			</cfmail>
+		</cfcatch>
+	</cftry>
+	<cfreturn />
 </cffunction>
 
 </cfcomponent>

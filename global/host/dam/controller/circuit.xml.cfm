@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2013.08.19.1" />
+		<set name="attributes.cachetag" value="2013.11.12.1" />
 	</fuseaction>
 	
 	<!--
@@ -245,6 +245,7 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage()" returnvariable="qry_storage" />
 				<!-- Set bucket -->
 				<set name="attributes.awsbucket" value="#qry_storage.set2_aws_bucket#" />
+				<set name="attributes.set2_img_format" value="#qry_storage.set2_img_format#" />
 			</true>
 		</if>
 		<if condition="application.razuna.storage EQ 'akamai'">
@@ -5120,7 +5121,7 @@
 		<set name="attributes.iscol" value="f" overwrite="false" />
 		<set name="attributes.kind" value="" overwrite="false" />
 		<set name="attributes.fromtrash" value="false" overwrite="false" />
-		<if condition="session.type NEQ 'movefile' AND session.type NEQ 'movefolder' AND session.type NEQ 'restorefolder' AND session.type NEQ 'restorecolfolder'">
+		<if condition="session.type NEQ 'movefile' AND session.type NEQ 'movefolder' AND session.type NEQ 'copyfolder' AND session.type NEQ 'restorefolder' AND session.type NEQ 'restorecolfolder'">
 			<true>
 				<set name="session.thefolderorg" value="0" />
 			</true>
@@ -5242,6 +5243,13 @@
 				<set name="session.savehere" value="c.move_folder_do" />
 			</true>
 		</if>
+		<!-- If we copy a FOLDER in this folder do... -->
+		<if condition="session.type EQ 'copyfolder'">
+			<true>
+				<set name="session.savehere" value="c.copy_folder" />
+				<!--<set name="session.type" value="movefolder" />-->
+			</true>
+		</if>
 		<!-- Choose the folder for get asset-->
 		<if condition="session.type EQ 'copymetadata'">
 			<true>
@@ -5342,6 +5350,12 @@
 		<if condition="structkeyexists(attributes,'file_id')">
 			<true>
 				<set name="session.thefileid" value="#attributes.file_id#" />
+			</true>
+		</if>
+		<!-- If we copy a folder -->
+		<if condition="attributes.type EQ 'copyfolder'">
+			<true>
+				<set name="session.thefolderorglevel" value="#attributes.folder_level#" />
 			</true>
 		</if>
 		<!-- If we move a folder -->
@@ -5595,6 +5609,31 @@
 		
 	</fuseaction>
 	
+	 <!-- Copy the folder into the desired folder -->
+	<fuseaction name="copy_folder">
+		<!-- Param -->
+		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.tocopyfolderid" value="#session.thefolderorg#" />
+		<!-- <set name="attributes.difflevel" value="#attributes.intolevel# - #session.thefolderorglevel#" /> -->
+		<set name="attributes.folder_id" value="#attributes.tocopyfolderid#" />
+		<!-- Set a flag for renaming the folder to be copied -->
+		<set name="attributes.count" value="0" />
+		<!-- Path for link_path_url -->
+		<set name="attributes.path" value="#expandpath('/')#" />
+		<!-- CFC: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: Move Folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="copy(attributes)" />
+		<!-- Go to show the folder -->
+		<if condition="attributes.iscol NEQ 't'">
+			<true>
+				<do action="folder" />
+			</true>
+		</if>
+	</fuseaction>
 	<!--
 		END: MOVING FOLDER AND FILES
 	-->

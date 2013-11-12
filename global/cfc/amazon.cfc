@@ -202,12 +202,12 @@
 		<!--- Get keys --->
 		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
 		<!--- Call the copyobject function --->
-		<cfloop array="#thekeys#" index="i">
-			<cfset thefile = listlast(i.key,"/")>
+		<cfloop query="thekeys" >
+			<cfset thefile = listlast(key,"/")>
 			<cfinvoke component="s3" method="copyObject">
 				<cfinvokeargument name="oldBucketName" value="#arguments.awsbucket#">
 				<cfinvokeargument name="newBucketName" value="#arguments.awsbucket#">
-				<cfinvokeargument name="oldFileKey" value="#i.key#">
+				<cfinvokeargument name="oldFileKey" value="#key#">
 				<cfinvokeargument name="newFileKey" value="#arguments.folderpathdest#/#thefile#">
 			</cfinvoke>
 		</cfloop>
