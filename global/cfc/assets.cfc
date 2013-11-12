@@ -1857,6 +1857,7 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
+		<cfset arguments.thestruct.qryfile.path = arguments.thestruct.pathorg>
 		<!--- Call versions component to do the versions thingy --->
 		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 	<!--- This is for normal adding --->
