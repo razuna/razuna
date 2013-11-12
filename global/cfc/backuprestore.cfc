@@ -93,32 +93,34 @@
 				AND (
 				lower(object_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#theprefix#">
 				<cfif arguments.thestruct.hostid EQ 0>
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_permissions">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="hosts">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="log_actions">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_login">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="wisdom">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_comments">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="file_types">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="webservices">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
-					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
-					OR lower(object_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
+					OR (
+						lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_permissions">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="hosts">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="log_actions">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_login">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="wisdom">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_comments">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="file_types">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="webservices">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
+						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+					)
+					AND lower(object_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -146,32 +148,34 @@
 				WHERE (
 				lower(tabname) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theprefix)#">
 				<cfif arguments.thestruct.hostid EQ 0>
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_permissions">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="hosts">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="log_actions">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_login">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="wisdom">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_comments">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="file_types">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="webservices">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
-					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
-					OR lower(tabname) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
+					OR (
+						lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_permissions">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="hosts">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="log_actions">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_login">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="wisdom">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_comments">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="file_types">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="webservices">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
+						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+					)
+					AND lower(tabname) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -199,32 +203,34 @@
 				FROM information_schema.tables
 				WHERE lower(table_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theprefix)#">
 				<cfif arguments.thestruct.hostid EQ 0>
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="hosts">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="log_actions">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_login">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="wisdom">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_comments">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="file_types">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="webservices">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_permissions">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
-					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
-					OR lower(table_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
+					OR (
+						lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="permissions">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="groups">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="hosts">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="log_actions">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_login">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="wisdom">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users_comments">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="file_types">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="webservices">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_users">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_groups_permissions">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_hosts">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+					)
+					AND lower(table_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
