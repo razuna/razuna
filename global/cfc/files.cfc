@@ -1251,6 +1251,42 @@
 		<cfreturn lqry>
 	</cffunction>
 
+	<cffunction name="genpdfjpgs"  returntype="void" hint="Generates jpg images for a given pdf">
+		<cfargument name="path2pdf" required="true" hint="path to pdf file">
+		<cfargument name="path2jpgs" required="true" hint="path to directory where jpgs will be stored">
+		
+		<cfinvoke component="settings" method="get_tools" returnVariable="thetools" /> <!--- Get tool paths --->
+		<cfset gettemp = GetTempDirectory()> 
+	 	<cfset var ttpdf = Createuuid("")>
+		<cfset theorgfile = arguments.path2pdf> <!--- Path to pdf --->
+	 	<cfset thepdfimage = replacenocase(listlast(theorgfile,"/"),".pdf",".jpg","all")> <!--- Name of image file name that will be extracted from pdf --->
+	 	<cfif FindNoCase("Windows", server.os.name)>
+			<cfset theimconvert = """#thetools.imagemagick#/convert.exe"""> <!--- imagemagick tool path --->
+			<!--- Set window scripts --->
+			<cfset args.thesht = "#gettemp#/#ttpdf#t.bat">
+			<cfset theorgfile = theorgfile>
+		<cfelse>
+			<cfset theimconvert = "#thetools.imagemagick#/convert">
+			<!--- Set non windows scripts --->
+			<cfset args.thesht = "#gettemp#/#ttpdf#t.sh">
+			<cfset theorgfile = replace(theorgfile," ","\ ","all")>
+			<cfset theorgfile = replace(theorgfile,"&","\&","all")>
+			<cfset theorgfile = replace(theorgfile,"'","\'","all")>
+		</cfif>
+	 	<cfset thejpgdirectory = arguments.path2jpgs> <!--- Directory where extracted jpgs will be stored --->
+		<!--- Write out script file--->
+		<cffile action="write" file="#args.thesht#" output="#theimconvert# #theorgfile# #thejpgdirectory#/#thepdfimage#" mode="777">
+		<!--- Execute script file in thread--->
+		<cfthread name="#ttpdf#" action="run" pdfintstruct="#args#">
+			<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
+		</cfthread>
+		<!--- Wait for thread to finish --->
+		<cfthread action="join" name="#ttpdf#" />					
+		<!--- Delete script file --->
+		<cffile action="delete" file="#args.thesht#">	
+		<cfreturn>
+	</cffunction>
+
 	<!--- GET THE DETAILS FOR BASKET --->
 	<cffunction name="detailforbasket" output="false">
 		<cfargument name="thestruct" type="struct">
