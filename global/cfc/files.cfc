@@ -1062,6 +1062,10 @@
 	<cffunction name="writefile" output="true">
 		<cfargument name="thestruct" type="struct">
 		<cfparam name="arguments.thestruct.sendaszip" default="F">
+		<!--- Create an Outgoing folder if it doesn't exists --->
+		<cfif !directoryExists("#arguments.thestruct.thepath#/outgoing/")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/" mode="775">
+		</cfif>
 		<!--- The tool paths --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Go grab the platform --->
@@ -1128,7 +1132,10 @@
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 		<cftry>
-			<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip">
+			<!--- Remove the Zip file of the (.doc, .pdf, .xls etc)file formats other than (.zip) file format --->
+			<cfif getbin.file_extension NEQ 'zip'>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip">
+			</cfif>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
