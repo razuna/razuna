@@ -1379,7 +1379,7 @@
 	<!--- Start the loop to get the different kinds of audios --->
 	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
-		<cfif isnumeric(art)>
+		<cfif art NEQ "audio">
 			<!--- Set the video id for this type of format and set the extension --->
 			<cfset theaudioid = art>
 			<cfquery name="ext" datasource="#variables.dsn#">
@@ -1476,7 +1476,12 @@
 	<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
 	<cfset zipname = replace(zipname,"\","-","all")>
 	<cfset zipname = replace(zipname, " ", "_", "All")>
+	<!--- check the create zip --->
+	<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+		<cfset zipname = zipname>
+	<cfelse>
 	<cfset zipname = zipname & ".zip">
+	</cfif>
 	<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 	<cftry>
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#zipname#">
@@ -1485,10 +1490,29 @@
 			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
+	<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+		<!--- Delete if any folder exists in same name and rename the temp folder --->
+		<cfif directoryExists("#arguments.thestruct.thepath#/outgoing/#zipname#")>
+			<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#zipname#" recurse="true">
+		</cfif>
+			<cfdirectory action="rename" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" newdirectory="#arguments.thestruct.thepath#/outgoing/#zipname#" mode="775">
+		<cfif directoryExists("#arguments.thestruct.thepath#/outgoing/#zipname#")>
+			<!--- get all directory name --->
+			<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#zipname#" name="myDir" type="dir">
+			<cfloop query="myDir">
+				<!--- get all files from the directory --->
+				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#" name="myFile" type="file">
+				<!--- Rename the files --->
+				<cfset new_name = replace(myFile.name, " ", "_", "All")>
+				<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#myFile.name#" >
+			</cfloop>
+		</cfif>
+	<cfelse>
 	<!--- Zip the folder --->
 	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#zipname#" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#" recurse="true" timeout="300" />
 	<!--- Remove the temp folder --->
 	<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" recurse="yes">
+	</cfif>
 	<!--- Return --->
 	<cfreturn zipname>
 </cffunction>

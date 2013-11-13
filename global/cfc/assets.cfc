@@ -1825,10 +1825,11 @@ This is the main function called directly by a single upload else from addassets
 				<!--- On LAN Put the path into this variable for the md5 hash --->
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 					<cfset arguments.thestruct.theorgfileraw = arguments.thestruct.qryfile.path>
+					<cfset arguments.thestruct.qryfile.path = arguments.thestruct.qryfile.path>
 				<cfelse>
 					<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+					<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 				</cfif>
-				<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfelse>
 				<!--- Set scripts --->
 				<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#ttpdf#.sh">
