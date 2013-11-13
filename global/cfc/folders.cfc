@@ -3940,8 +3940,6 @@
 			</cfif>
 		</cfoutput>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfset resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -6032,6 +6030,8 @@
 			</cfmail>
 		</cfcatch>
 	</cftry>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
