@@ -277,7 +277,7 @@
 					<tr class="list thumbview">
 						<td align="center">
 							<cfif is_available>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<!--- Show assets --->
 									<div id="draggable#img_id#-img" type="#img_id#-img">
 										<cfif link_kind NEQ "url">
