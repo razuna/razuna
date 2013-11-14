@@ -104,7 +104,7 @@
 		<cfelse>
 			<!--- Different file location for assets stored on lan --->
 			<cfif qry_binary.qfile.link_kind EQ "lan">
-				<cfset thefileloc = "#qry_binary.qfile.link_path_url#"> 
+				<cfset thefileloc = "#replace(qry_binary.qfile.link_path_url,"\ "," ","ALL")#">
 			<cfelse>
 				<!--- Decide on original or preview --->
 				<cfif attributes.v EQ "o">
