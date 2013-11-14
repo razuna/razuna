@@ -1799,7 +1799,12 @@ This is the main function called directly by a single upload else from addassets
 			<cfif NOT fileexists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#")>
 				<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="775">
 			</cfif>
-			<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<!--- RAZ-2480 : Setting link_path_url for the PDF type files --->
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#">
+			<cfelse>
+				<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			</cfif>
 		<!--- InDesign --->
 		<cfelseif arguments.thestruct.qryfile.extension EQ "indd">
 			<!--- Set vars --->
