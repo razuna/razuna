@@ -1262,19 +1262,8 @@
 			WHERE name IS NOT NULL
 			</cfquery>
 		</cfif>
-		<!--- Where to start in the loop. When only one record found start with 1 else with 0 --->
-		<cfif lqry.qry_pdfjpgs.recordcount EQ 1>
-			<cfset theloopstart = 1>
-			<cfset looptil = lqry.qry_pdfjpgs.recordcount>
-		<cfelse>
-			<cfset theloopstart = 0>
-			<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
-		</cfif>
-		<!--- Loop over the directory list and replace the name with the actual record number found --->
-		<cfloop from="#theloopstart#" to="#looptil#" index="i">
-			<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & replacenocase(lqry.qry_pdfjpgs.name,"-0","-#i#","all")>
-			<!--- <cfoutput>#replacenocase(qry_pdfjpgs.name,"-0","-#i#","all")#<br /></cfoutput> --->
-		</cfloop>
+		<!--- Get the list of images--->
+		<cfset lqry.thepdfjpgslist = valuelist(lqry.qry_pdfjpgs.name)>
 		<!--- Return --->
 		<cfreturn lqry>
 	</cffunction>
