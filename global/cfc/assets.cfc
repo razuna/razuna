@@ -4629,6 +4629,11 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Param --->
 	<cfset arguments.thestruct.convert_to = "">
 	<cfset arguments.thestruct.convert = true>
+	<cfset arguments.thestruct.convert_wm_jpg = "">
+	<cfset arguments.thestruct.convert_wm_gif = "">
+	<cfset arguments.thestruct.convert_wm_png = "">
+	<cfset arguments.thestruct.convert_wm_tif = "">
+	<cfset arguments.thestruct.convert_wm_bmp = "">
 	<cfset arguments.thestruct.qry_settings_image = arguments.thestruct.qrysettings>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
@@ -4641,6 +4646,9 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="qry">
 		<cfif upl_temp_field EQ "convert_to">
 			<cfset arguments.thestruct.convert_to = upl_temp_value & "," & arguments.thestruct.convert_to>
+		</cfif>
+		<cfif upl_temp_field EQ "convert_wm_#upl_temp_format#">
+			<cfset "arguments.thestruct.convert_wm_#upl_temp_format#" = upl_temp_value >
 		</cfif>
 	</cfloop>
 	<!--- Images --->
