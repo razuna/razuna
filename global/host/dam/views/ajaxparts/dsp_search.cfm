@@ -229,13 +229,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		<cfif structkeyexists(attributes,"searchfor")>
-			// Copy the simple search text value
-			$('#insearchsearchfor').val('<cfoutput>#attributes.searchfor#</cfoutput>');
-		<cfelseif structkeyexists(attributes,"searchtext") AND NOT attributes.searchtext CONTAINS ":" AND NOT attributes.searchtext CONTAINS "+">
-			// Copy the simple search text value
-			$('#insearchsearchfor').val('<cfoutput>#attributes.searchtext#</cfoutput>');
-		</cfif>
 		// Activate Chosen
 		$(".chzn-select").chosen();
 		// Load tabs
@@ -286,7 +279,7 @@
 				var from_sf = $('#from_sf').val();
 				var sf_id = $('#sf_id').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: escape(searchtext), newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
 						$("#bodyoverlay").remove();
 					});
 			}
