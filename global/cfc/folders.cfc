@@ -3654,7 +3654,7 @@
 					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					) THEN 'unlocked'
 				<!--- If this is the user folder or he is the owner --->
-				WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
+				WHEN f.folder_owner = '#Session.theUserID#' THEN 'unlocked'
 				<!--- If this is the upload bin --->
 				WHEN f.folder_id = '1' THEN 'unlocked'
 				<!--- If this is a collection --->
