@@ -51,9 +51,25 @@
 	AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
 	</cfquery>
+
+	<cfquery datasource="#Variables.dsn#" name="qry">
+	SELECT file_extension orgext, path_to_asset
+	FROM #session.hostdbprefix#files
+	WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+
 	<!--- Delete asset on system --->
 	<cfif application.razuna.storage EQ "local">
-		<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" recurse="true">
+		<cfif directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
+			<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" recurse="true">
+		</cfif>	
+		<!--- If document is PDF then delete the folder named after the version number where pdf imgaes are stored  --->
+		<cfif qry.orgext eq "pdf">
+			<cfif directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#")>		
+				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#" recurse="true">	
+			</cfif>	
+		</cfif>			
 	<cfelseif application.razuna.storage EQ "nirvanix">
 		<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
 	<cfelseif application.razuna.storage EQ "amazon">
@@ -165,6 +181,29 @@
 			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" destination="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" move="T">
 			<!--- Now copy the version to the original directory --->
 			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#">
+			<!--- If document is a PDF then back up PDF images into the new version folder on playback and copy over images from the playback version folder into razuna_pdf_images  folder --->
+			<cfif qry.orgext eq "pdf">
+				<!--- Create folder with the new version inside razuna_pdf_images folder --->
+				<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+				</cfif>
+				<!--- Move razuna_pdf_images folder content into new version folder  --->
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+				<cfif directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#")>
+					<!--- Copy over pdf images for playback version folder into razuna_pdf_images folder  --->
+					 <cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#" name="pdfimgscpy" filter="*.jpg"/>
+					<cfloop query="pdfimgscpy">
+						<cftry>
+						<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images/#arguments.thestruct.version#/#name#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images" mode="777">
+						<cfcatch type="any"></cfcatch>
+						</cftry>
+					</cfloop>
+				<cfelse> <!--- If directory does not exist for version then re-generate pdf images --->
+				 	<cfobject component="global.cfc.files" name="fobj"> 
+				 	<cfset var genjpgs = fobj.genpdfjpgs ("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/#qrycurrentversion.ver_filename_org#","#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images")>
+				</cfif>
+			</cfif>
+			
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
@@ -779,6 +818,18 @@
 			<cfif directoryExists(arguments.thestruct.qryfile.path)>
 				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
 			</cfif>
+
+			<!--- Create folder with the version inside razuna_pdf_images folder --->
+			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+			</cfif>
+
+			<!--- move {razuna_pdf_images folder} content {version #}  --->
+			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+
+			<!--- move from incoming folder JPGs to {razuna_pdf_images folder} --->
+			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" fileaction="move"  move="T">
+  			
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
@@ -1107,6 +1158,9 @@
 			</cfquery>
 			<!--- Flush Cache --->
 			<cfset variables.cachetoken = resetcachetoken("files")>
+			<!--- RAZ-2475 : Flush folders cache to get the latest thumbnail of PDF --->
+			<cfset variables.cachetoken = resetcachetoken("folders")> <!--- This will update folder view--->
+			<!--- We need to update the information tab of the popup too. --->
 		</cfif>
 		
 		<cfset arguments.thestruct.qrydetail.path_to_asset = arguments.thestruct.qryfilelocal.path_to_asset>
