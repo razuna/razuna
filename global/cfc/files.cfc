@@ -1062,6 +1062,10 @@
 	<cffunction name="writefile" output="true">
 		<cfargument name="thestruct" type="struct">
 		<cfparam name="arguments.thestruct.sendaszip" default="F">
+		<!--- Create an Outgoing folder if it doesn't exists --->
+		<cfif !directoryExists("#arguments.thestruct.thepath#/outgoing/")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/" mode="775">
+		</cfif>
 		<!--- The tool paths --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Go grab the platform --->
@@ -1105,6 +1109,8 @@
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.getbin.file_name_org#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
+				<!--- Rename the file --->
+				<cffile action="rename" source="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.getbin.file_name_org#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.newname#" >
 			</cfthread>
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai" AND getbin.link_kind EQ "">
@@ -1118,18 +1124,40 @@
 				<cffile action="copy" source="#attributes.intstruct.getbin.link_path_url#" destination="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.newname#" mode="775">
 			</cfthread>
 		</cfif>
+		<!--- Check that the zip name contains no spaces --->
+		<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+		<cfset zipname = replace(zipname,"\","-","all")>
+		<cfset zipname = replace(zipname, " ", "_", "All")>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 		<cftry>
-			<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip">
+			<!--- Remove the Zip file of the (.doc, .pdf, .xls etc)file formats other than (.zip) file format --->
+			<cfif getbin.file_extension NEQ 'zip'>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip">
+			</cfif>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
-		<!--- Zip the file --->	
-		<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip" source="#arguments.thestruct.thepath#/outgoing/#newname#" recurse="true" timeout="300" />
-		<!--- Remove the file --->
-		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newname#">
+		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+			<!--- Delete if any folder exists in same name and create the new directory --->
+			<cfif directoryExists("#arguments.thestruct.thepath#/outgoing/#zipname#")>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#zipname#" recurse="true">
+			</cfif>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#zipname#">
+			<cffile action="move" destination="#arguments.thestruct.thepath#/outgoing/#zipname#" source="#arguments.thestruct.thepath#/outgoing/#newname#" >
+		<cfelse>
+			<cfif listLast(arguments.thestruct.newname,'.') NEQ "zip">
+				<!--- Zip the file --->	
+				<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip" source="#arguments.thestruct.thepath#/outgoing/#newname#" recurse="true" timeout="300" />
+				<!--- Remove the file --->
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newname#">
+			</cfif>
+		</cfif>
+		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+			<cfset newname="#newnamenoext#">
+		<cfelse>
 		<cfset newname="#newnamenoext#.zip">
+		</cfif>
 		<!--- Return --->
 		<cfreturn newname>
 	</cffunction>
@@ -1234,19 +1262,19 @@
 			WHERE name IS NOT NULL
 			</cfquery>
 		</cfif>
-		<!--- Where to start in the loop. When only one record found start with 1 else with 0 --->
-		<cfif lqry.qry_pdfjpgs.recordcount EQ 1>
-			<cfset theloopstart = 1>
-			<cfset looptil = lqry.qry_pdfjpgs.recordcount>
-		<cfelse>
+		<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
+		<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
 			<cfset theloopstart = 0>
 			<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
+			<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
+			<cfset var jpgname = replace(lqry.qry_pdfjpgs.name,"-0.jpg","","ONE")>
+			<cfloop from="#theloopstart#" to="#looptil#" index="i">
+				<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
+			</cfloop>
+			<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
+		<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
+			<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
 		</cfif>
-		<!--- Loop over the directory list and replace the name with the actual record number found --->
-		<cfloop from="#theloopstart#" to="#looptil#" index="i">
-			<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & replacenocase(lqry.qry_pdfjpgs.name,"-0","-#i#","all")>
-			<!--- <cfoutput>#replacenocase(qry_pdfjpgs.name,"-0","-#i#","all")#<br /></cfoutput> --->
-		</cfloop>
 		<!--- Return --->
 		<cfreturn lqry>
 	</cffunction>

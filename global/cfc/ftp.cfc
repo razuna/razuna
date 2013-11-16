@@ -87,10 +87,74 @@
 	<cftry>
 		<!--- Open ftp connection --->
         <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive)>
+		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
+			<!--- Get the directories --->
+			<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" name="myDir" type="dir">
+			<cfif myDir.RecordCount>
+				<cfloop query="myDir">
+					<!--- Get the files --->
+					<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#" name="myFile" type="file">
+						<cfif !Ftpexistsfile(ftpdata=o, file="#arguments.thestruct.folderpath#/#myFile.name#")>
+							<!--- Put the file on the FTP Site --->
+							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#myFile.name#", passive=session.ftp_passive)>
+						<cfelse>
+							<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
+							<cfquery name="q" dbtype="query" >
+								SELECT * FROM listftp
+								WHERE name LIKE '#listfirst(myFile.name,'.')#%' 
+								AND name LIKE '%#listlast(myFile.name,'.')#%'
+							</cfquery>
+							<!--- set new name --->
+							<cfset new_name = #listFirst(myFile.name,'.')#&"("&#q.RecordCount#+1&")"&"."&#listLast(myFile.name,'.')#>
+							<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#myFile.name#">
+							<!--- Put the file on the FTP Site --->
+							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#new_name#", passive=session.ftp_passive)>
+						</cfif>
+				</cfloop>
+				<!--- Delete the folder in the outgoing folder --->
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" recurse="true">
+			<cfelse>
+				<!--- Get the files --->
+				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" name="myFile" type="file">
+				<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#myFile.name#")>
+					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myFile.name#", passive=session.ftp_passive)>
+				<cfelse>
+					<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
+					<cfquery name="q" dbtype="query" >
+						SELECT * FROM listftp
+						WHERE name LIKE '#listfirst(myFile.name,'.')#%' 
+						AND name LIKE '%#listlast(myFile.name,'.')#%'
+					</cfquery>
+					<!--- set new name --->
+					<cfset new_name = #listFirst(myFile.name,'.')#&"("&#q.RecordCount#+1&")"&"."&#listLast(myFile.name,'.')#>
+					<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myFile.name#" >
+					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#new_name#", passive=session.ftp_passive)>
+				</cfif>	
+				<!--- Delete the folder in the outgoing folder --->
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" recurse="true">
+			</cfif>
+		<cfelse>
+			<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#")>
 		<!--- Put the file on the FTP Site --->
         <cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#", passive=session.ftp_passive)>
 		<!--- Delete the file in the outgoing folder --->
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#">
+			<cfelse>
+				<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
+				<cfquery name="q" dbtype="query" >
+					SELECT * FROM listftp
+					WHERE name LIKE '#listfirst(arguments.thestruct.thefile,'.')#%' 
+					AND name LIKE '%#listlast(arguments.thestruct.thefile,'.')#%'
+				</cfquery>
+				<!--- set new name --->
+				<cfset new_name = #listFirst(arguments.thestruct.thefile,'.')#&"("&#q.RecordCount#+1&")"&"."&#listLast(arguments.thestruct.thefile,'.')#>
+				<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" >
+				<!--- Put the file on the FTP Site --->
+				<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#new_name#", localfile="#arguments.thestruct.thepath#/outgoing/#new_name#", passive=session.ftp_passive)>
+				<!--- Delete the file in the outgoing folder --->
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#new_name#">
+			</cfif>	
+		</cfif>
 		<!--- Close FTP --->
 		<cfset ftpclose(o)>
 		<cfoutput>success</cfoutput>

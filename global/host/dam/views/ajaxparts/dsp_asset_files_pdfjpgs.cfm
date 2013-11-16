@@ -40,16 +40,16 @@
 	</tr>
 	<cfif qry_pdfjpgs.qry_pdfjpgs.recordcount NEQ 1>
 		<tr>
-			<td align="center"><cfloop from="0" to="#qry_pdfjpgs.qry_pdfjpgs.recordcount#" index="i"><a href="###i#">#i#</a> | </cfloop></td>
+			<td align="center"><cfloop from="1" to="#qry_pdfjpgs.qry_pdfjpgs.recordcount#" index="i"><a href="###i#">#i#</a> <cfif i NEQ qry_pdfjpgs.qry_pdfjpgs.recordcount>|</cfif> </cfloop></td>
 		</tr>
 	</cfif>
+
 	<tr>
 		<td align="center" style="padding-top:10px;">
 			<cfloop list="#qry_pdfjpgs.thepdfjpgslist#" delimiters="," index="i">
 				<cfset thenr = replacenocase(i,".jpg","","all")>
 				<cfset thenr = listlast(thenr,"-")>
-
-				<a name="#thenr#"><img src="#thestorage##qry_detail.detail.path_to_asset#/razuna_pdf_images/#i#" border="0"></a><a href="##top">Top</a>
+				<a name="#val(thenr)+1#"><img src="#thestorage##qry_detail.detail.path_to_asset#/razuna_pdf_images/#i#" border="0"></a><a href="##top">Top</a>
 			</cfloop>
 		</td>
 	</tr>

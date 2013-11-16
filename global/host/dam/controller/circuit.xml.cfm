@@ -4456,6 +4456,7 @@
 		<set name="attributes.foldername" value="" overwrite="false" />
 		<set name="attributes.folderpath" value="" overwrite="false" />
 		<set name="attributes.artofimage" value="" overwrite="false" />
+		<set name="attributes.createzip" value="" overwrite="false" />
 		<!-- Store values in session since we need them later on some more -->
 		<set name="session.ftp_server" value="#attributes.ftp_server#" />
 		<set name="session.ftp_user" value="#attributes.ftp_user#" />
@@ -4465,6 +4466,7 @@
 		<set name="session.file_id" value="#attributes.file_id#" />
 		<set name="session.thetype" value="#attributes.thetype#" />
 		<set name="session.sendaszip" value="#attributes.sendaszip#" />
+		<set name="session.createzip" value="#attributes.createzip#" />
 		<set name="session.frombasket" value="F" />
 		<!-- If this comes from the scheduled uploads -->
 		<if condition="attributes.thetype EQ 'sched'">
