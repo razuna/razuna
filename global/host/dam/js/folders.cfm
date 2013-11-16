@@ -148,8 +148,8 @@
 		if (searchfor != '') var searchfor = searchfor;
 		if (keywords != '') var keywords = 'keywords:' + keywords;
 		if (description != '') var description = 'description:' + description;
-		if (filename != '') var filename = 'filename:' + filename;
-		if (extension != '') var extension = 'extension:' + extension;
+		if (filename != '') var filename = 'filename:"' + filename + '"';
+		if (extension != '') var extension = 'extension:"' + extension + '"';
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
 		if (labels != ''){
 			if (andor == "OR"){

@@ -95,6 +95,8 @@
 		<cfset var qry_path = "">
 		<!--- If the assetid is all it means a complete rebuild --->
 		<cfif arguments.assetid EQ "all">
+			<!--- Delete all records in the index --->
+			<cfset CollectionIndexpurge( arguments.hostid )>
 			<!--- Set all records to non indexed --->
 			<cfquery datasource="#arguments.dsn#">
 			UPDATE #arguments.prefix#images
@@ -279,6 +281,38 @@
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
+				<!--- Index only doc files --->
+				<cfif qry_all.link_kind NEQ "url" AND arguments.notfile EQ "F">
+					<cftry>
+						<!--- Nirvanix or Amazon --->
+						<cfif (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
+							<!--- Check if windows or not --->
+							<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+							<cfif !isWindows>
+								<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key," ","\ ","all")>
+								<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"&","\&","all")>
+								<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"'","\'","all")>
+							</cfif>
+							<!--- Index: Update file --->
+							<cfif fileExists(qry_all.lucene_key)>
+								<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+							</cfif>
+						<!--- Local Storage --->
+						<cfelseif qry_all.link_kind NEQ "lan" AND arguments.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
+							<!--- Index: Update file --->
+							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<!--- Linked file --->
+						<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
+							<!--- Index: Update file --->
+							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						</cfif>
+						<cfcatch type="any">
+							<cfset consoleoutput(true)>
+							<cfset console("Error while indexing doc files in function lucene.index_update_thread")>
+							<cfset console(cfcatch)>
+						</cfcatch>
+					</cftry>
+				</cfif>
 				<!--- Update database --->
 				<cfquery datasource="#arguments.dsn#">
 				UPDATE #arguments.prefix#files
@@ -586,38 +620,6 @@
 				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
-		<!--- Index only doc files --->
-		<cfif qry_all.link_kind NEQ "url" AND arguments.category EQ "doc" AND arguments.notfile EQ "F">
-			<cftry>
-				<!--- Nirvanix or Amazon --->
-				<cfif (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
-					<!--- Check if windows or not --->
-					<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-					<cfif !isWindows>
-						<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key," ","\ ","all")>
-						<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"&","\&","all")>
-						<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"'","\'","all")>
-					</cfif>
-					<!--- Index: Update file --->
-					<cfif fileExists(qry_all.lucene_key)>
-						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					</cfif>
-				<!--- Local Storage --->
-				<cfelseif qry_all.link_kind NEQ "lan" AND arguments.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
-					<!--- Index: Update file --->
-					<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
-				<!--- Linked file --->
-				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
-					<!--- Index: Update file --->
-					<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
-				</cfif>
-				<cfcatch type="any">
-					<cfset consoleoutput(true)>
-					<cfset console("Error while indexing doc files in function lucene.index_update_thread")>
-					<cfset console(cfcatch)>
-				</cfcatch>
-			</cftry>
-		</cfif>
 	</cffunction>
 	
 	<!--- Get custom values --->
@@ -785,12 +787,14 @@
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
+		<!--- Decode input (we urlencode passed search now as we need to quote some fields) --->
+		<cfset arguments.criteria = urldecode(arguments.criteria)>
 		<!--- If criteria is empty --->
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = "id:(""#arguments.criteria#"") filename:(""#arguments.criteria#"") filenameorg:(""#arguments.criteria#"") keywords:(""#arguments.criteria#"") description:(""#arguments.criteria#"") rawmetadata:(""#arguments.criteria#"") id:(""#arguments.criteria#"") labels:(""#arguments.criteria#"")">
+			<cfset arguments.criteria = "id:(""#arguments.criteria#"") filename:(""#arguments.criteria#"") filenameorg:(""#arguments.criteria#"") keywords:(""#arguments.criteria#"") description:(""#arguments.criteria#"") labels:(#arguments.criteria#)">
 		</cfif>
 		<cftry>
 			<cfsearch collection="#arguments.hostid#" criteria="#arguments.criteria#" name="qrylucene" category="#arguments.category#">
