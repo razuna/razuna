@@ -3870,7 +3870,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 			</cfif>
 			<!--- Write files --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# -g #arguments.thestruct.theorgfile#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# -g ""#arguments.thestruct.theorgfile#""" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="idtags" />
 			<!--- Set idtags into struct for API --->
