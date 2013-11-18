@@ -5047,8 +5047,8 @@
 			<cfset var thename = "img_filename">
 			<cfset var thetype = "images">
 			<cfset var thesize = "img_size">
-			<cfset var thedatecreate = "img_create_date">
-			<cfset var thedatechange = "img_change_date">
+			<cfset var thedatecreate = "img_create_time">
+			<cfset var thedatechange = "img_change_time">
 			<cfset var thehashtag = "hashtag">
 			<cfset var thegroup = "img_group">
 		<cfelseif arguments.thestruct.what EQ "videos">
@@ -5057,8 +5057,8 @@
 			<cfset var thename = "vid_filename">
 			<cfset var thetype = "videos">
 			<cfset var thesize = "vid_size">
-			<cfset var thedatecreate = "vid_create_date">
-			<cfset var thedatechange = "vid_change_date">
+			<cfset var thedatecreate = "vid_create_time">
+			<cfset var thedatechange = "vid_change_time">
 			<cfset var thehashtag = "hashtag">
 			<cfset var thegroup = "vid_group">
 		<cfelseif arguments.thestruct.what EQ "audios">
@@ -5067,8 +5067,8 @@
 			<cfset var thename = "aud_name">
 			<cfset var thetype = "audios">
 			<cfset var thesize = "aud_size"> 
-			<cfset var thedatecreate = "aud_create_date">
-			<cfset var thedatechange = "aud_change_date">
+			<cfset var thedatecreate = "aud_create_time">
+			<cfset var thedatechange = "aud_change_time">
 			<cfset var thehashtag = "hashtag">
 			<cfset var thegroup = "aud_group">
 		<cfelseif arguments.thestruct.what EQ "files">
@@ -5077,8 +5077,8 @@
 			<cfset var thename = "file_name">
 			<cfset var thetype = "files">
 			<cfset var thesize = "file_size">
-			<cfset var thedatecreate = "file_create_date">
-			<cfset var thedatechange = "file_change_date">
+			<cfset var thedatecreate = "file_create_time">
+			<cfset var thedatechange = "file_change_time">
 			<cfset var thehashtag = "hashtag">
 		</cfif>
 		<!--- Set the order by --->
@@ -5123,8 +5123,8 @@
 			img_id as file_id,
 			lower(img_filename) as filename_forsort,
 			img_size as size,
-			img_create_date as date_create,
-			img_change_date as date_change,
+			img_create_time as date_create,
+			img_change_time as date_change,
 			hashtag,
 			'images' as type
 			FROM #session.hostdbprefix#images
@@ -5137,8 +5137,8 @@
 			vid_id as file_id,
 			lower(vid_filename) as filename_forsort,
 			vid_size as size,
-			vid_create_date as date_create,
-			vid_change_date as date_change,
+			vid_create_time as date_create,
+			vid_change_time as date_change,
 			hashtag,
 			'videos' as type
 			FROM #session.hostdbprefix#videos
@@ -5151,8 +5151,8 @@
 			aud_id as file_id,
 			lower(aud_name) as filename_forsort,
 			aud_size as size,
-			aud_create_date as date_create,
-			aud_change_date as date_change,
+			aud_create_time as date_create,
+			aud_change_time as date_change,
 			hashtag,
 			'audios' as type
 			FROM #session.hostdbprefix#audios
@@ -5165,8 +5165,8 @@
 			file_id as file_id,
 			lower(file_name) as filename_forsort,
 			file_size as size,
-			file_create_date as date_create,
-			file_change_date as date_change,
+			file_create_time as date_create,
+			file_change_time as date_change,
 			hashtag,
 			'files' as type
 			FROM #session.hostdbprefix#files
@@ -5216,7 +5216,7 @@
 			</cfif>
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			#theid# as file_id,
-			#lcase(thename)# as filename_forsort,
+			lower(#thename#) as filename_forsort,
 			#thesize# as size,
 			#thedatecreate# as date_create,
 			#thedatechange# as date_change,
