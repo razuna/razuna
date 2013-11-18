@@ -3940,6 +3940,8 @@
 			</cfif>
 		</cfoutput>
 	</cfif>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -5336,6 +5338,10 @@
 		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
 		</cfinvoke>
+		<!--- Get the reocord of the folder to set the access permission --->
+		<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
+			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+		</cfinvoke>
 		<!--- Get the reocord of the folder into which the folder is to be copied --->
 		<cfinvoke method="getfolder" returnvariable="intofolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.intofolderid#">
@@ -5412,6 +5418,21 @@
 			</cfif>
 			)
 		</cfquery>
+		
+		<!--- Insert the Group and Permission --->
+		<cfloop query="tocopyfoldergroups">
+			<cfquery datasource="#variables.dsn#">
+				INSERT INTO #session.hostdbprefix#folders_groups
+				(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#grp_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#grp_permission#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+			</cfquery>
+		</cfloop>
 		<!--- Assign arguments --->
 		<cfset arguments.thestruct.dsn = variables.dsn>
 		<cfset arguments.thestruct.setid = variables.setid>

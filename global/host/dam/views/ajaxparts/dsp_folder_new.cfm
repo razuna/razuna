@@ -141,7 +141,6 @@
 			<div style="clear:both;"></div>
 			<div style="float:right;padding-top:10px;padding-right:10px;">
 				<input type="submit" name="submit" id="foldersubmitbutton" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
-				<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 			</div>
 		</div>
 		<!--- Link to Folder --->
