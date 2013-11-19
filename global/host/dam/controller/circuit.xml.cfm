@@ -9342,7 +9342,8 @@
 				<do action="videos_detail" />
 			</true>
 		</if>
-		<if condition="qry_f.type EQ 'files'">
+		<!-- Redirect to detail according to 'files' type -->
+		<if condition="qry_f.type EQ 'doc' OR qry_f.type EQ 'other'">
 			<true>
 				<do action="files_detail" />
 			</true>
