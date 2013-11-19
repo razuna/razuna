@@ -390,10 +390,10 @@
 									<cfif myid EQ file_id>
 										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 											<!--- If it is a PDF we show the thumbnail --->
-											<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+											<cfif application.razuna.storage EQ "amazon" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 												<img src="#cloud_url#" border="0">
-											<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-												<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+											<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+												<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
 												<cfif FileExists("#ExpandPath("../../")#assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 												<cfelse>
