@@ -42,7 +42,7 @@
 		</tr>
 		<tr>
 			<td>#defaultsObj.trans("admin_maintenance_backup_desc2")#<br /><br />
-			Backup to: <input type="radio" name="tofiletype" id="tofiletype" value="raz" checked="checked"> Razuna format &mdash; Export to:<input type="radio" name="tofiletype" id="tofiletype" value="sql"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file <input type="button" name="backup" value="Backup" class="button" onclick="dobackup();" style="margin-left:30px;"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
+			<!--- Backup to: <input type="radio" name="tofiletype" id="tofiletype" value="raz" checked="checked"> Razuna format &mdash; Export to:<input type="radio" name="tofiletype" id="tofiletype" value="sql"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file ---> <input type="button" name="backup" value="Backup Database Now" class="button" onclick="dobackup();"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
 		</tr>
 	</table>
 	<!--- Schedule Backup --->
