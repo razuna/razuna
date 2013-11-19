@@ -1267,7 +1267,7 @@
 			<cfset theloopstart = 0>
 			<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
 			<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
-			<cfset var jpgname = replace(lqry.qry_pdfjpgs.name,"-0.jpg","","ONE")>
+			<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9].jpg","","ONE")>
 			<cfloop from="#theloopstart#" to="#looptil#" index="i">
 				<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
 			</cfloop>
