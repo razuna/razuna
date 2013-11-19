@@ -3183,7 +3183,12 @@
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#, filename_forsort
+				<cfelse>
 				ORDER BY #sortby#
+				</cfif>
 				<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
 						)
 					WHERE ROWNUM <= <cfqueryparam cfsqltype="cf_sql_numeric" value="#max#">
@@ -3276,7 +3281,12 @@
 			WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND f.in_trash = 'F'
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+			<cfif #sortby# NEQ 'filename_forsort'>
+				ORDER BY #sortby#, filename_forsort
+			<cfelse>
 			ORDER BY #sortby#
+			</cfif>
 		)
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
@@ -3295,7 +3305,13 @@
 		<cfif application.razuna.thedatabase EQ "mssql">
 			<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
 				SELECT * FROM (
-				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+				SELECT ROW_NUMBER() OVER ( 
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#, filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif> ) AS RowNum,sorted_inline_view.* FROM (
 			</cfif>
 		</cfif>
 		SELECT /* #variables.cachetoken#getallassets */ i.img_id as id, 
@@ -3482,7 +3498,12 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<!--- MySQL / H2 --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
 				ORDER BY #sortby#
+				</cfif>
 				<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
 					 LIMIT #mysqloffset#,#session.rowmaxpage#
 				</cfif>
@@ -5117,7 +5138,13 @@
 			<!--- MSSQL --->
 			<cfif application.razuna.thedatabase EQ "mssql">
 				select * from (
-				select ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* from (
+				select ROW_NUMBER() OVER ( 
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif> ) AS RowNum,sorted_inline_view.* from (
 			</cfif>
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			img_id as file_id,
@@ -5168,14 +5195,19 @@
 			file_create_time as date_create,
 			file_change_time as date_change,
 			hashtag,
-			'files' as type
+			file_type as type
 			FROM #session.hostdbprefix#files
 			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			<!--- MySql OR H2 --->
 			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort LIMIT #detailrow#,1
+				<cfelse>
 				ORDER BY #sortby#  LIMIT #detailrow#,1
+			</cfif>
 			</cfif>
 			<!--- MSSQL --->
 			<cfif application.razuna.thedatabase EQ "mssql">
@@ -5185,12 +5217,22 @@
 			</cfif>
 			<!--- DB2 --->
 			<cfif application.razuna.thedatabase EQ "db2">
-				ORDER BY #sortby#) sorted_inline_view )resultSet
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif>) sorted_inline_view )resultSet
 				WHERE rownr = #detailrow+1#
 			</cfif>
 			<!--- Oracle --->
 			<cfif application.razuna.thedatabase EQ "oracle">
-				ORDER BY #sortby#) sorted_inline_view )resultSet
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif>) sorted_inline_view )resultSet
 				WHERE ROWNUM = #detailrow+1#
 			</cfif>
 			</cfquery>
@@ -5212,7 +5254,13 @@
 			<!--- MSSQL --->
 			<cfif application.razuna.thedatabase EQ "mssql">
 				SELECT * FROM (
-				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+				SELECT ROW_NUMBER() OVER ( 
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif> ) AS RowNum,sorted_inline_view.* FROM (
 			</cfif>
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			#theid# as file_id,
@@ -5250,7 +5298,12 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			<!--- MySql --->
 			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort LIMIT #detailrow#,1
+				<cfelse>
 				ORDER BY #sortby# LIMIT #detailrow#,1
+			</cfif>
 			</cfif>
 			<!--- MSSQL --->
 			<cfif application.razuna.thedatabase EQ "mssql">
@@ -5260,12 +5313,22 @@
 			</cfif>
 			<!--- DB2 --->
 			<cfif application.razuna.thedatabase EQ "db2">
-				ORDER BY #sortby#) sorted_inline_view )resultSet
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif>) sorted_inline_view )resultSet
 				WHERE rownr = #detailrow+1#
 			</cfif>
 			<!--- Oracle --->
 			<cfif application.razuna.thedatabase EQ "oracle">
-				ORDER BY #sortby#) sorted_inline_view )resultSet
+				<!--- Sorting made unique if two or more assets have the exact same sortby value --->
+				<cfif #sortby# NEQ 'filename_forsort'>
+					ORDER BY #sortby#,filename_forsort
+				<cfelse>
+					ORDER BY #sortby#
+				</cfif>) sorted_inline_view )resultSet
 				WHERE ROWNUM = #detailrow+1#
 			</cfif>
 			</cfquery>
