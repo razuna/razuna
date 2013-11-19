@@ -35,7 +35,7 @@
 <cfif structKeyExists(form,"fieldnames")>
     <span style="font-weight:bold;color:green;">Uploaded successfully</span>
     <script type="text/javascript">
-        parent.$('##thewmimg').html('<img src="#session.thehttp##cgi.http_host#/#wmupload.imgpath#" border="0" width="200" />');
+        parent.$('##thewmimg').html('<img src="../../#wmupload.imgpath#" border="0" width="200" />');
         parent.$('##wm_image_path').val('#wmupload.fordbpath#');
     </script>
 <cfelse>

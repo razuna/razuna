@@ -124,7 +124,7 @@
 				});
 			},
 			rules: {
-				wm_temp_name: "required"			   
+				wm_name: "required"			   
 			 }
 		});
 	});
