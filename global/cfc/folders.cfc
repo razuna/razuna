@@ -5333,6 +5333,7 @@
 <!--- Copy THE FOLDER TO THE GIVEN POSITION --->
 <cffunction hint="COPY THE FOLDER TO THE GIVEN POSITION" name="copy" output="true">
 	<cfargument name="thestruct" type="struct">
+
 	<cftry>
 		<!--- Get the reocord of the folder to be copied --->
 		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
@@ -5371,23 +5372,11 @@
 		<cfset var newfolderid = "#createuuid('')#">
 		<cfset var uid = "#createuuid('')#">
 		<cfif application.razuna.storage EQ "local">
-			<cfzip action="create" zipfile="#GetTempDirectory()##uid#.zip" recurse="yes" source="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.tocopyfolderid#" />
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#">
-			<cfzip action="extract" zipfile="#GetTempDirectory()##uid#.zip" destination="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" />
-			<cffile action="delete" file="#GetTempDirectory()##uid#.zip">
-			<!--- Check the directories are created correctly --->
-			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud')>
-				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud')>
-			</cfif>
-			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img')>
-				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img')>
-			</cfif>
-			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid')>
-				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid')>
-			</cfif>
-			<cfif NOT directoryExists('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc')>
-				<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc')>
-			</cfif>
+			<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud')>
+			<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img')>
+			<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid')>
+			<cfset directoryCreate('#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc')>
 		</cfif>
 		
 		<!--- Insert into folders table --->
@@ -5465,7 +5454,14 @@
 				<cfset arguments.thestruct.newimgid = newimgid>
 				<!--- Rename the folder and thumbnail image --->
 				<cfif application.razuna.storage EQ "local">
+					<cfinvoke component="global" method="directoryCopy">
+						<cfinvokeargument name="source" value="#arguments.thestruct.assetpath#/#session.hostid#/#assets.path_to_asset#">
+						<cfinvokeargument name="destination" value="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#">
+						<cfinvokeargument name="directoryrecursive" value="true">
+					</cfinvoke>
+					<!---
 					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#" >
+					--->
 					<cffile action="rename" source="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#/thumb_#id#.#select_images.thumb_extension#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img/#newimgid#/thumb_#newimgid#.#select_images.thumb_extension#" >
 				</cfif>
 				<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
@@ -5675,7 +5671,15 @@
 				<cfset arguments.thestruct.newfileid = newfileid>
 				<!--- Rename the folder --->
 				<cfif application.razuna.storage EQ "local">
+
+					<cfinvoke component="global" method="directoryCopy">
+						<cfinvokeargument name="source" value="#arguments.thestruct.assetpath#/#session.hostid#/#assets.path_to_asset#">
+						<cfinvokeargument name="destination" value="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc/#newfileid#">
+						<cfinvokeargument name="directoryrecursive" value="true">
+					</cfinvoke>
+					<!---
 					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc/#newfileid#" >
+					--->
 				</cfif>
 				<cfquery datasource="#application.razuna.datasource#" name="select_files_desc">
 					SELECT * FROM #session.hostdbprefix#files_desc
@@ -5794,7 +5798,15 @@
 				<cfset arguments.thestruct.newaudid = newaudid>
 				<!--- Rename the directory --->
 				<cfif application.razuna.storage EQ "local">
+
+					<cfinvoke component="global" method="directoryCopy">
+						<cfinvokeargument name="source" value="#arguments.thestruct.assetpath#/#session.hostid#/#assets.path_to_asset#">
+						<cfinvokeargument name="destination" value="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud/#newaudid#">
+						<cfinvokeargument name="directoryrecursive" value="true">
+					</cfinvoke>
+					<!---
 					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud/#newaudid#" >
+						--->
 				</cfif>
 				<cfquery datasource="#application.razuna.datasource#" name="select_audios_text">
 					SELECT * FROM #session.hostdbprefix#audios_text
@@ -5902,7 +5914,15 @@
 				<cfset arguments.thestruct.newvidid = newvidid>
 				<!--- Rename the folder --->
 				<cfif application.razuna.storage EQ "local">
+
+					<cfinvoke component="global" method="directoryCopy">
+						<cfinvokeargument name="source" value="#arguments.thestruct.assetpath#/#session.hostid#/#assets.path_to_asset#">
+						<cfinvokeargument name="destination" value="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid/#newvidid#">
+						<cfinvokeargument name="directoryrecursive" value="true">
+					</cfinvoke>
+					<!---
 					<cfdirectory action="rename" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid/#id#" newdirectory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid/#newvidid#" >
+					--->	
 				</cfif>
 				<cfquery datasource="#application.razuna.datasource#" name="select_videos_text">
 					SELECT * FROM #session.hostdbprefix#videos_text
