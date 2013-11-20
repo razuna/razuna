@@ -1232,7 +1232,7 @@
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Get the directory list --->
-			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg">
+			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<!--- Call ListFolder --->
