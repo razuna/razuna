@@ -819,69 +819,18 @@
 				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
 			</cfif>
 
-			<!--- Create folder with the version inside razuna_pdf_images folder --->
-			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+			<cfif arguments.thestruct.qryfilelocal.orgext EQ 'PDF'>
+				<!--- Create folder with the version inside razuna_pdf_images folder --->
+				<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+				</cfif>
+
+				<!--- move {razuna_pdf_images folder} content {version #}  --->
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+
+				<!--- move from incoming folder JPGs to {razuna_pdf_images folder} --->
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" fileaction="move"  move="T">
 			</cfif>
-
-			<!--- move {razuna_pdf_images folder} content {version #}  --->
-			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
-
-			<!--- move from incoming folder JPGs to {razuna_pdf_images folder} --->
-			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/razuna_pdf_images/" fileaction="move"  move="T">
-  			
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset mtt = createuuid("")>
-			<!--- Move the file to the versions directory --->
-			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
-				<!--- Move --->
-				<cfinvoke component="nirvanix" method="MoveFolders">
-					<cfinvokeargument name="srcFolderPath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="destFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for the move thread to finish --->
-			<cfthread action="join" name="#mtt#" />
-			<!--- Rename the just moved folder --->
-			<cfthread name="r#mtt#" intstruct="#arguments.thestruct#">
-				<cfinvoke component="nirvanix" method="RenameFolders">
-					<cfinvokeargument name="folderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.qryfile.file_id#">
-					<cfinvokeargument name="newFolderName" value="#attributes.intstruct.newversion#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for the rename thread to finish --->
-			<cfthread action="join" name="r#mtt#" />
-			<!--- Upload the new version to the old directory --->
-			<cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
-				<!--- Upload Original --->
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for the upload thread to finish --->
-			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
-			<!--- Upload Thumbnail --->
-			<cfthread name="ut#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.thumbnailname_new#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for the upload thread to finish --->
-			<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
-			<!--- Get SignedURL thumbnail --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.thumbnailname_new#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- Get SignedURL original --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_version" theasset="versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" nvxsession="#arguments.thestruct.nvxsession#">
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
