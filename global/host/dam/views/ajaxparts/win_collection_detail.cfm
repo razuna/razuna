@@ -340,7 +340,7 @@
 					<cfif cs.tab_labels>
 						<tr>
 							<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
-							<td width="100%" nowrap="true" colspan="5">
+							<td width="100%" colspan="5">
 								<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_col" onchange="razaddlabels('tags_col','#attributes.col_id#','collection');" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">

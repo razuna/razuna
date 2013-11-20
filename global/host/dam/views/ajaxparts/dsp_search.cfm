@@ -77,7 +77,7 @@
 						<br />
 						<input type="text" name="keywords" id="s_keywords" style="width:180px;" class="textbold" value="#attributes.keywords#">
 					</td>
-					<td valign="top" width="1%" nowrap="nowrap">
+					<td valign="top" width="1%" >
 						Description
 						<br />
 						<input type="text" name="description" id="s_description" style="width:180px;" class="textbold" value="#attributes.description#">
