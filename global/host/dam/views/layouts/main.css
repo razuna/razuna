@@ -955,6 +955,6 @@ font-weight: bold;
 .ui-dialog .ui-dialog-titlebar-close {
 	top: 10%;
 }
-.chosen-container-multi .chosen-choices {
+.chosen-container-multi .chosen-choices { 
   overflow: auto;
  } 
