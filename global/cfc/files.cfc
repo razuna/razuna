@@ -1232,7 +1232,7 @@
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Get the directory list --->
-			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg">
+			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<!--- Call ListFolder --->
@@ -1267,7 +1267,7 @@
 			<cfset theloopstart = 0>
 			<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
 			<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
-			<cfset var jpgname = replace(lqry.qry_pdfjpgs.name,"-0.jpg","","ONE")>
+			<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9].jpg","","ONE")>
 			<cfloop from="#theloopstart#" to="#looptil#" index="i">
 				<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
 			</cfloop>
