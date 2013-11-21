@@ -1252,7 +1252,7 @@
 			<!--- Move thumbnail --->
 			<!--- No Thumbnail for GIF file --->
 			<cfif arguments.thestruct.qry_detail.thumb_extension NEQ 'gif'>
-				cffile action="move" source="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" mode="775">
+				<cffile action="move" source="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" mode="775">
 			</cfif>
 			<cfthread name="upload#theformat##arguments.thestruct.newid#">
 			</cfthread>
