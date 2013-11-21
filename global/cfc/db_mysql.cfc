@@ -25,7 +25,7 @@
 --->
 <cfcomponent output="false">
 	
-	<cfset this.tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
+	<cfset this.tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin ROW_FORMAT=DYNAMIC;">
 	
 	<!--- Setup the DB if DB is not here --->
 	<cffunction name="setup" access="public" output="false">
@@ -45,6 +45,28 @@
 		#this.tableoptions#
 		</cfquery>
 		 --->
+		 <!--- ALLOW  INDEX KEY PREFIXES LARGER THAN 767 BYTES. 
+		 	Change needed for mysql versions >= 5.6 
+		--->
+		<cftry>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+				  SET GLOBAL innodb_large_prefix = 1;
+			</cfquery>
+		<cfcatch></cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+				  SET GLOBAL innodb_file_format = barracuda;
+			</cfquery>
+		<cfcatch></cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+				  SET GLOBAL innodb_file_per_table = true;
+			</cfquery>
+		<cfcatch></cfcatch>
+		</cftry>
+
 		<!--- CREATE CACHE --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.cache 
