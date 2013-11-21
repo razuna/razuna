@@ -944,7 +944,7 @@
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 	<!--- Get details of image --->
-	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,img_filename,path_to_asset,img_width,img_height,cloud_url_org" returnvariable="arguments.thestruct.qry_detail">
+	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,thumb_extension,img_filename,path_to_asset,img_width,img_height,cloud_url_org" returnvariable="arguments.thestruct.qry_detail">
 	<!--- Create a temp directory to hold the image file (needed because we are doing other files from it as well) --->
 	<cfset var tempfolder = "img#createuuid('')#">
 	<!--- set the folder path in a var --->
@@ -1222,6 +1222,10 @@
 		<cfelse>
 			<cfset var thedpitags = " -Photoshop:XResolution=#thedpi# -Photoshop:YResolution=#thedpi# -IFD0:XResolution=#thedpi# -JFIF:XResolution=#thedpi# -IFD0:YResolution=#thedpi# -JFIF:YResolution=#thedpi#">
 		</cfif>
+		<!--- Remove -0 from the Converted filename only for GIF files ---> 
+		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat NEQ 'gif' AND theformat NEQ 'tif'>
+			<cffile action="rename" source="#thisfolder#/#arguments.thestruct.thenamenoext#-0.#theformat#" destination="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" />
+		</cfif>
 		<cfexecute name="#theexif#" arguments="-TagsFromFile #theoriginalasset# -all:all#thedpitags# #theformatconv#" timeout="60" />
 		<!--- Get size of original and thumnail --->
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" returnvariable="orgsize">
@@ -1246,7 +1250,10 @@
 			<!--- Move original image --->
 			<cffile action="move" source="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#theformat#" mode="775">
 			<!--- Move thumbnail --->
-			<cffile action="move" source="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" mode="775">
+			<!--- No Thumbnail for GIF file --->
+			<cfif arguments.thestruct.qry_detail.thumb_extension NEQ 'gif'>
+				cffile action="move" source="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" mode="775">
+			</cfif>
 			<cfthread name="upload#theformat##arguments.thestruct.newid#">
 			</cfthread>
 		<!--- Nirvanix --->
@@ -1280,11 +1287,14 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 				<!--- Upload Thumbnail --->
-				<cfinvoke component="amazon" method="Upload">
-					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
-					<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
-					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-				</cfinvoke>
+				<!--- No Thumbnail for GIF file --->
+				<cfif attributes.intstruct.qry_detail.thumb_extension NEQ 'gif'>
+					<cfinvoke component="amazon" method="Upload">
+						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
+						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
+						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+					</cfinvoke>
+				</cfif>
 			</cfthread>
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
