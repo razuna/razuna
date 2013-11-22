@@ -42,6 +42,7 @@
 		<cfargument name="datechangestop" type="string" required="false" default="">
 		<cfargument name="sortby" type="string" required="false" default="name">
 		<cfargument name="ui" type="string" required="false" default="false">
+		<cfargument name="cs" type="any" required="false" default="" hint="custom metadata fields">
 		<cfargument name="dbdirect" type="string" required="false" default="false">
 		<cfargument name="available" type="string" required="false" default="1">
 		<!--- Check key --->
@@ -290,6 +291,29 @@
 					'' as labels,
 					'#session.customaccess#' as permfolder,
 					<cfif application.razuna.api.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
+					<cfif arguments.istruct.cs.images_metadata NEQ "">
+						<cfloop list="#arguments.istruct.cs.images_metadata#" index="m" delimiters=",">
+							,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
+							<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename">i
+							<cfelse>x
+							</cfif>.#m#
+						</cfloop>
+					</cfif>
+					<cfif arguments.istruct.cs.videos_metadata NEQ "">
+						<cfloop list="#arguments.istruct.cs.videos_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.istruct.cs.files_metadata NEQ "">
+						<cfloop list="#arguments.istruct.cs.files_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.istruct.cs.audios_metadata NEQ "">
+						<cfloop list="#arguments.istruct.cs.audios_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images i 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
@@ -482,8 +506,31 @@
 					'' as labels,
 					'#session.customaccess#' as permfolder,
 					<cfif application.razuna.api.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
+					<!--- custom metadata fields to show --->
+					<cfif arguments.vstruct.cs.images_metadata NEQ "">
+						<cfloop list="#arguments.vstruct.cs.images_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.vstruct.cs.videos_metadata NEQ "">
+						<cfloop list="#arguments.vstruct.cs.videos_metadata#" index="m" delimiters=",">
+							,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+							<cfelse>v
+							</cfif>.#m#
+						</cfloop>
+					</cfif>
+					<cfif arguments.vstruct.cs.files_metadata NEQ "">
+						<cfloop list="#arguments.vstruct.cs.files_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.vstruct.cs.audios_metadata NEQ "">
+						<cfloop list="#arguments.vstruct.cs.audios_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
 				</cfif>
-		        FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v 
+		        		FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
 				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
@@ -668,6 +715,29 @@
 					'' as labels,
 					'#session.customaccess#' as permfolder,
 					<cfif application.razuna.api.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
+					<!--- custom metadata fields to show --->
+					<cfif arguments.astruct.cs.images_metadata NEQ "">
+						<cfloop list="#arguments.astruct.cs.images_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.astruct.cs.videos_metadata NEQ "">
+						<cfloop list="#arguments.astruct.cs.videos_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.astruct.cs.files_metadata NEQ "">
+						<cfloop list="#arguments.astruct.cs.files_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.astruct.cs.audios_metadata NEQ "">
+						<cfloop list="#arguments.astruct.cs.audios_metadata#" index="m" delimiters=",">
+							,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
+							<cfelse>a
+							</cfif>.#m#
+						</cfloop>
+					</cfif>
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios a 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
@@ -864,6 +934,30 @@
 					'' as labels,
 					'#session.customaccess#' as permfolder,
 					<cfif application.razuna.api.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
+					<!--- custom metadata fields to show --->
+					<cfif arguments.fstruct.cs.images_metadata NEQ "">
+						<cfloop list="#arguments.fstruct.cs.images_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.fstruct.cs.videos_metadata NEQ "">
+						<cfloop list="#arguments.fstruct.cs.videos_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
+					<cfif arguments.fstruct.cs.files_metadata NEQ "">
+						<cfloop list="#arguments.fstruct.cs.files_metadata#" index="m" delimiters=",">
+							,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
+							<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+							<cfelse>x
+							</cfif>.#m#
+						</cfloop>
+					</cfif>
+					<cfif arguments.fstruct.cs.audios_metadata NEQ "">
+						<cfloop list="#arguments.fstruct.cs.audios_metadata#" index="m" delimiters=",">
+							,'' AS #listlast(m," ")#
+						</cfloop>
+					</cfif>
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
