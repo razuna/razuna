@@ -714,38 +714,19 @@
 	<!--- ADMIN: Remove label --->
 	<cffunction name="admin_remove" output="false" access="public">
 		<cfargument name="id" type="string">
+		<!--- Call this again to see if there are any more records below it --->
+		<cfinvoke method="label_get_ids" label_id="#arguments.id#" llist="#arguments.id#" returnVariable="llist" />
 		<!--- DB labels --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#labels
-		WHERE label_id = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
+		WHERE label_id IN (<cfqueryparam value="#llist#" cfsqltype="cf_sql_varchar" list="Yes" />)
 		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		<!--- DB CT table --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM ct_labels
-		WHERE ct_label_id = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
+		WHERE ct_label_id IN (<cfqueryparam value="#llist#" cfsqltype="cf_sql_varchar" list="Yes" />)
 		</cfquery>
-		<!--- Now check for any sub labels and remove them as well --->
-		<cfquery datasource="#application.razuna.datasource#" name="sub">
-		SELECT label_id
-		FROM #session.hostdbprefix#labels
-		WHERE label_id_r = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
-		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-		</cfquery>
-		<!--- If we find some records --->
-		<cfif sub.recordcount NEQ 0>
-			<!--- Remove in DBs --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#labels
-			WHERE label_id IN (<cfqueryparam value="#valuelist(sub.label_id)#" cfsqltype="cf_sql_varchar" list="Yes" />)
-			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-			</cfquery>
-			<!--- DB CT table --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM ct_labels
-			WHERE ct_label_id IN (<cfqueryparam value="#valuelist(sub.label_id)#" cfsqltype="cf_sql_varchar" list="Yes" />)
-			</cfquery>
-		</cfif>
 		<!--- Flush --->
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
@@ -868,6 +849,28 @@
 			<!--- Call this again to see if there are any more records below it --->
 			<cfinvoke method="label_get_path_down" label_id="#qry.label_id#" llist="#llist#" returnVariable="llist" />	
 		</cfif>
+		<!--- Return --->
+		<cfreturn llist />
+	</cffunction>
+	
+	<!--- Label Ids get recursive --->
+	<cffunction name="label_get_ids" output="false" access="public" returnType="string">
+		<cfargument name="label_id" type="string" required="true">
+		<cfargument name="llist" default="" type="string" required="false">
+			<!--- Query --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT label_id,label_id_r
+			FROM #session.hostdbprefix#labels
+			WHERE label_id_r = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			</cfquery>
+			<!--- Set into list --->
+			<cfset llist = arguments.llist &","&qry.label_id>
+			<!--- Check the recursive call --->
+			<cfif qry.recordcount NEQ 0 AND ListContainsnocase(llist,qry.label_id,',')>
+				<!--- Call this again to see if there are any more records below it --->
+				<cfinvoke method="label_get_ids" label_id="#qry.label_id#" llist="#llist#" returnVariable="llist" />
+			</cfif>
 		<!--- Return --->
 		<cfreturn llist />
 	</cffunction>
