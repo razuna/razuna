@@ -1800,11 +1800,6 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfset arguments.thestruct.thepdfimagename = "#arguments.thestruct.qryfile.filenamenoext#.jpg">
 			<cfset arguments.thestruct.thepdfimage = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.thepdfimagename#">
-		
-			<cfsavecontent variable="log">
-				<cfdump var="#thestruct#">
-			</cfsavecontent>
-			<cflog text="#log#">
 			<!--- Write script --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 ""#arguments.thestruct.theorgfile#"" -PageImage -b -listitem 0 > ""#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Execute --->
