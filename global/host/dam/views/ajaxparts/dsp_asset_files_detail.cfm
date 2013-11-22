@@ -89,7 +89,7 @@
 					</tr>
 				</cfif>
 				<tr>
-					<td width="1%" nowrap="true" valign="top" style="padding-top:20px;padding-right:10px;">
+					<td width="1%" valign="top" style="padding-top:20px;padding-right:10px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0">
 							<tr>
 								<!--- show image according to extension --->
@@ -182,7 +182,7 @@
 										<cfif cs.tab_labels>
 											<tr>
 												<td><strong>#myFusebox.getApplicationData().defaults.trans("labels")#</strong></td>
-												<td width="100%" nowrap="true">
+												<td width="100%" >
 													<cfif attributes.folderaccess EQ "R">
 														<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>
 													<cfelse>
