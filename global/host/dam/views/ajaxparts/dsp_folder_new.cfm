@@ -37,7 +37,10 @@
 		<cfif attributes.isdetail NEQ "T" AND !application.razuna.isp AND attributes.iscol NEQ "T">
 			<ul>
 				<li><a href="##folder_new#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("folder_new")#</a></li>
-				<cfif !application.razuna.isp><li><a href="##folder_link#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("link_folder_header")#</a></li></cfif>
+				<!--- Hide 'Link to Folder' for Amazon --->
+				<cfif !application.razuna.isp AND application.razuna.storage NEQ 'amazon'>
+					<li><a href="##folder_link#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("link_folder_header")#</a></li>
+				</cfif>
 			</ul>
 		</cfif>
 		<div id="folder_new#attributes.theid#">
@@ -145,7 +148,7 @@
 			</div>
 		</div>
 		<!--- Link to Folder --->
-		<cfif attributes.isdetail NEQ "T" AND !application.razuna.isp AND attributes.iscol NEQ "T">
+		<cfif attributes.isdetail NEQ "T" AND !application.razuna.isp AND attributes.iscol NEQ "T" AND application.razuna.storage NEQ 'amazon'>
 			<div id="folder_link#attributes.theid#">
 				<table border="0" cellpadding="0" cellspacing="0" class="grid" style="width:660px;">
 					<tr>
