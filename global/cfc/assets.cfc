@@ -1754,22 +1754,6 @@ This is the main function called directly by a single upload else from addassets
 			<!--- The name for the pdf --->
 			<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
 		</cfif>
-		<!--- Check the platform and then decide on the ImageMagick tag --->
-		<cfif arguments.thestruct.iswindows>
-			<cfset arguments.thestruct.theorgfileflat = arguments.thestruct.theorgfileflat>
-			<cfset arguments.thestruct.theorgfile = arguments.thestruct.theorgfile>
-			<cfset arguments.thestruct.thepdfimage = arguments.thestruct.thepdfimage>
-		<cfelse>
-			<cfset arguments.thestruct.theorgfileflat = replace(arguments.thestruct.theorgfileflat," ","\ ","all")>
-			<cfset arguments.thestruct.theorgfileflat = replace(arguments.thestruct.theorgfileflat,"&","\&","all")>
-			<cfset arguments.thestruct.theorgfileflat = replace(arguments.thestruct.theorgfileflat,"'","\'","all")>
-			<cfset arguments.thestruct.theorgfile = replace(arguments.thestruct.theorgfile," ","\ ","all")>
-			<cfset arguments.thestruct.theorgfile = replace(arguments.thestruct.theorgfile,"&","\&","all")>
-			<cfset arguments.thestruct.theorgfile = replace(arguments.thestruct.theorgfile,"'","\'","all")>
-			<cfset arguments.thestruct.thepdfimage = replace(arguments.thestruct.thepdfimage," ","\ ","all")>
-			<cfset arguments.thestruct.thepdfimage = replace(arguments.thestruct.thepdfimage,"&","\&","all")>
-			<cfset arguments.thestruct.thepdfimage = replace(arguments.thestruct.thepdfimage,"'","\'","all")>
-		</cfif>
 	</cfif>
 	<!--- If we are PDF we create thumbnail and images from the PDF --->
 	<!--- RFS --->
@@ -1780,9 +1764,9 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Create folder to hold the images --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -resize #arguments.thestruct.qrysettings.set2_img_thumb_width#x -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# ""#arguments.thestruct.theorgfileflat#"" -resize #arguments.thestruct.qrysettings.set2_img_thumb_width#x -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Script: Create images --->
-			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfile# #arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Execute --->
 			<cfthread name="#ttpdf#" action="run" pdfintstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
@@ -1808,12 +1792,16 @@ This is the main function called directly by a single upload else from addassets
 		<!--- InDesign --->
 		<cfelseif arguments.thestruct.qryfile.extension EQ "indd">
 			<!--- Set vars --->
+			<!--- Fix path if this is coming from lan --->
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfset arguments.thestruct.qryfile.path = replace(arguments.thestruct.qryfile.path,listlast(arguments.thestruct.qryfile.path,'\/'),"","ALL")>
+			</cfif>	
 			<cfset arguments.thestruct.theorgfile = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfset arguments.thestruct.thepdfimagename = "#arguments.thestruct.qryfile.filenamenoext#.jpg">
 			<cfset arguments.thestruct.thepdfimage = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.thepdfimagename#">
 			<!--- Write script --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 #arguments.thestruct.theorgfile# -PageImage -b -listitem 0 > #arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 ""#arguments.thestruct.theorgfile#"" -PageImage -b -listitem 0 > ""#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Execute --->
 			<cfthread name="#ttpdf#" action="run" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="900" />
@@ -1822,6 +1810,10 @@ This is the main function called directly by a single upload else from addassets
 			<cfthread action="join" name="#ttpdf#" />					
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<!--- Reset path change we made above for lan --->
+				<cfset arguments.thestruct.qryfile.path = arguments.thestruct.pathorg>
+			</cfif>
 		<!--- We are normal files --->
 		<cfelse>
 			<!--- Check the platform and then decide on the ImageMagick tag --->
@@ -1903,18 +1895,18 @@ This is the main function called directly by a single upload else from addassets
 		<cfif (arguments.thestruct.qryfile.extension EQ "PDF" OR arguments.thestruct.qryfile.extension EQ "indd") AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- On Windows reparse the metadata again (doesnt work properly with the bat file) --->
 			<cfif arguments.thestruct.isWindows>
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -b -subject #arguments.thestruct.theorgfile#" timeout="60" variable="thesubject" />
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -keywords #arguments.thestruct.theorgfile#" timeout="60" variable="thekeywords" />
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -applekeywords #arguments.thestruct.theorgfile#" timeout="60" variable="theapplekeywords" />
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.theorgfile#" timeout="60" variable="file_meta" />
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -X #arguments.thestruct.theorgfile#" timeout="60" variable="arguments.thestruct.pdf_xmp" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -b -subject ""#arguments.thestruct.theorgfile#""" timeout="60" variable="thesubject" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -keywords ""#arguments.thestruct.theorgfile#""" timeout="60" variable="thekeywords" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -applekeywords ""#arguments.thestruct.theorgfile#""" timeout="60" variable="theapplekeywords" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory ""#arguments.thestruct.theorgfile#""" timeout="60" variable="file_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -X ""#arguments.thestruct.theorgfile#""" timeout="60" variable="arguments.thestruct.pdf_xmp" />
 			<cfelse>
 				<!--- Script: Exiftool Commands --->
-				<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -fast -fast2 -b -subject #arguments.thestruct.theorgfile#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -fast -fast2 -XMP-PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -fast -fast2 -PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.theorgfile#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -fast -fast2 -X #arguments.thestruct.theorgfile#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -fast -fast2 -b -subject ""#arguments.thestruct.theorgfile#""" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -fast -fast2 -XMP-PDF:keywords ""#arguments.thestruct.theorgfile#""" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -fast -fast2 -PDF:keywords ""#arguments.thestruct.theorgfile#""" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory ""#arguments.thestruct.theorgfile#""" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -fast -fast2 -X ""#arguments.thestruct.theorgfile#""" mode="777">
 				<!--- Execute scripts --->
 				<cfexecute name="#arguments.thestruct.theshexs#" timeout="60" variable="thesubject" />
 				<cfexecute name="#arguments.thestruct.theshexk#" timeout="60" variable="thekeywords" />
@@ -3873,7 +3865,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 			</cfif>
 			<!--- Write files --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# -g #arguments.thestruct.theorgfile#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# -g ""#arguments.thestruct.theorgfile#""" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="idtags" />
 			<!--- Set idtags into struct for API --->
