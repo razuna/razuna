@@ -42,7 +42,6 @@
 	<!--- When adding a new host, creating one on the first time setup --->
 	<cffunction name="setup" access="public" output="false" returntype="void">
 		<cfargument name="colname" type="string">
-		<cfset consoleoutput(true)>
 		<!--- Delete collection --->
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>

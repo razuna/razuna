@@ -1127,6 +1127,7 @@
 		<cfparam name="arguments.thestruct.datechangestop" default="">
 		<cfparam name="arguments.thestruct.sortby" default="name">
 		<cfparam name="arguments.thestruct.ui" default="false">
+		<cfparam name="arguments.thestruct.cs" default="">
 		<!--- Fire of search --->
 		<cfinvoke component="global.api2.search" method="searchassets" returnvariable="qry_search.qall">
 			<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
@@ -1143,6 +1144,7 @@
 			<cfinvokeargument name="datechangestop" value="#arguments.thestruct.datechangestop#">
 			<cfinvokeargument name="sortby" value="#arguments.thestruct.sortby#">
 			<cfinvokeargument name="ui" value="#arguments.thestruct.ui#">
+			<cfinvokeargument name="cs" value="#arguments.thestruct.cs#">
 		</cfinvoke>
 		<!--- Return --->
 		<cfreturn qry_search>
