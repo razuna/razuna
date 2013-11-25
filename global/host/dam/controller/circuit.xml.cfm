@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2013.11.20.1" />
+		<set name="attributes.cachetag" value="2013.11.25.1" />
 	</fuseaction> 
 	
 	<!--
@@ -9356,5 +9356,29 @@
 
 	</fuseaction>
 
+	<!-- Select Label popup-->
+	<fuseaction name="select_label_popup">
+		<!-- Param -->
+		<set name="attributes.file_id" value="#attributes.file_id#" />
+		<set name="attributes.file_type" value="#attributes.file_type#" />
+		<!-- Show the choose folder -->
+		<do action="ajax.select_label_popup" />
+	</fuseaction>
+	
+	<!-- Search label for the asset-->
+	<fuseaction name="search_label_for_asset">
+		<!-- Get labels for this record -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,attributes.file_type)" returnvariable="attributes.asset_labels_list" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="get_all_labels_for_show(attributes)" returnvariable="qry_labels" />
+		<!-- Show the choose folder -->
+		<do action="ajax.search_label_for_asset" />
+	</fuseaction>
+	
+	<!-- Add or Remove the label for asset -->
+	<fuseaction name="asset_label_add_remove">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="asset_label_add_remove(attributes)" />
+	</fuseaction>
 
 </circuit>

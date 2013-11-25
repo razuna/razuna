@@ -125,20 +125,29 @@
 							</cfloop>
 							<cfif cs.tab_labels>
 								<tr>
-									<td><strong>#myFusebox.getApplicationData().defaults.trans("labels")#</strong></td>
+									<td valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("labels")#</strong></td>
 									<td width="100%" colspan="5">
 										<cfif attributes.folderaccess EQ "R">
 											<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>
 										<cfelse>
-											<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_aud" onchange="razaddlabels('tags_aud','#attributes.file_id#','aud');" multiple="multiple">
-												<option value=""></option>
-												<cfloop query="attributes.thelabelsqry">
-													<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
-												</cfloop>
-											</select>
-											<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
-												<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
-											</cfif>
+											<!--- Label text area --->
+											<div style="width:450px;">
+												<div id="select_lables_#attributes.file_id#" class="labelContainer" style="float:left;width:400px;" >
+													<cfloop query="attributes.thelabelsqry">
+														<cfif ListFind(qry_labels,'#label_id#') NEQ 0>
+														<div class='singleLabel' id="#label_id#">
+															<span>#label_path#</span>
+															<a class='labelRemove'  onclick="removeLabel('#attributes.file_id#','aud', '#label_id#',this)" >X</a>
+														</div>
+														</cfif>
+													</cfloop>
+												</div>
+												<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+													<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+												</cfif>
+												<!--- Select label button --->
+												<br /><br /><a onclick="showwindow('#myself#c.select_label_popup&file_id=#attributes.file_id#&file_type=aud&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
+											</div>
 										</cfif>
 									</td>
 								</tr>

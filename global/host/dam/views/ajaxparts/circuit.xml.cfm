@@ -853,5 +853,13 @@
 	<fuseaction name="sf_load_account">
   		<include template="dsp_sf_load_account" />
 	</fuseaction>
+	<!--  Select label popup Window -->
+	<fuseaction name="select_label_popup">
+  		<include template="win_choose_labels" />
+	</fuseaction>
+	<!-- Search label for the asset -->
+	<fuseaction name="search_label_for_asset">
+  		<include template="dsp_search_label_for_asset" />
+	</fuseaction>
 
 </circuit>

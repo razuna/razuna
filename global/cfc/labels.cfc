@@ -874,5 +874,89 @@
 		<!--- Return --->
 		<cfreturn llist />
 	</cffunction>
+	
+	<!--- Get the all labels for show --->
+	<cffunction name="get_all_labels_for_show" output="true" access="public" returntype="Query" hint="Get the all labels for show" >
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT  label_id, label_id_r, label_path, label_text
+			FROM #session.hostdbprefix#labels
+			WHERE lower(label_text) LIKE <cfqueryparam value="#lcase(arguments.thestruct.strLetter)#%" cfsqltype="cf_sql_varchar" />
+			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			ORDER BY label_text ASC
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry/>
+	</cffunction>
+	
+	<!--- Add OR Remove the asset labels --->
+	<cffunction name="asset_label_add_remove" output="true" access="public" hint="Add or remove the assets labels for choosed">
+		<cfargument name="thestruct" type="struct">
+		<!--- Update Dates --->
+		<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.thetype#" fileid="#arguments.thestruct.fileid#" />
+		<!--- Remove unchecked label for this record --->
+		<cfif structKeyExists(arguments.thestruct,'checked') AND arguments.thestruct.checked EQ "false">
+			<cfquery datasource="#application.razuna.datasource#">
+				DELETE FROM ct_labels
+				WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
+				AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
+				AND ct_label_id = <cfqueryparam value="#arguments.thestruct.labels#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+		</cfif>
+		<cfif structkeyexists(arguments.thestruct,"labels") AND structKeyExists(arguments.thestruct,'checked') AND arguments.thestruct.checked EQ "true">
+			<!--- Insert into cross table --->
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO ct_labels
+				(
+					ct_label_id,
+					ct_id_r,
+					ct_type,
+					rec_uuid
+				)
+				VALUES
+				(
+					<cfqueryparam value="#arguments.thestruct.labels#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+			</cfquery>
+			<!--- Lucene: Delete Records --->
+			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
+		</cfif>
+		<!--- Set index according to type --->
+		<cfif arguments.thestruct.thetype EQ "img">
+			<cfset var thedb = "images">
+			<cfset var theid = "img_id">
+			<cfset var d1 = "is_indexed">
+		<cfelseif arguments.thestruct.thetype EQ "vid">
+			<cfset var thedb = "videos">
+			<cfset var theid = "vid_id">
+			<cfset var d1 = "is_indexed">
+		<cfelseif arguments.thestruct.thetype EQ "aud">
+			<cfset var thedb = "audios">
+			<cfset var theid = "aud_id">
+			<cfset var d1 = "is_indexed">
+		<cfelse>
+			<cfset var thedb = "files">
+			<cfset var theid = "file_id">
+			<cfset var d1 = "is_indexed">
+		</cfif>
+		<!--- Update DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix##thedb#
+			SET #d1# = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+			WHERE #theid# = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Flush --->
+		<!--- <cfset resetcachetoken(thedb)> not sure, is it neccessary? --->
+		<cfset resetcachetoken("search")>
+		<cfset variables.cachetoken = resetcachetoken("labels")>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+	
 </cfcomponent>
 
