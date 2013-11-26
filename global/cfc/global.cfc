@@ -521,14 +521,32 @@ Comment:<br>
 		<!--- Param --->
 		<cfset var folderlist = "">
 		<cfset var qryfiles = "">
+		<cfset var checkorgentry ="">
+		<cfset var checkthumbentry ="">
+		<cfset var foldershareprops ="">
+		<cfset var asset_dl_org = "">
+		<cfset var asset_dl_thumb = "">
 		<!--- Get this folderid and all subfolders in a list --->
 		<cfinvoke component="folders" method="recfolder" thelist="#arguments.thestruct.folder_id#" returnvariable="folderlist">
 		<!--- Now loop over the folder list and do the reset --->
-		<cfloop list="#folderlist#" delimiters="," index="i">
-			<!--- Set i into var --->
-			<cfset thefolderid = i>
+		<cfloop list="#folderlist#" delimiters="," index="thefolderid">
+			<!--- 
+			If this is the original folder on whom reset was called then the share properties applied to all of its assets will be the ones passed in the form. 
+			If this is a sub folder within the original folder then share properties stored in database will be applied to all of its assets.
+			--->
+			<cfif thefolderid eq arguments.thestruct.folder_id> <!--- If folder is original folder that set share properties to form parameters passed --->
+				<cfset asset_dl_org = arguments.thestruct.setto>
+				<cfset asset_dl_thumb = arguments.thestruct.settothumb>
+			<cfelse><!--- If folder is a sub folder the get the share properties from database for this folder --->
+				<cfquery datasource="#application.razuna.datasource#" name="foldershareprops">
+					SELECT share_dl_org, share_dl_thumb FROM #session.hostdbprefix#folders 
+					WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
+				</cfquery>
+				<cfset asset_dl_org = iif(foldershareprops.share_dl_org eq 't',1,0)>
+				<cfset asset_dl_thumb = iif(foldershareprops.share_dl_thumb eq 't',1,0)>
+			</cfif>
 			<!--- Get all the files in this folder --->
-			<cfinvoke component="folders" method="getallassetsinfolder" folder_id="#i#" returnvariable="qryfiles">
+			<cfinvoke component="folders" method="getallassetsinfolder" folder_id="#thefolderid#" returnvariable="qryfiles">
 			<!--- Loop over the files and update shared options --->
 			<cfloop query="qryfiles">
 				<cfquery datasource="#application.razuna.datasource#" name="checkorgentry">
@@ -549,7 +567,7 @@ Comment:<br>
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">,
 						<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_org#">,
 						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 						)
 					</cfquery>
@@ -557,7 +575,7 @@ Comment:<br>
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#share_options
 					SET 
-					asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">,
+					asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_org#">,
 					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
 					WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 					AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
@@ -584,7 +602,7 @@ Comment:<br>
 							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
 							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">,
 							<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.settothumb#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_thumb#">,
 							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 							)
 						</cfquery>
@@ -592,7 +610,7 @@ Comment:<br>
 						<cfquery datasource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#share_options
 						SET 
-						asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.settothumb#">,
+						asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_thumb#">,
 						folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
 						WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 						AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
