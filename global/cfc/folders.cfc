@@ -3332,7 +3332,7 @@
 		i.hashtag,
 		'' as labels
 		<!--- custom metadata fields to show --->
-		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif  arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
 				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename">i
@@ -3340,17 +3340,17 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
@@ -3379,24 +3379,24 @@
 		v.hashtag,
 		'' as labels
 		<!--- custom metadata fields to show --->
-		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
 				<cfelse>v
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
@@ -3425,22 +3425,22 @@
 		a.hashtag,
 		'' as labels
 		<!--- custom metadata fields to show --->
-		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND  arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
 				<cfelse>a
@@ -3459,17 +3459,17 @@
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
 		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
 		<!--- custom metadata fields to show --->
-		<cfif structKeyExists(arguments.thestruct,"cs.images_metadata") AND arguments.thestruct.cs.images_metadata NEQ "">
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.videos_metadata") AND arguments.thestruct.cs.videos_metadata NEQ "">
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.files_metadata") AND arguments.thestruct.cs.files_metadata NEQ "">
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
 				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
@@ -3477,7 +3477,7 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,"cs.audios_metadata") AND arguments.thestruct.cs.audios_metadata NEQ "">
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,'' AS #listlast(m," ")#
 			</cfloop>
