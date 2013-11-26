@@ -9361,12 +9361,17 @@
 		<!-- Param -->
 		<set name="attributes.file_id" value="#attributes.file_id#" />
 		<set name="attributes.file_type" value="#attributes.file_type#" />
+		<set name="attributes.show" value="default" />
+		<!-- Get search label index (A,B,..Z)-->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="get_search_label_index(attributes)" returnvariable="qry_search_label_index" />
 		<!-- Show the choose folder -->
 		<do action="ajax.select_label_popup" />
 	</fuseaction>
 	
 	<!-- Search label for the asset-->
 	<fuseaction name="search_label_for_asset">
+		<!-- Param -->
+		<set name="attributes.show" value="#attributes.show#" />
 		<!-- Get labels for this record -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,attributes.file_type)" returnvariable="attributes.asset_labels_list" />
 		<!-- CFC -->

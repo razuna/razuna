@@ -880,11 +880,21 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT  label_id, label_id_r, label_path, label_text
+			SELECT  /* #variables.cachetoken#get_all_labels_for_show */ <cfif application.razuna.thedatabase EQ "mssql">Top 20 </cfif> label_id, label_id_r, label_path, label_text
 			FROM #session.hostdbprefix#labels
-			WHERE lower(label_text) LIKE <cfqueryparam value="#lcase(arguments.thestruct.strLetter)#%" cfsqltype="cf_sql_varchar" />
-			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-			ORDER BY label_text ASC
+			WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			<cfif structKeyExists(arguments.thestruct,'strLetter')>
+				AND lower(label_text) LIKE <cfqueryparam value="#lcase(arguments.thestruct.strLetter)#%" cfsqltype="cf_sql_varchar" />
+			</cfif>
+			ORDER BY 
+			<cfif structKeyExists(arguments.thestruct,'show') AND arguments.thestruct.show EQ 'default'>
+				label_date DESC	
+				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2"> 
+					Limit 0,20
+				</cfif>	
+			<cfelse>
+				label_text ASC
+			</cfif>
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry/>
@@ -956,6 +966,17 @@
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+	
+	<!--- Get the search label index (A,B,..Z) --->
+	<cffunction name="get_search_label_index" output="true" access="public" returntype="Query" hint="Get the search label text" >
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT DISTINCT LEFT(UPPER(RTRIM(LTRIM(label_text))),1) AS label_text_index FROM raz1_labels ORDER BY label_text_index
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry/>
 	</cffunction>
 	
 </cfcomponent>

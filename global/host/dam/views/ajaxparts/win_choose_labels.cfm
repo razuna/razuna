@@ -37,10 +37,11 @@
 				</div>
 			</div>
 		</div>
+		
 		<!--- Loop over letters as a list. --->
 		<div style="clear:both;float:left;padding:5px;text-align:center;width:100%;">
-			<cfloop	index="strLetter" list="A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z" delimiters=",">
-				<a herf="##" onclick="loadcontent('show_labels','index.cfm?fa=c.search_label_for_asset&file_id=' + '#attributes.file_id#' + '&file_type=' + '#attributes.file_type#' + '&strLetter=' + '#strLetter#');" style="padding-right:5px;font-weight:bold;cursor:pointer;">#strLetter#</a>
+			<cfloop	index="strLetter" list="#valuelist(qry_search_label_index.label_text_index)#" delimiters=",">
+				<a herf="##" onclick="loadcontent('show_labels','index.cfm?fa=c.search_label_for_asset&file_id=#attributes.file_id#&file_type=#attributes.file_type#&show=search&strLetter=#strLetter#');" style="padding-right:5px;font-weight:bold;cursor:pointer;">#strLetter#</a>
 			</cfloop>
 			<p><hr></p>
 			<div id="show_labels"></div>
@@ -48,6 +49,9 @@
 	</div>
 </cfoutput>
 <script language="javascript" type="text/javascript">
+	$(document).ready(function(){
+		loadcontent('show_labels','<cfoutput>index.cfm?fa=c.search_label_for_asset&file_id=#attributes.file_id#&file_type=#attributes.file_type#&show=default</cfoutput>');
+	});
 	//Search the label
 	function choose_label(){
 		// Only allow chars
@@ -56,6 +60,7 @@
 		var theentry = $('#searchtext').val();
 		var thetype = '<cfoutput>#attributes.file_type#</cfoutput>';
 		var thefid = '<cfoutput>#attributes.file_id#</cfoutput>';
+		var show_view = 'search';
 		if (theentry == "" | theentry == "Quick Search") {
 			return false;
 		}
@@ -67,9 +72,8 @@
 				alert('The first character of your search string is an illegal one. Please remove it!');
 			}
 			else {
-				$('#show_labels').load('<cfoutput>#myself#</cfoutput>c.search_label_for_asset', { strLetter: theentry, file_type: thetype, file_id: thefid }, function(){
+				$('#show_labels').load('<cfoutput>#myself#</cfoutput>c.search_label_for_asset', { strLetter: theentry, file_type: thetype, file_id: thefid,show: show_view}, function(){
 				});
-				//loadcontent('show_labels','index.cfm?fa=c.search_label_for_asset&file_id=' + thefid + '&file_type=' + thetype + '&strLetter=' + theentry);
 			}
 		return false;
 		}
