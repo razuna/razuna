@@ -2498,13 +2498,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
-			<cfldap   server = "#arguments.thestruct.ad_server_name#"  
+			<cfldap server = "#arguments.thestruct.ad_server_name#" 
+			scope="subtree" 
 			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
 			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
 			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		<cfelse>
-			<cfldap   server = "#arguments.thestruct.ad_server_name#"  
+			<cfldap server = "#arguments.thestruct.ad_server_name#"  
+			scope="subtree" 
 			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 			filter="(&(objectClass=user))" 
 			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
