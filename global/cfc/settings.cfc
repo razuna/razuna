@@ -227,7 +227,7 @@
 	<cfset variables.cachetoken = getcachetoken("settings")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_storage */ 
-	set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket, 
+	set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket, set2_img_format,
 	set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
 	FROM #session.hostdbprefix#settings_2
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
