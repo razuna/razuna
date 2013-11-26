@@ -531,24 +531,75 @@ Comment:<br>
 			<cfinvoke component="folders" method="getallassetsinfolder" folder_id="#i#" returnvariable="qryfiles">
 			<!--- Loop over the files and update shared options --->
 			<cfloop query="qryfiles">
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#share_options
-				SET 
-				asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">,
-				folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
-				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-				AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfquery datasource="#application.razuna.datasource#" name="checkorgentry">
+					SELECT 1 FROM #session.hostdbprefix#share_options  
+					WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+					AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#share_options
-				SET 
-				asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.settothumb#">,
-				folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
-				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-				AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
+				<!--- Insert/update original entires in share_options table and apply same appropriate permissions --->
+				<cfif checkorgentry.recordcount eq 0>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#share_options (host_id,asset_id_r, asset_type,asset_format,group_asset_id, folder_id_r, asset_order,asset_dl, rec_uuid)
+					VALUES(
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#type#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">,
+						<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">,
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+						)
+					</cfquery>
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#share_options
+					SET 
+					asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">,
+					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
+					WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+					AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				</cfif>
+
+				<cfif type eq "img"><!---  Insert/update preview entires for images only --->
+					<cfquery datasource="#application.razuna.datasource#" name="checkthumbentry">
+						SELECT 1 FROM #session.hostdbprefix#share_options  
+						WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+						AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+					</cfquery>
+
+					<cfif checkthumbentry.recordcount eq 0>
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#share_options (host_id,asset_id_r, asset_type, asset_format,group_asset_id, folder_id_r, asset_order,asset_dl, rec_uuid)
+						VALUES(
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#type#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">,
+							<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.settothumb#">,
+							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+							)
+						</cfquery>
+					<cfelse>
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#share_options
+						SET 
+						asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.settothumb#">,
+						folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
+						WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+						AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						</cfquery>
+					</cfif>	
+				</cfif>
 			</cfloop>
 		</cfloop>
 		<!--- Flush Cache --->
