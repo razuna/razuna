@@ -284,4 +284,31 @@
 		<cfreturn thexml>
 	</cffunction>
 	
+	<!--- Search labels --->
+	<cffunction name="searchlabel" access="remote" output="false" returntype="query" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="searchfor" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
+			<!--- Query --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+			SELECT /* #cachetoken#searchlabel */ label_id, label_text, label_path
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+			AND (label_text LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />
+			OR label_path LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />)
+			ORDER BY label_path
+			</cfquery>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+	
 </cfcomponent>
