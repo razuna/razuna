@@ -3600,6 +3600,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="pllink" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
+		<!-- CFC: Get individual share options -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 		<!-- Show the folder listing -->
 		<do action="ajax.files_detail" />
 	</fuseaction>

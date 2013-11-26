@@ -1984,6 +1984,12 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
+		<!--- Get sharing options for folder so it can be applied to the asset --->
+		<cfquery datasource="#application.razuna.datasource#" name="get_dl_params">
+			SELECT share_dl_org 
+			FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
 		<!--- Insert to share_options --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#share_options
@@ -1995,7 +2001,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="doc" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
@@ -2307,6 +2313,12 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<!--- Put below in thread --->
 			<cfthread action="run" intstruct="#arguments.thestruct#">
+				<!--- Get sharing option for folder so it can be applied to the asset --->
+				<cfquery datasource="#application.razuna.datasource#" name="get_dl_params">
+					SELECT share_dl_thumb, share_dl_org 
+					FROM #session.hostdbprefix#folders 
+					WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				</cfquery>
 				<!--- Add to shared options --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#share_options
@@ -2318,7 +2330,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#iif(get_dl_params.share_dl_thumb eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
@@ -2333,7 +2345,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
@@ -3267,6 +3279,12 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var th = 1>
 			<cfset var vid_meta = "">
 		</cfif>
+		<!--- Get sharing options for folder so it can be applied to the asset --->
+		<cfquery datasource="#application.razuna.datasource#" name="get_dl_params">
+			SELECT share_dl_org 
+			FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
 		<!--- Set shared options --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#share_options
@@ -3278,7 +3296,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
@@ -4162,6 +4180,12 @@ This is the main function called directly by a single upload else from addassets
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
+		<!--- Get sharing options for folder so it can be applied to the asset --->
+		<cfquery datasource="#application.razuna.datasource#" name="get_dl_params">
+			SELECT share_dl_org 
+			FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
 		<!--- Set shared options --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#share_options
@@ -4173,7 +4197,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)

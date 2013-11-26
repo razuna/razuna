@@ -119,7 +119,7 @@
 									<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 										<tr>
 											<td colspan="2">
-												<cfif attributes.folderaccess EQ "R">
+												<cfif !qry_share_options.asset_dl AND attributes.folderaccess EQ "R">
 													<strong>Original</strong> (not made available as download)<br />
 													<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
 													</cfif>
