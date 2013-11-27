@@ -5629,6 +5629,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
 		<!-- CFC: Move Folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="copy(attributes)" />
 		<!-- Go to show the folder -->
