@@ -52,7 +52,7 @@
 						<cfloop list="#qry_pdfjpgs.thepdfjpgslist#" delimiters="," index="i">
 							<cfset thenr = replacenocase(i,".jpg","","all")>
 							<cfset thenr = listlast(thenr,"-")>
-							<a name="#val(thenr)+1#"><img src="#thestorage##qry_detail.detail.path_to_asset#/razuna_pdf_images/#i#" border="0"></a><a href="##top">Top</a>
+							<a name="#val(thenr)+1#"><img src="#thestorage##qry_detail.detail.path_to_asset#/razuna_pdf_images/#i#" border="0" width="60%"></a><a href="##top">Top</a>
 						</cfloop>
 					</td>
 				</tr>
