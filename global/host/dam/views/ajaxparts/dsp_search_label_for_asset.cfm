@@ -2,6 +2,10 @@
 	<div style="float:left;width:100%;">
 		<div style="float:left;text-align:left;width:100%;">
 			<cfif qry_labels.recordcount>
+				<!--- Last 20 labels added --->
+				<cfif structKeyExists(attributes,'show') AND attributes.show EQ 'default'>
+					<span style="float:left;clear:both;"><h3>Last 20 Labels Added</h3></span><br/>
+				</cfif>
 				<!--- Looping the all labels in the query --->
 				<cfloop query="qry_labels" >
 					<label style="float:left;clear:both;">
