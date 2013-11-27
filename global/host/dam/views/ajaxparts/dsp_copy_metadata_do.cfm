@@ -56,7 +56,7 @@
 		$('.idList').each( function(){ 
 			if (this.checked){
 				// select none
-				$(this).attr('checked',false);
+				$(this).prop('checked',false);
 				// Apply Disable
 				$('#apply').attr('disabled', 'true');
 				// Change link
@@ -64,7 +64,7 @@
 			}
 			else {
 				// select all
-				$(this).attr('checked','checked');
+				$(this).prop('checked','checked');
 				//Apply Enable
 				$('#apply').removeAttr('disabled');
 				// Change link
