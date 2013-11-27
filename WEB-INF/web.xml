@@ -68,7 +68,7 @@
 		<url-pattern>*.cfc</url-pattern>
 	</servlet-mapping>
 	<session-config>
-		<session-timeout>30</session-timeout>
+		<session-timeout>240</session-timeout>
 	</session-config>
 	<listener>
 		<listener-class>com.naryx.tagfusion.cfm.application.cfHttpSessionListener</listener-class>
