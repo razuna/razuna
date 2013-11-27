@@ -77,8 +77,14 @@
 	});
 	// Add Label
 	function addlabel(){
+		//check label for first char and letters
+		if(!isValidLabel('label_text')){
+			alert('Please use first charactor as letters or numbers.');
+			return false;
+		}
+		
 		// Get value
-		var thelab = $("##label_text").val();
+		var thelab = $("##label_text").val().trim();
 		var theparent = $("##sublabelof option:selected").val();
 		// Submit
 		if (thelab != "") {
