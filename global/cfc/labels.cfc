@@ -973,7 +973,7 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT DISTINCT LEFT(UPPER(RTRIM(LTRIM(label_text))),1) AS label_text_index FROM raz1_labels ORDER BY label_text_index
+			SELECT DISTINCT LEFT(UPPER(RTRIM(LTRIM(label_text))),1) AS label_text_index FROM #session.hostdbprefix#labels ORDER BY label_text_index
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry/>
