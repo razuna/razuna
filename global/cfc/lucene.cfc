@@ -685,8 +685,9 @@
 			<!--- Index: delete records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while deleting records in function lucene.index_delete_thread">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfset consoleoutput(true)>
+				<cfset console("Error while deleting records in function lucene.index_delete_thread")>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 	</cffunction>
