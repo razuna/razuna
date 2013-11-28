@@ -324,7 +324,7 @@ $(document).bind('click', function(e) {
 // Simply JS to check radio button for group permissions
 // Check radio box
 	function checkradio(thisid){
-		$('#per_' + thisid).attr('checked','checked');
+		$('#per_' + thisid).prop('checked','checked');
 	}
 // Flash footer_tabs
 function flash_footer(what){
@@ -476,7 +476,7 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
 	// Loop over checkboxes and check all
-	$('#' + myform + ' :checkbox').attr('checked', true);
+	$('#' + myform + ' :checkbox').prop('checked', true);
 	// Show drop down
 	$("#folderselection" + myform).slideDown('slow');
 	$("#folderselectionb" + myform).slideDown('slow');
@@ -495,7 +495,7 @@ function CheckAll(myform,folderid,thediv,thekind) {
 
 function CheckAllNot(myform){
 	// Loop over checkboxes and check/uncheck and set var
-	$('#' + myform + ' :checkbox').attr('checked', false);
+	$('#' + myform + ' :checkbox').prop('checked', false);
 	// Hide bar
 	$("#folderselection" + myform).slideUp('slow');
 	$("#folderselectionb" + myform).slideUp('slow');
@@ -897,7 +897,7 @@ function checksel(theid,theckb,kind){
 	// if the indexof return -1 we prompt and reset the checkbox
 	if (ind == '-1'){
 		alert('You need to select at least one kind of the asset, else remove it from the basket!');
-		$('#' + theckb).attr('checked', true);
+		$('#' + theckb).prop('checked', true);
 	}
 }
 function addgrp(){

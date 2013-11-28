@@ -130,13 +130,13 @@
 			$('input[type=checkbox]').each( function(){ 
 				if (this.checked){
 					// select none
-					$(this).attr('checked',false);
+					$(this).prop('checked',false);
 					// Change link
 					$('##selectalluserslink').text('Select all');
 				}
 				else {
 					// select all
-					$(this).attr('checked','checked');
+					$(this).prop('checked','checked');
 					// Change link
 					$('##selectalluserslink').text('Select none');
 				}

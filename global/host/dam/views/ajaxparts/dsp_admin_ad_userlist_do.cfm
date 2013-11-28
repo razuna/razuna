@@ -43,11 +43,11 @@
 		$('##check_all').click(function(){
 			if (this.checked){
 					// select all
-					$('.ad_users').attr('checked','checked');
+					$('.ad_users').prop('checked','checked');
 				}
 				else {
 					// select none
-					$('.ad_users').attr('checked',false);
+					$('.ad_users').prop('checked',false);
 				}
 		});
 		 

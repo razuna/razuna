@@ -89,7 +89,7 @@
 			<!--- Select All --->
 			<tr>
 				<td colspan="4" style="padding-top:15px;">
-					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
+					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
 					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect Originals</a>
 					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
 				</td>
@@ -509,10 +509,10 @@
 	$('#checkall').click(function () {
 		$('#thebasket :checkbox').each( function() {
 			if(this.checked){
-				$(this).attr('checked', false);
+				$(this).prop('checked', false);
 			}
 			else{
-				$(this).attr('checked', true);
+				$(this).prop('checked', true);
 			}
 		})
 		return false;
@@ -522,10 +522,10 @@
 	$('#checkorg').click(function() {
 		$('#thebasket').find('[id*="imgorg"],[id*="vid"],[id*="aud"],[id*="doc"]').each( function() {
 			if(this.checked){
-				$(this).attr('checked', false);
+				$(this).prop('checked', false);
 			}
 			else{
-				$(this).attr('checked', true);
+				$(this).prop('checked', true);
 			}
 		})
 		return false;
@@ -535,10 +535,10 @@
 	$('#checkthumb').click(function() {
 		$('#thebasket').find('[id*="imgt"]').each( function() {
 			if(this.checked){
-				$(this).attr('checked', false);
+				$(this).prop('checked', false);
 			}
 			else{
-				$(this).attr('checked', true);
+				$(this).prop('checked', true);
 			}
 		})
 		return false;
