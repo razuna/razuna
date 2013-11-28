@@ -2877,7 +2877,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-resize #arguments.thestruct.width#x #thecolorspace#">
+		<cfset var theImgConvertParams = "-alpha off -resize #arguments.thestruct.width#x #thecolorspace#">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2912,13 +2912,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Set correct width or heigth --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x #thecolorspace#">
+			<cfset theImgConvertParams = "-alpha off -resize #arguments.thestruct.width#x #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "#thecolorspace#">
+			<cfset theImgConvertParams = "-alpha off #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x #thecolorspace#">
+			<cfset theImgConvertParams = "-alpha off -resize #arguments.thestruct.width#x #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-resize x#arguments.thestruct.height# #thecolorspace#">
+			<cfset theImgConvertParams = "-alpha off -resize x#arguments.thestruct.height# #thecolorspace#">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
