@@ -62,26 +62,28 @@
 		<td><input type="text" name="rawmetadata" style="width:300px;" class="textbold"></td>
 	</tr>
 	<cfloop query="qry_fields">
-		<tr>
-			<td nowrap="true">#cf_text#</td>
-			<td>
-				<cfset cfid = replace(cf_id,"-","","all")>
-				<!--- For text --->
-				<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-					<input type="text" style="width:300px;" name="cf#cfid#">
-				<!--- Radio --->
-				<cfelseif cf_type EQ "radio">
-					<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
-				<!--- Select --->
-				<cfelseif cf_type EQ "select">
-					<select name="cf#cfid#" style="width:300px;">
-						<option value="" selected="selected"></option>
-						<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
-							<option value="#i#">#i#</option>
-						</cfloop>
-					</select>
-				</cfif>
-			</td>
-		</tr>
+		<cfif myvar.thetype EQ qry_fields.cf_show OR myvar.thetype EQ 'all' AND qry_fields.cf_show NEQ 'users'>
+			<tr>
+				<td nowrap="true">#cf_text#</td>
+				<td>
+					<cfset cfid = replace(cf_id,"-","","all")>
+					<!--- For text --->
+					<cfif cf_type EQ "text" OR cf_type EQ "textarea">
+						<input type="text" style="width:300px;" name="cf#cfid#">
+					<!--- Radio --->
+					<cfelseif cf_type EQ "radio">
+						<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
+					<!--- Select --->
+					<cfelseif cf_type EQ "select">
+						<select name="cf#cfid#" style="width:300px;">
+							<option value="" selected="selected"></option>
+							<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
+								<option value="#i#">#i#</option>
+							</cfloop>
+						</select>
+					</cfif>
+				</td>
+			</tr>
+		</cfif>
 	</cfloop>
 </cfoutput>
