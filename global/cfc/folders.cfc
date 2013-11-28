@@ -4907,57 +4907,66 @@
 <!--- Store all values --->
 <cffunction name="store_values" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
-	<!--- Get ids --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "img">
-		SELECT /* #variables.cachetoken#sv */ <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as id
-		FROM #session.hostdbprefix#images
-		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-		AND (img_group IS NULL OR img_group = '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-	</cfif>
-	<cfif arguments.thestruct.thekind EQ "ALL">
-		UNION ALL
-	</cfif>
-	<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "vid">
-		SELECT <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as id
-		FROM #session.hostdbprefix#videos
-		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-		AND (vid_group IS NULL OR vid_group = '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-	</cfif>
-	<cfif arguments.thestruct.thekind EQ "ALL">
-		UNION ALL
-	</cfif>
-	<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "aud">
-		SELECT <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as id
-		FROM #session.hostdbprefix#audios
-		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-		AND (aud_group IS NULL OR aud_group = '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-	</cfif>
-	<cfif arguments.thestruct.thekind EQ "ALL">
-		UNION ALL
-	</cfif>
-	<cfif arguments.thestruct.thekind EQ "ALL" OR (arguments.thestruct.thekind NEQ "vid" AND arguments.thestruct.thekind NEQ "img" AND arguments.thestruct.thekind NEQ "aud")>
-		SELECT <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as id
-		FROM #session.hostdbprefix#files
-		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.thestruct.thekind EQ "other">
-			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
-		<cfelseif arguments.thestruct.thekind NEQ "all">
-			AND (
-			lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
-			OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
-			)
+	<!--- Get ids if this is a folder, folder_id set to 1 represents a collection --->
+	<cfif arguments.thestruct.folder_id neq 1>
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "img">
+			SELECT /* #variables.cachetoken#sv */ <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as id
+			FROM #session.hostdbprefix#images
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND (img_group IS NULL OR img_group = '')
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfif>
-	</Cfif>
-	</cfquery>
+		<cfif arguments.thestruct.thekind EQ "ALL">
+			UNION ALL
+		</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "vid">
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as id
+			FROM #session.hostdbprefix#videos
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND (vid_group IS NULL OR vid_group = '')
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL">
+			UNION ALL
+		</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "aud">
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as id
+			FROM #session.hostdbprefix#audios
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND (aud_group IS NULL OR aud_group = '')
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL">
+			UNION ALL
+		</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL" OR (arguments.thestruct.thekind NEQ "vid" AND arguments.thestruct.thekind NEQ "img" AND arguments.thestruct.thekind NEQ "aud")>
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as id
+			FROM #session.hostdbprefix#files
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif arguments.thestruct.thekind EQ "other">
+				AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+			<cfelseif arguments.thestruct.thekind NEQ "all">
+				AND (
+				lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
+				OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
+				)
+			</cfif>
+		</cfif>
+		</cfquery>
+	<cfelse>
+		<!--- Get ids if it is a collection --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">file_id_r + '-' + col_file_type<cfelse>concat(file_id_r,'-',col_file_type)</cfif> as id
+			FROM #session.hostdbprefix#collections_ct_files
+			WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.collection_id#">
+		</cfquery>
+	</cfif>
 	<!--- Set the valuelist   --->
 	<cfset var l = valuelist(qry.id)>
 	<!--- Set the sessions --->

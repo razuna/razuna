@@ -248,17 +248,17 @@
 		// Check all hosts
 		if (sysadminischecked == true){
 			// Uncheck admin
-			$('##admin_group_2').attr('checked',false);
+			$('##admin_group_2').prop('checked',false);
 			// Disable admin
 			$('##admin_group_2').attr('disabled',true);
 			$('.hostid').each( function(){
-				$(this).attr('checked',true);
+				$(this).prop('checked',true);
 			});
 		}
 		// Uncheck all hosts
 		else{
 			// Uncheck admin
-			$('##admin_group_2').attr('checked',false);
+			$('##admin_group_2').prop('checked',false);
 			// Disable admin
 			$('##admin_group_2').attr('disabled',false);
 			// Uncheck hosts
@@ -266,7 +266,7 @@
 				// Get tenant id
 				var thisval = $(this).val();
 				if (thisval != 1){
-					$(this).attr('checked',false);
+					$(this).prop('checked',false);
 				}
 			});
 		}

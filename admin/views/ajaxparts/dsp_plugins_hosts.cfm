@@ -75,6 +75,6 @@
 		$('#plfeedback').html('Saved your selection successfully!');
 	}
 	function plchkall(pid){
-		$('input:checkbox.' + pid).attr('checked','checked');
+		$('input:checkbox.' + pid).prop('checked','checked');
 	}
 </script>
