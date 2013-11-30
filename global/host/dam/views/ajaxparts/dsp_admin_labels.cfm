@@ -59,8 +59,13 @@
 <script type="text/javascript">
 // Update Comment
 function addlabeladmin(){
+	//check label for first char and letters
+	if(!isValidLabel('label_text_admin')){
+		alert('Please use first charactor as letters or numbers.');
+		return false;
+	}
 	// Get value
-	var thelab = $("##label_text_admin").val();
+	var thelab = $("##label_text_admin").val().trim();
 	var theparent = $("##sublabelofnew option:selected").val();
 	// Submit
 	if (thelab != "") {

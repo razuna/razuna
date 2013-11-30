@@ -1854,3 +1854,16 @@ $(document).tooltip({
 		at: "center top"
 	}
 });
+// Remove label while click on X
+function removeLabel(assetID,assetType,labelID,aHrefElement){
+	//console.log(aHrefElement);
+	$(aHrefElement).parent('.singleLabel').remove();
+	loadcontent('div_forall','index.cfm?fa=c.asset_label_add_remove&fileid=' +assetID+ '&thetype=' +assetType+ '&checked=false&labels=' + labelID);
+	$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+}
+//Check the label name, first char should be charactors or numbers
+function isValidLabel(labelName){
+	var exp = new RegExp(/^[^a-zA-Z0-9]/g);
+	return !exp.test($('#'+labelName).val());
+		
+}
