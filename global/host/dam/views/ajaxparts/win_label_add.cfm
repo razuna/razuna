@@ -50,8 +50,13 @@
 <script>
 // Update Comment
 function updatelabel(){
+	//check label for first char and letters
+	if(!isValidLabel('label_text_edit')){
+		alert('Please use first charactor as letters or numbers.');
+		return false;
+	}
 	// Get value
-	var thelab = $("##label_text_edit").val();
+	var thelab = $("##label_text_edit").val().trim();
 	var theparent = $("##sublabelofedit option:selected").val();
 	// Submit
 	if (thelab != "") {
