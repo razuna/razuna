@@ -146,11 +146,11 @@
 		// Put together the search
 		if (labels == null) var labels = '';
 		if (searchfor != '') var searchfor = searchfor;
-		if (keywords != '') var keywords = 'keywords:' + keywords;
-		if (description != '') var description = 'description:' + description;
-		if (filename != '') var filename = 'filename:"' + filename + '"';
-		if (extension != '') var extension = 'extension:"' + extension + '"';
-		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
+		if (keywords != '') var keywords = 'keywords:(' + keywords +')';
+		if (description != '') var description = 'description:(' + description +')';
+		if (filename != '') var filename = 'filename:(' + filename +')';
+		if (extension != '') var extension = 'extension:(' + extension +')';
+		if (rawmetadata != '') var rawmetadata = 'rawmetadata:(' + rawmetadata +')';
 		if (labels != ''){
 			if (andor == "OR"){
 				var labels = 'labels:(' + labels + ')';
@@ -166,7 +166,7 @@
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 			<cfelse>
-				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id#+' + value_#cfid# + ')';
+				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 			</cfif>
 		</cfoutput></cfloop>
 		// Create the searchtext
