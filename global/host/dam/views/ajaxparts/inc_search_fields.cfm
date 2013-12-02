@@ -62,7 +62,7 @@
 		<td><input type="text" name="rawmetadata" style="width:300px;" class="textbold"></td>
 	</tr>
 	<cfloop query="qry_fields">
-		<cfif myvar.thetype EQ qry_fields.cf_show OR myvar.thetype EQ 'all' AND qry_fields.cf_show NEQ 'users'>
+		<cfif myvar.thetype EQ qry_fields.cf_show OR qry_fields.cf_show EQ 'all' OR myvar.thetype EQ 'all' AND qry_fields.cf_show NEQ 'users'>
 			<tr>
 				<td nowrap="true">#cf_text#</td>
 				<td>
