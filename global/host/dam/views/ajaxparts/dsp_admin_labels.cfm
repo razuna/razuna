@@ -29,11 +29,20 @@
 		<tr class="list">
 			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("admin_labels_desc")#</td>
 		</tr>
+		<!--- Show the list of groups in select option --->
 		<tr class="list">
 			<td colspan="2" style="padding-top:15px;">#myFusebox.getApplicationData().defaults.trans("admin_labels_allow")#
-			<br /><br />
-			<input type="radio" name="labels_public" value="t" onclick="save_setting('t');"<cfif qry_labels_setting.set2_labels_users EQ "t"> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="labels_public" value="f" onclick="save_setting('f');"<cfif qry_labels_setting.set2_labels_users EQ "f"> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")# <span id="save_status_label" style="padding:10px;color:green;display:none;"></span><div id="save_status_hidden_label" style="display:none;"></div>
-			<br />
+				<br /><br />
+				<select data-placeholder="Choose a group or user" class="chzn-select" style="width:410px;" name="labels_public" id="labels_public" onchange="save_setting('labels_public')" multiple="multiple">
+					<option value=""></option>
+					<option value="#qry_admin.grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,qry_admin.grp_id)> selected="selected"</cfif>>#qry_admin.grp_name#</option>
+					<cfloop query="qry_groups">
+					<option value="#grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+					</cfloop>
+				</select>
+				<br />
+				<em>(If left empty users can edit field according to their label permissions)</em><br /><br />
+				<span id="save_status_label" style="padding:10px;color:green;display:none;"></span><div id="save_status_hidden_label" style="display:none;">
 			</td>
 		</tr>
 		<tr>
@@ -57,6 +66,7 @@
 		</cfloop>
 	</table>
 <script type="text/javascript">
+	$(".chzn-select").chosen();
 // Update Comment
 function addlabeladmin(){
 	//check label for first char and letters
@@ -76,7 +86,9 @@ function addlabeladmin(){
 	}
 }
 // Save setting
-function save_setting(labelset){
+function save_setting(labelset_div){
+	// Get the group value
+	var labelset = $('##'+labelset_div).val();
 	// Save
 	loadcontent('save_status_hidden_label','#myself#c.admin_labels_setting&label_users=' + labelset);
 	// Feedback

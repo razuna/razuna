@@ -70,6 +70,10 @@ function updatelabel(){
 		  });
 		  // Hide Window
 		  destroywindow(#attributes.closewin#);
+		  // Show labels
+		  <cfif structKeyExists(attributes,'file_id')>
+		  	loadcontent('show_labels','<cfoutput>index.cfm?fa=c.search_label_for_asset&file_id=#attributes.file_id#&file_type=#attributes.file_type#&show=default</cfoutput>');
+		  </cfif>
 		});
 	}
 	else {

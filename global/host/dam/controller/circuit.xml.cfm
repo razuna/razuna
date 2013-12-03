@@ -7016,6 +7016,16 @@
 	<fuseaction name="admin_labels">
 		<!-- CFC: Get setting -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_labels_setting" />
+		<!-- CFC: Get detail of Administrator group -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getdetail" returnvariable="qry_admin">
+			<argument name="grp_id" value="2" />
+		</invoke>
+		<!-- CFC: Get all groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="thestruct" value="#attributes#" />
+			<argument name="mod_short" value="ecp" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get all labels -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="qry_labels" />
 		<!-- Show -->
@@ -9419,6 +9429,13 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,attributes.file_type)" returnvariable="attributes.asset_labels_list" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="get_all_labels_for_show(attributes)" returnvariable="qry_labels" />
+		<!-- Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
+		<!-- CFC: Get setting -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set(attributes)" returnvariable="qry_labels_setting" />
 		<!-- Show the choose folder -->
 		<do action="ajax.search_label_for_asset" />
 	</fuseaction>

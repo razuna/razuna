@@ -689,6 +689,15 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
+			<!--- Set datatype to longtext for set2_labels_users--->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					alter table raz1_settings_2 <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column set2_labels_users #theclob#<cfelse>change set2_labels_users set2_labels_users #theclob#</cfif>
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE TABLE raz1_smart_folders 
