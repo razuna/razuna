@@ -787,6 +787,9 @@
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
+		<!--- Decode URL encoding that is encoded using the encodeURIComponent javascript method.
+		          Do not use escape(deprecated) or encodeURI (doesn't encode '+' sign) methods --->
+		<cfset arguments.criteria = urlDecode(arguments.criteria)>
 		<!--- If criteria is empty --->
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">

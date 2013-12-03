@@ -400,7 +400,7 @@ function checkentry(){
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// Parse the entry
-	var theentry = $('#simplesearchtext').val().replace(/["']/g, '\\"');
+	var theentry = $('#simplesearchtext').val();
 	var thetype = $('#simplesearchthetype').val();
 	if (theentry == "" | theentry == "Quick Search"){
 		return false;
@@ -416,7 +416,7 @@ function checkentry(){
 			// Show loading bar
 			$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 			// We are now using POST for the search field (much more compatible then a simple load for foreign chars)
-			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: theentry, folder_id: 0, thetype: thetype }, function(){
+			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: encodeURIComponent(theentry), folder_id: 0, thetype: thetype }, function(){
 				$("#bodyoverlay").remove();
 			});
 		}
@@ -1378,20 +1378,20 @@ function loadbasket(){
 }
 function subadvfieldsdoc(theform,searchtext){
 	// Get values
-	var author = document.forms[theform].author.value.replace(/["']/g, '\\"');
-	var authorsposition = document.forms[theform].authorsposition.value.replace(/["']/g, '\\"');
-	var captionwriter = document.forms[theform].captionwriter.value.replace(/["']/g, '\\"');
-	var webstatement = document.forms[theform].webstatement.value.replace(/["']/g, '\\"');
-	var rights = document.forms[theform].rights.value.replace(/["']/g, '\\"');
-	var rightsmarked = document.forms[theform].rightsmarked.value.replace(/["']/g, '\\"');
+	var author = document.forms[theform].author.value;
+	var authorsposition = document.forms[theform].authorsposition.value;
+	var captionwriter = document.forms[theform].captionwriter.value;
+	var webstatement = document.forms[theform].webstatement.value;
+	var rights = document.forms[theform].rights.value;
+	var rightsmarked = document.forms[theform].rightsmarked.value;
 	var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 	// Put together the search
-	if (author != '') var author = 'author:' + author;
-	if (authorsposition != '') var authorsposition = 'authorsposition:' + authorsposition;
-	if (captionwriter != '') var captionwriter = 'captionwriter:' + captionwriter;
-	if (webstatement != '') var webstatement = 'webstatement:' + webstatement;
+	if (author != '') var author = 'author:(' + author + ')';
+	if (authorsposition != '') var authorsposition = 'authorsposition:(' + authorsposition;
+	if (captionwriter != '') var captionwriter = 'captionwriter:(' + captionwriter+ ')';
+	if (webstatement != '') var webstatement = 'webstatement:(' + webstatement;+ ')'
 	if (rights != '') var rights = 'rights:' + rights;
-	if (rightsmarked != '') var rightsmarked = 'rightsmarked:' + rightsmarked;
+	if (rightsmarked != '') var rightsmarked = 'rightsmarked:(' + rightsmarked+ ')';
 	// Create the searchtext
 	if (searchtext != '' && author != '') {
 		var searchtext = searchtext + ' ' + andor + ' ' + author;
@@ -1429,78 +1429,78 @@ function subadvfieldsdoc(theform,searchtext){
 	else {
 		var searchtext = searchtext + rightsmarked;
 	}
-	return searchtext;
+	return encodeURIComponent(searchtext);
 }
 function subadvfieldsimg(theform,searchtext){
 	// Get values
-	var subjectcode = document.forms[theform].subjectcode.value.replace(/["']/g, '\\"');
-	var creator = document.forms[theform].creator.value.replace(/["']/g, '\\"');
-	var title = document.forms[theform].title.value.replace(/["']/g, '\\"');
-	var authorsposition = document.forms[theform].authorsposition.value.replace(/["']/g, '\\"');
-	var captionwriter = document.forms[theform].captionwriter.value.replace(/["']/g, '\\"');
-	var ciadrextadr = document.forms[theform].ciadrextadr.value.replace(/["']/g, '\\"');
-	var category = document.forms[theform].category.value.replace(/["']/g, '\\"');
-	var supplementalcategories = document.forms[theform].supplementalcategories.value.replace(/["']/g, '\\"');
-	var urgency = document.forms[theform].urgency.value.replace(/["']/g, '\\"');
-	var ciadrcity = document.forms[theform].ciadrcity.value.replace(/["']/g, '\\"');
-	var ciadrctry = document.forms[theform].ciadrctry.value.replace(/["']/g, '\\"');
-	var location = document.forms[theform].location.value.replace(/["']/g, '\\"');
-	var ciadrpcode = document.forms[theform].ciadrpcode.value.replace(/["']/g, '\\"');
-	var ciemailwork = document.forms[theform].ciemailwork.value.replace(/["']/g, '\\"');
-	var ciurlwork = document.forms[theform].ciurlwork.value.replace(/["']/g, '\\"');
-	var citelwork = document.forms[theform].citelwork.value.replace(/["']/g, '\\"');
-	var intellectualgenre = document.forms[theform].intellectualgenre.value.replace(/["']/g, '\\"');
-	var instructions = document.forms[theform].instructions.value.replace(/["']/g, '\\"');
-	var source = document.forms[theform].source.value.replace(/["']/g, '\\"');
-	var usageterms = document.forms[theform].usageterms.value.replace(/["']/g, '\\"');
-	var copyrightstatus = document.forms[theform].copyrightstatus.value.replace(/["']/g, '\\"');
-	var transmissionreference = document.forms[theform].transmissionreference.value.replace(/["']/g, '\\"');
-	var webstatement = document.forms[theform].webstatement.value.replace(/["']/g, '\\"');
-	var headline = document.forms[theform].headline.value.replace(/["']/g, '\\"');
-	var datecreated = document.forms[theform].datecreated.value.replace(/["']/g, '\\"');
-	var city = document.forms[theform].city.value.replace(/["']/g, '\\"');
-	var ciadrregion = document.forms[theform].ciadrregion.value.replace(/["']/g, '\\"');
-	var country = document.forms[theform].country.value.replace(/["']/g, '\\"');
-	var countrycode = document.forms[theform].countrycode.value.replace(/["']/g, '\\"');
-	var scene = document.forms[theform].scene.value.replace(/["']/g, '\\"');
-	var state = document.forms[theform].state.value.replace(/["']/g, '\\"');
-	var credit = document.forms[theform].credit.value.replace(/["']/g, '\\"');
-	var rights = document.forms[theform].rights.value.replace(/["']/g, '\\"');
+	var subjectcode = document.forms[theform].subjectcode.value;
+	var creator = document.forms[theform].creator.value;
+	var title = document.forms[theform].title.value;
+	var authorsposition = document.forms[theform].authorsposition.value;
+	var captionwriter = document.forms[theform].captionwriter.value;
+	var ciadrextadr = document.forms[theform].ciadrextadr.value;
+	var category = document.forms[theform].category.value;
+	var supplementalcategories = document.forms[theform].supplementalcategories.value;
+	var urgency = document.forms[theform].urgency.value;
+	var ciadrcity = document.forms[theform].ciadrcity.value;
+	var ciadrctry = document.forms[theform].ciadrctry.value;
+	var location = document.forms[theform].location.value;
+	var ciadrpcode = document.forms[theform].ciadrpcode.value;
+	var ciemailwork = document.forms[theform].ciemailwork.value;
+	var ciurlwork = document.forms[theform].ciurlwork.value;
+	var citelwork = document.forms[theform].citelwork.value;
+	var intellectualgenre = document.forms[theform].intellectualgenre.value;
+	var instructions = document.forms[theform].instructions.value;
+	var source = document.forms[theform].source.value;
+	var usageterms = document.forms[theform].usageterms.value;
+	var copyrightstatus = document.forms[theform].copyrightstatus.value;
+	var transmissionreference = document.forms[theform].transmissionreference.value;
+	var webstatement = document.forms[theform].webstatement.value;
+	var headline = document.forms[theform].headline.value;
+	var datecreated = document.forms[theform].datecreated.value;
+	var city = document.forms[theform].city.value;
+	var ciadrregion = document.forms[theform].ciadrregion.value;
+	var country = document.forms[theform].country.value;
+	var countrycode = document.forms[theform].countrycode.value;
+	var scene = document.forms[theform].scene.value;
+	var state = document.forms[theform].state.value;
+	var credit = document.forms[theform].credit.value;
+	var rights = document.forms[theform].rights.value;
 	var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 	// Put together the search
-	if (subjectcode != '') var subjectcode = 'subjectcode:' + subjectcode;
-	if (creator != '') var creator = 'creator:' + creator;
-	if (title != '') var title = 'title:' + title;
-	if (authorsposition != '') var authorsposition = 'authorsposition:' + authorsposition;
-	if (captionwriter != '') var captionwriter = 'captionwriter:' + captionwriter;
-	if (ciadrextadr != '') var ciadrextadr = 'ciadrextadr:' + ciadrextadr;
-	if (category != '') var category = 'category:' + category;
-	if (supplementalcategories != '') var supplementalcategories = 'supplementalcategories:' + supplementalcategories;
-	if (urgency != '') var urgency = 'urgency:' + urgency;
-	if (ciadrcity != '') var ciadrcity = 'ciadrcity:' + ciadrcity;
-	if (ciadrctry != '') var ciadrctry = 'ciadrctry:' + ciadrctry;
-	if (location != '') var location = 'location:' + location;
-	if (ciadrpcode != '') var ciadrpcode = 'ciadrpcode:' + ciadrpcode;
-	if (ciemailwork != '') var ciemailwork = 'ciemailwork:' + ciemailwork;
-	if (ciurlwork != '') var ciurlwork = 'ciurlwork:' + ciurlwork;
-	if (citelwork != '') var citelwork = 'citelwork:' + citelwork;
-	if (intellectualgenre != '') var intellectualgenre = 'intellectualgenre:' + intellectualgenre;
-	if (instructions != '') var instructions = 'instructions:' + instructions;
-	if (source != '') var source = 'source:' + source;
-	if (usageterms != '') var usageterms = 'usageterms:' + usageterms;
-	if (copyrightstatus != '') var copyrightstatus = 'copyrightstatus:' + copyrightstatus;
-	if (transmissionreference != '') var transmissionreference = 'transmissionreference:' + transmissionreference;
-	if (webstatement != '') var webstatement = 'webstatement:' + webstatement;
-	if (headline != '') var headline = 'headline:' + headline;
-	if (datecreated != '') var datecreated = 'datecreated:' + datecreated;
-	if (city != '') var city = 'city:' + city;
-	if (ciadrregion != '') var ciadrregion = 'ciadrregion:' + ciadrregion;
-	if (country != '') var country = 'country:' + country;
-	if (countrycode != '') var countrycode = 'countrycode:' + countrycode;
-	if (scene != '') var scene = 'scene:' + scene;
-	if (state != '') var state = 'state:' + state;
-	if (credit != '') var credit = 'credit:' + credit;
-	if (rights != '') var rights = 'rights:' + rights;
+	if (subjectcode != '') var subjectcode = 'subjectcode:(' + subjectcode + ')';
+	if (creator != '') var creator = 'creator:(' + creator+ ')';
+	if (title != '') var title = 'title:(' + title+ ')';
+	if (authorsposition != '') var authorsposition = 'authorsposition:(' + authorsposition+ ')';
+	if (captionwriter != '') var captionwriter = 'captionwriter:(' + captionwriter+ ')';
+	if (ciadrextadr != '') var ciadrextadr = 'ciadrextadr:(' + ciadrextadr+ ')';
+	if (category != '') var category = 'category:(' + category+ ')';
+	if (supplementalcategories != '') var supplementalcategories = 'supplementalcategories:(' + supplementalcategories+ ')';
+	if (urgency != '') var urgency = 'urgency:(' + urgency+ ')';
+	if (ciadrcity != '') var ciadrcity = 'ciadrcity:(' + ciadrcity+ ')';
+	if (ciadrctry != '') var ciadrctry = 'ciadrctry:(' + ciadrctry+ ')';
+	if (location != '') var location = 'location:(' + location+ ')';
+	if (ciadrpcode != '') var ciadrpcode = 'ciadrpcode:(' + ciadrpcode+ ')';
+	if (ciemailwork != '') var ciemailwork = 'ciemailwork:(' + ciemailwork+ ')';
+	if (ciurlwork != '') var ciurlwork = 'ciurlwork:(' + ciurlwork+ ')';
+	if (citelwork != '') var citelwork = 'citelwork:(' + citelwork+ ')';
+	if (intellectualgenre != '') var intellectualgenre = 'intellectualgenre:(' + intellectualgenre+ ')';
+	if (instructions != '') var instructions = 'instructions:(' + instructions+ ')';
+	if (source != '') var source = 'source:(' + source+ ')';
+	if (usageterms != '') var usageterms = 'usageterms:(' + usageterms+ ')';
+	if (copyrightstatus != '') var copyrightstatus = 'copyrightstatus:(' + copyrightstatus+ ')';
+	if (transmissionreference != '') var transmissionreference = 'transmissionreference:(' + transmissionreference+ ')';
+	if (webstatement != '') var webstatement = 'webstatement:(' + webstatement+ ')';
+	if (headline != '') var headline = 'headline:(' + headline+ ')';
+	if (datecreated != '') var datecreated = 'datecreated:(' + datecreated+ ')';
+	if (city != '') var city = 'city:(' + city+ ')';
+	if (ciadrregion != '') var ciadrregion = 'ciadrregion:(' + ciadrregion+ ')';
+	if (country != '') var country = 'country:(' + country+ ')';
+	if (countrycode != '') var countrycode = 'countrycode:(' + countrycode+ ')';
+	if (scene != '') var scene = 'scene:(' + scene+ ')';
+	if (state != '') var state = 'state:(' + state+ ')';
+	if (credit != '') var credit = 'credit:(' + credit+ ')';
+	if (rights != '') var rights = 'rights:(' + rights+ ')';
 	// Create the searchtext
 	if (searchtext != '' && subjectcode != '') {
 		var searchtext = searchtext + ' ' + andor + ' ' + subjectcode;
@@ -1700,7 +1700,7 @@ function subadvfieldsimg(theform,searchtext){
 	else {
 		var searchtext = searchtext + rights;
 	}	
-	return searchtext;
+	return encodeURIComponent(searchtext);
 }
 // Focus tree
 function razunatreefocus(folderid){
