@@ -1204,7 +1204,7 @@
 					});
 					getselected#kind#(fileids);
 					// Now uncheck all
-					$('###kind#form :checkbox').attr('checked', false);
+					$('###kind#form :checkbox').prop('checked', false);
 				}
 			});
 		});

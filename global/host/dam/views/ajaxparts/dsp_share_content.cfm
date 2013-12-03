@@ -25,11 +25,12 @@
 --->
 <!--- Storage Decision --->
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-<!--- </cfif> --->
-<cfif session.iscol EQ "F">
+<cfif session.iscol EQ "F"> <!--- If this is a folder --->
 	<cfset thefid = attributes.folder_id>
-<cfelse>
+	<cfset thecolid = 1>
+<cfelse> <!--- If this is a collection the folder_id holds the id of the collection --->
 	<cfset thefid = 1>
+	<cfset thecolid = attributes.folder_id>
 </cfif>
 <cfoutput>
 <div id="tabs_shared">
@@ -329,18 +330,18 @@
 		// Loop over the checkboxes
 		$('##shared_thumbs :checkbox').each( function() {
 			// Check all and display divs
-			$(this).attr('checked', true);
+			$(this).prop('checked', true);
 			$('##showselect').css('display','');
 			$('##showselectall').css('display','');
 		})
 		// Store all
-		$('##loaddummy').load('#myself#c.store_file_all', { folder_id: "#thefid#", thekind: "all" });
+		$('##loaddummy').load('#myself#c.store_file_all', { folder_id: "#thefid#", thekind: "all", collection_id: "#thecolid#"});
 		return false;
 	});
 	// Deselect all
 	$('##checkallnone').click(function () {
 		$('##shared_thumbs :checkbox').each( function() {
-			$(this).attr('checked', false);
+			$(this).prop('checked', false);
 			$('##showselect').css('display','none');
 			$('##showselectall').css('display','none');
 		})
@@ -373,12 +374,12 @@
 		var theids = '';
 		// Loop over all checked boxes and add them
 		$('##shared_thumbs :checkbox:checked').each( function() {
-			$(this).attr('checked', true);
+			$(this).prop('checked', true);
 			$('##showselect').css('display','');
 			theids += $(this).val() + ',';
 		})
 		// Store IDs
-		$('##loaddummy').load('#myself#c.store_file_values', { folder_id: "#thefid#", file_id: theids });
+		$('##loaddummy').load('#myself#c.store_file_values', { folder_id: "#thefid#", file_id: theids, collection_id: "#thecolid#" });
 	}
 </script>
 </cfoutput>
