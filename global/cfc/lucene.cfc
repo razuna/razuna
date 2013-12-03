@@ -787,21 +787,23 @@
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
-		<!--- Decode input (we urlencode passed search now as we need to quote some fields) --->
-		<cfset arguments.criteria = urldecode(arguments.criteria)>
+		<!--- Decode URL encoding that is encoded using the encodeURIComponent javascript method.
+		          Do not use escape(deprecated) or encodeURI (doesn't encode '+' sign) methods --->
+		<cfset arguments.criteria = urlDecode(arguments.criteria)>
 		<!--- If criteria is empty --->
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = "id:(""#arguments.criteria#"") filename:(""#arguments.criteria#"") filenameorg:(""#arguments.criteria#"") keywords:(""#arguments.criteria#"") description:(""#arguments.criteria#"") labels:(#arguments.criteria#)">
+			<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)'>
 		</cfif>
 		<cftry>
-			<cfsearch collection="#arguments.hostid#" criteria="#arguments.criteria#" name="qrylucene" category="#arguments.category#">
+			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>
 			<cfcatch type="any">
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
+		<!--- <cfset console(arguments.criteria)> --->
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>

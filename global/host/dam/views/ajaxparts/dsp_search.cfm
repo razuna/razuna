@@ -71,16 +71,16 @@
 					<td valign="top" width="1%" nowrap="nowrap">
 						Filename
 						<br />
-						<input type="text" name="filename" id="s_filename" style="width:180px;" class="textbold" value="#attributes.filename#">
+						<input type="text" name="filename" id="s_filename" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.filename))#">
 						<br />
 						Keywords
 						<br />
-						<input type="text" name="keywords" id="s_keywords" style="width:180px;" class="textbold" value="#attributes.keywords#">
+						<input type="text" name="keywords" id="s_keywords" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.keywords))#">
 					</td>
 					<td valign="top" width="1%" >
 						Description
 						<br />
-						<input type="text" name="description" id="s_description" style="width:180px;" class="textbold" value="#attributes.description#">
+						<input type="text" name="description" id="s_description" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.description))#">
 						<br>
 						#myFusebox.getApplicationData().defaults.trans("labels")#
 						<br />
@@ -95,10 +95,10 @@
 					</td>
 					<td valign="top" width="1%" nowrap="nowrap">
 						Extension
-						<br /><input type="text" name="extension" id="s_extension" style="width:180px;" class="textbold" value="#attributes.extension#">
+						<br /><input type="text" name="extension" id="s_extension" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.extension))#">
 						<br />
 						All Metadata
-						<br /><input type="text" name="rawmetadata" id="s_metadata" style="width:180px;" class="textbold" value="#attributes.metadata#">
+						<br /><input type="text" name="rawmetadata" id="s_metadata" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.metadata))#">
 					</td>
 					<td valign="top" width="100%" nowrap="nowrap">
 						Match: 
@@ -236,7 +236,7 @@
 		// Search submit
 		$("#form_searchsearch").submit(function(e){
 			// Get searchfor value
-			var searchfor = $('#insearchsearchfor').val();
+			var searchfor = encodeURIComponent($('#insearchsearchfor').val());
 			// Call subfunction to get fields
 			var searchtext = subadvfields('form_searchsearch');
 			// Only allow chars
@@ -270,16 +270,16 @@
 				var change_year = $('#s_change_year option:selected').val();
 				var andor = $('#andor option:selected').val();
 				var flab = $('#search_labels option:selected').val();
-				var fname = $('#s_filename').val();
-				var fkeys = $('#s_keywords').val();
-				var fdesc = $('#s_description').val();
-				var fext = $('#s_extension').val();
-				var fmeta = $('#s_metadata').val();
+				var fname = encodeURIComponent($('#s_filename').val());
+				var fkeys = encodeURIComponent($('#s_keywords').val());
+				var fdesc = encodeURIComponent($('#s_description').val());
+				var fext = encodeURIComponent($('#s_extension').val());
+				var fmeta = encodeURIComponent($('#s_metadata').val());
 				var cv = $('#cv').val();
 				var from_sf = $('#from_sf').val();
 				var sf_id = $('#sf_id').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: escape(searchtext), newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
 						$("#bodyoverlay").remove();
 					});
 			}

@@ -119,19 +119,19 @@
 	function subadvfields(theform){
 		// Get values
 		var searchtext = '';
-		var searchfor = document.forms[theform].searchfor.value.replace(/["']/g, '\\"');
-		var keywords = document.forms[theform].keywords.value.replace(/["']/g, '\\"');
-		var description = document.forms[theform].description.value.replace(/["']/g, '\\"');
-		var filename = document.forms[theform].filename.value.replace(/["']/g, '\\"');
-		var extension = document.forms[theform].extension.value.replace(/["']/g, '\\"');
-		var rawmetadata = document.forms[theform].rawmetadata.value.replace(/["']/g, '\\"');
+		var searchfor = document.forms[theform].searchfor.value;
+		var keywords = document.forms[theform].keywords.value;
+		var description = document.forms[theform].description.value;
+		var filename = document.forms[theform].filename.value;
+		var extension = document.forms[theform].extension.value;
+		var rawmetadata = document.forms[theform].rawmetadata.value;
 		var labels = $('#' + theform + ' [name="labels"]').val();
 		if(labels != null) var labels = labels.toString().replace(/,/g, " ");
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Custom fields (get values)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +').replace(/["']/g, '\\"');
+				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +');
 			<cfelseif cf_type EQ "select">
 				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join(' +');
 			<cfelseif cf_type EQ "radio">
@@ -146,11 +146,11 @@
 		// Put together the search
 		if (labels == null) var labels = '';
 		if (searchfor != '') var searchfor = searchfor;
-		if (keywords != '') var keywords = 'keywords:' + keywords;
-		if (description != '') var description = 'description:' + description;
-		if (filename != '') var filename = 'filename:"' + filename + '"';
-		if (extension != '') var extension = 'extension:"' + extension + '"';
-		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
+		if (keywords != '') var keywords = 'keywords:(' + keywords +')';
+		if (description != '') var description = 'description:(' + description +')';
+		if (filename != '') var filename = 'filename:(' + filename +')';
+		if (extension != '') var extension = 'extension:(' + extension +')';
+		if (rawmetadata != '') var rawmetadata = 'rawmetadata:(' + rawmetadata +')';
 		if (labels != ''){
 			if (andor == "OR"){
 				var labels = 'labels:(' + labels + ')';
@@ -166,7 +166,7 @@
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 			<cfelse>
-				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id#+' + value_#cfid# + ')';
+				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 			</cfif>
 		</cfoutput></cfloop>
 		// Create the searchtext
@@ -220,6 +220,6 @@
 				}
 			}
 		</cfoutput></cfloop>
-		return searchtext;
+		return encodeURIComponent(searchtext);
 	}
 </script>

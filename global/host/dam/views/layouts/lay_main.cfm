@@ -114,7 +114,7 @@
 	background-color:yellow;
 	font-family:'Lucida Grande', Helvetica, Arial, sans-serif;
 	font-size:13px;
-	color;grey;
+	color:grey;
 }
 .chzn-container .chzn-drop .chzn-results {
 	overflow: auto;
@@ -201,7 +201,7 @@
 /* override the arrow image of the tooltip */
 ##demotip.right {
 	background:url(#dynpath#/global/js/tooltip_images/black.png);	
-	//padding-top:40px;
+	/*padding-top:40px;*/
 	height:60px;
 }
 ##demotip.right {
