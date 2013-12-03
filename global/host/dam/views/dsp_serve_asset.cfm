@@ -30,8 +30,13 @@
 <cfif attributes.av>
 	<!--- Grab theurl and get filename --->
 	<cfset theext = listlast(qry_binary.theurl, ".")>
+	<!--- RAZ-2519 users download with their custom filename --->
+	<cfif structKeyExists(attributes,"set2_custom_file_ext") AND attributes.set2_custom_file_ext EQ "false">
+		<cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#" />
+	<cfelse>
 	<!--- Default file name when prompted to download --->
 	<cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#.#theext#" />
+	</cfif> 
 	<!--- Get file --->
 	<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
 	<!--- Serve the file --->

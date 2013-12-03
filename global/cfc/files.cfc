@@ -1052,6 +1052,10 @@
 		</cfif>
 		<!--- If name contains spaces then convert them to _ or else an incorrect name is being shown during download --->
 		<cfset qry.thefilename = replacenocase(qry.thefilename," ","_","all")>
+		<!--- RAZ-2519 users download with their custom filename --->
+		<cfif structKeyExists(arguments.thestruct,"set2_custom_file_ext") AND arguments.thestruct.set2_custom_file_ext EQ "false">
+			<cfset qry.thefilename = listfirst(qry.thefilename, ".")>
+		</cfif>
 		<!--- Set variables --->
 		<!--- <cfset qry.direct = "T"> --->
 		<cfset qry.qFile = qFile>

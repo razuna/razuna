@@ -649,6 +649,15 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
+			<!--- RAZ-2519 Add column set2_custom_file_ext to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_custom_file_ext #thevarchar#(5) default 'true'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				alter table raz1_custom_fields add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> cf_edit #thevarchar#(2000) default 'true'

@@ -1684,6 +1684,7 @@
 		  SET2_AKA_AUD					VARCHAR(200),
 		  SET2_AKA_DOC					VARCHAR(200),
 		  SET2_COLORSPACE_RGB			VARCHAR(5) DEFAULT 'false',
+		  SET2_CUSTOM_FILE_EXT			VARCHAR(5) DEFAULT 'true',
 		  rec_uuid						VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE

@@ -86,6 +86,22 @@
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>
+			<!--- RAZ-2519 Download option with their custom filename --->
+			<tr>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("custom_filename_header")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("custom_filename_desc")#</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="radio" name="set2_custom_file_ext" value="true" <cfif prefs.set2_custom_file_ext>checked="checked"</cfif><br />#myFusebox.getApplicationData().defaults.trans("custom_filename_off")#<br /> 
+					<input type="radio" name="set2_custom_file_ext" value="false" <cfif !prefs.set2_custom_file_ext>checked="checked"</cfif><br />#myFusebox.getApplicationData().defaults.trans("custom_filename_on")#
+				</td>
+			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
 			<!--- Set the FROM address for emails --->
 			<tr>
 				<th colspan="2" class="textbold">Set FROM address for eMail messages</th>
