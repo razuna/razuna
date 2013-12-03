@@ -108,7 +108,7 @@
 	background-color:yellow;
 	font-family:'Lucida Grande', Helvetica, Arial, sans-serif;
 	font-size:13px;
-	color;grey;
+	color:grey;
 }
 .chzn-container .chzn-drop .chzn-results {
 	overflow: auto;
