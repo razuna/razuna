@@ -1001,7 +1001,7 @@
 			<!--- Images --->
 			<cfif arguments.thestruct.type EQ "img">
 				<cfquery name="qFile" datasource="#variables.dsn#">
-				SELECT  img_id, img_filename, img_extension, 
+				SELECT  img_id, img_filename, img_extension as extension, 
 				thumb_extension, img_filename_org filenameorg, folder_id_r, link_kind, link_path_url, path_to_asset, 
 				cloud_url, cloud_url_org, img_size as thesize
 				FROM #session.hostdbprefix#images
@@ -1010,36 +1010,36 @@
 				</cfquery>
 				<!--- Correct filename for thumbnail or original --->
 				<cfif arguments.thestruct.v EQ "o">
-					<cfset qry.thefilename = listfirst(qfile.img_filename, ".") & "." & qfile.img_extension>
+					<cfset qry.thefilename =  replacenocase(qFile.img_filename, ".#qFile.extension#","","ALL")& "." & qfile.extension>
 				<cfelse>
 					<cfset qry.thefilename = "thumb_" & qfile.img_id & "." & qfile.thumb_extension>
 				</cfif>
 			<!--- Videos --->
 			<cfelseif arguments.thestruct.type EQ "vid">
 				<cfquery name="qFile" datasource="#variables.dsn#">
-				SELECT vid_filename, vid_extension, vid_name_org filenameorg, 
+				SELECT vid_filename, vid_extension as extension, vid_name_org filenameorg, 
 				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vid_size as thesize
 				FROM #session.hostdbprefix#videos
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Correct filename --->
-				<cfset qry.thefilename = listfirst(qfile.vid_filename, ".") & "." & qfile.vid_extension>
+				<cfset qry.thefilename =  replacenocase(qFile.vid_filename, ".#qFile.extension#","","ALL") & "." & qfile.extension>
 			<!--- Audios --->
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#">
-				SELECT  aud_name, aud_extension, aud_name_org filenameorg, 
+				SELECT  aud_name, aud_extension as extension, aud_name_org filenameorg, 
 				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aud_size as thesize
 				FROM #session.hostdbprefix#audios
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Correct filename --->
-				<cfset qry.thefilename = listfirst(qfile.aud_name, ".") & "." & qfile.aud_extension>
+				<cfset qry.thefilename =  replacenocase(qFile.aud_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
 			<!--- Documents --->
 			<cfelse>
 				<cfquery name="qFile" datasource="#variables.dsn#">
-				SELECT file_name, file_extension, file_name_org filenameorg, 
+				SELECT file_name, file_extension as extension, file_name_org filenameorg, 
 				folder_id_r, link_path_url, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org,
 				file_size as thesize
 				FROM #session.hostdbprefix#files
@@ -1047,14 +1047,14 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Correct filename --->
-				<cfset qry.thefilename = listfirst(qfile.file_name, ".") & "." & qfile.file_extension>
+				<cfset qry.thefilename =  replacenocase(qFile.file_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
 			</cfif>	
 		</cfif>
 		<!--- If name contains spaces then convert them to _ or else an incorrect name is being shown during download --->
 		<cfset qry.thefilename = replacenocase(qry.thefilename," ","_","all")>
 		<!--- RAZ-2519 users download with their custom filename --->
 		<cfif structKeyExists(arguments.thestruct,"set2_custom_file_ext") AND arguments.thestruct.set2_custom_file_ext EQ "false">
-			<cfset qry.thefilename = listfirst(qry.thefilename, ".")>
+			<cfset qry.thefilename = replacenocase(qry.thefilename, ".#qFile.extension#","","ALL")>
 		</cfif>
 		<!--- Set variables --->
 		<!--- <cfset qry.direct = "T"> --->
