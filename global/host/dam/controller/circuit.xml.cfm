@@ -9386,7 +9386,7 @@
 			</true>
 		</if>
 		<!-- Redirect to detail according to 'files' type -->
-		<if condition="qry_f.type EQ 'doc' OR qry_f.type EQ 'other'">
+		<if condition="qry_f.type EQ 'doc' OR qry_f.type EQ 'other' OR qry_f.type EQ 'files'">
 			<true>
 				<do action="files_detail" />
 			</true>
