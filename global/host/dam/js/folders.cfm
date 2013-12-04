@@ -129,7 +129,7 @@
 		if(labels != null) var labels = labels.toString().replace(/,/g, " ");
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		//search type 
-		var thetype = document.forms[theform].thetype.value.replace(/["']/g, '\\"');
+		var thetype = document.forms[theform].thetype.value;
 		
 		// Custom fields (get values)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
