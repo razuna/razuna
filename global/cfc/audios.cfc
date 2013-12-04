@@ -1107,16 +1107,11 @@
 		
 		<!--- Check the platform and then decide on the ffmpeg tag --->
 		<cfif isWindows>
-			<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-			<cfset var inputpath = """#inputpath#""">
-			<cfset var inputpath4copy = inputpath>
+			<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">	
 		<cfelse>
 			<cfset arguments.thestruct.theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-			<cfset var inputpath4copy = inputpath>
-			<cfset var inputpath = replace(inputpath," ","\ ","all")>
-			<cfset var inputpath = replace(inputpath,"&","\&","all")>
-			<cfset var inputpath = replace(inputpath,"'","\'","all")>
 		</cfif>
+		<cfset var inputpath4copy = inputpath>
 		<!--- Now, loop over the selected extensions and convert and store audio --->
 		<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 			<!--- Param --->
@@ -1151,29 +1146,20 @@
 			<!--- Put together the filenames --->
 			<cfset var newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
 			<cfset var finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
-			<!--- Check for os path --->
-			<cfif isWindows>
-				<cfset var thisfinalaudioname = """#thisfolder#/#finalaudioname#""">
-				<cfset var thisfinalaudioname4copy = thisfinalaudioname>
-			<cfelse>
-				<cfset var thisfinalaudioname = "#thisfolder#/#finalaudioname#">
-				<cfset var thisfinalaudioname4copy = thisfinalaudioname>
-				<cfset var thisfinalaudioname = replace(thisfinalaudioname," ","\ ","all")>
-				<cfset var thisfinalaudioname = replace(thisfinalaudioname,"&","\&","all")>
-				<cfset var thisfinalaudioname = replace(thisfinalaudioname,"'","\'","all")>
-			</cfif>
+			<cfset var thisfinalaudioname = "#thisfolder#/#finalaudioname#">
+			<cfset var thisfinalaudioname4copy = thisfinalaudioname>
 			<!--- FFMPEG: Set convert parameters for the different types --->
 			<cfswitch expression="#theformat#">
 				<!--- OGG --->
 				<cfcase value="ogg">
-					<cfset arguments.thestruct.theargument="-i #inputpath# -acodec libvorbis -aq #thebitrate# -y #thisfinalaudioname#">
+					<cfset arguments.thestruct.theargument="-i ""#inputpath#"" -acodec libvorbis -aq #thebitrate# -y ""#thisfinalaudioname#""">
 				</cfcase>
 				<!--- MP3 --->
 				<cfcase value="mp3">
-					<cfset arguments.thestruct.theargument="-i #inputpath# -ab #thebitrate#k -y #thisfinalaudioname#">
+					<cfset arguments.thestruct.theargument="-i ""#inputpath#"" -ab #thebitrate#k -y ""#thisfinalaudioname#""">
 				</cfcase>
 				<cfdefaultcase>
-					<cfset arguments.thestruct.theargument="-i #inputpath# -y #thisfinalaudioname#">
+					<cfset arguments.thestruct.theargument="-i ""#inputpath#"" -y ""#thisfinalaudioname#""">
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: Convert --->

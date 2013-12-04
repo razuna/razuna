@@ -3860,21 +3860,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfif arguments.thestruct.iswindows>
 				<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 				<cfset arguments.thestruct.theexeff = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-				<cfset arguments.thestruct.theorgfile4copy = arguments.thestruct.theorgfile>
-				<cfset arguments.thestruct.filenamenoext4copy = arguments.thestruct.qryfile.filenamenoext>
-				<cfset arguments.thestruct.theorgfile = arguments.thestruct.theorgfile>
 			<cfelse>
 				<cfset arguments.thestruct.theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
 				<cfset arguments.thestruct.theexeff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-				<cfset arguments.thestruct.theorgfile4copy = arguments.thestruct.theorgfile>
-				<cfset arguments.thestruct.filenamenoext4copy = arguments.thestruct.qryfile.filenamenoext>
-				<cfset arguments.thestruct.theorgfile = replace(arguments.thestruct.theorgfile," ","\ ","all")>
-				<cfset arguments.thestruct.theorgfile = replace(arguments.thestruct.theorgfile,"&","\&","all")>
-				<cfset arguments.thestruct.theorgfile = replace(arguments.thestruct.theorgfile,"'","\'","all")>
-				<cfset arguments.thestruct.qryfile.filenamenoext = replace(arguments.thestruct.qryfile.filenamenoext," ","\ ","all")>
-				<cfset arguments.thestruct.qryfile.filenamenoext = replace(arguments.thestruct.qryfile.filenamenoext,"&","\&","all")>
-				<cfset arguments.thestruct.qryfile.filenamenoext = replace(arguments.thestruct.qryfile.filenamenoext,"'","\'","all")>
 			</cfif>
+			<cfset arguments.thestruct.theorgfile4copy = arguments.thestruct.theorgfile>
+			<cfset arguments.thestruct.filenamenoext4copy = arguments.thestruct.qryfile.filenamenoext>
+			<cfset arguments.thestruct.theorgfile = arguments.thestruct.theorgfile>
 			<!--- Write the script --->
 			<cfset var thescript = Createuuid("")>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
@@ -3892,10 +3884,10 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- RFS --->
 			<cfif !application.razuna.rfs>
-				<!--- Create Raw file --->
+				<!--- Create WAV file if file is not already a WAV--->
 				<cfif arguments.thestruct.qryfile.extension NEQ "wav">
 					<!--- Write files --->
-					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i #arguments.thestruct.theorgfile# #arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav" mode="777">
+					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav""" mode="777">
 					<!--- Execute --->
 					<cfset var tt = createuuid("")>
 					<cfthread name="wav#tt#" intaudstruct="#arguments.thestruct#" action="run">
@@ -3903,20 +3895,28 @@ This is the main function called directly by a single upload else from addassets
 					</cfthread>
 					<!--- Wait until the WAV is done --->
 					<cfthread action="join" name="wav#tt#" />
+					<!--- If WAV file not generated then throw error --->	
+					<cfif !fileexists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
+						<cfthrow message="WAV file could not be created in assets.processaudfile">
+					</cfif>	
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#arguments.thestruct.thesh#">
 				</cfif>
 				<!--- If we are a local link and are NOT a MP3 we create one to be able to play it in the browser --->
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND arguments.thestruct.qryfile.extension NEQ "mp3">
 					<!--- Write files --->
-					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i #arguments.thestruct.theorgfile# -ab 192k #arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3" mode="777">
+					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i ""#arguments.thestruct.theorgfile#"" -ab 192k ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3""" mode="777">
 					<!--- Execute --->
 					<cfset var tt = createuuid("")>
-					<cfthread name="wav#tt#" intaudstruct="#arguments.thestruct#" action="run">
+					<cfthread name="mp3#tt#" intaudstruct="#arguments.thestruct#" action="run">
 						<cfexecute name="#attributes.intaudstruct.thesh#" timeout="60" />
 					</cfthread>
-					<!--- Wait until the WAV is done --->
-					<cfthread action="join" name="wav#tt#" />
+					<!--- Wait until the MP3 is done --->
+					<cfthread action="join" name="mp3#tt#" />
+					<!--- If MP3 file not generated then throw error --->
+					<cfif !fileexists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
+						<cfthrow message="MP3 file could not be created in assets.processaudfile">
+					</cfif>		
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#arguments.thestruct.thesh#">
 				<cfelseif arguments.thestruct.qryfile.link_kind EQ "lan" AND arguments.thestruct.qryfile.extension EQ "mp3">
