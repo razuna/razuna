@@ -74,7 +74,7 @@
 			<form name="advsearch_files" id="advsearch_files" onsubmit="searchadv_files('advsearch_files','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfset myvar.thetype = "files">
+				<cfset myvar.thetype = "doc">
 				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<tr>
 					<td nowrap="true" width="1%">#myFusebox.getApplicationData().defaults.trans("search_for_type")#</td>
@@ -164,7 +164,7 @@
 			<form name="advsearch_images" id="advsearch_images" onsubmit="searchadv_images('advsearch_images','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfset myvar.thetype = "images">
+				<cfset myvar.thetype = "img">
 				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
@@ -349,7 +349,7 @@
 			<form name="advsearch_videos" id="advsearch_videos" onsubmit="searchadv_videos('advsearch_videos','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfset myvar.thetype = "videos">
+				<cfset myvar.thetype = "vid">
 				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
@@ -382,7 +382,7 @@
 			<form name="advsearch_audios" id="advsearch_audios" onsubmit="searchadv_audios('advsearch_audios','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfset myvar.thetype = "audios">
+				<cfset myvar.thetype = "aud">
 				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
