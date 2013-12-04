@@ -128,8 +128,12 @@
 		var labels = $('#' + theform + ' [name="labels"]').val();
 		if(labels != null) var labels = labels.toString().replace(/,/g, " ");
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
+		//search type 
+		var thetype = document.forms[theform].thetype.value.replace(/["']/g, '\\"');
+		
 		// Custom fields (get values)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
+		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +');
 			<cfelseif cf_type EQ "select">
@@ -142,7 +146,9 @@
 				  }
 				}
 			</cfif>
+		}
 		</cfoutput></cfloop>
+
 		// Put together the search
 		if (labels == null) var labels = '';
 		if (searchfor != '') var searchfor = searchfor;
@@ -161,13 +167,17 @@
 				var labels = 'labels:(' + con1.concat(con2) + ')';
 			}
 		}
+		
+		
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
+		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 			<cfelse>
 				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 			</cfif>
+		}
 		</cfoutput></cfloop>
 		// Create the searchtext
 		var searchtext = searchfor;
@@ -209,6 +219,7 @@
 		}
 		// Custom fields (add to the searchtext)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
+		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
 			// Check that value is not undefined
 			t = value_#cfid#.indexOf("undefined");
 			if (t == '-1'){
@@ -219,6 +230,7 @@
 					var searchtext = searchtext + value_#cfid#;
 				}
 			}
+		}
 		</cfoutput></cfloop>
 		return encodeURIComponent(searchtext);
 	}

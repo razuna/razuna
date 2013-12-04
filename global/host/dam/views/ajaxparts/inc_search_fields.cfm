@@ -26,7 +26,8 @@
 <cfoutput>
 	<tr>
 		<td>Search Term</td>
-		<td><input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
+		<td><input type="hidden" name="thetype" value="#myvar.thetype#">
+			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
 		<td>Filename</td>
@@ -69,7 +70,7 @@
 					<cfset cfid = replace(cf_id,"-","","all")>
 					<!--- For text --->
 					<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-						<input type="text" style="width:300px;" name="cf#cfid#">
+						<input type="text" style="width:300px;" name="cf#cfid#" >
 					<!--- Radio --->
 					<cfelseif cf_type EQ "radio">
 						<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
