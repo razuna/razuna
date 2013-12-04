@@ -210,6 +210,7 @@
 										<img src="#cloud_url#" border="0" img-tt="img-tt">
 									<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
 										<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+										<cfset thethumb = replacenocase(thethumb, ".indd", ".jpg", "all")>
 										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
 										<cfelse>
