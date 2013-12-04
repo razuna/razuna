@@ -308,7 +308,7 @@
 				ORDER BY label_path
 			</cfquery>
 			<!--- Get labels if more than 1000 labels --->
-			<cfif  qryLabels.RecordCount GT 1 AND arguments.overridemax EQ 0>
+			<cfif  qryLabels.RecordCount GT 1000 AND arguments.overridemax EQ 0>
 				<cfquery dbtype="query" name="q" maxrows="1000">
 					SELECT * FROM qryLabels
 				</cfquery>			
