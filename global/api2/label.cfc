@@ -284,4 +284,45 @@
 		<cfreturn thexml>
 	</cffunction>
 	
+	<!--- Search labels --->
+	<cffunction name="searchlabel" access="remote" output="false" returntype="Any" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="searchfor" required="true">
+		<cfargument name="overridemax" required="false" default="0">
+		<cfset var thexml = structNew()>
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
+			<!--- Query --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qryLabels" cachedwithin="1" region="razcache">
+				SELECT /* #cachetoken#searchlabela */ label_id, label_text, label_path
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+				WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				<cfif arguments.searchfor NEQ '*'>
+					AND (label_text LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />
+					OR label_path LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />)
+				</cfif>	
+				ORDER BY label_path
+			</cfquery>
+			<!--- Get labels if more than 1000 labels --->
+			<cfif  qryLabels.RecordCount GT 1000 AND arguments.overridemax EQ 0>
+				<cfquery dbtype="query" name="q" maxrows="1000">
+					SELECT * FROM qryLabels
+				</cfquery>			
+				<cfset thexml.responsecode = 1>
+				<cfset thexml.message = "The search returned more than a 1000 records: #qryLabels.RecordCount# records. If you still wish to continue please use the 'overridemax' parameter. Doing so may take up server resources so please do it at own risk.">
+			<cfelse>
+				<cfset thexml = qryLabels>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+	
 </cfcomponent>
