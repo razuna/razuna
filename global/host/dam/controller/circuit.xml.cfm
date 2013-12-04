@@ -3645,6 +3645,9 @@
 		<!-- Param -->
 		<set name="attributes.thispath" value="#thispath#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+		<set name="attributes.set2_custom_file_ext" value="#prefs.set2_custom_file_ext#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get asset path -->

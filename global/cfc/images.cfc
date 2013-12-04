@@ -699,7 +699,7 @@
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
 	i.img_remarks, i.img_extension, i.shared, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
-	s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name, fo.folder_name,
+	s.set2_intranet_gen_download, s.set2_url_website,s.set2_custom_file_ext, u.user_first_name, u.user_last_name, fo.folder_name,
 	'' as perm
 	FROM #session.hostdbprefix#images i 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = i.host_id

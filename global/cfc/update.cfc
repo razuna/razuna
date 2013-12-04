@@ -123,7 +123,23 @@
 		</cfquery>
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
-
+		
+		<!--- If update number is lower then 17 (v. 1.6.1) --->
+		<cfif updatenumber.opt_value LT 17>
+			<!--- RAZ-2519 Add column set2_custom_file_ext to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> set2_custom_file_ext #thevarchar#(5) DEFAULT 'true'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_settings_2 SET set2_custom_file_ext = 'true'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfif>
+		
 		<!--- If update number is lower then 15 (v. 1.6) --->
 		<cfif updatenumber.opt_value LT 15>
 
