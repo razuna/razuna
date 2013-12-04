@@ -289,6 +289,7 @@
 		<cfargument name="api_key" required="true">
 		<cfargument name="searchfor" required="true">
 		<cfargument name="overridemax" required="false" default="0">
+		<cfset var thexml = structNew()>
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -307,19 +308,18 @@
 				ORDER BY label_path
 			</cfquery>
 			<!--- Get labels if more than 1000 labels --->
-			<cfif  qryLabels.RecordCount GT 1000 AND arguments.overridemax EQ 0>
+			<cfif  qryLabels.RecordCount GT 1 AND arguments.overridemax EQ 0>
 				<cfquery dbtype="query" name="q" maxrows="1000">
 					SELECT * FROM qryLabels
-				</cfquery>
-				<cfset thexml = structNew()>
+				</cfquery>			
+				<cfset thexml.responsecode = 1>
 				<cfset thexml.message = "The search returned more than a 1000 records: #qryLabels.RecordCount# records. If you still wish to continue please use the 'overridemax' parameter. Doing so may take up server resources so please do it at own risk.">
-				<cfset thexml.result = q> 
 			<cfelse>
 				<cfset thexml = qryLabels>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
-			<cfset var thexml = timeout("s")>
+			<cfset thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
