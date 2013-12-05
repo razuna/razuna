@@ -767,7 +767,7 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#labels
 			SET 
-			label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
+			label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />, 
 			label_id_r = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
 			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
