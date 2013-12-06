@@ -961,6 +961,7 @@
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+				LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = f.host_id
 				LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
 				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
 				<cfif !arguments.fstruct.dbdirect>
