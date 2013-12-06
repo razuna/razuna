@@ -2329,7 +2329,7 @@
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
 			SET folder_of_user = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-			WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
