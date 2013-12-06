@@ -1823,6 +1823,7 @@
 				AND column_name != 'COMP'
 				AND column_name != 'COMP_UW'
 				AND column_name != 'SET2_INTRANET_LOGO'
+				AND table_schema = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ucase(application.razuna.theschema)#">
 				</cfquery>
 			</cfif>
 			<!--- Create our custom list --->

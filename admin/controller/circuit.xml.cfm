@@ -829,15 +829,8 @@
 		<set name="attributes.hostid" value="0" />
 		<!-- Assetpath -->
 		<set name="attributes.assetpath" value="#thispath#" />
-		<!-- CFC: Backup -->
-		<if condition="#attributes.tofiletype# EQ 'raz'">
-			<true>
-				<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodb(attributes)" />
-			</true>
-			<false>
-				<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backupxml(attributes)" />
-			</false>
-		</if>
+		<!-- Backup tables and data to razuna_backup H2 database -->
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodb(attributes)" />
 	</fuseaction>
 	<!-- Run backup from scheduled task -->
 	<fuseaction name="runschedbackup">
