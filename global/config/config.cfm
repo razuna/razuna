@@ -1,6 +1,6 @@
 <cfabort>
 [default]
-version=1.6.1
+version=1.6.2
 prerelease=false
 global_im=/usr/bin
 global_ex=/usr/bin
