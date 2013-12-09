@@ -828,7 +828,7 @@
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
-		<cfset console(arguments.criteria)>
+		<!--- <cfset console(arguments.criteria)> --->
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>
