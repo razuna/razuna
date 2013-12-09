@@ -301,9 +301,16 @@
 							<!--- Index: Update file --->
 							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 						<!--- Linked file --->
-						<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
-							<!--- Index: Update file --->
-							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<cfelseif qry_all.link_kind EQ "lan">
+							<cfset var qryfile ="">
+							<cfquery name="qryfile" datasource="#arguments.dsn#">
+								select link_path_url from #arguments.prefix#files where file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+							</cfquery>
+							<cfset console(qryfile)>
+							<!--- <cfif fileexists("#qryfile.link_path_url#")> --->
+								<!--- Index: Update file --->
+								<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qryfile.link_path_url#" category="#arguments.category#" categoryTree="#qry_all.id#">
+							<!--- </cfif> --->
 						</cfif>
 						<cfcatch type="any">
 							<cfset consoleoutput(true)>
@@ -820,7 +827,14 @@
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = 'filename:(+#escapelucenechars(arguments.criteria)#) filenameorg:(+#escapelucenechars(arguments.criteria)#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) id:(+#arguments.criteria#) labels:(#arguments.criteria#)'>
+			<!--- If less search terms are entered then give less weight to lucene proximity search and allow it to return more results --->
+			<cfif len(arguments.criteria) lt 5>
+				<cfset var prox_wt = 0.5>
+			<cfelse>
+				<cfset var prox_wt = 0.8>
+			</cfif>
+			<!--- Replace '( )'' brackets in filename search as the proximity symbol ~  will throw errors if its next to one --->
+			<cfset arguments.criteria = 'filename:(#REreplace(arguments.criteria,"[()]","","ALL")#~#prox_wt#) filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") filenameorg:(#REreplace(arguments.criteria,"[()]","","ALL")#~#prox_wt #) keywords:(#arguments.criteria#) description:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>
