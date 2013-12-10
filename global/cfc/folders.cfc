@@ -3813,6 +3813,10 @@
 				OR f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				)
 		</cfif>
+		<!--- RAZ-273 Hide Linked folder --->
+		<cfif session.type EQ "copyfolder">
+			AND (f.link_path = <cfqueryparam cfsqltype="cf_sql_varchar" value=""> OR f.link_path IS NULL)
+		</cfif>
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) as itb
 	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
@@ -3822,6 +3826,10 @@
 		<cfif session.type EQ "movefolder">
 			AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 		</cfif>
+	</cfif>
+	<!--- RAZ-273 Hide Original Copy Folder --->
+	<cfif session.type EQ "copyfolder">
+		AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 	</cfif>
 	ORDER BY lower(folder_name)
 	</cfquery>
