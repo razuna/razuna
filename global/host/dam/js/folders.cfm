@@ -154,13 +154,7 @@
 		if (searchfor != '') var searchfor = searchfor;
 		if (keywords != '') var keywords = 'keywords:(' + keywords +')';
 		if (description != '') var description = 'description:(' + description +')';
-		// Apply proximity weights based on search criterion length
-		if (filename.length < 5)
-			var prox_wt = 0.5;
-		else
-			var prox_wt = 0.8;
-		if (filename != '') var filename = 'filename:(' + filename.replace(/[()]/g, '') +'~' + prox_wt +') filename:("'+ filename +'")';
-		
+		if (filename != '') var filename = 'filename:(' + filename + ')';
 		if (extension != '') var extension = 'extension:(' + extension +')';
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:(' + rawmetadata +')';
 		if (labels != ''){
@@ -178,11 +172,7 @@
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
-			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
-			<cfelse>
-				if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
-			</cfif>
+			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 		}
 		</cfoutput></cfloop>
 		// Create the searchtext

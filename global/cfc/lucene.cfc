@@ -306,11 +306,10 @@
 							<cfquery name="qryfile" datasource="#arguments.dsn#">
 								select link_path_url from #arguments.prefix#files where file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 							</cfquery>
-							<cfset console(qryfile)>
-							<!--- <cfif fileexists("#qryfile.link_path_url#")> --->
+							<cfif fileexists("#qryfile.link_path_url#")>
 								<!--- Index: Update file --->
 								<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qryfile.link_path_url#" category="#arguments.category#" categoryTree="#qry_all.id#">
-							<!--- </cfif> --->
+							</cfif>
 						</cfif>
 						<cfcatch type="any">
 							<cfset consoleoutput(true)>
@@ -788,27 +787,6 @@
 			</cfloop>
 		</cfif>
 	</cffunction>
-
-	<cffunction name="escapelucenechars" returntype="String" hint="Escapes lucene special characters in a given string">
-		<!--- 
-		The following lucene special characters will be escaped in searches
-		\ ! {} [] - && || 
-		The following lucene special characters  will NOT be escaped as we want to allow users to use these in their search criterion 
-		+ () " ~ * ? : ^
-		--->
-		<cfargument name="lucenestr" type="String" required="true">
-		<cfset lucenestr = replace(lucenestr,"\","\\","ALL")>
-		<cfset lucenestr = replace(lucenestr,"!","\!","ALL")>	
-		<cfset lucenestr = replace(lucenestr,"{","\{","ALL")>
-		<cfset lucenestr = replace(lucenestr,"}","\}","ALL")>
-		<cfset lucenestr = replace(lucenestr,"[","\[","ALL")>
-		<cfset lucenestr = replace(lucenestr,"]","\]","ALL")>
-		<cfset lucenestr = replace(lucenestr,"-","\-","ALL")>
-		<cfset lucenestr = replace(lucenestr,"&&","\&&","ALL")>	
-		<cfset lucenestr = replace(lucenestr,"||","\||","ALL")>	
-		<cfreturn lucenestr>	
-	</cffunction>
-	
 	<!--- SEARCH --->
 	<cffunction name="search" access="remote" output="false" returntype="query" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,30)#">
 		<cfargument name="criteria" type="string">
@@ -820,21 +798,12 @@
 		 Do not use escape(deprecated) or encodeURI (doesn't encode '+' sign) methods to encode. Use the encodeURIComponent javascript method only.
 		--->
 		<cfset arguments.criteria = replace(urlDecode(replace(arguments.criteria,"+","PLUSSIGN","ALL")),"PLUSSIGN","+","ALL")>
-		<!--- Escape Luence special characters --->
-		<cfset arguments.criteria = escapelucenechars(arguments.criteria)>
 		<!--- If criteria is empty --->
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<!--- If less search terms are entered then give less weight to lucene proximity search and allow it to return more results --->
-			<cfif len(arguments.criteria) lt 5>
-				<cfset var prox_wt = 0.5>
-			<cfelse>
-				<cfset var prox_wt = 0.8>
-			</cfif>
-			<!--- Replace '( )'' brackets in filename search as the proximity symbol ~  will throw errors if its next to one --->
-			<cfset arguments.criteria = 'filename:(#REreplace(arguments.criteria,"[()]","","ALL")#~#prox_wt#) filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") filenameorg:(#REreplace(arguments.criteria,"[()]","","ALL")#~#prox_wt #) keywords:(#arguments.criteria#) description:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)'>
+			<cfset arguments.criteria = "filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#) folderpath:(#arguments.criteria#) customfieldvalue:(#arguments.criteria#)">
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>

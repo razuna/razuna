@@ -1,17 +1,9 @@
 OpenBD Release Notes
 __________________________________
 
-$Date: 2013-10-09 19:09:52 +0000 (Wed, 09 Oct 2013) $
+$Date: 2013-07-28 21:19:27 +0000 (Sun, 28 Jul 2013) $
 __________________________________
 
-- Support for Mongo ObjectID in the tagUtils
-- Support for bluedragon.xml to be loaded via http on startup
-- Java7 compatibility [/WEB-INF/lib/ updated]
-  - Apache Tika 1.4 upgraded
-  - Apache Lucene 4.4.0 upgraded 
-  - MySQL Driver 5.1.26 upgraded
-- fixed overriding of hostname verifier in CFHTTP
-- fixed argument count for CreateTime(epoch="")
 - fixed cfscript function returnformat="" bug
 - Upgraded javolution jar to 5.5.1
 - Updated MongoFSGridPut() for updated ID support
