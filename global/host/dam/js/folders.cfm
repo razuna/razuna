@@ -154,13 +154,7 @@
 		if (searchfor != '') var searchfor = searchfor;
 		if (keywords != '') var keywords = 'keywords:(' + keywords +')';
 		if (description != '') var description = 'description:(' + description +')';
-		// Apply proximity weights based on search criterion length
-		if (filename.length < 5)
-			var prox_wt = 0.5;
-		else
-			var prox_wt = 0.8;
-		if (filename != '') var filename = 'filename:(' + filename.replace(/[()]/g, '') +'~' + prox_wt +') filename:("'+ filename +'")';
-		
+		if (filename != '') var filename = 'filename:("' + filename + '")';
 		if (extension != '') var extension = 'extension:(' + extension +')';
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:(' + rawmetadata +')';
 		if (labels != ''){
