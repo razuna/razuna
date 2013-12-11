@@ -312,9 +312,9 @@
 							</cfif>
 						</cfif>
 						<cfcatch type="any">
-							<cfset consoleoutput(true)>
+							<!--- <cfset consoleoutput(true)>
 							<cfset console("Error while indexing doc files in function lucene.index_update_thread")>
-							<cfset console(cfcatch)>
+							<cfset console(cfcatch)> --->
 						</cfcatch>
 					</cftry>
 				</cfif>
@@ -620,9 +620,9 @@
 			AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
 			</cfquery>
 			<cfcatch type="any">
-				<cfset consoleoutput(true)>
+				<!--- <cfset consoleoutput(true)>
 				<cfset console("Error in function lucene.index_update_thread")>
-				<cfset console(cfcatch)>
+				<cfset console(cfcatch)> --->
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -811,7 +811,7 @@
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
-		<cfset console(arguments.criteria)>
+		<!--- <cfset console(arguments.criteria)> --->
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>
