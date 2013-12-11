@@ -803,7 +803,7 @@
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = "filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#) folderpath:(#arguments.criteria#) customfieldvalue:(#arguments.criteria#)">
+			<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") keywords:(#arguments.criteria#) description:("#arguments.criteria#") id:(#arguments.criteria#) labels:(#arguments.criteria#) folderpath:(#arguments.criteria#) customfieldvalue:("#arguments.criteria#")'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>
@@ -811,7 +811,7 @@
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
-		<!--- <cfset console(arguments.criteria)> --->
+		<cfset console(arguments.criteria)>
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>
