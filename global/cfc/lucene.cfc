@@ -257,7 +257,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath,folder",
+					body : "id",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -399,7 +399,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath,folder",
+					body : "id",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -594,7 +594,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath,folder",
+				body : "id",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -803,7 +803,7 @@
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") keywords:(#arguments.criteria#) description:("#arguments.criteria#") id:(#arguments.criteria#) labels:(#arguments.criteria#) folderpath:(#arguments.criteria#) customfieldvalue:("#arguments.criteria#")'>
+			<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") keywords:(#arguments.criteria#) description:("#arguments.criteria#") id:(#arguments.criteria#) labels:(#arguments.criteria#) customfieldvalue:("#arguments.criteria#")'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>
