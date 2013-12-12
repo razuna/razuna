@@ -44,14 +44,35 @@
 	<tr>
 		<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 		<td>
-			<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
-				<option value=""></option>
-				<cfloop query="attributes.thelabelsqry">
-					<cfset l = replace(label_path," "," ","all")>
-					<cfset l = replace(l,"/"," ","all")>
-					<option value="#l#">#label_path#</option>
-				</cfloop>
-			</select>
+			<!--- Check the labels record count is less than 200 --->
+			<cfif attributes.thelabelsqry.recordcount LTE 200>
+				<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
+					<option value=""></option>
+					<cfloop query="attributes.thelabelsqry">
+						<cfset l = replace(label_path," "," ","all")>
+						<cfset l = replace(l,"/"," ","all")>
+						<option value="#l#">#label_path#</option>
+					</cfloop>
+				</select>
+			<cfelse>
+				<!--- For RAZ - 2708 Label text area --->
+				<div style="width:450px;">
+					<div id="lables_#myvar.thetype#" class="labelContainer"  style="float:left;width:311px;" >
+						<cfloop query="attributes.thelabelsqry">
+							<cfif ListFind(evaluate("session.search_advanced.labels_#myvar.thetype#"),'#label_id#') NEQ 0>
+							<div class='singleLabel'  id="#label_id#">
+								<span>#label_path#</span>
+								<a class='labelRemove'  onclick="removeLabel('0','#myvar.thetype#', '#label_id#',this)" >X</a>
+							</div>
+							</cfif>
+						</cfloop>
+					</div>
+					<!--- Select label button --->
+					<br /><br /><a onclick="showwindow('#myself#c.select_label_popup&file_id=0&file_type=#myvar.thetype#&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
+				</div>
+				<input type="hidden" name="labels" id="search_labels_#myvar.thetype#" value="">
+			</cfif>
+			
 		</td>
 	</tr>
 	<tr>

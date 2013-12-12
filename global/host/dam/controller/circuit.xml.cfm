@@ -5096,6 +5096,12 @@
 	
 	<!-- Search: Advanced -->
 	<fuseaction name="search_advanced">
+		<!-- Params -->
+		<set name="session.search_advanced.labels_all" value="" />
+		<set name="session.search_advanced.labels_img" value="" />
+		<set name="session.search_advanced.labels_aud" value="" />
+		<set name="session.search_advanced.labels_vid" value="" />
+		<set name="session.search_advanced.labels_doc" value="" />
 		<if condition="structkeyexists(attributes,'fromshare')">
 			<true>
 				<set name="attributes.fromshare" value="true" />
@@ -9431,7 +9437,54 @@
 	<!-- Add or Remove the label for asset -->
 	<fuseaction name="asset_label_add_remove">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="asset_label_add_remove(attributes)" />
+		<if condition="attributes.fileid NEQ '0'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().labels" methodcall="asset_label_add_remove(attributes)" />
+			</true>
+			<false>
+				<!-- RAZ - 2708 advanced search : Set selected labels id to assign the session variable  -->
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'all'">
+					<true>
+						<set name="session.search_advanced.labels_all" value="#listappend(session.search_advanced.labels_all,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search_advanced.labels_all" value="#ListDeleteAt( session.search_advanced.labels_all, ListFind(session.search_advanced.labels_all,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'img'">
+					<true>
+						<set name="session.search_advanced.labels_img" value="#listappend(session.search_advanced.labels_img,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search_advanced.labels_img" value="#ListDeleteAt( session.search_advanced.labels_img, ListFind(session.search_advanced.labels_img,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'aud'">
+					<true>
+						<set name="session.search_advanced.labels_aud" value="#listappend(session.search_advanced.labels_aud,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search_advanced.labels_aud" value="#ListDeleteAt( session.search_advanced.labels_aud, ListFind(session.search_advanced.labels_aud,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'vid'">
+					<true>
+						<set name="session.search_advanced.labels_vid" value="#listappend(session.search_advanced.labels_vid,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search_advanced.labels_vid" value="#ListDeleteAt( session.search_advanced.labels_vid, ListFind(session.search_advanced.labels_vid,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'doc'">
+					<true>
+						<set name="session.search_advanced.labels_doc" value="#listappend(session.search_advanced.labels_doc,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search_advanced.labels_doc" value="#ListDeleteAt( session.search_advanced.labels_doc, ListFind(session.search_advanced.labels_doc,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+			</false>
+		</if>
 	</fuseaction>
 
 </circuit>
