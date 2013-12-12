@@ -95,7 +95,8 @@
 			<div id="userselection" class="ddselection_header">
 				<!--- Profile --->
 				<p>
-					<a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#session.firstlastname#',600,1);$('##userselection').toggle();return false;">My info</a>
+					<!--- RAZ-2718 Encode User's first and last name for title --->
+					<a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#urlEncodedFormat(session.firstlastname)#',600,1);$('##userselection').toggle();return false;">My info</a>
 					<cfif qry_detail.user_pass EQ "">
 						<img width="20" height="20" border="0" src="/razuna/global/host/dam/images/active_directory_user.png">
 					</cfif>
