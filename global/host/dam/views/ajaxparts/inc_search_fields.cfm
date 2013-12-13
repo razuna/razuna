@@ -42,7 +42,7 @@
 		<td><input type="text" name="description" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
+		<td valign="top">#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 		<td>
 			<!--- Check the labels record count is less than 200 --->
 			<cfif attributes.thelabelsqry.recordcount LTE 200>
@@ -59,7 +59,7 @@
 				<div style="width:450px;">
 					<div id="lables_#myvar.thetype#" class="labelContainer"  style="float:left;width:311px;" >
 						<cfloop query="attributes.thelabelsqry">
-							<cfif ListFind(evaluate("session.search_advanced.labels_#myvar.thetype#"),'#label_id#') NEQ 0>
+							<cfif ListFind(evaluate("session.search.labels_#myvar.thetype#"),'#label_id#') NEQ 0>
 							<div class='singleLabel'  id="#label_id#">
 								<span>#label_path#</span>
 								<a class='labelRemove'  onclick="removeLabel('0','#myvar.thetype#', '#label_id#',this)" >X</a>
@@ -68,8 +68,9 @@
 						</cfloop>
 					</div>
 					<!--- Select label button --->
-					<br /><br /><a onclick="showwindow('#myself#c.select_label_popup&file_id=0&file_type=#myvar.thetype#&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
+					<a style = "float:left;clear:both;" onclick="showwindow('#myself#c.select_label_popup&file_id=0&file_type=#myvar.thetype#&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
 				</div>
+				<!--- To pass the label text values --->
 				<input type="hidden" name="labels" id="search_labels_#myvar.thetype#" value="">
 			</cfif>
 			

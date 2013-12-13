@@ -10,7 +10,7 @@
 				<cfloop query="qry_labels" >
 					<label style="float:left;clear:both;">
 					<input type="checkbox" data-label-text="<cfif qry_labels.label_id_r EQ '0'>#label_text#<cfelse>#qry_labels.label_path#</cfif>" 
-							name="label_id" id="check_label_#label_id#" class="check" value="#label_id#"  <cfif listfindnocase(attributes.asset_labels_list,#label_id#,',') OR ( attributes.file_id EQ 0 AND listfindnocase(evaluate('session.search_advanced.labels_#attributes.file_type#'),#label_id#,','))>checked="checked"</cfif> style="float:left;width:20px; "> 
+							name="label_id" id="check_label_#label_id#" class="check" value="#label_id#"  <cfif listfindnocase(attributes.asset_labels_list,#label_id#,',') OR ( attributes.file_id EQ 0 AND listfindnocase(evaluate('session.search.labels_#attributes.file_type#'),#label_id#,','))>checked="checked"</cfif> style="float:left;width:20px; "> 
 					#label_text# <cfif qry_labels.label_id_r EQ '0'>(root level)<cfelse>(#qry_labels.label_path#)</cfif>
 					</label></br>
 				</cfloop> 
@@ -20,7 +20,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		// Append to the list values
+		// RAZ-2708 Append to the list values
 		jQuery.fn.extend({
 			addToArray: function(value) {
 				return this.filter(":input").val(function(i, v) {
