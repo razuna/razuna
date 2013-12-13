@@ -1894,6 +1894,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.audios_metadata = "">
 	<cfset v.assetbox_height = "">
 	<cfset v.assetbox_width = "">
+	<!--- RAZ-2267 Set the default value --->
+	<cfset v.tab_explorer_default = 1>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2119,6 +2121,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfif custom_id EQ "assetbox_width">
 				<cfset v.assetbox_width = custom_value>
 			</cfif>
+			<!--- RAZ-2267 get the default value--->
+			<cfif custom_id EQ "tab_explorer_default">
+				<cfset v.tab_explorer_default = custom_value>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -2156,10 +2162,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn />
 </cffunction>
 
-<!--- Save customization --->
+<!--- Save customization ---> 
 <cffunction name="set_customization_internal" output="false" access="private" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<cfargument name="hostid" type="numeric">
+	<!--- Raz-2267 Checked server side validation --->
+	<cfif structKeyExists(arguments.thestruct,"tab_explorer_default") AND ((arguments.thestruct.tab_explorer_default EQ 4 AND arguments.thestruct.tab_labels EQ "false") OR (arguments.thestruct.tab_explorer_default EQ 2 AND arguments.thestruct.tab_collections EQ "false"))>
+		<cfset arguments.thestruct.tab_explorer_default = 1>
+	</cfif>
 	<!--- First remove all records for this host --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#custom
