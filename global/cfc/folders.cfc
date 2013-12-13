@@ -3649,9 +3649,9 @@
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, in_trash, username, perm, subhere, permfolder
+	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, in_trash,link_path, username, perm, subhere, permfolder
 	FROM (
-		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash, 
+		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash,f.link_path, 
 		<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 		<!--- Permission follow but not for sysadmin and admin --->
 		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
@@ -3702,8 +3702,12 @@
 					AND s1.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 				</cfif>
 				<!--- If this is a move then dont show the folder that we are moving --->
-				<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
+				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
 					AND s1.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+				</cfif>
+				<!--- RAZ-583 : exclude link folder from subfolder count --->
+				<cfif session.type NEQ ''>
+					AND (s1.link_path='' OR s1.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -3723,6 +3727,14 @@
 				AND fg3.folder_id_r = s2.folder_id
 				AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<!--- If this is a move then dont show the folder that we are moving --->
+				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
+					AND s2.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+				</cfif>
+				<!--- RAZ-583 : exclude link folder from subfolder count --->
+				<cfif session.type NEQ ''>
+					AND (s2.link_path='' OR s2.link_path IS NULL)
+				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
 				<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
@@ -3741,6 +3753,14 @@
 				AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND s3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND s3.host_id = fg4.host_id
+				<!--- If this is a move then dont show the folder that we are moving --->
+				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
+					AND s3.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+				</cfif>
+				<!--- RAZ-583 : exclude link folder from subfolder count --->
+				<cfif session.type NEQ ''>
+					AND (s3.link_path='' OR s3.link_path IS NULL)
+				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
 				<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
@@ -3813,23 +3833,19 @@
 				OR f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				)
 		</cfif>
-		<!--- RAZ-273 Hide Linked folder --->
-		<cfif session.type EQ "copyfolder">
-			AND (f.link_path = <cfqueryparam cfsqltype="cf_sql_varchar" value=""> OR f.link_path IS NULL)
-		</cfif>
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) as itb
 	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	<!--- If this is a move then dont show the folder that we are moving --->
-	<cfif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR session.type EQ "movefile" OR session.type EQ "choosecollection">
+	<cfif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR session.type EQ "movefile" OR session.type EQ "choosecollection" OR session.type EQ "copyfolder">
 		AND (itb.permfolder = 'W' OR itb.permfolder = 'X')
-		<cfif session.type EQ "movefolder">
+		<cfif session.type EQ "movefolder" OR session.type EQ "copyfolder">
 			AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 		</cfif>
 	</cfif>
-	<!--- RAZ-273 Hide Original Copy Folder --->
-	<cfif session.type EQ "copyfolder">
-		AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+	<!--- RAZ-583 : exclude link folder from select --->
+	<cfif session.type NEQ ''>
+		AND (link_path='' OR link_path IS NULL)
 	</cfif>
 	ORDER BY lower(folder_name)
 	</cfquery>
