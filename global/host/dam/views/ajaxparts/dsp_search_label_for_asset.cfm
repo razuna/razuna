@@ -13,14 +13,20 @@
 							name="label_id" id="check_label_#label_id#" class="check" value="#label_id#"  <cfif listfindnocase(attributes.asset_labels_list,#label_id#,',')>checked="checked"</cfif> style="float:left;width:20px; "> 
 					#label_text# <cfif qry_labels.label_id_r EQ '0'>(root level)<cfelse>(#qry_labels.label_path#)</cfif>
 					</label>
-					<!--- Check Group Permissions --->
+					<!--- RAZ-2207 Check Group/Users Permissions --->
 					<cfset flag = 0>
-					<cfloop list = '#qry_GroupsOfUser.grp_id#' index="i" >
-						<cfif listfindnocase(qry_labels_setting.set2_labels_users,i,',')>
+					<cfif qry_GroupsOfUser.recordcount NEQ 0>
+					<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
+						<cfif listfindnocase(qry_labels_setting.set2_labels_users,i,',') OR listfindnocase(qry_labels_setting.set2_labels_users,session.theuserid,',')>
 							<cfset flag=1>
 						</cfif>
 					</cfloop>
-						<span style="float:left;"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#&file_id=#attributes.file_id#&file_type=#attributes.file_type#','#Jsstringformat(label_text)#',450,1);return false"><cfif flag EQ 1><img src="#dynpath#/global/host/dam/images/edit.png" width="16" height="16" border="0"></cfif></a></span>
+					<cfelse>
+						<cfif listfindnocase(qry_labels_setting.set2_labels_users,session.theuserid,',')>
+							<cfset flag = 1>
+						</cfif>	
+					</cfif>	
+						<span style="float:left;"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#&file_id=#attributes.file_id#&file_type=#attributes.file_type#','#Jsstringformat(label_text)#',450,1);return false"><cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())><img src="#dynpath#/global/host/dam/images/edit.png" width="16" height="16" border="0"></cfif></a></span>
 					</br>
 				</cfloop> 
 			<cfelse>

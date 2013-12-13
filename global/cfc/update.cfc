@@ -123,7 +123,18 @@
 		</cfquery>
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
-
+		 <!--- If update number is lower then 18 (v. 1.6.1) --->
+		 <cfif updatenumber.opt_value LT 18>
+		<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					alter table raz1_settings_2 <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column SET2_LABELS_USERS #theclob#<cfelse>change SET2_LABELS_USERS SET2_LABELS_USERS #theclob#</cfif>
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		 </cfif>
 		<!--- If update number is lower then 15 (v. 1.6) --->
 		<cfif updatenumber.opt_value LT 15>
 
@@ -684,15 +695,6 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> share_dl_thumb #thevarchar#(1) default 't'
-				</cfquery>
-				<cfcatch type="any">
-					<cfset thelog(logname=logname,thecatch=cfcatch)>
-				</cfcatch>
-			</cftry>
-			<!--- Set datatype to longtext for set2_labels_users--->
-			<cftry>
-				<cfquery datasource="#application.razuna.datasource#">
-					alter table raz1_settings_2 <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column set2_labels_users #theclob#<cfelse>change set2_labels_users set2_labels_users #theclob#</cfif>
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>

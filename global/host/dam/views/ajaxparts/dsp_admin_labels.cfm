@@ -35,13 +35,15 @@
 				<br /><br />
 				<select data-placeholder="Choose a group or user" class="chzn-select" style="width:410px;" name="labels_public" id="labels_public" onchange="save_setting('labels_public')" multiple="multiple">
 					<option value=""></option>
-					<option value="#qry_admin.grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,qry_admin.grp_id)> selected="selected"</cfif>>#qry_admin.grp_name#</option>
+					
 					<cfloop query="qry_groups">
-					<option value="#grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+						<option value="#grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+					</cfloop>
+					<cfloop query="qry_users">
+						<option value="#user_id#"<cfif listfind(qry_labels_setting.set2_labels_users,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
 					</cfloop>
 				</select>
-				<br />
-				<em>(If left empty users can edit field according to their label permissions)</em><br /><br />
+				<br /><br />
 				<span id="save_status_label" style="padding:10px;color:green;display:none;"></span><div id="save_status_hidden_label" style="display:none;">
 			</td>
 		</tr>

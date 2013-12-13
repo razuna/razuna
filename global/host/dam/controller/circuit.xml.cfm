@@ -3590,6 +3590,11 @@
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- RAZ-2207 Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get plugin actions -->
@@ -3691,6 +3696,11 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'vid')" returnvariable="qry_labels" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- RAZ-2207 Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get plugin actions -->
@@ -3854,6 +3864,11 @@
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!--RAZ-2207 Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get plugin actions -->
@@ -4033,6 +4048,11 @@
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- RAZ-2207 Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get plugin actions -->
@@ -7016,16 +7036,13 @@
 	<fuseaction name="admin_labels">
 		<!-- CFC: Get setting -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_labels_setting" />
-		<!-- CFC: Get detail of Administrator group -->
-		<invoke object="myFusebox.getApplicationData().groups" method="getdetail" returnvariable="qry_admin">
-			<argument name="grp_id" value="2" />
-		</invoke>
-		<!-- CFC: Get all groups -->
+		<!-- CFC: Get groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
-			<argument name="thestruct" value="#attributes#" />
-			<argument name="mod_short" value="ecp" />
-			<argument name="host_id" value="#session.hostid#" />
+			<argument name="orderBy" value="grp_id,grp_name" />
 		</invoke>
+		<!-- CFC: Get users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />		
+		<!-- Show -->
 		<!-- CFC: Get all labels -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="qry_labels" />
 		<!-- Show -->

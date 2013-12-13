@@ -160,7 +160,20 @@
 														</cfif>
 													</cfloop>
 												</div>
-												<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+												<!--- RAZ-2207 Check Group/Users Permissions --->
+												<cfset flag = 0>
+												<cfif qry_GroupsOfUser.recordcount NEQ 0>
+												<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
+													<cfif listfindnocase(qry_label_set.set2_labels_users,i,',') OR listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+														<cfset flag=1>
+													</cfif>
+												</cfloop>
+												<cfelse>
+													<cfif listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+														<cfset flag = 1>
+													</cfif>	
+												</cfif>
+												<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 													<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 												</cfif>
 												<!--- Select label button --->
