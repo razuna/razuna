@@ -240,13 +240,34 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_collections_desc")#
 							<br />
-							<div><input type="radio" name="tab_collections" value="true"<cfif qry_customization.tab_collections> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_collections" value="false"<cfif !qry_customization.tab_collections> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div>
+								<input type="radio" name="tab_collections" value="true"<cfif qry_customization.tab_collections> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# 
+								<input type="radio" name="tab_collections" value="false"<cfif !qry_customization.tab_collections> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+							</div>
 							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_labels")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_labels_desc")#
 							<br />
-							<div><input type="radio" name="tab_labels" value="true"<cfif qry_customization.tab_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_labels" value="false"<cfif !qry_customization.tab_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div>
+								<input type="radio" name="tab_labels" value="true"<cfif qry_customization.tab_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")#
+								<input type="radio" name="tab_labels" value="false"<cfif !qry_customization.tab_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+							</div>
+							<br />
+						</td>
+					</tr>
+					<!--- RAZ-2267 Set the default explorer section for folder, smart folders, labels or collections ---> 
+					<tr>
+						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_default")#</th>
+					</tr>
+					<tr>
+						<td>
+							<div>
+								<input type="radio" name="tab_explorer_default" value="1" <cfif qry_customization.tab_explorer_default EQ 1> checked="checked"</cfif>/>#myFusebox.getApplicationData().defaults.trans("customization_explorer_folder")#<br />
+							 	<input type="radio" name="tab_explorer_default" class="collection_tab"  value="2" <cfif qry_customization.tab_explorer_default EQ 2> checked="checked"</cfif>/>#myFusebox.getApplicationData().defaults.trans("customization_explorer_collections")#<br />
+								<input type="radio" name="tab_explorer_default" value="3" <cfif qry_customization.tab_explorer_default EQ 3> checked="checked"</cfif>/>#myFusebox.getApplicationData().defaults.trans("customization_explorer_smartfolder")#<br />
+								<input type="radio" name="tab_explorer_default" class="label_tab"  value="4" <cfif qry_customization.tab_explorer_default EQ 4> checked="checked"</cfif>/>#myFusebox.getApplicationData().defaults.trans("customization_explorer_label")#
+							 </div>
 							<br />
 						</td>
 					</tr>
@@ -747,6 +768,50 @@
 		<div id="dummy_maintenance"></div>
 		<!--- JS --->
 		<script type="text/javascript">
+			//RAZ-2267 Option to define the default explorer section.
+			$(document).ready(function(){
+				//set check if Collection tab is enabled or disabled
+				 if($('input[name="tab_collections"]:checked' ).val()=='true'){
+					$('.collection_tab').attr('disabled', false);
+            	 }
+				 else{
+				 	$('.collection_tab').attr('disabled', true);
+				 }
+				//set check if Label tab is enabled or disabled
+				 if($('input[name="tab_labels"]:checked' ).val()=='true'){
+					$('.label_tab').attr('disabled', false);
+            	 }
+				 else {
+				 	$('.label_tab').attr('disabled', true);
+				 }
+				 //show or Hide  collection tab will set default explorer collection disabled or enabled
+				$("input[name$='tab_collections']").click(function() {
+					if($(this).val()=='false'){
+						$('.collection_tab').attr('disabled', true);
+						//if the user select collection tab hide will set default as folder
+						 if($("input:radio[name='tab_explorer_default'][value='2']").is(":checked")) {
+						 	$("input:radio[name='tab_explorer_default'][value='1']").attr("checked",true);
+						 }
+					}
+					else {
+						$('.collection_tab').attr('disabled', false);
+					}
+			    });
+				//show or Hide  label tab will set the default explorer label disabled or enabled
+				$("input[name$='tab_labels']").click(function() {
+					if($(this).val()=='false'){
+						$('.label_tab').attr('disabled', true);
+						//if the user select label tab hide will set default as folder  
+						 if($("input:radio[name='tab_explorer_default'][value='4']").is(":checked")) {
+						 	$("input:radio[name='tab_explorer_default'][value='1']").attr("checked",true);
+						 }
+					}
+					else{
+						$('.label_tab').attr('disabled', false);
+					}
+			    });
+				
+			});
 			// Load Logo
 			$('##loadlogo').load('#myself#ajax.prefs_loadlogo');
 			// Load Login Image

@@ -788,29 +788,6 @@
 		</cfif>
 	</cffunction>
 
-	<cffunction name="escapelucenechars" returntype="String" hint="Escapes lucene special characters in a given string">
-		<!--- 
-		The following lucene special characters will be escaped in searches
-		\ ! {} [] - && || 
-		The following lucene special characters  will NOT be escaped as we want to allow users to use these in their search criterion 
-		+ " ~ * ? : ^
-		--->
-		<cfargument name="lucenestr" type="String" required="true">
-		<cfset lucenestr = replace(lucenestr,"\","\\","ALL")>
-		<cfset lucenestr = replace(lucenestr,"!","\!","ALL")>	
-		<cfset lucenestr = replace(lucenestr,"{","\{","ALL")>
-		<cfset lucenestr = replace(lucenestr,"}","\}","ALL")>
-		<cfset lucenestr = replace(lucenestr,"[","\[","ALL")>
-		<cfset lucenestr = replace(lucenestr,"]","\]","ALL")>
-		<cfset lucenestr = replace(lucenestr,"-","\-","ALL")>
-		<cfset lucenestr = replace(lucenestr,"&&","\&&","ALL")>	
-		<cfset lucenestr = replace(lucenestr,"||","\||","ALL")>	
-		<cfset lucenestr = replace(lucenestr,"||","\||","ALL")>	
-		<cfset lucenestr = replace(lucenestr,"(","\(","ALL")>
-		<cfset lucenestr = replace(lucenestr,")","\)","ALL")>		
-		<cfreturn lucenestr>	
-	</cffunction>
-
 	<!--- SEARCH --->
 	<cffunction name="search" access="remote" output="false" returntype="query" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,30)#">
 		<cfargument name="criteria" type="string">
@@ -827,7 +804,7 @@
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") keywords:(#escapelucenechars(arguments.criteria)#) description:("#arguments.criteria#") id:(#escapelucenechars(arguments.criteria)#) labels:(#escapelucenechars(arguments.criteria)#) customfieldvalue:("#arguments.criteria#")'>
+			<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") keywords:("#arguments.criteria#") description:("#arguments.criteria#") id:("#arguments.criteria#") labels:("#arguments.criteria#") customfieldvalue:("#arguments.criteria#")'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>

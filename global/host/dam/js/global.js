@@ -9,7 +9,8 @@ function showwindow(theurl,thetitle,thew,thewin) {
 	$('#thewindowcontent' + thewin).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;">');
 	// Load Content into Dialog
 	$('#thewindowcontent' + thewin).load(theurl).dialog({
-		title: thetitle,
+		// RAZ-2718 Decode User's first and last name for title
+		title: decodeURI(thetitle),
 		modal: true,
 		autoOpen: false,
 		width: thew,
@@ -1859,7 +1860,10 @@ function removeLabel(assetID,assetType,labelID,aHrefElement){
 	//console.log(aHrefElement);
 	$(aHrefElement).parent('.singleLabel').remove();
 	loadcontent('div_forall','index.cfm?fa=c.asset_label_add_remove&fileid=' +assetID+ '&thetype=' +assetType+ '&checked=false&labels=' + labelID);
-	$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+	// For RAZ-2708 Advanced Search : Check the condition for remove labels
+	if (assetID != '0') {
+		$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+	}
 }
 //Check the label name, first char should be charactors or numbers
 function isValidLabel(labelName){
