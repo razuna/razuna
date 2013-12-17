@@ -835,10 +835,8 @@
 			<cfelse>	
 				<cfset arguments.criteria_sp = arguments.criteria>
 			</cfif>
-			<cfif arguments.criteria CONTAINS '"' >
+			<cfif arguments.criteria CONTAINS '"' OR arguments.criteria CONTAINS "*" >
 				<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#)'>
-			<cfelseif arguments.criteria CONTAINS "*">
-				<cfset arguments.criteria = 'filename:(#arguments.criteria_sp#) filenameorg:(#arguments.criteria_sp#)'>
 			<cfelse>
 				<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#")'>
 			</cfif>
@@ -850,7 +848,7 @@
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
-		<!--- <cfset console(arguments.criteria)> --->
+		<cfset console(arguments.criteria)>
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>

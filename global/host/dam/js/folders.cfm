@@ -162,10 +162,8 @@
 		if (keywords != '') var keywords = 'keywords:(' + replacespaces(keywords) +')';
 		if (description != '') var description = 'description:(' + replacespaces(description) +')';
 		var filename;
-		if (filename.indexOf('"')!=-1)
+		if (filename.indexOf('"')!=-1 || filename.indexOf('*')!=-1)
 			{if (filename != '')  filename = 'filename:(' + filename + ')';}
-		else if (filename.indexOf('*')!=-1)
-			{if (filename != '')  filename = 'filename:(' + replacespaces(filename) + ')';}
 		else	
 			{if (filename != '')  filename = 'filename:("' + filename + '")';}
 		
