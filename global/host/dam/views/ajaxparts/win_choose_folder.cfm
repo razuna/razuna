@@ -35,6 +35,10 @@
 		<div style="clear:both;padding-top:15px;" />
 		<div><a href="##" onclick="copythisfolder();return false;">Copy the folder to the top level</a></div>
 	</cfif>
+	<!--- RAZ-273 Inherit permissions of parent folder for copy folder--->
+	<cfif session.type EQ "copyfolder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+	<div style="clear:both;padding-top:15px;"><input type="checkbox" name="perm_inherit" id="perm_inherit" value="" >Inherit permissions of parent folder</div>
+	</cfif>
 	<div id="div_choosecol"></div>
 	<div style="clear:both;padding-top:15px;" />
 	<div id="div_choosefolder_status" style="color:green;font-weight:bold;"></div>

@@ -3893,7 +3893,7 @@
 					<!--- Copyfolder --->
 					<cfelseif session.type EQ "copyfolder">
 						<cfif session.thefolderorg NEQ folder_id>
-							<a href="##" onclick="loadcontent('div_forall','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){
+							<a href="##" onclick="loadcontent('div_forall','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#&inherit_perm='+$('##perm_inherit').is(':checked'), function(){
 								<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.<cfif iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');</cfif>
 							});$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');destroywindow(1);return false;">
 						</cfif>
@@ -5429,16 +5429,27 @@
 <!--- Copy THE FOLDER TO THE GIVEN POSITION --->
 <cffunction hint="COPY THE FOLDER TO THE GIVEN POSITION" name="copy" output="true">
 	<cfargument name="thestruct" type="struct">
-
 	<cftry>
 		<!--- Get the reocord of the folder to be copied --->
 		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
 		</cfinvoke>
-		<!--- Get the reocord of the folder to set the access permission --->
-		<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
-			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
-		</cfinvoke>
+		<cfif arguments.thestruct.count EQ 0>
+			<cfset arguments.thestruct.root_copy_folder_id = arguments.thestruct.folder_id >
+		</cfif>
+		<!--- RAZ- 273 Copy folder have a inherit permission to checked  --->
+		<cfif structKeyExists(arguments.thestruct,"inherit_perm") AND arguments.thestruct.inherit_perm EQ 'true'>
+			<!--- Get the reocord of the folder to set the access permission --->
+			<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
+				<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.root_copy_folder_id#">
+			</cfinvoke>
+		<cfelse>
+			<!--- Get the reocord of the folder to set the access permission --->
+			<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
+				<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+			</cfinvoke>
+		</cfif>
+		
 		<!--- Get the reocord of the folder into which the folder is to be copied --->
 		<cfinvoke method="getfolder" returnvariable="intofolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.intofolderid#">
@@ -5503,7 +5514,6 @@
 			</cfif>
 			)
 		</cfquery>
-		
 		<!--- Insert the Group and Permission --->
 		<cfloop query="tocopyfoldergroups">
 			<cfquery datasource="#variables.dsn#">
