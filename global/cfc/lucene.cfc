@@ -829,13 +829,16 @@
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
 			<cfset arguments.criteria = escapelucenechars(arguments.criteria)>
-			<cfif find(" AND ", arguments.criteria) EQ 0 AND find(" OR ", arguments.criteria) EQ 0>
+			 <!--- Replace spaces with AND if query doesn't contain AND, OR  or " --->
+			<cfif find(" AND ", arguments.criteria) EQ 0 AND find(" OR ", arguments.criteria) EQ 0 AND find('"', arguments.criteria) EQ 0 >
 				<cfset arguments.criteria_sp = replace(arguments.criteria,chr(32)," AND ", "ALL")>
 			<cfelse>	
 				<cfset arguments.criteria_sp = arguments.criteria>
 			</cfif>
-			<cfif arguments.criteria CONTAINS "*">
+			<cfif arguments.criteria CONTAINS '"' >
 				<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#)'>
+			<cfelseif arguments.criteria CONTAINS "*">
+				<cfset arguments.criteria = 'filename:(#arguments.criteria_sp#) filenameorg:(#arguments.criteria_sp#)'>
 			<cfelse>
 				<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#")'>
 			</cfif>

@@ -117,7 +117,7 @@
 	}
 	
 	function replacespaces(str){
-		if (str.indexOf(' AND ')==-1 && str.indexOf(' OR ')==-1)
+		if (str.indexOf(' AND ')==-1 && str.indexOf(' OR ')==-1 && str.indexOf('"')==-1) 
 			str = str.replace(/ /g, ' AND ');
 		return str;
 	}
@@ -162,10 +162,12 @@
 		if (keywords != '') var keywords = 'keywords:(' + replacespaces(keywords) +')';
 		if (description != '') var description = 'description:(' + replacespaces(description) +')';
 		var filename;
-		if (filename.indexOf('*')!=-1)
-			if (filename != '')  filename = 'filename:(' + filename + ')';
+		if (filename.indexOf('"')!=-1)
+			{if (filename != '')  filename = 'filename:(' + filename + ')';}
+		else if (filename.indexOf('*')!=-1)
+			{if (filename != '')  filename = 'filename:(' + replacespaces(filename) + ')';}
 		else	
-			if (filename != '')  filename = 'filename:("' + filename + '")';
+			{if (filename != '')  filename = 'filename:("' + filename + '")';}
 		
 		if (extension != '') var extension = 'extension:(' + extension +')';
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:(' + replacespaces(rawmetadata) +')';
