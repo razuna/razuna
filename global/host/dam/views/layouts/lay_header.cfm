@@ -56,7 +56,7 @@
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
 				<div style="float:left;background-color:##ddd;padding:4px;">
 					<div style="float:left;">
-						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search">
+						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search"  title="Uses AND for multiple keywords except if you use OR/AND or double quotes. See search help for more information.">
 					</div>
 					<div style="float:left;padding:5px 5px 0px 5px;">
 						<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></div>
