@@ -49,6 +49,11 @@
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_user_pass")#</td>
 			<td width="100%"><input type="password" name="ad_user_pass" id="ad_user_pass" style="width:300px;" value="#ad_server_password#" ></td>
 		</tr>
+		<!--- Is Secure --->
+		<tr>
+			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("is_secure")#</td>
+			<td width="100%"><input type="radio" name="ad_is_secure" class="ad_is_secure" value="T" <cfif #ad_server_secure# EQ 'T'> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("yes")#<input type="radio" name="ad_is_secure" class="ad_is_secure" value="F" <cfif #ad_server_secure# EQ 'F'> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
+		</tr>
 		<!--- Filter --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_filter")#</td>
@@ -72,10 +77,11 @@
 			var port = $("##ad_server_port").val();
 			var un = $("##ad_user_name").val();
 			var pwd = $("##ad_user_pass").val();
+			var secure = $('input:radio[name=ad_is_secure]:checked').val();
 			var filter = $("##ad_filter").val();
 			var start = $("##ad_start").val();
 			// Save
-			$('##div_forall').load('#myself#c.admin_ad_services_save', {ad_server_name: server, ad_server_port: port, ad_server_username: un, ad_server_password: pwd, ad_server_filter: filter, ad_server_start: start });
+			$('##div_forall').load('#myself#c.admin_ad_services_save', {ad_server_name: server, ad_server_port: port, ad_server_username: un, ad_server_password: pwd, ad_server_secure: secure, ad_server_filter: filter, ad_server_start: start });
 			// Feedback
 			$('##status_integration').fadeTo("fast", 100);
 			$('##status_integration').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change")#!</span>');

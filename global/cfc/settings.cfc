@@ -2221,6 +2221,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="ad_server_port" type="string">
 	<cfargument name="ad_server_username" type="string">
 	<cfargument name="ad_server_password" type="string">
+	<cfargument name="ad_server_secure" type="string">
 	<cfargument name="ad_server_filter" type="string">
 	<cfargument name="ad_server_start" type="string">
 	<!--- Delete & Insert --->
@@ -2228,6 +2229,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfinvoke method="savesetting" thefield="ad_server_port" thevalue="#arguments.ad_server_port#" />
 	<cfinvoke method="savesetting" thefield="ad_server_username" thevalue="#arguments.ad_server_username#" />
 	<cfinvoke method="savesetting" thefield="ad_server_password" thevalue="#arguments.ad_server_password#" />
+	<cfinvoke method="savesetting" thefield="ad_server_secure" thevalue="#arguments.ad_server_secure#" />
 	<cfinvoke method="savesetting" thefield="ad_server_filter" thevalue="#arguments.ad_server_filter#" />
 	<cfinvoke method="savesetting" thefield="ad_server_start" thevalue="#arguments.ad_server_start#" />
 	<!--- Return --->
@@ -2508,21 +2510,34 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Get AD users --->
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
-		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
-			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-			scope="subtree" 
-			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
-			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
-			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
-		<cfelse>
-			<cfldap server = "#arguments.thestruct.ad_server_name#"  
-			scope="subtree" 
-			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-			filter="(&(objectClass=user))" 
-			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
-			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
+
+		<cfset ldapAttributes = {
+									server = "#arguments.thestruct.ad_server_name#" ,
+									username="#arguments.thestruct.ad_server_username#" ,
+									password="#arguments.thestruct.ad_server_password#" ,
+									start = "#arguments.thestruct.ad_server_start#",
+									port = "#arguments.thestruct.ad_server_port#",
+									scope="subtree" ,
+									action = "query" , 
+									name = "results"  ,
+									filter="(&(objectClass=user))" ,
+									attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department",
+									sort = "cn ASC"   
+									
+
+								} >
+
+		<cfif arguments.thestruct.ad_server_secure EQ 'T'>
+			<cfset ldapAttributes.secure = "CFSSL_BASIC" >
 		</cfif>
+		
+		
+		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
+			<cfset ldapAttributes.filter = "(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
+		</cfif>
+
+		<cfldap attributecollection = "#ldapAttributes#" />
+
 		<cfreturn results/>
 	</cffunction>
 		
