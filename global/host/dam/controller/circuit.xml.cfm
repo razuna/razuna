@@ -384,12 +384,21 @@
 	<fuseaction name="forgotpasssend">
 		<set name="attributes.emailnotfound" value="F" overwrite="false" />
 		<set name="attributes.passsend" value="F" overwrite="false" />
+		<set name="attributes.aduser" value="F" overwrite="false" />
 		<!-- Check the email address of the user -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="sendpassword(attributes.email)" returnvariable="status" />
 		<!-- If the user is found an email has been sent thus return to the main layout with a message -->
 		<if condition="status.notfound EQ 'F'">
-    		<true>
-				<set name="attributes.passsend" value="T" />
+			<true>
+				<!-- Check the user is AD user -->
+				<if condition="status.aduser EQ 'T'">
+					<true>
+						<set name="attributes.aduser" value="T" />
+					</true>
+					<false>
+						<set name="attributes.passsend" value="T" />
+					</false>
+				</if>
 			</true>
 			<false>
 				<set name="attributes.emailnotfound" value="T" />
