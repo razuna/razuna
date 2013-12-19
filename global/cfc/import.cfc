@@ -1793,33 +1793,58 @@
 			</cfquery>
 			<!--- If not we add it or else we simply update the ct db --->
 			<cfif labhere.recordcount EQ 0>
-				<!--- Create uuid --->
-				<cfset theid = createuuid("")>
-				<!--- Insert --->
-				<cfquery dataSource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#labels
-				(label_id, label_text, label_date, user_id, host_id, label_path, label_id_r)
-				VALUES(
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-					<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.theuserid#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">
-				)
-				</cfquery>
-				<!--- Insert into CT --->
-				<cfquery dataSource="#application.razuna.datasource#">
-				INSERT INTO ct_labels
-				(ct_label_id, ct_id_r, ct_type, rec_uuid)
-				VALUES(
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-				)
-				</cfquery>
+				<cfset label_path_list = "">
+				<cfset label_root_id=0>
+				<!--- Get label's individually to insert in Labels table --->
+				<cfloop list="#i#" delimiters="/" index="idx" >
+					<!--- Create uuid --->
+					<cfset theid = createuuid("")>
+					<!--- Set Label path --->
+					<cfset label_path_list = listappend(label_path_list,'#idx#','/')>
+					<!--- Check if Label path already exists --->
+					<cfquery dataSource="#application.razuna.datasource#" name="checklabelpath">
+					SELECT label_id, label_text, label_path
+					FROM #session.hostdbprefix#labels
+					WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(label_path_list)#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Insert only new labels --->
+					<cfif checklabelpath.RecordCount EQ 0>
+						<!--- Insert --->
+						<cfquery dataSource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#labels
+						(label_id, label_text, label_date, user_id, host_id, label_path, label_id_r)
+						VALUES(
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#idx#">,
+							<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.theuserid#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_path_list#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_root_id#">
+						)
+						</cfquery>
+					</cfif>
+					<!--- Insert into CT --->
+					<cfif idx EQ listLast(i,"/")>
+						<cfquery dataSource="#application.razuna.datasource#">
+						INSERT INTO ct_labels
+						(ct_label_id, ct_id_r, ct_type, rec_uuid)
+						VALUES(
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+						)
+						</cfquery>
+					</cfif>
+					<!--- Set Parent id --->
+					<cfif checklabelpath.RecordCount NEQ 0>
+						<cfset label_root_id = checklabelpath.label_id>
+					<cfelse>
+						<cfset label_root_id = theid>
+					</cfif>
+				</cfloop>
 			<!--- Label is here --->
 			<cfelse>
 				<cfquery dataSource="#application.razuna.datasource#">
