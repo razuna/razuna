@@ -52,7 +52,8 @@
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
-			<cfdirectory action="delete" directory="#expandpath("../")#WEB-INF/collections/#arguments.colname#" recurse="true" />
+			<cfset var d = REReplaceNoCase(GetTempDirectory(),"/bluedragon/work/temp","","one")>
+			<cfdirectory action="delete" directory="#d#collections/#arguments.colname#" recurse="true" />
 			<cfcatch type="any">
 				<cfset console("Error while deleting path on disk in function lucene.setup")>
 				<cfset console(cfcatch)>
@@ -95,7 +96,7 @@
 		<!--- If the assetid is all it means a complete rebuild --->
 		<cfif arguments.assetid EQ "all">
 			<!--- Delete all records in the index --->
-			<cfset CollectionIndexpurge( arguments.hostid )>
+			<cfset setup( colname=arguments.hostid )>
 			<!--- Set all records to non indexed --->
 			<cfquery datasource="#arguments.dsn#">
 			UPDATE #arguments.prefix#images

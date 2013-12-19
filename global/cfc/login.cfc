@@ -350,7 +350,7 @@
 		<cfset thepass=structNew()>
 		<!--- Check the email address of this user if there then send pass if not return to the form --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id
+		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass
 		FROM users u, ct_users_hosts ct
 		WHERE (
 			lower(u.user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
@@ -363,29 +363,37 @@
 		<cfif qryuser.recordcount EQ 0>
 			<cfset thepass.notfound = "T">
 		<cfelse>
-			<!--- User is found thus send him an email --->
-			<cfset thepass.notfound = "F">
-			<!--- Create Random Password --->
-			<cfset var randompassword = randompass()>
-			<!--- Hash Password --->
-			<cfset newpass = hash(randompassword, "MD5", "UTF-8")>
-			<!--- Update DB with new password --->
-			<cfquery datasource="#variables.dsn#">
-			UPDATE users
-			SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newpass#">
-			WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
-			</cfquery>
-			<!--- send email --->
-			<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="Your password for Razuna" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
-
-It looks like you have lost your password. We have generated a random password for you. You can now login with your username and/or email address and the password below.
-
-Username: #qryuser.user_login_name#
-Password: #randompassword#
-
-			</cfmail>
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("users","true")>
+			<!--- If User is AD User --->
+			<cfif qryuser.user_pass EQ ''>
+				<cfset thepass.aduser = "T">
+				<cfset thepass.notfound = "F">
+			<cfelse>
+				<!--- User is not AD User --->
+				<cfset thepass.aduser = "F">
+				<!--- User is found thus send him an email --->
+				<cfset thepass.notfound = "F">
+				<!--- Create Random Password --->
+				<cfset var randompassword = randompass()>
+				<!--- Hash Password --->
+				<cfset newpass = hash(randompassword, "MD5", "UTF-8")>
+				<!--- Update DB with new password --->
+				<cfquery datasource="#variables.dsn#">
+				UPDATE users
+				SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newpass#">
+				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
+				</cfquery>
+				<!--- send email --->
+				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="Your password for Razuna" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
+	
+	It looks like you have lost your password. We have generated a random password for you. You can now login with your username and/or email address and the password below.
+	
+	Username: #qryuser.user_login_name#
+	Password: #randompassword#
+	
+				</cfmail>
+				<!--- Flush Cache --->
+				<cfset resetcachetoken("users","true")>
+			</cfif>
 		</cfif>
 		<cfreturn thepass />
 	</cffunction>

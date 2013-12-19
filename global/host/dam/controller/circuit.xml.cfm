@@ -384,12 +384,21 @@
 	<fuseaction name="forgotpasssend">
 		<set name="attributes.emailnotfound" value="F" overwrite="false" />
 		<set name="attributes.passsend" value="F" overwrite="false" />
+		<set name="attributes.aduser" value="F" overwrite="false" />
 		<!-- Check the email address of the user -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="sendpassword(attributes.email)" returnvariable="status" />
 		<!-- If the user is found an email has been sent thus return to the main layout with a message -->
 		<if condition="status.notfound EQ 'F'">
-    		<true>
-				<set name="attributes.passsend" value="T" />
+			<true>
+				<!-- Check the user is AD user -->
+				<if condition="status.aduser EQ 'T'">
+					<true>
+						<set name="attributes.aduser" value="T" />
+					</true>
+					<false>
+						<set name="attributes.passsend" value="T" />
+					</false>
+				</if>
 			</true>
 			<false>
 				<set name="attributes.emailnotfound" value="T" />
@@ -5976,6 +5985,7 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="ad_server_port" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="ad_server_username" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="ad_server_secure" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="ad_server_filter" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="ad_server_start" />
 		<!-- Show -->
@@ -5984,7 +5994,7 @@
 	<!-- For saving AD Server customization -->
 	<fuseaction name="admin_ad_services_save">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_filter,attributes.ad_server_start)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_secure,attributes.ad_server_filter,attributes.ad_server_start)" />
 	</fuseaction>
 	<!-- Users Search -->
 	<fuseaction name="ad_server_users_list">
