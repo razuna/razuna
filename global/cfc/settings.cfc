@@ -62,7 +62,7 @@
 	set2_intranet_reg_emails_sub, set2_intranet_gen_download, set2_cat_intra, set2_cat_web, set2_url_website, 
 	set2_payment_pre, set2_payment_bill, set2_payment_pod, set2_payment_cc, set2_payment_cc_cards, set2_payment_paypal, 
 	set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, 
-	set2_email_server_port,
+	set2_email_server_port, set2_email_use_ssl, set2_email_use_tls,
 	<!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> 
 	set2_url_sp_video_preview, set2_vid_preview_author, set2_vid_preview_copyright, set2_cat_vid_web, set2_cat_vid_intra,
 	set2_create_vidfolders_where, set2_path_to_assets, set2_aws_bucket, set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
@@ -116,7 +116,7 @@
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER, 
-	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT
+	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT, SET2_EMAIL_USE_SSL, SET2_EMAIL_USE_TLS
 	FROM #qry_host.host_shard_group#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -796,6 +796,14 @@
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "SET2_EMAIL_SERVER_PORT")>
 			<cfif commad EQ "T">,</cfif>SET2_EMAIL_SERVER_PORT = <cfif arguments.thestruct.set2_email_server_port EQ ""><cfqueryparam value="25" cfsqltype="cf_sql_numeric"><cfelse><cfqueryparam value="#arguments.thestruct.SET2_EMAIL_SERVER_PORT#" cfsqltype="cf_sql_numeric"></cfif>
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "SET2_EMAIL_USE_SSL")>
+			<cfif commad EQ "T">,</cfif>SET2_EMAIL_USE_SSL = <cfqueryparam value="#arguments.thestruct.SET2_EMAIL_USE_SSL#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "SET2_EMAIL_USE_TLS")>
+			<cfif commad EQ "T">,</cfif>SET2_EMAIL_USE_TLS = <cfqueryparam value="#arguments.thestruct.SET2_EMAIL_USE_TLS#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "folder_in")>
