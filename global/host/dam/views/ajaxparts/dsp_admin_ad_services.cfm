@@ -52,7 +52,7 @@
 		<!--- Is Secure --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("is_secure")#</td>
-			<td width="100%"><input type="radio" name="ad_is_secure" class="ad_is_secure" value="T" <cfif #ad_server_secure# EQ 'T'> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("yes")#<input type="radio" name="ad_is_secure" class="ad_is_secure" value="F" <cfif #ad_server_secure# EQ 'F'> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
+			<td width="100%"><input type="radio" name="ad_is_secure" class="ad_is_secure" value="T" <cfif #ad_server_secure# EQ 'T'> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("yes")#<input type="radio" name="ad_is_secure" class="ad_is_secure" value="F" <cfif ad_server_secure NEQ 'T' OR ad_server_secure EQ ''> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 		</tr>
 		<!--- Filter --->
 		<tr>
