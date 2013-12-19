@@ -109,7 +109,7 @@
 		</cfif>
 		<!--- Query email settings --->
 		<cfquery datasource="#thedsn#" name="emaildata">
-		SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
+		SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_email_use_ssl, set2_email_use_tls, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
 		FROM #thehostdbprefix#settings_2
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thehostid#">
 		</cfquery>
@@ -153,7 +153,7 @@
 				</cfmail>
 			<cfelse>
 				<!--- send message if there is a mail server set for this host --->
-				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" subject="#arguments.subject#" username="#emaildata.SET2_EMAIL_SMTP_USER#" password="#emaildata.SET2_EMAIL_SMTP_PASSWORD#" server="#emaildata.SET2_EMAIL_SERVER#" port="#emaildata.SET2_EMAIL_SERVER_PORT#" type="text/html" timeout="900"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
+				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" subject="#arguments.subject#" username="#emaildata.SET2_EMAIL_SMTP_USER#" password="#emaildata.SET2_EMAIL_SMTP_PASSWORD#" server="#emaildata.SET2_EMAIL_SERVER#" port="#emaildata.SET2_EMAIL_SERVER_PORT#" usessl="#emaildata.SET2_EMAIL_USE_SSL#" usetls="#emaildata.SET2_EMAIL_USE_TLS#" type="text/html" timeout="900"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
 					<cfif arguments.sendaszip EQ "T">
 						<!--- Check the attachment (zip or normal files) --->
 						<cfif right("#arguments.attach#", 4) EQ ".zip">
