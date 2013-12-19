@@ -115,6 +115,13 @@
 		$('#' + theform + ' [name="' + fd + '_month"]').val('<cfoutput><cfif len(settodaym) EQ 1>0</cfif>#settodaym#</cfoutput>');
 		$('#' + theform + ' [name="' + fd + '_year"]').val('<cfoutput>#year(now())#</cfoutput>');
 	}
+	
+	function replacespaces(str){
+		if (str.indexOf(' AND ')==-1 && str.indexOf(' OR ')==-1 && str.indexOf('"')==-1) 
+			str = str.replace(/ /g, ' AND ');
+		return str;
+	}
+
 	// For search
 	function subadvfields(theform){
 		// Get values
@@ -152,11 +159,18 @@
 		// Put together the search
 		if (labels == null) var labels = '';
 		if (searchfor != '') var searchfor = searchfor;
-		if (keywords != '') var keywords = 'keywords:(' + keywords +')';
-		if (description != '') var description = 'description:("' + description +'")';
-		if (filename != '') var filename = 'filename:("' + filename + '")';
+		if (keywords != '') var keywords = 'keywords:(' + replacespaces(keywords) +')';
+		if (description != '') var description = 'description:(' + replacespaces(description) +')';
+		var filename;
+		if (filename.indexOf('"')!=-1 || filename.indexOf('*')!=-1)
+			{if (filename != '')  filename = 'filename:(' + filename + ')';}
+		else	
+			{if (filename != '')  filename = 'filename:("' + filename + '")';}
+		
 		if (extension != '') var extension = 'extension:(' + extension +')';
-		if (rawmetadata != '') var rawmetadata = 'rawmetadata:("' + rawmetadata +'")';
+		if (rawmetadata != '') var rawmetadata = 'rawmetadata:(' + replacespaces(rawmetadata) +')';
+		
+
 		if (labels != ''){
 			if (andor == "OR"){
 				var labels = 'labels:(' + labels + ')';
@@ -167,7 +181,6 @@
 				var labels = 'labels:(' + con1.concat(con2) + ')';
 			}
 		}
-		
 		
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
