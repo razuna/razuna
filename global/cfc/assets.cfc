@@ -1934,6 +1934,17 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Append keywords and description to DB --->
 			<cfif structkeyexists(arguments.thestruct,"langcount")>
 				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+					<!--- Update keywords and descriptions for api --->
+					<cfif structkeyexists(arguments.thestruct,"api_key") AND arguments.thestruct.api_key NEQ ''>
+					<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #session.hostdbprefix#files_desc
+						SET 
+						file_desc = <cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
+						file_keywords = <cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">	
+						WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
+					</cfquery>
+					<cfelse>
+					<!--- Insert Keywords and Descriptions --->
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#files_desc
 					(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
@@ -1946,6 +1957,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					)
 					</cfquery>
+					</cfif>
 				</cfloop>
 			</cfif>
 		</cfif>
