@@ -52,7 +52,7 @@
 			<cfelse>
 				<tr>
 					<td nowrap="nowrap"><strong>#myFusebox.getApplicationData().defaults.trans("user_active")#</strong></td>
-					<td><input type="checkbox" name="user_active" value="T"<cfif qry_detail.user_active EQ "T"> checked</cfif>></td>
+					<td><input type="checkbox" name="user_active" value="T"<cfif qry_detail.user_active EQ "T" OR qry_detail.recordcount EQ 0> checked</cfif>></td>
 				</tr>
 			</cfif>
 			<tr>
