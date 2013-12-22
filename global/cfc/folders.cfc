@@ -179,7 +179,15 @@
 				AND LOWER(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND (
-					<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(fg.grp_id_r, 0) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+					<cfif variables.database EQ "oracle" OR variables.database EQ "db2">
+						NVL(fg.grp_id_r, 0)
+					<cfelseif variables.database EQ "h2">
+						NVL(fg.grp_id_r, '0')
+					<cfelseif variables.database EQ "mysql">
+						ifnull(fg.grp_id_r, 0)
+					<cfelseif variables.database EQ "mssql">
+						isnull(fg.grp_id_r, 0)
+					</cfif> = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 					OR
 					<!--- user in group --->
 					EXISTS(

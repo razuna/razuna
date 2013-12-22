@@ -34,23 +34,29 @@
 <cfelse>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 </cfif>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
 	<tr>
-		<td align="center"><a name="top"></a>#myFusebox.getApplicationData().defaults.trans("pages")#: #qry_pdfjpgs.qry_pdfjpgs.recordcount#</td>
-	</tr>
-	<cfif qry_pdfjpgs.qry_pdfjpgs.recordcount NEQ 1>
-		<tr>
-			<td align="center"><cfloop from="1" to="#qry_pdfjpgs.qry_pdfjpgs.recordcount#" index="i"><a href="###i#">#i#</a> <cfif i NEQ qry_pdfjpgs.qry_pdfjpgs.recordcount>|</cfif> </cfloop></td>
-		</tr>
-	</cfif>
-
-	<tr>
-		<td align="center" style="padding-top:10px;">
-			<cfloop list="#qry_pdfjpgs.thepdfjpgslist#" delimiters="," index="i">
-				<cfset thenr = replacenocase(i,".jpg","","all")>
-				<cfset thenr = listlast(thenr,"-")>
-				<a name="#val(thenr)+1#"><img src="#thestorage##qry_detail.detail.path_to_asset#/razuna_pdf_images/#i#" border="0"></a><a href="##top">Top</a>
-			</cfloop>
+		<td align="center">
+			<table border="0" cellpadding="0" cellspacing="0" width="80%">
+				<tr>
+					<td align="center"><a name="top"></a>#myFusebox.getApplicationData().defaults.trans("pages")#: #qry_pdfjpgs.qry_pdfjpgs.recordcount#</td>
+				</tr>
+				<cfif qry_pdfjpgs.qry_pdfjpgs.recordcount NEQ 1>
+					<tr>
+						<td align="center"><cfloop from="1" to="#qry_pdfjpgs.qry_pdfjpgs.recordcount#" index="i"><a href="###i#">#i#</a> <cfif i NEQ qry_pdfjpgs.qry_pdfjpgs.recordcount>|</cfif> </cfloop></td>
+					</tr>
+				</cfif>
+			
+				<tr>
+					<td align="center" style="padding-top:10px;">
+						<cfloop list="#qry_pdfjpgs.thepdfjpgslist#" delimiters="," index="i">
+							<cfset thenr = replacenocase(i,".jpg","","all")>
+							<cfset thenr = listlast(thenr,"-")>
+							<a name="#val(thenr)+1#"><img src="#thestorage##qry_detail.detail.path_to_asset#/razuna_pdf_images/#i#" border="0" width="60%"></a><a href="##top">Top</a>
+						</cfloop>
+					</td>
+				</tr>
+			</table>
 		</td>
 	</tr>
 </table>
