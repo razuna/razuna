@@ -4755,8 +4755,8 @@
 			<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
 			<!--- If the folder_id_r is not the same the passed one --->
 			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
-				<!--- Call this function again --->
-				<cfinvoke method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
+				<!--- Call this function again (need component otherwise it won't work for internal calls) --->
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
 			</cfif>
 		</cfif>
 		<!--- Return --->	
