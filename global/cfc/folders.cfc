@@ -4687,7 +4687,9 @@
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- If there is no session for webgroups set --->
-		<cfparam default="0" name="session.thegroupofuser">
+		<cfif arguments.fromshare>
+			<cfparam default="0" name="session.thegroupofuser">
+		</cfif>
 		<!--- Param --->
 		<cfset var qry = "">
 		<cfparam name="flist" default="">
