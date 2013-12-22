@@ -4683,79 +4683,82 @@
 	<cfargument name="dsn" type="string" default="#application.razuna.datasource#" required="false">
 	<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
 	<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
-	<!--- Param --->
-	<cfset var qry = "">
-	<cfparam name="flist" default="">
-	<!--- Query: Get current folder_id_r --->
-	<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
-	<cfif arguments.fromshare>
-		<!--- If there is no session for webgroups set --->
-		<cfparam default="0" name="session.thegroupofuser">
-		<cfif session.iscol EQ "F">
-			,
-			CASE
-				<!--- Check permission on this folder --->
-				WHEN EXISTS(
-					SELECT fg.folder_id_r
-					FROM #arguments.prefix#folders_groups fg
-					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-					AND fg.folder_id_r = f.folder_id
-					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-					) THEN 'unlocked'
-				<!--- When folder is shared for everyone --->
-				WHEN EXISTS(
-					SELECT fg2.folder_id_r
-					FROM #arguments.prefix#folders_groups fg2
-					WHERE fg2.grp_id_r = '0'
-					AND fg2.folder_id_r = f.folder_id
-					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-					) THEN 'unlocked'
-				<!--- If this is the user folder or he is the owner --->
-				WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
-				<!--- If nothing meets the above lock the folder --->
-				ELSE 'locked'
-			END AS perm
-		<cfelse>
-			CASE
-				WHEN EXISTS(
-					SELECT fg.col_id_r
-					FROM #arguments.prefix#collections_groups fg
-					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-					AND fg.col_id_r = f.col_id
-					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-					) THEN 'unlocked'
-				<!--- If nothing meets the above lock the folder --->
-				ELSE 'locked'
-			END AS perm
+	<cftry>
+		<!--- Param --->
+		<cfset var qry = "">
+		<cfparam name="flist" default="">
+		<!--- Query: Get current folder_id_r --->
+		<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
+		<cfif arguments.fromshare>
+			<!--- If there is no session for webgroups set --->
+			<cfparam default="0" name="session.thegroupofuser">
+			<cfif session.iscol EQ "F">
+				,
+				CASE
+					<!--- Check permission on this folder --->
+					WHEN EXISTS(
+						SELECT fg.folder_id_r
+						FROM #arguments.prefix#folders_groups fg
+						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+						AND fg.folder_id_r = f.folder_id
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						) THEN 'unlocked'
+					<!--- When folder is shared for everyone --->
+					WHEN EXISTS(
+						SELECT fg2.folder_id_r
+						FROM #arguments.prefix#folders_groups fg2
+						WHERE fg2.grp_id_r = '0'
+						AND fg2.folder_id_r = f.folder_id
+						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+						) THEN 'unlocked'
+					<!--- If this is the user folder or he is the owner --->
+					WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
+					<!--- If nothing meets the above lock the folder --->
+					ELSE 'locked'
+				END AS perm
+			<cfelse>
+				CASE
+					WHEN EXISTS(
+						SELECT fg.col_id_r
+						FROM #arguments.prefix#collections_groups fg
+						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+						AND fg.col_id_r = f.col_id
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						) THEN 'unlocked'
+					<!--- If nothing meets the above lock the folder --->
+					ELSE 'locked'
+				END AS perm
+			</cfif>
 		</cfif>
-	</cfif>
-	FROM #arguments.prefix#folders f
-	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
-	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-	</cfquery>
-	<!--- QoQ --->
-	<cfif arguments.fromshare>
-		<cfquery dbtype="query" name="qry">
-		SELECT *
-		FROM qry
-		WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+		FROM #arguments.prefix#folders f
+		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 		</cfquery>
-	</cfif>
-	<cfif qry.recordcount NEQ 0>
-		<!--- Set the current values into the list --->
-		<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
-		<!--- If the folder_id_r is not the same the passed one --->
-		<cfif qry.folder_id_r NEQ arguments.folder_id_r>
-			<!--- Call this function again --->
-			<cfinvoke method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
+		<!--- QoQ --->
+		<cfif arguments.fromshare>
+			<cfquery dbtype="query" name="qry">
+			SELECT *
+			FROM qry
+			WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+			</cfquery>
 		</cfif>
-	</cfif>
-	<!--- Return --->	
-	<cfreturn flist>
+		<cfif qry.recordcount NEQ 0>
+			<!--- Set the current values into the list --->
+			<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
+			<!--- If the folder_id_r is not the same the passed one --->
+			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
+				<!--- Call this function again --->
+				<cfinvoke method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
+			</cfif>
+		</cfif>
+		<!--- Return --->	
+		<cfreturn flist>
+		<cfcatch type="any"></cfcatch>
+	</cftry>
 </cffunction>
 
 <!--- Download Folder --->
