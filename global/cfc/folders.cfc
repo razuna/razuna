@@ -4686,6 +4686,8 @@
 	<cftry>
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("folders")>
+		<!--- If there is no session for webgroups set --->
+		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Param --->
 		<cfset var qry = "">
 		<cfparam name="flist" default="">
@@ -4693,8 +4695,6 @@
 		<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
 		<cfif arguments.fromshare>
-			<!--- If there is no session for webgroups set --->
-			<cfparam default="0" name="session.thegroupofuser">
 			<cfif session.iscol EQ "F">
 				,
 				CASE
@@ -4759,7 +4759,10 @@
 		</cfif>
 		<!--- Return --->	
 		<cfreturn flist>
-		<cfcatch type="any"></cfcatch>
+		<cfcatch type="any">
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
+		</cfcatch>
 	</cftry>
 </cffunction>
 
