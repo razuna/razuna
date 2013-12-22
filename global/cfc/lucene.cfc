@@ -45,27 +45,18 @@
 		<!--- Delete collection --->
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
-			<cfcatch type="any">
-				<cfset console("Error while deleting collection in function lucene.setup")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
 			<cfset var d = REReplaceNoCase(GetTempDirectory(),"/bluedragon/work/temp","","one")>
 			<cfdirectory action="delete" directory="#d#collections/#arguments.colname#" recurse="true" />
-			<cfcatch type="any">
-				<cfset console("Error while deleting path on disk in function lucene.setup")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<!--- Create collection --->
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
-			<cfcatch type="any">
-				<cfset console("Error while creating collection in function lucene.setup")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfcatch type="any"></cfcatch>
 		</cftry>
 	</cffunction>
 	
