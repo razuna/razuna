@@ -4684,6 +4684,8 @@
 	<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
 	<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
 	<cftry>
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Param --->
 		<cfset var qry = "">
 		<cfparam name="flist" default="">

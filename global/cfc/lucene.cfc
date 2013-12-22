@@ -135,6 +135,8 @@
 		<cfset arguments.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Loop over the recordset --->
 		<cfloop query="qry">
+			<cfset consoleoutput(true)>
+			<cfset console("Start indexing: #arguments.hostid# - #now()#")>
 			<!--- Create tt for thread --->
 			<cfset tt = createUUID("")>
 			<!--- Put vars into struct --->
@@ -156,6 +158,7 @@
 			</cfthread>
 			<!--- Wait and join thread --->
 			<cfthread name="#tt#" action="join" />
+			<cfset console("--- DONE indexing: #arguments.hostid# - #now()# ---")>
 		</cfloop>
 		<!--- Remove lock file --->
 		<cftry>
