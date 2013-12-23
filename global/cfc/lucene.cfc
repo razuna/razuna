@@ -138,26 +138,26 @@
 			<cfset consoleoutput(true)>
 			<cfset console("Start indexing: #arguments.hostid# - #now()#")>
 			<!--- Create tt for thread --->
-			<cfset tt = createUUID("")>
+			<!--- <cfset tt = createUUID("")> --->
 			<!--- Put vars into struct --->
 			<cfset arguments.theid = theid>
 			<cfset arguments.cat = cat>
-			<cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low">
+			<!--- <cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low"> --->
 				<cfinvoke method="index_update_thread">
-					<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
-					<cfinvokeargument name="assetid" value="#attributes.intstruct.theid#" />
-					<cfinvokeargument name="category" value="#attributes.intstruct.cat#" />
-					<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
-					<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
-					<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
-					<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
-					<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
-					<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
-					<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+					<cfinvokeargument name="thestruct" value="#arguments#" />
+					<cfinvokeargument name="assetid" value="#arguments.theid#" />
+					<cfinvokeargument name="category" value="#arguments.cat#" />
+					<cfinvokeargument name="dsn" value="#arguments.dsn#" />
+					<cfinvokeargument name="online" value="#arguments.online#" />
+					<cfinvokeargument name="notfile" value="#arguments.notfile#" />
+					<cfinvokeargument name="prefix" value="#arguments.prefix#" />
+					<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+					<cfinvokeargument name="storage" value="#arguments.storage#" />
+					<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
 				</cfinvoke>
-			</cfthread>
+			<!--- </cfthread> --->
 			<!--- Wait and join thread --->
-			<cfthread name="#tt#" action="join" />
+			<!--- <cfthread name="#tt#" action="join" /> --->
 			<cfset console("--- DONE indexing: #arguments.hostid# - #now()# ---")>
 		</cfloop>
 		<!--- Remove lock file --->
