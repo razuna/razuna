@@ -271,40 +271,20 @@
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset arguments.thestruct.qrycurrentversion.ver_filename_org = qrycurrentversion.ver_filename_org> 
 			<cfset arguments.thestruct.qry = qry>
+			
 			<cfif arguments.thestruct.type EQ 'img'>
-				<!--- Create folder with the version --->
-				<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" mode="775">
-				</cfif>
-				<!--- Download the original file --->
-				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
-					<cfinvokeargument name="theasset" value="#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
+				<!--- Move the current directory images to new version --->
+				<cfinvoke component="amazon" method="movefolder">
+					<cfinvokeargument name="folderpath" value="#arguments.thestruct.qry.path_to_asset#">
+					<cfinvokeargument name="folderpathdest" value="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
-				<!--- Params for resizeimage --->
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
-				<cfset arguments.thestruct.destination = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
-				<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
-				<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
-				<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
-				<cfset arguments.thestruct.newid = arguments.thestruct.therandom>
-				<cfset arguments.thestruct.thexmp.orgwidth = arguments.thestruct.qry.img_width>
-				<cfset arguments.thestruct.thexmp.orgheight = arguments.thestruct.qry.img_height>
-				<cfset arguments.thestruct.qryfile.extension = arguments.thestruct.qry.orgext>
-				<!--- resize original to thumb. This also returns the original width and height --->
-				<cfinvoke component="assets" method="resizeImage">
-					<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+				<!--- Copy the existing version images to current directory --->
+				<cfinvoke component="amazon" method="copyfolder">
+					<cfinvokeargument name="folderpath" value="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
+					<cfinvokeargument name="folderpathdest" value="#arguments.thestruct.qry.path_to_asset#">
+					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
-				<!--- Upload Thumbnail --->
-				<cfthread name="thumbupload#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#attributes.intstruct.qry.path_to_asset#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qrysettings.set2_img_format#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/playback/#attributes.intstruct.type#/#attributes.intstruct.file_id#/#attributes.intstruct.version#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qrysettings.set2_img_format#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-					</cfinvoke>
-				</cfthread>
-				<cfthread action="join" name="thumbupload#arguments.thestruct.file_id#" />
 			</cfif>
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_thumbnail#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -380,7 +360,7 @@
 		</cfquery>
 		<cfif qryv.RecordCount NEQ 0>
 			<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			<cfelse>
 				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			</cfif>
