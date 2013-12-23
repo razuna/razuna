@@ -2162,12 +2162,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfif>
 			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
 		</cfloop>
+		<!--- Flush Cache for all tenants--->
+		<cfset variables.cachetoken = resetcachetoken("settings",'true')>
 	<!--- For a single tenant --->
 	<cfelse>
 		<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=session.hostid)>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("settings")>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
