@@ -2365,7 +2365,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO news
 		(news_id, news_active)
-		VALUE(
+		VALUES (
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 		)

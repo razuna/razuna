@@ -56,7 +56,12 @@
 	<script type="text/javascript">
 		// Delete Workflow
 		function nDelete(nid){
-			$( "##news-confirm" ).dialog( "destroy" );
+			
+			// http://stackoverflow.com/questions/15763909/jquery-ui-dialog-check-if-exists-by-instance-method
+			if ($("##news-confirm").hasClass('ui-dialog-content')) {
+				$( "##news-confirm" ).dialog( "destroy" );
+			}
+
 			$( "##news-confirm" ).dialog({
 				resizable: false,
 				height: 200,
