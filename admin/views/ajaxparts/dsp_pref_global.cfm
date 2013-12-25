@@ -73,6 +73,22 @@
 	<td valign="top">Port</td>
 	<td><input type="text" name="SET2_EMAIL_SERVER_PORT" value="#prefs.SET2_EMAIL_SERVER_PORT#" size="4" class="text"></td>
 	</tr>
+
+	<tr>
+	<td valign="top">Use SSL</td>
+	<td>
+		<label><input type="radio"<cfif prefs.SET2_EMAIL_USE_SSL> checked="checked" </cfif> value="true" name="SET2_EMAIL_USE_SSL"> #defaultsObj.trans("yes")# </label>
+		<label><input type="radio"<cfif !prefs.SET2_EMAIL_USE_SSL> checked="checked" </cfif> value="false" name="SET2_EMAIL_USE_SSL"> #defaultsObj.trans("no")# </label>
+	</td>
+	</tr>
+	<tr>
+	<td valign="top">Use TLS</td>
+	<td>
+		<label><input type="radio"<cfif prefs.SET2_EMAIL_USE_TLS> checked="checked" </cfif> value="true" name="SET2_EMAIL_USE_TLS"> #defaultsObj.trans("yes")# </label>
+		<label><input type="radio"<cfif !prefs.SET2_EMAIL_USE_TLS> checked="checked" </cfif> value="false" name="SET2_EMAIL_USE_TLS"> #defaultsObj.trans("no")# </label>
+	</td>
+	</tr>
+
 	<tr>
 	<td valign="top" nowrap="true">#defaultsObj.trans("smtp_username")#</td>
 	<td><input type="text" name="SET2_EMAIL_smtp_user" value="#prefs.SET2_EMAIL_smtp_user#" size="40" class="text"><br /><em>#defaultsObj.trans("smtp_username_desc")#</em></td>

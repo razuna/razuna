@@ -62,7 +62,7 @@
 	set2_intranet_reg_emails_sub, set2_intranet_gen_download, set2_cat_intra, set2_cat_web, set2_url_website, 
 	set2_payment_pre, set2_payment_bill, set2_payment_pod, set2_payment_cc, set2_payment_cc_cards, set2_payment_paypal, 
 	set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, 
-	set2_email_server_port,
+	set2_email_server_port, set2_email_use_ssl, set2_email_use_tls,
 	<!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> 
 	set2_url_sp_video_preview, set2_vid_preview_author, set2_vid_preview_copyright, set2_cat_vid_web, set2_cat_vid_intra,
 	set2_create_vidfolders_where, set2_path_to_assets, set2_aws_bucket, set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
@@ -116,7 +116,7 @@
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER, 
-	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT
+	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT, SET2_EMAIL_USE_SSL, SET2_EMAIL_USE_TLS
 	FROM #qry_host.host_shard_group#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -796,6 +796,14 @@
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "SET2_EMAIL_SERVER_PORT")>
 			<cfif commad EQ "T">,</cfif>SET2_EMAIL_SERVER_PORT = <cfif arguments.thestruct.set2_email_server_port EQ ""><cfqueryparam value="25" cfsqltype="cf_sql_numeric"><cfelse><cfqueryparam value="#arguments.thestruct.SET2_EMAIL_SERVER_PORT#" cfsqltype="cf_sql_numeric"></cfif>
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "SET2_EMAIL_USE_SSL")>
+			<cfif commad EQ "T">,</cfif>SET2_EMAIL_USE_SSL = <cfqueryparam value="#arguments.thestruct.SET2_EMAIL_USE_SSL#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "SET2_EMAIL_USE_TLS")>
+			<cfif commad EQ "T">,</cfif>SET2_EMAIL_USE_TLS = <cfqueryparam value="#arguments.thestruct.SET2_EMAIL_USE_TLS#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "folder_in")>
@@ -1894,6 +1902,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.audios_metadata = "">
 	<cfset v.assetbox_height = "">
 	<cfset v.assetbox_width = "">
+	<!--- RAZ-2267 Set the default value --->
+	<cfset v.tab_explorer_default = 1>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2119,6 +2129,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfif custom_id EQ "assetbox_width">
 				<cfset v.assetbox_width = custom_value>
 			</cfif>
+			<!--- RAZ-2267 get the default value--->
+			<cfif custom_id EQ "tab_explorer_default">
+				<cfset v.tab_explorer_default = custom_value>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -2142,24 +2156,32 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<!--- Create directory --->
 				<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" mode="777">
 				<!--- copy the favicon.ico file --->
+				<cfif fileExists("#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico")>
 				<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" source="#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico"/>
+				</cfif>
 			</cfif>
 			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
 		</cfloop>
+		<!--- Flush Cache for all tenants--->
+		<cfset variables.cachetoken = resetcachetoken("settings",'true')>
 	<!--- For a single tenant --->
 	<cfelse>
 		<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=session.hostid)>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("settings")>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
 
-<!--- Save customization --->
+<!--- Save customization ---> 
 <cffunction name="set_customization_internal" output="false" access="private" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<cfargument name="hostid" type="numeric">
+	<!--- Raz-2267 Checked server side validation --->
+	<cfif structKeyExists(arguments.thestruct,"tab_explorer_default") AND ((arguments.thestruct.tab_explorer_default EQ 4 AND arguments.thestruct.tab_labels EQ "false") OR (arguments.thestruct.tab_explorer_default EQ 2 AND arguments.thestruct.tab_collections EQ "false"))>
+		<cfset arguments.thestruct.tab_explorer_default = 1>
+	</cfif>
 	<!--- First remove all records for this host --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#custom
@@ -2211,6 +2233,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="ad_server_port" type="string">
 	<cfargument name="ad_server_username" type="string">
 	<cfargument name="ad_server_password" type="string">
+	<cfargument name="ad_server_secure" type="string">
 	<cfargument name="ad_server_filter" type="string">
 	<cfargument name="ad_server_start" type="string">
 	<!--- Delete & Insert --->
@@ -2218,6 +2241,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfinvoke method="savesetting" thefield="ad_server_port" thevalue="#arguments.ad_server_port#" />
 	<cfinvoke method="savesetting" thefield="ad_server_username" thevalue="#arguments.ad_server_username#" />
 	<cfinvoke method="savesetting" thefield="ad_server_password" thevalue="#arguments.ad_server_password#" />
+	<cfinvoke method="savesetting" thefield="ad_server_secure" thevalue="#arguments.ad_server_secure#" />
 	<cfinvoke method="savesetting" thefield="ad_server_filter" thevalue="#arguments.ad_server_filter#" />
 	<cfinvoke method="savesetting" thefield="ad_server_start" thevalue="#arguments.ad_server_start#" />
 	<!--- Return --->
@@ -2498,21 +2522,39 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Get AD users --->
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
+
 		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
-			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-			scope="subtree" 
-			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
-			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
-			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
+			<cfset ldapfilter = "(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
 		<cfelse>
-			<cfldap server = "#arguments.thestruct.ad_server_name#"  
-			scope="subtree" 
-			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-			filter="(&(objectClass=user))" 
-			attributes="cn,company,username,firstname,lastname,mail,memberof,givenname,SamAccountname,physicalDeliveryOfficeName, department"
-			sort = "cn ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
+			<cfset ldapfilter="(&(objectClass=user))" >
 		</cfif>
+		
+		<!--- Set AD default port --->
+		<cfif Not structKeyExists(arguments.thestruct,'ad_server_port') OR arguments.thestruct.ad_server_port EQ ''>
+			<cfset arguments.thestruct.ad_server_port = 389>
+		</cfif>
+		
+		<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
+			<cfldap server = "#arguments.thestruct.ad_server_name#" 
+				username="#arguments.thestruct.ad_server_username#" 
+				password="#arguments.thestruct.ad_server_password#"
+				port = "#arguments.thestruct.ad_server_port#"
+				start = "#arguments.thestruct.ad_server_start#"
+				filter="#ldapfilter#" 
+				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				scope="subtree" action = "query"  name = "results" sort = "sAMAccountName ASC"  
+				secure = "CFSSL_BASIC" >
+		<cfelse>
+			<cfldap server = "#arguments.thestruct.ad_server_name#" 
+				username="#arguments.thestruct.ad_server_username#" 
+				password="#arguments.thestruct.ad_server_password#"
+				port = "#arguments.thestruct.ad_server_port#"
+				start = "#arguments.thestruct.ad_server_start#"
+				filter="#ldapfilter#" 
+				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				scope="subtree" action = "query"  name = "results" sort = "sAMAccountName ASC" >
+		</cfif>
+
 		<cfreturn results/>
 	</cffunction>
 		

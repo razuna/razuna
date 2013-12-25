@@ -11,7 +11,8 @@ function showwindow(theurl,thetitle,thew,thewin) {
 	$('#thewindowcontent' + thewin).html('<img src="images/loading.gif" border="0" style="padding:10px;">');
 	// Load Content into Dialog
 	$('#thewindowcontent' + thewin).load(theurl).dialog({
-		title: thetitle,
+		// RAZ-2718 Decode User's first and last name for title
+		title: decodeURI(thetitle),
 		modal: true,
 		autoOpen: false,
 		width: thew,

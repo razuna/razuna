@@ -84,6 +84,8 @@
 						<br>
 						#myFusebox.getApplicationData().defaults.trans("labels")#
 						<br />
+						<!--- RAZ-2708 Check the labels record count is less than 200 --->
+						<cfif attributes.thelabelsqry.recordcount LTE 200>
 						<select data-placeholder="Choose a label" class="chzn-select" style="width:201px;" name="labels" id="search_labels" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="attributes.thelabelsqry">
@@ -92,6 +94,25 @@
 								<option value="#l#"<cfif attributes.flabel EQ "+#l#"> selected="true"</cfif>>#label_path#</option>
 							</cfloop>
 						</select>
+						<cfelse>
+							<!--- Label text area --->
+							<div style="width:192px;">
+								<div id="lables_#attributes.thetype#" class="labelContainer" style="float:left;width:192px;" >
+									<cfloop query="attributes.thelabelsqry">
+										<cfif ListFind(evaluate("session.search.labels_#attributes.thetype#"),'#label_id#') NEQ 0>
+										<div class='singleLabel' id="#label_id#">
+											<span>#label_path#</span>
+											<a class='labelRemove'  onclick="removeLabel('0','#attributes.thetype#', '#label_id#',this)" >X</a>
+										</div>
+										</cfif>
+									</cfloop>
+								</div>
+								<!--- Select label button --->
+								<a style="float:left;clear:both;" onclick="showwindow('#myself#c.select_label_popup&file_id=0&file_type=#attributes.thetype#&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
+							</div>
+							<!--- To pass the label text values --->
+							<input type="hidden" name="labels" id="search_labels_#attributes.thetype#" value="">
+						</cfif>
 					</td>
 					<td valign="top" width="1%" nowrap="nowrap">
 						Extension

@@ -27,7 +27,18 @@
 	<!--- Section Chooser --->
 	<div id="leftchooser" style="text-decoration:none;font-weight:bold;font-size:15px;padding-bottom:20px;">
 		<div style="float:left;padding-left:10px;">
-			<a href="##" id="mainsectionchooser" onclick="$('##mainselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("log_header_folders")#</a>
+			<a href="##" id="mainsectionchooser" onclick="$('##mainselection').toggle();" class="ddicon" style="text-decoration:none;">
+				<!---RAZ-2267 Load the default explorer based on the admin customization --->
+				<cfif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 1>
+					#myFusebox.getApplicationData().defaults.trans("log_header_folders")#
+				<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 2>
+					Collections
+				<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 3>
+					Smart Folders
+				<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 4>
+					Labels
+				</cfif>
+			</a>
 		</div>
 		<div style="float:left;padding-top:3px;">
 			<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##mainselection').toggle();" class="ddicon">
@@ -48,8 +59,17 @@
 	<div id="explorer" style="margin-left:0;padding-left:0;"></div>
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
-		// Load the folders by default
+		//RAZ-2267 Load the default explorer based on the admin customization 
+		<cfif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 1>
 		$('##explorer').load('#myself#c.explorer');
+		<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 2>
+			$('##explorer').load('#myself#c.explorer_col');
+		<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 3>
+			$('##explorer').load('#myself#c.smart_folders');
+		<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 4>
+			$('##explorer').load('#myself#c.labels_list');
+		</cfif>
+		
 		// Show or hide left side
 		function hideshow(state){
 			if (state == "off"){

@@ -630,7 +630,7 @@
 		</cfmail>
 	<cfelse>
 		<!--- send message if there is a mail server set for this host --->
-		<cfmail to="issues@razuna.com" from="#arguments.thestruct.email#" subject="Error Report" username="#arguments.thestruct.qrysettings.SET2_EMAIL_SMTP_USER#" password="#arguments.thestruct.qrysettings.SET2_EMAIL_SMTP_PASSWORD#" server="#arguments.thestruct.qrysettings.SET2_EMAIL_SERVER#" port="#arguments.thestruct.qrysettings.SET2_EMAIL_SERVER_PORT#" type="text/html" timeout="900">
+		<cfmail to="issues@razuna.com" from="#arguments.thestruct.email#" subject="Error Report" username="#arguments.thestruct.qrysettings.SET2_EMAIL_SMTP_USER#" password="#arguments.thestruct.qrysettings.SET2_EMAIL_SMTP_PASSWORD#" server="#arguments.thestruct.qrysettings.SET2_EMAIL_SERVER#" port="#arguments.thestruct.qrysettings.SET2_EMAIL_SERVER_PORT#" usessl="#arguments.thestruct.qrysettings.SET2_EMAIL_USE_SSL#" usetls="#arguments.thestruct.qrysettings.SET2_EMAIL_USE_TLS#" type="text/html" timeout="900">
 		#arguments.thestruct.comment#	
 		<!--- Handle normal doc files --->
 		<cfmailparam file="#GetTempDirectory()#/#tf#">

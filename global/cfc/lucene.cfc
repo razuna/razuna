@@ -45,26 +45,18 @@
 		<!--- Delete collection --->
 		<cftry>
 			<cfset CollectionDelete(arguments.colname)>
-			<cfcatch type="any">
-				<cfset console("Error while deleting collection in function lucene.setup")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
-			<cfdirectory action="delete" directory="#expandpath("../")#WEB-INF/collections/#arguments.colname#" recurse="true" />
-			<cfcatch type="any">
-				<cfset console("Error while deleting path on disk in function lucene.setup")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfset var d = REReplaceNoCase(GetTempDirectory(),"/bluedragon/work/temp","","one")>
+			<cfdirectory action="delete" directory="#d#collections/#arguments.colname#" recurse="true" />
+			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<!--- Create collection --->
 		<cftry>
 			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
-			<cfcatch type="any">
-				<cfset console("Error while creating collection in function lucene.setup")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfcatch type="any"></cfcatch>
 		</cftry>
 	</cffunction>
 	
@@ -95,7 +87,7 @@
 		<!--- If the assetid is all it means a complete rebuild --->
 		<cfif arguments.assetid EQ "all">
 			<!--- Delete all records in the index --->
-			<cfset CollectionIndexpurge( arguments.hostid )>
+			<cfset setup( colname=arguments.hostid )>
 			<!--- Set all records to non indexed --->
 			<cfquery datasource="#arguments.dsn#">
 			UPDATE #arguments.prefix#images
@@ -143,27 +135,30 @@
 		<cfset arguments.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Loop over the recordset --->
 		<cfloop query="qry">
+			<cfset consoleoutput(true)>
+			<cfset console("Start indexing: #arguments.hostid# - #now()#")>
 			<!--- Create tt for thread --->
-			<cfset tt = createUUID("")>
+			<!--- <cfset tt = createUUID("")> --->
 			<!--- Put vars into struct --->
 			<cfset arguments.theid = theid>
 			<cfset arguments.cat = cat>
-			<cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low">
+			<!--- <cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low"> --->
 				<cfinvoke method="index_update_thread">
-					<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
-					<cfinvokeargument name="assetid" value="#attributes.intstruct.theid#" />
-					<cfinvokeargument name="category" value="#attributes.intstruct.cat#" />
-					<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
-					<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
-					<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
-					<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
-					<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
-					<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
-					<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+					<cfinvokeargument name="thestruct" value="#arguments#" />
+					<cfinvokeargument name="assetid" value="#arguments.theid#" />
+					<cfinvokeargument name="category" value="#arguments.cat#" />
+					<cfinvokeargument name="dsn" value="#arguments.dsn#" />
+					<cfinvokeargument name="online" value="#arguments.online#" />
+					<cfinvokeargument name="notfile" value="#arguments.notfile#" />
+					<cfinvokeargument name="prefix" value="#arguments.prefix#" />
+					<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+					<cfinvokeargument name="storage" value="#arguments.storage#" />
+					<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
 				</cfinvoke>
-			</cfthread>
+			<!--- </cfthread> --->
 			<!--- Wait and join thread --->
-			<cfthread name="#tt#" action="join" />
+			<!--- <cfthread name="#tt#" action="join" /> --->
+			<cfset console("--- DONE indexing: #arguments.hostid# - #now()# ---")>
 		</cfloop>
 		<!--- Remove lock file --->
 		<cftry>
@@ -249,37 +244,38 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-				<cfscript>
-					args = {
-					collection : arguments.hostid,
-					query : qry_all,
-					category : "thecategory",
-					categoryTree : "id",
-					key : "id",
-					title : "id",
-					body : "id",
-					custommap :{
-						id : "id",
-						filename : "filename",
-						filenameorg : "filenameorg",
-						keywords : "keywords",
-						description : "description",
-						rawmetadata : "rawmetadata",
-						extension : "theext",
-						author : "author",
-						rights : "rights",
-						authorsposition : "authorsposition", 
-						captionwriter : "captionwriter", 
-						webstatement : "webstatement", 
-						rightsmarked : "rightsmarked",
-						labels : "labels",
-						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath",
-						folder : "folder"
-						}
-					};
-					results = CollectionIndexCustom( argumentCollection=args );
-				</cfscript>
+				<cfloop query="qry_all">
+					<cfscript>
+						args = {
+						collection : arguments.hostid,
+						category : "#thecategory#",
+						categoryTree : "#id#",
+						key : "#id#",
+						title : "#id#",
+						body : "#id#",
+						custommap :{
+							id : "#id#",
+							filename : "#filename#",
+							filenameorg : "#filenameorg#",
+							keywords : "#keywords#",
+							description : "#description#",
+							rawmetadata : "#rawmetadata#",
+							extension : "#theext#",
+							author : "#author#",
+							rights : "#rights#",
+							authorsposition : "#authorsposition#", 
+							captionwriter : "#captionwriter#", 
+							webstatement : "#webstatement#", 
+							rightsmarked : "#rightsmarked#",
+							labels : "#labels#",
+							customfieldvalue : "#customfieldvalue#",
+							folderpath : "#folderpath#",
+							folder : "#folder#"
+							}
+						};
+						results = CollectionIndexCustom( argumentCollection=args );
+					</cfscript>
+				</cfloop>
 				<!--- Index only doc files --->
 				<cfif qry_all.link_kind NEQ "url" AND arguments.notfile EQ "F">
 					<cftry>
@@ -391,64 +387,65 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-				<cfscript>
-					args = {
-					collection : arguments.hostid,
-					query : qry_all,
-					category : "thecategory",
-					categoryTree : "id",
-					key : "id",
-					title : "id",
-					body : "id",
-					custommap :{
-						id : "id",
-						filename : "filename",
-						filenameorg : "filenameorg",
-						keywords : "keywords",
-						description : "description",
-						rawmetadata : "rawmetadata",
-						extension : "theext",
-						subjectcode : "subjectcode",
-						creator : "creator",
-						title : "title", 
-						authorsposition : "authorsposition", 
-						captionwriter : "captionwriter", 
-						ciadrextadr : "ciadrextadr", 
-						category : "category",
-						supplementalcategories : "supplementalcategories", 
-						urgency : "urgency",
-						ciadrcity : "ciadrcity", 
-						ciadrctry : "ciadrctry", 
-						location : "location", 
-						ciadrpcode : "ciadrpcode", 
-						ciemailwork : "ciemailwork", 
-						ciurlwork : "ciurlwork", 
-						citelwork : "citelwork", 
-						intellectualgenre : "intellectualgenre", 
-						instructions : "instructions", 
-						source : "source",
-						usageterms : "usageterms", 
-						copyrightstatus : "copyrightstatus", 
-						transmissionreference : "transmissionreference", 
-						webstatement : "webstatement", 
-						headline : "headline", 
-						datecreated : "datecreated", 
-						city : "city", 
-						ciadrregion : "ciadrregion", 
-						country : "country", 
-						countrycode : "countrycode", 
-						scene : "scene", 
-						state : "state", 
-						credit : "credit", 
-						rights : "rights",
-						labels : "labels",
-						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath",
-						folder : "folder"
-						}
-					};
-					results = CollectionIndexCustom( argumentCollection=args );
-				</cfscript>
+				<cfloop query="qry_all">
+					<cfscript>
+						args = {
+						collection : arguments.hostid,
+						category : "#thecategory#",
+						categoryTree : "#id#",
+						key : "#id#",
+						title : "#id#",
+						body : "#id#",
+						custommap :{
+							id : "#id#",
+							filename : "#filename#",
+							filenameorg : "#filenameorg#",
+							keywords : "#keywords#",
+							description : "#description#",
+							rawmetadata : "#rawmetadata#",
+							extension : "#theext#",
+							subjectcode : "#subjectcode#",
+							creator : "#creator#",
+							title : "#title#", 
+							authorsposition : "#authorsposition#", 
+							captionwriter : "#captionwriter#", 
+							ciadrextadr : "#ciadrextadr#", 
+							category : "#category#",
+							supplementalcategories : "#supplementalcategories#", 
+							urgency : "#urgency#",
+							ciadrcity : "#ciadrcity#", 
+							ciadrctry : "#ciadrctry#", 
+							location : "#location#", 
+							ciadrpcode : "#ciadrpcode#", 
+							ciemailwork : "#ciemailwork#", 
+							ciurlwork : "#ciurlwork#", 
+							citelwork : "#citelwork#", 
+							intellectualgenre : "#intellectualgenre#", 
+							instructions : "#instructions#", 
+							source : "#source#",
+							usageterms : "#usageterms#", 
+							copyrightstatus : "#copyrightstatus#", 
+							transmissionreference : "#transmissionreference#", 
+							webstatement : "#webstatement#", 
+							headline : "#headline#", 
+							datecreated : "#datecreated#", 
+							city : "#city#", 
+							ciadrregion : "#ciadrregion#", 
+							country : "#country#", 
+							countrycode : "#countrycode#", 
+							scene : "#scene#", 
+							state : "#state#", 
+							credit : "#credit#", 
+							rights : "#rights#",
+							labels : "#labels#",
+							customfieldvalue : "#customfieldvalue#",
+							folderpath : "#folderpath#",
+							folder : "#folder#"
+							}
+						};
+						results = CollectionIndexCustom( argumentCollection=args );
+					</cfscript>
+				</cfloop>
 				<!--- Update database --->
 				<cfquery datasource="#arguments.dsn#">
 				UPDATE #arguments.prefix#images
@@ -585,32 +582,33 @@
 			</cfif>
 			<!--- Only for video and audio files --->
 			<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
-				<!--- Indexing --->
-				<cfscript>
-				args = {
-				collection : arguments.hostid,
-				query : qry_all,
-				category : "thecategory",
-				categoryTree : "id",
-				key : "id",
-				title : "id",
-				body : "id",
-				custommap :{
-					id : "id",
-					filename : "filename",
-					filenameorg : "filenameorg",
-					keywords : "keywords",
-					description : "description",
-					rawmetadata : "rawmetadata",
-					extension : "theext",
-					labels : "labels",
-					customfieldvalue : "customfieldvalue",
-					folderpath : "folderpath",
-					folder : "folder"
-					}
-				};
-				results = CollectionIndexCustom( argumentCollection=args );
-				</cfscript>
+				<cfloop query="qry_all">
+					<!--- Indexing --->
+					<cfscript>
+						args = {
+						collection : arguments.hostid,
+						category : "#thecategory#",
+						categoryTree : "#id#",
+						key : "#id#",
+						title : "#id#",
+						body : "#id#",
+						custommap :{
+							id : "#id#",
+							filename : "#filename#",
+							filenameorg : "#filenameorg#",
+							keywords : "#keywords#",
+							description : "#description#",
+							rawmetadata : "#rawmetadata#",
+							extension : "#theext#",
+							labels : "#labels#",
+							customfieldvalue : "#customfieldvalue#",
+							folderpath : "#folderpath#",
+							folder : "#folder#"
+							}
+						};
+						results = CollectionIndexCustom( argumentCollection=args );
+					</cfscript>
+				</cfloop>
 			</cfif>
 			<!--- Flush Cache --->
 			<cfquery dataSource="#arguments.dsn#">
@@ -791,7 +789,7 @@
 	<cffunction name="escapelucenechars" returntype="String" hint="Escapes lucene special characters in a given string">
 		<!--- 
 		The following lucene special characters will be escaped in searches
-		\ ! {} [] - && || 
+		\ ! {} [] - && || ()
 		The following lucene special characters  will NOT be escaped as we want to allow users to use these in their search criterion 
 		+ " ~ * ? : ^
 		--->
@@ -811,6 +809,7 @@
 		<cfreturn lucenestr>	
 	</cffunction>
 
+
 	<!--- SEARCH --->
 	<cffunction name="search" access="remote" output="false" returntype="query" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,30)#">
 		<cfargument name="criteria" type="string">
@@ -827,7 +826,19 @@
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
-			<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#") keywords:(#escapelucenechars(arguments.criteria)#) description:("#arguments.criteria#") id:(#escapelucenechars(arguments.criteria)#) labels:(#escapelucenechars(arguments.criteria)#) customfieldvalue:("#arguments.criteria#")'>
+			<cfset arguments.criteria = escapelucenechars(arguments.criteria)>
+			 <!--- Replace spaces with AND if query doesn't contain AND, OR  or " --->
+			<cfif find(" AND ", arguments.criteria) EQ 0 AND find(" OR ", arguments.criteria) EQ 0 AND find('"', arguments.criteria) EQ 0 >
+				<cfset arguments.criteria_sp = replace(arguments.criteria,chr(32)," AND ", "ALL")>
+			<cfelse>	
+				<cfset arguments.criteria_sp = arguments.criteria>
+			</cfif>
+			<cfif arguments.criteria CONTAINS '"' OR arguments.criteria CONTAINS "*" >
+				<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#)'>
+			<cfelse>
+				<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#")'>
+			</cfif>
+			<cfset arguments.criteria = arguments.criteria & ' keywords:(#arguments.criteria_sp#) description:(#arguments.criteria_sp#) id:(#arguments.criteria_sp#) labels:(#arguments.criteria_sp#) customfieldvalue:(#arguments.criteria_sp#)'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>

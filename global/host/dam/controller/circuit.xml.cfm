@@ -384,12 +384,21 @@
 	<fuseaction name="forgotpasssend">
 		<set name="attributes.emailnotfound" value="F" overwrite="false" />
 		<set name="attributes.passsend" value="F" overwrite="false" />
+		<set name="attributes.aduser" value="F" overwrite="false" />
 		<!-- Check the email address of the user -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="sendpassword(attributes.email)" returnvariable="status" />
 		<!-- If the user is found an email has been sent thus return to the main layout with a message -->
 		<if condition="status.notfound EQ 'F'">
-    		<true>
-				<set name="attributes.passsend" value="T" />
+			<true>
+				<!-- Check the user is AD user -->
+				<if condition="status.aduser EQ 'T'">
+					<true>
+						<set name="attributes.aduser" value="T" />
+					</true>
+					<false>
+						<set name="attributes.passsend" value="T" />
+					</false>
+				</if>
 			</true>
 			<false>
 				<set name="attributes.emailnotfound" value="T" />
@@ -4665,6 +4674,13 @@
 
 	<!-- Simple Search -->
 	<fuseaction name="search_simple">
+		<!-- Params -->
+		<!-- RAZ-2708 set value to session -->
+		<set name="session.search.labels_all" value="" />
+		<set name="session.search.labels_img" value="" />
+		<set name="session.search.labels_aud" value="" />
+		<set name="session.search.labels_vid" value="" />
+		<set name="session.search.labels_doc" value="" />
 		<!-- Set search simple  -->
 		<set name="attributes.search_simple" value="true" />
 		<!-- Set database  -->
@@ -5096,6 +5112,12 @@
 	
 	<!-- Search: Advanced -->
 	<fuseaction name="search_advanced">
+		<!-- Params -->
+		<set name="session.search.labels_all" value="" />
+		<set name="session.search.labels_img" value="" />
+		<set name="session.search.labels_aud" value="" />
+		<set name="session.search.labels_vid" value="" />
+		<set name="session.search.labels_doc" value="" />
 		<if condition="structkeyexists(attributes,'fromshare')">
 			<true>
 				<set name="attributes.fromshare" value="true" />
@@ -5963,6 +5985,7 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="ad_server_port" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="ad_server_username" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="ad_server_secure" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="ad_server_filter" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="ad_server_start" />
 		<!-- Show -->
@@ -5971,7 +5994,7 @@
 	<!-- For saving AD Server customization -->
 	<fuseaction name="admin_ad_services_save">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_filter,attributes.ad_server_start)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_secure,attributes.ad_server_filter,attributes.ad_server_start)" />
 	</fuseaction>
 	<!-- Users Search -->
 	<fuseaction name="ad_server_users_list">
@@ -6781,6 +6804,8 @@
 	</fuseaction>
 	<!-- For saving customization -->
 	<fuseaction name="admin_customization_save">
+		<!-- Path -->
+		<set name="attributes.thepathup" value="#ExpandPath('../../')#" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_customization(attributes)" />
 	</fuseaction>
@@ -9431,7 +9456,54 @@
 	<!-- Add or Remove the label for asset -->
 	<fuseaction name="asset_label_add_remove">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="asset_label_add_remove(attributes)" />
+		<if condition="attributes.fileid NEQ '0'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().labels" methodcall="asset_label_add_remove(attributes)" />
+			</true>
+			<false>
+				<!-- RAZ - 2708 advanced search : Set selected labels id to assign the session variable  -->
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'all'">
+					<true>
+						<set name="session.search.labels_all" value="#listappend(session.search.labels_all,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search.labels_all" value="#ListDeleteAt( session.search.labels_all, ListFind(session.search.labels_all,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'img'">
+					<true>
+						<set name="session.search.labels_img" value="#listappend(session.search.labels_img,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search.labels_img" value="#ListDeleteAt( session.search.labels_img, ListFind(session.search.labels_img,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'aud'">
+					<true>
+						<set name="session.search.labels_aud" value="#listappend(session.search.labels_aud,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search.labels_aud" value="#ListDeleteAt( session.search.labels_aud, ListFind(session.search.labels_aud,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'vid'">
+					<true>
+						<set name="session.search.labels_vid" value="#listappend(session.search.labels_vid,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search.labels_vid" value="#ListDeleteAt( session.search.labels_vid, ListFind(session.search.labels_vid,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+				<if condition="attributes.checked EQ 'true' AND attributes.thetype EQ 'doc'">
+					<true>
+						<set name="session.search.labels_doc" value="#listappend(session.search.labels_doc,attributes.labels,',')#" />
+					</true>
+					<false>
+						<set name="session.search.labels_doc" value="#ListDeleteAt( session.search.labels_doc, ListFind(session.search.labels_doc,attributes.labels,','), ',')#" />
+					</false>
+				</if>
+			</false>
+		</if>
 	</fuseaction>
 
 </circuit>
