@@ -251,8 +251,17 @@
 <cffunction hint="GET THE GROUPS FOR THIS FOLDER" name="getfoldergroups" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="qrygroup" required="yes" type="query">
+	<cfargument name="in_folder_group" required="no" type="string" default="no" hint="Include the folder permission of current folder_id">
 	<!--- Set --->
 	<cfset var thegroups = 0>
+	<cfset var listgroups="">
+	<!--- Check the current folder permission included or not  --->
+	<cfif structKeyExists(arguments,'in_folder_group') AND arguments.in_folder_group EQ 'yes'>
+		<cfset listgroups = 0>
+		<cfset listgroups = listappend(listgroups,'#ValueList(arguments.qrygroup.grp_id)#', ',')>
+	<cfelse>
+		<cfset listgroups = listappend(listgroups,'#ValueList(arguments.qrygroup.grp_id)#', ',')>
+	</cfif>
 	<!--- Query --->
 	<cfif arguments.qrygroup.recordcount NEQ 0>
 		<cfquery datasource="#variables.dsn#" name="thegroups" cachedwithin="1" region="razcache">
@@ -261,7 +270,7 @@
 		WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND grp_id_r IN (
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qrygroup.grp_id)#" list="true">
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listgroups#" list="true">
 						)
 		</cfquery>
 	</cfif>
@@ -5500,27 +5509,37 @@
 <!--- Copy THE FOLDER TO THE GIVEN POSITION --->
 <cffunction hint="COPY THE FOLDER TO THE GIVEN POSITION" name="copy" output="true">
 	<cfargument name="thestruct" type="struct">
+
 	<cftry>
 		<!--- Get the reocord of the folder to be copied --->
 		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
 		</cfinvoke>
 		<cfif arguments.thestruct.count EQ 0>
-			<cfset arguments.thestruct.root_copy_folder_id = arguments.thestruct.folder_id >
+			<!--- Get all the group --->
+			<cfinvoke component="global.cfc.groups" method="getall" returnvariable="arguments.thestruct.qry_groups">
+				<cfinvokeargument name="mod_id" value="1">
+				<cfinvokeargument name="host_id" value="#session.hostid#">
+			</cfinvoke>
+			<!--- Parent folderId --->
+			<cfset arguments.thestruct.root_copy_folder_id = arguments.thestruct.intofolderid >
 		</cfif>
 		<!--- RAZ- 273 Copy folder have a inherit permission to checked  --->
 		<cfif structKeyExists(arguments.thestruct,"inherit_perm") AND arguments.thestruct.inherit_perm EQ 'true'>
 			<!--- Get the reocord of the folder to set the access permission --->
-			<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
+			<cfinvoke method="getfoldergroups" returnvariable="tocopyfoldergroups">
 				<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.root_copy_folder_id#">
+				<cfinvokeargument name="qrygroup" value="#arguments.thestruct.qry_groups#">
+				<cfinvokeargument name="in_folder_group" value="yes">
 			</cfinvoke>
 		<cfelse>
 			<!--- Get the reocord of the folder to set the access permission --->
-			<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
+			<cfinvoke method="getfoldergroups" returnvariable="tocopyfoldergroups">
 				<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+				<cfinvokeargument name="qrygroup" value="#arguments.thestruct.qry_groups#">
+				<cfinvokeargument name="in_folder_group" value="yes">
 			</cfinvoke>
 		</cfif>
-		
 		<!--- Get the reocord of the folder into which the folder is to be copied --->
 		<cfinvoke method="getfolder" returnvariable="intofolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.intofolderid#">
