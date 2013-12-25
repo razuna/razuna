@@ -124,6 +124,19 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
+		<!--- If update number is lower then 19 (v. 1.6.3) --->
+		<cfif updatenumber.opt_value LT 19>
+			<!--- Most recently updated --->
+			<cftry>
+				<cfquery dataSource="razuna_default">
+				alter table razuna_config add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> conf_wl_show_updates varchar(200) DEFAULT 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfif>
+		
 		<!--- If update number is lower then 17 (v. 1.6.2) --->
 		<cfif updatenumber.opt_value LT 18>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->

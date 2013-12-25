@@ -1134,7 +1134,7 @@
 		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
-		conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
+		conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token,conf_wl_show_updates
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -1324,6 +1324,7 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<cfset application.razuna.show_recent_updates = qry.conf_wl_show_updates>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1363,7 +1364,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_aka_token,
-	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl
+	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl,conf_wl_show_updates
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope --->
@@ -1390,6 +1391,7 @@
 	<cfelse>
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
+	<cfset application.razuna.show_recent_updates = qry.conf_wl_show_updates>
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -2272,7 +2274,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Set ISP --->
 	<cfquery datasource="razuna_default">
 	UPDATE razuna_config
-	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
+	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">,
+	conf_wl_show_updates = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.show_updates#">
 	</cfquery>
 	<!--- Enable cron directory --->
 	<cfset CronSetDirectory("/cron")>

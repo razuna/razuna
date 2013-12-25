@@ -327,6 +327,16 @@
 						</if>
 		  			</true>
 		  		</if>
+				<!-- Most Recently added assets -->
+				<if condition="application.razuna.show_recent_updates">
+					<true>
+						<!-- Params -->
+						<set name="attributes.logswhat" value="log_assets" />
+						<set name="attributes.is_dashboard_update" value="yes" />
+						<!-- CFC: Get log -->
+						<invoke object="myFusebox.getApplicationData().log" methodcall="get_log_assets(attributes)" returnvariable="attributes.qry_log" />
+		  			</true>
+		  		</if>
 				<!-- CFC: Get languages -->
 				<do action="languages" />
 				<!-- CFC: Custom fields -->
