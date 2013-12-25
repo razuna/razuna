@@ -6219,4 +6219,9 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Subscribe E-mail notification --->
+<cffunction name="subscribe" access="public" output="true">
+	<cfargument name="thestruct" type="struct" required="true">
+</cffunction>
+
 </cfcomponent>

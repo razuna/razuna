@@ -861,5 +861,9 @@
 	<fuseaction name="search_label_for_asset">
   		<include template="dsp_search_label_for_asset" />
 	</fuseaction>
+	<!-- Folder subscribe -->
+	<fuseaction name="subscribe">
+		<include template="dsp_subscribe" />
+	</fuseaction>
 
 </circuit>

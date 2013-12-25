@@ -124,6 +124,28 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
+		<!--- If update number is lower then 18 (v. 1.6.3) --->
+		<cfif updatenumber.opt_value LT 19>
+			<cftry>
+				<!--- Folder subscribe --->
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_folder_subscribe 
+				(	
+					fs_id 	 					#thevarchar#(100),
+					host_id						#theint#,
+					folder_id					#thevarchar#(100),
+					user_id						#thevarchar#(100),
+					mail_interval_in_hours		#theint#(6),
+					last_mail_notification_time #thetimestamp#,
+			 		PRIMARY KEY (fs_id)
+				)
+				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfif>
 		<!--- If update number is lower then 17 (v. 1.6.2) --->
 		<cfif updatenumber.opt_value LT 18>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->

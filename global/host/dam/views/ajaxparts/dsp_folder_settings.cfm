@@ -35,6 +35,8 @@
 				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 				<!--- Thumbnail --->
 				<li><a href="##thumbnail" >#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</a></li>
+				<!--- Subscribe --->
+				<li><a href="##subscribe" onclick="$('##subscribe').load('#myself#c.subscribe');savefolderforms();" rel="prefetch">Subscribe</a></li>
 			</cfif>
 		</ul>
 		<!--- Properties --->
@@ -48,6 +50,8 @@
 			<div id="thumbnail">
 				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" style="border:0px;width:100%;height:380px;"></iframe>
 			</div>
+			<!--- Subscribe --->
+			<div id="subscribe">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		</cfif>
 	</div>
 	<!--- Activate the Tabs --->

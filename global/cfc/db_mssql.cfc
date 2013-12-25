@@ -2349,6 +2349,20 @@
 		)
 		</cfquery>
 		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100),
+			host_id 					int,
+			folder_id 					varchar(100),
+			user_id						varchar(100),
+			mail_interval_in_hours		int,
+			last_mail_notification_time datetime,
+			PRIMARY KEY (fs_id)
+		)
+		</cfquery>
+		
 	</cffunction>
 	
 	<!--- Create Indexes --->

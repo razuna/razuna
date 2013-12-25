@@ -9505,5 +9505,17 @@
 			</false>
 		</if>
 	</fuseaction>
+	
+	<!-- Folder subscribe -->
+	<fuseaction name="subscribe">
+		<!-- Param -->
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<set name="attributes.emailnotify" value="0" overwrite="false" />
+		<set name="attributes.emailinterval" value="0" overwrite="false" />
+		<!-- CFC: Subscribe -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
+		<!-- Show -->
+		<do action="ajax.subscribe" />
+	</fuseaction>
 
 </circuit>

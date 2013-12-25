@@ -2327,6 +2327,20 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		)
 		</cfquery>
 		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar2(100 char) NOT NULL,
+			host_id 					number DEFAULT NULL,
+			folder_id 					varchar2(100 char) DEFAULT NULL,
+			user_id						varchar2(100 char) DEFAULT NULL,
+			mail_interval_in_hours		number(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			PRIMARY KEY (fs_id)
+		)
+		</cfquery>
+		
 	</cffunction>
 	
 	

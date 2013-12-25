@@ -2538,6 +2538,21 @@
 		#this.tableoptions#
 		</cfquery>
 		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100) NOT NULL,
+			host_id 					int DEFAULT NULL,
+			folder_id 					varchar(100) DEFAULT NULL,
+			user_id						varchar(100) DEFAULT NULL,
+			mail_interval_in_hours		int(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (fs_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
 	</cffunction>
 	
 	<!--- Clear database completely --->
