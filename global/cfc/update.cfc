@@ -135,10 +135,6 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-		</cfif>
-		
-		<!--- If update number is lower then 17 (v. 1.6.2) --->
-		<cfif updatenumber.opt_value LT 18>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
