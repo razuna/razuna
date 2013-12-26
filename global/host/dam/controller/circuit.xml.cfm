@@ -9507,15 +9507,21 @@
 	</fuseaction>
 	
 	<!-- Folder subscribe -->
-	<fuseaction name="subscribe">
+	<fuseaction name="folder_subscribe">
 		<!-- Param -->
 		<set name="attributes.theid" value="0" overwrite="false" />
-		<set name="attributes.emailnotify" value="0" overwrite="false" />
+		<set name="attributes.emailnotify" value="no" overwrite="false" />
 		<set name="attributes.emailinterval" value="0" overwrite="false" />
-		<!-- CFC: Subscribe -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
+		<!-- XFA -->
+		<xfa name="submitfolderform" value="c.folder_subscribe_save" />
 		<!-- Show -->
-		<do action="ajax.subscribe" />
+		<do action="ajax.folder_subscribe" />
 	</fuseaction>
 
+	<!-- Save Folder subscribe -->
+	<fuseaction name="folder_subscribe_save">
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<!-- CFC: Subscribe -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
+	</fuseaction>
 </circuit>

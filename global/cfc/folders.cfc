@@ -6222,6 +6222,49 @@
 <!--- Subscribe E-mail notification --->
 <cffunction name="subscribe" access="public" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Subscribe details --->
+	<cfquery datasource="#application.razuna.datasource#" name="folder_subscribe">
+		SELECT * 
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	</cfquery>
+	<!--- Subscribe : Yes or No --->
+	<cfif arguments.thestruct.emailnotify EQ 'no'>
+		<!--- Delete Subscribe details --->
+		<cfquery datasource="#application.razuna.datasource#" name="delete_subscribe">
+			DELETE FROM #session.hostdbprefix#folder_subscribe
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+			AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+		</cfquery>
+	<cfelse>
+		<cfif folder_subscribe.recordcount NEQ 0>
+			<!--- Update Subscribe --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#folder_subscribe
+				SET 
+				fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+				mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+				AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+			</cfquery>
+		<cfelse>
+			<!--- Insert Subscribe --->
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folder_subscribe
+				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				)
+			</cfquery>
+		</cfif>
+	</cfif>
 </cffunction>
 
 </cfcomponent>

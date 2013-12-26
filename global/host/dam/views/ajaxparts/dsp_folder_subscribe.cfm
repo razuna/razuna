@@ -24,17 +24,17 @@
 *
 --->
 <cfoutput>
-	<form name="form_folder_subscribe#attributes.theid#" action="#self#" method="post" id="form_folder_subscribe#attributes.theid#" onsubmit="savesubscribe();return false;">
-	<input type="hidden" name="#theaction#" value="c.subscribe">
+	<form name="form_folder_subscribe#attributes.theid#" action="#self#" method="post" id="form_folder_subscribe#attributes.theid#" onsubmit="savesubscribe('#attributes.theid#');return false;">
+	<input type="hidden" name="#theaction#" value="#xfa.submitfolderform#">
 	<input type="hidden" name="theid" value="#attributes.theid#">
-	<div id="folder" style="width:741px;padding-bottom:60px;">
+	<div id="folder#attributes.theid#" style="width:741px;padding-bottom:60px;">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<!--- Subscribe for E-mail notification --->
 			<tr>
 				<th colspan="4">Subscribe</th>
 			</tr>
 			<tr>
-				<td><input type="radio" value="yes" name="emailnotify" id="emailnotify" checked="checked">Yes</td>
+				<td><input type="radio" value="yes" name="emailnotify" checked="checked">Yes</td>
 				<td><input type="radio" value="no" name="emailnotify">No</td>
 			</tr>
 			<tr class="list">
@@ -45,16 +45,17 @@
 				<th colspan="4">E-mail notification interval</th>
 			</tr>
 			<tr>
-				<td width="1%" nowrap align="center"><input type="radio" value="1" name="emailinterval" id="emailinterval" checked="checked">1 hour</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="1" name="emailinterval" checked="checked">1 hour</td>
 				<td width="1%" nowrap align="center"><input type="radio" value="3" name="emailinterval">3 hour</td>
 				<td width="1%" nowrap align="center"><input type="radio" value="6" name="emailinterval">6 hour</td>
-				<td width="1%" nowrap align="center"><input type="radio" value="24" name="emailinterval">12 hour</td>
-				<td width="1%" nowrap align="center"><input type="radio" value="168" name="emailinterval">Every day</td>
-				<td><input type="radio" value="" name="week">Once a week</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="12" name="emailinterval">12 hour</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="24" name="emailinterval">Every day</td>
+				<td><input type="radio" value="168" name="emailinterval">Once a week</td>
 			</tr>
 		</table>
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
-			<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" onsubmit="savesubscribe();return false;">
+			<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" >
+			<div id="updatetextshare" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
 	</div>
 	</form>

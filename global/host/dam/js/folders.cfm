@@ -243,4 +243,21 @@
 		</cfoutput></cfloop>
 		return encodeURIComponent(searchtext);
 	}
+	// when saving subscribe only
+	function savesubscribe(theid){
+		var url = formaction("form_folder_subscribe" + theid);
+		var items = formserialize("form_folder_subscribe" + theid);
+		// Submit Form
+		$.ajax({
+			type: "POST",
+			url: url,
+			data: items,
+			success: function(theid){
+				// Feedback
+				$('#updatetextshare').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
+				$("#updatetextshare").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+			}
+		});
+	}
+
 </script>

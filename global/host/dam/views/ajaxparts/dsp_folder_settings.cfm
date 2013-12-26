@@ -36,7 +36,7 @@
 				<!--- Thumbnail --->
 				<li><a href="##thumbnail" >#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</a></li>
 				<!--- Subscribe --->
-				<li><a href="##subscribe" onclick="$('##subscribe').load('#myself#c.subscribe');savefolderforms();" rel="prefetch">Subscribe</a></li>
+				<li><a href="##subscribe" onclick="$('##subscribe').load('#myself#c.folder_subscribe&theid=#attributes.folder_id#');savefolderforms();" rel="prefetch">Subscribe</a></li>
 			</cfif>
 		</ul>
 		<!--- Properties --->
