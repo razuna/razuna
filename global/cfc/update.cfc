@@ -145,6 +145,17 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
+			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+			<cfset var newschid = createuuid()>
+			<cfschedule action="update"
+				task="RazScheduledUploadEvent[#newschid#]" 
+				operation="HTTPRequest"
+				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="120"
+			>
 		</cfif>
 		<!--- If update number is lower then 17 (v. 1.6.2) --->
 		<cfif updatenumber.opt_value LT 18>

@@ -34,8 +34,8 @@
 				<th colspan="4">Subscribe</th>
 			</tr>
 			<tr>
-				<td><input type="radio" value="yes" name="emailnotify" checked="checked">Yes</td>
-				<td><input type="radio" value="no" name="emailnotify">No</td>
+				<td><input type="radio" value="yes" name="emailnotify">Yes</td>
+				<td><input type="radio" value="no" name="emailnotify" checked="checked">No</td>
 			</tr>
 			<tr class="list">
 				<td></td>

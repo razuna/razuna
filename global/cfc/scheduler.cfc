@@ -700,4 +700,74 @@
 	<cfreturn doit>
 </cffunction>
 
+<!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
+<cffunction name="folder_subscribe_task" output="true" access="public" >
+
+	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
+		SELECT * FROM #session.hostdbprefix#folder_subscribe 
+		WHERE last_mail_notification_time + mail_interval_in_hours > <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+	</cfquery>
+
+	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
+
+	<cfoutput query="qGetUserSubscriptions">
+		<cfinvoke component="folders" method="init" returnvariable="foldersObj" />
+		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
+		
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
+			SELECT * FROM (
+
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#files tAsset  ON tLog.asset_id_r = tAsset.file_id 
+				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
+				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+
+			UNION ALL
+
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#videos tAsset ON tLog.asset_id_r = tAsset.vid_id 
+				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
+				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+			
+			UNION ALL
+
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#audios tAsset ON tLog.asset_id_r = tAsset.aud_id 
+				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
+				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+			UNION ALL
+
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#images tAsset ON tLog.asset_id_r = tAsset.img_id 
+				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
+				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+				) l
+			LEFT JOIN users u ON l.log_user = u.user_id
+		</cfquery>
+
+		<table>
+			<tr>
+				<th nowrap="true">Date</th>
+				<th nowrap="true">Time</th>
+				<th >Description</th>
+				<th nowrap="true">Action</th>
+				<th nowrap="true">Type of file</th>
+				<th nowrap="true">User</th>
+			</tr>
+		<cfloop query="qGetUpdatedAssets">
+			<tr >
+				<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
+				<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
+				<td valign="top">#qGetUpdatedAssets.log_desc#</td>
+				<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
+				<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
+				<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
+			</tr>
+		</cfloop>
+		</table>
+
+		<cfquery datasource="#application.razuna.datasource#" name="update">
+			UPDATE #session.hostdbprefix#folder_subscribe 
+			SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
+		</cfquery>
+	</cfoutput>
+</cffunction>
+
 </cfcomponent>

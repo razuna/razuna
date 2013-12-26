@@ -6223,7 +6223,7 @@
 <cffunction name="subscribe" access="public" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
 	<!--- Subscribe details --->
-	<cfquery datasource="#application.razuna.datasource#" name="folder_subscribe">
+	<cfquery datasource="#application.razuna.datasource#" name="foldersubscribe">
 		SELECT * 
 		FROM #session.hostdbprefix#folder_subscribe
 		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
@@ -6232,13 +6232,13 @@
 	<!--- Subscribe : Yes or No --->
 	<cfif arguments.thestruct.emailnotify EQ 'no'>
 		<!--- Delete Subscribe details --->
-		<cfquery datasource="#application.razuna.datasource#" name="delete_subscribe">
+		<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#folder_subscribe
 			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
 			AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 		</cfquery>
 	<cfelse>
-		<cfif folder_subscribe.recordcount NEQ 0>
+		<cfif foldersubscribe.recordcount NEQ 0>
 			<!--- Update Subscribe --->
 			<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#folder_subscribe
