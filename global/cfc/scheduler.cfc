@@ -702,18 +702,29 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
-
+	<cfargument name="thestruct" type="struct" required="yes">
+	<!--- Get User subscribed folders --->
 	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
 		SELECT * FROM #session.hostdbprefix#folder_subscribe 
-		WHERE last_mail_notification_time + mail_interval_in_hours > <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+		WHERE 
+		<!--- H2 or MSSQL --->
+		<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
+			DATEADD(HOUR, mail_interval_in_hours, last_mail_notification_time)
+		<!--- MYSQL --->
+		<cfelseif application.razuna.thedatabase EQ "mysql">
+			DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
+		<!--- Oracle, DB2 ?? --->	
+		</cfif>
+		> <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 	</cfquery>
-
+	<!--- Date Format --->
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
-
+	<!--- Get Assets Log of Subscribed folders --->
 	<cfoutput query="qGetUserSubscriptions">
 		<cfinvoke component="folders" method="init" returnvariable="foldersObj" />
+		<!--- Get Sub-folders of Folder subscribe --->
 		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
-		
+		<!--- Get Updated Assets --->
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
 			SELECT * FROM (
 
@@ -740,28 +751,42 @@
 				) l
 			LEFT JOIN users u ON l.log_user = u.user_id
 		</cfquery>
-
-		<table>
-			<tr>
-				<th nowrap="true">Date</th>
-				<th nowrap="true">Time</th>
-				<th >Description</th>
-				<th nowrap="true">Action</th>
-				<th nowrap="true">Type of file</th>
-				<th nowrap="true">User</th>
-			</tr>
-		<cfloop query="qGetUpdatedAssets">
-			<tr >
-				<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
-				<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
-				<td valign="top">#qGetUpdatedAssets.log_desc#</td>
-				<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
-				<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
-				<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
-			</tr>
-		</cfloop>
-		</table>
-
+		<!--- Email subject --->
+		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
+		<!--- Email content --->
+		<cfinvoke component="defaults" method="trans" transid="subscribe_email_content" returnvariable="email_content">
+		<!--- Email if assets are updated in Subscribed folders --->
+		<cfif qGetUpdatedAssets.recordcount>
+			<!--- Mail content --->
+			<cfsavecontent variable="mail" >
+				#email_content#
+				<table>
+					<tr>
+						<th nowrap="true">Date</th>
+						<th nowrap="true">Time</th>
+						<th >Description</th>
+						<th nowrap="true">Action</th>
+						<th nowrap="true">Type of file</th>
+						<th nowrap="true">User</th>
+					</tr>
+				<cfloop query="qGetUpdatedAssets">
+					<tr >
+						<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
+						<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
+						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
+					</tr>
+				</cfloop>
+				</table>
+			</cfsavecontent>
+			<!--- Get user details --->
+			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
+			<!--- Send the email --->
+			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" />
+		</cfif>
+		<!--- Update Folder Subscribe --->
 		<cfquery datasource="#application.razuna.datasource#" name="update">
 			UPDATE #session.hostdbprefix#folder_subscribe 
 			SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">

@@ -9512,20 +9512,23 @@
 		<set name="attributes.theid" value="0" overwrite="false" />
 		<set name="attributes.emailnotify" value="no" overwrite="false" />
 		<set name="attributes.emailinterval" value="0" overwrite="false" />
+		<!-- CFC: Subscribe -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubscribefolder(attributes.theid)" returnvariable="qry_folder" />
 		<!-- XFA -->
 		<xfa name="submitfolderform" value="c.folder_subscribe_save" />
 		<!-- Show -->
 		<do action="ajax.folder_subscribe" />
 	</fuseaction>
 
-	<!-- Save Folder subscribe -->
+	<!-- Save Folder subscribe details -->
 	<fuseaction name="folder_subscribe_save">
+		<!-- Param -->
 		<set name="attributes.theid" value="0" overwrite="false" />
 		<!-- CFC: Subscribe -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
 	</fuseaction>
 	
-	<!-- Schedule Run from the Folder subscribe tasks -->
+	<!-- Run Folder subscribe schedule tasks -->
 	<fuseaction name="folder_subscribe_task">
 		<!-- CFC: User info for user details -->
 		<set name="attributes.user_id" value="#session.theuserid#" />

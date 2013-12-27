@@ -34,8 +34,8 @@
 				<th colspan="4">Subscribe</th>
 			</tr>
 			<tr>
-				<td><input type="radio" value="yes" name="emailnotify">Yes</td>
-				<td><input type="radio" value="no" name="emailnotify" checked="checked">No</td>
+				<td><input type="radio" value="yes" name="emailnotify" <cfif qry_folder.recordcount> checked="checked"</cfif>>Yes</td>
+				<td><input type="radio" value="no" name="emailnotify" <cfif !qry_folder.recordcount> checked="checked"</cfif>>No</td>
 			</tr>
 			<tr class="list">
 				<td></td>
@@ -46,11 +46,11 @@
 			</tr>
 			<tr>
 				<td width="1%" nowrap align="center"><input type="radio" value="1" name="emailinterval" checked="checked">1 hour</td>
-				<td width="1%" nowrap align="center"><input type="radio" value="3" name="emailinterval">3 hour</td>
-				<td width="1%" nowrap align="center"><input type="radio" value="6" name="emailinterval">6 hour</td>
-				<td width="1%" nowrap align="center"><input type="radio" value="12" name="emailinterval">12 hour</td>
-				<td width="1%" nowrap align="center"><input type="radio" value="24" name="emailinterval">Every day</td>
-				<td><input type="radio" value="168" name="emailinterval">Once a week</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="3" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 3> checked="true"</cfif>>3 hour</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="6" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 6> checked="true"</cfif>>6 hour</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="12" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 12> checked="true"</cfif>>12 hour</td>
+				<td width="1%" nowrap align="center"><input type="radio" value="24" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 24> checked="true"</cfif>>Every day</td>
+				<td><input type="radio" value="168" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 168> checked="true"</cfif>>Once a week</td>
 			</tr>
 		</table>
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
