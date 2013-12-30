@@ -184,6 +184,40 @@
 								</cfif>
 							</div>
 						</cfif>
+						
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<!--- If WL we show the recently updated assets --->
+						<cfif application.razuna.show_recent_updates AND attributes.qry_log.recordcount NEQ 0>
+							<div class="panelsnew" style="width:100%" >
+								<h1>Most recently updated assets</h1>
+								<div style="height:200px;width:100%;overflow-y:auto;">
+								<table border="0" cellpadding="0" cellspacing="0" class="grid" >
+									<tr>
+										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
+										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("time")#</th>
+										<th width="100%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
+										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("action")#</th>
+										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("log_type_of_file")#</th>
+										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("theuser")#</th>
+									</tr>
+									<!--- Loop over all assets log entries in database table --->
+									<cfloop query="attributes.qry_log" endrow="50">
+										<tr class="list" >
+											<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+											<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
+											<td valign="top">#log_desc#</td>
+											<td nowrap="true" align="center" valign="top">#log_action#</td>
+											<td nowrap="true" align="center" valign="top">#log_file_type#</td>
+											<td nowrap="true" align="center" valign="top">#user_first_name# #user_last_name#</td>
+										</tr>
+									</cfloop>
+								</table>
+								</div>
+							</div>
+						</cfif>
 					</td>
 				</tr>
 			</table>

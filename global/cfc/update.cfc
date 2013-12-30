@@ -123,9 +123,8 @@
 		</cfquery>
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
-		
-		<!--- If update number is lower then 17 (v. 1.6.2) --->
-		<cfif updatenumber.opt_value LT 18>
+		<!--- If update number is lower then 19 (v. 1.6.3) --->
+		<cfif updatenumber.opt_value LT 19>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

@@ -1324,6 +1324,17 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<!--- RAZ-2812 Most recently updated assets  --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+		SELECT opt_value FROM options 
+		WHERE opt_id='SHOW_UPDATES' 
+	</cfquery>
+	<cfif qry_options.RecordCount NEQ 0>
+		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
+	<cfelse>
+		<cfset application.razuna.show_recent_updates = 'false'>
+	</cfif>
+	
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1389,6 +1400,16 @@
 		<cfset application.razuna.api.thehttp = "https://">
 	<cfelse>
 		<cfset application.razuna.api.thehttp = "http://">
+	</cfif>
+	<!--- RAZ-2812 Most recently updated assets  --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+		SELECT opt_value FROM options 
+		WHERE opt_id='SHOW_UPDATES' 
+	</cfquery>
+	<cfif qry_options.RecordCount NEQ 0>
+		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
+	<cfelse>
+		<cfset application.razuna.show_recent_updates = 'false'>
 	</cfif>
 </cffunction>
 
