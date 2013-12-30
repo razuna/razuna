@@ -1134,7 +1134,7 @@
 		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
-		conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token,conf_wl_show_updates
+		conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -1324,7 +1324,17 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
-	<cfset application.razuna.show_recent_updates = qry.conf_wl_show_updates>
+	<!--- RAZ-2812 Most recently updated assets  --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+		SELECT opt_value FROM options 
+		WHERE opt_id='SHOW_UPDATES' 
+	</cfquery>
+	<cfif qry_options.RecordCount NEQ 0>
+		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
+	<cfelse>
+		<cfset application.razuna.show_recent_updates = 'false'>
+	</cfif>
+	
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1364,7 +1374,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_aka_token,
-	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl,conf_wl_show_updates
+	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope --->
@@ -1391,7 +1401,16 @@
 	<cfelse>
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
-	<cfset application.razuna.show_recent_updates = qry.conf_wl_show_updates>
+	<!--- RAZ-2812 Most recently updated assets  --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+		SELECT opt_value FROM options 
+		WHERE opt_id='SHOW_UPDATES' 
+	</cfquery>
+	<cfif qry_options.RecordCount NEQ 0>
+		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
+	<cfelse>
+		<cfset application.razuna.show_recent_updates = 'false'>
+	</cfif>
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -2274,8 +2293,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Set ISP --->
 	<cfquery datasource="razuna_default">
 	UPDATE razuna_config
-	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">,
-	conf_wl_show_updates = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.show_updates#">
+	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
+	</cfquery>
+	<!--- RAZ-2812 Most recently updated assets  --->
+	<cfquery datasource="#application.razuna.datasource#" >
+	UPDATE options
+	SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.show_updates#"> 
+	WHERE opt_id='SHOW_UPDATES'
 	</cfquery>
 	<!--- Enable cron directory --->
 	<cfset CronSetDirectory("/cron")>
