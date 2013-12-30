@@ -138,6 +138,7 @@
 			</div>
 			<!--- show recent updates options --->
 			<div id="wl_show_recent_updates">
+				 #defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
 				<strong>Show list of most recently updated assets</strong><br />
 				<input type="radio" value="true" name="show_updates" <cfif application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
 				<input type="radio" value="false" name="show_updates" <cfif !application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
