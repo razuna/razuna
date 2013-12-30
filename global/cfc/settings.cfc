@@ -2295,12 +2295,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	UPDATE razuna_config
 	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
 	</cfquery>
-	<!--- RAZ-2812 Most recently updated assets  --->
-	<cfquery datasource="#application.razuna.datasource#" >
-	UPDATE options
-	SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.show_updates#"> 
-	WHERE opt_id='SHOW_UPDATES'
-	</cfquery>
 	<!--- Enable cron directory --->
 	<cfset CronSetDirectory("/cron")>
 	<!--- If this is for ISP we do a general scheduler task for indexing files --->
