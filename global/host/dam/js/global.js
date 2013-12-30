@@ -1845,6 +1845,7 @@ function switchmainselection(thetype,thelinktext){
 // Image Tooltip
 $(document).tooltip({
 	items: "[img-tt]",
+	show: { delay: 2000 },
 	content: function() {
 		 var element = $( this );
 		 var theimg = element.attr("src");
