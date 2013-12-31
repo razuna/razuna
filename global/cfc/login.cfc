@@ -57,8 +57,8 @@
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Check for the user --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
 			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
@@ -76,6 +76,7 @@
 			AND ct.ct_u_h_user_id = u.user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfif>
+		AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 		</cfquery>
 		
 		<!--- Check the AD user --->
@@ -88,8 +89,8 @@
 				</cfquery> 
 				<cfif qryAdUser.RecordCount NEQ 0>
 					<!--- Check for the user --->
-					<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
-					SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
 						lower(u.user_login_name) = <cfqueryparam value="#lcase(qryAdUser.SamAccountname)#" cfsqltype="cf_sql_varchar"> 
@@ -107,6 +108,7 @@
 						AND ct.ct_u_h_user_id = u.user_id
 						AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 					</cfif>
+					AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 					</cfquery>
 					<!--- AD user name --->
 					<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
@@ -350,7 +352,7 @@
 		<cfset thepass=structNew()>
 		<!--- Check the email address of this user if there then send pass if not return to the form --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass
+		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass, u.user_expiry_date
 		FROM users u, ct_users_hosts ct
 		WHERE (
 			lower(u.user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
@@ -368,28 +370,37 @@
 				<cfset thepass.aduser = "T">
 				<cfset thepass.notfound = "F">
 			<cfelse>
+				<cfif qryuser.user_expiry_date LTE now()>
+					<cfset thepass.expired = "T">
+				<cfelse>
+					<cfset thepass.expired = "F">	
+				</cfif>
 				<!--- User is not AD User --->
 				<cfset thepass.aduser = "F">
 				<!--- User is found thus send him an email --->
 				<cfset thepass.notfound = "F">
-				<!--- Create Random Password --->
-				<cfset var randompassword = randompass()>
-				<!--- Hash Password --->
-				<cfset newpass = hash(randompassword, "MD5", "UTF-8")>
-				<!--- Update DB with new password --->
-				<cfquery datasource="#variables.dsn#">
-				UPDATE users
-				SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newpass#">
-				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
-				</cfquery>
+				<cfif thepass.expired EQ 'F'> <!--- If the user account has not expired then reset password --->
+					<!--- Create Random Password --->
+					<cfset var randompassword = randompass()>
+					<!--- Hash Password --->
+					<cfset newpass = hash(randompassword, "MD5", "UTF-8")>
+					<!--- Update DB with new password --->
+					<cfquery datasource="#variables.dsn#">
+					UPDATE users
+					SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newpass#">
+					WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
+					</cfquery>
+				</cfif>
 				<!--- send email --->
 				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="Your password for Razuna" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
-	
-	It looks like you have lost your password. We have generated a random password for you. You can now login with your username and/or email address and the password below.
-	
-	Username: #qryuser.user_login_name#
-	Password: #randompassword#
-	
+	<cfif thepass.expired EQ 'T'>
+		Your user account has reached its expiration date. Please contact your system administrator to reset your account.
+	<cfelse>	
+		It looks like you have lost your password. We have generated a random password for you. You can now login with your username and/or email address and the password below.
+		
+		Username: #qryuser.user_login_name#
+		Password: #randompassword#
+	</cfif>
 				</cfmail>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("users","true")>

@@ -125,6 +125,15 @@
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		<!--- If update number is lower then 19 (v. 1.6.3) --->
 		<cfif updatenumber.opt_value LT 19>
+			<!--- RAZ-2829: Add an expiration date to a user and disable access when expiration occurs --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> USER_EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
