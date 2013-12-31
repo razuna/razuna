@@ -79,7 +79,7 @@
 									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 										<div id="draggable#img_id#" type="#img_id#-img" class="theimg">
 											<!--- Show assets --->
-											<cfif link_kind EQ "">
+											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<cfif cloud_url NEQ "">
 														<img src="#cloud_url#" border="0" img-tt="img-tt">
@@ -106,7 +106,7 @@
 										<cfif cs.show_bottom_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif attributes.folderaccess NEQ "R">
+										<cfif attributes.folderaccess NEQ "R" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>
 											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#img_id#&what=images&loaddiv=img&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
@@ -213,7 +213,7 @@
 									<cfif cs.show_bottom_part>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
-									<cfif attributes.folderaccess NEQ "R">
+									<cfif attributes.folderaccess NEQ "R"  AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>
 										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#img_id#&what=images&loaddiv=img&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
@@ -317,7 +317,7 @@
 									<cfif cs.show_bottom_part>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
-									<cfif attributes.folderaccess NEQ "R">
+									<cfif attributes.folderaccess NEQ "R" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>
 										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#img_id#&what=images&loaddiv=img&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
