@@ -861,5 +861,9 @@
 	<fuseaction name="search_label_for_asset">
   		<include template="dsp_search_label_for_asset" />
 	</fuseaction>
+	<!-- Metadata export template -->
+	<fuseaction name="admin_export_template">
+		<include template="dsp_admin_export_template" />
+	</fuseaction>
 
 </circuit>

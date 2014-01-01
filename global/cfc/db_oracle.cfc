@@ -2256,6 +2256,19 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		)
 		</cfquery>
 		
+		<!--- Metadata export template --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
+	  	exp_id				varchar2(100 char),
+		exp_field			varchar2(200 char),
+		exp_value			varchar2(2000 char),
+		exp_timestamp		timestamp, 
+		user_id				varchar2(100 char),
+		host_id				number,
+		PRIMARY KEY (exp_id)
+		)
+		</cfquery>
+		
 		<!--- Social accounts --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#users_accounts (

@@ -2462,6 +2462,20 @@
 		#this.tableoptions#
 		</cfquery>
 		
+		<!--- Metadata export template --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
+	  	exp_id				varchar(100),
+		exp_field			varchar(200),
+		exp_value			varchar(2000),
+		exp_timestamp		timestamp default '0000-00-00 00:00:00',
+		user_id				varchar(100),
+		host_id				int,
+		PRIMARY KEY (exp_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
 		<!--- Social accounts --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#users_accounts (

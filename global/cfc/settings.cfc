@@ -2579,5 +2579,70 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfreturn results/>
 	</cffunction>
 		
+	<!--- Get Metadata export template --->
+	<cffunction name="get_export_template" output="false" returnType="Any" >
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Params --->
+		<cfset var qry = "">
+		<!--- Query db --->
+		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#get_export_template */ exp_id, exp_field, exp_value
+		FROM #session.hostdbprefix#export_template
+		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		</cfquery>
+		<!--- Set value here --->
+		<cfset var v = structnew()>
+		<cfset v.images_metadata = "">
+		<cfset v.videos_metadata = "">
+		<cfset v.files_metadata = "">
+		<!--- Loop over query --->
+		<cfif qry.recordcount NEQ 0>
+			<cfloop query="qry">
+				<cfif exp_field EQ "images_metadata">
+					<cfset v.images_metadata = exp_value>
+				</cfif>
+				<cfif exp_field EQ "videos_metadata">
+					<cfset v.videos_metadata = exp_value>
+				</cfif>
+				<cfif exp_field EQ "files_metadata">
+					<cfset v.files_metadata = exp_value>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<!--- Return --->
+		<cfreturn v />
+	</cffunction>
+
+	<!--- Save Metadata Export template ---> 
+	<cffunction name="set_export_template" output="false" access="public" >
+		<cfargument name="thestruct" type="struct">
+		<!--- First remove all records for this host --->
+		<cfquery dataSource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#export_template
+		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		</cfquery>
+		<!--- Loop fieldnames when it exists --->
+		<cfif structKeyExists(arguments.thestruct,"fieldnames")>
+			<!--- Now loop over the fieldnames and do an insert for each record found --->
+			<cfloop list="#arguments.thestruct.fieldnames#" index="i">
+				<cfif i NEQ "apply_global">
+					<cfquery dataSource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#export_template
+					(exp_id, exp_field, exp_value, exp_timestamp, host_id, user_id)
+					VALUES(
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
+						<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">,
+						<cfqueryparam value="#session.theuserid#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("settings")>
+	</cffunction>
 
 </cfcomponent>

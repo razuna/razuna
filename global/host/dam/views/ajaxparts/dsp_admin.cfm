@@ -33,6 +33,7 @@
 			<li><a href="##admin_schedules" onclick="loadcontent('admin_schedules','#myself#c.scheduler_list&offset_sched=0');">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads")#</a></li>
 			<li><a href="##admin_upl_templates" onclick="loadcontent('admin_upl_templates','#myself#c.upl_templates');">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates")#</a></li>
 			<li><a href="##admin_imp_templates" onclick="loadcontent('admin_imp_templates','#myself#c.imp_templates');">#myFusebox.getApplicationData().defaults.trans("import_templates")#</a></li>
+			<li><a href="##admin_export_template" onclick="loadcontent('admin_export_template','#myself#c.admin_export_template');">#myFusebox.getApplicationData().defaults.trans("export_template")#</a></li>
 			<li><a href="##admin_watermark_templates" onclick="loadcontent('admin_watermark_templates','#myself#c.admin_watermark_templates');">#myFusebox.getApplicationData().defaults.trans("watermark_templates")#</a></li>
 			<li><a href="##admin_logs_all" onclick="loadcontent('log_show','#myself#c.log_assets&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_search_header")#</a></li>
 			<!--- <li><a href="##admin_logs_users" onclick="loadcontent('log_users_show','#myself#c.log_users');">#myFusebox.getApplicationData().defaults.trans("log_users_header")#</a></li> --->
@@ -97,6 +98,7 @@
 		<!--- System Information --->
 		<div id="admin_system">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		<div id="ad_Services">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<div id="admin_export_template">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		<!---<div id="admin_system">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>--->
 		<!--- Plugins --->
 		<cfif qry_plugins.recordcount NEQ 0>
