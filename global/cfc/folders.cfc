@@ -3350,17 +3350,17 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
@@ -3389,7 +3389,7 @@
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
@@ -3401,12 +3401,12 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
@@ -3435,17 +3435,17 @@
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
@@ -3469,12 +3469,12 @@
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
@@ -3487,7 +3487,7 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
