@@ -1324,17 +1324,6 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
-	<!--- RAZ-2812 Most recently updated assets  --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
-		SELECT opt_value FROM options 
-		WHERE opt_id='SHOW_UPDATES' 
-	</cfquery>
-	<cfif qry_options.RecordCount NEQ 0>
-		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
-	<cfelse>
-		<cfset application.razuna.show_recent_updates = 'false'>
-	</cfif>
-	
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -2332,6 +2321,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Put query into struct --->
 	<cfloop query="q">
 		<cfset s["#opt_id#"] = opt_value>
+		<!--- RAZ-2812 Most recently updated assest --->
+		<cfif q.opt_id EQ 'SHOW_UPDATES'>
+			<cfset application.razuna.show_recent_updates =  q.opt_value >
+		</cfif>
 	</cfloop>
 	<!--- Additionally store the full query into the struct --->
 	<cfset s.query = q>
