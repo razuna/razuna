@@ -4290,7 +4290,7 @@
 		<!-- CFC: Get user email -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="user_email()" returnvariable="qryuseremail" />
 		<!-- CFC: Get file detail -->
-		<if condition="attributes.thetype EQ 'doc'">
+		<if condition="attributes.thetype EQ 'doc' OR attributes.thetype EQ 'other'">
 			<true>
 				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_asset" />
 				<set name="attributes.filename" value="#qry_asset.detail.file_name#" />
