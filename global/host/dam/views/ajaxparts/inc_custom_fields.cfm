@@ -26,6 +26,8 @@
 <cfoutput>
 	<cfif !structKeyExists(variables,"cf_inline")><table border="0" cellpadding="0" cellspacing="0" width="450" class="grid"></cfif>
 		<cfloop query="qry_cf">
+			<!--- RAZ-2834 custom field selected under customization tab will displayed under metadata tab in in assets detail view window --->
+			<cfif structKeyExists(cs,'customfield_images_metadata') AND listFindNoCase(cs.customfield_images_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_audios_metadata') AND listFindNoCase(cs.customfield_audios_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_videos_metadata') AND listFindNoCase(cs.customfield_videos_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_files_metadata') AND listFindNoCase(cs.customfield_files_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_all_metadata') AND listFindNoCase(cs.customfield_all_metadata,'#qry_cf.cf_id#',',')> 
 			<tr>
 				<cfif !structKeyExists(variables,"cf_inline")>
 					<td width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
@@ -129,6 +131,7 @@
 					</cfif>
 				</td>
 			</tr>
+			</cfif>   
 		</cfloop>
 	<cfif !structKeyExists(variables,"cf_inline")></table></cfif>
 </cfoutput>
