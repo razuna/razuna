@@ -31,18 +31,19 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<!--- Subscribe for E-mail notification --->
 			<tr>
-				<th colspan="4">Subscribe</th>
+				<th colspan="8">#myFusebox.getApplicationData().defaults.trans("folder_subscribe_title")#</th>
+			</tr>
+			<tr>
+				<td colspan="8">#myFusebox.getApplicationData().defaults.trans("folder_subscribe_desc")#</td>
 			</tr>
 			<tr>
 				<td><input type="radio" value="yes" name="emailnotify" <cfif qry_folder.recordcount> checked="checked"</cfif>>Yes</td>
 				<td><input type="radio" value="no" name="emailnotify" <cfif !qry_folder.recordcount> checked="checked"</cfif>>No</td>
-			</tr>
-			<tr class="list">
-				<td></td>
+				<td colspan="6"/>
 			</tr>
 			<!--- Interval for e-mail notificatin --->
 			<tr>
-				<th colspan="4">E-mail notification interval</th>
+				<th colspan="8">#myFusebox.getApplicationData().defaults.trans("folder_subscribe_interval")#</th>
 			</tr>
 			<tr>
 				<td width="1%" nowrap align="center"><input type="radio" value="1" name="emailinterval" checked="checked">1 hour</td>
@@ -50,7 +51,7 @@
 				<td width="1%" nowrap align="center"><input type="radio" value="6" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 6> checked="true"</cfif>>6 hour</td>
 				<td width="1%" nowrap align="center"><input type="radio" value="12" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 12> checked="true"</cfif>>12 hour</td>
 				<td width="1%" nowrap align="center"><input type="radio" value="24" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 24> checked="true"</cfif>>Every day</td>
-				<td><input type="radio" value="168" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 168> checked="true"</cfif>>Once a week</td>
+				<td colspan="3"><input type="radio" value="168" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 168> checked="true"</cfif>>Once a week</td>
 			</tr>
 		</table>
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
