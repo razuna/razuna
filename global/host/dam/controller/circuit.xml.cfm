@@ -9530,9 +9530,7 @@
 	
 	<!-- Run Folder subscribe schedule tasks -->
 	<fuseaction name="folder_subscribe_task">
-		<!-- CFC: User info for user details -->
-		<set name="attributes.user_id" value="#session.theuserid#" />
 		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task(attributes)" returnvariable="thetask" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
 	</fuseaction>
 </circuit>

@@ -702,7 +702,6 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
-	<cfargument name="thestruct" type="struct" required="yes">
 	<!--- Get User subscribed folders --->
 	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
 		SELECT * FROM #session.hostdbprefix#folder_subscribe 
@@ -715,7 +714,7 @@
 			DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
 		<!--- Oracle, DB2 ?? --->	
 		</cfif>
-		> <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+		< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 	</cfquery>
 	<!--- Date Format --->
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
@@ -781,6 +780,8 @@
 				</cfloop>
 				</table>
 			</cfsavecontent>
+			<!--- Set user id --->
+			<cfset arguments.thestruct.user_id = qGetUserSubscriptions.user_Id>
 			<!--- Get user details --->
 			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
 			<!--- Send the email --->
