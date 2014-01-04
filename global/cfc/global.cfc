@@ -1554,4 +1554,22 @@ Comment:<br>
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction> 
+
+	<cffunction name="fixdbintegrityissues" returntype="void" hint="Put any database code here to fix issues with invalid data in database e.g. set boolean fields to have default boolean values instead of empty values which will throw errors in boolean type conditions etc.">
+		<!--- Use this format to specify tables and columns in the table to set to a specified value instead of an empty string
+			<cfset setempty2val["table1"] = "col1:'val1',col2:NULL">
+			<cfset setempty2val["table2"] = "col1:'val1',col2:'val2'">
+		--->
+		<cfset setempty2val["raz1_settings_2"] = "set2_md5check:NULL, set2_colorspace_rgb:'false', set2_custom_file_ext:'false',set2_email_use_ssl:'false',set2_email_use_tls:'false'">
+		<cfloop collection="#setempty2val#" item="tbl">
+			<cfloop list="#StructFind(setempty2val, tbl)#" index="col" delimiter=",">
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #tbl# SET #gettoken(col,1,':')#= #preservesinglequotes(gettoken(col,2,':'))# WHERE #gettoken(col,1,':')# = ''
+				</cfquery>
+				<cfcatch></cfcatch>
+				</cftry>
+		 	</cfloop>
+		</cfloop>
+	</cffunction>
 </cfcomponent>

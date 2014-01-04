@@ -24,6 +24,8 @@
 *
 --->
 <cfcomponent extends="extQueryCaching" output="false">
+ 	<!--- Global Object --->
+	<cfobject component="global.cfc.global" name="gobj">
 
 	<!--- Check for a DB update --->
 	<cffunction name="update_for">
@@ -1154,14 +1156,16 @@
 			</cfcatch>
 		</cftry>
 		 --->
-
-		
 		<!--- Update value in db --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE options
 		SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dbupdateconfig#">
 		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
 		</cfquery>
+
+		<!--- Fix db integrity issues if any --->
+		<cfset gobj.fixdbintegrityissues()>
+
 		<!--- Done --->
 	</cffunction>
 
@@ -1189,5 +1193,4 @@
 		)
 		</cfquery>
 	</cffunction>
-
 </cfcomponent>

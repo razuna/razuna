@@ -24,7 +24,9 @@
 *
 --->
 <cfcomponent extends="extQueryCaching">
-	
+	<!--- Global Object --->
+	<cfobject component="global.cfc.global" name="gobj">
+
 	<!--- Call this from the scheduled task --->
 	<cffunction name="backuptodbthread" output="true">
 		<cfargument name="thestruct" type="struct">
@@ -1069,6 +1071,8 @@
 		<cfset resetcachetokenall()>
 		<!--- Final Feedback --->
 		<cfoutput><br><br><span style="font-weight:bold;color:green;">Restore done! You can <a href="##" onclick="window.close();">close this window now</a>.</span><br></cfoutput>	
+		<!--- Fix db integrity issues if any --->
+		<cfset gobj.fixdbintegrityissues()>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
