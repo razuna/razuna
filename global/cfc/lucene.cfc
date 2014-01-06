@@ -73,12 +73,28 @@
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
 		<!--- Name of lock file --->
 		<cfset var lockfile = "lucene.lock">
-		<!--- Check for the lock file --->
-		<cfif fileExists("#GetTempDirectory()#/#lockfile#")>
-			<cfabort>
-		<cfelse>
-			<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
+		<cfset lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfset lockfiledelerr = false>
+		<cfif fileExists(lockfilepath) >
+			<cfset lockfileobj = createObject("java","java.io.File").init(lockfilepath)>
+			<cfset lockfiledate = createObject("java","java.util.Date").init(lockfileobj.lastModified())>
+			<cfif datediff("h", lockfiledate, now()) GT 24>
+				<cftry>
+					<cffile action="delete" file="#lockfilepath#">
+					<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
+				</cftry>
+			<cfelse>
+				<cfabort>	
+			</cfif>
 		</cfif>
+		
+		<cfif lockfiledelerr> <!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
+			<cfabort>
+		</cfif>
+
+		<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		
 		<!--- Check if collection exists --->
 		<cfinvoke method="exists" colname="#arguments.hostid#" />
 		<!--- Params --->
