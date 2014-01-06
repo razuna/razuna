@@ -1,10 +1,5 @@
 <!--- File is only invoked for ISP settings --->
 
-<!--- Check if lucene.lock exists if of abort --->
-<cfif fileExists("#GetTempDirectory()#/lucene.lock")>
-	<cfabort>
-</cfif>
-
 <cfquery datasource="razuna_default" name="variables.conf" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 select conf_database, conf_datasource, conf_storage
 from razuna_config
