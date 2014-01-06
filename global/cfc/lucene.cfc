@@ -77,8 +77,7 @@
 		<cfset lockfilepath = "#GetTempDirectory()#/#lockfile#">
 		<cfset lockfiledelerr = false>
 		<cfif fileExists(lockfilepath) >
-			<cfset lockfileobj = createObject("java","java.io.File").init(lockfilepath)>
-			<cfset lockfiledate = createObject("java","java.util.Date").init(lockfileobj.lastModified())>
+			<cfset lockfiledate = getfileinfo(lockfilepath).lastmodified>
 			<cfif datediff("h", lockfiledate, now()) GT 24>
 				<cftry>
 					<cffile action="delete" file="#lockfilepath#">
