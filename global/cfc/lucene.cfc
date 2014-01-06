@@ -77,7 +77,7 @@
 		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
 		<cfset var lockfiledelerr = false>
 		<cfif fileExists(lockfilepath) >
-			<cfset lockfiledate = getfileinfo(lockfilepath).lastmodified>
+			<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
 			<cfif datediff("h", lockfiledate, now()) GT 24>
 				<cftry>
 					<cffile action="delete" file="#lockfilepath#">
