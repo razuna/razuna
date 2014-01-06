@@ -436,6 +436,15 @@ Comment:<br>
 			WHERE group_asset_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="Yes">)
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+		<cfelseif structkeyexists(arguments.thestruct,"thumb_img_id")>
+			<!--- Get the thumb --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#get_share_options3 */ 
+			asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			FROM #session.hostdbprefix#share_options
+			WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thumb_img_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
 		<cfelse>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -770,7 +779,7 @@ Comment:<br>
 		<cfset var qry = structnew()>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type
+		SELECT /* #variables.cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -778,7 +787,7 @@ Comment:<br>
 		</cfquery>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -801,10 +810,11 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.order" default="1">
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
+		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
-		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight, hashtag)
+		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight, hashtag, av_thumb_url)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_title#">,
@@ -817,7 +827,8 @@ Comment:<br>
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thesize#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thewidth#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theheight#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.md5hash#">
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.md5hash#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_thumb_url#">
 		)
 		</cfquery>
 		

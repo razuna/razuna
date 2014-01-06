@@ -3000,15 +3000,18 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var thumbheight = 0>
 		</cfif>
 		<!--- Set original and thumbnail width and height --->
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#images
-		SET
-		thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
-		thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
-		img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
-		img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
+		<cfif !structKeyExists(arguments.thestruct,'av') OR arguments.thestruct.av NEQ 1>
+			<!--- Set original and thumbnail width and height --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
+			thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
+			img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
+			img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.resizeImage">
 			<cfset errobj.logerrors(cfcatch)/>
@@ -4699,6 +4702,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- Process Upload Additional versions --->
 <cffunction name="addassetav" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
+	
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.frompath" default="false">
 	<cfparam name="arguments.thestruct.thesize" default="false">
@@ -4726,12 +4730,16 @@ This is the main function called directly by a single upload else from addassets
 		<!--- File Size --->
 		<cfset arguments.thestruct.thesize = thefile.fileSize>
 	<cfelse>
+		<cfset arguments.thestruct.thetempfolder = "api#arguments.thestruct.newid#">
+		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
+		<!--- Create a temp directory to hold the file --->
+		<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+		<!--- Upload file --->
+		<cffile action="copy" source="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#file_field#" result="thefile">
 		<!--- File Extension --->
 		<cfset thefile.serverFileExt = arguments.thestruct.theextension>
 		<!--- File Name --->
 		<cfset thefile.serverFile = arguments.thestruct.thefilename>
-		<!--- The path --->
-		<cfset arguments.thestruct.theincomingtemppath = arguments.thestruct.thedir>
 	</cfif>
 	<!--- Get and set file type and MIME content --->
 	<cfquery datasource="#application.razuna.datasource#" name="fileType">
@@ -4785,7 +4793,8 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Query to get the settings --->
 	<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
-	SELECT set2_path_to_assets
+	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
+	set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets, set2_colorspace_rgb 
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -4795,6 +4804,42 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
 		<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 	</cfif>
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	
+	<cfset var theplaceholderpic = arguments.thestruct.rootpath & "global/host/dam/images/placeholders/nopic.jpg">
+	<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
+	<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
+	<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
+	<cfset arguments.thestruct.thesource = "#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
+	<cfset arguments.thestruct.destination = "#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
+	<cfset arguments.thestruct.qryfile.extension = arguments.thestruct.qrysettings.set2_img_format>
+	<cfset arguments.thestruct.isWindows = isWindows()>
+	<cfif arguments.thestruct.isWindows>
+		<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
+		<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
+		<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+	<cfelse>
+		<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
+		<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination," ","\ ","all")>
+		<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"&","\&","all")>
+		<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
+	</cfif>
+	
+	<!--- Parse keywords and description from XMP --->
+	<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
+	<!--- Parse the Metadata from the image --->
+	<cfthread name="xmp#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
+		<cfinvoke component="xmp" method="xmpparse" thestruct="#attributes.intstruct#" returnvariable="thread.thexmp" />
+	</cfthread>
+	<!--- Wait for the parsing --->
+	<cfthread action="join" name="xmp#arguments.thestruct.newid#" />
+	<!--- Put the thread result into general struct --->
+	<cfset arguments.thestruct.thexmp = cfthread["xmp#arguments.thestruct.newid#"].thexmp>
+
+	<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
+
 	<!--- If we are local --->
 	<cfif application.razuna.storage EQ "local">
 		<!--- Create folder with the asset id --->
@@ -4809,8 +4854,12 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Move original image --->
 		<cffile action="#theaction#" source="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" mode="775">
+		<!--- Move thumb image --->
+		<cffile action="#theaction#" source="#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
 		<!--- Set the URL --->
 		<cfset arguments.thestruct.av_link_url = "/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#">
+		<!--- thumb URL --->
+		<cfset arguments.thestruct.av_thumb_url = "/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 	<!--- NIRVANIX --->
 	<cfelseif application.razuna.storage EQ "nirvanix">
 		<!--- Upload Original --->
@@ -4839,10 +4888,24 @@ This is the main function called directly by a single upload else from addassets
 			</cfinvoke>
 		</cfthread>
 		<cfthread action="join" name="#upt#" />
+		<!--- Upload thumbnail --->
+		<cfset var uptn = Createuuid("")>
+		<cfthread name="#uptn#" intstruct="#arguments.thestruct#" action="run">
+			<cfinvoke component="amazon" method="Upload">
+				<cfinvokeargument name="key" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
+				<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
+				<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+			</cfinvoke>
+		</cfthread>
+		<cfthread action="join" name="#uptn#" />
+		<!--- Get signed URLS for thumb --->
+		<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_thumb" key="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 		<!--- Get signed URLS for original --->
 		<cfinvoke component="amazon" method="signedurl" returnVariable="cloudurl" key="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" awsbucket="#arguments.thestruct.awsbucket#">
 		<!--- Set the URL --->
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
+		<!--- Set the thumb URL --->
+		<cfset arguments.thestruct.av_thumb_url = cloud_url_thumb.theurl>
 	<!--- Akamai --->
 	<cfelseif application.razuna.storage EQ "akamai">
 		<cfset var upt = Createuuid("")>
@@ -5782,9 +5845,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.theextension = listLast(name,".")>
 		<!--- Now add the asset --->
 		<cfif thefiles.recordcount LT 10>
-			<cfthread intstruct="#arguments.thestruct#" action="run">
+			<cfthread name="uploadpath#currentrow#" intstruct="#arguments.thestruct#" action="run">
 				<cfinvoke method="addassetav" thestruct="#attributes.intstruct#" />
 			</cfthread>
+			<!--- Wait for the parsing --->
+			<cfthread action="join" name="uploadpath#currentrow#" />
 		<cfelse>
 			<cfinvoke method="addassetav" thestruct="#arguments.thestruct#" />
 		</cfif>

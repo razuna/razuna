@@ -2225,6 +2225,7 @@
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
   		  hashtag			   	VARCHAR(100),
+  		  av_thumb_url			varchar(500),
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
