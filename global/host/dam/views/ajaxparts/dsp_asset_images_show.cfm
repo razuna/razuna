@@ -71,7 +71,7 @@
 		</cfcase>
 		<cfdefaultcase>
 			<!--- Default file name when prompted to download --->
-			<cfheader name="content-disposition" value="attachment; filename=#qry_detail.img_filename#" />
+			<cfheader name="content-disposition" value='attachment; filename="#qry_detail.img_filename#"' />
 			<!--- Nirvanix--->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get file --->

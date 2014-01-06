@@ -30,7 +30,7 @@
 		<cfset thefilename = listlast(qry_binary.qfile.file_name, ".") & "." & qry_binary.qfile.file_extension>
 		<cfif application.razuna.thedatabase EQ "oracle">
 			<!--- Default file name when prompted to download --->
-			<cfheader name="content-disposition" value="attachment; filename=#thefilename#">
+			<cfheader name="content-disposition" value='attachment; filename="#thefilename#"'>
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
 			<cfif attributes.download EQ "T">
 				<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#thispath#/outgoing/#qry_binary.qfile.file_binary#" deleteFile="true">
@@ -40,7 +40,7 @@
 		<cfelse>
 			<cfif attributes.download EQ "T">
 				<!--- Default file name when prompted to download --->
-				<cfheader name="content-disposition" value="attachment; filename=#attributes.zipname#">
+				<cfheader name="content-disposition" value='attachment; filename="#attributes.zipname#"'>
 				<!--- Set the MIME content encoding header and send the contents of as the page output. --->
 				<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#attributes.zipname#" deletefile="true">
 			<cfelse>
