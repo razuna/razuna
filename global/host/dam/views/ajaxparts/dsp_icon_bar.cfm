@@ -198,18 +198,6 @@
 									<div style="padding-top:2px;">Download assets in this folder</div>
 								</a>
 							</p>
-							<p><hr /></p>
-						</cfif>
-						<!--- Refresh --->
-						<cfif cs.icon_refresh>
-							<p>
-								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&iscol=#attributes.iscol#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_desc")#">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" />
-									</div>
-									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("tooltip_refresh")#</div>
-								</a>
-							</p>
 						</cfif>
 					</div>
 				</div>
