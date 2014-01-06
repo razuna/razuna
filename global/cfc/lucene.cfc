@@ -74,8 +74,8 @@
 		<!--- Name of lock file --->
 		<cfset var lockfile = "lucene.lock">
 		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
-		<cfset lockfilepath = "#GetTempDirectory()#/#lockfile#">
-		<cfset lockfiledelerr = false>
+		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfset var lockfiledelerr = false>
 		<cfif fileExists(lockfilepath) >
 			<cfset lockfiledate = getfileinfo(lockfilepath).lastmodified>
 			<cfif datediff("h", lockfiledate, now()) GT 24>
