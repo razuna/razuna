@@ -124,7 +124,7 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		 <!--- If update number is lower then 18 (v. 1.6.1) --->
-		 <cfif updatenumber.opt_value LT 18>
+		 <cfif updatenumber.opt_value LT 19>
 		<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
