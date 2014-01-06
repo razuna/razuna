@@ -727,28 +727,28 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
 			SELECT * FROM (
 
-			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#files tAsset  ON tLog.asset_id_r = tAsset.file_id 
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog LEFT JOIN #session.hostdbprefix#files tAsset  ON tLog.asset_id_r = tAsset.file_id 
 				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 
 			UNION ALL
 
-			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#videos tAsset ON tLog.asset_id_r = tAsset.vid_id 
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog LEFT JOIN #session.hostdbprefix#videos tAsset ON tLog.asset_id_r = tAsset.vid_id 
 				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 			
 			UNION ALL
 
-			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#audios tAsset ON tLog.asset_id_r = tAsset.aud_id 
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog LEFT JOIN #session.hostdbprefix#audios tAsset ON tLog.asset_id_r = tAsset.aud_id 
 				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 			UNION ALL
 
-			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog INNER JOIN #session.hostdbprefix#images tAsset ON tLog.asset_id_r = tAsset.img_id 
+			SELECT tLog.* FROM #session.hostdbprefix#log_assets tLog LEFT JOIN #session.hostdbprefix#images tAsset ON tLog.asset_id_r = tAsset.img_id 
 				AND folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">) 
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 				) l
-			LEFT JOIN users u ON l.log_user = u.user_id
+			LEFT JOIN users u ON l.log_user = u.user_id GROUP BY l.log_id
 		</cfquery>
 		<!--- Email subject --->
 		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">

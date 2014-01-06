@@ -1410,6 +1410,8 @@
 					ALTER TABLE #session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
 					</cfquery>
 				</cfif>
+				<!--- Delete Subscribe --->
+				<cfinvoke method="removesubscribefolder" folderid="#folderids#" />
 				<!--- Delete labels --->
 				<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.folder_id#" />
 				<!--- Delete files in this folder --->
@@ -6278,6 +6280,21 @@
 		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 	</cfquery>
 	<cfreturn qry_folder />
+</cffunction>
+
+<!--- REMOVE FOLDER SUBSCRIBE --->
+<cffunction name="removesubscribefolder" output="false" access="public">
+	<cfargument name="folderid" required="yes" type="string">
+	<cfloop list="#arguments.folderid#" index="ids">
+	<!--- Delete folder subscribe --->
+		<cfquery datasource="#application.razuna.datasource#" >
+		DELETE FROM #session.hostdbprefix#folder_subscribe 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ids#"> 
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		</cfquery> 
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
 </cffunction>
 
 </cfcomponent>
