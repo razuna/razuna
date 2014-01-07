@@ -149,9 +149,12 @@
 		</cfquery>
 		<cfset arguments.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Loop over the recordset --->
-		<cfloop query="qry">
-			<cfset consoleoutput(true)>
+		<cfset consoleoutput(true)>
+		<cfif qry.recordcount NEQ 0>
 			<cfset console("Start indexing: #arguments.hostid# - #now()#")>
+		</cfif> 
+		<cfloop query="qry">
+			<cfset console("Start indexing: #theid# - #now()#")>
 			<!--- Create tt for thread --->
 			<!--- <cfset tt = createUUID("")> --->
 			<!--- Put vars into struct --->
@@ -173,8 +176,22 @@
 			<!--- </cfthread> --->
 			<!--- Wait and join thread --->
 			<!--- <cfthread name="#tt#" action="join" /> --->
-			<cfset console("--- DONE indexing: #arguments.hostid# - #now()# ---")>
+			<cfset console("DONE indexing: #theid# - #now()#")>
 		</cfloop>
+		<cfif qry.recordcount NEQ 0>
+			<!--- Write dummy record --->
+			<cfscript>
+				args = {
+				collection : arguments.hostid,
+				key : "delete",
+				body : "delete",
+				title : "delete"
+				};
+				results = CollectionIndexCustom( argumentCollection=args );
+			</cfscript>
+			<cfset console("--- DONE dummy: #arguments.hostid# - #now()# ---")>
+			<cfset console("--- DONE indexing: #arguments.hostid# - #now()# ---")>
+		</cfif>
 		<!--- Remove lock file --->
 		<cftry>
 			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
@@ -945,7 +962,7 @@
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Select all the files that need to be indexed --->
-		<cfquery datasource="#arguments.dsn#" name="qry">
+		<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="#CreateTimespan(0,0,3,0)#" region="razcache">
 		SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize
 		FROM #arguments.prefix#images
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
