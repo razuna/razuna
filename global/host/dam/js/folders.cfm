@@ -254,8 +254,8 @@
 			data: items,
 			success: function(theid){
 				// Feedback
-				$('#updatetextshare').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
-				$("#updatetextshare").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+				$('#updatetextsubscribe').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
+				$("#updatetextsubscribe").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 			}
 		});
 	}
