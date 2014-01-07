@@ -107,13 +107,15 @@
 			<td>#defaultsObj.trans("user_mobile")#</td>
 			<td><input name="user_mobile" type="text" size="45" value="#qry_detail.user_mobile#" tabindex="12"></td>
 		</tr>
-		<tr>
-			<td>#defaultsObj.trans("user_expirydate")#</td>
-			<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
-		</tr>
-		<tr>
-			<td colspan="2">#defaultsObj.trans("user_expirydate_desc")#</td>
-		</tr>
+		<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+			<tr>
+				<td>#defaultsObj.trans("user_expirydate")#</td>
+				<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
+			</tr>
+			<tr>
+				<td colspan="2">#defaultsObj.trans("user_expirydate_desc")#</td>
+			</tr>
+		</cfif>
 		</table>
 	</div>
 	<!--- Groups --->
@@ -236,9 +238,13 @@
 	});
 	// Feedback when saving form
 	function adminuserfeedback() {
-		$("##updatetext").css("display","");
-		$("##updatetext").html("#JSStringFormat(defaultsObj.trans("success"))#");
-		loadcontent('rightside', '#myself#c.users');
+			$("##updatetext").css("display","");
+			$("##updatetext").html("#JSStringFormat(defaultsObj.trans("success"))#");
+			loadcontent('rightside', '#myself#c.users');
+			<cfif attributes.user_id EQ "0">
+				destroywindow(1);
+			</cfif>	
+		
 	}
 	// Check eMail
 	function checkemail(){
