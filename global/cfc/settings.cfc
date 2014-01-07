@@ -1914,6 +1914,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.assetbox_width = "">
 	<!--- RAZ-2267 Set the default value --->
 	<cfset v.tab_explorer_default = 1>
+	<!--- RAZ-2834 Set the default value --->
+	<cfset v.customfield_images_metadata = "">
+	<cfset v.customfield_videos_metadata = "">
+	<cfset v.customfield_files_metadata = "">
+	<cfset v.customfield_audios_metadata = "">
+	<cfset v.customfield_all_metadata = "">
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2142,6 +2148,22 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<!--- RAZ-2267 get the default value--->
 			<cfif custom_id EQ "tab_explorer_default">
 				<cfset v.tab_explorer_default = custom_value>
+			</cfif>
+			<!--- RAZ-2834 get the default value --->
+			<cfif custom_id EQ "customfield_images_metadata">
+				<cfset v.customfield_images_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "customfield_videos_metadata">
+				<cfset v.customfield_videos_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "customfield_files_metadata">
+				<cfset v.customfield_files_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "customfield_audios_metadata">
+				<cfset v.customfield_audios_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "customfield_all_metadata">
+				<cfset v.customfield_all_metadata = custom_value>
 			</cfif>
 		</cfloop>
 	</cfif>
