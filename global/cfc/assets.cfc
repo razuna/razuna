@@ -4806,7 +4806,10 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
-	
+	<!--- animated GIFs can only be converted to GIF --->
+	<cfif Right(arguments.thestruct.thefilename, 4) eq ".gif">
+		<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
+	</cfif>
 	<cfset var theplaceholderpic = arguments.thestruct.rootpath & "global/host/dam/images/placeholders/nopic.jpg">
 	<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
 	<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
