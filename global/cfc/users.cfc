@@ -266,7 +266,7 @@
 		INSERT INTO users
 		(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
 		user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp
-		<cfif isdate(arguments.thestruct.user_expirydate)>
+		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND isdate(arguments.thestruct.user_expirydate)>
 			, user_expiry_date
 		</cfif>
 		)
@@ -291,9 +291,10 @@
 		<cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.vpuser#" cfsqltype="cf_sql_varchar">
-		<cfif isdate(arguments.thestruct.user_expirydate)>,<cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
+		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND isdate(arguments.thestruct.user_expirydate)>,<cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
 		)
 		</cfquery>
+	
 		<!--- Insert the user to the user host cross table --->
 		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
 			<cfquery datasource="#application.razuna.datasource#">
@@ -430,7 +431,7 @@
 		USER_FAX = <cfqueryparam value="#arguments.thestruct.USER_FAX#" cfsqltype="cf_sql_varchar">,
 		user_in_dam = <cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
 		user_salutation = <cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">
-		<cfif isdate(arguments.thestruct.user_expirydate) or len(arguments.thestruct.user_expirydate) eq 0>
+		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND (isdate(arguments.thestruct.user_expirydate) or len(arguments.thestruct.user_expirydate) eq 0)>
 			,user_expiry_date = <cfif len(arguments.thestruct.user_expirydate) eq 0>null<cfelse><cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
 		</cfif>
 		WHERE user_id = <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">

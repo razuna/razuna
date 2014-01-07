@@ -114,13 +114,15 @@
 				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_mobile")#</strong></td>
 				<td><input name="user_mobile" type="text" style="width:300px;" value="#qry_detail.user_mobile#"></td>
 			</tr>
-			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_expirydate")#</td>
-				<td><input name="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>
-			</tr>
+			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+				<tr>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("user_expirydate")#</strong></td>
+					<td><input name="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
+				</tr>
+				<tr>
+					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>
+				</tr>
+			</cfif>
 			<cfif attributes.add EQ "f">
 				<tr>
 					<td><strong>ID</strong></td>
