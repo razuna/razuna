@@ -401,7 +401,12 @@
 	<!--- Set the active field to f on all languages --->
 	<cfquery datasource="#application.razuna.datasource#">
 	UPDATE #session.hostdbprefix#settings_2
-	SET set2_labels_users = <cfqueryparam value="#arguments.label_users#" cfsqltype="cf_sql_varchar">
+	SET
+	<cfif arguments.label_users NEQ 'null'> 
+		set2_labels_users = <cfqueryparam value="#arguments.label_users#" cfsqltype="cf_sql_varchar"  >
+	<cfelse>
+		set2_labels_users = <cfqueryparam value="" cfsqltype="cf_sql_varchar"  null="true" >
+	</cfif>
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush --->

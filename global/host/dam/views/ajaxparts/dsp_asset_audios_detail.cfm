@@ -144,15 +144,19 @@
 												</div>
 												<!--- RAZ-2207 Check Group/Users Permissions --->
 												<cfset flag = 0>
-												<cfif qry_GroupsOfUser.recordcount NEQ 0>
-												<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
-													<cfif listfindnocase(qry_label_set.set2_labels_users,i,',') OR listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
-														<cfset flag=1>
-													</cfif>
-												</cfloop>
+												<cfif  qry_label_set.set2_labels_users EQ ''>
+													<cfset flag=1>
 												<cfelse>
-													<cfif listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
-														<cfset flag = 1>
+													<cfif qry_GroupsOfUser.recordcount NEQ 0>
+													<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
+														<cfif listfindnocase(qry_label_set.set2_labels_users,i,',') OR listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+															<cfset flag=1>
+														</cfif>
+													</cfloop>
+													<cfelse>
+														<cfif listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+															<cfset flag = 1>
+														</cfif>	
 													</cfif>	
 												</cfif>
 												<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
