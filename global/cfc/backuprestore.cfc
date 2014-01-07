@@ -341,13 +341,13 @@
 								</cfif>
 							<cfelseif trim(listlast(lg,"-")) EQ "date">
 								<cfif evaluate(cl) EQ "">
-									<cfqueryparam cfsqltype="CF_SQL_DATE" value="#now()#">
+									NULL
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_DATE" value="#evaluate(cl)#">
 								</cfif>
 							<cfelseif trim(listlast(lg,"-")) EQ "timestamp" OR trim(listlast(lg,"-")) EQ "datetime">
 								<cfif evaluate(cl) EQ "">
-									<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+									NULL
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#evaluate(cl)#">
 								</cfif>
@@ -1031,13 +1031,13 @@
 									</cfif>
 								<cfelseif trim(listlast(lg,"-")) EQ "date">
 									<cfif evaluate(cl) EQ "">
-										<cfqueryparam cfsqltype="CF_SQL_DATE" value="#now()#">
+										NULL
 									<cfelse>
 										<cfqueryparam CFSQLType="CF_SQL_DATE" value="#evaluate(cl)#">
 									</cfif>
 								<cfelseif trim(listlast(lg,"-")) EQ "timestamp" OR trim(listlast(lg,"-")) EQ "datetime">
 									<cfif evaluate(cl) EQ "">
-										<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+										NULL
 									<cfelse>
 										<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#evaluate(cl)#">
 									</cfif>
