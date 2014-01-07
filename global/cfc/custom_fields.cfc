@@ -206,7 +206,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
-		<cfif i CONTAINS "cf_">
+		<cfif i CONTAINS "cf_" AND i DOES NOT CONTAIN "META_" >
 			<!--- <cfif arguments.thestruct[i] EQ "">
 				<cfcontinue>
 			</cfif> --->

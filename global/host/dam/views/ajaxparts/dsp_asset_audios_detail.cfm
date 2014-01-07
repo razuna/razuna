@@ -188,6 +188,19 @@
 								<td nowrap="true" valign="top">ID</td>
 								<td  nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 							</tr>
+							<tr>
+								<!--- CUSTOM FIELDS --->
+								<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+									<!--- RAZ - 2834 --->
+									<cfif cs.customfield_all_metadata NEQ '' OR cs.customfield_audios_metadata NEQ ''>
+									<br />
+									<div id="customfields">
+										<cfinclude template="inc_custom_meta_fields.cfm">
+									</div>
+									<div stlye="clear:both;"></div>
+									</cfif>
+								</cfif>
+							</tr>
 						</table>
 					</td>
 				</tr>
@@ -234,12 +247,15 @@
 				<div stlye="clear:both;"></div>
 				<!--- CUSTOM FIELDS --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+					<!--- RAZ - 2834 --->
+					<cfif cs.customfield_all_metadata NEQ '' OR cs.customfield_audios_metadata NEQ ''>
 					<br />
 					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
 					<div id="customfields">
 						<cfinclude template="inc_custom_fields.cfm">
 					</div>
 					<div stlye="clear:both;"></div>
+					</cfif>
 				</cfif>
 				<!--- Raw Metadata --->
 				<cfif qry_detail.detail.link_kind NEQ "url">

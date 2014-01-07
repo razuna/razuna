@@ -786,15 +786,6 @@
 								</cfloop>
 							</select>
 							<br /><br />
-							<select name="customfield_images_metadata" multiple="multiple" style="width:400px;height:130px;">
-								<!--- customfield values of images--->
-								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_images")# ---</option>
-								<cfloop query="qry_fields">
-									<cfif cf_show EQ "img">
-										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.customfield_images_metadata,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
-									</cfif>
-								</cfloop>
-							</select><br /><br />
 							<!--- VIDEOS --->
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_videos")#
 							<br />

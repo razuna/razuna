@@ -1,4 +1,4 @@
-<!---
+﻿<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -26,8 +26,8 @@
 <cfoutput>
 	<cfif !structKeyExists(variables,"cf_inline")><table border="0" cellpadding="0" cellspacing="0" width="450" class="grid"></cfif>
 		<cfloop query="qry_cf">
-			<!--- RAZ-2834 custom field selected under customization tab will displayed under metadata tab in in assets detail view window --->
-			<cfif structKeyExists(cs,'customfield_images_metadata') AND listFindNoCase(cs.customfield_images_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_audios_metadata') AND listFindNoCase(cs.customfield_audios_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_videos_metadata') AND listFindNoCase(cs.customfield_videos_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_files_metadata') AND listFindNoCase(cs.customfield_files_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_all_metadata') AND listFindNoCase(cs.customfield_all_metadata,'#qry_cf.cf_id#',',')> 
+			<!--- RAZ-2834 --->
+			<cfif structKeyExists(cs,'customfield_images_metadata') AND listFindNoCase(cs.customfield_images_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_audios_metadata') AND listFindNoCase(cs.customfield_audios_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_videos_metadata') AND listFindNoCase(cs.customfield_videos_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_files_metadata') AND listFindNoCase(cs.customfield_files_metadata,'#qry_cf.cf_id#',',') OR structKeyExists(cs,'customfield_all_metadata') AND listFindNoCase(cs.customfield_all_metadata,'#qry_cf.cf_id#',',')>
 			<tr>
 				<cfif !structKeyExists(variables,"cf_inline")>
 					<td width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
@@ -56,7 +56,7 @@
 						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
-						<input type="text" style="width:300px;" id="cf_text_#listlast(cf_id,'-')#" name="cf_#cf_id#" value="#cf_value#" onchange="document.form#attributes.file_id#.cf_meta_text_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_text_#listlast(cf_id,'-')#.value;" <cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>
+						<input type="text" style="width:300px;" id="cf_meta_text_#listlast(cf_id,'-')#" name="cf_meta_text_#cf_id#" value="#cf_value#" onchange="document.form#attributes.file_id#.cf_text_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_meta_text_#listlast(cf_id,'-')#.value;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>
 					<!--- Radio --->
 					<cfelseif cf_type EQ "radio">
 						<!--- Variable --->
@@ -78,8 +78,8 @@
 						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
-						<input type="radio" name="cf_#cf_id#" id="cf_radio_yes#listlast(cf_id,'-')#" value="T" onchange="document.form#attributes.file_id#.cf_meta_radio_yes#listlast(cf_id,'-')#.checked = document.form#attributes.file_id#.cf_radio_yes#listlast(cf_id,'-')#.checked;" <cfif cf_value EQ "T"> checked="true"</cfif><cfif !allowed> disabled="disabled"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# 
-						<input type="radio" name="cf_#cf_id#" id="cf_radio_no#listlast(cf_id,'-')#" value="F" onchange="document.form#attributes.file_id#.cf_meta_radio_no#listlast(cf_id,'-')#.checked = document.form#attributes.file_id#.cf_radio_no#listlast(cf_id,'-')#.checked;" <cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif><cfif !allowed> disabled="disabled"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
+						<input type="radio" name="cf_meta_radio_#cf_id#" id="cf_meta_radio_yes#listlast(cf_id,'-')#" value="T" onchange="document.form#attributes.file_id#.cf_radio_yes#listlast(cf_id,'-')#.checked = document.form#attributes.file_id#.cf_meta_radio_yes#listlast(cf_id,'-')#.checked;"<cfif cf_value EQ "T"> checked="true"</cfif><cfif !allowed> disabled="disabled"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# 
+						<input type="radio" name="cf_meta_radio_#cf_id#" id="cf_meta_radio_no#listlast(cf_id,'-')#" value="F" onchange="document.form#attributes.file_id#.cf_radio_no#listlast(cf_id,'-')#.checked = document.form#attributes.file_id#.cf_meta_radio_no#listlast(cf_id,'-')#.checked;"<cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif><cfif !allowed> disabled="disabled"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 					<!--- Textarea --->
 					<cfelseif cf_type EQ "textarea">
 						<!--- Variable --->
@@ -101,7 +101,7 @@
 						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
-						<textarea name="cf_#cf_id#" id="cf_textarea_#listlast(cf_id,'-')#" onchange="document.form#attributes.file_id#.cf_meta_textarea_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_textarea_#listlast(cf_id,'-')#.value;" style="width:310px;height:60px;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>#cf_value#</textarea>
+						<textarea name="cf_meta_textarea_#cf_id#" id="cf_meta_textarea_#listlast(cf_id,'-')#" onchange="document.form#attributes.file_id#.cf_textarea_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_meta_textarea_#listlast(cf_id,'-')#.value;" style="width:310px;height:60px;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>#cf_value#</textarea>
 					<!--- Select --->
 					<cfelseif cf_type EQ "select">
 						<!--- Variable --->
@@ -123,7 +123,7 @@
 						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
-						<select name="cf_#cf_id#" id="cf_select_#listlast(cf_id,'-')#" onchange="document.form#attributes.file_id#.cf_meta_select_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_select_#listlast(cf_id,'-')#.value;" style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
+						<select name="cf_meta_select_#cf_id#" id="cf_meta_select_#listlast(cf_id,'-')#" onchange="document.form#attributes.file_id#.cf_select_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_meta_select_#listlast(cf_id,'-')#.value;" style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
 							<option value=""></option>
 							<cfloop list="#ltrim(ListSort(cf_select_list, 'text', 'asc', ','))#" index="i">
 								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
