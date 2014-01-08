@@ -56,8 +56,8 @@
 		</table>
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
 			<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" >
-			<div id="updatetextsubscribe" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
+		<div id="updatetextsubscribe" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 	</div>
 	</form>
 </cfoutput>
