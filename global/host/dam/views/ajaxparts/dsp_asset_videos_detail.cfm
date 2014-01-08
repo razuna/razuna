@@ -208,8 +208,8 @@
 							<tr>
 								<!--- CUSTOM FIELDS --->
 								<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-									<!--- RAZ - 2834 --->
-									<cfif cs.customfield_all_metadata NEQ '' OR cs.customfield_videos_metadata NEQ ''>
+									<!--- RAZ-2834 : Displays Custom field of Videos --->
+									<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_videos_metadata') AND cs.customfield_videos_metadata NEQ '')>
 									<br />
 									<div id="customfields">
 										<cfinclude template="inc_custom_meta_fields.cfm">
@@ -273,8 +273,8 @@
 				<div stlye="clear:both;"></div>
 				<!--- CUSTOM FIELDS --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-					<!--- RAZ - 2834 --->
-					<cfif cs.customfield_all_metadata NEQ '' OR cs.customfield_videos_metadata NEQ ''>
+					<!--- RAZ-2834 : Displays Custom field of Videos --->
+					<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_videos_metadata') AND cs.customfield_videos_metadata NEQ '')>
 					<br />
 					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
 					<div id="customfields">

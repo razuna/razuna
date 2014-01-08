@@ -246,8 +246,8 @@
 										</tr>
 										<tr>
 											<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-												<!--- RAZ - 2834 --->
-												<cfif cs.customfield_all_metadata NEQ '' OR cs.customfield_files_metadata NEQ ''>
+												<!--- RAZ-2834: Displays Custom field of files--->
+												<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_files_metadata') AND cs.customfield_files_metadata NEQ '')>
 												<br />
 												<div id="customfields" style="padding-top:10px;">
 													<cfinclude template="inc_custom_meta_fields.cfm">
@@ -350,8 +350,8 @@
 				<div stlye="clear:both;"></div>
 				<!--- Custom fields --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-					<!--- RAZ - 2834 --->
-					<cfif cs.customfield_all_metadata NEQ '' OR cs.customfield_files_metadata NEQ ''>
+					<!--- RAZ-2834: Displays Custom field of files --->
+					<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_files_metadata') AND cs.customfield_files_metadata NEQ '')>
 					<br />
 					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
 					<div id="customfields" style="padding-top:10px;">
