@@ -2930,6 +2930,7 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.link_path" value="#folder_path#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.av" value="false" overwrite="false" />
@@ -2941,13 +2942,23 @@
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
-		<!-- CFC: Add path -->
-		<if condition="!attributes.av">
+		<!-- CFC: Check to be able to read folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="link_check(attributes)" returnvariable="attributes.checkstatus" />
+		<!-- Show -->
+		<if condition="attributes.checkstatus.dir EQ 'no'">
 			<true>
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
+				<do action="ajax.folder_check" />
 			</true>
 			<false>
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="add_av_from_path(attributes)" />
+				<!-- CFC: Add path -->
+				<if condition="!attributes.av">
+					<true>
+						<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
+					</true>
+					<false>
+						<invoke object="myFusebox.getApplicationData().assets" methodcall="add_av_from_path(attributes)" />
+					</false>
+				</if>
 			</false>
 		</if>
 	</fuseaction>
