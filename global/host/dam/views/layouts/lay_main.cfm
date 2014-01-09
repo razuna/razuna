@@ -216,7 +216,7 @@ document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackw
 <script type="text/javascript">
 var zdFBWSettings = {};
 zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
-zdFBWSettings.fbURL = "http://forums.razuna.org/fbw?fbwId=125591000000015005";
+zdFBWSettings.fbURL = "https://forums.razuna.org/fbw?fbwId=125591000000015005";
 zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
 zdFBWSettings.display = "popout";
 var zdFBW = new ZDiscussions.loadZDFeedbackTab;
