@@ -47,12 +47,6 @@
 				<a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
 				| <a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank">Download</a>
 				| <a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;">Direct Link</a>
-				<!---<cfif application.razuna.storage EQ 'local'>
-					<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
-				<cfelse>
-					<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
-				</cfif>
-				| <a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50" width="50"></a>--->
 				<cfif attributes.folderaccess NEQ "R">
 					 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
 				</cfif>

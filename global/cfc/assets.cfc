@@ -4729,6 +4729,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfset thefile.serverFileExt = lcase(thefile.serverFileExt)>
 		<!--- File Size --->
 		<cfset arguments.thestruct.thesize = thefile.fileSize>
+		<!--- Rename the file so that we can remove any spaces --->
+		<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
+		<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 	<cfelse>
 		<cfset arguments.thestruct.thetempfolder = "api#arguments.thestruct.newid#">
 		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
@@ -4740,6 +4743,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfset thefile.serverFileExt = arguments.thestruct.theextension>
 		<!--- File Name --->
 		<cfset thefile.serverFile = arguments.thestruct.thefilename>
+		<!--- Rename the file so that we can remove any spaces --->
+		<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
+		<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 	</cfif>
 	<!--- Get and set file type and MIME content --->
 	<cfquery datasource="#application.razuna.datasource#" name="fileType">
@@ -4761,15 +4767,15 @@ This is the main function called directly by a single upload else from addassets
 		<cfif iswindows()>
 			<cfset var theexe = """#thetools.exiftool#/exiftool.exe""">
 			<!--- Get with and heigth --->
-			<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.thewidth" timeout="30" />
-			<cfexecute name="#theexe#" arguments="-S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.theheight" timeout="30" />
+			<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" variable="arguments.thestruct.thewidth" timeout="30" />
+			<cfexecute name="#theexe#" arguments="-S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" variable="arguments.thestruct.theheight" timeout="30" />
 		<cfelse>
 			<cfset var theexe = thetools.exiftool & "/exiftool">
 			<!--- Set scripts --->
 			<cfset var theshw = "#GetTempDirectory()#/w#arguments.thestruct.newid#.sh">
 			<cfset var theshh = "#GetTempDirectory()#/h#arguments.thestruct.newid#.sh">
 			<!--- On LAN --->
-			<cfset var theserverfile = "#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#">
+			<cfset var theserverfile = "#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 			<cfset var theserverfile = replace(theserverfile," ","\ ","all")>
 			<cfset var theserverfile = replace(theserverfile,"&","\&","all")>
 			<cfset var theserverfile = replace(theserverfile,"'","\'","all")>
@@ -4799,11 +4805,6 @@ This is the main function called directly by a single upload else from addassets
 	WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- Rename the file so that we can remove any spaces --->
-	<cfif !arguments.thestruct.frompath>
-		<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
-		<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
-	</cfif>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- animated GIFs can only be converted to GIF --->
