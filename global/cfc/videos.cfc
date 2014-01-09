@@ -591,6 +591,7 @@
 			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
 			<cfinvokeargument name="logfiletype" value="vid">
 			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+			<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -849,6 +850,7 @@
 				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
 				<cfinvokeargument name="logfiletype" value="vid">
 				<cfinvokeargument name="assetid" value="#i#">
+				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 			</cfinvoke>
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #arguments.thestruct.hostdbprefix#videos
@@ -1212,7 +1214,7 @@
 			</cfif>
 		</cfif>
 		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
@@ -1677,7 +1679,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.folder_id_r#')>
 				<!--- Call Plugins --->
 				<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
 				<cfset arguments.thestruct.file_name = previewvideo>
@@ -1921,7 +1923,7 @@
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<!--- </cfthread> --->
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id)>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id,folderid='#arguments.thestruct.folder_id#')>
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function videos.move">

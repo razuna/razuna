@@ -398,7 +398,7 @@
 			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 		</cfif>
 		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id)>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id,folderid='#arguments.thestruct.folder_id#')>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
@@ -435,6 +435,7 @@
 			<cfinvokeargument name="logdesc" value="Deleted: #details.aud_name#">
 			<cfinvokeargument name="logfiletype" value="aud">
 			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+			<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -700,6 +701,7 @@
 				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.aud_name#">
 				<cfinvokeargument name="logfiletype" value="aud">
 				<cfinvokeargument name="assetid" value="#i#">
+				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 			</cfinvoke>
 			<!--- Delete from files DB (including referenced data)--->
 			<cfquery datasource="#application.razuna.datasource#">
@@ -887,7 +889,7 @@
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<!--- </cfthread> --->
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id)>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id,folderid='#arguments.thestruct.folder_id#')>
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error while moving audio in function audios.move">
@@ -1304,7 +1306,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.folder_id_r#')>
 				<!--- Call Plugins --->
 				<cfset arguments.thestruct.fileid = newid.id>
 				<cfset arguments.thestruct.file_name = finalaudioname>

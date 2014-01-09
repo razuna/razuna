@@ -1624,7 +1624,8 @@
 		  LOG_IP		 	VARCHAR(200), 
 		  LOG_TIMESTAMP 	TIMESTAMP DEFAULT '0000-00-00 00:00:00',
 		  HOST_ID			INT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  PRIMARY KEY (LOG_ID),
 		  KEY #arguments.thestruct.host_db_prefix#la_user (log_user),
   		  KEY #arguments.thestruct.host_db_prefix#la_hostid (HOST_ID)

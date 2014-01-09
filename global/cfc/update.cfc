@@ -127,7 +127,7 @@
 		<!--- If update number is lower then 18 (v. 1.6.3) --->
 		<cfif updatenumber.opt_value LT 19>
 			<cftry>
-				<!--- Folder subscribe --->
+				<!--- RAZ-2815 : Folder subscribe --->
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE TABLE raz1_folder_subscribe 
 				(	
@@ -145,7 +145,7 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+			<!--- RAZ-2815 Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfset var newschid = createuuid()>
 			<cfschedule action="update"
 				task="RazScheduledUploadEvent[#newschid#]" 
@@ -156,6 +156,15 @@
 				endTime="23:59 PM"
 				interval="120"
 			>
+			<!--- RAZ-2815 Add FOLDER_ID Column in raz1_log_assets --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_log_assets add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FOLDER_ID #thevarchar#(100)
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

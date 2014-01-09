@@ -1188,7 +1188,8 @@
 		  LOG_IP			VARCHAR(200), 
 		  LOG_TIMESTAMP		TIMESTAMP,
 		  HOST_ID			BIGINT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
