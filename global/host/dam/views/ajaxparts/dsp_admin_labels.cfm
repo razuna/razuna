@@ -29,13 +29,12 @@
 		<tr class="list">
 			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("admin_labels_desc")#</td>
 		</tr>
-		<!--- Show the list of groups in select option --->
+		<!--- RAZ-2207: Show the list of groups in select option --->
 		<tr class="list">
-			<td colspan="2" style="padding-top:15px;">#myFusebox.getApplicationData().defaults.trans("admin_labels_allow")#
-				<br /><br />
+			<td colspan="2" style="padding-top:15px;">#myFusebox.getApplicationData().defaults.trans("admin_labels_allow")# 
+				<br/><br/>
 				<select data-placeholder="Choose a group or user" class="chzn-select" style="width:410px;" name="labels_public" id="labels_public" onchange="save_setting('labels_public')" multiple="multiple">
 					<option value=""></option>
-					
 					<cfloop query="qry_groups">
 						<option value="#grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,grp_id)> selected="selected"</cfif>>#grp_name#</option>
 					</cfloop>

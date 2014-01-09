@@ -7038,8 +7038,9 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_labels_setting" />
 		<!-- CFC: Get groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
-			<argument name="orderBy" value="grp_id,grp_name" />
-		</invoke>
+			<argument name="mod_short" value="ecp" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke> 
 		<!-- CFC: Get users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />		
 		<!-- Show -->
