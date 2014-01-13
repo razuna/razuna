@@ -1303,6 +1303,26 @@
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- RAZ-2837: Get descriptions and keywords  --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtext">
+					SELECT lang_id_r,aud_description as thedesc,aud_keywords as thekeys
+					FROM #session.hostdbprefix#audios_text
+					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add to descriptions and keywords--->
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#audios_text
+					(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#qry_theaudtext.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+					<cfqueryparam value="#ltrim(qry_theaudtext.thedesc)#" cfsqltype="cf_sql_varchar">, 
+					<cfqueryparam value="#ltrim(qry_theaudtext.thekeys)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
 				<!--- Log --->
 				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')>
 				<!--- Call Plugins --->
