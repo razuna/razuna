@@ -966,9 +966,17 @@
 	<!--- On local link asset we have a different input path --->
 	<cfif arguments.thestruct.link_kind NEQ "lan">
 		<cfif application.razuna.storage EQ "local">
+			<!--- Original image --->
 			<cfthread name="#tempfolder#" intstruct="#arguments.thestruct#">
 				<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.img_filename_org#" destination="#attributes.intstruct.thisfolder#/#attributes.intstruct.thename#" mode="775">
 			</cfthread>
+			<!--- Thumb --->
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'> 
+				<cfthread name="thumb#tempfolder#" intstruct="#arguments.thestruct#">
+					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.path_to_asset#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension#" destination="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension#" mode="775">
+				</cfthread>
+				<cfthread action="join" name="thumb#tempfolder#" />
+			</cfif>	
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfthread name="#tempfolder#" intstruct="#arguments.thestruct#">
@@ -984,6 +992,17 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
+			<!--- Thumb --->
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'> 
+				<cfthread name="thumb#tempfolder#" intstruct="#arguments.thestruct#">
+					<cfinvoke component="amazon" method="Download">
+						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.path_to_asset#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension#">
+						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension#">
+						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+					</cfinvoke>
+				</cfthread>
+				<cfthread action="join" name="thumb#tempfolder#" />
+			</cfif>
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai">
 			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
@@ -1001,6 +1020,7 @@
 	</cfif>
 	<!--- Wait for the thread above until the file is downloaded fully --->
 	<cfthread action="join" name="#tempfolder#" />
+	
 
 	<!--- Ok, file is here so continue --->
 
@@ -1247,6 +1267,10 @@
 		</cfquery>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
+			<cfset arguments.thestruct.theexe = theexe >
+			<cfset arguments.thestruct.thisfolder = thisfolder >
+			<cfset arguments.thestruct.host_id = session.hostid>
+			<cfset arguments.thestruct.theformat = theformat>
 			<!--- Create folder with the asset id --->
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#" mode="775">
 			<!--- Move original image --->
@@ -1254,10 +1278,25 @@
 			<!--- Move thumbnail --->
 			<!--- No Thumbnail for GIF file --->
 			<cfif arguments.thestruct.qry_detail.thumb_extension NEQ 'gif'>
-				<cffile action="move" source="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" mode="775">
+				<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+					<cffile action="move" source="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#" destination="#attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#" mode="775">
+				</cfthread>
+				<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
 			</cfif>
-			<cfthread name="upload#theformat##arguments.thestruct.newid#">
-			</cfthread>
+			<!--- Check the source file is animated then create a thumb image --->
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'> 
+				<cfif theformat NEQ 'gif' >
+					<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+						<cfexecute name="#attributes.intstruct.theexe#" arguments="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension#[0] #attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#" timeout="300" />
+					</cfthread>
+					<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
+				<cfelse>
+					<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+						<cfexecute name="#attributes.intstruct.theexe#" arguments="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension# #attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.theformat#" timeout="300" />
+					</cfthread>
+					<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
+				</cfif>
+			</cfif>	
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
@@ -1300,9 +1339,32 @@
 			</cfthread>
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
+			<!--- Check the source file is animated then create a thumb image --->
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'> 
+				<cfif theformat NEQ 'gif'>
+					<cfexecute name="#theexe#" arguments="#arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.qry_detail.img_id#.#arguments.thestruct.qry_detail.thumb_extension#[0] #arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" timeout="300" />
+					<cfinvoke component="amazon" method="Upload">
+						<cfinvokeargument name="key" value="/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+						<cfinvokeargument name="theasset" value="#arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+						<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+					</cfinvoke>
+				<cfelse>
+					<cfinvoke component="s3" method="copyObject">
+						<cfinvokeargument name="oldBucketName" value="#arguments.thestruct.awsbucket#">
+						<cfinvokeargument name="newBucketName" value="#arguments.thestruct.awsbucket#">
+						<cfinvokeargument name="oldFileKey" value="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.qry_detail.img_id#/thumb_#arguments.thestruct.file_id#.#theformat#">
+						<cfinvokeargument name="newFileKey" value="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#theformat#">
+					</cfinvoke>
+				</cfif>
+			</cfif>	
 			<!--- Get signed URLS --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#" awsbucket="#arguments.thestruct.awsbucket#">
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Check the source file is animated or not. --->
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat EQ 'gif'> 
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#theformat#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelse>
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai">
 			<cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
@@ -1343,6 +1405,12 @@
 		<!---<cfquery datasource="#application.razuna.datasource#" name="qry_img_id">
 			SELECT i.img_id FROM raz1_images i WHERE i.img_group IS NULL
 		</cfquery>	--->
+		<!--- Animated format image thumb extension --->
+		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat EQ 'gif'> 
+			<cfset thumb_extension = theformat>
+		<cfelse>
+			<cfset thumb_extension = arguments.thestruct.qry_settings_image.set2_img_format>
+		</cfif>
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#images
 		SET
@@ -1362,7 +1430,7 @@
 		img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">, 
 		img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">, 
 		img_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">, 
-		thumb_extension = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_format#" cfsqltype="cf_sql_varchar">, 
+		thumb_extension = <cfqueryparam value="#thumb_extension#" cfsqltype="cf_sql_varchar">, 
 		thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
 		thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
 		<cfif isNumeric(#thewidth#)>
@@ -1446,7 +1514,7 @@
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, 
-	i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org
+	i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension
 	FROM #session.hostdbprefix#images i
 	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#"> 
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

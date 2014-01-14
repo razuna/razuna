@@ -3923,6 +3923,7 @@
 	</fuseaction>
 	<!-- Load related images -->
 	<fuseaction name="images_detail_related">
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="qry_settings_image" />
 		<!-- CFC: Get global settings -->
 		<!-- <invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_web()" returnvariable="qry_settings" /> -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />

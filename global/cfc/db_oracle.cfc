@@ -2188,6 +2188,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
   		  thewidth 				varchar2(50 CHAR) DEFAULT '0',
   		  theheight				varchar2(50 CHAR) DEFAULT '0',
   		  hashtag			   	VARCHAR2(100 CHAR),
+  		  av_thumb_url			varchar2(500 CHAR) DEFAULT NULL,
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
