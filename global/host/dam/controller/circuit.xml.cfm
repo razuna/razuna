@@ -2108,6 +2108,8 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -2165,6 +2167,8 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -2222,6 +2226,8 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -2297,6 +2303,8 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -2365,6 +2373,8 @@
 		<do action="set_view" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Load record -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Set Access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get subfolders -->
@@ -2459,6 +2469,8 @@
 		<set name="attributes.dam" value="" />
 		<!-- CFC: Load record -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
+		<!-- CFC: Get parent folder details  -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(qry_folder.folder_id_r)" returnvariable="qry_root_folder" />
 		<!-- If rid or level are 0 -->
 		<if condition="#attributes.from# EQ 'list'">
 			<true>
@@ -3614,6 +3626,8 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'doc')" returnvariable="qry_labels" />
 		<!-- CFC: Get file detail -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Check for custom fields -->
@@ -3710,6 +3724,8 @@
 		<set name="attributes.cf_show" value="vid" />
 		<!-- CFC: Get file detail -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Check for custom fields -->
@@ -3881,6 +3897,8 @@
 		<!-- CFC: Get file detail -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
 		<set name="attributes.qry_detail" value="#qry_detail#" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Check for custom fields -->
@@ -4060,6 +4078,8 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'aud')" returnvariable="qry_labels" />
 		<!-- CFC: Get file detail -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Get folder info -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Check for custom fields -->
