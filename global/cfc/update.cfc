@@ -126,9 +126,9 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
-		<!--- If update number is lower then 18 (v. 1.6.3) --->
+		<!--- If update number is lower then 19(v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 19>
-			<!--- RAZ-2839: Add a new column for addional version thumnail url  --->
+			<!--- RAZ-2839: Add a new column for additional version thumbnail url  --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> av_thumb_url #thevarchar#(500)
@@ -139,7 +139,16 @@
 			</cftry>
 			
 			<!--- RAZ-2829: Add an expiration date to a user and disable access when expiration occurs --->
-			<cftry>
+			       <cftry>
+				         <cfquery datasource="#application.razuna.datasource#">
+				         ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> USER_EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				         </cfquery>
+				         <cfcatch type="any">
+				           <cfset thelog(logname=logname,thecatch=cfcatch)>
+				         </cfcatch>
+			       </cftry>
+			
+		    	        <cftry>
 				<!--- RAZ-2815 : Folder subscribe --->
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE TABLE raz1_folder_subscribe 
