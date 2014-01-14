@@ -1410,6 +1410,8 @@
 					ALTER TABLE #session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
 					</cfquery>
 				</cfif>
+				<!--- Delete Subscribe --->
+				<cfinvoke method="removesubscribefolder" folderid="#folderids#" />
 				<!--- Delete labels --->
 				<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.folder_id#" />
 				<!--- Delete files in this folder --->
@@ -6216,6 +6218,82 @@
 	</cftry>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfreturn />
+</cffunction>
+
+<!--- Subscribe E-mail notification --->
+<cffunction name="subscribe" access="public" output="true">
+	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Subscribe details --->
+	<cfquery datasource="#application.razuna.datasource#" name="qfoldersubscribe">
+		SELECT * 
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	</cfquery>
+	<!--- If folder subscribe details already exists then delete else insert/update --->
+	<cfif arguments.thestruct.emailnotify EQ 'no'>
+		<!--- Delete Subscribe details --->
+		<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#folder_subscribe
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+			AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+		</cfquery>
+	<cfelse>
+		<cfif qfoldersubscribe.recordcount NEQ 0>
+			<!--- Update Subscribe details --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#folder_subscribe
+				SET 
+				fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+				mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+				AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+			</cfquery>
+		<cfelse>
+			<!--- Insert Subscribe details --->
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folder_subscribe
+				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				)
+			</cfquery>
+		</cfif>
+	</cfif>
+</cffunction>
+
+<!--- GET SUBSCRIBE FOLDER RECORD --->
+<cffunction name="getsubscribefolder" output="false" access="public" returntype="query">
+	<cfargument name="folder_id" required="yes" type="string">
+	<!--- Subscribe folder details --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_folder">
+		SELECT * 
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
+		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	</cfquery>
+	<cfreturn qry_folder />
+</cffunction>
+
+<!--- REMOVE FOLDER SUBSCRIBE --->
+<cffunction name="removesubscribefolder" output="false" access="public">
+	<cfargument name="folderid" required="yes" type="string">
+	<cfloop list="#arguments.folderid#" index="ids">
+	<!--- Delete folder subscribe --->
+		<cfquery datasource="#application.razuna.datasource#" >
+		DELETE FROM #session.hostdbprefix#folder_subscribe 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ids#"> 
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		</cfquery> 
+	</cfloop>
+	<!--- Return --->
 	<cfreturn />
 </cffunction>
 

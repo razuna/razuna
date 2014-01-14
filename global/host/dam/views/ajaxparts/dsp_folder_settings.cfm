@@ -27,14 +27,16 @@
 <cfoutput>
 	<div id="tabfoldersettings">
 		<ul>
-			<li><a href="##properties" onclick="$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');savefolderforms();" rel="prefetch"><cfif attributes.iscol EQ "f">Folder Settings<cfelse>Collection Settings</cfif></a></li>
+			<li><a href="##properties" onclick="$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch"><cfif attributes.iscol EQ "f">Folder Settings<cfelse>Collection Settings</cfif></a></li>
 			<cfif attributes.iscol EQ "F">
 				<!--- Sharing --->
-				<li><a href="##sharing" onclick="$('##sharing').load('#myself#c.folder_sharing&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
+				<li><a href="##sharing" onclick="$('##sharing').load('#myself#c.folder_sharing&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				<!--- Widgets --->
-				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
+				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 				<!--- Thumbnail --->
 				<li><a href="##thumbnail" >#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</a></li>
+				<!--- Subscribe --->
+				<li><a href="##subscribe" onclick="$('##subscribe').load('#myself#c.folder_subscribe&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_subscribe_title")#</a></li>
 			</cfif>
 		</ul>
 		<!--- Properties --->
@@ -48,6 +50,8 @@
 			<div id="thumbnail">
 				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" style="border:0px;width:100%;height:380px;"></iframe>
 			</div>
+			<!--- Subscribe --->
+			<div id="subscribe">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		</cfif>
 	</div>
 	<!--- Activate the Tabs --->

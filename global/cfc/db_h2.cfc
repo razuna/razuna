@@ -1189,7 +1189,8 @@
 		  LOG_IP			VARCHAR(200), 
 		  LOG_TIMESTAMP		TIMESTAMP,
 		  HOST_ID			BIGINT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
@@ -1989,6 +1990,19 @@
 		)
 		</cfquery>
 		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100) NOT NULL,
+			host_id 					bigint DEFAULT NULL,
+			folder_id 					varchar(100) DEFAULT NULL,
+			user_id						varchar(100) DEFAULT NULL,
+			mail_interval_in_hours		BIGINT(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			 PRIMARY KEY (fs_id)
+		)
+		</cfquery>
 	</cffunction>
 	
 	<!--- Create Indexes --->

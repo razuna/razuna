@@ -1513,7 +1513,8 @@
 		  LOG_IP			VARCHAR2(200 CHAR), 
 		  LOG_TIMESTAMP		TIMESTAMP, 
 		  HOST_ID			NUMBER,
-		  asset_id_r		VARCHAR2(100 CHAR),
+		  ASSET_ID_R		VARCHAR2(100 CHAR),
+		  FOLDER_ID			VARCHAR2(100 CHAR),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		
@@ -2325,6 +2326,20 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			sf_prop_value 	varchar2(2000 char),
 			host_id 		number,
 			PRIMARY KEY (sf_id_r)
+		)
+		</cfquery>
+		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar2(100 char) NOT NULL,
+			host_id 					number DEFAULT NULL,
+			folder_id 					varchar2(100 char) DEFAULT NULL,
+			user_id						varchar2(100 char) DEFAULT NULL,
+			mail_interval_in_hours		number(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			PRIMARY KEY (fs_id)
 		)
 		</cfquery>
 		

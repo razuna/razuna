@@ -125,12 +125,43 @@
 		</cfquery>
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
-		<!--- If update number is lower then 19 (v. 1.6.3) --->
+		
+		<!--- If update number is lower then 18 (v. 1.6.3) --->
 		<cfif updatenumber.opt_value LT 19>
-			<!--- RAZ-2829: Add an expiration date to a user and disable access when expiration occurs --->
+			<cftry>
+				<!--- RAZ-2815 : Folder subscribe --->
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_folder_subscribe 
+				(	
+					fs_id 	 					#thevarchar#(100),
+					host_id						#theint#,
+					folder_id					#thevarchar#(100),
+					user_id						#thevarchar#(100),
+					mail_interval_in_hours		#theint#(6),
+					last_mail_notification_time #thetimestamp#,
+			 		PRIMARY KEY (fs_id)
+				)
+				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2815 Save Folder Subscribe scheduled event in CFML scheduling engine --->
+			<cfset var newschid = createuuid()>
+			<cfschedule action="update"
+				task="RazScheduledUploadEvent[#newschid#]" 
+				operation="HTTPRequest"
+				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="120"
+			>
+			<!--- RAZ-2815 Add FOLDER_ID Column in raz1_log_assets --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> USER_EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				ALTER TABLE raz1_log_assets add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FOLDER_ID #thevarchar#(100)
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
