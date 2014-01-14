@@ -2550,23 +2550,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		
 		<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
 			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-				username="#arguments.thestruct.ad_server_username#" 
-				password="#arguments.thestruct.ad_server_password#"
-				port = "#arguments.thestruct.ad_server_port#"
-				start = "#arguments.thestruct.ad_server_start#"
-				filter="#ldapfilter#" 
-				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				scope="subtree" action = "query"  name = "results" sort = "sAMAccountName ASC"  
-				secure = "CFSSL_BASIC" >
+			scope="subtree" 
+			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
+			attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		<cfelse>
-			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-				username="#arguments.thestruct.ad_server_username#" 
-				password="#arguments.thestruct.ad_server_password#"
-				port = "#arguments.thestruct.ad_server_port#"
-				start = "#arguments.thestruct.ad_server_start#"
-				filter="#ldapfilter#" 
-				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				scope="subtree" action = "query"  name = "results" sort = "sAMAccountName ASC" >
+			<cfldap server = "#arguments.thestruct.ad_server_name#"  
+			scope="subtree" 
+			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+			filter="(&(objectClass=user))" 
+			attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		</cfif>
 
 		<cfreturn results/>
