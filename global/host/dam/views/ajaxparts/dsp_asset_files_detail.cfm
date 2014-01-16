@@ -186,6 +186,23 @@
 													<cfif attributes.folderaccess EQ "R">
 														<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>
 													<cfelse>
+														<!--- RAZ-2207 Check Group/Users Permissions --->
+														<cfset flag = 0>
+														<cfif  qry_label_set.set2_labels_users EQ ''>
+															<cfset flag=1>
+														<cfelse>
+															<cfif qry_GroupsOfUser.recordcount NEQ 0>
+															<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
+																<cfif listfindnocase(qry_label_set.set2_labels_users,i,',') OR listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+																	<cfset flag=1>
+																</cfif>
+															</cfloop>
+															<cfelse>
+																<cfif listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+																	<cfset flag = 1>
+																</cfif>	
+															</cfif>	
+														</cfif>
 														<cfif attributes.thelabelsqry.recordcount lte 200>
 															<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_doc" onchange="razaddlabels('tags_doc','#attributes.file_id#','doc');" multiple="multiple">
 															<option value=""></option>
@@ -193,7 +210,7 @@
 																<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 															</cfloop>
 															</select>
-															<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+															<cfif  flag EQ 1 OR qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 																<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 															</cfif>
 														<cfelse>
@@ -209,7 +226,8 @@
 																		</cfif>
 																	</cfloop>
 																</div>
-																<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+																
+																<cfif flag EQ 1 OR qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 																	<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 																</cfif>
 																<!--- Select label button --->

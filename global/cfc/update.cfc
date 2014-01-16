@@ -128,6 +128,16 @@
 		
 		<!--- If update number is lower then 19(v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 19>
+			<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					alter table raz1_settings_2 <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column SET2_LABELS_USERS #theclob#<cfelse>change SET2_LABELS_USERS SET2_LABELS_USERS #theclob#</cfif>
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+
 			<!--- RAZ-2839: Add a new column for additional version thumbnail url  --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
