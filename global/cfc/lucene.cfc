@@ -149,6 +149,7 @@
 		</cfquery>
 		<cfset arguments.assetpath = trim(qry_path.set2_path_to_assets)>
 		<!--- Loop over the recordset --->
+		<cfset consoleoutput(true)>
 		<cfloop query="qry">
 			<cfset console("Start indexing: #arguments.hostid# -  #theid# - #now()#")>
 			<!--- Create tt for thread --->
@@ -856,18 +857,18 @@
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
 			<cfset arguments.criteria = escapelucenechars(arguments.criteria)>
-			 <!--- Replace spaces with AND if query doesn't contain AND, OR  or " --->
+			<!--- Replace spaces with AND if query doesn't contain AND, OR  or " --->
 			<cfif find(" AND ", arguments.criteria) EQ 0 AND find(" OR ", arguments.criteria) EQ 0 AND find('"', arguments.criteria) EQ 0 >
 				<cfset arguments.criteria_sp = replace(arguments.criteria,chr(32)," AND ", "ALL")>
 			<cfelse>	
 				<cfset arguments.criteria_sp = arguments.criteria>
 			</cfif>
-			<cfif arguments.criteria CONTAINS '"' OR arguments.criteria CONTAINS "*" >
+			<cfif arguments.criteria CONTAINS '"' OR arguments.criteria CONTAINS "*" OR find(" AND ", arguments.criteria) NEQ 0 OR find(" OR ", arguments.criteria) NEQ 0>
 				<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#)'>
 			<cfelse>
-				<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#")'>
+				<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#)'>
 			</cfif>
-			<cfset arguments.criteria = arguments.criteria & ' keywords:(#arguments.criteria_sp#) description:(#arguments.criteria_sp#) id:(#arguments.criteria_sp#) labels:(#arguments.criteria_sp#) customfieldvalue:(#arguments.criteria_sp#)'>
+			<cfset arguments.criteria = arguments.criteria_sp & ' ' & arguments.criteria & ' keywords:(#arguments.criteria_sp#) description:(#arguments.criteria_sp#) id:(#arguments.criteria_sp#) labels:(#arguments.criteria_sp#) customfieldvalue:(#arguments.criteria_sp#)'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>
