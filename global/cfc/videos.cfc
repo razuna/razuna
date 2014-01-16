@@ -1506,7 +1506,12 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on converting your video" themessage="Your Video could not be converted to the format #ucase(theformat)#. This can happen when the source video is rendered with codecs that our conversion engine can not read/write.">
+				<!--- RAZ-2810 Customise email message --->
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "#ucase(theformat)#">
+				<cfinvoke component="defaults" method="trans" transid="video_convert_error_subject" values="#transvalues#" returnvariable="video_convert_error_sub" />
+				<cfinvoke component="defaults" method="trans" transid="video_convert_error_message" values="#transvalues#" returnvariable="video_convert_error_msg" />
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="#video_convert_error_sub#" themessage="#video_convert_error_msg#">
 			<cfelse>
 				<!--- If we are MP4 run it trough MP4Box --->
 				<cfif theformat EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">

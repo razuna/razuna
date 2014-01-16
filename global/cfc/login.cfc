@@ -350,6 +350,12 @@
 		<cfargument name="email" required="yes" type="string">
 		<!--- create structure to store results in --->
 		<cfset thepass=structNew()>
+		<!--- RAZ-2810 Customise email message --->
+		<cfinvoke component="defaults" method="trans" transid="password_for_razuna" returnvariable="password_for_razuna_subject" />
+		<cfinvoke component="defaults" method="trans" transid="user_account_expired" returnvariable="user_account_expired_content" />
+		<cfinvoke component="defaults" method="trans" transid="user_lost_password" returnvariable="user_lost_password_content" />
+		<cfinvoke component="defaults" method="trans" transid="username" returnvariable="user_login_name" />
+		<cfinvoke component="defaults" method="trans" transid="password" returnvariable="user_login_password" />
 		<!--- Check the email address of this user if there then send pass if not return to the form --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass, u.user_expiry_date
@@ -392,14 +398,14 @@
 					</cfquery>
 				</cfif>
 				<!--- send email --->
-				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="Your password for Razuna" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
+				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="#password_for_razuna_subject#" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
 	<cfif thepass.expired EQ 'T'>
-		Your user account has reached its expiration date. Please contact your system administrator to reset your account.
+		#user_account_expired_content#
 	<cfelse>	
-		It looks like you have lost your password. We have generated a random password for you. You can now login with your username and/or email address and the password below.
+		#user_lost_password_content#
 		
-		Username: #qryuser.user_login_name#
-		Password: #randompassword#
+		#user_login_name#: #qryuser.user_login_name#
+		#user_login_password#: #randompassword#
 	</cfif>
 				</cfmail>
 				<!--- Flush Cache --->
@@ -483,8 +489,15 @@
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Get admins --->
 		<cfinvoke component="global.cfc.groups_users" method="getadmins" returnvariable="theadmins">
+		<!--- RAZ-2810 Customise email message --->
+		<cfset transvalues = arraynew()>
+		<cfset transvalues[1] = "#arguments.thestruct.user_first_name#">
+		<cfset transvalues[2] = "#arguments.thestruct.user_last_name#">
+		<cfset transvalues[3] = "#arguments.thestruct.user_email#">
+		<cfinvoke component="defaults" method="trans" transid="req_access_mail_subject" values="#transvalues#" returnvariable="req_access_mail_sub" />
+		<cfinvoke component="defaults" method="trans" transid="req_access_mail_message" values="#transvalues#" returnvariable="req_access_mail_msg" />
 		<cfloop query="theadmins">
-			<cfinvoke component="email" method="send_email" to="#user_email#" subject="Razuna: User requests access" themessage="The user #arguments.thestruct.user_first_name# #arguments.thestruct.user_last_name# (#arguments.thestruct.user_email#) is requesting access to your Razuna. You should go to the Razuna Administration and grant or deny this user access now!">
+			<cfinvoke component="email" method="send_email" to="#user_email#" subject="#req_access_mail_sub#" themessage="#req_access_mail_msg#">
 		</cfloop>
 	</cffunction>
 	

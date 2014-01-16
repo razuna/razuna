@@ -317,7 +317,10 @@
 	<cfset var thehost = listlast(arguments.thestruct.pathoneup,"/\")>
 	<!--- Send the user an email that his basket is ready --->
 	<cfif NOT structkeyexists(arguments.thestruct,"fromzip") AND !arguments.thestruct.noemail>
-		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
+		<!--- RAZ-2810 Customise email message --->
+		<cfinvoke component="defaults" method="trans" transid="basket_download_available_subject" returnvariable="basket_download_available_sub" />
+		<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
+		<cfinvoke component="email" method="send_email" subject="#basket_download_available_sub#" themessage="#basket_download_available_msg# <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>

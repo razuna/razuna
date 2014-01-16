@@ -95,7 +95,12 @@
 			)
 			</cfquery>
 		<cfelse>
-			<cfinvoke component="email" method="send_email" subject="Razuna: File #thefilename# already exists" themessage="Hi there. The file (#thefilename#) already exists in Razuna and thus was not added to the system!">
+			<!--- RAZ-2810 Customise email message --->
+			<cfset transvalues = arraynew()>
+			<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+			<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+			<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+			<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 		</cfif>
 	</cfthread>
 	<cfset result = "T">
@@ -229,7 +234,12 @@
 				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 			<!--- </cfthread> --->
 		<cfelse>
-			<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+			<!--- RAZ-2810 Customise email message --->
+			<cfset transvalues = arraynew()>
+			<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+			<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+			<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+			<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 		</cfif>
 	</cfloop>
 </cffunction>
@@ -526,7 +536,12 @@
 							<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 						<!--- </cfthread> --->
 					<cfelse>
-						<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+						<!--- RAZ-2810 Customise email message --->
+						<cfset transvalues = arraynew()>
+						<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+						<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+						<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+						<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 					</cfif>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in function assets.addassetscheduledserverthread">
@@ -632,7 +647,12 @@
 								<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 							<!--- </cfthread> --->
 						<cfelse>
-							<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+							<!--- RAZ-2810 Customise email message --->
+							<cfset transvalues = arraynew()>
+							<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+							<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+							<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+							<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 						</cfif>
 					</cfif>
 					<!--- Remove the attachment from the email folder. This is on purpose outside of the if so that we remove unwanted attachments as well --->
@@ -765,7 +785,12 @@
 					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 				<!--- </cfthread> --->
 			<cfelse>
-				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+				<!--- RAZ-2810 Customise email message --->
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+				<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
@@ -1047,8 +1072,13 @@
 <assetid>#xmlformat(arguments.thestruct.thefilename)#</assetid>
 </Response></cfoutput>
 				</cfsavecontent>
+				<!--- RAZ-2810 Customise email message --->
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
 				<!--- Send email with the duplicate asset --->
-				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+				<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -1357,7 +1387,12 @@
 				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 			<!--- </cfthread> --->
 		<cfelse>
-			<cfinvoke component="email" method="send_email" subject="Razuna: File #thefilename# already exists" themessage="Hi there. The file (#thefilename#) already exists in Razuna and thus was not added to the system!">
+			<!--- RAZ-2810 Customise email message --->
+			<cfset transvalues = arraynew()>
+			<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+			<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+			<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+			<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 		</cfif>
 		<!--- Catch --->
 		<cfcatch type="any">
@@ -1399,35 +1434,38 @@
 		</cfquery>
 		<!--- Convert the now date to readable format --->
 		<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
+		<!--- RAZ-2810 Customise email message --->
+		<cfset transvalues = arraynew()>
+		<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+		<cfset transvalues[2] = "#dateformat(now(),"#thedateformat#")#">
+		<cfset transvalues[3] = "#timeformat(now(),"HH:mm:sstt")#">
+		<cfset transvalues[4] = "#arguments.thestruct.emailorgname#">
+		<cfset transvalues[5] = "#ucase(arguments.thestruct.convert_to)#">
 		<!--- The Message --->
 		<!--- For adding asset --->
 		<cfif arguments.thestruct.emailwhat EQ "start_adding">
-			<cfset var thesubject = "Adding asset #arguments.thestruct.qryfile.filename# has started">
-			<cfset var mailmessage = "Hello,
-	
-Razuna has started to add your asset (#arguments.thestruct.qryfile.filename#) on #dateformat(now(),"#thedateformat#")# at #timeformat(now(),"HH:mm:sstt")#.
-
-You will get notified again when the asset is available in the system for you and others.">
+			<cfinvoke component="defaults" method="trans" transid="start_adding_asset_subject" values="#transvalues#" returnvariable="start_adding_asset_sub" />
+			<cfinvoke component="defaults" method="trans" transid="start_adding_asset_message" values="#transvalues#" returnvariable="start_adding_asset_msg" />
+			<cfset var thesubject = "#start_adding_asset_sub#">
+			<cfset var mailmessage = "#start_adding_asset_msg#">
 		<!--- Finished adding asset --->
 		<cfelseif arguments.thestruct.emailwhat EQ "end_adding">
-			<cfset var thesubject = "Your asset #arguments.thestruct.thefilename# is now available">
-			<cfset var mailmessage = "Hello,
-	
-Your asset (#arguments.thestruct.thefilename#) is now available in Razuna. We finished adding on #dateformat(now(),"#thedateformat#")# at #timeformat(now(),"HH:mm:sstt")#.">
+			<cfinvoke component="defaults" method="trans" transid="end_adding_asset_subject" values="#transvalues#" returnvariable="end_adding_asset_sub" />
+			<cfinvoke component="defaults" method="trans" transid="end_adding_asset_message" values="#transvalues#" returnvariable="end_adding_asset_msg" />
+			<cfset var thesubject = "#end_adding_asset_sub#">
+			<cfset var mailmessage = "#end_adding_asset_msg#">
 		<!--- Start Converting --->
 		<cfelseif arguments.thestruct.emailwhat EQ "start_converting">
-			<cfset var thesubject = "Converting of #arguments.thestruct.emailorgname# has started">
-			<cfset var mailmessage = "Hello,
-	
-Razuna has started converting your asset (#arguments.thestruct.emailorgname#) to the format #ucase(arguments.thestruct.convert_to)# on #dateformat(now(),"#thedateformat#")# at #timeformat(now(),"HH:mm:sstt")#.
-
-You will get notified again when the asset is available in the system for you and others.">
+			<cfinvoke component="defaults" method="trans" transid="start_converting_asset_subject" values="#transvalues#" returnvariable="start_converting_asset_sub" />
+			<cfinvoke component="defaults" method="trans" transid="start_converting_asset_message" values="#transvalues#" returnvariable="start_converting_asset_msg" />
+			<cfset var thesubject = "#start_converting_asset_sub#">
+			<cfset var mailmessage = "#start_converting_asset_msg#">
 		<!--- End Converting --->
 		<cfelseif arguments.thestruct.emailwhat EQ "end_converting">
-			<cfset var thesubject = "Converting of #arguments.thestruct.emailorgname# has finished">
-			<cfset var mailmessage = "Hello,
-	
-Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the format #ucase(arguments.thestruct.convert_to)# on #dateformat(now(),"#thedateformat#")# at #timeformat(now(),"HH:mm:sstt")#.">
+			<cfinvoke component="defaults" method="trans" transid="end_converting_asset_subject" values="#transvalues#" returnvariable="end_converting_asset_sub" />
+			<cfinvoke component="defaults" method="trans" transid="end_converting_asset_message" values="#transvalues#" returnvariable="end_converting_asset_msg" />
+			<cfset var thesubject = "#end_converting_asset_sub#">
+			<cfset var mailmessage = "#end_converting_asset_msg#">
 		</cfif>
 		<!--- Send the email --->
 		<cftry>
@@ -2284,7 +2322,12 @@ This is the main function called directly by a single upload else from addassets
 		</cfthread> --->
 		<!--- If above return x we failed for the image --->
 		<cfif arguments.thestruct.newid EQ 0>
-			<cfinvoke component="email" method="send_email" subject="Image #arguments.thestruct.qryfile.filename# not added" themessage="Unfortunately, we could not add your image #arguments.thestruct.qryfile.filename# to the system because we can't recognize it as an image!">
+			<!--- RAZ-2810 Customise email message --->
+			<cfset transvalues = arraynew()>
+			<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+			<cfinvoke component="defaults" method="trans" transid="image_not_added_subject" values="#transvalues#" returnvariable="image_not_added_sub" />
+			<cfinvoke component="defaults" method="trans" transid="image_not_added_message" values="#transvalues#" returnvariable="image_not_added_msg" />
+			<cfinvoke component="email" method="send_email" subject="#image_not_added_sub#" themessage="#image_not_added_msg#">	
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Error',logdesc='Error: #arguments.thestruct.qryfile.filename# not recognized as image!',logfiletype='img')>
 		<cfelse>
@@ -3728,7 +3771,12 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Check on any plugin that call the on_file_add action --->
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<cfelse>
-					<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+					<!--- RAZ-2810 Customise email message --->
+					<cfset transvalues = arraynew()>
+					<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+					<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+					<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+					<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 				</cfif>
 			</cfif>
 		</cfloop>
@@ -5765,7 +5813,12 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 				<!--- </cfthread> --->
 			<cfelse>
-				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+				<!--- RAZ-2810 Customise email message --->
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+				<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 			</cfif>
 		<cfcatch type="any">
 			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
