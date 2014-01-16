@@ -2550,6 +2550,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		
 		<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
 			<cfldap server = "#arguments.thestruct.ad_server_name#" 
+			port = "#arguments.thestruct.ad_server_port#"
 			scope="subtree" 
 			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
@@ -2557,6 +2558,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		<cfelse>
 			<cfldap server = "#arguments.thestruct.ad_server_name#"  
+			port = "#arguments.thestruct.ad_server_port#"
 			scope="subtree" 
 			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 			filter="(&(objectClass=user))" 
