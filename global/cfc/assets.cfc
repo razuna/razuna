@@ -2886,10 +2886,18 @@ This is the main function called directly by a single upload else from addassets
 		<cfif arguments.thestruct.qrysettings.set2_colorspace_rgb>
 			<cfset var thecolorspace = "-colorspace sRGB">
 		</cfif>
+		<!--- Get file extension --->
+		<cfset var ext = right(arguments.thestruct.thefilename,3)>
+		<!--- If extension is TGA then turn off alpha --->
+		<cfif ext eq 'tga'>
+			<cfset alpha = '-alpha off'>
+		<cfelse>
+			<cfset alpha = ''>	
+		</cfif>
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-alpha off -resize #arguments.thestruct.width#x #thecolorspace#">
+		<cfset var theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2924,13 +2932,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Set correct width or heigth --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "-alpha off -resize #arguments.thestruct.width#x #thecolorspace#">
+			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "-alpha off #thecolorspace#">
+			<cfset theImgConvertParams = "#alpha# #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-alpha off -resize #arguments.thestruct.width#x #thecolorspace#">
+			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-alpha off -resize x#arguments.thestruct.height# #thecolorspace#">
+			<cfset theImgConvertParams = "#alpha# -resize x#arguments.thestruct.height# #thecolorspace#">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
