@@ -251,6 +251,20 @@
 					interval="120"
 				>
 			</cfif>
+			<!--- Add scheduled task for folders subscribe but only for not isp setup --->
+			<cfif !application.razuna.isp>
+				<cfset var newschid = createuuid()>
+				<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+				<cfschedule action="update"
+					task="RazScheduledUploadEvent[#newschid#]" 
+					operation="HTTPRequest"
+					url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="120"
+				>
+			</cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfset resetcachetoken("users")>

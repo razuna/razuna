@@ -324,6 +324,7 @@
 				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
 				<cfinvokeargument name="logfiletype" value="doc">
 				<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 			</cfinvoke>
 			<!--- Delete from files DB (including referenced data)--->
 			<cfquery datasource="#application.razuna.datasource#">
@@ -612,6 +613,7 @@
 					<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
 					<cfinvokeargument name="logfiletype" value="doc">
 					<cfinvokeargument name="assetid" value="#i#">
+					<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 				</cfinvoke>
 				<!--- Remove --->
 				<cfquery datasource="#application.razuna.datasource#">
@@ -959,7 +961,7 @@
 				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 			</cfif>
 			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -1218,7 +1220,7 @@
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<!--- </cfthread> --->
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id)>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
 			</cfif>
 			<!--- Flush Cache --->
 			<cfset resetcachetoken("folders")>

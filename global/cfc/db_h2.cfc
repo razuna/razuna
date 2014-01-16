@@ -164,6 +164,7 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
+		  USER_EXPIRY_DATE DATE,
 		CONSTRAINT USERS_PK PRIMARY KEY (USER_ID)
 		)
 		</cfquery>
@@ -1188,7 +1189,8 @@
 		  LOG_IP			VARCHAR(200), 
 		  LOG_TIMESTAMP		TIMESTAMP,
 		  HOST_ID			BIGINT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
@@ -1847,6 +1849,7 @@
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
   		  hashtag			   	VARCHAR(100),
+  		  av_thumb_url			varchar(500) DEFAULT NULL,
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
@@ -1988,6 +1991,19 @@
 		)
 		</cfquery>
 		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100) NOT NULL,
+			host_id 					bigint DEFAULT NULL,
+			folder_id 					varchar(100) DEFAULT NULL,
+			user_id						varchar(100) DEFAULT NULL,
+			mail_interval_in_hours		BIGINT(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			 PRIMARY KEY (fs_id)
+		)
+		</cfquery>
 	</cffunction>
 	
 	<!--- Create Indexes --->

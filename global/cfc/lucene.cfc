@@ -73,12 +73,27 @@
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
 		<!--- Name of lock file --->
 		<cfset var lockfile = "lucene.lock">
-		<!--- Check for the lock file --->
-		<cfif fileExists("#GetTempDirectory()#/#lockfile#")>
-			<cfabort>
-		<cfelse>
-			<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
+		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfset var lockfiledelerr = false>
+		<cfif fileExists(lockfilepath) >
+			<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
+			<cfif datediff("h", lockfiledate, now()) GT 24>
+				<cftry>
+					<cffile action="delete" file="#lockfilepath#">
+					<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
+				</cftry>
+			<cfelse>
+				<cfabort>	
+			</cfif>
 		</cfif>
+		
+		<cfif lockfiledelerr> <!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
+			<cfabort>
+		</cfif>
+
+		<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		
 		<!--- Check if collection exists --->
 		<cfinvoke method="exists" colname="#arguments.hostid#" />
 		<!--- Params --->
@@ -842,7 +857,9 @@
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
 			<cfset arguments.criteria = escapelucenechars(arguments.criteria)>
-			 <!--- Replace spaces with AND if query doesn't contain AND, OR  or " --->
+			<!--- Store the original criteria --->
+			<cfset criteria_org = arguments.criteria>
+			<!--- Replace spaces with AND if query doesn't contain AND, OR  or " --->
 			<cfif find(" AND ", arguments.criteria) EQ 0 AND find(" OR ", arguments.criteria) EQ 0 AND find('"', arguments.criteria) EQ 0 >
 				<cfset arguments.criteria_sp = replace(arguments.criteria,chr(32)," AND ", "ALL")>
 			<cfelse>	
@@ -853,7 +870,7 @@
 			<cfelse>
 				<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#")'>
 			</cfif>
-			<cfset arguments.criteria = arguments.criteria & ' keywords:(#arguments.criteria_sp#) description:(#arguments.criteria_sp#) id:(#arguments.criteria_sp#) labels:(#arguments.criteria_sp#) customfieldvalue:(#arguments.criteria_sp#)'>
+			<cfset arguments.criteria = criteria_org & ' ' & arguments.criteria & ' keywords:(#arguments.criteria_sp#) description:(#arguments.criteria_sp#) id:(#arguments.criteria_sp#) labels:(#arguments.criteria_sp#) customfieldvalue:(#arguments.criteria_sp#)'>
 		</cfif>
 		<cftry>
 			<cfsearch collection='#arguments.hostid#' criteria='#arguments.criteria#' name='qrylucene' category='#arguments.category#'>

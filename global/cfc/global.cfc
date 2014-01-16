@@ -433,6 +433,15 @@ Comment:<br>
 			WHERE group_asset_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="Yes">)
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+		<cfelseif structkeyexists(arguments.thestruct,"thumb_img_id")>
+			<!--- Get the thumb --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#get_share_options3 */ 
+			asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			FROM #session.hostdbprefix#share_options
+			WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thumb_img_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
 		<cfelse>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -767,7 +776,7 @@ Comment:<br>
 		<cfset var qry = structnew()>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type
+		SELECT /* #variables.cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -775,7 +784,7 @@ Comment:<br>
 		</cfquery>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -798,10 +807,11 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.order" default="1">
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
+		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
-		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight, hashtag)
+		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight, hashtag, av_thumb_url)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_title#">,
@@ -814,7 +824,8 @@ Comment:<br>
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thesize#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thewidth#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theheight#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.md5hash#">
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.md5hash#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_thumb_url#">
 		)
 		</cfquery>
 		
@@ -1551,4 +1562,22 @@ Comment:<br>
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction> 
+
+	<cffunction name="fixdbintegrityissues" returntype="void" hint="Put any database code here to fix issues with invalid data in database e.g. set boolean fields to have default boolean values instead of empty values which will throw errors in boolean type conditions etc.">
+		<!--- Use this format to specify tables and columns in the table to set to a specified value instead of an empty string
+			<cfset setempty2val["table1"] = "col1:'val1',col2:NULL">
+			<cfset setempty2val["table2"] = "col1:'val1',col2:'val2'">
+		--->
+		<cfset setempty2val["raz1_settings_2"] = "set2_md5check:NULL, set2_colorspace_rgb:'false', set2_custom_file_ext:'false',set2_email_use_ssl:'false',set2_email_use_tls:'false'">
+		<cfloop collection="#setempty2val#" item="tbl">
+			<cfloop list="#StructFind(setempty2val, tbl)#" index="col" delimiter=",">
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #tbl# SET #gettoken(col,1,':')#= #preservesinglequotes(gettoken(col,2,':'))# WHERE #gettoken(col,1,':')# = ''
+				</cfquery>
+				<cfcatch></cfcatch>
+				</cftry>
+		 	</cfloop>
+		</cfloop>
+	</cffunction>
 </cfcomponent>

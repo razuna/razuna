@@ -180,6 +180,7 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
+		  USER_EXPIRY_DATE DATE,
 		  PRIMARY KEY (USER_ID)
 		)
 		#this.tableoptions#
@@ -1624,7 +1625,8 @@
 		  LOG_IP		 	VARCHAR(200), 
 		  LOG_TIMESTAMP 	TIMESTAMP DEFAULT '0000-00-00 00:00:00',
 		  HOST_ID			INT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  PRIMARY KEY (LOG_ID),
 		  KEY #arguments.thestruct.host_db_prefix#la_user (log_user),
   		  KEY #arguments.thestruct.host_db_prefix#la_hostid (HOST_ID)
@@ -2378,6 +2380,7 @@
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
   		  hashtag			   	VARCHAR(100),
+  		  av_thumb_url			varchar(500),
 		  PRIMARY KEY (av_id),
 		  KEY #arguments.thestruct.host_db_prefix#av_id_r (asset_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#av_fid_r (folder_id_r),
@@ -2534,6 +2537,21 @@
 			sf_prop_value 	varchar(2000),
 			host_id 		int,
 			PRIMARY KEY (sf_id_r)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100) NOT NULL,
+			host_id 					int DEFAULT NULL,
+			folder_id 					varchar(100) DEFAULT NULL,
+			user_id						varchar(100) DEFAULT NULL,
+			mail_interval_in_hours		int(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (fs_id)
 		)
 		#this.tableoptions#
 		</cfquery>

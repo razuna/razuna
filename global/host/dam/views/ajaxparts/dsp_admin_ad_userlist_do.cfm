@@ -8,22 +8,37 @@
 			<tr>
 				<th><input type="checkbox" name="check_all" id="check_all" value="" /></th>
 				<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
-				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("user_first_name")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
 				<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
-				<th>eMail</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("email")#</th>
 				<th colspan="2"></th>
 			</tr>
 	        <cfif results.recordcount NEQ 0>
 				<cfoutput query="results">
-				<input type="hidden" name="acc_email" id="acc_email" value="">
-				<cfinvoke component="global.cfc.users" method="check_email"  returnvariable="qCheckUser"  email=#mail#>
-				<tr>
-					<td valign="top" nowrap width="5%"><cfif qCheckUser.recordcount EQ 0><input type="checkbox" name="ad_users" class="ad_users" id="ad_users" value="" /></cfif></td>
-					<td valign="top" nowrap width="30%">#SamAccountname#</td>
-					<td valign="top" nowrap width="30%" >#cn#</td>
-					<td valign="top" nowrap width="30%">#company#</td>
-					<td valign="top" nowrap width="5%">#mail#</td>
-				</tr>
+					<!--- AD users details --->
+					<input type="hidden" name="user_login_name_#currentrow#" class="#currentrow#" value="#sAMAccountName#" disabled="disabled">
+					<input type="hidden" name="user_email_#currentrow#" class="#currentrow#" value="#mail#" disabled="disabled">
+					<input type="hidden" name="user_first_name_#currentrow#" class="#currentrow#" value="#givenName#" disabled="disabled">
+					<input type="hidden" name="user_last_name_#currentrow#" class="#currentrow#" value="#sn#" disabled="disabled">
+					<input type="hidden" name="user_company_#currentrow#" class="#currentrow#" value="#company#" disabled="disabled">
+					<input type="hidden" name="user_street_#currentrow#" class="#currentrow#" value="#streetAddress#" disabled="disabled">
+					<input type="hidden" name="user_zip_#currentrow#" class="#currentrow#" value="#postalCode#" disabled="disabled">
+					<input type="hidden" name="user_city_#currentrow#" class="#currentrow#" value="#l#" disabled="disabled">
+					<input type="hidden" name="user_country_#currentrow#" class="#currentrow#" value="#co#" disabled="disabled">
+					<input type="hidden" name="user_phone_#currentrow#" class="#currentrow#" value="#telephoneNumber#" disabled="disabled">
+					<input type="hidden" name="user_phone_2_#currentrow#" class="#currentrow#" value="#homePhone#" disabled="disabled">
+					<input type="hidden" name="user_mobile_#currentrow#" class="#currentrow#" value="#mobile#" disabled="disabled">
+					<input type="hidden" name="user_fax_#currentrow#" class="#currentrow#" value="#facsimileTelephoneNumber#" disabled="disabled">
+					<cfinvoke component="global.cfc.users" method="check_email"  returnvariable="qCheckUser"  email=#mail# >
+					<tr>
+						<td valign="top" nowrap width="5%"><cfif qCheckUser.recordcount EQ 0><input type="checkbox" name="ad_users" class="ad_users" id="ad_users" value="#currentrow#" /></cfif></td>
+						<td valign="top" nowrap width="20%">#SamAccountname#</td>
+						<td valign="top" nowrap width="20%" >#givenName#</td>
+						<td valign="top" nowrap width="20%" >#sn#</td>
+						<td valign="top" nowrap width="30%">#company#</td>
+						<td valign="top" nowrap width="5%">#mail#</td>
+					</tr>
 				</cfoutput>
 			</cfif>
 		</table>
@@ -43,22 +58,34 @@
 		$('##check_all').click(function(){
 			if (this.checked){
 					// select all
-					$('.ad_users').prop('checked','checked');
+					$('.ad_users').attr('checked','checked');
+					<cfloop query="results">
+						$('.#currentrow#').attr('disabled',false);
+					</cfloop>
 				}
 				else {
 					// select none
-					$('.ad_users').prop('checked',false);
+					$('.ad_users').attr('checked',false);
+					<cfloop query="results">
+						$('.#currentrow#').attr('disabled',true);
+					</cfloop>
 				}
+		});
+		
+		//Form data posted based on the checkbox checked values  
+		$(".ad_users").on("change", function() {
+			if($(this).prop("checked")) {
+				 $('.'+$(this).val()).attr('disabled',false);		
+			} else {
+				 $('.'+$(this).val()).attr('disabled',true);		
+			}
 		});
 		 
 		$('##add').on('click', function () {
-			var emailValue='';
-		    $('input:checked').each(function () {
-		        emailValue += $(this).parent().siblings('td').eq(0).text()+'-'+$(this).parent().siblings('td').eq(1).text()+'-'+$(this).parent().siblings('td').eq(3).text()+',';
-				$('##acc_email').val(emailValue);
-			});
+			// Form url and post data	    
 			var url = formaction("ad_user_form");
 			var items = formserialize("ad_user_form");
+			
 			// Submit Form
 			$.ajax({
 				type: "POST",

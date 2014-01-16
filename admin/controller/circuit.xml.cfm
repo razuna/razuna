@@ -1337,6 +1337,7 @@
 	<!-- Load -->
 	<fuseaction name="pref_global_wl">
 		<!-- Params -->
+		<set name="application.razuna.show_recent_updates" value="false" overwrite="false" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<!-- Get options -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options()" returnvariable="qry_options" />

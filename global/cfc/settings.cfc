@@ -1390,6 +1390,16 @@
 	<cfelse>
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
+	<!--- RAZ-2812 Most recently updated assets  --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+		SELECT opt_value FROM options 
+		WHERE opt_id='SHOW_UPDATES' 
+	</cfquery>
+	<cfif qry_options.RecordCount NEQ 0>
+		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
+	<cfelse>
+		<cfset application.razuna.show_recent_updates = 'false'>
+	</cfif>
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -2156,16 +2166,20 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<!--- Create directory --->
 				<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" mode="777">
 				<!--- copy the favicon.ico file --->
+				<cfif fileExists("#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico")>
 				<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" source="#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico"/>
+				</cfif>
 			</cfif>
 			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
 		</cfloop>
+		<!--- Flush Cache for all tenants--->
+		<cfset variables.cachetoken = resetcachetoken("settings",'true')>
 	<!--- For a single tenant --->
 	<cfelse>
 		<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=session.hostid)>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("settings")>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2307,6 +2321,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Put query into struct --->
 	<cfloop query="q">
 		<cfset s["#opt_id#"] = opt_value>
+		<!--- RAZ-2812 Most recently updated assest --->
+		<cfif q.opt_id EQ 'SHOW_UPDATES'>
+			<cfset application.razuna.show_recent_updates =  q.opt_value >
+		</cfif>
 	</cfloop>
 	<!--- Additionally store the full query into the struct --->
 	<cfset s.query = q>
@@ -2361,7 +2379,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO news
 		(news_id, news_active)
-		VALUE(
+		VALUES (
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 		)
@@ -2532,23 +2550,20 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		
 		<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
 			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-				username="#arguments.thestruct.ad_server_username#" 
-				password="#arguments.thestruct.ad_server_password#"
-				port = "#arguments.thestruct.ad_server_port#"
-				start = "#arguments.thestruct.ad_server_start#"
-				filter="#ldapfilter#" 
-				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				scope="subtree" action = "query"  name = "results" sort = "sAMAccountName ASC"  
-				secure = "CFSSL_BASIC" >
+			port = "#arguments.thestruct.ad_server_port#"
+			scope="subtree" 
+			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
+			attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		<cfelse>
-			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-				username="#arguments.thestruct.ad_server_username#" 
-				password="#arguments.thestruct.ad_server_password#"
-				port = "#arguments.thestruct.ad_server_port#"
-				start = "#arguments.thestruct.ad_server_start#"
-				filter="#ldapfilter#" 
-				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				scope="subtree" action = "query"  name = "results" sort = "sAMAccountName ASC" >
+			<cfldap server = "#arguments.thestruct.ad_server_name#"  
+			port = "#arguments.thestruct.ad_server_port#"
+			scope="subtree" 
+			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+			filter="(&(objectClass=user))" 
+			attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		</cfif>
 
 		<cfreturn results/>

@@ -31,23 +31,36 @@
 		<br />
 	</cfloop>
 	<br />
-	<cfloop query="qry_av.assets">
-		 <strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)<br />
-			<a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
-			| <a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank">Download</a>
-			| <a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;">Direct Link</a>
-			<cfif attributes.folderaccess NEQ "R">
-				 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
-			</cfif>
-			<div id="divavo#av_id#" style="display:none;">
-				<cfif application.razuna.storage EQ "local">
-					<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<cfloop query="qry_av.assets">
+		<tr>
+			<td width="55">
+				<cfif application.razuna.storage EQ 'local'>
+				<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
 				<cfelse>
-					<input type="text" id="inputavo#av_id#" style="width:100%;" value="#av_link_url#" />
-				</cfif>		
-			</div>
-		<br />
-	</cfloop>
+					<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
+				</cfif>
+				 <a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50" width="50"></a>
+			</td>
+			<td valign="top">
+				<strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)<br />
+				<a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
+				| <a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank">Download</a>
+				| <a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;">Direct Link</a>
+				<cfif attributes.folderaccess NEQ "R">
+					 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
+				</cfif>
+				<div id="divavo#av_id#" style="display:none;">
+					<cfif application.razuna.storage EQ "local">
+						<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
+					<cfelse>
+						<input type="text" id="inputavo#av_id#" style="width:100%;" value="#av_link_url#" />
+					</cfif>		
+				</div>
+			</td>
+		</tr>
+		</cfloop>
+	</table>
 	<!--- Js --->
 	<script type="text/javascript">
 	function remavren(id,type){
