@@ -372,7 +372,7 @@
 					</cfloop>
 				</cfif>
 				<!--- Initiate the index --->
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="#lucenecategory#">
+				<!--- <cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="#lucenecategory#"> --->
 			</cfloop>
 			<!--- Feedback --->
 			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>

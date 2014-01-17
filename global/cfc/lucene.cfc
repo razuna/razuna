@@ -71,29 +71,34 @@
 		<cfargument name="hostid" default="#session.hostid#" required="false">
 		<cfargument name="storage" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
-		<!--- Name of lock file --->
-		<cfset var lockfile = "lucene.lock">
-		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
-		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
-		<cfset var lockfiledelerr = false>
-		<cfif fileExists(lockfilepath) >
-			<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
-			<cfif datediff("h", lockfiledate, now()) GT 24>
-				<cftry>
-					<cffile action="delete" file="#lockfilepath#">
-					<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
-				</cftry>
-			<cfelse>
-				<cfabort>	
-			</cfif>
-		</cfif>
+		<cfargument name="hosted" default="false" required="true">
 		
-		<cfif lockfiledelerr> <!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
-			<cfabort>
+		<!--- Only check for file if hosted is false --->
+		<cfif !arguments.hosted>
+			<!--- Name of lock file --->
+			<cfset var lockfile = "lucene_#arguments.hostid#.lock">
+			<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
+			<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+			<cfset var lockfiledelerr = false>
+			<cfif fileExists(lockfilepath) >
+				<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
+				<cfif datediff("h", lockfiledate, now()) GT 24>
+					<cftry>
+						<cffile action="delete" file="#lockfilepath#">
+						<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
+					</cftry>
+				<cfelse>
+					<cfabort>	
+				</cfif>
+			</cfif>
+			
+			<cfif lockfiledelerr> <!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
+				<cfabort>
+			</cfif>
+
+			<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
 		</cfif>
 
-		<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
-		
 		<!--- Check if collection exists --->
 		<cfinvoke method="exists" colname="#arguments.hostid#" />
 		<!--- Params --->
@@ -189,12 +194,14 @@
 			<cfset console("--- DONE dummy: #arguments.hostid# - #now()# ---")>
 		</cfif>
 		<!--- Remove lock file --->
-		<cftry>
-			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
-			<cfcatch type="any">
-				<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
-			</cfcatch>
-		</cftry>
+		<cfif !arguments.hosted>
+			<cftry>
+				<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+				<cfcatch type="any">
+					<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
+				</cfcatch>
+			</cftry>
+		</cfif>
 	</cffunction>
 
 	<!--- INDEX: Update --->
@@ -942,6 +949,7 @@
 		<cfargument name="thedatabase" type="string" required="true">
 		<cfargument name="prefix" type="string" required="true">
 		<cfargument name="hostid" type="string" required="true">
+		<cfargument name="hosted" type="string" required="false" default="false">
 		<!--- Call to update asset --->
 		<cfinvoke method="index_update">
 			<cfinvokeargument name="assetid" value="#arguments.assetid#">
@@ -950,6 +958,7 @@
 			<cfinvokeargument name="hostid" value="#arguments.hostid#">
 			<cfinvokeargument name="storage" value="#arguments.storage#">
 			<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#">
+			<cfinvokeargument name="hosted" value="#arguments.hosted#">
 			<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai">
 				<cfinvokeargument name="notfile" value="f">
 			</cfif>
