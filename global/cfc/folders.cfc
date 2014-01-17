@@ -3703,8 +3703,9 @@
 				WHEN f.folder_owner = '#Session.theUserID#' THEN 'unlocked'
 				<!--- If this is the upload bin --->
 				WHEN f.folder_id = '1' THEN 'unlocked'
-				<!--- If this is a collection --->
-				WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked'
+				<!--- RAZ-2872 : Removed the below condition to show the collection folder as per the group permissions assigned to it --->
+				<!--- If this is a collection 
+				WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked' --->
 				<!--- If nothing meets the above lock the folder --->
 				ELSE 'locked'
 			END AS perm
