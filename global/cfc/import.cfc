@@ -217,8 +217,15 @@
 		<!--- XLS and XLSX --->
 		<cfelse>
 			<!--- Read the file --->
-			<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#session.importfilename#")>
-			<cfset arguments.thestruct.theimport = SpreadsheetQueryread(spreadsheet=thexls,sheet=0,headerrow=1)>
+			<cftry>
+				<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#session.importfilename#")>
+				<cfset arguments.thestruct.theimport = SpreadsheetQueryread(spreadsheet=thexls,sheet=0,headerrow=1)>
+			<cfcatch>
+				<cfoutput>We could not read the excel file properly. Please convert it into a CSV and try again.</cfoutput>
+				<cfflush>
+				<cfabort>
+			</cfcatch>
+			</cftry>
 		</cfif>
 		<!--- Feedback --->
 		<cfoutput>We could read your file. Continuing...<br><br></cfoutput>
