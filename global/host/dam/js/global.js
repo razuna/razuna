@@ -931,8 +931,8 @@ function updategrp(grpid){
 // Upload method: Server, Mail, FTP
 function showConnectDetail(kind) {
 	// Show Frequency options
-	$("#frequency option[value='2']").css('display','');
-	$("#frequency option[value='3']").css('display','');
+	$("#frequency option[value='2']").attr('disabled',false);
+	$("#frequency option[value='3']").attr('disabled',false);
 	// Get method
 	var method = $("#method option:selected").val();
 	// Set folder_id by default
@@ -979,8 +979,8 @@ function showConnectDetail(kind) {
 		$("#task_lower_part").css('display','none');
 		// If rebuild remove repeat time options
 		if (method == "rebuild") {
-			$("#frequency option[value='2']").css('display','none');
-			$("#frequency option[value='3']").css('display','none');
+			$("#frequency option[value='2']").attr('disabled','disabled');
+			$("#frequency option[value='3']").attr('disabled','disabled');
 		}
 		// Show frequency
 		showFrequencyDetail('new');
