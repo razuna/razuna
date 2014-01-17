@@ -698,32 +698,40 @@
 		<cfargument name="notfile" type="string" default="F" required="false">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.link_kind" default="">
-		<!--- Index: delete file --->
 		<cftry>
-			<!--- Only if notfile is f --->
-			<cfif arguments.notfile EQ "F">
-				<!--- Asset has URL --->
-				<cfif arguments.thestruct.link_kind EQ "">
-					<!--- Storage: Local --->
-					<cfif application.razuna.storage EQ "local">
-							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
-					<!--- Storage: Nirvanix --->
-					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
-							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
-					</cfif>
-				<!--- For linked local assets --->
-				<cfelseif arguments.thestruct.link_kind EQ "lan">
-						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
-				</cfif>
-			</cfif>
-			<!--- Index: delete records --->
-			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
-			<cfcatch type="any">
-				<cfset consoleoutput(true)>
-				<cfset console("Error while deleting records in function lucene.index_delete_thread")>
-				<cfset console(cfcatch)>
-			</cfcatch>
+			<cfset var tmp  = CollectionStatus('#session.hostid#')>
+			<cfset var colexists = true>
+			<cfcatch><cfset var colexists = false></cfcatch>
 		</cftry>
+
+		<cfif colexists>
+			<!--- Index: delete file --->
+			<cftry>
+				<!--- Only if notfile is f --->
+				<cfif arguments.notfile EQ "F">
+					<!--- Asset has URL --->
+					<cfif arguments.thestruct.link_kind EQ "">
+						<!--- Storage: Local --->
+						<cfif application.razuna.storage EQ "local">
+								<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
+						<!--- Storage: Nirvanix --->
+						<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
+								<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
+						</cfif>
+					<!--- For linked local assets --->
+					<cfelseif arguments.thestruct.link_kind EQ "lan">
+							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
+					</cfif>
+				</cfif>
+				<!--- Index: delete records --->
+				<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console("Error while deleting records in function lucene.index_delete_thread")>
+					<cfset console(cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfif>
 	</cffunction>
 	
 	<!--- INDEX: Delete Folder --->
