@@ -181,16 +181,23 @@
 			<cfset console("DONE indexing: #arguments.hostid# - #theid# - #now()#")>
 		</cfloop>
 		<cfif qry.recordcount NEQ 0>
+			<!--- Delete previous dummy records --->
+			<cfsearch collection='#arguments.hostid#' criteria='razunadummy' category="delete" name='dummyqry'>
+			<cfloop query = "dummyqry">
+				<cfindex action="delete" collection="#arguments.hostid#" category="delete" key="#dummyqry.key#">
+			</cfloop>	
 			<!--- Write dummy record --->
 			<cfscript>
 				args = {
-				collection : arguments.hostid,
-				key : "delete",
-				body : "delete",
-				title : "delete"
+				collection : "#arguments.hostid#",
+				key : "#createuuid()#",
+				body : "razunadummy",
+				title : "delete",
+				category: "delete" 
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
 			</cfscript>
+			<cfset console ('hosted = #arguments.hosted#')>
 			<cfset console("--- DONE dummy: #arguments.hostid# - #now()# ---")>
 		</cfif>
 		<!--- Remove lock file --->
