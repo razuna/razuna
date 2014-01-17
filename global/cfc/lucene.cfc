@@ -142,7 +142,7 @@
 			</cfinvoke>
 		</cfif>
 		<!--- Grab assetpath --->
-		<cfquery datasource="#arguments.dsn#" name="qry_path" cachedwithin="1">
+		<cfquery datasource="#arguments.dsn#" name="qry_path">
 		SELECT set2_path_to_assets
 		FROM #arguments.prefix#settings_2
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
