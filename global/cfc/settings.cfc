@@ -2270,13 +2270,22 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	UPDATE razuna_config
 	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
 	</cfquery>
-	<!--- Enable cron directory --->
-	<cfset CronSetDirectory("/cron")>
+	<!--- Setting this to false since we changed how we do it for hosted since 1.6.5 --->
+	<cfset CronEnable(False)>
 	<!--- If this is for ISP we do a general scheduler task for indexing files --->
 	<cfif arguments.thestruct.conf_isp>
-		<cfset CronEnable(True)>
+		<!--- Save scheduled event in CFML scheduling engine --->
+		<cfschedule action="update"
+			task="GlobalIndex" 
+			operation="HTTPRequest"
+			url="http://#cgi.http_host#/#cgi.context_path#/admin/lucene.cfm"
+			startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+			startTime="00:01 AM"
+			endTime="23:59 PM"
+			interval="300"
+		>
 	<cfelse>
-		<cfset CronEnable(False)>
+		<cfschedule action="delete" task="GlobalIndex" />
 	</cfif>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings","true")>

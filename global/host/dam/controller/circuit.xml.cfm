@@ -9504,4 +9504,28 @@
 		</if>
 	</fuseaction>
 
+	<!-- Save Folder subscribe details -->
+	<fuseaction name="folder_subscribe_save">
+		<!-- Param -->
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<!-- CFC: Subscribe -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
+	</fuseaction>
+	
+	<!-- Run Folder subscribe schedule tasks -->
+	<fuseaction name="folder_subscribe_task">
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
+	</fuseaction>
+
+	<!-- Lucene index for hosted -->
+	<fuseaction name="req_index_update_hosted">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: update -->
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted(thestruct=attributes)" />
+	</fuseaction>
+
 </circuit>
