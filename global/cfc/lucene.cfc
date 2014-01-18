@@ -99,14 +99,12 @@
 			</cfinvoke>
 		</cfloop>
 		<!--- Remove lock file --->
-		<cfif !arguments.hosted>
-			<cftry>
-				<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
-				<cfcatch type="any">
-					<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
-				</cfcatch>
-			</cftry>
-		</cfif>
+		<cftry>
+			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+			<cfcatch type="any">
+				<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
+			</cfcatch>
+		</cftry>
 	</cffunction>
 
 	<!--- INDEX: Update --->
