@@ -998,7 +998,7 @@
 			AND cloud_url_org IS NOT NULL 
 			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 		</cfif>
-		GROUP BY img_id
+		GROUP BY img_id, folder_id_r, img_filename_org, link_kind, link_path_url, img_filename, path_to_asset, cloud_url_org, img_size
 		UNION ALL
 		SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize
 		FROM #arguments.prefix#videos
@@ -1013,7 +1013,7 @@
 			AND cloud_url_org IS NOT NULL 
 			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 		</cfif>
-		GROUP BY vid_id
+		GROUP BY vid_id, folder_id_r, vid_name_org, link_kind, link_path_url, vid_filename, path_to_asset, cloud_url_org, vid_size
 		UNION ALL
 		SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize
 		FROM #arguments.prefix#audios
@@ -1028,7 +1028,7 @@
 			AND cloud_url_org IS NOT NULL 
 			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 		</cfif>
-		GROUP BY aud_id
+		GROUP BY aud_id, folder_id_r, aud_name_org, link_kind, link_path_url, aud_name, path_to_asset, cloud_url_org, aud_size
 		UNION ALL
 		SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
 		FROM #arguments.prefix#files
@@ -1043,7 +1043,7 @@
 			AND cloud_url_org IS NOT NULL 
 			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 		</cfif>
-		GROUP BY file_id
+		GROUP BY file_id, folder_id_r, file_name_org, link_kind, link_path_url, file_name, path_to_asset, cloud_url_org, file_size
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
