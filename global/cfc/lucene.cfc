@@ -61,6 +61,55 @@
 	</cffunction>
 	
 	<!--- INDEX: Update --->
+	<cffunction name="index_update_hosted" access="public" output="false" returntype="void">
+		<!--- Name of lock file --->
+		<cfset var lockfile = "lucene.lock">
+		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
+		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfset var lockfiledelerr = false>
+		<cfif fileExists(lockfilepath) >
+			<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
+			<cfif datediff("h", lockfiledate, now()) GT 24>
+				<cftry>
+					<cffile action="delete" file="#lockfilepath#">
+					<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
+				</cftry>
+			<cfelse>
+				<cfabort>	
+			</cfif>
+		</cfif>
+		<!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
+		<cfif lockfiledelerr> 
+			<cfabort>
+		</cfif>
+		<!--- Write file --->
+		<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		<!--- Query hosts --->
+		<cfquery datasource="#application.razuna.datasource#" name="hosts">
+		SELECT host_id, host_shard_group
+		FROM hosts
+		WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
+		</cfquery>
+		<!--- Loop over hostids --->
+		<cfloop query="hosts">
+			<cfinvoke method="index_update">
+				<cfinvokeargument name="hostid" value="#host_id#" />
+				<cfinvokeargument name="prefix" value="#host_shard_group#" />
+				<cfinvokeargument name="hosted" value="true" />
+			</cfinvoke>
+		</cfloop>
+		<!--- Remove lock file --->
+		<cfif !arguments.hosted>
+			<cftry>
+				<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+				<cfcatch type="any">
+					<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
+				</cfcatch>
+			</cftry>
+		</cfif>
+	</cffunction>
+
+	<!--- INDEX: Update --->
 	<cffunction name="index_update" access="public" output="false" returntype="void">
 		<cfargument name="dsn" default="#application.razuna.datasource#" required="false">
 		<cfargument name="thestruct" default="#structnew()#" required="false">
