@@ -671,6 +671,7 @@
 	<!--- Params --->
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
+	<cfparam name="arguments.thestruct.folderpath" default="">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
