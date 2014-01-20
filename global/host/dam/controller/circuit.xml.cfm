@@ -9610,4 +9610,15 @@
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
 	</fuseaction>
+
+	<!-- Lucene index for hosted -->
+	<fuseaction name="req_index_update_hosted">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: update -->
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted(thestruct=attributes)" />
+	</fuseaction>
+
 </circuit>

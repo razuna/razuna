@@ -788,6 +788,7 @@
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND permfolder IS NOT NULL
 					</cfif>
+					AND kind IS NOT NULL
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 							LIMIT #mysqloffset#,#session.rowmaxpage#

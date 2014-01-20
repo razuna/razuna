@@ -145,8 +145,6 @@
 					</cfquery>
 				</cfif>
 			</cfloop>
-			<!--- Lucene: Delete Records --->
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" notfile="T">
 			<!--- Set index according to type --->
 			<cfif arguments.thestruct.thetype EQ "img">
 				<!--- Set for indexing --->
@@ -929,8 +927,6 @@
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 			</cfquery>
-			<!--- Lucene: Delete Records --->
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" notfile="T">
 		</cfif>
 		<!--- Set index according to type --->
 		<cfif arguments.thestruct.thetype EQ "img">
