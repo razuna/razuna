@@ -7787,6 +7787,7 @@
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.langcount" value="1" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -7814,6 +7815,7 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.langcount" value="1" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->

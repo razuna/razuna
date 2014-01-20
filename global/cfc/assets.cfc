@@ -2888,6 +2888,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfif arguments.thestruct.qrysettings.set2_colorspace_rgb>
 			<cfset var thecolorspace = "-colorspace sRGB">
 		</cfif>
+		<!--- RAZ-2877 : Set File name --->
+		<cfif !structKeyExists(arguments.thestruct,'thefilename')>
+			<cfset arguments.thestruct.thefilename = #arguments.thestruct.qryfile.filename#>
+		</cfif>
 		<!--- Get file extension --->
 		<cfset var ext = right(arguments.thestruct.thefilename,3)>
 		<!--- If extension is TGA then turn off alpha --->
