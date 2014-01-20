@@ -70,6 +70,9 @@
         <cfquery dbtype="query" name="ftplist">
         SELECT *
         FROM dirlist
+        <cfif isdefined("arguments.thestruct.filesonly") AND arguments.thestruct.filesonly>
+        	WHERE isdirectory = 'NO'
+        </cfif>
         ORDER BY isdirectory DESC, name
         </cfquery>
         <cfset qry.dirname = thedirname>
