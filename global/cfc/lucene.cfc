@@ -227,26 +227,6 @@
 			<!--- <cfthread name="#tt#" action="join" /> --->
 			<cfset console("DONE indexing: #arguments.hostid# - #theid# - #now()#")>
 		</cfloop>
-		<cfif qry.recordcount NEQ 0>
-			<!--- Delete previous dummy records --->
-			<cfsearch collection='#arguments.hostid#' criteria='razunadummy' category="delete" name='dummyqry'>
-			<cfloop query = "dummyqry">
-				<cfindex action="delete" collection="#arguments.hostid#" category="delete" key="#dummyqry.key#">
-			</cfloop>	
-			<!--- Write dummy record --->
-			<cfscript>
-				args = {
-				collection : "#arguments.hostid#",
-				key : "#createuuid()#",
-				body : "razunadummy",
-				title : "delete",
-				category: "delete" 
-				};
-				results = CollectionIndexCustom( argumentCollection=args );
-			</cfscript>
-			<cfset console ('hosted = #arguments.hosted#')>
-			<cfset console("--- DONE dummy: #arguments.hostid# - #now()# ---")>
-		</cfif>
 		<!--- Remove lock file --->
 		<cfif !arguments.hosted>
 			<cftry>
@@ -910,10 +890,15 @@
 
 
 	<!--- SEARCH --->
-	<cffunction name="search" access="remote" output="false" returntype="query" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,30)#">
+	<cffunction name="search" access="remote" output="false" returntype="query">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
+		<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
+		<cftry>
+			<cfset CollectionIndexcustom( collection=#arguments.hostid#, key="delete", body="#createuuid()#", title="#createuuid()#")>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<!--- 
 		 Decode URL encoding that is encoded using the encodeURIComponent javascript method. 
 		 Preserve the '+' sign during decoding as the URLDecode methode will remove it if present.
@@ -945,7 +930,6 @@
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
-		<!--- <cfset console(arguments.criteria)> --->
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>
