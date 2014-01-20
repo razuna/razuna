@@ -1382,26 +1382,29 @@
 		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
-		<!--- RAZ-2837: Get descriptions and keywords --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_details">
-			SELECT  lang_id_r, img_description as thedesc, img_keywords as thekeys
-			FROM #session.hostdbprefix#images_text
-			WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<!--- Add to descriptions and keywords --->
-		<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#images_text
-			(id_inc, img_id_r, lang_id_r, img_description, img_keywords, host_id)
-			VALUES(
-			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
-			<cfqueryparam value="#qry_details.lang_id_r#" cfsqltype="cf_sql_numeric">, 
-			<cfqueryparam value="#ltrim(qry_details.thedesc)#" cfsqltype="cf_sql_varchar">, 
-			<cfqueryparam value="#ltrim(qry_details.thekeys)#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
-		</cfquery>
+		<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
+		<cfif structKeyExists(arguments.thestruct.qry_settings_image,'set2_rendition_metadata') AND arguments.thestruct.qry_settings_image.set2_rendition_metadata EQ 'true'>
+			<!--- RAZ-2837: Get descriptions and keywords --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_details">
+				SELECT  lang_id_r, img_description as thedesc, img_keywords as thekeys
+				FROM #session.hostdbprefix#images_text
+				WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- Add to descriptions and keywords --->
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#images_text
+				(id_inc, img_id_r, lang_id_r, img_description, img_keywords, host_id)
+				VALUES(
+				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#qry_details.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+				<cfqueryparam value="#ltrim(qry_details.thedesc)#" cfsqltype="cf_sql_varchar">, 
+				<cfqueryparam value="#ltrim(qry_details.thekeys)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+			</cfquery>
+		</cfif>
 		<!--- Get the colorspace of the original file --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry_colorspace">
 		SELECT colorspace

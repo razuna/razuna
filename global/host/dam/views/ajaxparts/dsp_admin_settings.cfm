@@ -83,6 +83,18 @@
 					<input type="radio" name="set2_colorspace_RGB" value="true" <cfif prefs.set2_colorspace_rgb eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_on")#
 				</td>
 			</tr>
+			<!--- RAZ-2837 Adding additional rendition will copy the metadata from original file --->
+			<tr>
+				<td colspan="2">
+					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_header")#</strong>
+					<br />
+					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_desc")#
+					<br /><br />
+					<input type="radio" name="set2_rendition_metadata" value="false" <cfif prefs.set2_rendition_metadata eq 'false' or prefs.set2_rendition_metadata eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_off")#
+					<br />
+					<input type="radio" name="set2_rendition_metadata" value="true" <cfif prefs.set2_rendition_metadata eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_on")#
+				</td>
+			</tr>
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>

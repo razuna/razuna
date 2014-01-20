@@ -3830,6 +3830,8 @@
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>
@@ -3842,6 +3844,8 @@
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>

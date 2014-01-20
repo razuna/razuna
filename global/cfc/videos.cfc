@@ -1676,26 +1676,29 @@
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- RAZ-2837: Get descriptions and keywords --->
-				<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtxt">
-					SELECT lang_id_r,vid_id_r, vid_description as thedesc, vid_keywords as thekeys
-					FROM #session.hostdbprefix#videos_text
-					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Add to descriptions and keywords --->
-				<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#videos_text
-						(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
-					VALUES(
-						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">, 
-						<cfqueryparam value="#qry_theaudtxt.thedesc#" cfsqltype="cf_sql_varchar">, 
-						<cfqueryparam value="#qry_theaudtxt.thekeys#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					)
-				</cfquery>
+				<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
+				<cfif structKeyExists(arguments.thestruct.qry_settings_video,'set2_rendition_metadata') AND arguments.thestruct.qry_settings_video.set2_rendition_metadata EQ 'true'>
+					<!--- RAZ-2837: Get descriptions and keywords --->
+					<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtxt">
+						SELECT lang_id_r,vid_id_r, vid_description as thedesc, vid_keywords as thekeys
+						FROM #session.hostdbprefix#videos_text
+						WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Add to descriptions and keywords --->
+					<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#videos_text
+							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+						VALUES(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+							<cfqueryparam value="#qry_theaudtxt.thedesc#" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#qry_theaudtxt.thekeys#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+					</cfquery>
+				</cfif>
 				<!--- Log --->
 				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
 				<!--- Call Plugins --->
