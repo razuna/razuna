@@ -89,6 +89,9 @@
 		SELECT host_id, host_shard_group
 		FROM hosts
 		WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
+		<cfif cgi.http_host CONTAINS "razuna.com">
+			AND host_type != 0
+		</cfif>
 		</cfquery>
 		<!--- Loop over hostids --->
 		<cfloop query="hosts">
