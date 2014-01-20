@@ -649,7 +649,7 @@
 				<cfparam name="arguments.thestruct.file_desc_#langindex#" default="">
 				<cfparam name="arguments.thestruct.file_keywords_#langindex#" default="">
 				<!--- Grab the user input --->
-				<cfif arguments.thestruct.uploadkind EQ "many">
+				<cfif structKeyExists(arguments.thestruct,'uploadkind') AND arguments.thestruct.uploadkind EQ "many">
 					<cfset userdesc="file_desc_" & "#countnr#" & "_" & "#langindex#">
 					<cfset userkeywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
 				<cfelse>
@@ -670,7 +670,7 @@
 					</cfif>
 					<cftry>
 						<!--- Append to DB --->
-						<cfquery datasource="#arguments.thestruct.dsn#">
+						<cfquery datasource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#images_text
 						SET 
 						<cfif newkeywords EQ ",">
@@ -679,7 +679,7 @@
 							img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
 						</cfif>,
 						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
-						WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+						WHERE <cfif structKeyExists(arguments.thestruct,'newid')> img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR"><cfelse>img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR"></cfif>
 						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
 						</cfquery>
 						<cfcatch type="any">
