@@ -626,6 +626,7 @@
 			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
 			<cfset session.ftp_pass = doit.qry_detail.sched_ftp_pass>
 			<cfset session.ftp_passive = doit.qry_detail.sched_ftp_passive>
+			<cfset x.filesonly = true> <!--- For scheduled upload we only upload files in folder and ignore any subfolders --->
 			<!-- CFC: Get FTP directory for adding to the system -->
 			<cfinvoke component="ftp" method="getdirectory" thestruct="#x#" returnvariable="thefiles" />
 			<cfset x.thefile = valuelist(thefiles.ftplist.name) />
