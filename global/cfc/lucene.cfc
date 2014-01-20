@@ -255,7 +255,7 @@
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
-		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
+		<cfset var theregchars = "[\&\(\)\[\]\'\n\r]+">
 		<cfset var thedesc = "">
 		<cfset var thekeys = "">
 		<cftry>
