@@ -202,9 +202,6 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_SSL #thevarchar#(5) DEFAULT 'false'
 				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET SET2_EMAIL_USE_SSL = 'false'
-				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
@@ -213,9 +210,6 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_TLS #thevarchar#(5) DEFAULT 'false'
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET SET2_EMAIL_USE_TLS = 'false'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -229,9 +223,6 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> set2_custom_file_ext #thevarchar#(5) DEFAULT 'true'
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET set2_custom_file_ext = 'true'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
