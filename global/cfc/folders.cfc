@@ -2509,10 +2509,14 @@
 	<cfset arguments.thestruct.kind = "aud">
 	<cfinvoke method="filetotaltype" thestruct="#arguments.thestruct#" returnvariable="totalaud">
 	<cfset totaltypes.aud = totalaud.thetotal>
-	<!--- Call function for DOC --->
+	<!--- Call function for DOC (formats .doc or .docx) --->
 	<cfset arguments.thestruct.kind = "doc">
 	<cfinvoke method="filetotaltype" thestruct="#arguments.thestruct#" returnvariable="totaldoc">
 	<cfset totaltypes.doc = totaldoc.thetotal>
+	<!--- Call function for ALL FILES (excludes audio, video or images)--->
+	<cfset arguments.thestruct.kind = "allfiles">
+	<cfinvoke method="filetotaltype" thestruct="#arguments.thestruct#" returnvariable="totalfiles">
+	<cfset totaltypes.files = totalfiles.thetotal>
 	<!--- Return --->
 	<cfreturn totaltypes>
 </cffunction>
@@ -2535,7 +2539,7 @@
 		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache" result="yoqry">
 	SELECT /* #variables.cachetoken#filetotalcount */
 		(
 		SELECT count(fi.file_id)
@@ -2699,6 +2703,19 @@
 		</cfif>
 		</cfquery>
 	<!--- Files --->
+	<cfelseif arguments.thestruct.kind EQ "allfiles">
+		<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#docfiletotaltype */ count(file_id) as thetotal
+		FROM #session.hostdbprefix#files
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		<cfif thefolderlist NEQ "">
+			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
+		<cfif session.customfileid NEQ "">
+			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
+		</cfquery>
 	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#docfiletotaltype */ count(file_id) as thetotal
