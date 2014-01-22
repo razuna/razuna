@@ -408,31 +408,25 @@
 			<!--- Get Cachetoken --->
 			<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 			<!--- Query folder --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 			SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner, fd.folder_desc as folder_description,
 			<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "h2">NVL<cfelseif application.razuna.api.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 				(
-					SELECT<cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> s.folder_id
+					CASE WHEN EXISTS (SELECT 1
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders s
 					WHERE s.folder_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id
 					AND s.folder_id_r = f.folder_id
 					AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-					AND s.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-					<cfif application.razuna.api.thedatabase EQ "oracle">
-						AND ROWNUM = 1
-					<cfelseif application.razuna.api.thedatabase EQ "db2">
-						FETCH FIRST 1 ROWS ONLY
-					<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						LIMIT 1
-					</cfif>
+					AND s.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">) THEN 'true' ELSE 'false' END
 				)
-				AS hassubfolders
+				AS hassubfolders, '' totalassets, '' totalimg, '' totalvid, '' totaldoc, '' totalaud , '' howmanycollections
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 			LEFT JOIN users u ON u.user_id = f.folder_owner
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE
 			<cfif Arguments.folderid gt 0>
 				f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
+				AND f.folder_id_r != f.folder_id
 			<cfelse>
 				f.folder_id = f.folder_id_r
 			</cfif>
@@ -441,44 +435,45 @@
 			<cfelse>
 				AND lower(f.folder_is_collection) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 			</cfif>
+			 
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			ORDER BY f.folder_name
-			</cfquery>
-			<!--- If this is NOT for a collection --->
-			<cfif arguments.collectionfolder EQ "false">
-				<cfset session.showsubfolders = "F">
-				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<!--- Query total count --->
-				<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#arguments.folderid#" returnvariable="totalassets">
-				<!--- Query total count for individual files --->
-				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#arguments.folderid#" returnvariable="totaltypes">
-				<!--- Create additional query fields --->
-				<cfset q = querynew("totalassets,totalimg,totalvid,totaldoc,totalaud")>
-				<cfset queryaddrow(q,1)>
-				<cfset querysetcell(q,"totalassets",totalassets.thetotal)>
-				<cfset querysetcell(q,"totalimg",totaltypes.img)>
-				<cfset querysetcell(q,"totalvid",totaltypes.vid)>
-				<cfset querysetcell(q,"totaldoc",totaltypes.doc)>
-				<cfset querysetcell(q,"totalaud",totaltypes.aud)>
-			<!--- This is for a collection --->
-			<cfelse>
-				<!--- Query how many collections are in this folder --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="q">
-				SELECT count(col_id) as howmanycollections, col_id
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections
-				WHERE folder_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(qry.folder_id)#" list="Yes">)
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-				</cfquery>
-			</cfif>
-			<!--- Put the 2 queries together --->
-			<cfquery dbtype="query" name="thexml">
-			SELECT *
-			FROM qry, q
-			</cfquery>
+			</cfquery>			
+				<!--- If this is NOT for a collection --->
+				<cfif arguments.collectionfolder EQ "false">
+					<cfset session.showsubfolders = "F">
+					<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+					<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+					<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
+					<cfloop query="qry">
+						<!--- Query total count --->
+						<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#qry.folder_id#" returnvariable="totalassets">
+						<!--- Query total count for individual files --->
+						<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#qry.folder_id#" returnvariable="totaltypes">
+						<!--- Create additional query fields --->
+						<cfset querysetcell(qry,"totalassets",totalassets.thetotal, qry.currentrow)>
+						<cfset querysetcell(qry,"totalimg",totaltypes.img, qry.currentrow)>
+						<cfset querysetcell(qry,"totalvid",totaltypes.vid, qry.currentrow)>
+						<cfset querysetcell(qry,"totaldoc",totaltypes.files, qry.currentrow)>
+						<cfset querysetcell(qry,"totalaud",totaltypes.aud, qry.currentrow)>
+					</cfloop>
+				<!--- This is for a collection --->
+				<cfelse>
+					<cfloop query="qry">
+						<!--- Query how many collections are in this folder --->
+						<cfquery datasource="#application.razuna.api.dsn#" name="q">
+						SELECT count(col_id) as howmanycollections
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections
+						WHERE folder_id_r  =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.folder_id#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+						AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+						</cfquery>
+						<cfset querysetcell(qry,"howmanycollections",q.howmanycollections, qry.currentrow)>
+					</cfloop>
+				</cfif>
+			
+			<cfset thexml = qry>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
