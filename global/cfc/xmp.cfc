@@ -33,6 +33,7 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="xmp" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#readxmpdb */ 
+		id_r,
 		subjectcode iptcsubjectcode, 
 		creator, 
 		title, 
@@ -1593,10 +1594,36 @@
 <cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Feedback --->
-	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
+	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
+		<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	</cfif>
 	<cfflush>
 	<!--- Param --->
-	<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+	<!--- RAZ-2831 : Set metadata fields as per Export template --->
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
+		<cfset img_columns = ''>
+		<cfset doc_columns = ''>
+		<!--- Get selected metadata to export --->
+		<cfloop query="arguments.thestruct.export_template">
+			<cfif exp_field EQ 'images_metadata'>
+				<cfset arguments.thestruct.img_columns = arguments.thestruct.export_template.exp_value>
+			</cfif>
+			<cfif exp_field EQ 'files_metadata'>
+				<cfset arguments.thestruct.doc_columns = arguments.thestruct.export_template.exp_value>
+			</cfif>
+		</cfloop>
+		<!--- Set Columns for Export --->
+		<cfif structKeyExists(arguments.thestruct,'img_columns') AND structKeyExists(arguments.thestruct,'doc_columns')>
+			<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,#arguments.thestruct.img_columns#,#arguments.thestruct.doc_columns#">
+		<cfelseif structKeyExists(arguments.thestruct,'img_columns')>
+			<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,#arguments.thestruct.img_columns#">
+		<cfelseif structKeyExists(arguments.thestruct,'doc_columns')>
+			<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,#arguments.thestruct.doc_columns#">
+		</cfif>
+	<cfelse>
+		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+	</cfif>
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
 	<!--- Add another query structure for gettext --->
@@ -1816,7 +1843,10 @@
 		</cfdefaultcase>
 	</cfswitch>
 	<!--- Feedback --->
-	<cfoutput><strong> .</strong></cfoutput>
+	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
+	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
+		<cfoutput><strong> .</strong></cfoutput>
+	</cfif>
 	<cfflush>
 	<!--- Return --->
 	<cfreturn />
@@ -1832,7 +1862,10 @@
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
-	<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
+	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
+		<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
 	<cfinvoke method="remove_files" thestruct="#arguments.thestruct#" />
@@ -1862,7 +1895,10 @@
 	<!--- Serve the file --->
     <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
 	<!--- Feedback --->
-	<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
+	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
+		<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
 	<cfinvoke method="remove_files" thestruct="#arguments.thestruct#" />
@@ -1946,6 +1982,29 @@
 		</cfloop>
 	</cfif>
 	<!--- Add XMP --->
+	<!--- RAZ-2831 : Add metadata to Export file --->
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0 AND structkeyexists(arguments.thestruct.export_template,"exp_field")>
+		<cfif structKeyExists(arguments.thestruct,'qry_xmp')>
+			<cfloop query="arguments.thestruct.qry_xmp">
+				<!--- Loop to set images metadata values to selected metadata into export file--->
+				<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," >
+					<cfif id_r EQ arguments.thestruct.file_id AND isDefined('arguments.thestruct.qry_xmp.#idx#')>
+						<cfset QuerySetCell(arguments.thestruct.tq, "#idx#", evaluate("arguments.thestruct.qry_xmp.#idx#"))>
+					</cfif>
+				</cfloop>
+			</cfloop>
+		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'qry_pdfxmp')>
+			<cfloop query="arguments.thestruct.qry_pdfxmp">
+				<!--- Loop to set images metadata values to selected metadata into export file--->
+				<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," >
+					<cfif id_r EQ arguments.thestruct.file_id AND isDefined('arguments.thestruct.qry_pdfxmp.#idx#')>
+						<cfset QuerySetCell(arguments.thestruct.tq, "#idx#", evaluate("arguments.thestruct.qry_pdfxmp.#idx#"))>
+					</cfif>
+				</cfloop>
+			</cfloop>
+		</cfif>
+	<cfelse>
 	<cfif structkeyexists(arguments.thestruct,"qry_xmp") AND arguments.thestruct.qry_xmp.recordcount NEQ 0 AND arguments.thestruct.filetype EQ "img">
 		<cfset QuerySetCell(arguments.thestruct.tq, "iptcsubjectcode", arguments.thestruct.qry_xmp.iptcsubjectcode)>
 		<cfset QuerySetCell(arguments.thestruct.tq, "creator", arguments.thestruct.qry_xmp.creator)>
@@ -1989,6 +2048,7 @@
 		<cfset QuerySetCell(arguments.thestruct.tq, "pdf_captionwriter", arguments.thestruct.qry_pdfxmp.captionwriter)>
 		<cfset QuerySetCell(arguments.thestruct.tq, "pdf_webstatement", arguments.thestruct.qry_pdfxmp.webstatement)>
 		<cfset QuerySetCell(arguments.thestruct.tq, "pdf_rightsmarked", arguments.thestruct.qry_pdfxmp.rightsmarked)>
+		</cfif>
 	</cfif>
 	<!--- Return --->
 	<cfreturn />

@@ -1440,7 +1440,7 @@
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="pdfxmp" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getpdfxmp */ author, rights, authorsposition, captionwriter, webstatement, rightsmarked
+		SELECT /* #variables.cachetoken#getpdfxmp */ asset_id_r AS id_r, author, rights, authorsposition, captionwriter, webstatement, rightsmarked
 		FROM #session.hostdbprefix#files_xmp
 		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

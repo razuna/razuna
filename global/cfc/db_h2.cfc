@@ -1920,6 +1920,19 @@
 		)
 		</cfquery>
 		
+		<!--- RAZ-2831 : Metadata export template --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#export_template (
+	  	exp_id				varchar(100),
+		exp_field			varchar(200),
+		exp_value			varchar(2000),
+		exp_timestamp		timestamp, 
+		user_id				varchar(100),
+		host_id				bigint,
+		PRIMARY KEY (exp_id)
+		)
+		</cfquery>
+		
 		<!--- Social accounts --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#users_accounts (
