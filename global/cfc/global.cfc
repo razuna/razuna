@@ -376,7 +376,8 @@
 <!--- Send Feedback ---------------------------------------------------------------------->
 	<cffunction name="send_feedback" output="false">
 		<cfargument name="thestruct" type="struct">
-		<cfmail to="support@razuna.com" from="server@razuna.com" replyto="#arguments.thestruct.email#" subject="Feedback from within Razuna" type="html">
+		<cfinvoke component="defaults" method="trans" transid="feedback_from_razuna" returnvariable="feedback_within_razuna" />
+		<cfmail to="support@razuna.com" from="server@razuna.com" replyto="#arguments.thestruct.email#" subject="#feedback_within_razuna#" type="html">
 Date: #now()#
 <br>
 From: #arguments.thestruct.author#

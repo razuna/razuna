@@ -1195,7 +1195,12 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="Error on converting your audio" themessage="Your Audio could not be converted to the format #ucase(theformat)#. This can happen when the source audio is rendered with codecs that our conversion engine can not read/write.">
+				<!--- RAZ-2810 Customise email message --->
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "#ucase(theformat)#">
+				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_subject" values="#transvalues#" returnvariable="audio_convert_error_sub" />
+				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_message" values="#transvalues#" returnvariable="audio_convert_error_msg" />
+				<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#audio_convert_error_sub#" themessage="#audio_convert_error_msg#" />
 			<cfelse>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#finalaudioname#" returnvariable="orgsize">
