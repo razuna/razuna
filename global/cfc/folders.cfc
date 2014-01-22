@@ -2353,7 +2353,7 @@
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
 			SET folder_of_user = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
@@ -3844,57 +3844,7 @@
 			AND
 			f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 		<cfelse>
-			(
-				f.folder_id = f.folder_id_r
-				<!--- RAZ:2509 Sub-folder is visible to the user, although he has Full-access permission  --->
-				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-				OR 
-				<!--- Select folder_id in 'unlocked' permission and the parent folder permission is 'locked' --->
-				f.folder_id IN 
-				( 
-					SELECT folder_id FROM #session.hostdbprefix#folders 
-					WHERE folder_id_r IN 
-					(
-							SELECT folder_id FROM 
-							(
-								SELECT fdr.folder_id,
-								CASE 
-									<!--- Check permission on this folder --->
-									WHEN EXISTS(
-										SELECT fgp.folder_id_r
-										FROM #session.hostdbprefix#folders_groups fgp
-										WHERE fgp.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-										AND fgp.folder_id_r = fdr.folder_id
-										AND lower(fgp.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-										AND fgp.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-									) THEN 'unlocked'
-									<!--- When folder is shared for everyone --->
-									WHEN EXISTS(
-										SELECT fgp2.folder_id_r
-										FROM #session.hostdbprefix#folders_groups fgp2
-										WHERE fgp2.grp_id_r = '0'
-										AND fgp2.folder_id_r = fdr.folder_id
-										AND fgp2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-										AND lower(fgp2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									) THEN 'unlocked' 
-									<!--- If this is the user folder or he is the owner --->
-									WHEN fdr.folder_owner = '#Session.theUserID#' THEN 'unlocked'
-									<!--- If this is the upload bin --->
-									WHEN fdr.folder_id = '1' THEN 'unlocked' <!--- Not sure about this condition, copied from existing implementation --->
-									<!--- If this is a collection --->
-									WHEN lower(fdr.folder_is_collection) = 't' THEN 'unlocked' 
-									<!--- If nothing meets the above lock the folder --->
-									ELSE 'locked'
-								END AS perm 
-								FROM #session.hostdbprefix#folders fdr
-								WHERE fdr.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							)AS fdr_perm WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="locked">
-					) 
-					AND folder_id != folder_id_r 
-				)
-				</cfif>
-			)
-			
+			f.folder_id = f.folder_id_r
 		</cfif>
 		<cfif iscol EQ "F">
 			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
