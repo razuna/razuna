@@ -2480,6 +2480,11 @@
 		<do action="labels" />
 		<!-- Get labels for this record -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.folder_id,'folder')" returnvariable="qry_labels" />
+		<!--RAZ-2207 Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get languages -->

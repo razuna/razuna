@@ -63,12 +63,41 @@
 						<td width="100%" class="td2"><textarea name="folder_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_folder_desc"><cfif thisid EQ #lang_id_r#><cfif folder_desc NEQ "">#folder_desc#</cfif></cfif></cfloop></textarea></td>
 					</tr>
 				</cfloop>
+				<!--- RAZ-2207 Check Group/Users Permissions --->
+				<cfset flag = 0>
+				<cfif  qry_label_set.set2_labels_users EQ ''>
+					<cfset flag=1>
+				<cfelse>
+					<cfif qry_GroupsOfUser.recordcount NEQ 0>
+					<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
+						<cfif listfindnocase(qry_label_set.set2_labels_users,i,',') OR listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+							<cfset flag=1>
+						</cfif>
+					</cfloop>
+					<cfelse>
+						<cfif listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+							<cfset flag = 1>
+						</cfif>	
+					</cfif>	
+				</cfif>
 				<!--- Labels --->
 				<cfif attributes.isdetail EQ "T">
 					<cfif cs.tab_labels>
 						<tr>
 							<td valign="top">#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 							<td width="100%" colspan="5">
+							<!--- RAZ-2898 : Show Advanced labels --->
+							<cfif attributes.thelabelsqry.recordcount lte 200>
+								<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_folder" onchange="razaddlabels('tags_folder','#attributes.folder_id#','folder');" multiple="multiple">
+									<option value=""></option>
+									<cfloop query="attributes.thelabelsqry">
+										<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
+									</cfloop>
+								</select>
+								<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+									<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+								</cfif>
+							<cfelse>
 								<!--- Label text area --->
 								<div style="width:450px;">
 									<div id="select_lables_#attributes.folder_id#" class="labelContainer" style="float:left;width:400px;" >
@@ -87,6 +116,7 @@
 									<!--- Select label button --->
 									<br /><br /><a onclick="showwindow('#myself#c.select_label_popup&file_id=#attributes.folder_id#&file_type=folder&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
 								</div>
+							</cfif>
 							</td>
 						</tr>
 					</cfif>
