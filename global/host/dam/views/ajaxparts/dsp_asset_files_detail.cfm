@@ -244,18 +244,14 @@
 											<td nowrap="true" valign="top">ID</td>
 											<td  nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 										</tr>
-										<tr>
 											<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
 												<!--- RAZ-2834: Displays Custom field of files--->
 												<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_files_metadata') AND cs.customfield_files_metadata NEQ '')>
-												<br />
-												<div id="customfields" style="padding-top:10px;">
-													<cfinclude template="inc_custom_meta_fields.cfm">
-												</div>
-												<div stlye="clear:both;"></div>
+												<tr>
+													<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
+												</tr>
 												</cfif>
 											</cfif>
-										</tr>
 									</table>
 								</td>
 							</tr>
@@ -350,15 +346,12 @@
 				<div stlye="clear:both;"></div>
 				<!--- Custom fields --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-					<!--- RAZ-2834: Displays Custom field of files --->
-					<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_files_metadata') AND cs.customfield_files_metadata NEQ '')>
 					<br />
 					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
 					<div id="customfields" style="padding-top:10px;">
 						<cfinclude template="inc_custom_fields.cfm">
 					</div>
 					<div stlye="clear:both;"></div>
-					</cfif>
 				</cfif>
 				<!--- Raw Metadata --->
 				<cfif qry_detail.detail.link_kind NEQ "url">
