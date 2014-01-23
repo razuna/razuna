@@ -8410,6 +8410,8 @@
 	<fuseaction name="widget_download">
 		<!-- Set fileid into session for upload -->
 		<set name="attributes.widget_download" value="true" />
+		<set name="attributes.widget_id" value="#attributes.wid#" />
+		<set name="attributes.external" value="t" />
 		<!-- Get link to assets for downloading -->
 		<if condition="attributes.kind EQ 'img'">
 			<true>
@@ -8438,6 +8440,8 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
+		<!-- CFC: Get widget share options -->
+		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<!-- Show -->
 		<do action="ajax.widget_download" />
 	</fuseaction>
