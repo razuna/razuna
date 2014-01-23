@@ -33,14 +33,14 @@
 				<cfif asset_format EQ "thumb">
 					<tr>
 						<td><strong>Preview</strong><br>(#attributes.qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
-						<td valign="top"><cfif asset_dl><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
+						<td valign="top"><cfif asset_dl OR qry_widget.widget_dl_thumb eq 't'><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
 					</tr>
 				</cfif>
 				<!--- Show original if allowed --->
 				<cfif asset_format EQ "org">
 					<tr>
 						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
-						<td valign="top"><cfif asset_dl><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
+						<td valign="top"><cfif asset_dl OR qry_widget.widget_dl_org eq 't'><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
 					</tr>
 				</cfif>
 			</cfloop>
