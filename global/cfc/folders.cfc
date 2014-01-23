@@ -4764,7 +4764,7 @@
 			<!--- If the folder_id_r is not the same the passed one --->
 			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 				<!--- Call this function again (need component otherwise it won't work for internal calls) --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
+				<cfinvoke component="folders" returnvariable="flist" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
 			</cfif>
 		</cfif>
 		<!--- Return --->	
@@ -6327,6 +6327,88 @@
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
+</cffunction>
+
+<!--- RAZ-2901 : Download Folder as per folder structure Razuna --->
+<cffunction name="download_folder_structure" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset var thisstruct = structnew()>
+	<cfparam name="arguments.thestruct.awsbucket" default="" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<cftry>
+		<!--- Set time for remove --->
+		<cfset var removetime = DateAdd("h", -2, "#now()#")>
+		<!--- Remove old directories --->
+		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thedirs">
+		<!--- Loop over dirs --->
+		<cfloop query="thedirs">
+			<!--- If a directory --->
+			<cfif type EQ "dir" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#name#" recurse="true" mode="775">
+			<cfelseif type EQ "file" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
+	</cftry>
+	<!--- Create directory --->
+	<cfset var basketname = createuuid("")>
+	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<!--- Get Parent folder names --->
+	<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.folder_id#" returnvariable="crumbs" />
+	<cfset parentfoldersname = ''>
+	<cfloop list="#crumbs#" index="idx" delimiters=";">
+		<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
+	</cfloop>
+	<!--- Create Directory as per folder structure in Razuna --->
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	<!--- Create folders according to selection and download --->
+	<!--- Thumbnails --->
+	<cfif arguments.thestruct.download_thumbnails>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/thumbnails" mode="775">
+		<!--- Download thumbnails --->
+		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Originals --->
+	<cfif arguments.thestruct.download_originals>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the originals<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		<!--- Download originals --->
+		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Renditions --->
+	<cfif arguments.thestruct.download_renditions>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the renditions<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		<!--- Download renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
+	<cfflush>
+	<!--- All done. ZIP and finish --->
+	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/folder_#arguments.thestruct.folder_id#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<!--- Zip path for download --->
+	<cfoutput><p><a href="outgoing/folder_#arguments.thestruct.folder_id#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Remove the temp folder --->
+	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes" />
 </cffunction>
 
 </cfcomponent>

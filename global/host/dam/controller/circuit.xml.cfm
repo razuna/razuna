@@ -8934,8 +8934,8 @@
 		<!-- CFC: Get all assets -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
 		
-		<!-- CFC: Show the progress download -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder(attributes)" />
+		<!-- RAZ-2901 CFC: Show the progress download -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
 	</fuseaction>
 	
 	<!--  -->
