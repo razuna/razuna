@@ -224,6 +224,14 @@
 								<td nowrap="true" valign="top">ID</td>
 								<td nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 							</tr>
+							<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields >
+								<!--- RAZ-2834 : Displays Custom field of All and Images --->
+								<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_images_metadata') AND cs.customfield_images_metadata NEQ '')>
+									<tr>
+										<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
+									</tr>
+								</cfif>
+							</cfif>
 						</table>
 					</td>
 				</tr>

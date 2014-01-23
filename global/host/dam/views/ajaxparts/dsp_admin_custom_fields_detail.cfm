@@ -59,7 +59,7 @@
 									<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
 									<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_images")#</option>
 									<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_videos")#</option>
-									<option value="vid"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
+									<option value="aud"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
 									<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 									<option value="users"<cfif qry_field.cf_show EQ "users"> selected="true"</cfif>>Users</option>
 								</select>
