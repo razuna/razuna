@@ -39,7 +39,7 @@
 		<li><a href="##tab_groups">#myFusebox.getApplicationData().defaults.trans("groups")#</a></li>
 		<cfif jr_enable EQ "true"><li><a href="##tab_logins">#myFusebox.getApplicationData().defaults.trans("tab_users_social_accounts")#</a></li></cfif>
 		<cfif attributes.add EQ "f">
-			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#');">API Key</a></li>
+			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#&grpnrlist=#grpnrlist#');">API Key</a></li>
 		</cfif>
 	</ul>
 	<!--- User --->
