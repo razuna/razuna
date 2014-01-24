@@ -83,6 +83,9 @@
 					<input type="radio" name="set2_colorspace_RGB" value="true" <cfif prefs.set2_colorspace_rgb eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_on")#
 				</td>
 			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
 			<!--- RAZ-2837 Adding additional rendition will copy the metadata from original file --->
 			<tr>
 				<td colspan="2">
