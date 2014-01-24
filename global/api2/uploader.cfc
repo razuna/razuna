@@ -28,10 +28,10 @@
 	<cffunction name="checkLogin" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
-		<cfset var login = structnew()>
-		<cfset login.valid = checkDesktop(arguments.api_key)>
+		<cfset var s = structnew()>
+		<cfset s.login = checkDesktop(arguments.api_key)>
 		<!--- Return --->
-		<cfreturn login>
+		<cfreturn s>
 	</cffunction>
 	
 </cfcomponent>
