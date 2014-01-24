@@ -25,10 +25,10 @@
 --->
 <cfcomponent output="false" extends="authentication">
 
-	<cffunction name="gethosts" access="remote" output="false" returntype="struct" returnformat="json">
+	<cffunction name="checkLogin" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
-		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkDesktop(arguments.api_key)>
 		<!--- Return --->
 		<cfreturn thesession>
 	</cffunction>
