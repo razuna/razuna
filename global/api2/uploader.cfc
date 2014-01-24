@@ -29,7 +29,9 @@
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
 		<cfset var s = structnew()>
-		<cfset s.login = checkDesktop(arguments.api_key)>
+		<cfset s.login = checkDesktop(arguments.api_key).login>
+		<cfset s.hostid = checkDesktop(arguments.api_key).hostid>
+		<cfset s.grpid = checkDesktop(arguments.api_key).grpid>
 		<!--- Return --->
 		<cfreturn s>
 	</cffunction>

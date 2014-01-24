@@ -271,10 +271,14 @@
 		<!--- If timeout is within the last 30 minutes then extend it again --->
 		<cfif qry.recordcount EQ 0>
 			<!--- Set --->
-			<cfset var status = false>
+			<cfset status.login = false>
+			<cfset status.hostid = 0>
+			<cfset status.grpid = 0>
 		<cfelse>
 			<!--- Set --->
-			<cfset var status = true>
+			<cfset status.login = true>
+			<cfset status.hostid = qry.hostid>
+			<cfset status.grpid = qry.grpid>
 			<!--- Get Host prefix --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #theapikey##thehostid#checkdesktop2 */ host_shard_group,host_path
