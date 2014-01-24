@@ -241,4 +241,60 @@
 		<cfreturn qrylucene>
 	</cffunction>
 
+	<!--- Check for desktop user --->
+	<cffunction name="checkDesktop" access="public" output="no">
+		<cfargument name="api_key" type="string" required="true">
+		<!--- Param --->
+		<cfparam name="thehostid" default="" />
+		<!--- If api key is empty --->
+		<cfif arguments.api_key EQ "">
+			<cfset arguments.api_key = 0>
+		</cfif>
+		<!--- Check to see if api key has a hostid --->
+		<cfif arguments.api_key contains "-">
+			<cfset var thehostid = listfirst(arguments.api_key,"-")>
+			<cfset var theapikey = listlast(arguments.api_key,"-")>
+		<cfelse>
+			<cfset var theapikey = arguments.api_key>
+		</cfif>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #theapikey##thehostid#checkdesktop */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
+		FROM users u, ct_users_hosts ct, ct_groups_users gu
+		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
+		AND u.user_id = ct.ct_u_h_user_id
+		<cfif thehostid NEQ "">
+			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
+		</cfif>
+		AND gu.ct_g_u_user_id = u.user_id
+		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
+		</cfquery>
+		<!--- If timeout is within the last 30 minutes then extend it again --->
+		<cfif qry.recordcount EQ 0>
+			<!--- Set --->
+			<cfset var status = false>
+		<cfelse>
+			<!--- Set --->
+			<cfset var status = true>
+			<!--- Get Host prefix --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
+			SELECT /* #theapikey##thehostid#checkdesktop2 */ host_shard_group,host_path
+			FROM hosts
+			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">
+			</cfquery>
+			<!--- Set Host information --->
+			<cfset application.razuna.api.host_path = pre.host_path>
+			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
+			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
+			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
+			<cfset session.hostdbprefix = pre.host_shard_group>
+			<cfset session.hostid = qry.hostid>
+			<cfset session.theuserid = qry.user_id>
+			<cfset session.thelangid = 1>
+			<cfset session.login = "T">
+		</cfif>
+		<!--- Return --->
+		<cfreturn status>
+	</cffunction>
+
 </cfcomponent>

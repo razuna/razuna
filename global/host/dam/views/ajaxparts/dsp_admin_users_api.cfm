@@ -26,9 +26,16 @@
 <cfoutput>
 	<!--- Set Languages --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr>
-			<td>Below is your pre-generated unique API. With it you can use the Razuna API to access your assets. Please refer to the <a href="http://wiki.razuna.com/" target="_blank">API documentation</a> for proper use. Please note, that currently we only support the access by API from an account within the administrator group.</td>
-		</tr>
+		<!--- For Admins --->
+		<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+			<tr>
+				<td>Below is your API Key. With it you can use the Razuna API. Please refer to the <a href="http://wiki.razuna.com/" target="_blank">API documentation</a>. Please note, that currently we only support access by API from an account within the administrator group.</td>
+			</tr>
+		<cfelse>
+			<tr>
+				<td>Below is your API Key. With it you can use the Razuna Desktop Uploader application. Note: This API Key does not work with the Razuna API!</td>
+			</tr>
+		</cfif>
 		<tr>
 			<td width="100%" style="padding:20px;text-align:center;">
 				<span style="color:green;font-weight:bold;border:1px solid green;padding:10px;background-color:yellow;">#qry_api_key#</span>
