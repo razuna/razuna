@@ -260,13 +260,12 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #theapikey##thehostid#checkdesktop */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
-		FROM users u, ct_users_hosts ct, ct_groups_users gu
+		FROM ct_users_hosts ct, users u left join ct_groups_users gu on gu.ct_g_u_user_id = u.user_id
 		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
 		AND u.user_id = ct.ct_u_h_user_id
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
 		</cfif>
-		AND gu.ct_g_u_user_id = u.user_id
 		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
 		<!--- If timeout is within the last 30 minutes then extend it again --->
