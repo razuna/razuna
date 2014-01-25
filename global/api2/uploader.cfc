@@ -36,12 +36,13 @@
 		<cfreturn s>
 	</cffunction>
 
-	<cffunction name="getFolders" access="remote" output="false" returntype="struct" returnformat="json">
+	<cffunction name="getFolders" access="remote" output="true" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Create struct --->
 		<cfset var s = structnew()>
 		<!--- Lets make sure the API key is still valid --->
 		<cfset var login = checkDesktop(arguments.api_key).login>
+		<cfdump var="#login#">
 		<!--- Ok user is in --->
 		<cfif login>
 			<cfset var hostid = checkDesktop(arguments.api_key).hostid>
