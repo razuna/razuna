@@ -35,51 +35,101 @@
 		<!--- Return --->
 		<cfreturn s>
 	</cffunction>
-
-	<cffunction name="getFolders" access="remote" output="true" returntype="struct" returnformat="json">
+	
+	<cffunction name="getFolders" access="remote" output="true" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
-		<cfargument name="thelist" required="false" default="" hint="list of parent folder-ids">
 		<!--- Create struct --->
 		<cfset var s = structnew()>
 		<cfset var qry = "">
 		<!--- Lets make sure the API key is still valid --->
-		<cfset var login = checkDesktop(arguments.api_key)>
+		<cfset var login = checkDesktop(arguments.api_key).login>
 		<!--- Ok user is in --->
 		<cfif login>
-			<cfset var hostid = checkDesktop(arguments.api_key).hostid>
-			<cfset var grpid = checkDesktop(arguments.api_key).grpid>
-			<cfset s.login = true>
-			<cfdump var="#application.razuna#">
-			<cfdump var="#session#">
 			<cftry>
-				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-				SELECT folder_id, folder_name
+				<!--- Query root folders --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry_root">
+				SELECT folder_id, folder_name, concat(folder_name) as path
 				FROM #session.hostdbprefix#folders
 				WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				<cfif arguments.thelist EQ "">
-					AND folder_id = folder_id_r
-				<cfelse>
-					AND folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-					AND folder_id != folder_id_r
-				</cfif>
+				AND (folder_is_collection IS NULL OR folder_is_collection = '')
+				AND folder_id = folder_id_r
+				ORDER BY folder_name
 				</cfquery>
-				<cfif qry.RecordCount NEQ 0>
-					<cfinvoke method="getFolders" returnvariable="local_list">
-						<cfinvokeargument name="api_key" value="#arguments.api_key#">
-						<cfinvokeargument name="thelist" value="#ValueList(qry.folder_id)#">
-					</cfinvoke>
-					<cfset Arguments.thelist = Arguments.thelist & "," & local_list>
-				</cfif>
-				<cfset s.folderlist = arguments.thelist>
-				<cfcatch type="any"><cfdump var="#cfcatch#"></cfcatch>
+				<!--- Create new query object --->
+				<cfset var qry = querynew('folder_id, folder_name, path')>
+				<!--- Add query to our temp query --->
+				<cfloop query="qry_root">
+					<!--- Set cells of query --->
+					<cfset queryaddrow(qry,1)>
+					<cfset querysetcell(qry,"folder_id",folder_id)>
+					<cfset querysetcell(qry,"folder_name",folder_name)>
+					<cfset querysetcell(qry,"path",path)>
+				</cfloop>
+				<!--- Call sub function which does its recursive thing --->
+				<cfinvoke method="getFoldersSub" returnvariable="qry_all">
+					<cfinvokeargument name="theqry" value="#qry#">
+					<cfinvokeargument name="qry_root" value="#qry_root#">
+				</cfinvoke>
+				<!--- Take the final query and sort by path --->
+				<cfquery dbtype="query" name="qry">
+				SELECT *
+				FROM qry_all
+				ORDER BY path
+				</cfquery>
+				<!--- Catch	--->
+				<cfcatch type="any">
+					<cfdump var="#cfcatch#">
+					<cfabort>
+				</cfcatch>
 			</cftry>
-		<cfelse>
-			<cfset s.login = false>
 		</cfif>
 		<!--- Return --->
-		<cfreturn s>
+		<cfreturn qry>
 	</cffunction>
-	
+
+	<cffunction name="getFoldersSub" access="private" output="true" returntype="query">
+		<cfargument name="theqry" required="true">
+		<cfargument name="qry_root" required="true">
+		<cfargument name="qry_root_name" required="false" default="">
+		<!--- Params --->
+		<cfset var qry_children = "">
+		<!--- Loop --->
+		<cfloop query="arguments.qry_root">
+			<!--- Append the "/" on the root name but only on the first loop --->
+			<cfif arguments.qry_root_name NEQ "" and arguments.qry_root.currentRow EQ 1>
+				<cfset arguments.qry_root_name = "#arguments.qry_root_name#/">
+			</cfif>
+			<!--- Get next children --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry_children">
+			SELECT folder_id, folder_name, concat('#arguments.qry_root_name##folder_name#','/',folder_name) as path
+			FROM #session.hostdbprefix#folders
+			WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND (folder_is_collection IS NULL OR folder_is_collection = '')
+			AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">
+			AND folder_id_r != folder_id
+			ORDER BY folder_name
+			</cfquery>
+			<!--- If more found then call this function again --->
+			<cfif qry_children.recordcount NEQ 0>
+				<!--- Add children to query --->
+				<cfloop query="qry_children">
+					<cfset queryaddrow(arguments.theqry,1)>
+					<cfset querysetcell(arguments.theqry,"folder_id",folder_id)>
+					<cfset querysetcell(arguments.theqry,"folder_name",folder_name)>
+					<cfset querysetcell(arguments.theqry,"path",path)>
+				</cfloop>
+				<!--- Look for more records --->
+				<cfinvoke method="getFoldersSub" returnvariable="qry_all">
+					<cfinvokeargument name="theqry" value="#arguments.theqry#">
+					<cfinvokeargument name="qry_root" value="#qry_children#">
+					<cfinvokeargument name="qry_root_name" value="#arguments.qry_root_name##folder_name#">
+				</cfinvoke>
+			</cfif>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn arguments.theqry>
+	</cffunction>
+
 </cfcomponent>
