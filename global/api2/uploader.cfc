@@ -49,6 +49,8 @@
 			<cfset var hostid = checkDesktop(arguments.api_key).hostid>
 			<cfset var grpid = checkDesktop(arguments.api_key).grpid>
 			<cfset s.login = true>
+			<cfdump var="#application.razuna#">
+			<cfdump var="#session#">
 			<cftry>
 				<!--- Query --->
 				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
@@ -65,6 +67,7 @@
 				</cfquery>
 				<cfif qry.RecordCount NEQ 0>
 					<cfinvoke method="getFolders" returnvariable="local_list">
+						<cfinvokeargument name="api_key" value="#arguments.api_key#">
 						<cfinvokeargument name="thelist" value="#ValueList(qry.folder_id)#">
 					</cfinvoke>
 					<cfset Arguments.thelist = Arguments.thelist & "," & local_list>
