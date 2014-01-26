@@ -49,26 +49,29 @@
 			<cfset var hostid = checkDesktop(arguments.api_key).hostid>
 			<cfset var grpid = checkDesktop(arguments.api_key).grpid>
 			<cfset s.login = true>
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-			SELECT folder_id, folder_name
-			FROM #session.hostdbprefix#folders
-			WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			<cfif arguments.thelist EQ "">
-				AND folder_id = folder_id_r
-			<cfelse>
-				AND folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-				AND folder_id != folder_id_r
-			</cfif>
-			</cfquery>
-			<cfif qry.RecordCount NEQ 0>
-				<cfinvoke method="getFolders" returnvariable="local_list">
-					<cfinvokeargument name="thelist" value="#ValueList(qry.folder_id)#">
-				</cfinvoke>
-				<cfset Arguments.thelist = Arguments.thelist & "," & local_list>
-			</cfif>
-			<cfset s.folderlist = arguments.thelist>
+			<cftry>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT folder_id, folder_name
+				FROM #session.hostdbprefix#folders
+				WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif arguments.thelist EQ "">
+					AND folder_id = folder_id_r
+				<cfelse>
+					AND folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+					AND folder_id != folder_id_r
+				</cfif>
+				</cfquery>
+				<cfif qry.RecordCount NEQ 0>
+					<cfinvoke method="getFolders" returnvariable="local_list">
+						<cfinvokeargument name="thelist" value="#ValueList(qry.folder_id)#">
+					</cfinvoke>
+					<cfset Arguments.thelist = Arguments.thelist & "," & local_list>
+				</cfif>
+				<cfset s.folderlist = arguments.thelist>
+				<cfcatch type="any"><cfdump var="#cfcatch#"></cfcatch>
+			</cftry>
 		<cfelse>
 			<cfset s.login = false>
 		</cfif>
