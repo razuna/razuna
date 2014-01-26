@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent output="false" extends="authentication">
+<cfcomponent output="true" extends="authentication">
 
 	<cffunction name="checkLogin" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -38,18 +38,39 @@
 
 	<cffunction name="getFolders" access="remote" output="true" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
+		<cfargument name="thelist" required="false" default="" hint="list of parent folder-ids">
 		<!--- Create struct --->
 		<cfset var s = structnew()>
+		<cfset var qry = "">
 		<!--- Lets make sure the API key is still valid --->
-		<cfset var login = checkDesktop(arguments.api_key).login>
-		<cfdump var="#login#">
+		<cfset var login = checkDesktop(arguments.api_key)>
 		<!--- Ok user is in --->
 		<cfif login>
 			<cfset var hostid = checkDesktop(arguments.api_key).hostid>
 			<cfset var grpid = checkDesktop(arguments.api_key).grpid>
-			<csfet s.login = true>
+			<cfset s.login = true>
+			<!--- Query --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			SELECT folder_id, folder_name
+			FROM #session.hostdbprefix#folders
+			WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif arguments.thelist EQ "">
+				AND folder_id = folder_id_r
+			<cfelse>
+				AND folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+				AND folder_id != folder_id_r
+			</cfif>
+			</cfquery>
+			<cfif qry.RecordCount NEQ 0>
+				<cfinvoke method="getFolders" returnvariable="local_list">
+					<cfinvokeargument name="thelist" value="#ValueList(qry.folder_id)#">
+				</cfinvoke>
+				<cfset Arguments.thelist = Arguments.thelist & "," & local_list>
+			</cfif>
+			<cfset s.folderlist = arguments.thelist>
 		<cfelse>
-			<csfet s.login = false>
+			<cfset s.login = false>
 		</cfif>
 		<!--- Return --->
 		<cfreturn s>
