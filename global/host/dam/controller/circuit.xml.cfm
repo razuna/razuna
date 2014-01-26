@@ -2952,6 +2952,8 @@
 		<set name="attributes.host_id" value="#attributes.hostid#" />
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(attributes)" returnvariable="qry_host" />
 		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
+		<!-- Set to not create a folder since we only upload files -->
+		<set name="attributes.nofolder" value="true" />
 		<!-- Finally call function to import from path -->
 		<do action="asset_add_path" />
 	</fuseaction>
@@ -2965,6 +2967,7 @@
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.av" value="false" overwrite="false" />
+		<set name="attributes.nofolder" value="false" overwrite="false" />
 		<!-- Query folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.theid)" returnvariable="qry" />
 		<set name="attributes.level" value="#qry.folder_level#" />

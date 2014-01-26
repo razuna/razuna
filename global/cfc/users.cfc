@@ -938,7 +938,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	select /* #variables.cachetoken#getUserbyApiKey */ user_id, user_login_name, user_email ,user_first_name, user_last_name
 	from users
-	where api_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.api_key#">
+	where user_api_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.api_key#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
