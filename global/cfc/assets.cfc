@@ -5077,31 +5077,32 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Since we come from upload we can remove the directory --->
 	<cfif arguments.thestruct.nofolder>
 		<cfdirectory action="delete" directory="#arguments.thestruct.folder_path#" recurse="true" />
-	</cfif>
-	<!--- Feedback --->
-	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
-	<cfflush>
-	<!--- Check if folder has subfolders if so add them recursively --->
-	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
-	<!--- Filter out hidden dirs --->
-	<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
-	SELECT *
-	FROM thedir
-	WHERE attributes != 'H'
-	</cfquery>
-	<!--- Call rec function --->
-	<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+	<cfelse>
 		<!--- Feedback --->
-		<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
-		<!--- folder_id into theid --->
-		<cfset arguments.thestruct.theid = new_folder_id>
-		<!--- Call function --->
-		<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Call function --->
+			<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+		</cfif>
+		<!--- Feedback --->
+		<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
+		<cfflush>
 	</cfif>
-	<!--- Feedback --->
-	<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
-	<cfflush>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
