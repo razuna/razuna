@@ -5070,13 +5070,19 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 		<cfset arguments.thestruct.orgsize = size>
 		<!--- Now add the asset --->
-		<!--- <cfif thefiles.recordcount LT 10>
+		<cfif arguments.thestruct.nofolder>
 			<cfthread intstruct="#arguments.thestruct#" action="run">
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
-		<cfelse> --->
-			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
-		<!--- </cfif> --->
+		<cfelse>
+			<cfif thefiles.recordcount LT 10>
+				<cfthread intstruct="#arguments.thestruct#" action="run">
+					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+				</cfthread>
+			<cfelse>
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfif>
+		</cfif>
 	</cfloop>
 	<!--- Since we come from upload we can remove the directory --->
 	<cfif !arguments.thestruct.nofolder>
