@@ -1632,7 +1632,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	</cfif>
 	<!--- Remove record in DB and file system --->
-	<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
+	<!--- <cfinvoke method="removeasset" thestruct="#arguments.thestruct#"> --->
 	<cfif returnid NEQ 0>
 		<!--- Call method to send email --->
 		<cfset arguments.thestruct.emailwhat = "end_adding">
@@ -1653,9 +1653,9 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- If this is coming from a uploader then remove source directory --->
-	<cfif arguments.thestruct.nofolder>
+	<!--- <cfif arguments.thestruct.nofolder>
 		<cfdirectory action="delete" directory="#arguments.thestruct.folder_path#" recurse="true" />
-	</cfif>
+	</cfif> --->
 	<!--- Thread --->
 	<cfthread action="run" intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
