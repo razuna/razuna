@@ -692,7 +692,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function xmp.xmpwritekeydesc_thread">
-			<cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>
