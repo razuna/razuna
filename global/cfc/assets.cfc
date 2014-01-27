@@ -5076,7 +5076,7 @@ This is the main function called directly by a single upload else from addassets
 	</cfloop>
 	<!--- Since we come from upload we can remove the directory --->
 	<cfif arguments.thestruct.nofolder>
-		<cfdirectory action="delete" directory="#arguments.thestruct.folder_path#" />
+		<cfdirectory action="delete" directory="#arguments.thestruct.folder_path#" recurse="true" />
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
