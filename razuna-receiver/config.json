@@ -1,0 +1,4 @@
+{
+	"uploadFolder" : "/opt/razuna-receiver/uploaderfiles/",
+	"serverPort" : "3000"
+}
