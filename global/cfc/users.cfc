@@ -169,7 +169,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, 
 	user_first_name, user_last_name, user_in_admin, user_create_date, user_active, user_company, user_phone, 
-	user_mobile, user_fax, user_in_dam, user_salutation, user_expiry_date
+	user_mobile, user_fax, user_in_dam, user_salutation
 	from users
 	where user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	</cfquery>
@@ -212,24 +212,15 @@
 <!--- Add AD Server --->
 <cffunction name="ad_server_user">
 	<cfargument name="thestruct" type="Struct">
-	<cfloop list="#arguments.thestruct.ad_users#" index="i" delimiters="," >
-		<cfset arguments.thestruct.user_first_name = evaluate("arguments.thestruct.user_first_name_#i#")>
-		<cfset arguments.thestruct.user_last_name = evaluate("arguments.thestruct.user_last_name_#i#")>
+	<cfloop list="#arguments.thestruct.acc_email#" index="i" delimiters="," >
+		<cfset arguments.thestruct.user_first_name = listGetAt(i,2,'-')>
+		<cfset arguments.thestruct.user_last_name = "">
 		<cfset arguments.thestruct.intrauser = "T">
 		<cfset arguments.thestruct.user_active = "T">
 		<cfset arguments.thestruct.user_pass = "">
 		<cfset arguments.thestruct.hostid = session.hostid>
-		<cfset arguments.thestruct.user_login_name = evaluate("arguments.thestruct.user_login_name_#i#")>
-		<cfset arguments.thestruct.user_email = evaluate("arguments.thestruct.user_email_#i#")>
-		<cfset arguments.thestruct.user_company = evaluate("arguments.thestruct.user_company_#i#")>
-		<cfset arguments.thestruct.user_street = evaluate("arguments.thestruct.user_street_#i#")>
-		<cfset arguments.thestruct.user_zip = evaluate("arguments.thestruct.user_zip_#i#")>
-		<cfset arguments.thestruct.user_city = evaluate("arguments.thestruct.user_city_#i#")>
-		<cfset arguments.thestruct.user_country = evaluate("arguments.thestruct.user_country_#i#")>
-		<cfset arguments.thestruct.user_phone = evaluate("arguments.thestruct.user_phone_#i#")>
-		<cfset arguments.thestruct.user_phone_2 = evaluate("arguments.thestruct.user_phone_2_#i#")>
-		<cfset arguments.thestruct.user_mobile = evaluate("arguments.thestruct.user_mobile_#i#")>
-		<cfset arguments.thestruct.user_fax = evaluate("arguments.thestruct.user_fax_#i#")>
+		<cfset arguments.thestruct.user_login_name = listfirst(i,'-')>
+		<cfset arguments.thestruct.user_email = listlast(i,'-')>
 		<cfif arguments.thestruct.user_login_name NEQ '' OR arguments.thestruct.user_email NEQ ''> 
 			<cfinvoke method="add"  thestruct="#arguments.thestruct#">
 		</cfif>
@@ -274,11 +265,7 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO users
 		(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
-		user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp
-		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND isdate(arguments.thestruct.user_expirydate)>
-			, user_expiry_date
-		</cfif>
-		)
+		user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp)
 		VALUES(
 		<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.user_login_name#" cfsqltype="cf_sql_varchar">,
@@ -300,10 +287,8 @@
 		<cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.vpuser#" cfsqltype="cf_sql_varchar">
-		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND isdate(arguments.thestruct.user_expirydate)>,<cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
 		)
 		</cfquery>
-	
 		<!--- Insert the user to the user host cross table --->
 		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
 			<cfquery datasource="#application.razuna.datasource#">
@@ -440,9 +425,6 @@
 		USER_FAX = <cfqueryparam value="#arguments.thestruct.USER_FAX#" cfsqltype="cf_sql_varchar">,
 		user_in_dam = <cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
 		user_salutation = <cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">
-		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND (isdate(arguments.thestruct.user_expirydate) or len(arguments.thestruct.user_expirydate) eq 0)>
-			,user_expiry_date = <cfif len(arguments.thestruct.user_expirydate) eq 0>null<cfelse><cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
-		</cfif>
 		WHERE user_id = <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Insert the user to the user host cross table --->
@@ -887,14 +869,11 @@
 	<cfargument name="userpass" required="true" type="string">
 	<!--- Get the record --->
 	<cfinvoke method="details" thestruct="#arguments#" returnvariable="qry_user" />
-	<cfinvoke component="defaults" method="trans" transid="user_login_info_email" returnvariable="user_login_info_email_content" />
-	<cfinvoke component="defaults" method="trans" transid="user_login_info_email_contactus" returnvariable="login_info_email_contactus" />
-	<cfinvoke component="defaults" method="trans" transid="user_login_info_email_subject" returnvariable="login_info_email_subject" />
 	<!--- The message --->
-	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />#user_login_info_email_content#<br /><br />Login: #session.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_email#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />#login_info_email_contactus#</cfoutput>
+	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />Your Razuna account login information are as follows:<br /><br />Login: #session.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_email#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />Please feel free to contact us if you have any questions.</cfoutput>
 	</cfsavecontent>
 	<!--- Send the email --->
-	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#login_info_email_subject#" themessage="#m#">
+	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="Your Razuna account" themessage="#m#">
 	<cfreturn />
 </cffunction>
 
@@ -925,23 +904,6 @@
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
-</cffunction>
-
-<!--- Get User by ApiKey --->
-<cffunction name="getUserbyApiKey">
-	<cfargument name="api_key" type="string">
-	<!--- Set param --->
-	<cfset var qry = "">
-	<!--- Get cache --->
-	<cfset variables.cachetoken = getcachetoken("users")>
-	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	select /* #variables.cachetoken#getUserbyApiKey */ user_id, user_login_name, user_email ,user_first_name, user_last_name
-	from users
-	where user_api_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.api_key#">
-	</cfquery>
-	<!--- Return --->
-	<cfreturn qry>
 </cffunction>
 
 </cfcomponent>
