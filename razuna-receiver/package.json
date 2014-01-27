@@ -1,7 +1,7 @@
 {
   "name": "Razuna-Receiver",
   "description": "This app takes care of receiving and adding files to Razuna from the Razuna Desktop application",
-  "version": "1.0",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "express": "3.x",
