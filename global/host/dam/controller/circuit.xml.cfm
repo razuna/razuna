@@ -2954,6 +2954,8 @@
 		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
 		<!-- Set to not create a folder since we only upload files -->
 		<set name="attributes.nofolder" value="true" />
+		<!-- Set langcount -->
+		<set name="attributes.langcount" value="1" />
 		<!-- Finally call function to import from path -->
 		<do action="asset_add_path" />
 	</fuseaction>
