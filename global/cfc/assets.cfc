@@ -5071,9 +5071,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.orgsize = size>
 		<!--- Now add the asset --->
 		<cfif arguments.thestruct.nofolder>
-			<cfthread intstruct="#arguments.thestruct#" action="run">
-				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 		<cfelse>
 			<cfif thefiles.recordcount LT 10>
 				<cfthread intstruct="#arguments.thestruct#" action="run">
