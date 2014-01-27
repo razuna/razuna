@@ -1,0 +1,11 @@
+{
+  "name": "Razuna-Receiver",
+  "description": "This app takes care of receiving and adding files to Razuna from the Razuna Desktop application",
+  "version": "1.0",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "request": "*",
+    "node-uuid": "*"
+  }
+}
