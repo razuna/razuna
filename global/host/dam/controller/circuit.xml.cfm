@@ -9615,33 +9615,7 @@
 		</if>
 	</fuseaction>
 	
-	<!-- Folder subscribe -->
-	<fuseaction name="folder_subscribe">
-		<!-- Param -->
-		<set name="attributes.theid" value="0" overwrite="false" />
-		<set name="attributes.emailnotify" value="no" overwrite="false" />
-		<set name="attributes.emailinterval" value="0" overwrite="false" />
-		<!-- CFC: Subscribe -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubscribefolder(attributes.theid)" returnvariable="qry_folder" />
-		<!-- XFA -->
-		<xfa name="submitfolderform" value="c.folder_subscribe_save" />
-		<!-- Show -->
-		<do action="ajax.folder_subscribe" />
-	</fuseaction>
-
-	<!-- Save Folder subscribe details -->
-	<fuseaction name="folder_subscribe_save">
-		<!-- Param -->
-		<set name="attributes.theid" value="0" overwrite="false" />
-		<!-- CFC: Subscribe -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
-	</fuseaction>
 	
-	<!-- Run Folder subscribe schedule tasks -->
-	<fuseaction name="folder_subscribe_task">
-		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
-	</fuseaction>
 
 	<!-- Lucene index for hosted -->
 	<fuseaction name="req_index_update_hosted">
