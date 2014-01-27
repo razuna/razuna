@@ -5853,7 +5853,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfcatch type="any">
 			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
 			<cfset cfcatch.custom_message = "The file '#arguments.thestruct.filename#' could not be proccessed in function assets.addassetpathfiles!">
-			<cfset errobj.logerrors(cfcatch,false)/>
+			<!--- <cfset errobj.logerrors(cfcatch,false)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>
