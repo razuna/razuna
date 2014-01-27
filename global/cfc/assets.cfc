@@ -1652,6 +1652,10 @@ This is the main function called directly by a single upload else from addassets
 <!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- If this is coming from a uploader then remove source directory --->
+	<cfif arguments.thestruct.nofolder>
+		<cfdirectory action="delete" directory="#arguments.thestruct.folder_path#" recurse="true" />
+	</cfif>
 	<!--- Thread --->
 	<cfthread action="run" intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
@@ -5066,18 +5070,16 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 		<cfset arguments.thestruct.orgsize = size>
 		<!--- Now add the asset --->
-		<cfif thefiles.recordcount LT 10>
+		<!--- <cfif thefiles.recordcount LT 10>
 			<cfthread intstruct="#arguments.thestruct#" action="run">
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
-		<cfelse>
+		<cfelse> --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
-		</cfif>
+		<!--- </cfif> --->
 	</cfloop>
 	<!--- Since we come from upload we can remove the directory --->
-	<cfif arguments.thestruct.nofolder>
-		<cfdirectory action="delete" directory="#arguments.thestruct.folder_path#" recurse="true" />
-	<cfelse>
+	<cfif !arguments.thestruct.nofolder>
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
