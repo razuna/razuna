@@ -2942,15 +2942,34 @@
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetlink(attributes)" returnvariable="result" />
 	</fuseaction>
 	
+	<!-- Called from uploader directly -->
+	<fuseaction name="w_import_from_uploader">
+		<!-- Get userid by apikey -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getUserbyApiKey(attributes.apikey)" returnvariable="qry_user" />
+		<!-- Set userid into session -->
+		<set name="session.theuserid" value="#qry_user.user_id#" />
+		<!-- Set proper host data -->
+		<set name="attributes.host_id" value="#attributes.hostid#" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(attributes)" returnvariable="qry_host" />
+		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
+		<!-- Set to not create a folder since we only upload files -->
+		<set name="attributes.nofolder" value="true" />
+		<!-- Set langcount -->
+		<set name="attributes.langcount" value="1" />
+		<!-- Finally call function to import from path -->
+		<do action="asset_add_path" />
+	</fuseaction>
+
 	<!-- Add asset from path -->
 	<fuseaction name="asset_add_path">
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.thepath" value="#thispath#" />
-		<set name="attributes.link_path" value="#folder_path#" />
+		<set name="attributes.link_path" value="#attributes.folder_path#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.av" value="false" overwrite="false" />
+		<set name="attributes.nofolder" value="false" overwrite="false" />
 		<!-- Query folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.theid)" returnvariable="qry" />
 		<set name="attributes.level" value="#qry.folder_level#" />

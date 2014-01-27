@@ -927,4 +927,21 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Get User by ApiKey --->
+<cffunction name="getUserbyApiKey">
+	<cfargument name="api_key" type="string">
+	<!--- Set param --->
+	<cfset var qry = "">
+	<!--- Get cache --->
+	<cfset variables.cachetoken = getcachetoken("users")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	select /* #variables.cachetoken#getUserbyApiKey */ user_id, user_login_name, user_email ,user_first_name, user_last_name
+	from users
+	where user_api_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.api_key#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
+
 </cfcomponent>

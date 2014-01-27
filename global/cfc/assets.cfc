@@ -5023,15 +5023,21 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
 	<!--- Read the name of the root folder --->
 	<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.folder_path,"/\")>
-	<!--- Add the folder --->
-	<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
-	<!--- If we store on the file system we create the folder here --->
-	<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+	<!--- Since we come from the uploader we dont create the folder --->
+	<cfif !arguments.thestruct.nofolder>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+		</cfif>
+	<cfelse>
+		<!--- Set the folder id  --->
+		<cfset new_folder_id = arguments.thestruct.theid>
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>List files of this folder...<br><br></cfoutput>
@@ -5068,30 +5074,33 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 		</cfif>
 	</cfloop>
-	<!--- Feedback --->
-	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
-	<cfflush>
-	<!--- Check if folder has subfolders if so add them recursively --->
-	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
-	<!--- Filter out hidden dirs --->
-	<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
-	SELECT *
-	FROM thedir
-	WHERE attributes != 'H'
-	</cfquery>
-	<!--- Call rec function --->
-	<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+	<!--- Since we come from upload we can remove the directory --->
+	<cfif !arguments.thestruct.nofolder>
 		<!--- Feedback --->
-		<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
-		<!--- folder_id into theid --->
-		<cfset arguments.thestruct.theid = new_folder_id>
-		<!--- Call function --->
-		<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Call function --->
+			<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+		</cfif>
+		<!--- Feedback --->
+		<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
+		<cfflush>
 	</cfif>
-	<!--- Feedback --->
-	<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
-	<cfflush>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -5836,7 +5845,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfcatch type="any">
 			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
 			<cfset cfcatch.custom_message = "The file '#arguments.thestruct.filename#' could not be proccessed in function assets.addassetpathfiles!">
-			<cfset errobj.logerrors(cfcatch,false)/>
+			<!--- <cfset errobj.logerrors(cfcatch,false)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>

@@ -31,15 +31,15 @@
 <input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 <div id="tab_admin_user">
 	<ul>
-		<cfif #attributes.user_id# eq 0>
+		<cfif attributes.user_id eq 0>
 			<li><a href="##tab_user">#myFusebox.getApplicationData().defaults.trans("user_add")#</a></li>
 		<cfelse>
 			<li><a href="##tab_user">#myFusebox.getApplicationData().defaults.trans("user_edit")#</a></li>
 		</cfif>
 		<li><a href="##tab_groups">#myFusebox.getApplicationData().defaults.trans("groups")#</a></li>
 		<cfif jr_enable EQ "true"><li><a href="##tab_logins">#myFusebox.getApplicationData().defaults.trans("tab_users_social_accounts")#</a></li></cfif>
-		<cfif attributes.add EQ "f" AND grpnrlist EQ 2>
-			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#');">API Key</a></li>
+		<cfif attributes.add EQ "f">
+			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#&grpnrlist=#grpnrlist#');">API Key</a></li>
 		</cfif>
 	</ul>
 	<!--- User --->
@@ -263,7 +263,7 @@
 		</div>
 	</cfif>
 	<!--- API --->
-	<cfif attributes.add EQ "f" AND grpnrlist EQ 2>
+	<cfif attributes.add EQ "f">
 		<div id="tab_api"></div>
 	</cfif>
 </div>
