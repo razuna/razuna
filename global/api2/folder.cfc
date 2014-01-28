@@ -409,7 +409,14 @@
 			<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 			<!--- Query folder --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-			SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner, fd.folder_desc as folder_description,
+			SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner, 
+			 (SELECT <cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> folder_desc from #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc WHERE folder_id_r = f.folder_id AND lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric"> 
+			 	<cfif application.razuna.api.thedatabase EQ "oracle">
+					AND rownum = 1
+				<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					LIMIT 1
+				</cfif>
+			 	) as folder_description, 
 			<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "h2">NVL<cfelseif application.razuna.api.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 				(
 					CASE WHEN EXISTS (SELECT 1
@@ -422,7 +429,6 @@
 				AS hassubfolders, '' totalassets, '' totalimg, '' totalvid, '' totaldoc, '' totalaud , '' howmanycollections
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 			LEFT JOIN users u ON u.user_id = f.folder_owner
-			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE
 			<cfif Arguments.folderid gt 0>
 				f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
