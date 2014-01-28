@@ -54,7 +54,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND (folder_is_collection IS NULL OR folder_is_collection = '')
 				AND folder_id = folder_id_r
-				ORDER BY folder_name
+				ORDER BY lower(folder_name)
 				</cfquery>
 				<!--- Create new query object --->
 				<cfset var qry = querynew('folder_id, folder_name, path')>
@@ -109,7 +109,7 @@
 			AND (folder_is_collection IS NULL OR folder_is_collection = '')
 			AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">
 			AND folder_id_r != folder_id
-			ORDER BY folder_name
+			ORDER BY lower(folder_name)
 			</cfquery>
 			<!--- If more found then call this function again --->
 			<cfif qry_children.recordcount NEQ 0>
