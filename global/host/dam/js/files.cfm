@@ -9,12 +9,12 @@
 // 	loadcontent('versionlist','index.cfm?fa=c.versions_add&file_id=' + fileid + '&type=' + type + '&tempid=' + tempid);
 // }
 // Playback Version
-function verplayback(fileid, type, version){
+function verplayback(fileid, type, version, folder_id){
 	$("#status").css("display","");
 	$("#status").html('<cfoutput>#myFusebox.getApplicationData().defaults.trans("versions_playback_progress")#</cfoutput>');
 	$("#status").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 	// Submit Form
-	loadcontent('versionlist','index.cfm?fa=c.versions_playback&file_id=' + fileid + '&type=' + type + '&version=' + version);
+	loadcontent('versionlist','index.cfm?fa=c.versions_playback&file_id=' + fileid + '&type=' + type + '&version=' + version + '&folder_id=' + folder_id);
 }
 function reloadfilelisting(theid){
 	if(theid == ""){

@@ -47,7 +47,9 @@
 			<cfif cs.tab_comments>
 				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
-			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind EQ "">
+			<!--- VERSIONS --->
+			<!--- attributes.folderaccess NEQ "R" AND condition removed for RAZ-2905 --->
+			<cfif qry_detail.detail.link_kind EQ "">
 				<cfif cs.tab_versions>
 					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("versions_header")#</a></li>
 				</cfif>
@@ -391,9 +393,11 @@
 				</cfif>
 			</div>			
 		</cfif>
-		<cfif attributes.folderaccess NEQ "R">
+		
 			<!--- VERSIONS --->
 			<div id="divversions"></div>
+
+		<cfif attributes.folderaccess NEQ "R">
 			<!--- SHARING OPTIONS --->
 			<div id="shareoptions"></div>
 			<div id="moreversions"></div>

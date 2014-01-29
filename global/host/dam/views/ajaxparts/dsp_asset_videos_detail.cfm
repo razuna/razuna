@@ -60,7 +60,9 @@
 			<cfif cs.tab_metadata>
 				<li><a href="##meta">Metadata</a></li>
 			</cfif>
-			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+			<!--- VERSIONS --->
+			<!--- attributes.folderaccess NEQ "R" AND condition removed for RAZ-2905 --->
+			<cfif qry_detail.detail.link_kind NEQ "url">
 				<cfif qry_detail.detail.link_kind NEQ "lan">
 					<cfif cs.tab_versions>
 						<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("versions_header")#</a></li>
