@@ -4865,6 +4865,7 @@
 	<cfparam name="arguments.thestruct.akavid" default="" />
 	<cfparam name="arguments.thestruct.akaaud" default="" />
 	<cfparam name="arguments.thestruct.akadoc" default="" />
+	<cfset var count = 1>
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
 		<!--- Set original --->
@@ -4887,6 +4888,12 @@
 		AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
 		</cfquery>
 	</cfif>
+	<!--- RAZ-2901 : QoQ to change the sort order by filename --->
+	<cfquery name="arguments.dl_query" dbtype="query">
+		SELECT * 
+		FROM arguments.dl_query 
+		ORDER BY filename
+	</cfquery> 
 	<!--- Loop over records --->
 	<cfloop query="arguments.dl_query">
 		<!--- Set var --->
@@ -4900,6 +4907,8 @@
 			<cfset var thefinalname = theorgname>
 			<cfset var thiscloudurl = cloud_url>
 			<cfset var theorgext = ext>
+			<cfset var tn = listfirst(filename,".")>
+			<cfset var thefinalname = "thumb_#tn#.#ext#">
 		<cfelseif arguments.dl_originals>
 			<cfset var theorgname = filename_org>
 			<cfset var thefinalname = filename>
@@ -4909,7 +4918,7 @@
 			<cfif arguments.dl_renditions>
 				<cfset var tn = listfirst(filename,".")>
 				<cfset var te = listlast(filename_org,".")>
-				<cfset var thefinalname = tn & "_" & currentRow & "." & te>
+				<cfset var thefinalname = "rend_" & tn & "." & te>
 			</cfif>
 		</cfif>
 		<!--- Start download but only if theorgname is not empty --->
@@ -4918,9 +4927,34 @@
 			<cfif listlast(thefinalname,".") NEQ theorgext>
 				<cfset var thefinalname = filename & "." & theorgext>
 			</cfif>
+			<!--- RAZ-2901 : Set Original Video name --->
+			<cfif kind EQ 'vid' AND arguments.dl_renditions>
+				<cfset var tn = listfirst(filename,".")>
+				<cfset var te = listlast(filename_org,".")>
+				<cfset var thefinalname = "rend_" & tn & "." & te>
+			<cfelse>
+				<cfset var theorgname = filename>
+				<cfset var thefinalname = filename>
+				<cfset var theorgext = listlast(thefinalname,".")>
+			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
+				<!--- RAZ-2901 : Rename if file already exists --->
+				<cfif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_thumbnails>
+					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" & "." & theorgext>
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelseif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_originals>
+					<cfset var thefinalname = listfirst(filename,".") & "_#count#" & "." & theorgext>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelse>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				</cfif>
+				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
+				<cfif filename[currentrow-1] EQ filename[currentrow]>
+					<cfset var count = count + 1>
+				<cfelse> 
+					<cfset var count = 1>
+				</cfif>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
 				<cftry>
@@ -4958,11 +4992,34 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
+				<!--- RAZ-2901 : Rename if file already exists --->
+				<cfif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_thumbnails>
+					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" & "." & theorgext>
 				<cfinvoke component="amazon" method="Download">
 					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
 					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
 					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
 				</cfinvoke>
+				<cfelseif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_originals>
+					<cfset var thefinalname = listfirst(filename,".") & "_#count#" & "." & theorgext>
+					<cfinvoke component="amazon" method="Download">
+						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+						<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+					</cfinvoke>
+				<cfelse>
+					<cfinvoke component="amazon" method="Download">
+						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+						<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+					</cfinvoke>
+				</cfif>
+				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
+				<cfif filename[currentrow-1] EQ filename[currentrow]>
+					<cfset var count = count + 1>
+				<cfelse> 
+					<cfset var count = 1>
+				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif link_kind EQ "url">
 				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
