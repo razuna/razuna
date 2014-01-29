@@ -1257,6 +1257,8 @@
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
 		<cfset cloud_url_org.newepoch = 0>
+		<!--- Set file id for API rendition --->
+		<cfset var newid = "0">
 		<cfparam name="arguments.thestruct.upl_template" default="0">
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
