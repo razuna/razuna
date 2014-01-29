@@ -4928,14 +4928,15 @@
 				<cfset var thefinalname = filename & "." & theorgext>
 			</cfif>
 			<!--- RAZ-2901 : Set Original Video name --->
+			<cfif kind EQ 'vid'>
+				<cfset var theorgname = filename>
+				<cfset var thefinalname = filename>
+				<cfset var theorgext = listlast(thefinalname,".")>
+			</cfif>
 			<cfif kind EQ 'vid' AND arguments.dl_renditions>
 				<cfset var tn = listfirst(filename,".")>
 				<cfset var te = listlast(filename_org,".")>
 				<cfset var thefinalname = "rend_" & tn & "." & te>
-			<cfelse>
-				<cfset var theorgname = filename>
-				<cfset var thefinalname = filename>
-				<cfset var theorgext = listlast(thefinalname,".")>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
