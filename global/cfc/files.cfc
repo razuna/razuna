@@ -979,6 +979,8 @@
 		<cfset var qry = structnew()>
 		<cfset qry.thefilename = "">
 		<cfset qry.av = false>
+		<!--- RAZ-2906 : Get the dam settings --->
+		<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 		<!--- If this is for additional renditions --->
 		<cfif arguments.thestruct.av>
 			<!--- Query version --->
@@ -1010,11 +1012,19 @@
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+					<cfset thumbnailname = "thumb_" & qfile.img_id >
+					<cfset originalfilename = replacenocase(qFile.img_filename, ".#qFile.extension#","","ALL") >
+				<cfelse>
+					<cfset thumbnailname = "thumb_" & qfile.img_id & "." & qfile.thumb_extension >
+					<cfset originalfilename = replacenocase(qFile.img_filename, ".#qFile.extension#","","ALL")& "." & qfile.extension >
+				</cfif>
 				<!--- Correct filename for thumbnail or original --->
 				<cfif arguments.thestruct.v EQ "o">
-					<cfset qry.thefilename =  replacenocase(qFile.img_filename, ".#qFile.extension#","","ALL")& "." & qfile.extension>
+					<cfset qry.thefilename =  originalfilename>
 				<cfelse>
-					<cfset qry.thefilename = "thumb_" & qfile.img_id & "." & qfile.thumb_extension>
+					<cfset qry.thefilename = thumbnailname>
 				</cfif>
 			<!--- Videos --->
 			<cfelseif arguments.thestruct.type EQ "vid">
@@ -1025,8 +1035,14 @@
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+					<cfset originalfilename = replacenocase(qFile.vid_filename, ".#qFile.extension#","","ALL") >
+				<cfelse>
+					<cfset originalfilename = replacenocase(qFile.vid_filename, ".#qFile.extension#","","ALL") & "." & qfile.extension>
+				</cfif>
 				<!--- Correct filename --->
-				<cfset qry.thefilename =  replacenocase(qFile.vid_filename, ".#qFile.extension#","","ALL") & "." & qfile.extension>
+				<cfset qry.thefilename =  originalfilename >
 			<!--- Audios --->
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#">
@@ -1036,8 +1052,14 @@
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+					<cfset originalfilename = replacenocase(qFile.aud_name, ".#qFile.extension#","","ALL") >
+				<cfelse>
+					<cfset originalfilename = replacenocase(qFile.aud_name, ".#qFile.extension#","","ALL") & "." & qfile.extension >
+				</cfif>
 				<!--- Correct filename --->
-				<cfset qry.thefilename =  replacenocase(qFile.aud_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
+				<cfset qry.thefilename = originalfilename >
 			<!--- Documents --->
 			<cfelse>
 				<cfquery name="qFile" datasource="#variables.dsn#">
@@ -1048,8 +1070,14 @@
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+					<cfset originalfilename = replacenocase(qFile.file_name, ".#qFile.extension#","","ALL") >
+				<cfelse>
+					<cfset originalfilename = replacenocase(qFile.file_name, ".#qFile.extension#","","ALL") & "." & qfile.extension >
+				</cfif>
 				<!--- Correct filename --->
-				<cfset qry.thefilename =  replacenocase(qFile.file_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
+				<cfset qry.thefilename =  originalfilename >
 			</cfif>	
 		</cfif>
 		<!--- If name contains spaces then convert them to _ or else an incorrect name is being shown during download --->

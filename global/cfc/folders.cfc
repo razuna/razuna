@@ -4865,6 +4865,8 @@
 	<cfparam name="arguments.thestruct.akavid" default="" />
 	<cfparam name="arguments.thestruct.akaaud" default="" />
 	<cfparam name="arguments.thestruct.akadoc" default="" />
+	<!--- RAZ-2906: Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
 		<!--- Set original --->
@@ -4917,6 +4919,10 @@
 			<!--- Check if thefinalname has an extension. If not add the original one --->
 			<cfif listlast(thefinalname,".") NEQ theorgext>
 				<cfset var thefinalname = filename & "." & theorgext>
+			</cfif>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfset thefinalname = listfirst('#thefinalname#','.') >
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">

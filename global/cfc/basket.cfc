@@ -337,6 +337,8 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset var qry = "">
+	<!--- RAZ-2906 : Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 	<!--- Start the loop to get the file --->
 	<cfloop delimiters="," list="#arguments.thestruct.artoffile#" index="art">
 		<!--- Put id and art into variables --->
@@ -382,6 +384,10 @@
 				<cfset thename = replace(thename,"\","-","all")>
 				<cfset arguments.thestruct.thename = thename & ".#arguments.thestruct.qry.file_extension#">
 			</cfif>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfset arguments.thestruct.thename = listfirst('#arguments.thestruct.thename#','.') >
+			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Copy file to the outgoing folder --->
@@ -407,7 +413,7 @@
 				<cfif theart EQ "versions">
 					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/doc/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
 				<cfelse>
-					<cfset arguments.thestruct.asset_path = "/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.file_name_org#">
+					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.file_name_org#">
 				</cfif>
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
@@ -453,6 +459,8 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset var qry = "">
+	<!--- RAZ-2906 : Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 	<!--- Start the loop to get the different kinds of images --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
 		<!--- Create uuid for thread --->
@@ -543,6 +551,11 @@
 			<cfset arguments.thestruct.thefname = thefname>
 			<cfset arguments.thestruct.thefinalname = thefinalname>
 			<cfset arguments.thestruct.theart = theart>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfset arguments.thestruct.thefinalname = listfirst('#arguments.thestruct.thefinalname#','.') >
+				<cfset thenewname = listfirst('#thenewname#','.') >
+			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -637,6 +650,8 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset var qry = "">
+	<!--- RAZ-2906 : Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofvideo#" index="art">
 		<!--- Put image id and art into variables --->
@@ -712,6 +727,11 @@
 			<cfset arguments.thestruct.theart = theart>
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfset arguments.thestruct.thefname = listfirst('#arguments.thestruct.thefname#','.') >
+				<cfset arguments.thestruct.thenewname = listfirst('#thenewname#','.') >
+			</cfif>
 			<!--- Create uuid for thread --->
 			<cfset wvt = createuuid("")>
 			<!--- Local --->
@@ -736,7 +756,7 @@
 				<cfif theart EQ "versions">
 					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/vid/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
 				<cfelse>
-					<cfset arguments.thestruct.asset_path = "/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.vid_name_org#">
+					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.vid_name_org#">
 				</cfif>
 				<!--- Download file --->
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
@@ -783,6 +803,8 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset var qry = "">
+	<!--- RAZ-2906 : Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofaudio#" index="art">
 		<!--- Put image id and art into variables --->
@@ -857,6 +879,11 @@
 			<cfset arguments.thestruct.theart = theart>
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfset arguments.thestruct.thefname = listfirst('#arguments.thestruct.thefname#','.') >
+				<cfset arguments.thestruct.thenewname = listfirst('#thenewname#','.') >
+			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -879,7 +906,7 @@
 				<cfif theart EQ "versions">
 					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/aud/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
 				<cfelse>
-					<cfset arguments.thestruct.asset_path = "/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.aud_name_org#">
+					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.aud_name_org#">
 				</cfif>
 				<!--- Download file --->
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
