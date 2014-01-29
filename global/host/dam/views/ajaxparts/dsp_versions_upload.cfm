@@ -54,7 +54,7 @@
                 }
             catch(e) {};
             function callwithdelay(){
-                parent.$('##versionlist').load('index.cfm?fa=c.versions_add&file_id=#attributes.file_id#&type=#attributes.type#&tempid=#attributes.tempid#');
+                parent.$('##versionlist').load('index.cfm?fa=c.versions_add&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&tempid=#attributes.tempid#');
             }
         </script>
     </cfif>

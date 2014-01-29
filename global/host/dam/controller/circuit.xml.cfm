@@ -7779,6 +7779,8 @@
 	<fuseaction name="versions">
 		<!-- Param -->
 		<set name="attributes.tempid" value="#createuuid()#" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />	
 		<!-- Show -->
 		<do action="ajax.versions" />
 	</fuseaction>
@@ -7789,6 +7791,8 @@
 		<!-- Action: Check storage
 		<set name="attributes.isbrowser" value="#session.isbrowser#" />
 		<do action="storage" /> -->
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Query the versions -->
 		<invoke object="myFusebox.getApplicationData().versions" methodcall="get(attributes)" returnvariable="qry_versions" />
 		<!-- Show -->
@@ -7821,6 +7825,8 @@
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Remove version -->
 		<invoke object="myFusebox.getApplicationData().versions" methodcall="remove(attributes)" />
 		<!-- Show -->
