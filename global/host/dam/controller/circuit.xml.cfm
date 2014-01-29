@@ -3847,10 +3847,17 @@
 	<fuseaction name="videos_detail_save">
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
+		<set name="attributes.thefiletype" value="vid" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Get related videos -->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="attributes.qry_related" />
 		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
 		<if condition="attributes.customfields NEQ 0">
 			<true>
@@ -3860,7 +3867,7 @@
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
 		<!-- Variables for API -->
-		<set name="attributes.thefiletype" value="vid" />
+		
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
@@ -3876,10 +3883,17 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="vid" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>
@@ -3888,10 +3902,17 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="vid" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>
@@ -4024,6 +4045,7 @@
 	<fuseaction name="images_detail_save">
 		<!-- Params -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
+		<set name="attributes.thefiletype" value="img" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -4031,6 +4053,10 @@
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
 		<set name="attributes.file_ids" value="#attributes.file_id#" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Get related images -->
+		<invoke object="myFusebox.getApplicationData().images" methodcall="relatedimages(attributes)" returnvariable="attributes.qry_related" />
 		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
 		<if condition="attributes.customfields NEQ 0">
 			<true>
@@ -4046,7 +4072,6 @@
 			</true>
 		</if>
 		<!-- Variables for API -->
-		<set name="attributes.thefiletype" value="img" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
@@ -4064,12 +4089,17 @@
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.cf_show" value="img" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert images -->	
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
@@ -4080,12 +4110,17 @@
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.cf_show" value="img" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert images -->	
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
@@ -4151,10 +4186,17 @@
 	<fuseaction name="audios_detail_save">
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
+		<set name="attributes.thefiletype" value="aud" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get related audios -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="attributes.qry_related" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
 		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
 		<if condition="attributes.customfields NEQ 0">
 			<true>
@@ -4164,7 +4206,6 @@
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
 		<!-- Variables for API -->
-		<set name="attributes.thefiletype" value="aud" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
@@ -4223,14 +4264,19 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="aud" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get video settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />		
 	</fuseaction>
@@ -4239,12 +4285,17 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="aud" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get video settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
 		<!-- CFC: Convert video -->

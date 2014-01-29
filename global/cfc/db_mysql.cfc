@@ -1801,6 +1801,7 @@
 		  SET2_AKA_DOC					VARCHAR(200),
 		  SET2_COLORSPACE_RGB			VARCHAR(5) DEFAULT 'false',
 		  SET2_CUSTOM_FILE_EXT			VARCHAR(5) DEFAULT 'true',
+		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),

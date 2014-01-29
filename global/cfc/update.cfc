@@ -215,6 +215,18 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
+			<!--- RAZ-2837 Add column SET2_RENDITION_METADATA to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_RENDITION_METADATA #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_settings_2 SET SET2_RENDITION_METADATA = 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If update number is lower then 17 (v. 1.6.1) --->
