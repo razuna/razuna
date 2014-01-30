@@ -36,7 +36,9 @@
 		<th>#myFusebox.getApplicationData().defaults.trans("thumbnails")#</th>
 		<th>#myFusebox.getApplicationData().defaults.trans("version_header")#</th>
 		<th>#myFusebox.getApplicationData().defaults.trans("date_created")#</th>
-		<th colspan="3"><a href="##" onclick="loadcontent('versionlist','#myself#c.versions_list&file_id=#attributes.file_id#&type=#attributes.type#&view=#createuuid()#');" style="align:right;">#myFusebox.getApplicationData().defaults.trans("reload")#</a></th>
+		<cfif attributes.folderaccess NEQ "R">
+			<th colspan="3"><a href="##" onclick="loadcontent('versionlist','#myself#c.versions_list&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&view=#createuuid()#');" style="align:right;">#myFusebox.getApplicationData().defaults.trans("reload")#</a></th>
+		</cfif>	
 	</tr>
 	<cfloop query="qry_versions">
 		<tr class="list">
@@ -71,6 +73,7 @@
 			</td>
 			<td><b>#ver_version#</b></td>
 			<td width="100%">#dateformat(ver_date_add,"mmmm dd yyyy")# #timeformat(ver_date_add,"hh:mm:ss")#</td>
+			<cfif attributes.folderaccess NEQ "R">
 			<td valign="center" nowrap="true">
 				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 					<a href="#cloud_url_org#" target="_blank">
@@ -78,12 +81,19 @@
 					<a href="#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_filename_org#" target="_blank">
 				</cfif>	
 				#myFusebox.getApplicationData().defaults.trans("show")#</a></td>
-			<td valign="center" nowrap="true"><a href="##" onclick="verplayback('#asset_id_r#','#attributes.type#',#ver_version#);return false;">#myFusebox.getApplicationData().defaults.trans("playback")#</a></td>
-			<td valign="center" nowrap="true"><a href="##" onclick="loadcontent('versionlist','#myself#c.versions_remove&file_id=#asset_id_r#&type=#attributes.type#&version=#ver_version#');return false;">#myFusebox.getApplicationData().defaults.trans("remove")#</a></td>
+				<td valign="center" nowrap="true">
+					<a href="##" onclick="verplayback('#asset_id_r#','#attributes.type#',#ver_version#,'#attributes.folder_id#');return false;">#myFusebox.getApplicationData().defaults.trans("playback")#</a>
+				</td>
+				<td valign="center" nowrap="true">
+					<a href="##" onclick="loadcontent('versionlist','#myself#c.versions_remove&file_id=#asset_id_r#&folder_id=#attributes.folder_id#&type=#attributes.type#&version=#ver_version#');return false;">#myFusebox.getApplicationData().defaults.trans("remove")#</a>
+				</td>
+			</cfif>
 		</tr>
 	</cfloop>
+	<cfif attributes.folderaccess NEQ "R">
 	<tr>
 		<td colspan="5"><i>(#myFusebox.getApplicationData().defaults.trans("versions_cache")#)</i></td>
 	</tr>
+	</cfif>
 </table>
 </cfoutput>
