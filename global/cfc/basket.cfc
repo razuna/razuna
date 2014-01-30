@@ -385,8 +385,14 @@
 				<cfset arguments.thestruct.thename = thename & ".#arguments.thestruct.qry.file_extension#">
 			</cfif>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfset var name = arguments.thestruct.qry.file_name>
+			<cfset var orgname = listfirst(arguments.thestruct.qry.file_name_org,".")>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
-				<cfset arguments.thestruct.thename = listfirst('#arguments.thestruct.thename#','.') >
+				<cfif name EQ orgname>
+					<cfset arguments.thestruct.thename = arguments.thestruct.qry.file_name >
+				<cfelse>
+					<cfset arguments.thestruct.thename = arguments.thestruct.qry.file_name >
+				</cfif>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
@@ -551,11 +557,6 @@
 			<cfset arguments.thestruct.thefname = thefname>
 			<cfset arguments.thestruct.thefinalname = thefinalname>
 			<cfset arguments.thestruct.theart = theart>
-			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
-				<cfset arguments.thestruct.thefinalname = listfirst('#arguments.thestruct.thefinalname#','.') >
-				<cfset thenewname = listfirst('#thenewname#','.') >
-			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -634,6 +635,26 @@
 				</cfthread>
 				<!--- Wait for the thread above until the file is downloaded fully --->
 				<cfthread action="join" name="#thethreadid#" />
+			</cfif>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfset var name = qry.img_filename>
+			<cfset var orgname = listfirst(qry.img_filename_org,".")>
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfif name EQ orgname>
+					<cfif theart EQ "thumb">
+						<cfset thenewname = "thumb_" & theimgid >
+					<cfelse>
+						<cfset thenewname = qry.img_filename >
+					</cfif>
+				<cfelse>
+					<cfif theart EQ "thumb">
+						<cfset thenewname = "thumb_" & theimgid & ".#qry.thumb_extension#">
+					</cfif>
+				</cfif>
+			<cfelse>
+				<cfif theart EQ "thumb">
+					<cfset thenewname = "thumb_#theimgid#.#qry.thumb_extension#">
+				</cfif>
 			</cfif>
 			<!--- Rename the file --->
 			<cfif structkeyexists(qry, "link_kind") AND qry.link_kind NEQ "url" AND fileExists("#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#")>
@@ -728,9 +749,14 @@
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfset var name = qry.vid_filename>
+			<cfset var orgname = listfirst(qry.vid_name_org,".")>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
-				<cfset arguments.thestruct.thefname = listfirst('#arguments.thestruct.thefname#','.') >
-				<cfset arguments.thestruct.thenewname = listfirst('#thenewname#','.') >
+				<cfif name EQ orgname>
+					<cfset arguments.thestruct.thenewname = qry.vid_filename >
+				<cfelse>
+					<cfset arguments.thestruct.thenewname = qry.vid_filename >
+				</cfif>
 			</cfif>
 			<!--- Create uuid for thread --->
 			<cfset wvt = createuuid("")>
@@ -880,9 +906,14 @@
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfset var name = qry.aud_name>
+			<cfset var orgname = listfirst(qry.aud_name_org,".")>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
-				<cfset arguments.thestruct.thefname = listfirst('#arguments.thestruct.thefname#','.') >
-				<cfset arguments.thestruct.thenewname = listfirst('#thenewname#','.') >
+				<cfif name EQ orgname>
+					<cfset arguments.thestruct.thenewname = qry.aud_name >
+				<cfelse>
+					<cfset arguments.thestruct.thenewname = qry.aud_name >
+				</cfif>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">

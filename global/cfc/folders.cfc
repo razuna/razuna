@@ -4896,6 +4896,9 @@
 		<!--- Feedback --->
 		<cfoutput>. </cfoutput>
 		<cfflush>
+		<!--- RAZ-2906 : Get custom file name and original file name --->
+		<cfset var name = filename>
+		<cfset var orgname = replaceNoCase('#listfirst(filename_org,".")#','_',' ','all')>
 		<!--- If we have to get thumbnails then the name is different --->
 		<cfif arguments.dl_thumbnails AND kind EQ "img">
 			<cfset var theorgname = "thumb_#id#.#ext#">
@@ -4922,7 +4925,15 @@
 			</cfif>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
-				<cfset thefinalname = listfirst('#thefinalname#','.') >
+				<cfif name EQ orgname>
+					<cfif arguments.dl_thumbnails AND kind EQ "img">
+						<cfset var thefinalname = "thumb_#id#">
+					<cfelseif arguments.dl_originals>
+						<cfset var thefinalname = filename>
+					<cfelseif arguments.dl_renditions>
+						<cfset var thefinalname = listfirst(filename,".")>
+					</cfif>
+				</cfif>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
