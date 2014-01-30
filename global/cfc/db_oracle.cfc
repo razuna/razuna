@@ -2018,6 +2018,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			meta_data			CLOB,
 			hashtag				VARCHAR2(100 CHAR),
 			rec_uuid			VARCHAR2(100 CHAR),
+			cloud_url_thumb		VARCHAR2(500 CHAR),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#versions_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		</cfquery>

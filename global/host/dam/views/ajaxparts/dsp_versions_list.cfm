@@ -33,38 +33,57 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 	<tr>
+		<th>#myFusebox.getApplicationData().defaults.trans("thumbnails")#</th>
 		<th>#myFusebox.getApplicationData().defaults.trans("version_header")#</th>
 		<th>#myFusebox.getApplicationData().defaults.trans("date_created")#</th>
-		<cfif attributes.folderaccess NEQ "R">
-			<th colspan="3"><a href="##" onclick="loadcontent('versionlist','#myself#c.versions_list&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&view=#createuuid()#');" style="align:right;">#myFusebox.getApplicationData().defaults.trans("reload")#</a></th>
-		</cfif>		
+		<th colspan="3"><a href="##" onclick="loadcontent('versionlist','#myself#c.versions_list&file_id=#attributes.file_id#&type=#attributes.type#&view=#createuuid()#');" style="align:right;">#myFusebox.getApplicationData().defaults.trans("reload")#</a></th>
 	</tr>
 	<cfloop query="qry_versions">
 		<tr class="list">
+			<!--- RAZ-2904::Thumbnail Preview --->
+			<cfif application.razuna.storage EQ "local">
+				<cfif (ver_type EQ "img" OR ver_type EQ "vid") OR (ver_type EQ "doc" AND ver_extension EQ "pdf")>
+					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_thumbnail#'>	
+				<cfelseif ver_type EQ "aud">
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_aud.png'>	
+				<cfelseif ver_type EQ "doc" AND ver_extension EQ "doc"  >
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_doc.png'>	
+				<cfelseif ver_type EQ "doc" AND ver_extension EQ "xlsx"  >
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>	
+				<cfelse>
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/image_missing.png'>
+				</cfif>
+			<cfelse>
+				<cfif (ver_type EQ "img" OR ver_type EQ "vid") OR (ver_type EQ "doc" AND ver_extension EQ "pdf")>
+					<cfset thumb_img = '#cloud_url_thumb#'>
+				<cfelseif ver_type EQ "aud">
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_aud.png'>	
+				<cfelseif ver_type EQ "doc" AND ver_extension EQ "doc"  >
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_doc.png'>	
+				<cfelseif ver_type EQ "doc" AND ver_extension EQ "xlsx"  >
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>	
+				<cfelse>
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/image_missing.png'>
+				</cfif>
+			</cfif>
+			<td>
+				<a href="#thumb_img#" target="_blank"><img src="#thumb_img#" height="50" width="50"></a> 
+			</td>
 			<td><b>#ver_version#</b></td>
 			<td width="100%">#dateformat(ver_date_add,"mmmm dd yyyy")# #timeformat(ver_date_add,"hh:mm:ss")#</td>
-			<cfif attributes.folderaccess NEQ "R">
-				<td valign="center" nowrap="true">
-					<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-						<a href="#cloud_url_org#" target="_blank">
-					<cfelse>
-						<a href="#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_filename_org#" target="_blank">
-					</cfif>	
-					#myFusebox.getApplicationData().defaults.trans("show")#</a></td>
-
-				<td valign="center" nowrap="true">
-					<a href="##" onclick="verplayback('#asset_id_r#','#attributes.type#',#ver_version#,'#attributes.folder_id#');return false;">#myFusebox.getApplicationData().defaults.trans("playback")#</a>
-				</td>
-				<td valign="center" nowrap="true">
-					<a href="##" onclick="loadcontent('versionlist','#myself#c.versions_remove&file_id=#asset_id_r#&folder_id=#attributes.folder_id#&type=#attributes.type#&version=#ver_version#');return false;">#myFusebox.getApplicationData().defaults.trans("remove")#</a>
-				</td>
-			</cfif>
+			<td valign="center" nowrap="true">
+				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+					<a href="#cloud_url_org#" target="_blank">
+				<cfelse>
+					<a href="#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_filename_org#" target="_blank">
+				</cfif>	
+				#myFusebox.getApplicationData().defaults.trans("show")#</a></td>
+			<td valign="center" nowrap="true"><a href="##" onclick="verplayback('#asset_id_r#','#attributes.type#',#ver_version#);return false;">#myFusebox.getApplicationData().defaults.trans("playback")#</a></td>
+			<td valign="center" nowrap="true"><a href="##" onclick="loadcontent('versionlist','#myself#c.versions_remove&file_id=#asset_id_r#&type=#attributes.type#&version=#ver_version#');return false;">#myFusebox.getApplicationData().defaults.trans("remove")#</a></td>
 		</tr>
 	</cfloop>
-	<cfif attributes.folderaccess NEQ "R">
-		<tr>
-			<td colspan="5"><i>(#myFusebox.getApplicationData().defaults.trans("versions_cache")#)</i></td>
-		</tr>
-	</cfif>
+	<tr>
+		<td colspan="5"><i>(#myFusebox.getApplicationData().defaults.trans("versions_cache")#)</i></td>
+	</tr>
 </table>
 </cfoutput>
