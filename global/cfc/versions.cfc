@@ -30,7 +30,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
 	<cfquery datasource="#Variables.dsn#" name="qry">
-	SELECT v.ver_version, v.ver_date_add, v.ver_filename_org, v.asset_id_r, v.cloud_url_org,
+	SELECT v.ver_version,v.ver_extension, v.ver_date_add, v.ver_filename_org,v.ver_thumbnail,v.cloud_url_thumb,v.ver_type,v.asset_id_r, v.cloud_url_org,
 	u.user_login_name, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix#versions v LEFT JOIN users u ON u.user_id = v.ver_who
 	WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -87,11 +87,13 @@
 	<cfset var cloud_url_org = structnew()>
 	<cfset var cloud_url_2 = structnew()>
 	<cfset var cloud_url_version = structnew()>
+	<cfset var cloud_url_version_thumb = structnew()>
 	<cfset cloud_url_org.theurl = "">
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_version.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
+	<cfset cloud_url_version_thumb.theurl = "">
 	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -271,8 +273,7 @@
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset arguments.thestruct.qrycurrentversion.ver_filename_org = qrycurrentversion.ver_filename_org> 
 			<cfset arguments.thestruct.qry = qry>
-			
-			<cfif arguments.thestruct.type EQ 'img'>
+			<cfif arguments.thestruct.type EQ 'img' OR arguments.thestruct.type EQ 'vid' OR arguments.thestruct.type EQ 'doc'>
 				<!--- Move the current directory images to new version --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#arguments.thestruct.qry.path_to_asset#">
@@ -292,11 +293,19 @@
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_filename_org#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Get the thumbnail --->
+			<cfif arguments.thestruct.type EQ "img">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ "vid">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ 'doc' AND arguments.thestruct.qry.orgext EQ 'PDF'>
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid, meta_data
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid, meta_data
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 		,
@@ -321,6 +330,7 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.orgext#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version_thumb.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thethumbname#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.hashtag#">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,
@@ -537,12 +547,14 @@
 	<cfset var cloud_url_2 = structnew()>
 	<cfset var cloud_url_org = structnew()>
 	<cfset var cloud_url_version = structnew()>
+	<cfset var cloud_url_version_thumb = structNew()>
 	<cfset cloud_url_org.theurl = "">
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_version.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset thumbnailname = "">
+	<cfset cloud_url_version_thumb.theurl = "">
 	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- Get windows or not --->
 	<cfinvoke component="global" method="iswindows" returnVariable="iswindows" />
@@ -820,7 +832,7 @@
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="folderpathdest" value="#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
+					<cfinvokeargument name="folderpathdest" value="#session.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
@@ -853,11 +865,19 @@
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Get the thumbnail  --->
+			<cfif arguments.thestruct.type EQ "img">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ "vid">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ 'doc' AND arguments.thestruct.qryfilelocal.orgext EQ 'PDF'>
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid, meta_data
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid, meta_data
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 			,
@@ -882,6 +902,7 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.orgext#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version_thumb.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.hashtag#">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,

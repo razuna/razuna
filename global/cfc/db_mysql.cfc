@@ -2179,6 +2179,7 @@
 			meta_data			LONGTEXT,
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
+			cloud_url_thumb		VARCHAR(500),
 			PRIMARY KEY (rec_uuid)
 		)
 		#this.tableoptions#

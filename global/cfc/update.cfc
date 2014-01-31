@@ -128,6 +128,16 @@
 		
 		<!--- If update number is lower then 19(v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 19>
+			<!--- RAZ-2904 --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cloud_url_thumb #thevarchar#(500)
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			
 			<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
