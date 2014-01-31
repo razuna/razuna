@@ -49,9 +49,14 @@
 				<cfelseif ver_type EQ "aud">
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_aud.png'>	
 				<cfelseif ver_type EQ "doc" AND ver_extension EQ "doc"  >
-					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_doc.png'>	
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_doc.png'>
+				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "txt") OR (ver_type EQ "doc" AND ver_extension EQ "htm") OR (ver_type EQ "doc" AND ver_extension EQ "html")>
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_txt.png'>	
 				<cfelseif ver_type EQ "doc" AND ver_extension EQ "xlsx"  >
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>	
+				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "indd")>
+					<cfset thumb_img_jpg = replacenocase(ver_filename_org, ".#ver_extension#", ".#attributes.qry_settings_image.set2_img_format#", "all")>
+					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#thumb_img_jpg#'>	
 				<cfelse>
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/image_missing.png'>
 				</cfif>
@@ -63,7 +68,12 @@
 				<cfelseif ver_type EQ "doc" AND ver_extension EQ "doc"  >
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_doc.png'>	
 				<cfelseif ver_type EQ "doc" AND ver_extension EQ "xlsx"  >
-					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>	
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>
+				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "txt") OR (ver_type EQ "doc" AND ver_extension EQ "htm") OR (ver_type EQ "doc" AND ver_extension EQ "html")>
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_txt.png'>
+				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "indd")>
+					<cfset thumb_img_jpg = replacenocase(ver_filename_org, ".#ver_extension#", ".#attributes.qry_settings_image.set2_img_format#", "all")>
+					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#thumb_img_jpg#'>		
 				<cfelse>
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/image_missing.png'>
 				</cfif>
