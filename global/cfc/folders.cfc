@@ -4859,6 +4859,7 @@
 	<cfargument name="dl_folder" required="true" type="string">
 	<cfargument name="assetpath" required="true" type="string">
 	<cfargument name="awsbucket" required="false" type="string">
+	<cfargument name="rend_av" required="false" type="string" default="f">
 	<cfargument name="thestruct" required="false" type="struct">
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.akaimg" default="" />
@@ -4868,38 +4869,61 @@
 	<cfset var count = 1>
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
-		<!--- Set original --->
-		<cfset arguments.dl_originals = true>
-		<!--- Query with group values --->
-		<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
-		SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
-		FROM #session.hostdbprefix#images
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		UNION ALL
-		SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
-		FROM #session.hostdbprefix#videos
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		UNION ALL
-		SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
-		FROM #session.hostdbprefix#audios
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		</cfquery>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 'f'>
+			<!--- Set original --->
+			<cfset arguments.dl_originals = true>
+			<!--- Query with group values --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+			SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+			FROM #session.hostdbprefix#images
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			UNION ALL
+			SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+			FROM #session.hostdbprefix#videos
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			UNION ALL
+			SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+			FROM #session.hostdbprefix#audios
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			</cfquery>
+			<!--- RAZ-2901 : QoQ to change the sort order by filename --->
+			<cfquery name="arguments.dl_query" dbtype="query">
+				SELECT *
+				FROM arguments.dl_query
+				ORDER BY filename
+			</cfquery>
+		<cfelseif rend_av EQ 't'>
+			<!--- RAZ-2901 : Get additional renditions --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+				SELECT av_id, av_link_url, av_link_title, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+				FROM #session.hostdbprefix#images i 
+				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r
+				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+				FROM #session.hostdbprefix#videos v
+				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r
+				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+				FROM #session.hostdbprefix#audios a
+				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r
+				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfif>
 	</cfif>
-	<!--- RAZ-2901 : QoQ to change the sort order by filename --->
-	<cfquery name="arguments.dl_query" dbtype="query">
-		SELECT * 
-		FROM arguments.dl_query 
-		ORDER BY filename
-	</cfquery> 
 	<!--- Loop over records --->
 	<cfloop query="arguments.dl_query">
 		<!--- Set var --->
 		<cfset var theorgname = "">
 		<!--- Feedback --->
+		<cfif rend_av EQ 'f'>
 		<cfoutput>. </cfoutput>
+		</cfif>
 		<cfflush>
 		<!--- If we have to get thumbnails then the name is different --->
 		<cfif arguments.dl_thumbnails AND kind EQ "img">
@@ -4921,22 +4945,37 @@
 				<cfset var thefinalname = "rend_" & tn & "." & te>
 			</cfif>
 		</cfif>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 't'>
+			<cfset var tn = listfirst(filename_org,".")>
+			<cfset var te = listlast(av_link_title,".")>
+			<cfset var avid = av_id>
+			<cfset var thefinalname = "rend_" & tn & "_#avid#" & "." & te>
+			<cfset var filename_av = listlast('#av_link_url#','/')>
+			<cfset var theorgname = filename_av>
+			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
+			<cfset var link_url = replacenocase('#fs#','#filename_av#','')>
+			<cfset var path_to_asset = reverse('#replacenocase('#reverse('#link_url#')#','/','','one')#')>
+		</cfif>
 		<!--- Start download but only if theorgname is not empty --->
 		<cfif theorgname NEQ "">
-			<!--- Check if thefinalname has an extension. If not add the original one --->
-			<cfif listlast(thefinalname,".") NEQ theorgext>
-				<cfset var thefinalname = filename & "." & theorgext>
-			</cfif>
-			<!--- RAZ-2901 : Set Original Video name --->
-			<cfif kind EQ 'vid'>
-				<cfset var theorgname = filename>
-				<cfset var thefinalname = filename>
-				<cfset var theorgext = listlast(thefinalname,".")>
-			</cfif>
-			<cfif kind EQ 'vid' AND arguments.dl_renditions>
-				<cfset var tn = listfirst(filename,".")>
-				<cfset var te = listlast(filename_org,".")>
-				<cfset var thefinalname = "rend_" & tn & "." & te>
+			<!--- RAZ-2901 : Check for additional renditions --->
+			<cfif rend_av EQ 'f'>
+				<!--- Check if thefinalname has an extension. If not add the original one --->
+				<cfif listlast(thefinalname,".") NEQ theorgext>
+					<cfset var thefinalname = filename & "." & theorgext>
+				</cfif>
+				<!--- RAZ-2901 : Set Original Video name --->
+				<cfif kind EQ 'vid'>
+					<cfset var theorgname = filename>
+					<cfset var thefinalname = filename>
+					<cfset var theorgext = listlast(thefinalname,".")>
+				</cfif>
+				<cfif kind EQ 'vid' AND arguments.dl_renditions>
+					<cfset var tn = listfirst(filename,".")>
+					<cfset var te = listlast(filename_org,".")>
+					<cfset var thefinalname = "rend_" & tn & "." & te>
+				</cfif>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
@@ -4951,10 +4990,12 @@
 					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
 				</cfif>
 				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
-				<cfif filename[currentrow-1] EQ filename[currentrow]>
-					<cfset var count = count + 1>
-				<cfelse> 
-					<cfset var count = 1>
+				<cfif rend_av EQ 'f'>
+					<cfif filename[currentrow-1] EQ filename[currentrow]>
+						<cfset var count = count + 1>
+					<cfelse> 
+						<cfset var count = 1>
+				</cfif>
 				</cfif>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
@@ -5016,10 +5057,12 @@
 					</cfinvoke>
 				</cfif>
 				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
-				<cfif filename[currentrow-1] EQ filename[currentrow]>
-					<cfset var count = count + 1>
-				<cfelse> 
-					<cfset var count = 1>
+				<cfif rend_av EQ 'f'>
+					<cfif filename[currentrow-1] EQ filename[currentrow]>
+						<cfset var count = count + 1>
+					<cfelse> 
+						<cfset var count = 1>
+					</cfif>
 				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif link_kind EQ "url">
@@ -6456,6 +6499,8 @@
 		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
 		<!--- Download renditions --->
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+		<!--- Download additional renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" rend_av="t" />
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
