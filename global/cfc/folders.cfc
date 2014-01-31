@@ -4865,6 +4865,8 @@
 	<cfparam name="arguments.thestruct.akavid" default="" />
 	<cfparam name="arguments.thestruct.akaaud" default="" />
 	<cfparam name="arguments.thestruct.akadoc" default="" />
+	<!--- RAZ-2906: Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
 		<!--- Set original --->
@@ -4894,6 +4896,9 @@
 		<!--- Feedback --->
 		<cfoutput>. </cfoutput>
 		<cfflush>
+		<!--- RAZ-2906 : Get custom file name and original file name --->
+		<cfset var name = filename>
+		<cfset var orgname = replaceNoCase('#listfirst(filename_org,".")#','_',' ','all')>
 		<!--- If we have to get thumbnails then the name is different --->
 		<cfif arguments.dl_thumbnails AND kind EQ "img">
 			<cfset var theorgname = "thumb_#id#.#ext#">
@@ -4917,6 +4922,18 @@
 			<!--- Check if thefinalname has an extension. If not add the original one --->
 			<cfif listlast(thefinalname,".") NEQ theorgext>
 				<cfset var thefinalname = filename & "." & theorgext>
+			</cfif>
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+				<cfif name EQ orgname>
+					<cfif arguments.dl_thumbnails AND kind EQ "img">
+						<cfset var thefinalname = "thumb_#id#">
+					<cfelseif arguments.dl_originals>
+						<cfset var thefinalname = filename>
+					<cfelseif arguments.dl_renditions>
+						<cfset var thefinalname = listfirst(filename,".")>
+					</cfif>
+				</cfif>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
