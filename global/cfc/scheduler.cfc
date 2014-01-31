@@ -726,7 +726,13 @@
 		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
 		<!--- Get Updated Assets --->
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
-			SELECT * FROM (
+			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id
+			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
+				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
+			</cfif>
+  
+			FROM (
 
 				SELECT * FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
@@ -735,7 +741,15 @@
 
 				) l
 			LEFT JOIN users u ON l.log_user = u.user_id
+
+			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
+			</cfif>
 		</cfquery>
+		
 		<!--- Email subject --->
 		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
 		<!--- Email content --->
@@ -745,7 +759,7 @@
 			<!--- Mail content --->
 			<cfsavecontent variable="mail" >
 				#email_content#
-				<table>
+				<table border="1" cellpadding="4" cellspacing="0">
 					<tr>
 						<th nowrap="true">Date</th>
 						<th nowrap="true">Time</th>
@@ -753,6 +767,12 @@
 						<th nowrap="true">Action</th>
 						<th nowrap="true">Type of file</th>
 						<th nowrap="true">User</th>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<th>Asset Keywords</th>
+						</cfif>
+						<cfif qGetUserSubscriptions.asset_description eq 'T'>
+							<th>Asset Description</th>
+						</cfif>
 					</tr>
 				<cfloop query="qGetUpdatedAssets">
 					<tr >
@@ -762,16 +782,54 @@
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<td>&nbsp;
+							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+								<cfcase value="img">
+									#qGetUpdatedAssets.img_keywords#
+								</cfcase>
+								<cfcase value="doc">
+									#qGetUpdatedAssets.file_keywords#
+								</cfcase>
+								<cfcase value="vid">
+									#qGetUpdatedAssets.vid_keywords#
+								</cfcase>
+								<cfcase value="aud">
+									#qGetUpdatedAssets.aud_keywords#
+								</cfcase>
+							</cfswitch>
+							</td>
+						</cfif>
+						<cfif qGetUserSubscriptions.asset_description eq 'T'>
+							<td>&nbsp;
+							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+								<cfcase value="img">
+									#qGetUpdatedAssets.img_description#
+								</cfcase>
+								<cfcase value="doc">
+									#qGetUpdatedAssets.file_desc#
+								</cfcase>
+								<cfcase value="vid">
+									#qGetUpdatedAssets.vid_description#
+								</cfcase>
+								<cfcase value="aud">
+									#qGetUpdatedAssets.aud_description#
+								</cfcase>
+							</cfswitch>
+							</td>
+						</cfif>
 					</tr>
 				</cfloop>
 				</table>
 			</cfsavecontent>
+
 			<!--- Set user id --->
 			<cfset arguments.thestruct.user_id = qGetUserSubscriptions.user_Id>
 			<!--- Get user details --->
 			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
 			<!--- Send the email --->
 			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" />
+			
 		</cfif>
 		<!--- Update Folder Subscribe --->
 		<cfquery datasource="#application.razuna.datasource#" name="update">

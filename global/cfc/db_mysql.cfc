@@ -2552,6 +2552,8 @@
 			user_id						varchar(100) DEFAULT NULL,
 			mail_interval_in_hours		int(6) DEFAULT NULL,
 			last_mail_notification_time timestamp DEFAULT '0000-00-00 00:00:00',
+			asset_keywords				varchar(3) DEFAULT 'F',
+			asset_description			varchar(3) DEFAULT 'F',
 			PRIMARY KEY (fs_id)
 		)
 		#this.tableoptions#

@@ -2341,6 +2341,8 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			user_id						varchar2(100 char) DEFAULT NULL,
 			mail_interval_in_hours		number(6) DEFAULT NULL,
 			last_mail_notification_time timestamp DEFAULT NULL,
+			asset_keywords				varchar2(3 char) DEFAULT 'F',
+			asset_description			varchar2(3 char) DEFAULT 'F',
 			PRIMARY KEY (fs_id)
 		)
 		</cfquery>

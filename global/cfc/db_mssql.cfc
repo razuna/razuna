@@ -2363,6 +2363,8 @@
 			user_id						varchar(100),
 			mail_interval_in_hours		int,
 			last_mail_notification_time datetime,
+			asset_keywords				varchar(3) DEFAULT 'F',
+			asset_description			varchar(3) DEFAULT 'F',
 			PRIMARY KEY (fs_id)
 		)
 		</cfquery>

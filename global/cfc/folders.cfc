@@ -6256,6 +6256,8 @@
 <!--- Subscribe E-mail notification --->
 <cffunction name="subscribe" access="public" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
+	<cfparam name="arguments.thestruct.asset_keywords" default="F" >
+	<cfparam name="arguments.thestruct.asset_description" default="F" >
 	<!--- Subscribe details --->
 	<cfquery datasource="#application.razuna.datasource#" name="qfoldersubscribe">
 		SELECT * 
@@ -6279,7 +6281,13 @@
 				SET 
 				fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
 				mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
-				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				<cfif structKeyExists(arguments.thestruct,"asset_keywords")>
+				asset_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
+				</cfif>
+				<cfif structKeyExists(arguments.thestruct,"asset_description")>
+				asset_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
+				</cfif>
 				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
 				AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 			</cfquery>
@@ -6287,14 +6295,16 @@
 			<!--- Insert Subscribe details --->
 			<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#folder_subscribe
-				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time)
+				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time, asset_keywords, asset_description)
 				VALUES(
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
-					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
 				)
 			</cfquery>
 		</cfif>

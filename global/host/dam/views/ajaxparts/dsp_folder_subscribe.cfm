@@ -53,6 +53,14 @@
 				<td width="1%" nowrap align="center"><input type="radio" value="24" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 24> checked="true"</cfif>>Every day</td>
 				<td colspan="3"><input type="radio" value="168" name="emailinterval" <cfif qry_folder.mail_interval_in_hours EQ 168> checked="true"</cfif>>Once a week</td>
 			</tr>
+			<tr>
+				<th colspan="8">#myFusebox.getApplicationData().defaults.trans("folder_subscribe_fields")#</th>
+			</tr>
+			<tr>
+				<td width="1%" nowrap align="center"><input type="checkbox" name="asset_keywords" value="T" <cfif qry_folder.asset_keywords EQ 'T'> checked="true"</cfif>>Keywords</td>
+				<td width="1%" nowrap align="center"><input type="checkbox" name="asset_description" value="T" <cfif qry_folder.asset_description EQ 'T'> checked="true"</cfif>>Description</td>
+				<td colspan="6"/>
+			</tr>
 		</table>
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
 			<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" >
