@@ -83,7 +83,7 @@
 			</td>
 			<td><b>#ver_version#</b></td>
 			<td width="100%">#dateformat(ver_date_add,"mmmm dd yyyy")# #timeformat(ver_date_add,"hh:mm:ss")#</td>
-			<cfif attributes.folderaccess NEQ "R">
+			
 			<td valign="center" nowrap="true">
 				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 					<a href="#cloud_url_org#" target="_blank">
@@ -91,6 +91,7 @@
 					<a href="#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_filename_org#" target="_blank">
 				</cfif>	
 				#myFusebox.getApplicationData().defaults.trans("show")#</a></td>
+			<cfif attributes.folderaccess NEQ "R">	
 				<td valign="center" nowrap="true">
 					<a href="##" onclick="verplayback('#asset_id_r#','#attributes.type#',#ver_version#,'#attributes.folder_id#');return false;">#myFusebox.getApplicationData().defaults.trans("playback")#</a>
 				</td>
