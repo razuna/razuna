@@ -1668,11 +1668,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 			</cfloop>
 		</cfif>
-		<cfset arguments.thestruct.thefile = arguments.thestruct.thefile & ",">
-		<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
-			<cfset arguments.thestruct.thefilename = i>
-			<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
-		</cfloop>
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.qryfile.path>
@@ -6026,7 +6021,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- RAZ - 2907 EXTRACT A COMPRESSED FILE (ZIP) for version bulk upload--->
 <cffunction name="extractFrom_versions_Zip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">
-	<!---<cftry>--->
+	<cftry>
 		<!--- Remove the ZIP file from the files DB. This is being created on normal file upload and is not needed --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#files
@@ -6175,7 +6170,9 @@ This is the main function called directly by a single upload else from addassets
 					<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemptomovepath#" mode="775">
 				</cfif>
 				<!--- Copy the file into the temp dir --->
-				<cffile action="copy" source="#directory#/#name#" destination="#arguments.thestruct.theincomingtemptomovepath#/#arguments.thestruct.thefilename#" mode="775">C
+				<cfif !FileExists("#arguments.thestruct.theincomingtemptomovepath#/#arguments.thestruct.thefilename#")>
+					<cffile action="copy" source="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#" destination="#arguments.thestruct.theincomingtemptomovepath#/#arguments.thestruct.thefilename#" mode="775">
+				</cfif>
 				<!--- MD5 Hash --->
 				<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 					<cfset var md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
@@ -6330,12 +6327,12 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfif>
 		</cfloop>
-		<!---<cfcatch type="any">
+		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.extractFromZip">
 			<cfset cfcatch.thestruct = arguments.thestruct>
 			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
-	</cftry>--->
+	</cftry>
 	<cfreturn />
 </cffunction>
 </cfcomponent>
