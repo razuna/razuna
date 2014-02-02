@@ -1143,6 +1143,8 @@
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Get windows or not --->
 	<cfinvoke component="global" method="iswindows" returnVariable="iswindows" />
+	
+	<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.therandom#.sh">
 	<!--- Set Exiftool --->
 	<cfif isWindows>
 		<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
