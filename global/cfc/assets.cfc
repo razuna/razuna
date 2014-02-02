@@ -1330,6 +1330,10 @@
 		</cfif>
 		<!--- If this is a local link --->
 		<cfif arguments.thestruct.link_kind EQ "lan">
+			<!--- OpenBD fileExists returns true for folderpath. So need to use directoryExists too --->
+			<cfif NOT (fileExists("#arguments.thestruct.link_path_url#") and NOT directoryExists("#arguments.thestruct.link_path_url#")) >
+				<cfoutput>file_not_found_error</cfoutput><cfabort>
+			</cfif>	
 			<!--- Get size --->
 			<cfif NOT structkeyexists(arguments.thestruct,"orgsize")>
 				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.link_path_url#" returnvariable="orgsize">

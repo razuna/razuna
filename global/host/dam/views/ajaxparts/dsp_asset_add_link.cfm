@@ -81,10 +81,15 @@
 					type: "POST",
 					url: url,
 				   	data: items,
-				   	success: function(){
-						// Update Text
-						$("##addlinkstatus").css({'color':'green','font-weight':'bold','padding-top':'10px'});
-						$("##addlinkstatus").html("#myFusebox.getApplicationData().defaults.trans("link_added")#");
+				   	success: function(result){
+						if($.trim(result) == "file_not_found_error"){
+							$("##addlinkstatus").css({'color':'red','font-weight':'bold','padding-top':'10px'});
+							$("##addlinkstatus").html("#myFusebox.getApplicationData().defaults.trans('file_not_found_error')#");
+						}else{
+							// Update Text
+							$("##addlinkstatus").css({'color':'green','font-weight':'bold','padding-top':'10px'});
+							$("##addlinkstatus").html("#myFusebox.getApplicationData().defaults.trans("link_added")#");
+						}
 						$("##addlinkstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 				   	}
 				});
