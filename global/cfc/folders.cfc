@@ -4879,16 +4879,19 @@
 			FROM #session.hostdbprefix#images
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			UNION ALL
 			SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
 			FROM #session.hostdbprefix#videos
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			UNION ALL
 			SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
 			FROM #session.hostdbprefix#audios
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			</cfquery>
 			<!--- RAZ-2901 : QoQ to change the sort order by filename --->
 			<cfquery name="arguments.dl_query" dbtype="query">
@@ -4903,16 +4906,19 @@
 				FROM #session.hostdbprefix#images i 
 				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r and av.av_link = 0
 				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT av_id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
 				FROM #session.hostdbprefix#videos v
 				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r and av.av_link = 0
 				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT av_id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
 				FROM #session.hostdbprefix#audios a
 				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r and av.av_link = 0
 				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			</cfquery>
 		</cfif>
 	</cfif>
