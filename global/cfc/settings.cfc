@@ -2599,6 +2599,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfset v.images_metadata = "">
 		<cfset v.videos_metadata = "">
 		<cfset v.files_metadata = "">
+		<cfset v.audios_metadata = "">
 		<!--- Loop over query --->
 		<cfif qry.recordcount NEQ 0>
 			<cfloop query="qry">
@@ -2610,6 +2611,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				</cfif>
 				<cfif exp_field EQ "files_metadata">
 					<cfset v.files_metadata = exp_value>
+				</cfif>
+				<cfif exp_field EQ "audios_metadata">
+					<cfset v.audios_metadata = exp_value>
 				</cfif>
 			</cfloop>
 		</cfif>

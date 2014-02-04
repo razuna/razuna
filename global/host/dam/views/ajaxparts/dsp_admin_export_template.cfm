@@ -28,10 +28,6 @@
 		<!--- Metadata Export --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<br />
-				#myFusebox.getApplicationData().defaults.trans("export_template_desc")#
-			</tr>
-			<tr>
 				<td>
 					<em>(#myFusebox.getApplicationData().defaults.trans("multiselect")#)</em>
 					<br /><br />
@@ -39,6 +35,17 @@
 					#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_images")#
 					<br />
 					<select name="images_metadata" multiple="multiple" style="width:400px;height:130px;">
+						<!--- Default values --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+						<option value="img_id"<cfif listFind(qry_export.images_metadata,"img_id")> selected="selected"</cfif>>ID</option>
+						<option value="img_filename"<cfif listFind(qry_export.images_metadata,"img_filename")> selected="selected"</cfif>>Filename</option>
+						<option value="img_description"<cfif listFind(qry_export.images_metadata,"img_description")> selected="selected"</cfif>>Description</option>
+						<option value="img_keywords"<cfif listFind(qry_export.images_metadata,"img_keywords")> selected="selected"</cfif>>Keywords</option>
+						<option value="img_create_time"<cfif listFind(qry_export.images_metadata,"img_create_time")> selected="selected"</cfif>>Create Date</option>
+						<option value="img_change_time"<cfif listFind(qry_export.images_metadata,"img_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="img_width"<cfif listFind(qry_export.images_metadata,"img_width")> selected="selected"</cfif>>Width</option>
+						<option value="img_height"<cfif listFind(qry_export.images_metadata,"img_height")> selected="selected"</cfif>>Height</option>
+						<option value="img_size"<cfif listFind(qry_export.images_metadata,"img_size")> selected="selected"</cfif>>Size</option>
 						<!--- Extended metadata --->
 						<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 						<cfloop list="#attributes.meta_img#" index="i">
@@ -48,10 +55,35 @@
 						</cfloop>
 					</select>
 					<br /><br />
+					<!--- VIDEOS --->
+					#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_videos")#
+					<br />
+					<select name="videos_metadata" multiple="multiple" style="width:400px;height:130px;">
+						<!--- Default values --->
+						<option value="vid_id"<cfif listFind(qry_export.videos_metadata,"vid_id")> selected="selected"</cfif>>ID</option>
+						<option value="vid_filename"<cfif listFind(qry_export.videos_metadata,"vid_filename")> selected="selected"</cfif>>Filename</option>
+						<option value="vid_description"<cfif listFind(qry_export.videos_metadata,"vid_description")> selected="selected"</cfif>>Description</option>
+						<option value="vid_keywords"<cfif listFind(qry_export.videos_metadata,"vid_keywords")> selected="selected"</cfif>>Keywords</option>
+						<option value="vid_create_time"<cfif listFind(qry_export.videos_metadata,"vid_create_time")> selected="selected"</cfif>>Create Date</option>
+						<option value="vid_change_time"<cfif listFind(qry_export.videos_metadata,"vid_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="vid_width"<cfif listFind(qry_export.videos_metadata,"vid_width")> selected="selected"</cfif>>Width</option>
+						<option value="vid_height"<cfif listFind(qry_export.videos_metadata,"vid_height")> selected="selected"</cfif>>Height</option>
+						<option value="vid_size"<cfif listFind(qry_export.videos_metadata,"vid_size")> selected="selected"</cfif>>Size</option>
+					</select>
+					<br /><br />
 					<!--- FILES --->
 					#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_files")#
 					<br />
 					<select name="files_metadata" multiple="multiple" style="width:400px;height:130px;">
+					<!--- Default values --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+						<option value="file_id"<cfif listFind(qry_export.files_metadata,"file_id")> selected="selected"</cfif>>ID</option>
+						<option value="file_name"<cfif listFind(qry_export.files_metadata,"file_name")> selected="selected"</cfif>>Filename</option>
+						<option value="file_desc"<cfif listFind(qry_export.files_metadata,"file_desc")> selected="selected"</cfif>>Description</option>
+						<option value="file_keywords"<cfif listFind(qry_export.files_metadata,"file_keywords")> selected="selected"</cfif>>Keywords</option>
+						<option value="file_create_time"<cfif listFind(qry_export.files_metadata,"file_create_time")> selected="selected"</cfif>>Create Date</option>
+						<option value="file_change_time"<cfif listFind(qry_export.files_metadata,"file_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="file_size"<cfif listFind(qry_export.files_metadata,"file_size")> selected="selected"</cfif>>Size</option>
 						<!--- Extended metadata --->
 						<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 						<cfloop list="#attributes.meta_doc#" index="i">
@@ -59,6 +91,20 @@
 							<cfset l = len(i) - 1>
 							<option value="#i#"<cfif listFind(qry_export.files_metadata,"#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
 						</cfloop>
+					</select>
+					<br /><br />
+					<!--- AUDIOS --->
+					#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_audios")#
+					<br />
+					<select name="audios_metadata" multiple="multiple" style="width:400px;height:130px;">
+						<!--- Default values --->
+						<option value="aud_id"<cfif listFind(qry_export.audios_metadata,"aud_id")> selected="selected"</cfif>>ID</option>
+						<option value="aud_name"<cfif listFind(qry_export.audios_metadata,"aud_name")> selected="selected"</cfif>>Filename</option>
+						<option value="aud_description"<cfif listFind(qry_export.audios_metadata,"aud_description")> selected="selected"</cfif>>Description</option>
+						<option value="aud_keywords"<cfif listFind(qry_export.audios_metadata,"aud_keywords")> selected="selected"</cfif>>Keywords</option>
+						<option value="aud_create_time"<cfif listFind(qry_export.audios_metadata,"aud_create_time")> selected="selected"</cfif>>Create Date</option>
+						<option value="aud_change_time"<cfif listFind(qry_export.audios_metadata,"aud_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="aud_size"<cfif listFind(qry_export.audios_metadata,"aud_size")> selected="selected"</cfif>>Size</option>
 					</select>
 				</td>
 			</tr>

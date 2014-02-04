@@ -1604,23 +1604,38 @@
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
 		<cfset img_columns = ''>
 		<cfset doc_columns = ''>
+		<cfset aud_columns = ''>
+		<cfset vid_columns = ''>
 		<!--- Get selected metadata to export --->
 		<cfloop query="arguments.thestruct.export_template">
 			<cfif exp_field EQ 'images_metadata'>
-				<cfset arguments.thestruct.img_columns = arguments.thestruct.export_template.exp_value>
+				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_create_time,img_change_time,img_width,img_height,img_size", "id,filename,description,keywords,create_date,change_date,width,height,size")>
 			</cfif>
 			<cfif exp_field EQ 'files_metadata'>
-				<cfset arguments.thestruct.doc_columns = arguments.thestruct.export_template.exp_value>
+				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_create_time,file_change_time,file_size", "id,filename,description,keywords,create_date,change_date,size")>
+			</cfif>
+			<cfif exp_field EQ 'audios_metadata'>
+				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_create_time,aud_change_time,aud_size", "id,filename,description,keywords,create_date,change_date,size")>
+			</cfif>
+			<cfif exp_field EQ 'videos_metadata'>
+				<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_create_time,vid_change_time,vid_width,vid_height,vid_size", "id,filename,description,keywords,create_date,change_date,width,height,size")>
 			</cfif>
 		</cfloop>
 		<!--- Set Columns for Export --->
-		<cfif structKeyExists(arguments.thestruct,'img_columns') AND structKeyExists(arguments.thestruct,'doc_columns')>
-			<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,#arguments.thestruct.img_columns#,#arguments.thestruct.doc_columns#">
-		<cfelseif structKeyExists(arguments.thestruct,'img_columns')>
-			<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,#arguments.thestruct.img_columns#">
-		<cfelseif structKeyExists(arguments.thestruct,'doc_columns')>
-			<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,#arguments.thestruct.doc_columns#">
+		<cfset arguments.thestruct.meta_fields = "">
+		<cfif structKeyExists(arguments.thestruct,'img_columns')>
+			<cfset arguments.thestruct.meta_fields = listappend(arguments.thestruct.meta_fields,"#arguments.thestruct.img_columns#",',')>
 		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'doc_columns')>
+			<cfset arguments.thestruct.meta_fields = listappend(arguments.thestruct.meta_fields,"#arguments.thestruct.doc_columns#",',')>
+		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'aud_columns')>
+			<cfset arguments.thestruct.meta_fields = listappend(arguments.thestruct.meta_fields,"#arguments.thestruct.aud_columns#",',')>
+		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'vid_columns')>
+			<cfset arguments.thestruct.meta_fields = listappend(arguments.thestruct.meta_fields,"#arguments.thestruct.vid_columns#",',')>
+		</cfif>
+		<cfset arguments.thestruct.meta_fields="#listremoveduplicates(arguments.thestruct.meta_fields)#">
 	<cfelse>
 		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	</cfif>
@@ -1641,6 +1656,11 @@
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", cart_product_id)>
 			<cfset arguments.thestruct.file_id = cart_product_id>
 			<cfset arguments.thestruct.filetype = cart_file_type>
+			<cfset arguments.thestruct.create_date = cart_create_date>
+			<cfset arguments.thestruct.change_date = cart_change_date>
+			<cfset arguments.thestruct.width = cart_width>
+			<cfset arguments.thestruct.height = cart_height>
+			<cfset arguments.thestruct.size = cart_size>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
@@ -1653,7 +1673,7 @@
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
-		img_filename as url_file_name, cloud_url_org
+		img_filename as url_file_name, cloud_url_org, img_create_date AS create_date, img_change_date AS change_date, img_size AS size, img_width AS width, img_height AS height
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1662,7 +1682,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org
+		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_date, vid_change_date, vid_size, vid_width AS width, vid_height AS height
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1671,7 +1691,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org
+		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_date, aud_change_date, aud_size, '' AS width, '' As height
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1680,7 +1700,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org
+		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_date, file_change_date, file_size, '' AS width, '' AS height
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
@@ -1695,6 +1715,11 @@
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", theid)>
 			<cfset arguments.thestruct.file_id = theid>
 			<cfset arguments.thestruct.filetype = thetype>
+			<cfset arguments.thestruct.create_date = create_date>
+			<cfset arguments.thestruct.change_date = change_date>
+			<cfset arguments.thestruct.width = width>
+			<cfset arguments.thestruct.height = height>
+			<cfset arguments.thestruct.size = size>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
@@ -1735,7 +1760,7 @@
 		<!--- Images --->
 		<cfcase value="img">
 			<!--- Get asset detail --->
-			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r" returnVariable="qry_image" />
+			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r, img_create_time, img_change_time, img_size" returnVariable="qry_image" />
 			<cfset arguments.thestruct.filename = qry_image.img_filename>
 			<cfset arguments.thestruct.folder_id_r = qry_image.folder_id_r>
 			<!--- Get foldername --->
@@ -1756,12 +1781,14 @@
 				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
-			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			<cfif (structKeyExists(arguments.thestruct,"img_columns") AND arguments.thestruct.img_columns NEQ "") OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfcase>
 		<!--- Videos --->
 		<cfcase value="vid">
 			<!--- Get asset detail --->
-			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org, v.folder_id_r" returnVariable="qry_video" />
+			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org, v.folder_id_r, v.vid_create_time, v.vid_change_time, v.vid_size" returnVariable="qry_video" />
 			<cfset arguments.thestruct.filename = qry_video.vid_filename>
 			<cfset arguments.thestruct.folder_id_r = qry_video.folder_id_r>
 			<!--- Get foldername --->
@@ -1779,7 +1806,9 @@
 				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
-			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			<cfif structKeyExists(arguments.thestruct,"vid_columns") AND arguments.thestruct.vid_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfcase>
 		<!--- Audios --->
 		<cfcase value="aud">
@@ -1814,7 +1843,9 @@
 				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
-			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			<cfif structKeyExists(arguments.thestruct,"aud_columns") AND arguments.thestruct.aud_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>	
 		</cfcase>
 		<!--- All other files --->
 		<cfdefaultcase>
@@ -1839,7 +1870,9 @@
 				<cfset arguments.thestruct.file_url = qry_doc.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
-			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			<cfif structKeyExists(arguments.thestruct,"doc_columns") AND arguments.thestruct.doc_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>	
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>	
 		</cfdefaultcase>
 	</cfswitch>
 	<!--- Feedback --->
@@ -1882,14 +1915,22 @@
 	<cfelseif arguments.thestruct.format EQ "xlsx">
 		<cfset var sxls = spreadsheetnew(true)>
 	</cfif>
+	<cfset fields = #arguments.thestruct.meta_fields#>
+	<cfset create_date_pos = listFind(fields,'create_date')>
+	<cfset change_date_pos = listfind(fields,'change_date')>
 	<!--- Create header row --->
 	<cfset SpreadsheetAddrow(sxls, arguments.thestruct.meta_fields, 1)>
 	<cfset SpreadsheetFormatRow(sxls, {bold=TRUE, alignment="left"}, 1)>
 	<cfset SpreadsheetColumnfittosize(sxls, "1-#len(arguments.thestruct.meta_fields)#")>
 	<cfset SpreadsheetSetcolumnwidth(sxls, 1, 10000)>
 	<!--- Add orders from query --->
-	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)> 
-	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<cfif arguments.thestruct.export_template.recordcount NEQ 0>
+		<cfset SpreadsheetFormatColumns(sxls, {dateformat="yyyy-mm-dd"}, '#create_date_pos#')>
+		<cfset SpreadsheetFormatColumns(sxls, {dateformat="yyyy-mm-dd"}, '#change_date_pos#')>
+	<cfelse>	 
+		<cfset SpreadsheetFormatrow(sxls, {alignment="vertical_top"}, 2)>
+	</cfif>
+	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)>
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#",true)>
 	<!--- Serve the file --->
@@ -1927,24 +1968,76 @@
 <!--- Add to query --->
 <cffunction name="add_to_query" output="false">
 	<cfargument name="thestruct" type="struct">
-	<!--- Add row local query --->
-	<cfset QueryAddRow(arguments.thestruct.tq,1)>
-	<!--- Add id --->
-	<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
-	<!--- Add type --->
-	<cfset QuerySetCell(arguments.thestruct.tq, "type", arguments.thestruct.filetype)>
-	<!--- Add filename --->
-	<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
-	<!--- Add file_url --->
-	<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
-	<!--- Add folder_id_r --->
-	<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
-	<!--- Add folder_name --->
-	<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
-	<!--- Add Labels --->
-	<cfif arguments.thestruct.qry_labels NEQ "">
-		<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
-	</cfif>
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
+		<!--- Add row local query --->
+		<cfset QueryAddRow(arguments.thestruct.tq,1)>
+		<cfloop query="arguments.thestruct.export_template" >
+			<cfif (structKeyExists(arguments.thestruct,'img_columns') AND "#arguments.thestruct.img_columns#" NEQ "" ) OR (structKeyExists(arguments.thestruct,'doc_columns') AND "#arguments.thestruct.doc_columns#" NEQ "" ) OR (structKeyExists(arguments.thestruct,'vid_columns') AND "#arguments.thestruct.vid_columns#" NEQ "" ) OR (structKeyExists(arguments.thestruct,'aud_columns') AND "#arguments.thestruct.aud_columns#" NEQ "" )>
+				<cfif (#exp_field# EQ "images_metadata") OR (#exp_field# EQ "files_metadata") OR(#exp_field# EQ "videos_metadata") OR (#exp_field# EQ "audios_metadata")>
+					<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," > 
+						<!--- Add id --->
+						<cfif ("#idx#" EQ "img_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_id")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
+						</cfif>
+						<!--- Add File Name --->
+						<cfif ("#idx#" EQ "img_filename" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_name" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_filename" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_name" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
+						</cfif>
+						<!--- Add create time --->
+						<cfif ("#idx#" EQ "img_create_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_create_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_create_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_create_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "create_date", arguments.thestruct.create_date)>
+						</cfif>
+						<!--- Add Change time --->
+						<cfif ("#idx#" EQ "img_change_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_change_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_change_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_change_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "change_date", arguments.thestruct.change_date)>
+						</cfif>
+						<!--- Add Width --->
+						<cfif ("#idx#" EQ "img_width" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_width" AND "#arguments.thestruct.filetype#" EQ "vid")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "width", arguments.thestruct.width)>
+						</cfif>
+						<!--- Add Height --->
+						<cfif ("#idx#" EQ "img_height" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_height" AND "#arguments.thestruct.filetype#" EQ "vid")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "height", arguments.thestruct.height)>
+						</cfif>
+						<!--- Add Size --->
+						<cfif ("#idx#" EQ "img_size" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_size" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_size" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_size" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "size", arguments.thestruct.size)>
+						</cfif>
+						<!--- Add keywords and description --->
+						<cfif arguments.thestruct.qry_text.recordcount NEQ 0>
+							<cfif arguments.thestruct.qry_text.tid EQ arguments.thestruct.file_id>
+								<cfif ("#idx#" EQ "img_keywords" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_keywords" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_keywords" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_keywords" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+									<cfset QuerySetCell(arguments.thestruct.tq, "keywords", arguments.thestruct.qry_text.keywords)>
+								</cfif>
+								<cfif ("#idx#" EQ "img_description" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_desc" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_description" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_description" AND "#arguments.thestruct.filetype#" EQ "aud")>
+									<cfset QuerySetCell(arguments.thestruct.tq, "description", arguments.thestruct.qry_text.description)>
+								</cfif>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+			</cfif>	
+		</cfloop>
+	<cfelse>	
+		<!--- Add row local query --->
+		<cfset QueryAddRow(arguments.thestruct.tq,1)>
+		<!--- Add id --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
+		<!--- Add type --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "type", arguments.thestruct.filetype)>
+		<!--- Add filename --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
+		<!--- Add file_url --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
+		<!--- Add folder_id_r --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
+		<!--- Add folder_name --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
+		<!--- Add Labels --->
+		<cfif arguments.thestruct.qry_labels NEQ "">
+			<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
+		</cfif>
+	
 	<!--- Add custom fields --->
 	<cfloop query="arguments.thestruct.qry_cfields">
 		<!--- Replace foreign chars in column names --->
@@ -1980,6 +2073,7 @@
 			<cfset QuerySetCell(arguments.thestruct.tq, "description", description)>
 			</cfif>
 		</cfloop>
+	</cfif>
 	</cfif>
 	<!--- Add XMP --->
 	<!--- RAZ-2831 : Add metadata to Export file --->
