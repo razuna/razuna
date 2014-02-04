@@ -385,8 +385,13 @@
 				<cfset arguments.thestruct.thename = thename & ".#arguments.thestruct.qry.file_extension#">
 			</cfif>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-			<cfset var name = arguments.thestruct.qry.file_name>
-			<cfset var orgname = listfirst(arguments.thestruct.qry.file_name_org,".")>
+			<cfif theart EQ "versions">
+				<cfset var name = arguments.thestruct.qry.av_link_title>
+				<cfset var orgname = listfirst(arguments.thestruct.qry.av_link_title,".")>
+			<cfelse>
+				<cfset var name = arguments.thestruct.qry.file_name>
+				<cfset var orgname = listfirst(arguments.thestruct.qry.file_name_org,".")>
+			</cfif>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 				<cfif name EQ orgname>
 					<cfset arguments.thestruct.thename = arguments.thestruct.qry.file_name >
@@ -394,6 +399,17 @@
 					<cfset arguments.thestruct.thename = arguments.thestruct.qry.file_name >
 				</cfif>
 			</cfif>
+			<!--- RAZ-2918:: If the file have same name in basket then rename the file --->
+			<cfset fileNameOK = true>
+			<cfset uniqueCount = 1>
+			<cfloop condition="#fileNameOK#">
+				<cfif fileExists("#arguments.thestruct.newpath#/#arguments.thestruct.thename#")>
+					<cfset arguments.thestruct.thename = listFirst(arguments.thestruct.thename,'.') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thename,'.')> 
+					<cfset uniqueCount = uniqueCount + 1>
+				<cfelse>
+					<cfset fileNameOK = false>	
+				</cfif>	
+			</cfloop>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Copy file to the outgoing folder --->
@@ -518,13 +534,13 @@
 			<!--- If the art id not thumb and original we need to get the name from the parent record --->
 			<cfif qry.img_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT img_filename
+				SELECT img_filename, img_extension
 				FROM #session.hostdbprefix#images
 				WHERE img_id = <cfqueryparam value="#qry.img_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset rep = replacenocase(qrysub.img_filename,".#theext#","","one")>
+				<cfset rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & theext>
 				<cfset thefinalname = thenewname>
@@ -539,7 +555,6 @@
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & theext>
 			</cfif>
-			
 			<!--- If thenewname variable contains /\ --->
 			<cfset thenewname = replace(thenewname,"/","-","all")>
 			<cfset thenewname = replace(thenewname,"\","-","all")>
@@ -547,8 +562,8 @@
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#/#theart#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#" mode="775">
+			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#_#arguments.thestruct.theid#/#theart#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#_#arguments.thestruct.theid#/#theart#" mode="775">
 			</cfif>
 			<!--- Put variables into struct for threads --->
 			<cfset arguments.thestruct.qry = qry>
@@ -561,11 +576,11 @@
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
 					</cfthread>	
 				<cfelse>
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775" >
 					</cfthread>	
 				</cfif>
 				<!--- Wait for the thread above until the file is downloaded fully --->
@@ -592,7 +607,7 @@
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#">
+						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
@@ -637,8 +652,13 @@
 				<cfthread action="join" name="#thethreadid#" />
 			</cfif>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-			<cfset var name = qry.img_filename>
-			<cfset var orgname = listfirst(qry.img_filename_org,".")>
+			<cfif theart EQ "versions">
+				<cfset var name = qry.av_link_title>
+				<cfset var orgname = listfirst(qry.av_link_title,".")>
+			<cfelse>
+				<cfset var name = qry.img_filename>
+				<cfset var orgname = listfirst(qry.img_filename_org,".")>
+			</cfif>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 				<cfif name EQ orgname>
 					<cfif theart EQ "thumb">
@@ -713,14 +733,15 @@
 			</cfif>
 			<cfif qry.vid_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT vid_filename
+				SELECT vid_filename,vid_extension
 				FROM #session.hostdbprefix#videos
 				WHERE vid_id = <cfqueryparam value="#qry.vid_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset thefname = listfirst(qrysub.vid_filename,".")>
-				<cfset thenewname = qrysub.vid_filename>
+				 <cfset rep = replacenocase(qrysub.vid_filename,".#qrysub.vid_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & qrysub.vid_extension> 
 			<cfelseif theart EQ "versions">
 				<cfset theext = listlast(qry.av_link_title,".")>
 				<cfset rep = replacenocase(qry.av_link_title,".#theext#","","one")>
@@ -739,8 +760,8 @@
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of video --->
-			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#/#theart#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#" mode="775">
+			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#_#arguments.thestruct.theid#/#theart#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#_#arguments.thestruct.theid#/#theart#" mode="775">
 			</cfif>
 			<!--- Put variables into struct for threads --->
 			<cfset arguments.thestruct.qry = qry>
@@ -749,8 +770,13 @@
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-			<cfset var name = qry.vid_filename>
-			<cfset var orgname = listfirst(qry.vid_name_org,".")>
+			<cfif theart EQ "versions">
+				<cfset var name = qry.av_link_title>
+				<cfset var orgname = listfirst(qry.av_link_title,".")>
+			<cfelse>
+				<cfset var name = qry.vid_filename>
+				<cfset var orgname = listfirst(qry.vid_name_org,".")>
+			</cfif>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 				<cfif name EQ orgname>
 					<cfset arguments.thestruct.thenewname = qry.vid_filename >
@@ -764,11 +790,11 @@
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 					</cfthread>
 				<cfelse>
 					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.vid_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.vid_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 					</cfthread>
 				</cfif>
 			<!--- Nirvanix --->
@@ -788,7 +814,7 @@
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#">
+						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
@@ -896,8 +922,8 @@
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of audio --->
-			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#/#theart#/")>
-				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#/" mode="775">
+			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#_#arguments.thestruct.theid#/#theart#/")>
+				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#_#arguments.thestruct.theid#/#theart#/" mode="775">
 			</cfif>
 			<!--- Put variables into struct for threads --->
 			<cfset arguments.thestruct.qry = qry>
@@ -906,8 +932,13 @@
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-			<cfset var name = qry.aud_name>
-			<cfset var orgname = listfirst(qry.aud_name_org,".")>
+			<cfif theart EQ "versions">
+				<cfset var name = qry.av_link_title>
+				<cfset var orgname = listfirst(qry.av_link_title,".")>
+			<cfelse>
+				<cfset var name = qry.aud_name>
+				<cfset var orgname = listfirst(qry.aud_name_org,".")>
+			</cfif>
 			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 				<cfif name EQ orgname>
 					<cfset arguments.thestruct.thenewname = qry.aud_name >
@@ -919,11 +950,11 @@
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 					</cfthread>
 				<cfelse>
 					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.aud_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.aud_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 					</cfthread>
 				</cfif>
 			<!--- Nirvanix --->
@@ -943,7 +974,7 @@
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#">
+						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#_#attributes.intstruct.theid#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
