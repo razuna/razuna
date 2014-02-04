@@ -34,6 +34,10 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.file_id" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
+	<!--- RAZ-2907 Create tempid --->
+	<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
+		<cfset arguments.thestruct.tempid = createuuid()>
+	</cfif>	
 	<!--- Change tempid a bit --->
 	<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
 	<!--- Create a unique name for the temp directory to hold the file --->
@@ -53,8 +57,9 @@
 	<cfif len(arguments.thestruct.thefile.serverFileExt) GT 9>
 		<cfset arguments.thestruct.thefile.serverFileExt = "txt">
 	</cfif>
+	<cfset var tt = createUUID()>
 	<!--- Put the rest into a thread --->
-	<cfthread intstruct="#arguments.thestruct#" action="run">
+	<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 		<cfset md5hash = "">
 		<!--- Rename the file so that we can remove any spaces --->
 		<cfinvoke component="global" method="convertname" returnvariable="thefilename" thename="#attributes.intstruct.thefile.serverFile#">
@@ -103,6 +108,8 @@
 			<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
 		</cfif>
 	</cfthread>
+	<!--- Wait --->
+	<cfthread name="#tt#" action="join" />
 	<cfset result = "T">
 	<!--- Return --->
 	<cfreturn result>
@@ -1553,10 +1560,18 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- check if compressed file (ZIP) --->
 	<cfif arguments.thestruct.qryfile.extension EQ "zip" AND arguments.thestruct.zip_extract AND arguments.thestruct.qryfile.link_kind EQ "">
-		<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
-		<cfinvoke method="extractFromZip" thestruct="#arguments.thestruct#">
-		<cfset var returnid = 1>
-		<cfset arguments.thestruct.thefile = zipnameorg>
+		<!--- RAZ-2907 Extract the compressed zip file for bulk upload versions --->
+		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
+			<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
+			<cfinvoke method="extractFrom_versions_Zip" thestruct="#arguments.thestruct#">
+			<cfset var returnid = 1>
+			<cfset arguments.thestruct.thefile = zipnameorg>
+		<cfelse>	
+			<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
+			<cfinvoke method="extractFromZip" thestruct="#arguments.thestruct#">
+			<cfset var returnid = 1>
+			<cfset arguments.thestruct.thefile = zipnameorg>
+		</cfif>
 	<cfelse>
 		<!--- Get and set file type and MIME content --->
 		<cfquery datasource="#application.razuna.datasource#" name="fileType">
@@ -1636,14 +1651,23 @@ This is the main function called directly by a single upload else from addassets
 	<cfif returnid NEQ 0>
 		<!--- Call method to send email --->
 		<cfset arguments.thestruct.emailwhat = "end_adding">
-		<cfif NOT structkeyexists(arguments.thestruct,"thefile")>
-			<cfset arguments.thestruct.thefile = arguments.thestruct.qryfile.filename>
+		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ 'T'>
+			<cfset arguments.thestruct.thefiles = arguments.thestruct.qryfile.filename>
+			<cfset arguments.thestruct.thefiles = arguments.thestruct.thefiles & ",">
+			<cfloop list="#arguments.thestruct.thefiles#" index="i" delimiters=",">
+				<cfset arguments.thestruct.thefilename = i>
+				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
+			</cfloop>
+		<cfelse>
+			<cfif NOT structkeyexists(arguments.thestruct,"thefile")>
+				<cfset arguments.thestruct.thefile = arguments.thestruct.qryfile.filename>
+			</cfif>
+			<cfset arguments.thestruct.thefile = arguments.thestruct.thefile & ",">
+			<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
+				<cfset arguments.thestruct.thefilename = i>
+				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
+			</cfloop>
 		</cfif>
-		<cfset arguments.thestruct.thefile = arguments.thestruct.thefile & ",">
-		<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
-			<cfset arguments.thestruct.thefilename = i>
-			<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
-		</cfloop>
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.qryfile.path>
@@ -1895,8 +1919,14 @@ This is the main function called directly by a single upload else from addassets
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
 		<cfset arguments.thestruct.qryfile.path = arguments.thestruct.pathorg>
-		<!--- Call versions component to do the versions thingy --->
-		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- RAZ-2907 Call the component for Bulk upload versions --->
+		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
+			<!--- Call versions component to do the old versions thingy --->
+			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
+		<cfelse>	
+			<!--- Call versions component to do the versions thingy --->
+			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		</cfif>
 	<!--- This is for normal adding --->
 	<cfelse>
 		<!--- If there are metadata fields then add them here --->
@@ -2308,8 +2338,14 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam name="arguments.thestruct.hostdbprefix"  	 default="#session.hostdbprefix#">
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
-		<!--- Call versions component to do the versions thingy --->
-		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- RAZ-2907 Call the component for Bulk upload versions --->
+		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
+			<!--- Call versions component to do the old versions thingy --->
+			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
+		<cfelse>	
+			<!--- Call versions component to do the versions thingy --->
+			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		</cfif>
 		<!--- Set the newid --->
 		<cfset arguments.thestruct.newid = 1>
 	<!--- For normal adding --->
@@ -3058,7 +3094,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var thumbheight = 0>
 		</cfif>
 		<!--- Set original and thumbnail width and height --->
-		<cfif !structKeyExists(arguments.thestruct,'av') OR arguments.thestruct.av NEQ 1>
+		<cfif (!structKeyExists(arguments.thestruct,'av') OR arguments.thestruct.av NEQ 1) OR (!structKeyExists(arguments.thestruct,'extjs') OR arguments.thestruct.extjs NEQ 'T')>
 			<!--- Set original and thumbnail width and height --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
@@ -3127,8 +3163,14 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.iswindows = iswindows()>
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
-		<!--- Call versions component to do the versions thingy --->
-		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- RAZ-2907 Call the component for Bulk upload versions --->
+		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
+			<!--- Call versions component to do the old versions thingy --->
+			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
+		<cfelse>	
+			<!--- Call versions component to do the versions thingy --->
+			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		</cfif>
 		<!--- Set the newid --->
 		<cfset arguments.thestruct.thisvid.newid = 1>
 		<cfset arguments.thestruct.newid = 1>
@@ -3907,8 +3949,14 @@ This is the main function called directly by a single upload else from addassets
 	<cfset cloud_url_org.newepoch = 0>
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
-		<!--- Call versions component to do the versions thingy --->
-		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- RAZ-2907 Call the component for Bulk upload versions --->
+		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
+			<!--- Call versions component to do the old versions thingy --->
+			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
+		<cfelse>	
+			<!--- Call versions component to do the versions thingy --->
+			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		</cfif>
 	<!--- This is for normal adding --->
 	<cfelse>
 		<!--- Dont do this if the link_kind is a url --->
@@ -5970,5 +6018,321 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
-
+<!--- RAZ - 2907 EXTRACT A COMPRESSED FILE (ZIP) for version bulk upload--->
+<cffunction name="extractFrom_versions_Zip" output="true" access="private">
+	<cfargument name="thestruct" type="struct">
+	<cftry>
+		<!--- Remove the ZIP file from the files DB. This is being created on normal file upload and is not needed --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#files
+		WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+		</cfquery>
+		<!--- Params --->
+		<cfparam default="0" name="arguments.thestruct.upl_template">
+		<cfset var thetemp = Createuuid("")>
+		<!--- Extract ZIP --->
+		<cfset var tzip = "zip" & thetemp>
+		<cfthread name="#tzip#" intstruct="#arguments.thestruct#" action="run">
+			<cfzip action="extract" zipfile="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qryfile.path#" timeout="9000" charset="utf-8">
+		</cfthread>
+		<cfthread action="join" name="#tzip#" />
+		<!--- Get folder level of the folder we are in to create new folder --->
+		<cfquery datasource="#application.razuna.datasource#" name="folders">
+		SELECT folder_level, folder_main_id_r, folder_id_r
+		FROM #session.hostdbprefix#folders
+		WHERE folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- set root folder id to keep top folder during creating folder out of zip archive --->
+		<cfset var rootfolderId = arguments.thestruct.qryfile.folder_id>
+		<cfset var folderIdr = arguments.thestruct.qryfile.folder_id>
+		<cfset var folderId = arguments.thestruct.qryfile.folder_id>
+		<!---<cfset var folderlevel = folders.folder_level>--->
+		<cfset var loopname = "">
+		<!--- Loop over the zip directories and rename them if needed --->
+		<cfset var ttf = "rec" & thetemp>
+		<!--- <cfthread name="#ttf#" intstruct="#arguments.thestruct#"> --->
+			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thestruct.qryfile.path#" />
+		<!--- </cfthread> --->
+		<!--- <cfthread action="join" name="#ttf#" /> --->
+		<!--- Get directory again since the directory names could have changed from above --->
+		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" type="dir">
+		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+		<cfquery dbtype="query" name="thedir">
+		SELECT *
+		FROM thedir
+		WHERE name NOT LIKE '__MACOSX%'
+		AND name NOT LIKE '.zip%'
+		ORDER BY name
+		</cfquery>
+		<!--- Get folders within the unzip RECURSIVE --->
+		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedirfiles" recurse="true" type="file">
+		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+		<cfquery dbtype="query" name="thedirfiles">
+		SELECT *
+		FROM thedirfiles
+		WHERE size != 0
+		AND attributes != 'H'
+		AND name != 'thumbs.db'
+		AND name NOT LIKE '.DS_STORE%'
+		AND name NOT LIKE '__MACOSX%'
+		AND name NOT LIKE '%.zip%'
+		ORDER BY name
+		</cfquery>
+		<!--- Create Directories --->
+		<cfloop query="thedir">
+			<cfset temp="">
+			<cfset var folderlevel = "">
+			<!--- Check how long the folder list is --->
+			<cfset var namelistlen = listlen(name,FileSeparator())>
+			<!--- If longer then 1 we need to get the folder_id_r of the previous folder --->
+			<cfif namelistlen GT 1>
+				<!--- Get the list entry at one higher then the current len --->
+				<cfset var lenminusone = namelistlen - 1>
+				<cfset var fnameforqry = ListGetAt(name, lenminusone, FileSeparator())>
+				<!--- Query to get the folder_id_r --->
+				<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
+				SELECT folder_id
+				FROM #session.hostdbprefix#folders
+				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
+				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+				AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+				</cfquery>
+				<cfset var thedirlen = listLen(thedir.name, FileSeparator())-1>
+				<cfset temp = rootfolderId>
+				<cfloop index="i" from=1 to="#thedirlen#">
+					<cfset folder_name = listGetAt(thedir.name, i, FileSeparator())>
+					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
+					SELECT folder_id, folder_name, folder_level, folder_id_r
+					FROM #session.hostdbprefix#folders 
+					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+					AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
+					<cfset temp= qryGetFolderDetails.folder_id >
+				</cfloop>
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qryfidr.folder_id#" returnvariable="crumbs" />
+				<cfset var folderlevel = listlen(crumbs,";") + 1>
+				<!--- Set the folder_id_r in var --->
+				<!---<cfset var fidr = qryfidr.folder_id>--->
+				<cfset var fidr = temp>
+				<cfset var fname = listlast(name, FileSeparator())>
+			<cfelse>
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#folders.folder_id_r#" returnvariable="crumbs" />
+				<cfset var folderlevel = listlen(crumbs,";") + 1>
+				<cfset var fname = name>
+				<cfset var fidr = folderIdr>
+			</cfif>			
+			
+		</cfloop>
+		<cfset resetcachetoken("folders")>
+		<cfset sleep(2000)>
+		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
+		<cfloop query="thedirfiles">
+			<cfif fileexists("#directory#/#name#") >
+				<cfset var temp="">
+				<cfset var md5hash = "">
+				<!--- Set Original FileName --->
+				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
+				<cfset arguments.thestruct.thepathtoname = replacenocase(name,arguments.thestruct.theoriginalfilename,"","one")>
+				<!--- Rename the file so that we can remove any spaces --->
+				<cfinvoke component="global" method="convertname" returnvariable="newFileName" thename="#arguments.thestruct.theoriginalfilename#">
+				<cffile action="rename" source="#directory#/#name#" destination="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#">
+				<!--- Detect file extension --->
+				<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
+				<cfset var file = structnew()>
+				<cfset file.fileSize = size>
+				<cfset file.oldFileSize = size>
+				<cfset file.dateLastAccessed = dateLastModified>
+				<!--- Get and set file type and MIME content --->
+				<cfquery datasource="#application.razuna.datasource#" name="fileType">
+				SELECT type_type, type_mimecontent, type_mimesubcontent
+				FROM file_types
+				WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+				<!--- set attributes of file structure --->
+				<cfif #fileType.recordCount# GT 0>
+					<cfset arguments.thestruct.thefiletype = fileType.type_type>
+				<cfelse>
+					<cfset arguments.thestruct.thefiletype = "other">
+				</cfif>
+				<cfset arguments.thestruct.tempid = createuuid("")>
+				<cfset arguments.thestruct.thefilename = newFileName>
+				<cfset arguments.thestruct.thefolder_name = "asset#arguments.thestruct.tempid#">
+				<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
+				<cfset arguments.thestruct.theincomingtemptomovepath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thefolder_name#">
+				<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
+				<!--- Create a temp directory to hold the file --->
+				<cfif !DirectoryExists(arguments.thestruct.theincomingtemptomovepath)>
+					<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemptomovepath#" mode="775">
+				</cfif>
+				<!--- Copy the file into the temp dir --->
+				<cfif !FileExists("#arguments.thestruct.theincomingtemptomovepath#/#arguments.thestruct.thefilename#")>
+					<cffile action="copy" source="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#" destination="#arguments.thestruct.theincomingtemptomovepath#/#arguments.thestruct.thefilename#" mode="775">
+				</cfif>
+				<!--- MD5 Hash --->
+				<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
+					<cfset var md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
+				</cfif>
+				<!--- Check if we have to check for md5 records --->
+				<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
+				<!--- Check for the same MD5 hash in the existing records --->
+				<cfif checkformd5>
+					<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+				<cfelse>
+					<cfset var md5here = 0>
+				</cfif>
+				<!--- If file does not exsist continue else send user an eMail --->
+				<cfif md5here EQ 0>
+					<!--- Check for the name which now contains the directory --->
+					<cfset var thedirlen = listLen(name, FileSeparator()) - 1>
+					<!--- If the above return 0 --->
+					<cfif thedirlen EQ 0>
+						<cfset var thedirlen = 1>
+					</cfif>
+					<!--- Get the directory name at the exact position in the list --->
+					<cfset var thedirname = listGetAt(name, thedirlen, FileSeparator())>
+					<!--- Get folder id with the name of the folder --->
+					<cfquery datasource="#application.razuna.datasource#" name="qryfolderidmain">
+					SELECT f.folder_id, f.folder_name,
+					CASE
+						WHEN EXISTS(
+							SELECT s.folder_id
+							FROM #session.hostdbprefix#folders s
+							WHERE s.folder_id = f.folder_id_r
+							AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						) THEN 1
+						ELSE 0
+					END AS ISHERE
+					FROM #session.hostdbprefix#folders f
+					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thedirname)#">
+					AND f.folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+					<!---
+					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
+					--->
+					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND f.in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
+					<!--- Subselect --->
+					<cfquery dbtype="query" name="qryfolderid">
+					SELECT *
+					FROM qryfolderidmain
+					WHERE ishere = 1
+					</cfquery>
+					
+					<cfset temp = rootfolderId>
+					<cfloop index="i" from=1 to="#thedirlen#">
+						<cfset folder_name = listGetAt(thedirfiles.name, i, FileSeparator())>
+						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
+						SELECT folder_id, folder_name 
+						FROM #session.hostdbprefix#folders 
+						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+						AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+						</cfquery>
+						<cfset temp = qryGetFolderDetails.folder_id>
+					</cfloop>
+					
+					<!--- Put folder id into the general struct --->
+					<cfif isDefined('temp') AND temp NEQ ''>
+						<cfset arguments.thestruct.theid = temp>
+					<cfelse>
+						<cfset arguments.thestruct.theid = rootfolderId>
+						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
+						<!--- <cfset arguments.thestruct.fidr = 0> --->
+					</cfif>
+					
+					<!--- Add to temp db --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#assets_temp
+					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,thesize,file_id,host_id,md5hash)
+					VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemptomovepath#">,
+					<cfif isnumeric(file.fileSize)>
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
+					<cfelse>
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
+					</cfif>
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					)
+					</cfquery>
+					<!--- Return IDs in a variable --->
+					<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
+					<!--- For each file we need query for the file --->
+					<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qryfile">
+					SELECT 
+					tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype,
+					thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
+					FROM #session.hostdbprefix#assets_temp
+					WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Now start the file mumbo jumbo --->
+					<cfif fileType.type_type EQ "img">
+						<!--- IMAGE UPLOAD (call method to process a img-file) --->
+						<cfinvoke method="processImgFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "img">
+						<!--- Act on Upload Templates --->
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
+							<cfset arguments.thestruct.upltemptype = "img">
+							<cfset arguments.thestruct.file_id = returnid>
+							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+						</cfif>
+					<cfelseif fileType.type_type EQ "vid">
+						<!--- VIDEO UPLOAD (call method to process a vid-file) --->
+						<cfinvoke method="processVidFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "vid">
+						<!--- Act on Upload Templates --->
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
+							<cfset arguments.thestruct.upltemptype = "vid">
+							<cfset arguments.thestruct.file_id = returnid>
+							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+						</cfif>
+					<cfelseif fileType.type_type EQ "aud">
+						<!--- AUDIO UPLOAD (call method to process a vid-file) --->
+						<cfinvoke method="processAudFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "aud">
+						<!--- Act on Upload Templates --->
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
+							<cfset arguments.thestruct.upltemptype = "aud">
+							<cfset arguments.thestruct.file_id = returnid>
+							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+						</cfif>
+					<cfelse>
+						<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
+						<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "doc">
+					</cfif>
+				<cfelse>
+					<!--- RAZ-2810 Customise email message --->
+					<cfset transvalues = arraynew()>
+					<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+					<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+					<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+					<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
+				</cfif>
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error in function assets.extractFromZip">
+			<cfset cfcatch.thestruct = arguments.thestruct>
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
+	</cftry>
+	<cfreturn />
+</cffunction>
 </cfcomponent>

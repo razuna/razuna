@@ -56,7 +56,12 @@ $(function() {
 	$("##uploader").pluploadQueue({
 		// General settings
 		runtimes : '#session.pluploadruntimes#',
-		url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#',
+		// RAZ-2907 check the condition for bulk upload versions
+		<cfif structKeyExists(attributes,'file_id') AND attributes.file_id EQ 0>
+			url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#',
+		<cfelse>
+			url : '#myself#c.asset_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&nopreview=#attributes.nopreview#&type=#attributes.type#&thefieldname=file',
+		</cfif>
 		max_file_size : '2000mb',
 		unique_names : false,
 		multipart : true,
@@ -84,10 +89,17 @@ $(function() {
 			,		
 			preinit : function(up) {
 				up.bind('UploadFile', function() {
-					up.settings.url = '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=' + S4();
-					up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
+					// RAZ-2907 check the condition for bulk upload versions
+					<cfif structKeyExists(attributes,'file_id') AND attributes.file_id EQ 0>
+						up.settings.url = '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=' + S4();
+						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
+					<cfelse>
+						up.settings.url = '#myself#c.asset_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&nopreview=#attributes.nopreview#&type=#attributes.type#&thefieldname=file&_v=' + S4();
+						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), preview: false };
+					</cfif>
+					
 				});
-				<cfif !session.fromshare>
+				<cfif !session.fromshare AND (!structKeyExists(attributes,'extjs'))>
 					up.bind('UploadComplete', function() {
 						<cfif !pl_return.cfc.pl.loadform.active>
 							parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');

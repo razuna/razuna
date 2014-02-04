@@ -2865,8 +2865,16 @@
 		<set name="attributes.user_id" value="#session.theuserid#" />	
 		<set name="attributes.nopreview" value="0" overwrite="false" />
 		<set name="attributes.av" value="0" overwrite="false" />
+		<set name="attributes.thepath" value="#thispath#" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="upload(attributes)" returnvariable="result" />
+		<!-- RAZ-2907 upload Bulk versions -->
+		<!-- Versions Add -->
+		<if condition="structkeyexists(attributes,'extjs') AND attributes.extjs EQ 'T' ">
+			<true>
+				<do action = "versions_add" />
+			</true>
+		</if>		
 		<!-- Show -->
 		<do action="ajax.versions_upload" />
 	</fuseaction>
@@ -7863,8 +7871,13 @@
 	</fuseaction>
 	<!-- Upload a new version -->
 	<fuseaction name="versions_add">
+		<!-- RAZ-2907 for set zip extraction value -->
 		<!-- Param -->
-		<set name="attributes.zip_extract" value="0" />
+		<if condition="!structkeyexists(attributes,'extjs')">
+			<true>
+				<set name="attributes.zip_extract" value="0" />
+			</true>
+		</if>
 		<set name="attributes.sendemail" value="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
