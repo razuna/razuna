@@ -27,13 +27,13 @@
 
 	<!--- Check if collection exists for this host --->
 	<cffunction name="exists" access="public" output="false">
-		<cfargument name="colname" type="string">
+		<cfargument name="thestruct" type="struct">
 		<cftry>
 			<!--- Get the collection --->
-			<cfset CollectionStatus(arguments.colname)>
+			<cfset CollectionStatus(arguments.thestruct.hostid)>
 			<!--- Collection does NOT exists, thus create it --->
 			<cfcatch>
-		    	<cfinvoke method="setup" colname="#arguments.colname#">
+		    	<cfinvoke method="setup" thestruct="#arguments.thestruct#">
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -41,23 +41,44 @@
 	<!--- Setup the Collection for the first time --->
 	<!--- When adding a new host, creating one on the first time setup --->
 	<cffunction name="setup" access="public" output="false" returntype="void">
-		<cfargument name="colname" type="string">
+		<cfargument name="thestruct" type="struct">
 		<!--- Delete collection --->
 		<cftry>
-			<cfset CollectionDelete(arguments.colname)>
+			<cfset CollectionDelete(arguments.thestruct.hostid)>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<!--- Delete path on disk --->
 		<cftry>
 			<cfset var d = REReplaceNoCase(GetTempDirectory(),"/bluedragon/work/temp","","one")>
-			<cfdirectory action="delete" directory="#d#collections/#arguments.colname#" recurse="true" />
+			<cfdirectory action="delete" directory="#d#collections/#arguments.thestruct.hostid#" recurse="true" />
 			<cfcatch type="any"></cfcatch>
 		</cftry>
 		<!--- Create collection --->
 		<cftry>
-			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
+			<cfset CollectionCreate(collection=arguments.thestruct.hostid,relative=true,path="/WEB-INF/collections/#arguments.thestruct.hostid#")>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+		<!--- Set all records to non indexed --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		UPDATE #arguments.thestruct.prefix#images
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		UPDATE #arguments.thestruct.prefix#videos
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		UPDATE #arguments.thestruct.prefix#audios
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		UPDATE #arguments.thestruct.prefix#files
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
 	</cffunction>
 	
 	<!--- INDEX: Update --->
@@ -150,35 +171,14 @@
 		</cfif>
 
 		<!--- Check if collection exists --->
-		<cfinvoke method="exists" colname="#arguments.hostid#" />
+		<cfinvoke method="exists" thestruct="#arguments#" />
 		<!--- Params --->
 		<cfset var qry = "">
 		<cfset var qry_path = "">
 		<!--- If the assetid is all it means a complete rebuild --->
 		<cfif arguments.assetid EQ "all">
 			<!--- Delete all records in the index --->
-			<cfset setup( colname=arguments.hostid )>
-			<!--- Set all records to non indexed --->
-			<cfquery datasource="#arguments.dsn#">
-			UPDATE #arguments.prefix#images
-			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-			</cfquery>
-			<cfquery datasource="#arguments.dsn#">
-			UPDATE #arguments.prefix#videos
-			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-			</cfquery>
-			<cfquery datasource="#arguments.dsn#">
-			UPDATE #arguments.prefix#audios
-			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-			</cfquery>
-			<cfquery datasource="#arguments.dsn#">
-			UPDATE #arguments.prefix#files
-			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-			</cfquery>
+			<cfset setup( thestruct=arguments )>
 		</cfif>
 		<!--- Grab files to index --->
 		<cfinvoke method="query_for_index" returnvariable="qry">
