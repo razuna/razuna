@@ -72,7 +72,7 @@
 function addlabeladmin(){
 	//check label for first char and letters
 	if(!isValidLabel('label_text_admin')){
-		alert('Please use first charactor as letters or numbers.');
+		alert('The first character has to be a number or letter!');
 		return false;
 	}
 	// Get value
