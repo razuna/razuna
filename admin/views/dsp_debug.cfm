@@ -37,22 +37,50 @@ Files not indexed: #idxstats_fil.cnt#
 <cfset bdxml="#xmlparse(filetmp)#">
 <!--- <cfdump var="#bdxml.server#"> --->
 
+
+<h5><u>SEARCH COLLECTIONS</u></h5>
+<font size="2">
+<cfif isArray(bdxml.server.cfcollection.collection)>
+	<cfloop array="#bdxml.server.cfcollection.collection#" index="col">
+		<b>BD CollectionName:</b>#col.name#<br>
+		<b>BD Collection Path:</b>#col.path#<br>
+		<hr>
+	</cfloop>
+<cfelse>
+	 <cfset col = bdxml.server.cfcollection.collection>
+	<b>BD CollectionName:</b>#col.name#<br>
+	<b>BD Collection Path:</b>#col.path#<br>
+</cfif>
+</font>
+
 <h5><u>SCHEDULED TASKS</u></h5>
 <font size="2">
-<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
+<cfif isArray(bdxml.server.cfschedule.task)>
+	<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
+		<b>BD Task Name:</b>: #tsk.name#<br>
+		<b>BD Task URL:</b>: #tsk.urltouse#<br>
+		<hr>
+	</cfloop>
+<cfelse>
+	<cfset tsk = bdxml.server.cfschedule.task>
 	<b>BD Task Name:</b>: #tsk.name#<br>
 	<b>BD Task URL:</b>: #tsk.urltouse#<br>
-	<hr>
-</cfloop>
+</cfif>
 </font>
 
 <h5><u>DATASOURCES</u></h5>
 <font size="2">
-<cfloop array="#bdxml.server.cfquery.datasource#" index="dsn">
+<cfif isArray(bdxml.server.cfquery.datasource)>
+	<cfloop array="#bdxml.server.cfquery.datasource#" index="dsn">
+		<b>BD Datasource Name:</b> #dsn.name#<br>
+		<b>BD Datasource hoststring:</b> #dsn.hoststring#<br>
+		<hr>
+	</cfloop>
+<cfelse>
+	<cfset dsn = bdxml.server.cfquery.datasource>
 	<b>BD Datasource Name:</b> #dsn.name#<br>
 	<b>BD Datasource hoststring:</b> #dsn.hoststring#<br>
-	<hr>
-</cfloop>
+</cfif>
 </font>
 
 </cfoutput>
