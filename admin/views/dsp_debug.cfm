@@ -7,7 +7,7 @@
 <!--- Get List of schedules tasks in database--->
 <h3>SCHEDULED TASKS IN DATABASE</h3>
 <cfquery name="gettasks" datasource="#application.razuna.datasource#">
-	SELECT sched_id, sched_status, sched_method, sched_interval, sched_start_date, sched_start_time, sched_end_date, sched_end_time
+	SELECT sched_id, sched_status, sched_method, host_id, sched_interval, sched_start_date, sched_start_time, sched_end_date, sched_end_time
 	FROM raz1_schedules
 </cfquery>
 <cfdump var="#gettasks#">
