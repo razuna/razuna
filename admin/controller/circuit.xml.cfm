@@ -1387,4 +1387,7 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="del_news(attributes.news_id)" />
 	</fuseaction>
 
+	<fuseaction name="debug">
+		<do action="v.debug" />	
+	</fuseaction>
 </circuit>
