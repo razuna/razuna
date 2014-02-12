@@ -40,4 +40,9 @@
 		<include template="dsp_serve_asset" contentvariable="showcontent" />
 		<do action="l.lay_assets" />
 	</fuseaction>
+	
+	<!-- Show debug info  -->
+	<fuseaction name="debug">
+			<include template="dsp_debug"/>
+	</fuseaction>
 </circuit>
