@@ -28,7 +28,7 @@
 
 Images not indexed: #idxstats_img.cnt#<br>
 Videos not indexed: #idxstats_vid.cnt#<br>
-Audios not indexed: #idxstats_img.cnt#<br>
+Audios not indexed: #idxstats_aud.cnt#<br>
 Files not indexed: #idxstats_fil.cnt#
 
 <h3>BLUEDRAGON CONFIG FILE</h3>
