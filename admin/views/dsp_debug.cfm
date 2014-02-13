@@ -40,42 +40,46 @@ Audios not indexed: #idxstats_aud.cnt#<br>
 Files not indexed: #idxstats_fil.cnt#
 
 <h3>BLUEDRAGON CONFIG FILE</h3>
-
 <cffile action="read" file="#expandpath('../')#/WEB-INF/bluedragon/bluedragon.xml" variable="filetmp">
 <cfset bdxml="#xmlparse(filetmp)#">
 <!--- <cfdump var="#bdxml.server#"> --->
 
-
-<h5><u>SEARCH COLLECTIONS</u></h5>
-<font size="2">
-<cfif isArray(bdxml.server.cfcollection.collection)>
-	<cfloop array="#bdxml.server.cfcollection.collection#" index="col">
+<!--- Print our search collections --->
+<cfif isdefined("bdxml.server.cfcollection.collection")>
+	<h5><u>SEARCH COLLECTIONS</u></h5>
+	<font size="2">
+	<cfif isArray(bdxml.server.cfcollection.collection)>
+		<cfloop array="#bdxml.server.cfcollection.collection#" index="col">
+			<b>BD CollectionName:</b>#col.name#<br>
+			<b>BD Collection Path:</b>#col.path#<br>
+			<hr>
+		</cfloop>
+	<cfelse>
+		 <cfset col = bdxml.server.cfcollection.collection>
 		<b>BD CollectionName:</b>#col.name#<br>
 		<b>BD Collection Path:</b>#col.path#<br>
-		<hr>
-	</cfloop>
-<cfelse>
-	 <cfset col = bdxml.server.cfcollection.collection>
-	<b>BD CollectionName:</b>#col.name#<br>
-	<b>BD Collection Path:</b>#col.path#<br>
+	</cfif>
+	</font>
 </cfif>
-</font>
 
-<h5><u>SCHEDULED TASKS</u></h5>
-<font size="2">
-<cfif isArray(bdxml.server.cfschedule.task)>
-	<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
+<!--- Print out tasks --->
+<cfif isdefined("bdxml.server.cfschedule.task")>
+	<h5><u>SCHEDULED TASKS</u></h5>
+	<font size="2">
+	<cfif isArray(bdxml.server.cfschedule.task)>
+		<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
+			<b>BD Task Name:</b>: #tsk.name#<br>
+			<b>BD Task URL:</b>: #tsk.urltouse#<br>
+			<hr>
+		</cfloop>
+	<cfelse>
+		<cfset tsk = bdxml.server.cfschedule.task>
 		<b>BD Task Name:</b>: #tsk.name#<br>
 		<b>BD Task URL:</b>: #tsk.urltouse#<br>
-		<hr>
-	</cfloop>
-<cfelse>
-	<cfset tsk = bdxml.server.cfschedule.task>
-	<b>BD Task Name:</b>: #tsk.name#<br>
-	<b>BD Task URL:</b>: #tsk.urltouse#<br>
+	</cfif>
+	</font>
 </cfif>
-</font>
-
+<!--- Print out datasources --->
 <h5><u>DATASOURCES</u></h5>
 <font size="2">
 <cfif isArray(bdxml.server.cfquery.datasource)>
