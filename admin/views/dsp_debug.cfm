@@ -39,28 +39,33 @@ Videos not indexed: #idxstats_vid.cnt#<br>
 Audios not indexed: #idxstats_img.cnt#<br>
 Files not indexed: #idxstats_fil.cnt#
 
+<!--- Read BD XML config file --->
 <h3>BLUEDRAGON CONFIG FILE</h3>
 
 <cffile action="read" file="#expandpath('../')#/WEB-INF/bluedragon/bluedragon.xml" variable="filetmp">
 <cfset bdxml="#xmlparse(filetmp)#">
 <!--- <cfdump var="#bdxml.server#"> --->
 
-<h5><u>SCHEDULED TASKS</u></h5>
-<font size="2">
-<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
-	<b>BD Task Name:</b>: #tsk.name#<br>
-	<b>BD Task URL:</b>: #tsk.urltouse#<br>
-	<hr>
-</cfloop>
-</font>
+<cfif isdefined("bdxml.server.cfschedule.task")>
+	<h5><u>SCHEDULED TASKS</u></h5>
+	<font size="2">
+	<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
+		<b>BD Task Name:</b>: #tsk.name#<br>
+		<b>BD Task URL:</b>: #tsk.urltouse#<br>
+		<hr>
+	</cfloop>
+	</font>
+</cfif>
 
-<h5><u>DATASOURCES</u></h5>
-<font size="2">
-<cfloop array="#bdxml.server.cfquery.datasource#" index="dsn">
-	<b>BD Datasource Name:</b> #dsn.name#<br>
-	<b>BD Datasource hoststring:</b> #dsn.hoststring#<br>
-	<hr>
-</cfloop>
-</font>
+<cfif isdefined("bdxml.server.cfquery.datasource")>
+	<h5><u>DATASOURCES</u></h5>
+	<font size="2">
+	<cfloop array="#bdxml.server.cfquery.datasource#" index="dsn">
+		<b>BD Datasource Name:</b> #dsn.name#<br>
+		<b>BD Datasource hoststring:</b> #dsn.hoststring#<br>
+		<hr>
+	</cfloop>
+	</font>
+</cfif>
 
 </cfoutput>
