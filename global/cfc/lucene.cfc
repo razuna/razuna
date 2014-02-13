@@ -304,15 +304,17 @@
 				<cfset var l = valuelist(qry_l.label_path," ")>
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
-				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, "'", "", "ALL")><!--- For single quotes remove them instead of replacing with space --->
+				<cfset var thefilename = REReplaceNoCase(thefilename, theregchars, " ", "ALL")>
+				
 				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
 				<cfloop query="qry_all">
-					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
 					<!--- For single quotes remove them instead of replacing with space --->
-					<cfset var thedesc = REReplaceNoCase(description, "'", "", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords,  "'", "", "ALL") & " " & thekeys>
+					<cfset var thedesc_1 = REReplaceNoCase(description, "'", "", "ALL") >
+					<cfset var thekeys_1 = REReplaceNoCase(keywords,  "'", "", "ALL")>
+
+					<cfset var thedesc = REReplaceNoCase(thedesc_1 , theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(thekeys_1, theregchars, " ", "ALL") & " " & thekeys>
 				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
@@ -448,15 +450,16 @@
 				<cfset var l = valuelist(qry_l.label_path," ")>
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
-				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, "'", "", "ALL")><!--- For single quotes remove them instead of replacing with space --->
+				<cfset var thefilename = REReplaceNoCase(thefilename, theregchars, " ", "ALL")>
 				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
 				<cfloop query="qry_all">
-					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
 					<!--- For single quotes remove them instead of replacing with space --->
-					<cfset var thedesc = REReplaceNoCase(description, "'", "", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords,  "'", "", "ALL") & " " & thekeys>
+					<cfset var thedesc_1 = REReplaceNoCase(description, "'", "", "ALL") >
+					<cfset var thekeys_1 = REReplaceNoCase(keywords,  "'", "", "ALL")>
+
+					<cfset var thedesc = REReplaceNoCase(thedesc_1 , theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(thekeys_1, theregchars, " ", "ALL") & " " & thekeys>
 				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
@@ -579,15 +582,16 @@
 				<cfset var l = valuelist(qry_l.label_path," ")>
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
-				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
 				<cfset var thefilename = REReplaceNoCase(qry_all.filename, "'", "", "ALL")><!--- For single quotes remove them instead of replacing with space --->
+				<cfset var thefilename = REReplaceNoCase(thefilename, theregchars, " ", "ALL")>
 				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
 				<cfloop query="qry_all">
-					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
 					<!--- For single quotes remove them instead of replacing with space --->
-					<cfset var thedesc = REReplaceNoCase(description, "'", "", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords,  "'", "", "ALL") & " " & thekeys>
+					<cfset var thedesc_1 = REReplaceNoCase(description, "'", "", "ALL") >
+					<cfset var thekeys_1 = REReplaceNoCase(keywords,  "'", "", "ALL")>
+
+					<cfset var thedesc = REReplaceNoCase(thedesc_1 , theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(thekeys_1, theregchars, " ", "ALL") & " " & thekeys>
 				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
@@ -646,15 +650,16 @@
 				<cfset var l = valuelist(qry_l.label_path," ")>
 				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Remove foreign chars for some columns --->
-				<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
-				<cfset var thefilename = REReplaceNoCase(qry_all.filename, "'", "", "ALL")> <!--- For single quotes remove them instead of replacing with space --->
+				<cfset var thefilename = REReplaceNoCase(qry_all.filename, "'", "", "ALL")><!--- For single quotes remove them instead of replacing with space --->
+				<cfset var thefilename = REReplaceNoCase(thefilename, theregchars, " ", "ALL")>
 				<!--- Loop over the qry_all set because we could have more then one language for the description and keywords --->
 				<cfloop query="qry_all">
-					<cfset var thedesc = REReplaceNoCase(description, theregchars, " ", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords, theregchars, " ", "ALL") & " " & thekeys>
 					<!--- For single quotes remove them instead of replacing with space --->
-					<cfset var thedesc = REReplaceNoCase(description, "'", "", "ALL") & " " & thedesc>
-					<cfset var thekeys = REReplaceNoCase(keywords,  "'", "", "ALL") & " " & thekeys>
+					<cfset var thedesc_1 = REReplaceNoCase(description, "'", "", "ALL") >
+					<cfset var thekeys_1 = REReplaceNoCase(keywords,  "'", "", "ALL")>
+
+					<cfset var thedesc = REReplaceNoCase(thedesc_1 , theregchars, " ", "ALL") & " " & thedesc>
+					<cfset var thekeys = REReplaceNoCase(thekeys_1, theregchars, " ", "ALL") & " " & thekeys>
 				</cfloop>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
