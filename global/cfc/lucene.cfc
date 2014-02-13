@@ -1018,67 +1018,74 @@
 		<cfargument name="assetid" required="true">
 		<!--- Param --->
 		<cfset var qry = "">
-		<!--- Select all the files that need to be indexed --->
+		<cfset recs2index = 500>
+		<!--- Select 500 newest files that need to be indexed --->
 		<cfquery datasource="#arguments.dsn#" name="qry">
-		SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize
-		FROM #arguments.prefix#images
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
-			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		<cfelse>
-			AND img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+		SELECT <cfif arguments.thedatabase EQ "mssql"> TOP #recs2index#</cfif>* FROM (
+				SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize, img_create_time as createtime
+				FROM #arguments.prefix#images
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
+					AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				<cfelse>
+					AND img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+				</cfif>
+				AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+				<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+					AND cloud_url_org IS NOT NULL 
+					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				</cfif>
+				GROUP BY img_id, folder_id_r, img_filename_org, link_kind, link_path_url, img_filename, path_to_asset, cloud_url_org, img_size, img_create_time
+				UNION ALL
+				SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize, vid_create_time as createtime
+				FROM #arguments.prefix#videos
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
+					AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				<cfelse>
+					AND vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+				</cfif>
+				AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+				<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+					AND cloud_url_org IS NOT NULL 
+					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				</cfif>
+				GROUP BY vid_id, folder_id_r, vid_name_org, link_kind, link_path_url, vid_filename, path_to_asset, cloud_url_org, vid_size, vid_create_time
+				UNION ALL
+				SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize, aud_create_time as createtime
+				FROM #arguments.prefix#audios
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
+					AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				<cfelse>
+					AND aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+				</cfif>
+				AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+				<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+					AND cloud_url_org IS NOT NULL 
+					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				</cfif>
+				GROUP BY aud_id, folder_id_r, aud_name_org, link_kind, link_path_url, aud_name, path_to_asset, cloud_url_org, aud_size, aud_create_time
+				UNION ALL
+				SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize, file_create_time as createtime
+				FROM #arguments.prefix#files
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
+					AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				<cfelse>
+					AND file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+				</cfif>
+				AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+				<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+					AND cloud_url_org IS NOT NULL 
+					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				</cfif>
+				GROUP BY file_id, folder_id_r, file_name_org, link_kind, link_path_url, file_name, path_to_asset, cloud_url_org, file_size, file_create_time
+		)tmp
+		ORDER BY createtime desc
+		<cfif arguments.thedatabase EQ "mysql" OR arguments.thedatabase EQ "h2">
+			LIMIT #recs2index#
 		</cfif>
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		GROUP BY img_id, folder_id_r, img_filename_org, link_kind, link_path_url, img_filename, path_to_asset, cloud_url_org, img_size
-		UNION ALL
-		SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize
-		FROM #arguments.prefix#videos
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
-			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		<cfelse>
-			AND vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
-		</cfif>
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		GROUP BY vid_id, folder_id_r, vid_name_org, link_kind, link_path_url, vid_filename, path_to_asset, cloud_url_org, vid_size
-		UNION ALL
-		SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize
-		FROM #arguments.prefix#audios
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
-			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		<cfelse>
-			AND aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
-		</cfif>
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		GROUP BY aud_id, folder_id_r, aud_name_org, link_kind, link_path_url, aud_name, path_to_asset, cloud_url_org, aud_size
-		UNION ALL
-		SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
-		FROM #arguments.prefix#files
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
-			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		<cfelse>
-			AND file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
-		</cfif>
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		GROUP BY file_id, folder_id_r, file_name_org, link_kind, link_path_url, file_name, path_to_asset, cloud_url_org, file_size
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
