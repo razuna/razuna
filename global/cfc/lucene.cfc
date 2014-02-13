@@ -1018,11 +1018,11 @@
 		<cfargument name="assetid" required="true">
 		<!--- Param --->
 		<cfset var qry = "">
-		<cfset recs2index = 500>
+		<cfset recs2index = 500><!---  enter number of files to be indexed on one go --->
 		<!--- Select 500 newest files that need to be indexed --->
 		<cfquery datasource="#arguments.dsn#" name="qry">
 		SELECT <cfif arguments.thedatabase EQ "mssql"> TOP #recs2index#</cfif>* FROM (
-				SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize, img_create_time as createtime
+				SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize, img_change_time as changetime
 				FROM #arguments.prefix#images
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
@@ -1035,9 +1035,9 @@
 					AND cloud_url_org IS NOT NULL 
 					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				</cfif>
-				GROUP BY img_id, folder_id_r, img_filename_org, link_kind, link_path_url, img_filename, path_to_asset, cloud_url_org, img_size, img_create_time
+				GROUP BY img_id, folder_id_r, img_filename_org, link_kind, link_path_url, img_filename, path_to_asset, cloud_url_org, img_size, img_change_time
 				UNION ALL
-				SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize, vid_create_time as createtime
+				SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize, vid_change_time as changetime
 				FROM #arguments.prefix#videos
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
@@ -1050,9 +1050,9 @@
 					AND cloud_url_org IS NOT NULL 
 					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				</cfif>
-				GROUP BY vid_id, folder_id_r, vid_name_org, link_kind, link_path_url, vid_filename, path_to_asset, cloud_url_org, vid_size, vid_create_time
+				GROUP BY vid_id, folder_id_r, vid_name_org, link_kind, link_path_url, vid_filename, path_to_asset, cloud_url_org, vid_size, vid_change_time
 				UNION ALL
-				SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize, aud_create_time as createtime
+				SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize, aud_change_time as changetime
 				FROM #arguments.prefix#audios
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
@@ -1065,9 +1065,9 @@
 					AND cloud_url_org IS NOT NULL 
 					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				</cfif>
-				GROUP BY aud_id, folder_id_r, aud_name_org, link_kind, link_path_url, aud_name, path_to_asset, cloud_url_org, aud_size, aud_create_time
+				GROUP BY aud_id, folder_id_r, aud_name_org, link_kind, link_path_url, aud_name, path_to_asset, cloud_url_org, aud_size, aud_change_time
 				UNION ALL
-				SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize, file_create_time as createtime
+				SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize, file_change_time as changetime
 				FROM #arguments.prefix#files
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				<cfif arguments.assetid EQ 0 OR arguments.assetid EQ "all">
@@ -1080,9 +1080,9 @@
 					AND cloud_url_org IS NOT NULL 
 					AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				</cfif>
-				GROUP BY file_id, folder_id_r, file_name_org, link_kind, link_path_url, file_name, path_to_asset, cloud_url_org, file_size, file_create_time
+				GROUP BY file_id, folder_id_r, file_name_org, link_kind, link_path_url, file_name, path_to_asset, cloud_url_org, file_size, file_change_time
 		)tmp
-		ORDER BY createtime desc
+		ORDER BY changetime desc
 		<cfif arguments.thedatabase EQ "mysql" OR arguments.thedatabase EQ "h2">
 			LIMIT #recs2index#
 		</cfif>
