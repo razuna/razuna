@@ -2522,7 +2522,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set_id, set_pref
 		FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_#session.hostid#">
 		ORDER BY lower(set_id)
 		</cfquery>
 		<!--- Return --->
@@ -2535,7 +2535,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Remove all aws fields in DB first --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_#session.hostid#">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
 		<cfif structKeyExists(session,"aws")>
