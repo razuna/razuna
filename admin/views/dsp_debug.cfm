@@ -1,4 +1,12 @@
 <cfoutput>
+
+<!--- Search a collection with given parameters if defined --->
+<cfif isdefined("colname") and isdefined("search")>
+	<h3>SEARCHING COLLECTION #colname# FOR #search#</h3>
+	<cfsearch collection="#colname#" criteria="#search#" name="x">
+	<cfdump var="#x#"> 
+</cfif>
+
 <!--- Does lock files(s) exist --->
 <h3>LOCK FILES IN TEMP</h3>
 <cfdirectory action="list" directory="#GetTempDirectory()#" name="tmp" filter="*.lock">
