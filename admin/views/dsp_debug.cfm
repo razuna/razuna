@@ -15,7 +15,7 @@
 <!--- Get List of schedules tasks in database--->
 <h3>SCHEDULED TASKS IN DATABASE</h3>
 <cfquery name="gettasks" datasource="#application.razuna.datasource#">
-	SELECT sched_id, sched_status, sched_method, sched_interval, sched_start_date, sched_start_time, sched_end_date, sched_end_time
+	SELECT sched_id, sched_status, sched_method, host_id, sched_interval, sched_start_date, sched_start_time, sched_end_date, sched_end_time
 	FROM raz1_schedules
 </cfquery>
 <cfdump var="#gettasks#">
@@ -36,36 +36,63 @@
 
 Images not indexed: #idxstats_img.cnt#<br>
 Videos not indexed: #idxstats_vid.cnt#<br>
-Audios not indexed: #idxstats_img.cnt#<br>
+Audios not indexed: #idxstats_aud.cnt#<br>
 Files not indexed: #idxstats_fil.cnt#
 
-<!--- Read BD XML config file --->
 <h3>BLUEDRAGON CONFIG FILE</h3>
-
 <cffile action="read" file="#expandpath('../')#/WEB-INF/bluedragon/bluedragon.xml" variable="filetmp">
 <cfset bdxml="#xmlparse(filetmp)#">
 <!--- <cfdump var="#bdxml.server#"> --->
 
-<cfif isdefined("bdxml.server.cfschedule.task")>
-	<h5><u>SCHEDULED TASKS</u></h5>
+<!--- Print our search collections --->
+<cfif isdefined("bdxml.server.cfcollection.collection")>
+	<h5><u>SEARCH COLLECTIONS</u></h5>
 	<font size="2">
-	<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
-		<b>BD Task Name:</b>: #tsk.name#<br>
-		<b>BD Task URL:</b>: #tsk.urltouse#<br>
-		<hr>
-	</cfloop>
+	<cfif isArray(bdxml.server.cfcollection.collection)>
+		<cfloop array="#bdxml.server.cfcollection.collection#" index="col">
+			<b>BD CollectionName:</b>#col.name#<br>
+			<b>BD Collection Path:</b>#col.path#<br>
+			<hr>
+		</cfloop>
+	<cfelse>
+		 <cfset col = bdxml.server.cfcollection.collection>
+		<b>BD CollectionName:</b>#col.name#<br>
+		<b>BD Collection Path:</b>#col.path#<br>
+	</cfif>
 	</font>
 </cfif>
 
-<cfif isdefined("bdxml.server.cfquery.datasource")>
-	<h5><u>DATASOURCES</u></h5>
+<!--- Print out tasks --->
+<cfif isdefined("bdxml.server.cfschedule.task")>
+	<h5><u>SCHEDULED TASKS</u></h5>
 	<font size="2">
+	<cfif isArray(bdxml.server.cfschedule.task)>
+		<cfloop array="#bdxml.server.cfschedule.task#" index="tsk">
+			<b>BD Task Name:</b>: #tsk.name#<br>
+			<b>BD Task URL:</b>: #tsk.urltouse#<br>
+			<hr>
+		</cfloop>
+	<cfelse>
+		<cfset tsk = bdxml.server.cfschedule.task>
+		<b>BD Task Name:</b>: #tsk.name#<br>
+		<b>BD Task URL:</b>: #tsk.urltouse#<br>
+	</cfif>
+	</font>
+</cfif>
+<!--- Print out datasources --->
+<h5><u>DATASOURCES</u></h5>
+<font size="2">
+<cfif isArray(bdxml.server.cfquery.datasource)>
 	<cfloop array="#bdxml.server.cfquery.datasource#" index="dsn">
 		<b>BD Datasource Name:</b> #dsn.name#<br>
 		<b>BD Datasource hoststring:</b> #dsn.hoststring#<br>
 		<hr>
 	</cfloop>
-	</font>
+<cfelse>
+	<cfset dsn = bdxml.server.cfquery.datasource>
+	<b>BD Datasource Name:</b> #dsn.name#<br>
+	<b>BD Datasource hoststring:</b> #dsn.hoststring#<br>
 </cfif>
+</font>
 
 </cfoutput>
