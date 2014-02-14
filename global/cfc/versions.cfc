@@ -535,6 +535,8 @@
 			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
+	<!--- Reset folders cachetoken so preview images update --->
+	<cfset resetcachetoken("folders")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1121,6 +1123,8 @@
 			<cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry> 
+	<!--- Reset folders cachetoken so preview images update --->
+	<cfset resetcachetoken("folders")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
