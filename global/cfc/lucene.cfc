@@ -943,9 +943,9 @@
 				<cfset arguments.criteria_sp = arguments.criteria>
 			</cfif>
 			<cfif arguments.criteria CONTAINS '"' OR arguments.criteria CONTAINS "*" OR find(" AND ", arguments.criteria) NEQ 0 OR find(" OR ", arguments.criteria) NEQ 0>
-				<cfset arguments.criteria = 'filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#)'>
+				<cfset arguments.criteria = 'filename:(#arguments.criteria#)'>
 			<cfelse>
-				<cfset arguments.criteria = 'filename:("#arguments.criteria#") filenameorg:("#arguments.criteria#")'>
+				<cfset arguments.criteria = 'filename:("#arguments.criteria#")'>
 			</cfif>
 			<cfset arguments.criteria = '(' & arguments.criteria_sp & ') ' & arguments.criteria & ' keywords:(#arguments.criteria_sp#) description:(#arguments.criteria_sp#) id:(#arguments.criteria_sp#) labels:(#arguments.criteria_sp#) customfieldvalue:(#arguments.criteria_sp#)'>
 		</cfif>
@@ -955,7 +955,7 @@
 				<cfset qrylucene = querynew("x")>
 			</cfcatch>
 		</cftry>
-		<cfset console(arguments.criteria)>
+		<!--- <cfset console(arguments.criteria)> --->
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>
