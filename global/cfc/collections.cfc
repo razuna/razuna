@@ -1133,6 +1133,10 @@
 	<cfparam name="arguments.thestruct.share_order_user" default="0">
 	<cfparam name="arguments.thestruct.share_dl_org" default="f">
 	<cfparam name="arguments.thestruct.share_dl_thumb" default="t">
+	<cfparam name="arguments.thestruct.share_upload" default="F">
+	<cfparam name="arguments.thestruct.share_comments" default="F">
+	<cfparam name="arguments.thestruct.share_order" default="f">
+	<cfparam name="arguments.thestruct.share_order_user" default="">
 	<!--- Check if a collection by this name exists in this folder --->
 	<cfquery datasource="#variables.dsn#" name="here">
 	SELECT ct.col_name
