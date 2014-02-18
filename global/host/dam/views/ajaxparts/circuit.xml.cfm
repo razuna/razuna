@@ -865,5 +865,9 @@
 	<fuseaction name="folder_subscribe">
 		<include template="dsp_folder_subscribe" />
 	</fuseaction>
+	<!-- Metadata export template -->
+	<fuseaction name="admin_export_template">
+		<include template="dsp_admin_export_template" />
+	</fuseaction>
 
 </circuit>

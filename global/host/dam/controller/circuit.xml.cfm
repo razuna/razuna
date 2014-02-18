@@ -1142,10 +1142,15 @@
 		<set name="attributes.type" value="doc" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.dllinkbasket" />
 	</fuseaction>
@@ -1174,10 +1179,14 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.noemail" value="true" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="thebasket" />
 		<!-- CFC: Send eMail -->
@@ -1240,6 +1249,8 @@
 		<set name="attributes.folderpath" value="#thispath#/incoming" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
 		<!-- Put session into attributes -->
 		<set name="attributes.artofimage" value="#session.artofimage#" />
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
@@ -1249,6 +1260,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- Do the upload from server which will add the zip file from above -->
@@ -8963,6 +8976,10 @@
 	<fuseaction name="meta_export_do">
 		<!-- Param -->
 		<set name="attributes.thepath" value="#thispath#" />
+		<!-- CFC: Get export template -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_export_template_details()" returnvariable="qry_details" />
+		<!-- Param -->
+		<set name="attributes.export_template" value="#qry_details#" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
 	</fuseaction>
@@ -9010,6 +9027,10 @@
 	<!-- Download Folder -->
 	<fuseaction name="download_folder_do">
 		<!-- Param -->
+		<set name="attributes.what" value="folder" overwrite="false" />
+		<set name="attributes.expwhat" value="all" overwrite="false" />
+		<set name="attributes.meta_export" value="T" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.pages" value="download" />
 		<set name="attributes.download_thumbnails" value="false" overwrite="false" />
@@ -9024,7 +9045,8 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
 		<!-- CFC: Get all assets -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
-		
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Show the progress download -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder(attributes)" />
 	</fuseaction>
@@ -9723,6 +9745,27 @@
 		<do action="storage" />
 		<!-- CFC: update -->
 		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted(thestruct=attributes)" />
+	</fuseaction>
+
+	<!-- Metadata export template -->
+	<fuseaction name="admin_export_template">
+		<!-- Param -->
+		<set name="attributes.meta_keys" value="id,filename" />
+		<set name="attributes.meta_default" value="labels,keywords,description,type" />
+		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- CFC: Get export template -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_export_template(attributes)" returnvariable="qry_export" />
+		<!-- Show metadata export template -->
+		<do action="ajax.admin_export_template" />
+	</fuseaction>
+
+	<!-- Metadata export template save -->
+	<fuseaction name="admin_export_template_save">
+		<!-- Path -->
+		<set name="attributes.thepathup" value="#ExpandPath('../../')#" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_export_template(attributes)" />
 	</fuseaction>
 
 </circuit>

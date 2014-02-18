@@ -88,7 +88,7 @@
 <!--- READ BASKET --->
 <cffunction name="readbasket" output="false" returnType="query">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, 
+		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, 
 			CASE 
 				WHEN c.cart_file_type = 'doc' 
 					THEN (
@@ -134,7 +134,69 @@
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
-			END as theextension
+			END as theextension,
+			CASE 
+				WHEN c.cart_file_type = 'img' 
+					THEN (
+						SELECT img_width
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid' 
+					THEN (
+						SELECT vid_width
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as cart_width,
+			CASE 
+				WHEN c.cart_file_type = 'img' 
+					THEN (
+						SELECT img_height
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid' 
+					THEN (
+						SELECT vid_height
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as cart_height,
+			CASE 
+				WHEN c.cart_file_type = 'doc' 
+					THEN (
+						SELECT file_size
+						FROM #session.hostdbprefix#files 
+						WHERE file_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'img'
+					THEN (
+						SELECT img_size
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid'
+					THEN (
+						SELECT vid_size
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'aud'
+					THEN (
+						SELECT aud_size
+						FROM #session.hostdbprefix#audios 
+						WHERE aud_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as cart_size
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -300,6 +362,10 @@
 	<cfelse>
 		<cfset arguments.thestruct.zipname = replacenocase(arguments.thestruct.zipname, " ", "_", "ALL")>
 		<cfset arguments.thestruct.zipname = arguments.thestruct.zipname & ".zip">
+	</cfif>
+	<!--- RAZ-2831 : Move metadata export into folder --->
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
 	</cfif>
 	<!--- Zip the folder --->
 	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
