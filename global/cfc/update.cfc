@@ -246,6 +246,25 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
+			<!--- RAZ-2831 : Create EXPORT_TEMPLATE table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_export_template
+				(
+					exp_id				#thevarchar#(100),
+					exp_field			#thevarchar#(200),
+					exp_value			#thevarchar#(2000),
+					exp_timestamp		#thetimestamp#, 
+					user_id				#thevarchar#(100),
+					host_id				#theint#,
+					PRIMARY KEY (exp_id)
+				)
+				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If update number is lower then 17 (v. 1.6.1) --->
