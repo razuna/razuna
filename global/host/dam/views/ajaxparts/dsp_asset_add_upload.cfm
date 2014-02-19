@@ -57,7 +57,7 @@ $(function() {
 		// General settings
 		runtimes : '#session.pluploadruntimes#',
 		url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#',
-		max_file_size : '2000mb',
+		// max_file_size : '2000mb',
 		unique_names : false,
 		multipart : true,
 		//chunk_size : '1mb',
