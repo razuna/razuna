@@ -62,7 +62,7 @@ $(function() {
 		<cfelse>
 			url : '#myself#c.asset_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&nopreview=#attributes.nopreview#&type=#attributes.type#&thefieldname=file',
 		</cfif>
-		max_file_size : '2000mb',
+		// max_file_size : '2000mb',
 		unique_names : false,
 		multipart : true,
 		//chunk_size : '1mb',
