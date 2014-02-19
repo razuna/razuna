@@ -4764,7 +4764,7 @@
 			<!--- If the folder_id_r is not the same the passed one --->
 			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 				<!--- Call this function again (need component otherwise it won't work for internal calls) --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
+				<cfinvoke component="folders" returnvariable="flist" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
 			</cfif>
 		</cfif>
 		<!--- Return --->	
@@ -4863,6 +4863,7 @@
 	<cfargument name="dl_folder" required="true" type="string">
 	<cfargument name="assetpath" required="true" type="string">
 	<cfargument name="awsbucket" required="false" type="string">
+	<cfargument name="rend_av" required="false" type="string" default="f">
 	<cfargument name="thestruct" required="false" type="struct">
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.akaimg" default="" />
@@ -4870,35 +4871,73 @@
 	<cfparam name="arguments.thestruct.akaaud" default="" />
 	<cfparam name="arguments.thestruct.akadoc" default="" />
 	<!--- RAZ-2906: Get the dam settings --->
-	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
+	<cfset var count = 1>
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
-		<!--- Set original --->
-		<cfset arguments.dl_originals = true>
-		<!--- Query with group values --->
-		<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
-		SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
-		FROM #session.hostdbprefix#images
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		UNION ALL
-		SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
-		FROM #session.hostdbprefix#videos
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		UNION ALL
-		SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
-		FROM #session.hostdbprefix#audios
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		</cfquery>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 'f'>
+			<!--- Set original --->
+			<cfset arguments.dl_originals = true>
+			<!--- Query with group values --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+			SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+			FROM #session.hostdbprefix#images
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION ALL
+			SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+			FROM #session.hostdbprefix#videos
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION ALL
+			SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+			FROM #session.hostdbprefix#audios
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			</cfquery>
+			<!--- RAZ-2901 : QoQ to change the sort order by filename --->
+			<cfquery name="arguments.dl_query" dbtype="query">
+				SELECT *
+				FROM arguments.dl_query
+				ORDER BY filename
+			</cfquery>
+		<cfelseif rend_av EQ 't'>
+			<!--- RAZ-2901 : Get additional renditions --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+				SELECT av_id, av_link_url, av_link_title, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+				FROM #session.hostdbprefix#images i 
+				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r and av.av_link = 0
+				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND i.img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+				FROM #session.hostdbprefix#videos v
+				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r and av.av_link = 0
+				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+				FROM #session.hostdbprefix#audios a
+				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r and av.av_link = 0
+				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND a.aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			</cfquery>
+		</cfif>
 	</cfif>
 	<!--- Loop over records --->
 	<cfloop query="arguments.dl_query">
 		<!--- Set var --->
 		<cfset var theorgname = "">
 		<!--- Feedback --->
+		<cfif rend_av EQ 'f'>
 		<cfoutput>. </cfoutput>
+		</cfif>
 		<cfflush>
 		<!--- RAZ-2906 : Get custom file name and original file name --->
 		<cfset var name = filename>
@@ -4909,6 +4948,8 @@
 			<cfset var thefinalname = theorgname>
 			<cfset var thiscloudurl = cloud_url>
 			<cfset var theorgext = ext>
+			<cfset var tn = listfirst(filename,".")>
+			<cfset var thefinalname = "thumb_#tn#.#ext#">
 		<cfelseif arguments.dl_originals>
 			<cfset var theorgname = filename_org>
 			<cfset var thefinalname = filename>
@@ -4918,30 +4959,61 @@
 			<cfif arguments.dl_renditions>
 				<cfset var tn = listfirst(filename,".")>
 				<cfset var te = listlast(filename_org,".")>
-				<cfset var thefinalname = tn & "_" & currentRow & "." & te>
+				<cfset var thefinalname = "rend_" & tn & "." & te>
 			</cfif>
+		</cfif>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 't'>
+			<cfset var tn = listfirst(filename_org,".")>
+			<cfset var te = listlast(av_link_title,".")>
+			<cfset var avid = av_id>
+			<cfset var thefinalname = "rend_" & tn & "_#avid#" & "." & te>
+			<cfset var filename_av = listlast('#av_link_url#','/')>
+			<cfset var theorgname = filename_av>
+			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
+			<cfset var link_url = replacenocase('#fs#','#filename_av#','')>
+			<cfset var path_to_asset = reverse('#replacenocase('#reverse('#link_url#')#','/','','one')#')>
 		</cfif>
 		<!--- Start download but only if theorgname is not empty --->
 		<cfif theorgname NEQ "">
-			<!--- Check if thefinalname has an extension. If not add the original one --->
-			<cfif listlast(thefinalname,".") NEQ theorgext>
-				<cfset var thefinalname = filename & "." & theorgext>
-			</cfif>
-			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
-				<cfif name EQ orgname>
-					<cfif arguments.dl_thumbnails AND kind EQ "img">
-						<cfset var thefinalname = "thumb_#id#">
-					<cfelseif arguments.dl_originals>
-						<cfset var thefinalname = filename>
-					<cfelseif arguments.dl_renditions>
-						<cfset var thefinalname = listfirst(filename,".")>
-					</cfif>
+			<!--- RAZ-2901 : Check for additional renditions --->
+			<cfif rend_av EQ 'f'>
+				<!--- Check if thefinalname has an extension. If not add the original one --->
+				<cfif listlast(thefinalname,".") NEQ theorgext>
+					<cfset var thefinalname = filename & "." & theorgext>
+				</cfif>
+				<!--- RAZ-2901 : Set Original Video name --->
+				<cfif kind EQ 'vid'>
+					<cfset var theorgname = filename>
+					<cfset var thefinalname = filename>
+					<cfset var theorgext = listlast(thefinalname,".")>
+				</cfif>
+				<cfif kind EQ 'vid' AND arguments.dl_renditions>
+					<cfset var tn = listfirst(filename,".")>
+					<cfset var te = listlast(filename_org,".")>
+					<cfset var thefinalname = "rend_" & tn & "." & te>
 				</cfif>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
+				<!--- RAZ-2901 : Rename if file already exists --->
+				<cfif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_thumbnails>
+					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" & "." & theorgext>
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelseif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_originals>
+					<cfset var thefinalname = listfirst(filename,".") & "_#count#" & "." & theorgext>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelse>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				</cfif>
+				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
+				<cfif rend_av EQ 'f'>
+					<cfif filename[currentrow-1] EQ filename[currentrow]>
+						<cfset var count = count + 1>
+					<cfelse> 
+						<cfset var count = 1>
+				</cfif>
+				</cfif>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
 				<cftry>
@@ -4979,11 +5051,36 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
+				<!--- RAZ-2901 : Rename if file already exists --->
+				<cfif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_thumbnails>
+					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" & "." & theorgext>
 				<cfinvoke component="amazon" method="Download">
 					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
 					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
 					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
 				</cfinvoke>
+				<cfelseif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_originals>
+					<cfset var thefinalname = listfirst(filename,".") & "_#count#" & "." & theorgext>
+					<cfinvoke component="amazon" method="Download">
+						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+						<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+					</cfinvoke>
+				<cfelse>
+					<cfinvoke component="amazon" method="Download">
+						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+						<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+					</cfinvoke>
+				</cfif>
+				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
+				<cfif rend_av EQ 'f'>
+					<cfif filename[currentrow-1] EQ filename[currentrow]>
+						<cfset var count = count + 1>
+					<cfelse> 
+						<cfset var count = 1>
+					</cfif>
+				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif link_kind EQ "url">
 				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
@@ -6358,6 +6455,90 @@
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
+</cffunction>
+
+<!--- RAZ-2901 : Download Folder as per folder structure Razuna --->
+<cffunction name="download_folder_structure" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset var thisstruct = structnew()>
+	<cfparam name="arguments.thestruct.awsbucket" default="" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<cftry>
+		<!--- Set time for remove --->
+		<cfset var removetime = DateAdd("h", -2, "#now()#")>
+		<!--- Remove old directories --->
+		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thedirs">
+		<!--- Loop over dirs --->
+		<cfloop query="thedirs">
+			<!--- If a directory --->
+			<cfif type EQ "dir" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#name#" recurse="true" mode="775">
+			<cfelseif type EQ "file" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
+	</cftry>
+	<!--- Create directory --->
+	<cfset var basketname = createuuid("")>
+	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<!--- Get Parent folder names --->
+	<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.folder_id#" returnvariable="crumbs" />
+	<cfset parentfoldersname = ''>
+	<cfloop list="#crumbs#" index="idx" delimiters=";">
+		<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
+	</cfloop>
+	<!--- Create Directory as per folder structure in Razuna --->
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	<!--- Create folders according to selection and download --->
+	<!--- Thumbnails --->
+	<cfif arguments.thestruct.download_thumbnails>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/thumbnails" mode="775">
+		<!--- Download thumbnails --->
+		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Originals --->
+	<cfif arguments.thestruct.download_originals>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the originals<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		<!--- Download originals --->
+		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Renditions --->
+	<cfif arguments.thestruct.download_renditions>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the renditions<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		<!--- Download renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+		<!--- Download additional renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" rend_av="t" />
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
+	<cfflush>
+	<!--- All done. ZIP and finish --->
+	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/folder_#arguments.thestruct.folder_id#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<!--- Zip path for download --->
+	<cfoutput><p><a href="outgoing/folder_#arguments.thestruct.folder_id#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Remove the temp folder --->
+	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes" />
 </cffunction>
 
 </cfcomponent>

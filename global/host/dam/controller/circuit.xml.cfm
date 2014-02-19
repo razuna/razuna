@@ -3868,6 +3868,19 @@
 	<fuseaction name="videos_detail_save">
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<do action="custom_fields_save" />
+			</true>
+		</if>
+		<!-- CFC: Save file detail -->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
+		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="vid" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
@@ -4207,6 +4220,19 @@
 	<fuseaction name="audios_detail_save">
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<do action="custom_fields_save" />
+			</true>
+		</if>
+		<!-- CFC: Save file detail -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
+		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="aud" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
@@ -9047,8 +9073,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
 		<!-- Action: Export Metadata -->
 		<do action="meta_export_do" />
-		<!-- CFC: Show the progress download -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder(attributes)" />
+		<!-- RAZ-2901 CFC: Show the progress download -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
 	</fuseaction>
 	
 	<!--  -->
