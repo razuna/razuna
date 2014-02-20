@@ -185,7 +185,7 @@
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
-			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
+			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id#+' + value_#cfid# + ')';
 		}
 		</cfoutput></cfloop>
 		// Create the searchtext
