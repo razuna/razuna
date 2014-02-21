@@ -7536,6 +7536,13 @@
 				<set name="session.fid" value="#attributes.fid#" />
 				<!-- CFC: Check if user is allowed for this folder -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
+				<!-- If user does not have permission then redirect to login screen-->
+				<if condition="#request.shareperm_fldr# EQ 'locked'">
+					<true>
+						<!-- Relocate to login -->
+						<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
+					</true>
+				</if>
 				<!-- Relocate -->
 				<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 			</true>

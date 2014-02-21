@@ -4120,7 +4120,7 @@
 				CASE
 					WHEN EXISTS(
 						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+						FROM #session.hostdbprefix#folders_groups fg INNER JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 						WHERE fg.folder_id_r = f.folder_id
 						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
@@ -4148,7 +4148,7 @@
 				CASE
 					WHEN EXISTS(
 						SELECT fg.col_id_r
-						FROM #session.hostdbprefix#collections_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+						FROM #session.hostdbprefix#collections_groups fg INNER JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 						WHERE fg.col_id_r = f.col_id
 						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
@@ -4166,6 +4166,7 @@
 		</cfquery>
 	</cfif>
 	<cfoutput>#qry.perm#</cfoutput>
+	<cfset request.shareperm_fldr = qry.perm>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
