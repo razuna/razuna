@@ -613,6 +613,8 @@
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.folder_id = newfolderid>
+			<!--- Apply custom settings to new folder --->
+			<cfinvoke component="global.cfc.folders" method="apply_custom_shared_setting" folder_id="#newfolderid#" />
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
