@@ -194,7 +194,7 @@
 		<!--- Convert space to an underscore --->
 		<cfset thefilename = REReplaceNoCase(thefilename, " ", "_", "ALL")>
 		<!--- All foreign chars are now converted, except the - --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:alnum:]^\-\_]", "", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:alnum:]^\-\_\.]", "", "ALL")>
 		<!--- Danish Chars --->
 		<cfset thefilename = REReplaceNoCase(thefilename, "([å]+)", "aa", "ALL")>
 		<cfset thefilename = REReplaceNoCase(thefilename, "([æ]+)", "ae", "ALL")>
@@ -208,7 +208,7 @@
 		<cfset thefilename = REReplaceNoCase(thefilename, "([à]+)", "a", "ALL")>
 		<cfset thefilename = REReplaceNoCase(thefilename, "([é]+)", "e", "ALL")>
 		<!--- If all fails then --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\-\_\s]", "", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\-\_\.\s]", "", "ALL")>
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
 			<cfset thefilename = "#thefilename#.#fileNameExt.theExt#">
@@ -809,6 +809,38 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
+
+		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
+		<cfset console(upcstruct)>
+		<cfif upcstruct.upcenabled>
+			<!--- Get UPC number for asset  from database --->
+			<cfquery datasource="#application.razuna.datasource#" name="get_upc">
+					SELECT img_upc_number as upcnumber FROM  #session.hostdbprefix#images
+					WHERE img_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					UNION
+					SELECT aud_upc_number as upcnumber FROM  #session.hostdbprefix#audios
+					WHERE aud_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					UNION
+					SELECT vid_upc_number as upcnumber FROM  #session.hostdbprefix#videos
+					WHERE vid_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					UNION
+					SELECT file_upc_number as upcnumber FROM  #session.hostdbprefix#files
+					WHERE file_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+
+			<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
+				<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
+				<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+			</cfinvoke>
+			<cfset var filenum = getToken(arguments.thestruct.av_link_title,2,'.') >
+			<cfif isnumeric(filenum)>
+				<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '.#filenum#'>
+			<cfelse>
+				<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr>
+			</cfif>
+			
+		</cfif>
+
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
@@ -1563,7 +1595,78 @@ Comment:<br>
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction> 
+	
+	<cffunction name="isUPC"  hint="Check whether host, user and folder are UPC enabled" returntype="Struct">
+		<!--- For UPC to be enabled 3 conditions must be fulfilled:
+		1) The host must have UPC enabled in settings
+		2) Folder  must have UPC label
+		3) User must be part of a group which has UPC size set
+		 --->
+		<cfargument name ="folder_id" required="true" hint="folder to check for UPC label">
+		<cfset var upcstruct = structnew()>
+		<cfset upcstruct.upcenabled = false>
+		<cfset upcstruct.upcgrpsize = "">
+		<!--- Check if UPC enabled in settings --->
+		<cfquery datasource="#application.razuna.datasource#" name="is_upc_enabled">
+			SELECT set2_upc_enabled FROM #session.hostdbprefix#settings_2
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
 
+		<!--- Check if folder has UPC label --->
+		<cfquery datasource="#application.razuna.datasource#" name="is_folder_upc_label">
+			SELECT 1 FROM #session.hostdbprefix#labels l, ct_labels c, #session.hostdbprefix#folders f
+			WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND (l.label_text = 'UPC' OR l.label_text = 'upc')
+			AND  c.ct_id_r =  f.folder_id
+			AND  c.ct_type = 'folder'
+			AND  c.ct_label_id  = l.label_id
+			AND f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+
+		<!--- Check if user is part of a group for which UPC size is set--->
+		<cfquery datasource="#application.razuna.datasource#" name="grp_upc_size">
+			SELECT upc_size FROM groups g, ct_groups_users u
+			WHERE g.grp_id = u.ct_g_u_grp_id
+			AND u.ct_g_u_user_id = '#session.theuserid#'
+			AND g.upc_size is not null
+			AND g.upc_size != ''
+		</cfquery>
+
+		 <cfif is_upc_enabled.set2_upc_enabled eq 'true' and  is_folder_upc_label.recordcount neq 0 and isnumeric(grp_upc_size.upc_size)>
+		 	<cfset upcstruct.upcenabled = true>
+		 	<cfset upcstruct.upcgrpsize = grp_upc_size.upc_size>
+		 </cfif>
+		 <cfreturn upcstruct>
+	</cffunction>
+
+	<cffunction name="ExtractUPCInfo"  hint="Extracts UPC naming details based on group UPC size set for user and UPC number for asset" returntype="Struct">
+		<cfargument name="upcnumber" required="true" hint="UPC number for asset">
+		<cfargument name="upcgrpsize" required="true" hint="UPC group size set">
+		<cfset var upcstruct = structnew()>
+		<cfset upcstruct.extract_upcnumber = "">
+		<cfset upcstruct.upcprodstr = "">
+		<cfset upcstruct.upcmanufstr = "">
+		<!--- Extract UPC number --->
+		<cfset arguments.thestruct.dl_query.upc_number = arguments.upcnumber>
+		<cfinvoke component="folders" method="Extract_UPC" returnvariable="extract_upcnumber">
+			<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
+			<cfinvokeargument name="sUPC" value="#arguments.upcnumber#">
+			<cfinvokeargument name="iUPC_Option" value="#arguments.upcgrpsize#">
+		</cfinvoke>
+		<!--- Get Manufacturer String which will be the folder name --->
+		<cfinvoke component="folders" method="Find_Manuf_String" returnvariable="manuf_str">
+			<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
+		</cfinvoke>
+		<!--- Get Product String which will be the file name --->
+		<cfinvoke component="folders" method="Find_Prod_String" returnvariable="prod_str">
+			<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
+		</cfinvoke>
+		<cfset upcstruct.extract_upcnumber = extract_upcnumber>
+		<cfset upcstruct.upcmanufstr = manuf_str>
+		<cfset upcstruct.upcprodstr = prod_str>
+		<cfreturn upcstruct>
+	</cffunction>
+	
 	<cffunction name="fixdbintegrityissues" returntype="void" hint="Put any database code here to fix issues with invalid data in database e.g. set boolean fields to have default boolean values instead of empty values which will throw errors in boolean type conditions etc.">
 		<!--- Use this format to specify tables and columns in the table to set to a specified value instead of an empty string
 			<cfset setempty2val["table1"] = "col1:'val1',col2:NULL">
@@ -1581,4 +1684,5 @@ Comment:<br>
 		 	</cfloop>
 		</cfloop>
 	</cffunction>
+
 </cfcomponent>

@@ -192,19 +192,27 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.images_metadata EQ "">
+								<cfif attributes.cs.images_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.images_metadata EQ "img_upc_number AS cs_img_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
 									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
-										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 										<cfif m CONTAINS "_filename">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "_number"> 
+										    <cfif prefs.set2_upc_enabled>
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											#evaluate(listlast(m," "))#
+											</cfif>
 										<cfelse>
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -279,21 +287,29 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.videos_metadata EQ "">
+								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number")>
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
 									<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
-										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 										<cfif m CONTAINS "_filename">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "_number">
+											<cfif prefs.set2_upc_enabled>
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											#evaluate(listlast(m," "))#
+											</cfif>
 										<cfelse>
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -352,21 +368,29 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.audios_metadata EQ "">
+								<cfif attributes.cs.audios_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.audios_metadata EQ "aud_upc_number AS cs_aud_upc_number")>
 									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
 									<cfloop list="#attributes.cs.audios_metadata#" index="m" delimiters=",">
-										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 										<cfif m CONTAINS "_filename">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "_number">
+											<cfif prefs.set2_upc_enabled > 
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											#evaluate(listlast(m," "))#
+											</cfif>
 										<cfelse>
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -445,21 +469,29 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.files_metadata EQ "">
+								<cfif attributes.cs.files_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.files_metadata EQ "file_upc_number AS cs_file_upc_number")>
 									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
 									<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
-										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 										<cfif m CONTAINS "_filename">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "_number">
+											<cfif prefs.set2_upc_enabled >
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											#evaluate(listlast(m," "))#
+											</cfif>
 										<cfelse>
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />

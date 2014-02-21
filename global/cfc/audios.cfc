@@ -219,7 +219,7 @@
 	a.cloud_url, a.cloud_url_org, a.aud_group,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
-	a.path_to_asset, a.lucene_key, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
+	a.path_to_asset, a.lucene_key, a.aud_upc_number, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
 	u.user_first_name, u.user_last_name, fo.folder_name,
 	'' as perm
 	FROM #session.hostdbprefix#audios a 
@@ -373,6 +373,9 @@
 			SET
 			aud_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			aud_online = <cfqueryparam value="#arguments.thestruct.aud_online#" cfsqltype="cf_sql_varchar">,
+			<cfif isdefined("arguments.thestruct.aud_upc")>
+				aud_upc_number = <cfqueryparam value="#arguments.thestruct.aud_upc#" cfsqltype="cf_sql_varchar">,
+			</cfif>
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1287,6 +1290,33 @@
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
+
+				<!--- Check if UPC criterion is satisfied and needs to be enabled--->
+				<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
+					<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.folder_id_r#"/>
+				</cfinvoke>
+				<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
+				 <cfif upcstruct.upcenabled>
+				 	<cfset var get_upc ="">
+				 	<!--- Get UPC number for asset  from database --->
+					<cfquery datasource="#application.razuna.datasource#" name="get_upc">
+						SELECT aud_upc_number as upcnumber FROM  #session.hostdbprefix#audios
+						WHERE aud_id =
+						 <cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
+							<cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">
+						<cfelse>
+							<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+						</cfif>
+					</cfquery>
+					
+					<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
+						<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
+						<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+					</cfinvoke>
+					
+					<cfset finalaudioname = upcinfo.upcprodstr>
+				</cfif>
+
 				<!--- Update the audio record with other information --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios

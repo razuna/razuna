@@ -201,6 +201,13 @@
 									</td>
 								</tr>
 							</cfif>
+							<!--- UPC Number --->
+							<cfif prefs.set2_upc_enabled>
+							<tr>
+								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("cs_vid_upc_number")#</td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="vid_upc" id="vid_upc" value="#qry_detail.detail.vid_upc_number#" ></td>
+							</tr>
+							</cfif>
 							<tr>
 								<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_size")#</td>
 								<td width="1%" nowrap="true"><cfif qry_detail.detail.link_kind EQ "url">n/a<cfelse>#qry_detail.thesize# MB</cfif></td>
@@ -360,8 +367,10 @@
 	}
 	// Submit form
 	function filesubmit(){
-		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords OR prefs.set2_upc_enabled>
 			var reqfield = false;
+			var isNumericField = false;
+			var str = '';
 			<cfif cs.req_filename>
 				var val_filename = $('##fname').val();
 				if (val_filename == '') reqfield = true;
@@ -375,7 +384,24 @@
 				if (val_keys == '') reqfield = true;
 			</cfif>
 			if (reqfield == true){
-				alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+				str = str +'#myFusebox.getApplicationData().defaults.trans("req_fields_error")#\n';
+			}
+			// UPC number size alert message
+			<cfif prefs.set2_upc_enabled>
+				var val_upc = $('##vid_upc').val();
+				if(!$.isNumeric(val_upc) && val_upc!='') isNumericField = true;
+			
+				if(isNumericField == true){
+					str = str +'Numeric values Only allowed\n';
+				}
+				<cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
+				if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
+					str = str +'Enter the correct size of the UPC.The size of UPC is '+'#qry_GroupsOfUser.upc_size#';
+				}
+				</cfif>
+			</cfif>
+			if(str != ''){
+				alert(str);
 				return false;
 			}
 		</cfif>

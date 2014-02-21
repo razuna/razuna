@@ -75,9 +75,11 @@
 								
 								// Show loading bar
 								$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+								<cfif !structKeyExists(attributes,'search_upc')>
 								$('###attributes.thediv#').load('#myself#c.search_simple', { view: theview, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "view">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 									$("##bodyoverlay").remove();
 								});
+								</cfif>
 							}
 						</script>
 					</div>
@@ -174,19 +176,27 @@
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<!--- custom metadata fields to show --->
-									<cfif attributes.cs.images_metadata EQ "">
+									<cfif attributes.cs.images_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.images_metadata EQ "img_upc_number AS cs_img_upc_number" )>
 										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,30)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											<cfif m CONTAINS "_filename">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 											<cfelseif m CONTAINS "_size">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											<cfelseif m CONTAINS "_time">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelseif m CONTAINS "_number"> 
+											    <cfif prefs.set2_upc_enabled>
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+												#evaluate(listlast(m," "))#
+												</cfif>
 											<cfelse>
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#evaluate(listlast(m," "))#
 											</cfif>
 											<br />
@@ -278,21 +288,29 @@
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<!--- custom metadata fields to show --->
-									<cfif attributes.cs.videos_metadata EQ "">
+									<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number")>
 										<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											<cfif m CONTAINS "_filename">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
+													#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelseif m CONTAINS "_number">
+												<cfif prefs.set2_upc_enabled>
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+												#evaluate(listlast(m," "))#
+												</cfif>
 											<cfelse>
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#evaluate(listlast(m," "))#
 											</cfif>
 											<br />
@@ -372,21 +390,29 @@
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<!--- custom metadata fields to show --->
-									<cfif attributes.cs.audios_metadata EQ "">
+									<cfif attributes.cs.audios_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.audios_metadata EQ "aud_upc_number AS cs_aud_upc_number")>
 										<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs.audios_metadata#" index="m" delimiters=",">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											<cfif m CONTAINS "_filename">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
+													#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelseif m CONTAINS "_number">
+												<cfif prefs.set2_upc_enabled > 
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+												#evaluate(listlast(m," "))#
+												</cfif>
 											<cfelse>
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#evaluate(listlast(m," "))#
 											</cfif>
 											<br />
@@ -480,21 +506,29 @@
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<!--- custom metadata fields to show --->
-									<cfif attributes.cs.files_metadata EQ "">
+									<cfif attributes.cs.files_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.files_metadata EQ "file_upc_number AS cs_file_upc_number")>
 										<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											<cfif m CONTAINS "_filename">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
+													#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelseif m CONTAINS "_number">
+												<cfif prefs.set2_upc_enabled >
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+												#evaluate(listlast(m," "))#
+												</cfif>
 											<cfelse>
+												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 												#evaluate(listlast(m," "))#
 											</cfif>
 											<br />
@@ -994,9 +1028,15 @@
 			// Show loading bar
 			$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 			// Load
-			$('##content_search' + '_' + thetab).load('index.cfm?fa=c.search_simple', { thetype: thetab, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "thetype"><cfoutput>#lcase(i)#:"#evaluate(i)#"</cfoutput>, </cfif></cfloop> }, function(){
+			<cfif !structKeyExists(attributes,'search_upc')> 
+				$('##content_search' + '_' + thetab).load('index.cfm?fa=c.search_simple', { thetype: thetab, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "thetype"><cfoutput>#lcase(i)#:"#evaluate(i)#"</cfoutput>, </cfif></cfloop> }, function(){
 					$("##bodyoverlay").remove();
 				});
+			<cfelse>
+				$('##content_search' + '_' + thetab).load('index.cfm?fa=c.searchupc', { thetype: thetab, fcall: true, search_upc:'#attributes.search_upc#' }, function(){
+					$("##bodyoverlay").remove();
+				});	
+			</cfif>	
 		}
 		<cfif session.view EQ "combined">
 			// Activate Chosen

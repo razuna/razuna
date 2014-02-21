@@ -41,6 +41,19 @@
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>
+			<!--- UPC Enabeld --->
+			<tr>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("upc_enabled")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="radio" name="set2_upc_enabled" value="true" <cfif prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("yes")#
+					<input type="radio" name="set2_upc_enabled" value="false" <cfif !prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("no")#
+				</td>
+			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
 			<!--- Image Settings --->
 			<tr>
 				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("image_settings")#</th>

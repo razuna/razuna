@@ -170,9 +170,15 @@
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Get selected option
 		var thesortby = $('##' + theselect + ' option:selected').val();
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+		<cfif !structKeyExists(attributes,'search_upc')>
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
+		<cfelse>
+			$('###attributes.thediv#').load('#myself#c.searchupc', { sortby: thesortby, fcall: true, search_upc:'#attributes.search_upc#', thetype:'#attributes.thetype#'}, function(){
+				$("##bodyoverlay").remove();
+			});	
+		</cfif>	
 	}
 	// Change the rowmax
 	function changerowmaxsearch(theselect){
@@ -185,9 +191,15 @@
 			$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 			// Get selected option
 			var themax = $('##' + theselect + ' option:selected').val();
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+			<cfif !structKeyExists(attributes,'search_upc')>
+				$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 					$("##bodyoverlay").remove();
-				}); 
+				});
+			<cfelse>	
+				$('###attributes.thediv#').load('#myself#c.searchupc', { rowmaxpage: themax, fcall: true, search_upc:'#attributes.search_upc#', thetype:'#attributes.thetype#' }, function(){
+					$("##bodyoverlay").remove();
+				});
+			</cfif>	 
 		}
 	}
 	// Change the pagelist
@@ -196,16 +208,23 @@
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Get selected option
 		var themax = $('##' + theselect + ' option:selected').val();
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+		<cfif !structKeyExists(attributes,'search_upc')>
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
+		<cfelse>
+			$('###attributes.thediv#').load('#myself#c.searchupc', { offset: themax, fcall: true, search_upc:'#attributes.search_upc#', thetype:'#attributes.thetype#' }, function(){
+				$("##bodyoverlay").remove();
+			});	
+		</cfif>	
 	}
 	// Change the pagelist
 	function backforth(theoffset){
 		// Show loading bar
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Load
-		$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', 
+		<cfif !structKeyExists(attributes,'search_upc')>
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', 
 			{ offset: theoffset, 
 				fcall: true, 
 				share: "#attributes.share#",
@@ -213,7 +232,17 @@
 			, function(){
 				$("##bodyoverlay").remove();
 			});
-
+		<cfelse>
+			$('###attributes.thediv#').load('#myself#c.searchupc', 
+			{ offset: theoffset, 
+				fcall: true, 
+				share: "#attributes.share#",
+				search_upc:'#attributes.search_upc#', thetype:'#attributes.thetype#' }
+			, function(){
+				$("##bodyoverlay").remove();
+			});
+		
+		</cfif>
 	}
 </script>
 

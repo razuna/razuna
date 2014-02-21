@@ -240,6 +240,13 @@
 												</td>
 											</tr>
 										</cfif>
+										<!--- UPC Number --->
+										<cfif prefs.set2_upc_enabled>	
+										<tr>
+											<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("cs_file_upc_number")#</td>
+											<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="file_upc" id="file_upc" value="#qry_detail.detail.file_upc_number#" ></td>
+										</tr>
+										</cfif>
 										<tr>
 											<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_size")#</td>
 											<td><cfif qry_detail.detail.link_kind EQ "url">n/a<cfelse>#qry_detail.thesize# MB</cfif></td>
@@ -421,8 +428,10 @@
 	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
 	// Submit form
 	function filesubmit(){
-		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords OR prefs.set2_upc_enabled>
 			var reqfield = false;
+			var isNumericField = false;
+			var str = '';
 			<cfif cs.req_filename>
 				var val_filename = $('##fname').val();
 				if (val_filename == '') reqfield = true;
@@ -436,7 +445,24 @@
 				if (val_keys == '') reqfield = true;
 			</cfif>
 			if (reqfield == true){
-				alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+				str = str +'#myFusebox.getApplicationData().defaults.trans("req_fields_error")#\n';
+			}
+			// UPC number size alert message
+			<cfif prefs.set2_upc_enabled>
+				var val_upc = $('##file_upc').val();
+				if(!$.isNumeric(val_upc) && val_upc!='') isNumericField = true;
+			
+				if(isNumericField == true){
+					str = str +'Numeric values Only allowed\n';
+				}
+				<cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
+				if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
+					str = str +'Enter the correct size of the UPC.The size of UPC is '+'#qry_GroupsOfUser.upc_size#';
+				}
+				</cfif>
+			</cfif>
+			if(str != ''){
+				alert(str);
 				return false;
 			}
 		</cfif>

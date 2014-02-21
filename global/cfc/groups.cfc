@@ -77,7 +77,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#variables.dsn#" name="localquery">
-	SELECT grp_name
+	SELECT grp_name, upc_size, upc_folder_format
 	FROM groups
 	WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -131,12 +131,14 @@
 	<cfset var newgrpid = createuuid()>
 	<cfquery datasource="#variables.dsn#">
 	INSERT INTO	groups
-	(grp_id, grp_name, grp_host_id, grp_mod_id)
+	(grp_id, grp_name, grp_host_id, grp_mod_id, upc_size, upc_folder_format)
 	VALUES(
 	<cfqueryparam value="#newgrpid#" cfsqltype="CF_SQL_VARCHAR">,
 	<cfqueryparam value="#arguments.thestruct.newgrp#" cfsqltype="cf_sql_varchar">,
 	<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
-	<cfqueryparam value="#arguments.thestruct.modules_dam_id#" cfsqltype="cf_sql_numeric">
+	<cfqueryparam value="#arguments.thestruct.modules_dam_id#" cfsqltype="cf_sql_numeric">,
+	<cfqueryparam value="#arguments.thestruct.sizeofupc#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#arguments.thestruct.upc_folder_structure#" cfsqltype="cf_sql_varchar">
 	)
 	</cfquery>
 	<cfreturn newgrpid>
@@ -149,6 +151,10 @@
 	<cfquery datasource="#variables.dsn#">
 		UPDATE groups
 		SET	grp_name = <cfqueryparam value="#arguments.thestruct.grpname#" cfsqltype="cf_sql_varchar">
+		<cfif structKeyExists(arguments.thestruct,'sizeofupc') AND arguments.thestruct.sizeofupc NEQ 0>
+			,upc_size = <cfqueryparam value="#arguments.thestruct.sizeofupc#" cfsqltype="CF_SQL_VARCHAR">
+			,upc_folder_format = <cfqueryparam value="#arguments.thestruct.upc_folder_structure#" cfsqltype="cf_sql_varchar">
+		</cfif>
 		WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<cfreturn />
