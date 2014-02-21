@@ -1273,6 +1273,7 @@
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("folders")>
 </cffunction>
 
 <!--- GET THE GROUPS FOR THIS COLLECTION --->
