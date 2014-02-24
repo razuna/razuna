@@ -9611,6 +9611,10 @@
 		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+
 		<!-- Show -->
 		<do action="ajax.rend_meta" />
 	</fuseaction>
