@@ -1293,7 +1293,7 @@
 
 				<!--- Check if UPC criterion is satisfied and needs to be enabled--->
 				<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
-					<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.folder_id_r#"/>
+					<cfinvokeargument name="folder_id" value="#arguments.thestruct.qry_detail.detail.folder_id_r#"/>
 				</cfinvoke>
 				<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 				 <cfif upcstruct.upcenabled>
@@ -1383,7 +1383,7 @@
 					</cfif>
 				</cfif>
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.folder_id_r#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.detail.folder_id_r#')>
 				<!--- Call Plugins --->
 				<cfset arguments.thestruct.fileid = newid.id>
 				<cfset arguments.thestruct.file_name = finalaudioname>
