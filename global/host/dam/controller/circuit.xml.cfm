@@ -7651,8 +7651,10 @@
 						<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
 					</true>
 				</if>
+				<!-- Encode login vars and pass it to sharep which will verify login with it -->
+				<invoke object="myFusebox.getApplicationData().security" methodcall="encrypt('#logindone.qryuser.user_id#','#logindone.notfound#')" returnvariable="ls" />
 				<!-- Relocate -->
-				<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;ls=#urlencodedformat(ls)#&amp;_v=#createuuid('')#" />
 			</true>
 			<!-- User not found -->
 			<false>
@@ -7673,6 +7675,33 @@
 		<if condition="structkeyexists(attributes,'fid')">
 			<true>
 				<set name="session.fid" value="#attributes.fid#" />
+			</true>
+		</if>
+
+		<!-- Check if folder is shared, secured. If so display log in -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckperm(attributes)" returnvariable="shared" />
+
+		<!-- If folder is open to everyone then bypass login checks -->
+		<if condition="#shared.everyone# EQ 'F'">
+			<true>
+				<!-- If login credentials not passed then redirect to login screen -->
+				<if condition="not isdefined('attributes.ls') eq true">
+					<true>
+						<!-- Relocate to login -->
+						<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
+					</true>
+				</if>
+				<!-- Decode and validate login credentials  -->
+				<!-- Decode login vars -->
+				<invoke object="myFusebox.getApplicationData().security" methodcall="decrypt('#urldecode(attributes.ls)#','F')" returnvariable="userid" />
+				<!-- Check if decoded userid exists in database -->
+				<invoke object="myFusebox.getApplicationData().security" methodcall="isuser('#userid#')" returnvariable="logcheck" />
+				<if condition="logcheck eq false">
+					<true>
+						<!-- Relocate to login -->
+						<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
+					</true>
+				</if>
 			</true>
 		</if>
 		<!-- CFC: Custom fields -->
