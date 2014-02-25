@@ -832,13 +832,15 @@ Comment:<br>
 				<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
 				<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
 			</cfinvoke>
-			<cfset var filenum = getToken(arguments.thestruct.av_link_title,2,'.') >
-			<cfif isnumeric(filenum)>
-				<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '.#filenum#'>
-			<cfelse>
-				<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr>
+			<!--- Only if product string is numeric then change filename --->
+			<cfif isNumeric(upcinfo.upcprodstr)>
+				<cfset var filenum = getToken(arguments.thestruct.av_link_title,2,'.') >
+				<cfif isnumeric(filenum)>
+					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '.#filenum#'>
+				<cfelse>
+					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr>
+				</cfif>
 			</cfif>
-			
 		</cfif>
 
 		<!--- Save --->

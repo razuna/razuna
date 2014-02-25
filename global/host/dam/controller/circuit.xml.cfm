@@ -9626,6 +9626,8 @@
 				<do action="custom_fields_save" />
 			</true>
 		</if>
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- Images -->
 		<if condition="attributes.thetype EQ 'img'">
 			<true>

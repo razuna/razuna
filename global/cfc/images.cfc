@@ -1435,8 +1435,6 @@
 				<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
 				<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
 			</cfinvoke>
-			
-			<cfset arguments.thestruct.thenamenoext = upcinfo.upcprodstr>
 		</cfif>
         		<!--- Animated format image thumb extension --->
 		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat EQ 'gif'> 
@@ -1452,7 +1450,12 @@
 		<cfelse>
 			img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
 		</cfif>
-		img_filename = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">, 
+		<!--- If UPC is enabled and product string is numeric then change filename --->
+		img_filename = <cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
+					<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					<cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">
+				</cfif>, 
 		img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
 		folder_id_r = <cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">, 
 		img_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
@@ -1494,19 +1497,21 @@
 				WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Add to descriptions and keywords --->
-			<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#images_text
-				(id_inc, img_id_r, lang_id_r, img_description, img_keywords, host_id)
-				VALUES(
-				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="#qry_details.lang_id_r#" cfsqltype="cf_sql_numeric">, 
-				<cfqueryparam value="#ltrim(qry_details.thedesc)#" cfsqltype="cf_sql_varchar">, 
-				<cfqueryparam value="#ltrim(qry_details.thekeys)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-			</cfquery>
+			<cfif qry_details.recordcount neq 0>
+				<!--- Add to descriptions and keywords --->
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#images_text
+					(id_inc, img_id_r, lang_id_r, img_description, img_keywords, host_id)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#qry_details.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+					<cfqueryparam value="#ltrim(qry_details.thedesc)#" cfsqltype="cf_sql_varchar">, 
+					<cfqueryparam value="#ltrim(qry_details.thekeys)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
 			<cfif structKeyExists(arguments.thestruct,'qry_cf') AND arguments.thestruct.qry_cf.recordcount NEQ 0>
 				<cfloop query="arguments.thestruct.qry_cf">
 					<cfquery datasource="#application.razuna.datasource#">

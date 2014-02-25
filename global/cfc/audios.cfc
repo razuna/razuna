@@ -1313,8 +1313,6 @@
 						<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
 						<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
 					</cfinvoke>
-					
-					<cfset finalaudioname = upcinfo.upcprodstr>
 				</cfif>
 
 				<!--- Update the audio record with other information --->
@@ -1326,7 +1324,12 @@
 				<cfelse>
 					aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
 				</cfif>
-				aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#finalaudioname#">,
+				<!--- If UPC is enabled and product string is numeric then change filename --->
+				aud_name = 	<cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
+							<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
+						<cfelse>
+							<cfqueryparam value="finalaudioname" cfsqltype="cf_sql_varchar">
+						</cfif>, 
 				aud_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 				aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 				aud_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
@@ -1347,25 +1350,27 @@
 				<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
 				<cfif structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true'>
 					<!--- Get descriptions and keywords  --->
-					<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtext">
+					<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtxt">
 						SELECT lang_id_r,aud_description as thedesc,aud_keywords as thekeys
 						FROM #session.hostdbprefix#audios_text
 						WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
-					<!--- Add to descriptions and keywords--->
-					<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO #session.hostdbprefix#audios_text
-						(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
-						VALUES(
-						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#qry_theaudtext.lang_id_r#" cfsqltype="cf_sql_numeric">, 
-						<cfqueryparam value="#ltrim(qry_theaudtext.thedesc)#" cfsqltype="cf_sql_varchar">, 
-						<cfqueryparam value="#ltrim(qry_theaudtext.thekeys)#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-					</cfquery>
+					<cfif qry_theaudtxt.recordcount neq 0>
+						<!--- Add to descriptions and keywords--->
+						<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#audios_text
+							(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
+							VALUES(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+							<cfqueryparam value="#ltrim(qry_theaudtxt.thedesc)#" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#ltrim(qry_theaudtxt.thekeys)#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+						</cfquery>
+					</cfif>
 					<cfif structKeyExists(arguments.thestruct,'qry_cf') AND arguments.thestruct.qry_cf.recordcount NEQ 0>
 						<cfloop query="arguments.thestruct.qry_cf">
 							<cfquery datasource="#application.razuna.datasource#">

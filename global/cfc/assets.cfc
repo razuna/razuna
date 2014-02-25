@@ -4210,17 +4210,17 @@ This is the main function called directly by a single upload else from addassets
 				aud_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar">,
 			</cfif>
 		<cfelse>
-		aud_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
-			aud_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
-		aud_name_org = 
+			aud_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
+			aud_name_org = 
 			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 				<cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
 			<cfelse>
 				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			</cfif>,
-		aud_meta = <cfqueryparam value="#idtags#" cfsqltype="cf_sql_varchar">, 
-		link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
+			aud_meta = <cfqueryparam value="#idtags#" cfsqltype="cf_sql_varchar">, 
+			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
 		</cfif>
+		aud_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
 		host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">,
 		path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
