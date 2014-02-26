@@ -455,11 +455,11 @@
 				if(isNumericField == true){
 					str = str +'Numeric values Only allowed\n';
 				}
-				<cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
-				if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
-					str = str +'Enter the correct size of the UPC.The size of UPC is '+'#qry_GroupsOfUser.upc_size#';
-				}
-				</cfif>
+				// <cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
+				// if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
+				// 	str = str +'Enter the correct size of the UPC.The size of UPC is '+'#qry_GroupsOfUser.upc_size#';
+				// }
+				// </cfif>
 			</cfif>
 			if(str != ''){
 				alert(str);

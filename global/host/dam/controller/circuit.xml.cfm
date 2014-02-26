@@ -9369,7 +9369,7 @@
 	<fuseaction name="download_folder_do">
 		<!-- Param -->
 		<set name="attributes.what" value="folder" overwrite="false" />
-		<set name="attributes.expwhat" value="all" overwrite="false" />
+		<set name="attributes.expwhat" value="folder" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
@@ -9400,14 +9400,15 @@
 		<!-- Check the UPC folder download -->
 		<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
 			<true>
+				<do action="meta_export_do" />
 				<!-- CFC: Show the progress UPC download -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
 			</true>
 			<false>
 			<!-- Action: Export Metadata -->
-		<do action="meta_export_do" />
-		<!-- RAZ-2901 CFC: Show the progress download -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
+				<do action="meta_export_do" />
+				<!-- RAZ-2901 CFC: Show the progress download -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
 			</false>
 		</if>
 	</fuseaction>
