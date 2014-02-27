@@ -232,7 +232,15 @@
 			<!--- RAZ-2815 : Folder subscribe --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> asset_keywords #thevarchar#(3) DEFAULT 'F', asset_description #thevarchar#(3) DEFAULT 'F'
+					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> asset_keywords #thevarchar#(3) DEFAULT 'F'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> asset_description #thevarchar#(3) DEFAULT 'F'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
