@@ -219,7 +219,7 @@
 					host_id						#theint#,
 					folder_id					#thevarchar#(100),
 					user_id						#thevarchar#(100),
-					mail_interval_in_hours		#theint#(6),
+					mail_interval_in_hours		#theint#,
 					last_mail_notification_time #thetimestamp#,
 			 		PRIMARY KEY (fs_id)
 				)
