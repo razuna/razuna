@@ -169,17 +169,99 @@
 				</cfquery>
 				<cfcatch></cfcatch>
 			</cftry>
-		</cfif>
-		
-		<!--- If update number is lower then 17 (v. 1.6.2) --->
-		<cfif updatenumber.opt_value LT 18>
+
+			<!--- RAZ-2904 --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cloud_url_thumb #thevarchar#(500)
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			
+			<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					alter table raz1_settings_2 <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column SET2_LABELS_USERS #theclob#<cfelse>change SET2_LABELS_USERS SET2_LABELS_USERS #theclob#</cfif>
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+
+			<!--- RAZ-2839: Add a new column for additional version thumbnail url  --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> av_thumb_url #thevarchar#(500)
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			
+			<!--- RAZ-2829: Add an expiration date to a user and disable access when expiration occurs --->
+			       <cftry>
+				         <cfquery datasource="#application.razuna.datasource#">
+				         ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> USER_EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				         </cfquery>
+				         <cfcatch type="any">
+				           <cfset thelog(logname=logname,thecatch=cfcatch)>
+				         </cfcatch>
+			       </cftry>
+			
+		    	        <cftry>
+				<!--- RAZ-2815 : Folder subscribe --->
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_folder_subscribe 
+				(	
+					fs_id 	 					#thevarchar#(100),
+					host_id						#theint#,
+					folder_id					#thevarchar#(100),
+					user_id						#thevarchar#(100),
+					mail_interval_in_hours		#theint#(6),
+					last_mail_notification_time #thetimestamp#,
+			 		PRIMARY KEY (fs_id)
+				)
+				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2815 : Folder subscribe --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> (asset_keywords #thevarchar#(3) DEFAULT 'F', asset_description #thevarchar#(3) DEFAULT 'F')
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2815 Save Folder Subscribe scheduled event in CFML scheduling engine --->
+			<cfset var newschid = createuuid()>
+			<cfschedule action="update"
+				task="RazScheduledUploadEvent[#newschid#]" 
+				operation="HTTPRequest"
+				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="120"
+			>
+			<!--- RAZ-2815 Add FOLDER_ID Column in raz1_log_assets --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_log_assets add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FOLDER_ID #thevarchar#(100)
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_SSL #thevarchar#(5) DEFAULT 'false'
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET SET2_EMAIL_USE_SSL = 'false'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -190,8 +272,59 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_TLS #thevarchar#(5) DEFAULT 'false'
 				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2837 Add column SET2_RENDITION_METADATA to raz1_settings_2 table --->
+			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET SET2_EMAIL_USE_TLS = 'false'
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_RENDITION_METADATA #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_settings_2 SET SET2_RENDITION_METADATA = 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2831 : Create EXPORT_TEMPLATE table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_export_template
+				(
+					exp_id				#thevarchar#(100),
+					exp_field			#thevarchar#(200),
+					exp_value			#thevarchar#(2000),
+					exp_timestamp		#thetimestamp#, 
+					user_id				#thevarchar#(100),
+					host_id				#theint#,
+					PRIMARY KEY (exp_id)
+				)
+				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+
+		</cfif>
+		
+		<!--- If update number is lower then 17 (v. 1.6.2) --->
+		<cfif updatenumber.opt_value LT 18>
+			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_SSL #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- Add column SET2_EMAIL_USE_TLS to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_TLS #thevarchar#(5) DEFAULT 'false'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -205,9 +338,6 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> set2_custom_file_ext #thevarchar#(5) DEFAULT 'true'
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET set2_custom_file_ext = 'true'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
