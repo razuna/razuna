@@ -34,14 +34,16 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_av.assets">
 		<tr>
-			<td width="55">
-				<cfif application.razuna.storage EQ 'local'>
-				<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
-				<cfelse>
-					<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
-				</cfif>
-				 <a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50" width="50"></a>
-			</td>
+			<cfif av_type eq 'img'>
+				<td width="55">
+					<cfif application.razuna.storage EQ 'local'>
+					<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
+					<cfelse>
+						<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
+					</cfif>
+					 <a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50" width="50"></a>
+				</td>
+			</cfif>
 			<td valign="top">
 				<strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)<br />
 				<a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
