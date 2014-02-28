@@ -4818,7 +4818,6 @@ This is the main function called directly by a single upload else from addassets
 <!--- Process Upload Additional versions --->
 <cffunction name="addassetav" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
-	
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.frompath" default="false">
 	<cfparam name="arguments.thestruct.thesize" default="false">
@@ -4958,7 +4957,15 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Put the thread result into general struct --->
 	<cfset arguments.thestruct.thexmp = cfthread["xmp#arguments.thestruct.newid#"].thexmp>
 
-	<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
+	<!--- Create thumbnail if image file --->
+	<cfif arguments.thestruct.thefiletype eq 'img'>
+		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
+	</cfif>
+
+	<!--- <cfif arguments.thestruct.thefiletype eq 'vid'>
+		<cfset arguments.thestruct.thisvid.finalpath =
+		<cfinvoke component="videos" method="create_previews" thestruct="#arguments.thestruct#">
+	</cfif> --->
 
 	<!--- If we are local --->
 	<cfif application.razuna.storage EQ "local">
@@ -4974,8 +4981,12 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Move original image --->
 		<cffile action="#theaction#" source="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" mode="775">
-		<!--- Move thumb image --->
-		<cffile action="#theaction#" source="#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+		
+		<cfif arguments.thestruct.thefiletype eq 'img'>
+			<!--- Move thumb image --->
+			<cffile action="#theaction#" source="#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+		</cfif>
+		
 		<!--- Set the URL --->
 		<cfset arguments.thestruct.av_link_url = "/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#">
 		<!--- thumb URL --->
