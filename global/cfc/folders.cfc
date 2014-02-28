@@ -3194,7 +3194,7 @@
 				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				UNION ALL
-				SELECT v.vid_id as id, v.vid_filename as filename, v.folder_id_r, v.vid_extension as ext, v.vid_name_image as filename_org,
+				SELECT v.vid_id as id, v.vid_filename as filename, v.folder_id_r, v.vid_extension as ext, v.vid_name_org as filename_org,
 				'vid' as kind, v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 				v.path_to_asset, v.cloud_url, v.cloud_url, 
 				vt.vid_description as description, vt.vid_keywords as keywords, v.vid_height as vheight, v.vid_width as vwidth,
@@ -3293,7 +3293,7 @@
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
 			SELECT row_number() over() as rownr, v.vid_id as id, v.vid_filename as filename, v.folder_id_r,
-			v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
+			v.vid_extension as ext, v.vid_name_org as filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 			v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, v.vid_height as vheight, v.vid_width as vwidth,
 			(
@@ -3428,7 +3428,7 @@
 		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
-		v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
+		v.vid_extension as ext, v.vid_name_org as filename_org, 'vid' as kind, v.is_available,
 		v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
 		(
@@ -4960,6 +4960,8 @@
 				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND f.file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+
+				ORDER BY av_link_title
 			</cfquery>
 	  	</cfif>
 	</cfif>
@@ -4995,16 +4997,24 @@
 			<!--- If rendition we append the currentrow number in order to have same renditions formats still work --->
 			<cfif arguments.dl_renditions>
 				<cfset var tn = listfirst(filename,".")>
-				<cfset var te = listlast(filename_org,".")>
-				<cfset var thefinalname = "rend_" & tn & "." & te>
+				<cfif find('.', filename_org)>
+					<cfset var te = "." & listlast(filename_org,".")>
+				<cfelse>
+					<cfset var te = "">
+				</cfif>
+				<cfset var thefinalname = "rend_" & tn & te>
 			</cfif>
 		</cfif>
 		<!--- RAZ-2901 : Check for additional renditions --->
 		<cfif rend_av EQ 't'>
-			<cfset var tn = listfirst(filename_org,".")>
-			<cfset var te = listlast(av_link_title,".")>
+			<cfset var tn = listfirst(av_link_title,".")>
+			<cfif find('.', av_link_title)>
+				<cfset var te = "." & listlast(av_link_title,".")>
+			<cfelse>
+				<cfset var te = "">
+			</cfif>
 			<cfset var avid = av_id>
-			<cfset var thefinalname = "rend_" & tn & "_#avid#" & "." & te>
+			<cfset var thefinalname = "rend_" & tn & te>
 			<cfset var filename_av = listlast('#av_link_url#','/')>
 			<cfset var theorgname = filename_av>
 			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
@@ -5033,9 +5043,10 @@
 					<cfset var te = listlast(filename_org,".")>
 					<cfset var thefinalname = "rend_" & tn & "." & te>
 				</cfif>
-			</cfif>			
+			</cfif>		
+
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
-        			<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+        			<!--- <cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
         					<cfif arguments.dl_renditions>
         						<!--- <cfset var thefinalname = replacenocase(thefinalname,".#theext#","","ALL")> --->
         						<cfset var thefinalname = thefinalname>
@@ -5045,15 +5056,31 @@
         						<cfset var thefinalname = filename>
         					</cfif>
         					<cfset var the_org_ext = "">
-        			</cfif>
+        					<cfif listlast(thefinalname,".") neq theext>
+						<cfset thefinalname = replacenocase(thefinalname, ".#theext#","ALL")>
+					</cfif>
+        			<cfelse>
+        				<cfif listlast(thefinalname,".") neq theext>
+					<cfset thefinalname = thefinalname & ".#theext#">
+				</cfif>
+        			</cfif> --->
+        			<cfif rend_av EQ 'f'>
+        				<!--- Add filename extension if missing --->
+	        			<cfif listlast(thefinalname,".") neq theext>
+					<cfset thefinalname = thefinalname & ".#theext#">
+				</cfif>
+			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
 				<!--- RAZ-2901 : Rename if file already exists --->
-				<cfif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_thumbnails>
+				<cfif arguments.dl_thumbnails AND fileexists('#arguments.dl_folder#/#thefinalname#')>
 					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" & the_org_ext>
 					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
-				<cfelseif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_originals>
+				<cfelseif arguments.dl_originals AND fileexists('#arguments.dl_folder#/#thefinalname#')>
 					<cfset var thefinalname = listfirst(filename,".") & "_#count#" &  the_org_ext>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelseif rend_av eq 't' AND  fileexists('#arguments.dl_folder#/#thefinalname#')>
+					<cfset var thefinalname = "rend_" & listfirst(av_link_title,".") & "_#count#" &  te>
 					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
 				<cfelse>
 					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
@@ -5064,7 +5091,14 @@
 						<cfset var count = count + 1>
 					<cfelse> 
 						<cfset var count = 1>
-				</cfif>
+					</cfif>
+				<cfelse>
+					<cfset console(av_link_title[currentrow-1])>
+					<cfif av_link_title[currentrow-1] EQ av_link_title[currentrow]>
+						<cfset var count = count + 1>
+					<cfelse> 
+						<cfset var count = 1>
+					</cfif>
 				</cfif>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
@@ -6761,7 +6795,7 @@
 			<cfset arguments.dl_originals = true>
 			<!--- Query with group values --->
 			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
-				SELECT img_id as id,img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind, img_upc_number as upc_number, img_extension as ext
+				SELECT img_id as id,img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind, img_upc_number as upc_number, img_extension as extension
 				FROM #session.hostdbprefix#images
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
@@ -6770,7 +6804,7 @@
 					AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
 				</cfif>
 				UNION ALL
-				SELECT vid_id as id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind, vid_upc_number as upc_number, vid_extension as ext
+				SELECT vid_id as id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind, vid_upc_number as upc_number, vid_extension as extension
 				FROM #session.hostdbprefix#videos
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
@@ -6779,7 +6813,7 @@
 					AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
 				</cfif>
 				UNION ALL
-				SELECT aud_id as id,aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind, aud_upc_number as upc_number, aud_extension as ext
+				SELECT aud_id as id,aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind, aud_upc_number as upc_number, aud_extension as extension
 				FROM #session.hostdbprefix#audios
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
@@ -6842,8 +6876,8 @@
 		<cfif (arguments.is_upc EQ 'yes' AND (arguments.dl_query.id EQ '#arguments.thestruct.upc_asset_id#' OR arguments.dl_renditions)) OR (arguments.is_upc EQ 'no' AND (listfindnocase('#arguments.thestruct.other_asset_id#','#arguments.dl_query.id#') OR arguments.dl_renditions)) >
 		<!--- Set var --->
 		<cfset var theorgname = "">
-		<cfif not isdefined("ext")>
-			<cfset var ext = listlast(filename_org,".")>
+		<cfif not isdefined("extension")>
+			<cfset var extension = listlast(filename_org,".")>
 		</cfif>
 		
 		<!--- Feedback --->
@@ -6860,7 +6894,7 @@
 				<cfset var theorgext = ext>
 			<cfelse>
 				<cfif kind EQ 'vid' AND (arguments.dl_originals OR arguments.dl_renditions)>
-					<cfset var theorgname = replace(filename_org,'#listlast(filename_org,'.')#','#ext#','one')>
+					<cfset var theorgname = replace(filename_org,'#listlast(filename_org,'.')#','#extension#','one')>
 				<cfelseif not(arguments.dl_thumbnails)>
 					<cfset var theorgname = filename_org>
 				</cfif>
@@ -6885,7 +6919,7 @@
 				<cfset var theorgext = ext>
 			<cfelseif arguments.dl_originals>
 				<cfif kind EQ 'vid' AND (arguments.dl_originals OR arguments.dl_renditions)>
-					<cfset var theorgname = replace(filename_org,'#listlast(filename_org,'.')#','#ext#','one')>
+					<cfset var theorgname = replace(filename_org,'#listlast(filename_org,'.')#','#extension#','one')>
 				<cfelse>
 					<cfset var theorgname = filename_org>
 				</cfif>
@@ -6902,7 +6936,7 @@
 		</cfif>
 
 		<cfif not isdefined("theorgext")>
-			<cfset var theorgext = ext>
+			<cfset var theorgext = extension>
 		</cfif>
 		<!--- RAZ-2901 : Check for additional renditions --->
 		<cfif rend_av EQ 't'>
@@ -6927,8 +6961,9 @@
 			<cfset thefinalname = theorgname>
 		</cfif>
 
-		<!--- Remove extension from filenames for UPC--->
-		<cfset thefinalname = replacenocase(thefinalname,".#ext#","","ALL")>
+		<!--- Remove extension from filenames for UPC --->
+		<cfset thefinalname = replacenocase(replacenocase(thefinalname,".#extension#","","ALL"),".jpg","ALL")>
+
 		<!--- Start download but only if theorgname is not empty --->
 		<cfif theorgname NEQ "">
 			<cfset fileNameOK = true>
