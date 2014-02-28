@@ -1328,7 +1328,7 @@
 				aud_name = 	<cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
 							<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
 						<cfelse>
-							<cfqueryparam value="finalaudioname" cfsqltype="cf_sql_varchar">
+							<cfqueryparam value="#finalaudioname#" cfsqltype="cf_sql_varchar">
 						</cfif>, 
 				aud_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 				aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,

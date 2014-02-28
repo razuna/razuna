@@ -4988,7 +4988,7 @@
 			<cfset var thiscloudurl = cloud_url>
 			<cfset var theorgext = ext>
 			<cfset var tn = listfirst(filename,".")>
-			<cfset var thefinalname = "thumb_#tn#.#ext#">
+			<cfset var thefinalname = "thumb_#tn#_#id#.#ext#">
 		<cfelseif arguments.dl_originals>
 			<cfset var theorgname = filename_org>
 			<cfset var thefinalname = filename>
@@ -5014,7 +5014,7 @@
 				<cfset var te = "">
 			</cfif>
 			<cfset var avid = av_id>
-			<cfset var thefinalname = "rend_" & tn & te>
+			<cfset var thefinalname = "add_rend_" & tn & "_#av_id#" & te>
 			<cfset var filename_av = listlast('#av_link_url#','/')>
 			<cfset var theorgname = filename_av>
 			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
@@ -5040,8 +5040,12 @@
 				</cfif>
 				<cfif kind EQ 'vid' AND arguments.dl_renditions>
 					<cfset var tn = listfirst(filename,".")>
-					<cfset var te = listlast(filename_org,".")>
-					<cfset var thefinalname = "rend_" & tn & "." & te>
+					<cfif find('.', filename_org)>
+					<cfset var te = "." & listlast(filename_org,".")>
+					<cfelse>
+						<cfset var te = "">
+					</cfif>
+					<cfset var thefinalname = "rend_" & tn & te>
 				</cfif>
 			</cfif>		
 
@@ -5064,42 +5068,23 @@
 					<cfset thefinalname = thefinalname & ".#theext#">
 				</cfif>
         			</cfif> --->
-        			<cfif rend_av EQ 'f'>
+        			<cfif rend_av EQ 'f' and not arguments.dl_thumbnails>
         				<!--- Add filename extension if missing --->
 	        			<cfif listlast(thefinalname,".") neq theext>
 					<cfset thefinalname = thefinalname & ".#theext#">
 				</cfif>
 			</cfif>
+
+			<!--- RAZ-2901 : Rename if file already exists --->
+			<cfif arguments.dl_renditions AND fileexists('#arguments.dl_folder#/#thefinalname#')>
+				<cfset var thefinalname = "rend_" & tn & "_#count#" & te>
+			<cfelseif arguments.dl_originals AND fileexists('#arguments.dl_folder#/#thefinalname#')>
+				<cfset var thefinalname = listfirst(filename,".") & "_#count#" &  the_org_ext>
+			</cfif>
+				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
-				<!--- RAZ-2901 : Rename if file already exists --->
-				<cfif arguments.dl_thumbnails AND fileexists('#arguments.dl_folder#/#thefinalname#')>
-					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" & the_org_ext>
-					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
-				<cfelseif arguments.dl_originals AND fileexists('#arguments.dl_folder#/#thefinalname#')>
-					<cfset var thefinalname = listfirst(filename,".") & "_#count#" &  the_org_ext>
-					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
-				<cfelseif rend_av eq 't' AND  fileexists('#arguments.dl_folder#/#thefinalname#')>
-					<cfset var thefinalname = "rend_" & listfirst(av_link_title,".") & "_#count#" &  te>
-					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
-				<cfelse>
-					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
-				</cfif>
-				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
-				<cfif rend_av EQ 'f'>
-					<cfif filename[currentrow-1] EQ filename[currentrow]>
-						<cfset var count = count + 1>
-					<cfelse> 
-						<cfset var count = 1>
-					</cfif>
-				<cfelse>
-					<cfset console(av_link_title[currentrow-1])>
-					<cfif av_link_title[currentrow-1] EQ av_link_title[currentrow]>
-						<cfset var count = count + 1>
-					<cfelse> 
-						<cfset var count = 1>
-					</cfif>
-				</cfif>
+				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
 				<cftry>
@@ -5137,44 +5122,25 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
-				<!--- RAZ-2901 : Rename if file already exists --->
-				<cfif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_thumbnails>
-					<cfset var thefinalname = "thumb_" & listfirst(filename,".") & "_#count#" &  the_org_ext>
-				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
-					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
-					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
-				</cfinvoke>
-				<cfelseif fileexists('#arguments.dl_folder#/#thefinalname#') AND arguments.dl_originals>
-					<cfset var thefinalname = listfirst(filename,".") & "_#count#" &  the_org_ext>
-				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
-					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
-					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
-				</cfinvoke>
-				<cfelse>
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
 						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
 						<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
 					</cfinvoke>
-				</cfif>
-				<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
-				<cfif rend_av EQ 'f'>
-					<cfif filename[currentrow-1] EQ filename[currentrow]>
-						<cfset var count = count + 1>
-					<cfelse> 
-						<cfset var count = 1>
-					</cfif>
-				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif link_kind EQ "url">
-				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-							
-#link_path_url#" mode="775">
+				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:#link_path_url#" mode="775">
 			<!--- If this is a linked asset --->
 			<cfelseif link_kind EQ "lan">
 				<cffile action="copy" source="#link_path_url#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+			</cfif>
+			<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
+			<cfif rend_av EQ 'f'>
+				<cfif filename[currentrow-1] EQ filename[currentrow]>
+					<cfset var count = count + 1>
+				<cfelse> 
+					<cfset var count = 1>
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- Reset variables --->
