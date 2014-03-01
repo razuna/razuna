@@ -6836,7 +6836,6 @@
 				</cfif>
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			</cfquery>
-			<cfset console(arguments.dl_query)>
 	  	</cfif>
 	</cfif>
 	<!--- Loop over records --->
@@ -6908,7 +6907,6 @@
 		</cfif>
 		<!--- RAZ-2901 : Check for additional renditions --->
 		<cfif rend_av EQ 't'>
-			<cfset console("ENTERING AV")>
 			<cfset var filename_av = listlast('#av_link_url#','/')>
 			<cfif arguments.is_upc EQ 'yes'>
 				<cfset var rendition_version ="">
