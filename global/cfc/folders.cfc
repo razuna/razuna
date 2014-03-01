@@ -6717,6 +6717,7 @@
 			<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#/renditions" mode="775">
 			<!--- Download renditions --->
 			<cfinvoke method="download_upc_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="no"/>
+			<cfinvoke method="download_upc_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="no" rend_av='t'/>
 		</cfif>
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
@@ -6835,6 +6836,7 @@
 				</cfif>
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			</cfquery>
+			<cfset console(arguments.dl_query)>
 	  	</cfif>
 	</cfif>
 	<!--- Loop over records --->
@@ -6906,17 +6908,22 @@
 		</cfif>
 		<!--- RAZ-2901 : Check for additional renditions --->
 		<cfif rend_av EQ 't'>
+			<cfset console("ENTERING AV")>
 			<cfset var filename_av = listlast('#av_link_url#','/')>
-			<cfset var rendition_version ="">
-			<cfif find('.', av_link_title)>
-				<cfset rendition_version = listlast(av_link_title,'.')>
-				<cfif not isnumeric(rendition_version)>
-					<cfset rendition_version ="">
-				<cfelse>
-					<cfset rendition_version ="." & rendition_version>
+			<cfif arguments.is_upc EQ 'yes'>
+				<cfset var rendition_version ="">
+				<cfif find('.', av_link_title)>
+					<cfset rendition_version = listlast(av_link_title,'.')>
+					<cfif not isnumeric(rendition_version)>
+						<cfset rendition_version ="">
+					<cfelse>
+						<cfset rendition_version ="." & rendition_version>
+					</cfif>
 				</cfif>
+				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#theorgext#">
+			<cfelse>
+				<cfset var thefinalname = filename_av>
 			</cfif>
-			<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#theorgext#">
 			<cfset var theorgname = filename_av>
 			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
 			<cfset var link_url = replacenocase('#fs#','#filename_av#','')>
@@ -6927,9 +6934,10 @@
 			<cfset thefinalname = theorgname>
 		</cfif>
 
-		<!--- Remove extension from filenames for UPC --->
-		<cfset thefinalname = replacenocase(replacenocase(thefinalname,".#extension#","","ALL"),".jpg","ALL")>
-
+		<cfif not arguments.dl_thumbnails and arguments.is_upc EQ 'yes'>
+			<!--- Remove extension from filenames for UPC --->
+			<cfset thefinalname = replacenocase(replacenocase(thefinalname,".#extension#","","ALL"),".jpg","ALL")>
+		</cfif>
 		<!--- Start download but only if theorgname is not empty --->
 		<cfif theorgname NEQ "">
 			<cfset fileNameOK = true>
