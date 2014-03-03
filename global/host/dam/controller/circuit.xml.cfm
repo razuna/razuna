@@ -6260,6 +6260,8 @@
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getUsersOfGroup" returnvariable="qry_groups_users">
 			<argument name="grp_id" value="2" />
 		</invoke>
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: Check if Janrain is enabled -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<!-- CFC: Get social -->
