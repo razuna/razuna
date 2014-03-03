@@ -724,7 +724,7 @@
 			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#i#">
 			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
 			<!--- Get the file from FTP --->
-			
+			<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilename >
 			<!--- If we are coming from a scheduled task then... --->
 			<cfif structkeyexists(arguments.thestruct,"sched")>
 				<cfset var remote_file = arguments.thestruct.folderpath & "/" & i>
@@ -1513,6 +1513,8 @@
 		<cfthread name="addasset#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#" action="run">
 			<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" />
 		</cfthread>
+		<!--- Join above thread --->
+		<cfthread action="join" name="addasset#arguments.thestruct.tempid#" />
 	</cfif>
 	<!--- Return --->
 	<cfreturn />
@@ -1571,10 +1573,10 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var returnid = 1>
 			<cfset arguments.thestruct.thefile = zipnameorg>
 		<cfelse>	
-			<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
-			<cfinvoke method="extractFromZip" thestruct="#arguments.thestruct#">
-			<cfset var returnid = 1>
-			<cfset arguments.thestruct.thefile = zipnameorg>
+		<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
+		<cfinvoke method="extractFromZip" thestruct="#arguments.thestruct#">
+		<cfset var returnid = 1>
+		<cfset arguments.thestruct.thefile = zipnameorg>
 		</cfif>
 	<cfelse>
 		<!--- Get and set file type and MIME content --->
@@ -1663,15 +1665,15 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 			</cfloop>
 		<cfelse>
-			<cfif NOT structkeyexists(arguments.thestruct,"thefile")>
-				<cfset arguments.thestruct.thefile = arguments.thestruct.qryfile.filename>
-			</cfif>
-			<cfset arguments.thestruct.thefile = arguments.thestruct.thefile & ",">
-			<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
-				<cfset arguments.thestruct.thefilename = i>
-				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
-			</cfloop>
+		<cfif NOT structkeyexists(arguments.thestruct,"thefile")>
+			<cfset arguments.thestruct.thefile = arguments.thestruct.qryfile.filename>
 		</cfif>
+		<cfset arguments.thestruct.thefile = arguments.thestruct.thefile & ",">
+		<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
+			<cfset arguments.thestruct.thefilename = i>
+			<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
+		</cfloop>
+	</cfif>
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.qryfile.path>
@@ -1928,8 +1930,8 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Call versions component to do the old versions thingy --->
 			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
 		<cfelse>	
-			<!--- Call versions component to do the versions thingy --->
-			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- Call versions component to do the versions thingy --->
+		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 		</cfif>
 	<!--- This is for normal adding --->
 	<cfelse>
@@ -2347,8 +2349,8 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Call versions component to do the old versions thingy --->
 			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
 		<cfelse>	
-			<!--- Call versions component to do the versions thingy --->
-			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- Call versions component to do the versions thingy --->
+		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 		</cfif>
 		<!--- Set the newid --->
 		<cfset arguments.thestruct.newid = 1>
@@ -2386,9 +2388,12 @@ This is the main function called directly by a single upload else from addassets
 			img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">,
 			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
+			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1)>
 			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
+			</cfif>
 			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum')>
 			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 				,
 				img_filename_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
@@ -2399,6 +2404,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfif structkeyexists(arguments.thestruct.qryfile,"groupid") AND arguments.thestruct.qryfile.groupid NEQ "">
 				,
 				img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfif>
 			</cfif>
 			<!--- For cloud --->
 			<cfif application.razuna.storage NEQ "local" AND arguments.thestruct.qryfile.link_kind EQ "">
@@ -2416,6 +2422,29 @@ This is the main function called directly by a single upload else from addassets
 					FROM #session.hostdbprefix#folders 
 					WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
+				<!--- Check the UPC rendition upload --->
+				<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND attributes.intstruct.upcRenditionNum NEQ 1>
+					 <!--- Add to shared options --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#share_options
+					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+					VALUES(
+					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+					<cfif structKeyExists(attributes.intstruct,'qryGroupDetails') AND attributes.intstruct.qryGroupDetails.recordcount NEQ 0 >
+						<cfqueryparam value="#attributes.intstruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+					<cfelse>
+						<cfqueryparam value="" null="true" cfsqltype="cf_sql_varchar">,
+					</cfif>	
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				<cfelse>
 				<!--- Add to shared options --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#share_options
@@ -2447,6 +2476,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
+				</cfif>
 				<!--- If there are metadata fields then add them here --->
 				<cfif structKeyExists(attributes.intstruct,'metadata') AND attributes.intstruct.metadata EQ 1>
 					<!--- Check if API is called the old way --->
@@ -2528,6 +2558,15 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
 	<cfset arguments.thestruct.isWindows = isWindows()>
+	
+	<!--- Check the asset upload based on the UPC  --->
+	<cfinvoke method="assetuploadupc" returnvariable="arguments.thestruct.upc_name" >
+		<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+		<cfinvokeargument name="assetfrom" value="img">
+	</cfinvoke>
+	<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
+		<cfset arguments.thestruct.image_name = arguments.thestruct.upc_name >
+	</cfif>
 	<!--- Random ID for script --->
 	<cfset var imguuid = arguments.thestruct.newid>
 	<!--- When we add a URL image we don't need to do the below --->
@@ -2535,7 +2574,12 @@ This is the main function called directly by a single upload else from addassets
 		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
-			SET img_filename = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			SET
+			<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+				img_filename = <cfqueryparam value="#arguments.thestruct.image_name#" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				img_filename = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			</cfif>
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 		</cfif>
@@ -2594,13 +2638,25 @@ This is the main function called directly by a single upload else from addassets
 			<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="img_meta" />
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
-			
 			<!--- DB update --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
 			SET
-			img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
+			<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+				img_filename_org = <cfqueryparam value="#arguments.thestruct.image_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+				<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
+					img_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+				</cfif>
+				<cfif arguments.thestruct.upcRenditionNum NEQ 1>
+					img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">,
+					img_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar"> 
+				</cfif>
+			<cfelse>
+				img_filename_org = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
 			img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
+			</cfif>
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 		<!--- </cfthread> --->
@@ -2723,6 +2779,14 @@ This is the main function called directly by a single upload else from addassets
 				</cfthread>
 				<!--- Wait for thread to finish --->
 				<cfthread action="join" name="upload#arguments.thestruct.newid#" />
+				<!--- Rename the UPC addtional rendition image --->
+				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					<cfthread name="rename#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
+						<cffile action="rename" source="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#">
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="rename#arguments.thestruct.newid#" />
+				</cfif>
 			</cfif>
 			<!--- Move thumbnail --->
 			<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
@@ -2800,6 +2864,16 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
 							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 						</cfinvoke>
+						<!--- Rename the UPC addtional rendition image --->
+						<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND attributes.intstruct.upcRenditionNum NEQ "">
+							<cfpause interval="5" />
+							<cfinvoke component="s3" method="renameObject">
+								<cfinvokeargument name="oldBucketName" value="#attributes.intstruct.awsbucket#">
+								<cfinvokeargument name="newBucketName" value="#attributes.intstruct.awsbucket#">
+								<cfinvokeargument name="oldFileKey" value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
+								<cfinvokeargument name="newFileKey" value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#">
+							</cfinvoke>
+						</cfif>
 					</cfthread>
 					<cfthread action="join" name="#upt#" />
 				</cfif>
@@ -3100,15 +3174,15 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Set original and thumbnail width and height --->
 		<cfif (!structKeyExists(arguments.thestruct,'av') OR arguments.thestruct.av NEQ 1) OR (!structKeyExists(arguments.thestruct,'extjs') OR arguments.thestruct.extjs NEQ 'T')>
 			<!--- Set original and thumbnail width and height --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET
-			thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
-			thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
-			img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
-			img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#images
+		SET
+		thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
+		thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
+		img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
+		img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.resizeImage">
@@ -3172,14 +3246,22 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Call versions component to do the old versions thingy --->
 			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
 		<cfelse>	
-			<!--- Call versions component to do the versions thingy --->
-			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- Call versions component to do the versions thingy --->
+		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 		</cfif>
 		<!--- Set the newid --->
 		<cfset arguments.thestruct.thisvid.newid = 1>
 		<cfset arguments.thestruct.newid = 1>
 	<!--- For normal adding --->
 	<cfelse>	
+		<!--- Check the asset upload based on the UPC  --->
+		<cfinvoke method="assetuploadupc" returnvariable="arguments.thestruct.upc_name" >
+			<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+			<cfinvokeargument name="assetfrom" value="vid">
+		</cfinvoke>
+		<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
+			<cfset arguments.thestruct.vid_name = arguments.thestruct.upc_name >
+		</cfif>
 		<!--- Create a new ID for the video --->
 		<cfset arguments.thestruct.thisvid.newid = arguments.thestruct.qryfile.tempid>
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
@@ -3210,6 +3292,10 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Move original (used to be in a thread) --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cffile action="copy" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#" mode="775">
+				</cfif>
+				<!--- Rename the UPC based upload audio --->
+				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					<cffile action="rename" source="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.vid_name#.#arguments.thestruct.qryfile.extension#">
 				</cfif>
 			<!--- NIRVANIX / AMAZON /AKMAI --->
 			<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
@@ -3347,6 +3433,19 @@ This is the main function called directly by a single upload else from addassets
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upmt#" />
+					<!--- Rename the UPC addtional rendition image --->
+					<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					<cfpause interval="5" />
+						<cfthread name="rename#upmt#" intupstruct="#arguments.thestruct#" action="run">
+							<cfinvoke component="s3" method="renameObject">
+								<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
+								<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
+								<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.qryfile.filename#">
+								<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.vid_name#.#attributes.intupstruct.qryfile.extension#">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="rename#upmt#" />
+					</cfif>
 				</cfif>
 				<!--- Get signed URLS for movie --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -3392,7 +3491,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfif>
 		<!--- We come from a link thus assign some variables --->
-		<cfelse arguments.thestruct.qryfile.link_kind EQ "url">
+		<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
 			<cfset var ts = 1>
 			<cfset var tw = 1>
 			<cfset var th = 1>
@@ -3414,8 +3513,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.thisvid.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1>
+			<cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		<cfelse>
 		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
+		</cfif>
 		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
@@ -3430,32 +3534,46 @@ This is the main function called directly by a single upload else from addassets
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#tw#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#th#">,
 		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+			vid_filename = <cfqueryparam value="#arguments.thestruct.vid_name#" cfsqltype="cf_sql_varchar">,
+			vid_name_org = <cfqueryparam value="#arguments.thestruct.vid_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+			<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
+				vid_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+			</cfif>
+			<cfif arguments.thestruct.upcRenditionNum EQ 1>
+				vid_online = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.vid_online#">,
+				vid_single_sale = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">,
+				vid_is_new = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">,
+				vid_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">,
+				vid_in_progress = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">,
+				vid_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar">,
+			</cfif>
+		<cfelse>
+			vid_online = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.vid_online#">,
+			vid_single_sale = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">,
+			vid_is_new = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">,
+			vid_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">,
+			vid_in_progress = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">,
+			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
+			vid_meta = <cfqueryparam value="#vid_meta#" cfsqltype="cf_sql_varchar">,
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				vid_name_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">,
+			<cfelse>
+				vid_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
+			</cfif>
+		</cfif>
 		vid_custom_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.newid#">,
-		vid_online = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.vid_online#">,
 		vid_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 		vid_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 		vid_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 		vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 		vid_create_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		vid_single_sale = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">,
-		vid_is_new = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">,
-		vid_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">,
-		vid_in_progress = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">,
 		vid_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 		link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
-		link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
-		vid_meta = <cfqueryparam value="#vid_meta#" cfsqltype="cf_sql_varchar">,
 		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
 		<cfif !application.razuna.rfs>
 			,
 			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-		</cfif>
-		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-			,
-			vid_name_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
-		<cfelse>
-			,
-			vid_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 		</cfif>
 		<cfif application.razuna.storage NEQ "local">
 			,
@@ -3470,6 +3588,8 @@ This is the main function called directly by a single upload else from addassets
 		WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thisvid.newid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<!--- Check the audio from UPC or Not --->
+		<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum EQ 1)>
 		<!--- If there are metadata fields then add them here --->
 		<cfif structkeyexists(arguments.thestruct,"metadata") AND arguments.thestruct.metadata EQ 1>
 			<!--- Check if API is called the old way --->
@@ -3495,6 +3615,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
 				</cfinvoke>
 			</cfif>
+		</cfif>
 		</cfif>
 		<!--- Log --->
 		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid=arguments.thestruct.thisvid.newid,folderid='#arguments.thestruct.folder_id#')>
@@ -3958,11 +4079,19 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Call versions component to do the old versions thingy --->
 			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
 		<cfelse>	
-			<!--- Call versions component to do the versions thingy --->
-			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+		<!--- Call versions component to do the versions thingy --->
+		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 		</cfif>
 	<!--- This is for normal adding --->
 	<cfelse>
+		<!--- Check the asset upload based on the UPC  --->
+		<cfinvoke method="assetuploadupc" returnvariable="arguments.thestruct.upc_name" >
+			<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+			<cfinvokeargument name="assetfrom" value="aud">
+		</cfinvoke>
+		<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
+			<cfset arguments.thestruct.aud_name = arguments.thestruct.upc_name >
+		</cfif>
 		<!--- Dont do this if the link_kind is a url --->
 		<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Set the correct path --->
@@ -4068,19 +4197,30 @@ This is the main function called directly by a single upload else from addassets
 		aud_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 		aud_owner = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 		aud_type = <cfqueryparam value="#arguments.thestruct.thefiletype#" cfsqltype="cf_sql_varchar">, 
-		aud_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
 		aud_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">, 
-		aud_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
-		aud_name_org = 
+		aud_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_varchar">, 
+		link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">, 
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+			aud_name = <cfqueryparam value="#arguments.thestruct.aud_name#" cfsqltype="cf_sql_varchar">,
+			aud_name_org = <cfqueryparam value="#arguments.thestruct.aud_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+			<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
+				aud_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+			</cfif>
+			<cfif arguments.thestruct.upcRenditionNum EQ 1>
+				aud_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar">,
+			</cfif>
+		<cfelse>
+			aud_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
+			aud_name_org = 
 			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 				<cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
 			<cfelse>
 				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			</cfif>,
-		aud_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_varchar">, 
-		aud_meta = <cfqueryparam value="#idtags#" cfsqltype="cf_sql_varchar">, 
-		link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">, 
-		link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
+			aud_meta = <cfqueryparam value="#idtags#" cfsqltype="cf_sql_varchar">, 
+			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
+		</cfif>
+		aud_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
 		host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">,
 		path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
@@ -4089,6 +4229,8 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
+		<!--- Check the audio from UPC or NOT --->
+		<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum EQ 1)>
 		<!--- Add the TEXTS to the DB. We have to hide this if we are coming from FCK --->
 		<cfif structkeyexists(arguments.thestruct,'fieldname') AND arguments.thestruct.fieldname NEQ "NewFile" AND structkeyexists(arguments.thestruct,"langcount")>
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
@@ -4114,6 +4256,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfloop>
 		</cfif>
+		</cfif>
 		<!--- Upload --->
 		<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Move the file to its own directory --->
@@ -4138,6 +4281,10 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Move the MP3 but only if local asset link --->
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3")>
 					<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.filenamenoext4copy#.mp3" mode="775">
+				</cfif>
+				<!--- Rename the UPC based upload audio --->
+				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					<cffile action="rename" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.aud_name#.#arguments.thestruct.qryfile.extension#">
 				</cfif>
 			<!--- NIRVANIX --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
@@ -4238,6 +4385,19 @@ This is the main function called directly by a single upload else from addassets
 					</cfthread>
 					<cfthread action="join" name="#upmp#" />
 				</cfif>
+				<!--- Rename the UPC addtional rendition image --->
+				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					<cfpause interval="5" />
+					<cfthread name="rename#upa#" intupstruct="#arguments.thestruct#" action="run">
+						<cfinvoke component="s3" method="renameObject">
+							<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
+							<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
+							<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
+							<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.aud_name#.#attributes.intupstruct.qryfile.extension#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="rename#upa#" />
+				</cfif>
 				<!--- Get signed URLS --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -4326,12 +4486,19 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1>
+			<cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		<cfelse>
 		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#iif(get_dl_params.share_dl_org eq 't',1,0)#" cfsqltype="cf_sql_varchar">,
+		</cfif>
 		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
+		<!--- Check the audio from UPC or Not --->
+		<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum EQ 1)>
 		<!--- If there are metadata fields then add them here --->
 		<cfif structkeyexists(arguments.thestruct,"metadata") AND arguments.thestruct.metadata EQ 1>
 			<!--- Check if API is called the old way --->
@@ -4357,6 +4524,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
 				</cfinvoke>
 			</cfif>
+		</cfif>
 		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
@@ -5088,16 +5256,16 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.folder_path,"/\")>
 	<!--- Since we come from the uploader we dont create the folder --->
 	<cfif !arguments.thestruct.nofolder>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
-		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
-		</cfif>
+	<!--- Add the folder --->
+	<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+	<!--- If we store on the file system we create the folder here --->
+	<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+	</cfif>
 	<cfelse>
 		<!--- Set the folder id  --->
 		<cfset new_folder_id = arguments.thestruct.theid>
@@ -5130,39 +5298,41 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.orgsize = size>
 		<!--- Now add the asset --->
 		<cfif thefiles.recordcount LT 10>
-			<cfthread intstruct="#arguments.thestruct#" action="run">
+			<cfset var upt = Createuuid("")>
+			<cfthread name="#upt#" intstruct="#arguments.thestruct#" action="run">
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
+			<cfthread action="join" name="#upt#" />
 		<cfelse>
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
 		</cfif>
 	</cfloop>
 	<!--- Since we come from upload we can remove the directory --->
 	<cfif !arguments.thestruct.nofolder>
+	<!--- Feedback --->
+	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+	<cfflush>
+	<!--- Check if folder has subfolders if so add them recursively --->
+	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
+	<!--- Filter out hidden dirs --->
+	<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+	SELECT *
+	FROM thedir
+	WHERE attributes != 'H'
+	</cfquery>
+	<!--- Call rec function --->
+	<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
 		<!--- Feedback --->
-		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
 		<cfflush>
-		<!--- Check if folder has subfolders if so add them recursively --->
-		<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
-		<!--- Filter out hidden dirs --->
-		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
-		SELECT *
-		FROM thedir
-		WHERE attributes != 'H'
-		</cfquery>
-		<!--- Call rec function --->
-		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
-			<!--- Feedback --->
-			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
-			<cfflush>
-			<!--- folder_id into theid --->
-			<cfset arguments.thestruct.theid = new_folder_id>
-			<!--- Call function --->
-			<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
-		</cfif>
-		<!--- Feedback --->
-		<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
-		<cfflush>
+		<!--- folder_id into theid --->
+		<cfset arguments.thestruct.theid = new_folder_id>
+		<!--- Call function --->
+		<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
+	<cfflush>
 	</cfif>
 	<!--- Return --->
 	<cfreturn />
@@ -5852,6 +6022,9 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Store the original filename --->
 		<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
+		<!--- UPC --->
+		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilename >
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.new_folder_id>
 		<!--- MD5 Hash --->
 		<cfif FileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 			<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
@@ -6252,7 +6425,7 @@ This is the main function called directly by a single upload else from addassets
 						</cfquery>
 						<cfset temp = qryGetFolderDetails.folder_id>
 					</cfloop>
-					
+
 					<!--- Put folder id into the general struct --->
 					<cfif isDefined('temp') AND temp NEQ ''>
 						<cfset arguments.thestruct.theid = temp>
@@ -6350,4 +6523,76 @@ This is the main function called directly by a single upload else from addassets
 	</cftry>
 	<cfreturn />
 </cffunction>
+
+<!--- UPC upload --->
+<cffunction name="assetuploadupc" output="true" >
+	<cfargument name="thestruct" type="struct" required="true" >
+	<cfargument name="assetfrom" type="string" required="true" >
+	<!--- param --->
+	<cfparam name="arguments.thestruct.upc_name" default="" >
+	<!--- Get settings dam details --->
+	<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="prefs">
+	<!--- Get current user UPC Details  --->
+	<cfinvoke component="groups_users" method="getGroupsOfUser" returnvariable="arguments.thestruct.qry_GroupsOfUser" >
+		<cfinvokeargument name="user_id" value="#session.theuserid#">
+		<cfinvokeargument name="host_id" value="#session.hostid#">
+		<cfinvokeargument name="check_upc_size" value="true">
+	</cfinvoke>
+	<!--- Check the current folder having label text as upc --->
+	<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.folder_id#" thetype="folder" checkUPC="true" returnvariable="arguments.thestruct.qry_labels">
+	<!--- Check the UPC option is enabled --->
+	<cfif prefs.set2_upc_enabled AND listLen(arguments.thestruct.theoriginalfilename,".") EQ 3 AND isNumeric(listfirst(arguments.thestruct.theoriginalfilename,".")) AND isNumeric(listgetat(arguments.thestruct.theoriginalfilename,2,'.')) AND arguments.thestruct.qry_GroupsOfUser.recordcount AND arguments.thestruct.qry_labels NEQ ''>
+		<cfset arguments.thestruct.checkUFName=listDeleteAt(arguments.thestruct.theoriginalfilename,listLen(arguments.thestruct.theoriginalfilename,"."),".")>
+		<cfif Find(".", '#arguments.thestruct.checkUFName#') NEQ 0 >
+			<cfset arguments.thestruct.checkURNum = listlast('#arguments.thestruct.checkUFName#','.')>
+			<cfif isNumeric(arguments.thestruct.checkURNum)>
+				<cfset arguments.thestruct.upcFileName = arguments.thestruct.checkUFName >
+				<cfset arguments.thestruct.dl_query.upc_number = listfirst('#arguments.thestruct.upcFileName#','.') >
+				<cfset arguments.thestruct.upcRenditionNum = arguments.thestruct.checkURNum >
+			</cfif>
+		</cfif> 
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1>
+			<cfif arguments.assetfrom EQ 'img'>
+				<cfset field_name = 'img_id'>
+				<cfset table_name = '#session.hostdbprefix#images'>
+				<cfset check_field_name = 'img_upc_number'>
+			<cfelseif arguments.assetfrom EQ 'aud'>
+				<cfset field_name = 'aud_id'>
+				<cfset table_name = '#session.hostdbprefix#audios'>
+				<cfset check_field_name = 'aud_upc_number'>
+			<cfelseif arguments.assetfrom EQ 'vid'>
+				<cfset field_name = 'vid_id'>
+				<cfset table_name = '#session.hostdbprefix#videos'>
+				<cfset check_field_name = 'vid_upc_number'>
+			</cfif>
+			<!--- GroupID assigned for the easy way upload --->
+			<cfquery name="arguments.thestruct.qryGroupDetails" datasource="#application.razuna.datasource#">
+				SELECT #field_name# as id
+				FROM #table_name# 
+				WHERE #check_field_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.dl_query.upc_number#">
+				AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<cfinvoke component="folders" method="Extract_UPC" returnvariable="extract_upcnumber">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
+				<cfinvokeargument name="sUPC" value="#arguments.thestruct.dl_query.upc_number#">
+				<cfinvokeargument name="iUPC_Option" value="#arguments.thestruct.qry_GroupsOfUser.upc_size#">
+			</cfinvoke>
+			<cfinvoke component="folders" method="Find_Manuf_String" returnvariable="arguments.thestruct.folder_name">
+				<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
+			</cfinvoke>
+			<cfinvoke component="folders" method="Find_Prod_String" returnvariable="arguments.thestruct.upc_name">
+				<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
+			</cfinvoke>
+			<cfset arguments.thestruct.upc_name = '#arguments.thestruct.upc_name#.#arguments.thestruct.upcRenditionNum#' >
+		<cfelse>
+			<cfset arguments.thestruct.qryGroupDetails = queryNew('id')>
+			<cfset arguments.thestruct.upc_name = arguments.thestruct.upcFileName >
+		</cfif>
+	</cfif>
+	<!--- return --->
+	<cfreturn arguments.thestruct.upc_name />
+</cffunction>
+ 
 </cfcomponent>

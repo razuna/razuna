@@ -214,7 +214,7 @@
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">ft
-					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
 					<cfelse>x
 					</cfif>.#m#
 				</cfloop>
@@ -738,7 +738,7 @@
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Get details --->
 		<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detailfiles */ f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_create_date, f.file_create_time, f.file_change_date, f.file_change_time, f.file_owner, f.file_name, f.file_remarks, f.file_name_org, f.file_name_org filenameorg, f.shared, f.link_path_url, f.link_kind, f.file_size, f.file_meta, f.path_to_asset, f.cloud_url, f.cloud_url_org, s.set2_doc_download, s.set2_intranet_gen_download, s.set2_url_website, s.set2_path_to_assets, u.user_first_name, u.user_last_name, fo.folder_name,
+		SELECT /* #variables.cachetoken#detailfiles */ f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_create_date, f.file_create_time, f.file_change_date, f.file_change_time, f.file_owner, f.file_name, f.file_remarks, f.file_name_org, f.file_name_org filenameorg, f.shared, f.link_path_url, f.link_kind, f.file_size, f.file_meta, f.path_to_asset, f.cloud_url, f.cloud_url_org, f.file_upc_number, s.set2_doc_download, s.set2_intranet_gen_download, s.set2_url_website, s.set2_path_to_assets, u.user_first_name, u.user_last_name, fo.folder_name,
 		'' as perm
 		FROM #session.hostdbprefix#files f
 		LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#variables.setid#"> AND s.host_id = f.host_id
@@ -928,6 +928,9 @@
 					UPDATE #session.hostdbprefix#files
 					SET 
 					file_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
+					<cfif isdefined("arguments.thestruct.file_upc")>
+						file_upc_number = <cfqueryparam value="#arguments.thestruct.file_upc#" cfsqltype="cf_sql_varchar">,
+					</cfif>
 					shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 					<!--- <cfif isdefined("remarks")>, file_remarks = <cfqueryparam value="#remarks#" cfsqltype="cf_sql_varchar"></cfif> --->
 					WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">

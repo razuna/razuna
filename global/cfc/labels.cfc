@@ -290,6 +290,7 @@
 	<cffunction name="getlabels" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
+		<cfargument name="checkUPC" type="string" required="false" default="false" > 
 		<!--- Param --->
 		<cfset var l = "">
 		<cfset var qryct = "">
@@ -309,6 +310,9 @@
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			<cfif structKeyExists(arguments,'checkUPC') AND arguments.checkUPC EQ 'true'>
+				AND lower(label_text) = <cfqueryparam value="upc" cfsqltype="cf_sql_varchar" />
+			</cfif>
 			ORDER BY lower(label_text)
 			</cfquery>
 			<!--- Param --->

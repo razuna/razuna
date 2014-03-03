@@ -376,7 +376,7 @@
 				<cfset thepass.aduser = "T">
 				<cfset thepass.notfound = "F">
 			<cfelse>
-				<cfif qryuser.user_expiry_date LTE now()>
+				<cfif isdate(qryuser.user_expiry_date) and qryuser.user_expiry_date LTE now()>
 					<cfset thepass.expired = "T">
 				<cfelse>
 					<cfset thepass.expired = "F">	

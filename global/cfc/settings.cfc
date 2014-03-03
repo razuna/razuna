@@ -76,7 +76,7 @@
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_rendition_metadata
+	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -102,6 +102,7 @@
 	set2_custom_file_ext = <cfqueryparam value="#arguments.thestruct.set2_custom_file_ext#" cfsqltype="cf_sql_varchar">,
 	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">,
 	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">,
+	set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">,
 	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2587,19 +2588,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		
 		<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
 			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-			port = "#arguments.thestruct.ad_server_port#"
+				port = "#arguments.thestruct.ad_server_port#"
 			scope="subtree" 
 			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
-			attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		<cfelse>
-			<cfldap server = "#arguments.thestruct.ad_server_name#"  
-			port = "#arguments.thestruct.ad_server_port#"
+			<cfldap server = "#arguments.thestruct.ad_server_name#" 
+				port = "#arguments.thestruct.ad_server_port#"
 			scope="subtree" 
 			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 			filter="(&(objectClass=user))" 
-			attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
 		</cfif>
 
