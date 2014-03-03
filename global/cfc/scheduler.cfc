@@ -727,7 +727,7 @@
 		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
 		<!--- Get Updated Assets --->
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
-			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id
+			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
 				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
@@ -742,7 +742,7 @@
 
 				) l
 			LEFT JOIN users u ON l.log_user = u.user_id
-
+			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
@@ -750,7 +750,6 @@
 				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
 			</cfif>
 		</cfquery>
-		
 		<!--- Email subject --->
 		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
 		<!--- Email content --->
@@ -760,11 +759,12 @@
 			<!--- Mail content --->
 			<cfsavecontent variable="mail" >
 				#email_content#<br>
-				<h3>Folder: #qGetUserSubscriptions.folder_name#</h3>
+				<h3>Subscribed Folder: #qGetUserSubscriptions.folder_name#</h3>
 				<table border="1" cellpadding="4" cellspacing="0">
 					<tr>
 						<th nowrap="true">Date</th>
 						<th nowrap="true">Time</th>
+						<th nowrap="true">Folder/<br>Sub-Folder</th>
 						<th nowrap="true">Action</th>
 						<th >Details</th>
 						<th nowrap="true">Type of file</th>
@@ -780,6 +780,7 @@
 					<tr >
 						<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
 						<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
+						<td valign="top">#qGetUpdatedAssets.folder_name#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
 						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
