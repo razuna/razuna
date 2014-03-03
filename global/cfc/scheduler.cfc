@@ -705,7 +705,8 @@
 <cffunction name="folder_subscribe_task" output="true" access="public" >
 	<!--- Get User subscribed folders --->
 	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
-		SELECT * FROM #session.hostdbprefix#folder_subscribe 
+		SELECT fs.*, fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
+		LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
 		WHERE 
 		<!--- H2 or MSSQL --->
 		<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
@@ -758,13 +759,14 @@
 		<cfif qGetUpdatedAssets.recordcount>
 			<!--- Mail content --->
 			<cfsavecontent variable="mail" >
-				#email_content#
+				#email_content#<br>
+				<h3>Folder: #qGetUserSubscriptions.folder_name#</h3>
 				<table border="1" cellpadding="4" cellspacing="0">
 					<tr>
 						<th nowrap="true">Date</th>
 						<th nowrap="true">Time</th>
-						<th >Description</th>
 						<th nowrap="true">Action</th>
+						<th >Details</th>
 						<th nowrap="true">Type of file</th>
 						<th nowrap="true">User</th>
 						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
@@ -778,8 +780,8 @@
 					<tr >
 						<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
 						<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
-						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
+						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
 						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
