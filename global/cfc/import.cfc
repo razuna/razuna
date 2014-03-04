@@ -247,6 +247,7 @@
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("general")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1886,7 +1887,7 @@
 			<!--- If template --->
 			<cfif arguments.thestruct.impp_template NEQ "">
 				<cfloop query="arguments.thestruct.template.impval">
-					<cfif imp_field EQ i AND !imp_key>
+					<cfif imp_field EQ listfirst(i,":") AND !imp_key>
 						<!--- <cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]> --->
 						<cfset var theid = imp_map>
 						<cfset var doloop = true>
