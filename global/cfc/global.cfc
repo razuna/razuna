@@ -811,7 +811,6 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
 
 		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
-		<cfset console(upcstruct)>
 		<cfif upcstruct.upcenabled>
 			<!--- Get UPC number for asset  from database --->
 			<cfquery datasource="#application.razuna.datasource#" name="get_upc">
