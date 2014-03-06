@@ -172,13 +172,13 @@
 	<cffunction name="convertbytes" returntype="String" hint="converts bytes into appropriate kb, mb, gb or tb size.">
 		<cfargument name="bytes" required="true" type="numeric">
 		<cfif arguments.bytes gte 1099511627776>
-			<cfset size = round(arguments.bytes/1099511627776) & "T">
+			<cfset size = numberformat(arguments.bytes/1099511627776,'_._') & "T">
 		<cfelseif arguments.bytes gte 1073741824>
-			<cfset size = round(arguments.bytes/1073741824) & "G">
+			<cfset size = numberformat(arguments.bytes/1073741824,'_._') & "G">
 		<cfelseif arguments.bytes gte 1048576>
-			<cfset size = round(arguments.bytes/1048576)  & "M">	
+			<cfset size = numberformat(arguments.bytes/1048576,'_._')  & "M">	
 		<cfelseif arguments.bytes gte 1024>
-			<cfset size = round(arguments.bytes/1024) & "K">
+			<cfset size = numberformat(arguments.bytes/1024,'_._') & "K">
 		<cfelse>
 			<cfset size = arguments.bytes & "B">				
 		</cfif>
