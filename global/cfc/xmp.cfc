@@ -2014,6 +2014,17 @@
 								</cfif>
 							</cfif>
 						</cfif>
+						<!--- Add custom fields --->
+						<cfloop query="arguments.thestruct.qry_cfields">
+          							<cfif idx eq "#cf_text#:#cf_id#">
+	          							<cfquery name="qcf" dbtype="query">
+									SELECT cf_value
+									FROM arguments.thestruct.qry_cf
+									WHERE cf_text = '#cf_text#'
+								</cfquery>
+	          							<cfset QuerySetCell(arguments.thestruct.tq, "#cf_text#:#cf_id#", "#qcf.cf_value#")>
+          							</cfif>
+          						</cfloop>
 					</cfloop>
 				</cfif>
 			</cfif>	
