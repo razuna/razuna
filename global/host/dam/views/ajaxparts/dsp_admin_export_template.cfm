@@ -53,6 +53,13 @@
 							<cfset l = len(i) - 1>
 							<option value="#i#"<cfif listFind(qry_export.images_metadata,"#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
 						</cfloop>
+						<!--- Custom fields --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields")# ---</option>
+						<cfloop query="meta_cf">
+							<cfif cf_show eq 'all' or cf_show eq 'img'>
+								<option value="#cf_text#:#cf_id#"<cfif listFind(qry_export.images_metadata,"#cf_text#:#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+							</cfif>
+						</cfloop>
 					</select>
 					<br /><br />
 					<!--- VIDEOS --->
@@ -69,6 +76,13 @@
 						<option value="vid_width"<cfif listFind(qry_export.videos_metadata,"vid_width")> selected="selected"</cfif>>Width</option>
 						<option value="vid_height"<cfif listFind(qry_export.videos_metadata,"vid_height")> selected="selected"</cfif>>Height</option>
 						<option value="vid_size"<cfif listFind(qry_export.videos_metadata,"vid_size")> selected="selected"</cfif>>Size</option>
+						<!--- Custom fields --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields")# ---</option>
+						<cfloop query="meta_cf">
+							<cfif cf_show eq 'all' or cf_show eq 'vid'>
+								<option value="#cf_text#:#cf_id#"<cfif listFind(qry_export.videos_metadata,"#cf_text#:#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+							</cfif>
+						</cfloop>
 					</select>
 					<br /><br />
 					<!--- FILES --->
@@ -91,6 +105,13 @@
 							<cfset l = len(i) - 1>
 							<option value="#i#"<cfif listFind(qry_export.files_metadata,"#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
 						</cfloop>
+						<!--- Custom fields --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields")# ---</option>
+						<cfloop query="meta_cf">
+							<cfif cf_show eq 'all' or cf_show eq 'doc'>
+								<option value="#cf_text#:#cf_id#"<cfif listFind(qry_export.files_metadata,"#cf_text#:#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+							</cfif>
+						</cfloop>
 					</select>
 					<br /><br />
 					<!--- AUDIOS --->
@@ -105,6 +126,13 @@
 						<option value="aud_create_time"<cfif listFind(qry_export.audios_metadata,"aud_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="aud_change_time"<cfif listFind(qry_export.audios_metadata,"aud_change_time")> selected="selected"</cfif>>Change Date</option>
 						<option value="aud_size"<cfif listFind(qry_export.audios_metadata,"aud_size")> selected="selected"</cfif>>Size</option>
+						<!--- Custom fields --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields")# ---</option>
+						<cfloop query="meta_cf">
+							<cfif cf_show eq 'all' or cf_show eq 'aud'>
+								<option value="#cf_text#:#cf_id#"<cfif listFind(qry_export.audios_metadata,"#cf_text#:#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+							</cfif>
+						</cfloop>
 					</select>
 				</td>
 			</tr>

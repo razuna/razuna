@@ -10162,6 +10162,8 @@
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
 		<!-- CFC: Get export template -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_export_template(attributes)" returnvariable="qry_export" />
+		<!-- Get Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(true)" returnvariable="meta_cf" />
 		<!-- Show metadata export template -->
 		<do action="ajax.admin_export_template" />
 	</fuseaction>
