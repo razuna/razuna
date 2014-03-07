@@ -956,6 +956,8 @@
 				<cfset var thefileinfo = getfileinfo("#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#")>
 				<cfset thefile.filesize = thefileinfo.size>
 			<cfelse>
+				<!--- Initilaize thefile as local var --->
+				<cfset var thefile = "">
 				<!--- If plupload --->
 				<cfif arguments.thestruct.plupload>
 					<cfset var thefilefield = "file">
