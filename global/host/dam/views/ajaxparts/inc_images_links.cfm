@@ -4,7 +4,6 @@
 	<cfquery name="thumb_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'thumb'
 	</cfquery>
-	<cfdump var="#qry_share_options#">
 	<cfif qry_detail.detail.link_kind NEQ "url">
 		<cfif attributes.folderaccess NEQ "R" OR (thumb_share_setting.recordcount EQ 1 AND thumb_share_setting.asset_dl EQ 1)>
 			<!--- Preview --->
