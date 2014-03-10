@@ -3096,16 +3096,22 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.bat">
 			<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#reimtt#wt.bat">
 		</cfif>
-		<!--- Set correct width or heigth --->
-		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
-		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "#alpha# #thecolorspace#">
-		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
-		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
+		
+		<!--- Set correct width and height parameters --->
+		<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
+		<cfif isnumeric(arguments.thestruct.width) AND isnumeric(arguments.thestruct.height)>
+			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x#arguments.thestruct.height#! #thecolorspace#">
+		<!--- If only height set then resize to given height preserving aspect ratio. Do only if original height > set height else leave as is. --->
+		<cfelseif isnumeric(arguments.thestruct.height) AND arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
 			<cfset theImgConvertParams = "#alpha# -resize x#arguments.thestruct.height# #thecolorspace#">
+		<!--- If only width set then resize to given width preserving aspect ratio. Do only if original width > set width else leave as is. --->
+		<cfelseif isnumeric(arguments.thestruct.width) AND arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
+			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
+		<!--- If neither height nor width are set then shrink image to width of 400 preserving aspect ratio. Do only if original width > 400 else leave as is --->
+		<cfelseif isnumeric( arguments.thestruct.thexmp.orgwidth) AND arguments.thestruct.thexmp.orgwidth GT 400>
+			<cfset theImgConvertParams = "#alpha# -resize 400x #thecolorspace#">
 		</cfif>
+
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
 			<cfset var theImgConvertParams = "-coalesce " & theImgConvertParams>
@@ -4805,22 +4811,45 @@ This is the main function called directly by a single upload else from addassets
 				<cfelseif thetype EQ "img">
 					<cfset arguments.thestruct.thumbname = "thumb_#theid#.#arguments.thestruct.qry_settings_image.set2_img_format#">
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
+					<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
+					<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
+					<cfset var thumb_height = arguments.thestruct.qry_settings_image.set2_img_thumb_heigth>
+					<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
+					<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
+						<cfset resizeargs =  "#thumb_width#x#thumb_height#!">
+					<!--- If only height set then resize to given height preserving aspect ratio.  --->
+					<cfelseif isnumeric(thumb_height)>
+						<cfset resizeargs = "x#thumb_height#">
+					<!--- If only width set then resize to given width preserving aspect ratio. --->
+					<cfelseif isnumeric(thumb_width)>
+						<cfset resizeargs = "#thumb_width#x">
+					</cfif>
 					<!--- Create the args for conversion --->
 					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 						<cfcase value="psd,eps,ai,png">
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x #thecolorspace# -flatten #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -resize #resizeargs# #thecolorspace# -flatten #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
 						<cfcase value="3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
 							<cfset var theargs = "#thedcraw# -w -b 1.8 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-							<cfset var theargsdc = "#themogrify# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x #thecolorspace# #arguments.thestruct.thumbpath#">
+							<cfset var theargsdc = "#themogrify# -resize #resizeargs# #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->
 						<cfdefaultcase>
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x #thecolorspace# #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #resizeargs# #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
+					<!--- Call the component to read the XMP data --->
+					<cfset arguments.thestruct.thesource = arguments.thestruct.thumbpath>
+					<cfinvoke component = "global.cfc.xmp" method="xmpparse" returnvariable="xmlxmp" thestruct="#arguments.thestruct#">
+					<!--- Update DB with appropriate thumb height and width from XMP data --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #thedb#
+					SET thumb_width = <cfqueryparam value="#xmlxmp.orgwidth#" cfsqltype="cf_sql_integer">,
+					thumb_height = <cfqueryparam value="#xmlxmp.orgheight#" cfsqltype="cf_sql_integer">
+					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
 				</cfif>
 				<!--- Write script file --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theargs#" mode="777">

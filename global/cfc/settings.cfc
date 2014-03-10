@@ -92,8 +92,8 @@
 	UPDATE #session.hostdbprefix#settings_2
 	SET
 	set2_img_format = <cfqueryparam value="#arguments.thestruct.set2_img_format#" cfsqltype="cf_sql_varchar">,
-	set2_img_thumb_width = <cfqueryparam value="#arguments.thestruct.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
-	set2_img_thumb_heigth = <cfqueryparam value="#arguments.thestruct.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">,
+	set2_img_thumb_width = <cfif isnumeric(arguments.thestruct.set2_img_thumb_width)><cfqueryparam value="#arguments.thestruct.set2_img_thumb_width#" cfsqltype="cf_sql_numeric"><cfelse>null</cfif>,
+	set2_img_thumb_heigth = <cfif isnumeric(arguments.thestruct.set2_img_thumb_heigth)><cfqueryparam value="#arguments.thestruct.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric"><cfelse>null</cfif>,
 	set2_date_format = <cfqueryparam value="#arguments.thestruct.set2_date_format#" cfsqltype="cf_sql_varchar">,
 	set2_date_format_del = <cfqueryparam value="#arguments.thestruct.set2_date_format_del#" cfsqltype="cf_sql_varchar">,
 	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
