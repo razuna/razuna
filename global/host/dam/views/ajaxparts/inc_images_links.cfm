@@ -1,43 +1,52 @@
 <cfoutput>
 	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadren();return false;">Refresh</a></div></div>
 	<br />
+	<cfquery name="thumb_share_setting" dbtype="query">
+		SELECT * FROM qry_share_options WHERE asset_format= 'thumb'
+	</cfquery>
+	<cfdump var="#qry_share_options#">
 	<cfif qry_detail.detail.link_kind NEQ "url">
-		<!--- Preview --->
-		<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> (#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.theprevsize# MB, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel)<br /> 
-		<cfif qry_detail.detail.shared EQ "F">
-			<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
-		<cfelse>
-			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" target="_blank">
-		</cfif>
-		View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">Download</a>
-		<!--- Nirvanix --->
-		<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
-			<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#</i>
-		</cfif>
-		 | <a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');return false;">Direct Link</a>
-		<div id="divp#attributes.file_id#" style="display:none;">
-			<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
-			<br />
-			<cfif application.razuna.storage EQ "local">
-				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" />
+		<cfif attributes.folderaccess NEQ "R" OR (thumb_share_setting.recordcount EQ 1 AND thumb_share_setting.asset_dl EQ 1)>
+			<!--- Preview --->
+			<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> (#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.theprevsize# MB, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel)<br /> 
+			<cfif qry_detail.detail.shared EQ "F">
+				<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
 			<cfelse>
-				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
+				<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" target="_blank">
 			</cfif>
-			<!--- Plugin --->
-			<cfset args = structNew()>
-			<cfset args.detail = qry_detail.detail>
-			<cfset args.thefiletype = "img">
-			<cfset args.thepreview = true>
-			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
-			<!--- Show plugin --->
-			<cfif structKeyExists(pl,"pview")>
-				<cfloop list="#pl.pview#" delimiters="," index="i">
-					#evaluate(i)#
-				</cfloop>
+			View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">Download</a>
+			<!--- Nirvanix --->
+			<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
+				<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#</i>
 			</cfif>
-		</div>
+			 | <a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');return false;">Direct Link</a>
+			<div id="divp#attributes.file_id#" style="display:none;">
+				<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
+				<br />
+				<cfif application.razuna.storage EQ "local">
+					<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" />
+				<cfelse>
+					<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
+				</cfif>
+				<!--- Plugin --->
+				<cfset args = structNew()>
+				<cfset args.detail = qry_detail.detail>
+				<cfset args.thefiletype = "img">
+				<cfset args.thepreview = true>
+				<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+				<!--- Show plugin --->
+				<cfif structKeyExists(pl,"pview")>
+					<cfloop list="#pl.pview#" delimiters="," index="i">
+						#evaluate(i)#
+					</cfloop>
+				</cfif>
+			</div>
+		</cfif>
+		<cfquery name="org_share_setting" dbtype="query">
+			SELECT * FROM qry_share_options WHERE asset_format= 'org'
+		</cfquery>
 		<!--- Original --->
-		<cfif attributes.folderaccess NEQ "R">
+		<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
 			<br /><br />
 			<cfif qry_detail.detail.link_kind NEQ "lan">
 				<cfif qry_detail.detail.shared EQ "F">
