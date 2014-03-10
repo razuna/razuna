@@ -24,10 +24,13 @@
 *
 --->
 <cfoutput>
+	<cfquery name="org_share_setting" dbtype="query">
+		SELECT * FROM qry_share_options WHERE asset_format= 'org'
+	</cfquery>
 	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadrenaud();return false;">Refresh</a></div></div>
 	<br />
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
-		<cfif attributes.folderaccess NEQ "R">
+		<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
 			<tr>
 				<td width="100%" nowrap="true">
 					<cfif qry_detail.detail.link_kind NEQ "url">
