@@ -773,13 +773,18 @@ Comment:<br>
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfif isDefined("arguments.thestruct.useavid")>
+			<cfset idcol  = "av_id">
+		<cfelse>
+			<cfset idcol  = "asset_id_r">
+		</cfif>
 		<!--- Param --->
 		<cfset var qry = structnew()>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#get_versions_link */ av_id, asset_id_r, av_link_title, av_link_url, folder_id_r, av_type, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
-		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		WHERE #idcol# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
@@ -787,10 +792,11 @@ Comment:<br>
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, asset_id_r, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag, folder_id_r, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
-		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		WHERE #idcol# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		</cfquery>
+		<cfset console(qry.assets)>
 		<cfreturn qry />
 	</cffunction>
 
@@ -894,6 +900,27 @@ Comment:<br>
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		</cfquery>
+		<!--- Remove version data --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#images_text
+		WHERE img_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#videos_text
+		WHERE vid_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#audios_text
+		WHERE aud_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#custom_fields_values
+		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>

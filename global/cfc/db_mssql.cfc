@@ -1524,8 +1524,7 @@
 		  IMG_KEYWORDS     NVARCHAR(max),
 		  IMG_DESCRIPTION  NVARCHAR(max),
 		  HOST_ID		   INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (IMG_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -1895,8 +1894,7 @@
 		  VID_DESCRIPTION  nvarchar(max),
 		  VID_TITLE		   nvarchar(max),
 		  HOST_ID		   INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (VID_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -2117,8 +2115,7 @@
 			aud_DESCRIPTION     NVARCHAR(max),
 			aud_KEYWORDS		NVARCHAR(max),
 			HOST_ID				INT,
-			PRIMARY KEY (ID_INC),
-			FOREIGN KEY (aud_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
+			PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		

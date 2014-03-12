@@ -293,6 +293,14 @@
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
 	<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
 	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
+		<!--- Get additional renditions --->
+		<cfquery datasource="#variables.dsn#" name="getaddver">
+		SELECT av_id FROM #session.hostdbprefix#additional_versions
+		WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+		</cfquery>
+		<!--- Append additional renditions --->
+		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(getaddver.av_id)#',',')>
+		<!--- Append  renditions --->
 		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.aud_id)#',',')>
 	</cfif>
 	<!--- Loop over the file_id (important when working on more then one image) --->
@@ -366,6 +374,16 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+
+		<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
+		<cfquery datasource="#variables.dsn#">
+		UPDATE #session.hostdbprefix#additional_versions
+		SET 
+		av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
+		WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
 		<!--- Save to the files table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<cfquery datasource="#variables.dsn#">
@@ -397,15 +415,28 @@
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Select the record to get the original filename or assign if one is there --->
-		<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
-			<cfset arguments.thestruct.qrydetail.filenameorg = qryorg.aud_name_org>
-			<cfset arguments.thestruct.file_name = qryorg.aud_name>
+		<cfif qryorg.recordcount neq 0>
+			<!--- Select the record to get the original filename or assign if one is there --->
+			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
+				<cfset arguments.thestruct.qrydetail.filenameorg = qryorg.aud_name_org>
+				<cfset arguments.thestruct.file_name = qryorg.aud_name>
+			<cfelse>
+				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+			</cfif>
+			<!--- Log --->
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id,folderid='#arguments.thestruct.folder_id#')>
 		<cfelse>
-			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+			<!--- If udpaitng additional version then get info and log change--->
+			<cfquery datasource="#variables.dsn#" name="qryaddver">
+			SELECT av_link_title, folder_id_r
+			FROM #session.hostdbprefix#additional_versions
+			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif qryaddver.recordcount neq 0>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
+			</cfif>
 		</cfif>
-		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id,folderid='#arguments.thestruct.folder_id#')>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
@@ -448,6 +479,11 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#audios_text
+		WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Delete from collection --->
@@ -714,6 +750,11 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #arguments.thestruct.hostdbprefix#audios
 			WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#audios_text
+			WHERE aud_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
 			<!--- Delete from collection --->

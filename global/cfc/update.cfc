@@ -126,6 +126,33 @@
 		
 		<!--- If update number is lower then 19 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 19>
+			<!--- RAZ-2940 : Remove constraints from images_text, audiots_text and videos_text tables --->
+			<cfset var thesql = "DROP CONSTRAINT">
+			<cfset var thetbl = "table_constraints">
+			<cfset var thetype = "FOREIGN KEY">
+			<cfif application.razuna.thedatabase EQ "mysql">
+				<cfset thesql = "DROP FOREIGN KEY">
+			<cfelseif application.razuna.thedatabase EQ "h2">
+				<cfset var thetbl = "constraints">
+				<cfset var thetype = "REFERENTIAL">
+			</cfif>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#"  name="getdel_sql">
+					select concat('alter table ',table_schema,'.',table_name,' #thesql# ',constraint_name, ';') altersql
+					from information_schema.#thetbl#
+					 where constraint_type='#thetype#' 
+					 and (lower(table_name) like '%_images_text'
+					 or  lower(table_name) like '%_audios_text'
+					  or  lower(table_name) like '%_videos_text')
+				</cfquery>
+				<cfloop query ="getdel_sql">
+					<cfquery datasource="#application.razuna.datasource#" name="remove_constraint">
+						#getdel_sql.altersql#
+					</cfquery>
+				</cfloop>
+				<cfcatch></cfcatch>
+				</cftry>
+
 			<!--- RAZ-2819 Add a UPC column in database tables for all file types --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

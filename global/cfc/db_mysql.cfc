@@ -1608,8 +1608,7 @@
 		PRIMARY KEY (ID_INC),
 		KEY #arguments.thestruct.host_db_prefix#it_IMG_ID_R (img_id_r),
 		KEY #arguments.thestruct.host_db_prefix#it_hostid (HOST_ID),
-		KEY #arguments.thestruct.host_db_prefix#it_lang (LANG_ID_R),
-		FOREIGN KEY (IMG_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
+		KEY #arguments.thestruct.host_db_prefix#it_lang (LANG_ID_R)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -2019,8 +2018,7 @@
 		PRIMARY KEY (ID_INC),
 		KEY #arguments.thestruct.host_db_prefix#vt_idr (vid_id_r),
 		KEY #arguments.thestruct.host_db_prefix#vt_lang (LANG_ID_R),
-		KEY #arguments.thestruct.host_db_prefix#vt_hostid (HOST_ID),
-		FOREIGN KEY (VID_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
+		KEY #arguments.thestruct.host_db_prefix#vt_hostid (HOST_ID)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -2267,8 +2265,7 @@
 			PRIMARY KEY (id_inc),
 			KEY #arguments.thestruct.host_db_prefix#at_idr (aud_id_r),
 		    KEY #arguments.thestruct.host_db_prefix#at_lang (LANG_ID_R),
-		    KEY #arguments.thestruct.host_db_prefix#at_hostid (HOST_ID),
-			FOREIGN KEY (aud_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
+		    KEY #arguments.thestruct.host_db_prefix#at_hostid (HOST_ID)
 		)
 		#this.tableoptions#
 		</cfquery>

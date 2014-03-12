@@ -49,6 +49,7 @@
 				<a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
 				| <a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank">Download</a>
 				| <a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;">Direct Link</a>
+				| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#av_id#&thetype=#av_type#&cf_show=#av_type#&av=1','Metadata',550,2);return false;">Metadata</a>
 				<cfif attributes.folderaccess NEQ "R">
 					 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
 				</cfif>

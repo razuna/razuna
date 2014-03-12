@@ -1172,9 +1172,7 @@
 		  IMG_DESCRIPTION  VARCHAR(4000),
 		  ID_INC		   VARCHAR(100),
 		  HOST_ID		   BIGINT,
-		  PRIMARY KEY (ID_INC),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_TEXT_FK_IMG FOREIGN KEY (IMG_ID_R)
-		REFERENCES #arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
@@ -1538,9 +1536,7 @@
 		  VID_TITLE		   VARCHAR(400),
 		  ID_INC		   VARCHAR(100),
 		  HOST_ID		   BIGINT,
-		  PRIMARY KEY (ID_INC),
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#videos_text_FK1 FOREIGN KEY (VID_ID_R)
-			REFERENCES #arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
@@ -1755,9 +1751,7 @@
 			aud_KEYWORDS		VARCHAR(4000),
 			ID_INC		   		VARCHAR(100),
 			HOST_ID				BIGINT,
-			PRIMARY KEY (ID_INC),
-			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_DESC_FK_FILE FOREIGN KEY (aud_ID_R)
-			REFERENCES #arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
+			PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		

@@ -9623,6 +9623,7 @@
 	</fuseaction>
 	<!-- Show metadata for renditions -->
 	<fuseaction name="rend_meta">
+		<!-- <set name="attributes.av" value="0" /> -->
 		<!-- Get Languages -->
 		<do action="languages" />
 		<!-- Images -->
@@ -9633,8 +9634,21 @@
 				<set name="attributes.keys" value="img_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
-				<!-- Set filename -->
-				<set name="attributes.filename" value="#qry_detail.detail.img_filename#" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.detail.img_filename#" />
+					</false>
+				</if>
+			
 			</true>
 		</if>
 		<!-- Videos -->
@@ -9645,8 +9659,20 @@
 				<set name="attributes.keys" value="vid_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
-				<!-- Set filename -->
-				<set name="attributes.filename" value="#qry_detail.detail.vid_filename#" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.detail.vid_filename#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- Audios -->
@@ -9657,8 +9683,20 @@
 				<set name="attributes.keys" value="aud_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
-				<!-- Set filename -->
-				<set name="attributes.filename" value="#qry_detail.detail.aud_name#" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.detail.aud_name#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- CFC: Check for custom fields -->

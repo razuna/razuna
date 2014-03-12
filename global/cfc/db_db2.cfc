@@ -1510,8 +1510,7 @@
 		  IMG_KEYWORDS     VARCHAR(4000),
 		  IMG_DESCRIPTION  VARCHAR(4000),
 		  HOST_ID				INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (IMG_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -1881,8 +1880,7 @@
 		  VID_DESCRIPTION  VARCHAR(4000),
 		  VID_TITLE		   VARCHAR(4000),
 		  HOST_ID			INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (VID_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -2132,8 +2130,7 @@
 			aud_DESCRIPTION     VARCHAR(4000),
 			aud_KEYWORDS		VARCHAR(4000),
 			HOST_ID				INT,
-			PRIMARY KEY (ID_INC),
-			FOREIGN KEY (aud_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
+			PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
