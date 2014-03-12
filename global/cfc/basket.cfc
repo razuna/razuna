@@ -275,7 +275,7 @@
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<cftry>
 		<!--- Set time for remove --->
-		<cfset var removetime = DateAdd("h", -24, "#now()#")>
+		<cfset var removetime = DateAdd("h", -72, "#now()#")>
 		<!--- Remove old directories --->
 		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thedirs">
 		<!--- Loop over dirs --->
