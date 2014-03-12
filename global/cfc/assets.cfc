@@ -1834,8 +1834,21 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thepdfdirectory = "#arguments.thestruct.thetempdirectory#/#createuuid('')#/razuna_pdf_images">
 			<!--- Create folder to hold the images --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
+			<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
+			<cfset var thumb_width = arguments.thestruct.qrysettings.set2_img_thumb_width>
+			<cfset var thumb_height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
+			<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
+			<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
+				<cfset resizeargs =  "#thumb_width#x#thumb_height#!">
+			<!--- If only height set then resize to given height preserving aspect ratio.  --->
+			<cfelseif isnumeric(thumb_height)>
+				<cfset resizeargs = "x#thumb_height#">
+			<!--- If only width set then resize to given width preserving aspect ratio. --->
+			<cfelseif isnumeric(thumb_width)>
+				<cfset resizeargs = "#thumb_width#x">
+			</cfif>
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #arguments.thestruct.qrysettings.set2_img_thumb_width#x -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Execute --->
@@ -3101,17 +3114,16 @@ This is the main function called directly by a single upload else from addassets
 		<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
 		<cfif isnumeric(arguments.thestruct.width) AND isnumeric(arguments.thestruct.height)>
 			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x#arguments.thestruct.height#! #thecolorspace#">
-		<!--- If only height set then resize to given height preserving aspect ratio. Do only if original height > set height else leave as is. --->
-		<cfelseif isnumeric(arguments.thestruct.height) AND arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
+		<!--- If only height set then resize to given height preserving aspect ratio --->
+		<cfelseif isnumeric(arguments.thestruct.height)>
 			<cfset theImgConvertParams = "#alpha# -resize x#arguments.thestruct.height# #thecolorspace#">
-		<!--- If only width set then resize to given width preserving aspect ratio. Do only if original width > set width else leave as is. --->
-		<cfelseif isnumeric(arguments.thestruct.width) AND arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
+		<!--- If only width set then resize to given width preserving aspect ratio  --->
+		<cfelseif isnumeric(arguments.thestruct.width) >
 			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
-		<!--- If neither height nor width are set then shrink image to width of 400 preserving aspect ratio. Do only if original width > 400 else leave as is --->
-		<cfelseif isnumeric( arguments.thestruct.thexmp.orgwidth) AND arguments.thestruct.thexmp.orgwidth GT 400>
+		<!--- Default case shrink image to width of 400 preserving aspect ratio  --->
+		<cfelse>
 			<cfset theImgConvertParams = "#alpha# -resize 400x #thecolorspace#">
 		</cfif>
-
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
 			<cfset var theImgConvertParams = "-coalesce " & theImgConvertParams>
