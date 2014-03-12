@@ -6675,6 +6675,13 @@
 		<set name="attributes.reset" value="false" overwrite="false" />
 		<!-- CFC: Check API key -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
+		<!-- Get Admin groups of this user and put into list -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_usergroup">
+			<argument name="user_id" value="#attributes.user_id#" />
+			<argument name="mod_short" value="adm" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
+		<set name="grpnrlist" value="#valuelist(qry_usergroup.grp_id)#" />
 		<!-- Show -->
 		<do action="ajax.admin_user_api" />
 	</fuseaction>
