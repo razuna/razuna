@@ -943,8 +943,18 @@
 			img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-			thumb_width = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">, 
-			thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
+			thumb_width = 
+			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_width)> 
+				<cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">
+			<cfelse>
+				null
+			</cfif>
+			, 
+			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_heigth)>
+				thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">
+			<cfelse>
+				null
+			</cfif>,
 			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">, 
 			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
 			img_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#trim(cfthread["#ts#"].output)#">,
@@ -1413,8 +1423,16 @@
 		<cfif arguments.thestruct.type EQ "img">
 			,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_img_meta#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.width#">, 
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.height#">, 
+			<cfif isnumeric(arguments.thestruct.width)>
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.width#">
+			<cfelse>
+				null
+			</cfif>, 
+			<cfif isnumeric(arguments.thestruct.height)>
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.height#">
+			<cfelse>
+				null
+			</cfif>,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.theheight#">, 
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.thewidth#">, 
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
