@@ -1699,7 +1699,7 @@ Comment:<br>
 			<cfset setempty2val["table1"] = "col1:'val1',col2:NULL">
 			<cfset setempty2val["table2"] = "col1:'val1',col2:'val2'">
 		--->
-		<cfset setempty2val["raz1_settings_2"] = "set2_md5check:NULL, set2_colorspace_rgb:'false', set2_custom_file_ext:'false',set2_email_use_ssl:'false',set2_email_use_tls:'false'">
+		<cfset setempty2val["raz1_settings_2"] = "set2_md5check:NULL, set2_colorspace_rgb:'false', set2_custom_file_ext:'false',set2_email_use_ssl:'false',set2_email_use_tls:'false',set2_rendition_metadata:'false',">
 		<cfloop collection="#setempty2val#" item="tbl">
 			<cfloop list="#StructFind(setempty2val, tbl)#" index="col" delimiter=",">
 				<cftry>

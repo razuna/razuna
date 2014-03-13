@@ -23,8 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent extends="extQueryCaching" output="false">
 
+<cfcomponent extends="extQueryCaching" output="false">
+	<!--- Global Object --->
+	<cfobject component="global.cfc.global" name="gobj">
 	<!--- Check for a DB update --->
 	<cffunction name="update_for">
 		<!--- Param --->
@@ -150,7 +152,7 @@
 						#getdel_sql.altersql#
 					</cfquery>
 				</cfloop>
-				<cfcatch></cfcatch>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 
 			<!--- RAZ-2819 Add a UPC column in database tables for all file types --->
@@ -158,43 +160,43 @@
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> IMG_UPC_NUMBER #thevarchar#(15)
 				</cfquery>
-			<cfcatch></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> AUD_UPC_NUMBER #thevarchar#(15)
 				</cfquery>
-			<cfcatch></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> VID_UPC_NUMBER #thevarchar#(15)
 				</cfquery>
-			<cfcatch></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FILE_UPC_NUMBER #thevarchar#(15)
 				</cfquery>
-			<cfcatch></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_UPC_ENABLED #thevarchar#(5) DEFAULT 'false' 
 				</cfquery>
-			<cfcatch></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> UPC_SIZE #thevarchar#(2) DEFAULT NULL
 				</cfquery>
-			<cfcatch></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> UPC_FOLDER_FORMAT #thevarchar#(5) DEFAULT 'false'
 				</cfquery>
-				<cfcatch></cfcatch>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 
 			<!--- RAZ-2904 --->
@@ -315,9 +317,6 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_RENDITION_METADATA #thevarchar#(5) DEFAULT 'false'
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET SET2_RENDITION_METADATA = 'false'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -1340,11 +1339,6 @@
 			</cftry>
 		
 		</cfif>
-	
-		<!--- If update number is lower then 17 (v. 1.6.x) --->
-		<cfif updatenumber.opt_value LT 17>
-			
-		</cfif>
 		
 
 		<!--- 
@@ -1367,6 +1361,8 @@
 		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
 		</cfquery>
 		<!--- Done --->
+		<!--- Fix db integrity issues if any --->
+		<cfset gobj.fixdbintegrityissues()>
 	</cffunction>
 
 	<!--- DO DB update --->
