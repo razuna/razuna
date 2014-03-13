@@ -490,8 +490,7 @@
 	<!--- FUNCTION: Request Access eMail --->
 	<cffunction name="reqaccessemail" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
-		<!--- Get admins --->
-		<cfinvoke component="global.cfc.groups_users" method="getadmins" returnvariable="theadmins">
+
 		<!--- RAZ-2810 Customise email message --->
 		<cfset transvalues = arraynew()>
 		<cfset transvalues[1] = "#arguments.thestruct.user_first_name#">
@@ -499,9 +498,21 @@
 		<cfset transvalues[3] = "#arguments.thestruct.user_email#">
 		<cfinvoke component="defaults" method="trans" transid="req_access_mail_subject" values="#transvalues#" returnvariable="req_access_mail_sub" />
 		<cfinvoke component="defaults" method="trans" transid="req_access_mail_message" values="#transvalues#" returnvariable="req_access_mail_msg" />
-		<cfloop query="theadmins">
-			<cfinvoke component="email" method="send_email" to="#user_email#" subject="#req_access_mail_sub#" themessage="#req_access_mail_msg#">
-		</cfloop>
+
+		<!--- Get users to notify from new registration settings --->
+		<cfinvoke component="global.cfc.settings" method="getsettingsfromdam" returnvariable="prefs">
+		<!--- If no users found then notify admins --->
+		<cfif trim(prefs.set2_intranet_reg_emails) eq "">
+			<!--- Get admins --->
+			<cfinvoke component="global.cfc.groups_users" method="getadmins" returnvariable="theadmins">
+			<cfloop query="theadmins">
+				<cfinvoke component="email" method="send_email" to="#user_email#" subject="#req_access_mail_sub#" themessage="#req_access_mail_msg#">
+			</cfloop>
+		<cfelse>
+			<cfloop list="#prefs.set2_intranet_reg_emails#" index="user_email" delimiters=",">
+				<cfinvoke component="email" method="send_email" to="#user_email#" subject="#req_access_mail_sub#" themessage="#req_access_mail_msg#">
+			</cfloop>
+		</cfif>
 	</cffunction>
 	
 	<!--- Check user and host. This is if login form is only the email and pass --->
