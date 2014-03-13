@@ -796,7 +796,6 @@ Comment:<br>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		</cfquery>
-		<cfset console(qry.assets)>
 		<cfreturn qry />
 	</cffunction>
 
