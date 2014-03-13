@@ -364,7 +364,10 @@
 			lower(u.user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
 			OR lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
 			)
+		<!--- When password is requested from admin login then the hostid is not set in session and is set to 0 --->
+		<cfif session.hostid neq 0>
 		AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+		</cfif>
 		AND ct.ct_u_h_user_id = u.user_id
 		</cfquery>
 		<!--- check to see if a record has been found --->
