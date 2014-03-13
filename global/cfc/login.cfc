@@ -510,7 +510,7 @@
 			</cfloop>
 		<cfelse>
 			<cfloop list="#prefs.set2_intranet_reg_emails#" index="user_email" delimiters=",">
-				<cfinvoke component="email" method="send_email" to="#user_email#" subject="#req_access_mail_sub#" themessage="#req_access_mail_msg#">
+				<cfinvoke component="email" method="send_email" to="#user_email#" subject="#prefs.set2_intranet_reg_emails_sub#" themessage="#req_access_mail_msg#">
 			</cfloop>
 		</cfif>
 	</cffunction>
