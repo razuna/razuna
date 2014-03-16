@@ -126,7 +126,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value; document.form#attributes.file_id#.img_upc.value = document.form#attributes.file_id#.fname.value.match(/\d+./g).toString().replace('.','');"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<!--- Description & Keywords --->
 							<cfloop query="qry_langs">
@@ -205,7 +205,7 @@
 							<cfif prefs.set2_upc_enabled>
 							<tr>
 								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</td>
-								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="img_upc" id="img_upc" value="#qry_detail.detail.img_upc_number#" ></td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="img_upc" id="img_upc" value="#qry_detail.detail.img_upc_number#"></td>
 							</tr>
 							</cfif>
 							<tr>
@@ -450,8 +450,11 @@
 				if(!$.isNumeric(val_upc) && val_upc!='') isNumericField = true;
 			
 				if(isNumericField == true){
-					str = str +'Numeric values Only allowed\n';
+					str = str +'Only numeric values are allowed in UPC\n';
 				}
+				else if (val_upc.trim() !='' && val_upc.length <6){
+				 	str = str +'Incorrect UPC size. Please check UPC and try again.';
+				 }
 				// <cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
 				// if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
 				// 	str = str +'Enter the correct size of the UPC.The size of UPC is '+'#qry_GroupsOfUser.upc_size#';
