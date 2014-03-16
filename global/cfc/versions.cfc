@@ -949,9 +949,9 @@
 			<cfelse>
 				null
 			</cfif>
-			, 
+			, thumb_height = 
 			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_heigth)>
-				thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">
+				<cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">
 			<cfelse>
 				null
 			</cfif>,
