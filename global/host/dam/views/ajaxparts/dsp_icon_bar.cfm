@@ -58,7 +58,7 @@
 				<!--- Icons --->
 				<div id="tooltip" style="float:left;width:490px;">
 					<!--- Upload --->
-					<cfif attributes.folderaccess NEQ "R" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')> 
+					<cfif attributes.folderaccess NEQ "R"> 
 						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
 								<div style="float:left;padding-right:15px;"><button class="awesome medium green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button></div>
@@ -98,9 +98,9 @@
 				</div>
 				<!--- More actions menu --->	
 				<div>
-					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>358<cfelse>251</cfif>px;">
+					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">358<cfelse>251</cfif>px;">
 						<!--- Add Subfolder --->
-						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>
+						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
 							<p>
 								<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
 									<div style="float:left;padding-right:5px;">
@@ -203,7 +203,7 @@
 				</div>
 				<!--- View menu --->	
 				<div>
-					<div id="dropviews#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>458<cfelse>351</cfif>px;">
+					<div id="dropviews#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">458<cfelse>351</cfif>px;">
 						<p>
 							<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&iscol=#attributes.iscol#&view=');$('##dropviews#thediv#').toggle();return false;" title="Thumbnail View">
 								<div style="float:left;padding-right:5px;">
@@ -352,15 +352,12 @@
 		</a> 
 	</cfif>
 	<cfif attributes.folderaccess IS NOT "R">
-		
-		<cfif structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ ''>
-			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','move');return false;">
-				<div style="float:left;padding-left:5px;">
-					<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
-				</div>
-				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
-			</a>
-		</cfif>
+		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','move');return false;">
+			<div style="float:left;padding-left:5px;">
+				<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+			</div>
+			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
+		</a>
 		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','batch');return false;">
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
@@ -389,7 +386,7 @@
 				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#</div>
 			</a>
 		</cfif>
-		<cfif attributes.folderaccess EQ "X" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>
+		<cfif attributes.folderaccess EQ "X">
 			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','delete');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />

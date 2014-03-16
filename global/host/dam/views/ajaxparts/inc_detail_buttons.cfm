@@ -42,7 +42,7 @@
 			</a>
 		</cfif>
 		<!--- Shown only to users who are not R --->
-		<cfif attributes.folderaccess NEQ "R" AND (structKeyExists(qry_folder,'link_path') AND qry_folder.link_path EQ '')>
+		<cfif attributes.folderaccess NEQ "R">
 			<!--- Move --->
 			<a href="##" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#','#myFusebox.getApplicationData().defaults.trans("move_file")#',600,2);">
 				<div style="float:left;">

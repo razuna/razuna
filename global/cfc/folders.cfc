@@ -5661,7 +5661,7 @@
 		<!--- Get the reocord of the folder to be copied --->
 		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
-			<cfinvokeargument name="avoid_link_path" value="yes">
+			<cfinvokeargument name="avoid_link_path" value="no">
 		</cfinvoke>
 		<cfif tocopyfolderdetails.recordcount NEQ 0>
 			<cfif arguments.thestruct.count EQ 0>
