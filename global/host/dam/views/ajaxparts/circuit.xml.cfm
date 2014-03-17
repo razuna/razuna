@@ -870,4 +870,9 @@
 		<include template="dsp_admin_export_template" />
 	</fuseaction>
 
+	<!-- Updater -->
+	<fuseaction name="updater_tool">
+		<include template="dsp_updater_tool" />
+	</fuseaction>
+
 </circuit>

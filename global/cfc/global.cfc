@@ -1711,4 +1711,25 @@ Comment:<br>
 		</cfloop>
 	</cffunction>
 
+	<!--- Updater logs --->
+	<cffunction name="updaterLogs" returntype="query">
+		<cfset var qry = "">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT l.file_name, l.hashtag, l.date_upload, l.file_status, u.user_first_name, u.user_last_name
+		FROM log_uploader l LEFT JOIN users u ON u.user_api_key = l.api_key
+		WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		ORDER BY l.date_upload DESC
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry>
+	</cffunction>
+
+	<!--- Updater logs CLEAN --->
+	<cffunction name="updaterLogsClean">
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM log_uploader
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+	</cffunction>
+
 </cfcomponent>

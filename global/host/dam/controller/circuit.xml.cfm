@@ -3004,20 +3004,17 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.link_path" value="#attributes.folder_path#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
-		<!-- CFC: Check to be able to read folder -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="link_check(attributes)" returnvariable="attributes.checkstatus" />
-		<!-- Show -->
-		<if condition="attributes.checkstatus.dir EQ 'yes'">
-			<true>
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath_updater(attributes)" />
-			</true>
-		</if>
+		<!-- CFC: Get image settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Add file -->
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath_updater(attributes)" />
 	</fuseaction>
 
 	<!-- Add asset from path -->
@@ -10258,5 +10255,25 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_export_template(attributes)" />
 	</fuseaction>
+
+	<!-- Updater Tool -->
+	<fuseaction name="updater_tool">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="updaterLogs()" returnvariable="qry_logs" />
+		<!-- Show -->
+		<do action="ajax.updater_tool" />
+	</fuseaction>
+
+	<!-- Metadata export template save -->
+	<fuseaction name="updater_tool_clean_log">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="updaterLogsClean()" />
+		<!-- Show -->
+		<do action="updater_tool" />
+	</fuseaction>
+
+
 
 </circuit>
