@@ -1,4 +1,5 @@
 {
+	"razunaServer" : "http://server.razuna.com:8080/index.cfm",
 	"uploadFolder" : "/opt/razuna-receiver/uploaderfiles/",
 	"serverPort" : "3000"
 }

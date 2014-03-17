@@ -8,6 +8,7 @@ var configjson = fs.readFileSync(__dirname + '/config.json');
 var jsonData = JSON.parse(configjson);
 var uploadFolder = jsonData.uploadFolder;
 var serverPort = jsonData.serverPort;
+var razunaServer = jsonData.razunaServer;
 // Add express
 var app = express();
 
@@ -20,7 +21,7 @@ app.post('/', function (req, res, next) {
   var folderid = req.query.folderid;
   var razurl = req.query.razurl;
   // What URL to call
-  razurl = razurl + '/index.cfm';
+  razurl = razunaServer;
   // Where to upload into
   var folder_path = uploadFolder + '/' + uuid.v4();
   // Create random folder
