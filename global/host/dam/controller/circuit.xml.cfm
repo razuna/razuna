@@ -2974,12 +2974,13 @@
 	<fuseaction name="w_import_from_uploader">
 		<!-- Param -->
 		<set name="attributes.updater" value="false" overwrite="false" />
+		<set name="session.hostid" value="#attributes.hostid#" />
+		<set name="attributes.host_id" value="#attributes.hostid#" />
 		<!-- Get userid by apikey -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getUserbyApiKey(attributes.apikey)" returnvariable="qry_user" />
 		<!-- Set userid into session -->
 		<set name="session.theuserid" value="#qry_user.user_id#" />
 		<!-- Set proper host data -->
-		<set name="attributes.host_id" value="#attributes.hostid#" />
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getdetail(attributes)" returnvariable="qry_host" />
 		<set name="session.hostdbprefix" value="#qry_host.host_shard_group#" />
 		<!-- Set to not create a folder since we only upload files -->
@@ -10273,7 +10274,5 @@
 		<!-- Show -->
 		<do action="updater_tool" />
 	</fuseaction>
-
-
 
 </circuit>
