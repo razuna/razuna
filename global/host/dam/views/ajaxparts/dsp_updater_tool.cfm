@@ -122,7 +122,7 @@
 						</p>
 						<h4>What have you done to prevent this from happening again?</h4>
 						<p>
-							Well, theoretically it wasn't supposed to happen to begin with. We are absolutely shocked. In order to prevent something like this from happening again, we have implemented a double backup. I don't think there are a lot of companies with double backups, but that's what we’ve done.
+							Well, theoretically it wasn't supposed to happen to begin with. We are absolutely shocked. In order to prevent something like this from happening again, we have implemented a double backup. I don't think there are a lot of companies with double backups, but that's what we've done.
 						</p>
 						<p>
 							For performance reasons, we are still using a mirror with RAID 6, so a similar breakdown in one server, would not be noticeable. If two servers break down, we have a cloud backup via Amazon S3. So a similar, but still theoretically close to impossible, failure would mean that we would have down-time but that files would be recoverable.
