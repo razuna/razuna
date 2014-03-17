@@ -5285,6 +5285,114 @@ This is the main function called directly by a single upload else from addassets
 	<cfreturn thexml />
 </cffunction>
 
+<!--- UPDATER: INSERT FROM PATH --->
+<cffunction name="addassetpath_updater" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Now add all assets of this folder --->
+	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thefiles" type="file">
+	<!--- Filter out hidden dirs --->
+	<cfquery dbtype="query" name="thefiles">
+	SELECT *
+	FROM thefiles
+	WHERE attributes != 'H'
+	</cfquery>
+	<!--- Loop over the assets --->
+	<cfloop query="thefiles">
+		<cfset var md5hash = "">
+		<cfset var filepath = "">
+		<cfset var thedir = "">
+		<cfset var filename = "">
+		<cfset var extension = "">
+		<!--- Params --->
+		<cfset var filepath = directory & "/" & name>
+		<cfset var thedir = directory>
+		<cfset var filename = listlast(name,FileSeparator())>
+		<cfset var extension = listlast(name,".")>
+		<!--- Get MD5 hash --->
+		<cfset var md5hash = hashbinary("#arguments.thestruct.folder_path#/#filename#")>
+		<!--- Check in file type for extension --->
+		<cfquery datasource="#application.razuna.datasource#" name="fileType">
+		SELECT type_type
+		FROM file_types
+		WHERE lower(type_id) = <cfqueryparam value="#lcase(extension)#" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- According to type we query db --->
+		<cfif fileType.type_type EQ "img">
+			<cfset var db = "images">
+			<cfset var type = "image">
+			<cfset var colname = "img_filename">
+			<cfset var columns = "img_id as fileid, img_filename, folder_id_r">
+		<cfelseif fileType.type_type EQ "vid">
+			<cfset var db = "videos">
+			<cfset var type = "video">
+			<cfset var colname = "vid_filename">
+			<cfset var columns = "vid_id as fileid, vid_filename, folder_id_r">
+		<cfelseif fileType.type_type EQ "aud">
+			<cfset var db = "audios">
+			<cfset var type = "audio">
+			<cfset var colname = "aud_name">
+			<cfset var columns = "aud_id as fileid, aud_name, folder_id_r">
+		<cfelse>
+			<cfset var db = "files">
+			<cfset var type = "document">
+			<cfset var colname = "file_name">
+			<cfset var columns = "file_id as fileid, file_name, folder_id_r">
+		</cfif>
+		<!--- Now check db for same hashtag --->
+		<cfquery datasource="#application.razuna.datasource#" name="samefile">
+		SELECT #columns#
+		FROM #session.hostdbprefix##db#
+		WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+		</cfquery>
+		<!--- If found then --->
+		<cfif samefile.recordcount NEQ 0>
+			<!--- Create directory first --->
+			<cftry>
+				<cfset path_to_file = "#arguments.thestruct.assetpath#/#session.hostid#/#folder_id_r#/#fileType.type_type#/#samefile.fileid#">
+				<cfdirectory action="create" directory="#path_to_file#" mode="775">
+				<!--- Error out --->
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console('Error on creating folder for file #filename#')>
+				</cfcatch>
+			</cftry>
+			<!--- Let's move file on file system --->
+			<cffile action="move" source="#arguments.thestruct.folderpath#/#filename#" destination="#path_to_file#/#filename#" mode="775">
+			<!--- Create preview --->
+
+			<!--- Log it --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO log_uploader
+			(api_key, file_name, file_type, date_upload, file_status)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.apikey#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#type#">,
+				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="sucess">
+			)
+			</cfquery>
+		<!--- Filename can not be found --->
+		<cfelse>
+			<!--- Log it --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO log_uploader
+			(api_key, file_name, file_type, date_upload, file_status, file_comment)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.apikey#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#type#">,
+				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="error">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="Could not find filename">
+			)
+			</cfquery>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 <!--- INSERT FROM PATH --->
 <cffunction name="addassetpath" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
@@ -5299,16 +5407,16 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.folder_path,"/\")>
 	<!--- Since we come from the uploader we dont create the folder --->
 	<cfif !arguments.thestruct.nofolder>
-	<!--- Add the folder --->
-	<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
-	<!--- If we store on the file system we create the folder here --->
-	<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
-	</cfif>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+		</cfif>
 	<cfelse>
 		<!--- Set the folder id  --->
 		<cfset new_folder_id = arguments.thestruct.theid>
@@ -5352,30 +5460,30 @@ This is the main function called directly by a single upload else from addassets
 	</cfloop>
 	<!--- Since we come from upload we can remove the directory --->
 	<cfif !arguments.thestruct.nofolder>
-	<!--- Feedback --->
-	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
-	<cfflush>
-	<!--- Check if folder has subfolders if so add them recursively --->
-	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
-	<!--- Filter out hidden dirs --->
-	<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
-	SELECT *
-	FROM thedir
-	WHERE attributes != 'H'
-	</cfquery>
-	<!--- Call rec function --->
-	<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
 		<!--- Feedback --->
-		<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
-		<!--- folder_id into theid --->
-		<cfset arguments.thestruct.theid = new_folder_id>
-		<!--- Call function --->
-		<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
-	</cfif>
-	<!--- Feedback --->
-	<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
-	<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Call function --->
+			<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+		</cfif>
+		<!--- Feedback --->
+		<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
+		<cfflush>
 	</cfif>
 	<!--- Return --->
 	<cfreturn />

@@ -2972,6 +2972,8 @@
 	
 	<!-- Called from uploader directly -->
 	<fuseaction name="w_import_from_uploader">
+		<!-- Param -->
+		<set name="attributes.updater" value="false" overwrite="false" />
 		<!-- Get userid by apikey -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getUserbyApiKey(attributes.apikey)" returnvariable="qry_user" />
 		<!-- Set userid into session -->
@@ -2984,8 +2986,38 @@
 		<set name="attributes.nofolder" value="true" />
 		<!-- Set langcount -->
 		<set name="attributes.langcount" value="1" />
-		<!-- Finally call function to import from path -->
-		<do action="asset_add_path" />
+		<!-- If we are updater or not -->
+		<if condition="attributes.updater">
+			<true>
+				<!-- Call updater -->
+				<do action="asset_add_updater" />
+			</true>
+			<false>
+				<!-- Finally call function to import from path -->
+				<do action="asset_add_path" />
+			</false>
+		</if>
+	</fuseaction>
+
+	<!-- Add asset from path -->
+	<fuseaction name="asset_add_updater">
+		<!-- Param -->
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- CFC: Check to be able to read folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="link_check(attributes)" returnvariable="attributes.checkstatus" />
+		<!-- Show -->
+		<if condition="attributes.checkstatus.dir EQ 'yes'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath_updater(attributes)" />
+			</true>
+		</if>
 	</fuseaction>
 
 	<!-- Add asset from path -->
@@ -3014,15 +3046,15 @@
 				<do action="ajax.folder_check" />
 			</true>
 			<false>
-		<!-- CFC: Add path -->
-		<if condition="!attributes.av">
-			<true>
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
-			</true>
-			<false>
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="add_av_from_path(attributes)" />
-			</false>
-		</if>
+				<!-- CFC: Add path -->
+				<if condition="!attributes.av">
+					<true>
+						<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
+					</true>
+					<false>
+						<invoke object="myFusebox.getApplicationData().assets" methodcall="add_av_from_path(attributes)" />
+					</false>
+				</if>
 			</false>
 		</if>
 	</fuseaction>
