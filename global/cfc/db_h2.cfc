@@ -110,7 +110,9 @@
 			GRP_NAME 			VARCHAR(50), 
 			GRP_HOST_ID 		BIGINT DEFAULT NULL, 
 			GRP_MOD_ID 			BIGINT NOT NULL, 
-			GRP_TRANSLATION_KEY VARCHAR(50), 
+			GRP_TRANSLATION_KEY VARCHAR(50),
+			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
+			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
 			CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID), 
 			CONSTRAINT GROUPS_FK_MODULES FOREIGN KEY (GRP_MOD_ID)
 			REFERENCES modules (MOD_ID)
@@ -164,6 +166,7 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
+		  USER_EXPIRY_DATE DATE,
 		CONSTRAINT USERS_PK PRIMARY KEY (USER_ID)
 		)
 		</cfquery>
@@ -1070,6 +1073,7 @@
 		  CLOUD_URL_EXP		   BIGINT,
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
+		  FILE_UPC_NUMBER      VARCHAR(15), 
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_FK_HOST FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1151,6 +1155,7 @@
 		  CLOUD_URL_EXP		  BIGINT,
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
+		  IMG_UPC_NUMBER      VARCHAR(15),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_FK_HOSTID FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1167,9 +1172,7 @@
 		  IMG_DESCRIPTION  VARCHAR(4000),
 		  ID_INC		   VARCHAR(100),
 		  HOST_ID		   BIGINT,
-		  PRIMARY KEY (ID_INC),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_TEXT_FK_IMG FOREIGN KEY (IMG_ID_R)
-		REFERENCES #arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
@@ -1188,7 +1191,8 @@
 		  LOG_IP			VARCHAR(200), 
 		  LOG_TIMESTAMP		TIMESTAMP,
 		  HOST_ID			BIGINT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		</cfquery>
@@ -1336,7 +1340,7 @@
 		  SET2_NIRVANIX_PASS			VARCHAR(500),
 		  HOST_ID						BIGINT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
-		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 'f',
+		  SET2_LABELS_USERS				VARCHAR(1000),
 		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'false',
 		  SET2_AKA_URL					VARCHAR(500),
 		  SET2_AKA_IMG					VARCHAR(200),
@@ -1345,7 +1349,9 @@
 		  SET2_AKA_DOC					VARCHAR(200),
 		  SET2_COLORSPACE_RGB			VARCHAR(5) DEFAULT 'false',
 		  SET2_CUSTOM_FILE_EXT			VARCHAR(5) DEFAULT 'true',
+		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
+		  SET2_UPC_ENABLED				VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (rec_uuid),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_2_FK FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1512,6 +1518,7 @@
 		CLOUD_URL_EXP		   	BIGINT,
 		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
+		VID_UPC_NUMBER      	VARCHAR(15),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_FK1 FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1529,9 +1536,7 @@
 		  VID_TITLE		   VARCHAR(400),
 		  ID_INC		   VARCHAR(100),
 		  HOST_ID		   BIGINT,
-		  PRIMARY KEY (ID_INC),
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#videos_text_FK1 FOREIGN KEY (VID_ID_R)
-			REFERENCES #arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
@@ -1676,6 +1681,7 @@
 			meta_data			CLOB,
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
+			cloud_url_thumb		VARCHAR(500),
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
@@ -1729,6 +1735,7 @@
 		    CLOUD_URL_EXP		BIGINT,
 		    IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		    IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
+		    AUD_UPC_NUMBER      VARCHAR(15),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1744,9 +1751,7 @@
 			aud_KEYWORDS		VARCHAR(4000),
 			ID_INC		   		VARCHAR(100),
 			HOST_ID				BIGINT,
-			PRIMARY KEY (ID_INC),
-			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_DESC_FK_FILE FOREIGN KEY (aud_ID_R)
-			REFERENCES #arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
+			PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
@@ -1847,6 +1852,7 @@
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
   		  hashtag			   	VARCHAR(100),
+  		  av_thumb_url			varchar(500) DEFAULT NULL,
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
@@ -1914,6 +1920,19 @@
 	  	custom_id			varchar(200),
 		custom_value		varchar(2000),
 		host_id				bigint
+		)
+		</cfquery>
+		
+		<!--- RAZ-2831 : Metadata export template --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#export_template (
+	  	exp_id				varchar(100),
+		exp_field			varchar(200),
+		exp_value			varchar(2000),
+		exp_timestamp		timestamp, 
+		user_id				varchar(100),
+		host_id				bigint,
+		PRIMARY KEY (exp_id)
 		)
 		</cfquery>
 		
@@ -1988,6 +2007,21 @@
 		)
 		</cfquery>
 		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100) NOT NULL,
+			host_id 					bigint DEFAULT NULL,
+			folder_id 					varchar(100) DEFAULT NULL,
+			user_id						varchar(100) DEFAULT NULL,
+			mail_interval_in_hours		BIGINT(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			asset_keywords				varchar(3) DEFAULT 'F',
+			asset_description			varchar(3) DEFAULT 'F',
+			 PRIMARY KEY (fs_id)
+		)
+		</cfquery>
 	</cffunction>
 	
 	<!--- Create Indexes --->

@@ -36,11 +36,32 @@
 				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("check_duplicates_desc")#</td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="radio" name="set2_md5check" value="true"<cfif prefs.set2_md5check> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("check_duplicates_on")#<br /><input type="radio" name="set2_md5check" value="false"<cfif !prefs.set2_md5check> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("check_duplicates_off")#</td>
+				<td colspan="2"><input type="radio" name="set2_md5check" value="true"<cfif prefs.set2_md5check eq 'true'> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("check_duplicates_on")#<br /><input type="radio" name="set2_md5check" value="false"<cfif prefs.set2_md5check eq 'false' or prefs.set2_md5check eq ''> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("check_duplicates_off")#</td>
 			</tr>
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>
+			<!--- Hide UPC settings if storage is not local --->
+			 <cfif !application.razuna.storage eq 'local'>
+			 	<cfset csshide= "style='display:none'">
+			 <cfelse> 
+			 	<cfset csshide= "">
+			</cfif>
+				<!--- UPC Enabeld --->
+				<tr #csshide#>
+					<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("upc_enabled")#</th>
+				</tr>
+				<tr #csshide#>
+					<td colspan="2">
+						<input type="radio" name="set2_upc_enabled" value="true" <cfif prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("yes")#
+						<input type="radio" name="set2_upc_enabled" value="false" <cfif !prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("no")#
+					</td>
+				</tr>
+			
+				<tr class="list" #csshide#>
+					<td colspan="2"><br /></td>
+				</tr>
+
 			<!--- Image Settings --->
 			<tr>
 				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("image_settings")#</th>
@@ -78,9 +99,24 @@
 					<br />
 					#myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_desc")#
 					<br /><br />
-					<input type="radio" name="set2_colorspace_RGB" value="false" <cfif !prefs.set2_colorspace_rgb> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_off")#
+					<input type="radio" name="set2_colorspace_RGB" value="false" <cfif prefs.set2_colorspace_rgb eq 'false' or prefs.set2_colorspace_rgb eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_off")#
 					<br />
-					<input type="radio" name="set2_colorspace_RGB" value="true" <cfif prefs.set2_colorspace_rgb> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_on")#
+					<input type="radio" name="set2_colorspace_RGB" value="true" <cfif prefs.set2_colorspace_rgb eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_on")#
+				</td>
+			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
+			<!--- RAZ-2837 Adding additional rendition will copy the metadata from original file --->
+			<tr>
+				<td colspan="2">
+					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_header")#</strong>
+					<br />
+					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_desc")#
+					<br /><br />
+					<input type="radio" name="set2_rendition_metadata" value="false" <cfif prefs.set2_rendition_metadata eq 'false' or prefs.set2_rendition_metadata eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_off")#
+					<br />
+					<input type="radio" name="set2_rendition_metadata" value="true" <cfif prefs.set2_rendition_metadata eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_on")#
 				</td>
 			</tr>
 			<tr class="list">
@@ -95,8 +131,8 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input type="radio" name="set2_custom_file_ext" value="true" <cfif prefs.set2_custom_file_ext>checked="checked"</cfif><br />#myFusebox.getApplicationData().defaults.trans("custom_filename_off")#<br /> 
-					<input type="radio" name="set2_custom_file_ext" value="false" <cfif !prefs.set2_custom_file_ext>checked="checked"</cfif><br />#myFusebox.getApplicationData().defaults.trans("custom_filename_on")#
+					<input type="radio" name="set2_custom_file_ext" value="true" <cfif prefs.set2_custom_file_ext eq 'true'>checked="checked"</cfif><br />#myFusebox.getApplicationData().defaults.trans("custom_filename_off")#<br /> 
+					<input type="radio" name="set2_custom_file_ext" value="false" <cfif prefs.set2_custom_file_ext eq 'false' or prefs.set2_custom_file_ext eq ''>checked="checked"</cfif><br />#myFusebox.getApplicationData().defaults.trans("custom_filename_on")#
 				</td>
 			</tr>
 			<tr class="list">

@@ -216,9 +216,9 @@
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
 			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
 				<input type="button" name="movefolder" value="#myFusebox.getApplicationData().defaults.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("move_folder")#',600,1);"> 
-				<!--- <cfif qry_folder.folder_is_collection NEQ "T" >
+				<cfif qry_folder.folder_is_collection NEQ "T" >
 					<input type="button" name="copyfolder" value="#myFusebox.getApplicationData().defaults.trans("copy_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=copyfolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("copy_folder")#',600,1);">
-				</cfif> --->  
+				</cfif>   
 			</cfif>
 			<cfif attributes.isdetail EQ "T">
 				<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>

@@ -26,6 +26,10 @@
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- Save search --->
+		<cfif structKeyExists(attributes,'search_upc')>
+			<cfset attributes.searchtext = #attributes.search_upc# >
+		</cfif>
+	<cfif !structKeyExists(attributes,'search_upc')>
 	<div id="save_search" style="padding-bottom:10px;">
 		<cfif attributes.sf_id EQ 0>
 			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#</a>
@@ -33,10 +37,12 @@
 			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#</a> | <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
 		</cfif>
 	</div>
+	</cfif>
 	<div style="clear:both;"></div>
 	<!--- Search Results --->
 	<div id="loading_searchagain"></div>
 	<div>
+		<cfif !structKeyExists(attributes,'search_upc')> 
 		<!--- Top Search Bar --->
 		<div style="margin:0;padding:0;">
 			<form action="#self#" method="post" id="form_searchsearch" name="form_searchsearch">
@@ -197,6 +203,7 @@
 			</table>
 			</form>
 		</div>
+		</cfif>
 		<!--- Clear --->
 		<div style="clear:both;padding-top:15px;"></div>
 		<!--- Search Results --->

@@ -84,6 +84,8 @@
 			GRP_HOST_ID 		NUMBER DEFAULT NULL, 
 			GRP_MOD_ID 			NUMBER NOT NULL ENABLE, 
 			GRP_TRANSLATION_KEY VARCHAR2(50 CHAR), 
+			UPC_SIZE 			VARCHAR2(2 CHAR) DEFAULT NULL,
+			UPC_FOLDER_FORMAT	VARCHAR2(5 CHAR) DEFAULT 'false',
 		CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID), 
 		CONSTRAINT GROUPS_UK1 UNIQUE (GRP_NAME, GRP_HOST_ID, GRP_MOD_ID), 
 		CONSTRAINT GROUPS_FK_MODULES FOREIGN KEY (GRP_MOD_ID)
@@ -138,6 +140,7 @@
 		  SET2_NIRVANIX_NAME   VARCHAR2(500 CHAR),
 		  SET2_NIRVANIX_PASS   VARCHAR2(500 CHAR),
 		  USER_API_KEY		   VARCHAR2(100 CHAR),
+		  USER_EXPIRY_DATE DATE,
 		CONSTRAINT USERS_PK PRIMARY KEY (USER_ID) ENABLE
 		)
 		</cfquery>
@@ -1391,6 +1394,7 @@
 		  CLOUD_URL_EXP		   	NUMBER,
 		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		  IS_INDEXED		  	VARCHAR2(1 CHAR) DEFAULT 0,
+		  FILE_UPC_NUMBER		VARCHAR2(15 CHAR),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1473,6 +1477,7 @@
 		  CLOUD_URL_EXP		  NUMBER,
 		  IN_TRASH			  VARCHAR2(2 CHAR) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR2(1 CHAR) DEFAULT 0,
+		  IMG_UPC_NUMBER	  VARCHAR2(15 CHAR),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1512,7 +1517,8 @@
 		  LOG_IP			VARCHAR2(200 CHAR), 
 		  LOG_TIMESTAMP		TIMESTAMP, 
 		  HOST_ID			NUMBER,
-		  asset_id_r		VARCHAR2(100 CHAR),
+		  ASSET_ID_R		VARCHAR2(100 CHAR),
+		  FOLDER_ID			VARCHAR2(100 CHAR),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		
@@ -1664,7 +1670,7 @@
 		  SET2_NIRVANIX_PASS			VARCHAR2(500 CHAR),
 		  HOST_ID						NUMBER,
 		  SET2_AWS_BUCKET				VARCHAR2(100 CHAR),
-		  SET2_LABELS_USERS				VARCHAR2(2 CHAR) DEFAULT 'f',
+		  SET2_LABELS_USERS				CLOB,
 		  SET2_MD5CHECK					VARCHAR2(5 CHAR) DEFAULT 'false',
 		  SET2_AKA_URL					VARCHAR2(500 CHAR),
 		  SET2_AKA_IMG					VARCHAR2(200 CHAR),
@@ -1673,7 +1679,9 @@
 		  SET2_AKA_DOC					VARCHAR2(200 CHAR),
 		  SET2_COLORSPACE_RGB			VARCHAR2(5 CHAR) DEFAULT 'false',
 		  SET2_CUSTOM_FILE_EXT			VARCHAR2(5 CHAR) DEFAULT 'true',
+		  SET2_RENDITION_METADATA		VARCHAR2(5 CHAR) DEFAULT 'false',
 		  rec_uuid						VARCHAR2(100 CHAR),
+		  SET2_UPC_ENABLED				VARCHAR2(5 CHAR) DEFAULT 'false',
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_PK PRIMARY KEY (rec_uuid) ENABLE,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1845,6 +1853,7 @@
 		CLOUD_URL_EXP		    NUMBER,
 		IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR2(1 CHAR) DEFAULT 0,
+		VID_UPC_NUMBER			VARCHAR2(15 CHAR),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -2015,6 +2024,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			meta_data			CLOB,
 			hashtag				VARCHAR2(100 CHAR),
 			rec_uuid			VARCHAR2(100 CHAR),
+			cloud_url_thumb		VARCHAR2(500 CHAR),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#versions_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		</cfquery>
@@ -2068,6 +2078,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  	CLOUD_URL_EXP		NUMBER,
 		  	IN_TRASH			VARCHAR2(2 CHAR) DEFAULT 'F',
 			IS_INDEXED		  	VARCHAR2(1 CHAR) DEFAULT 0,
+			AUD_UPC_NUMBER		VARCHAR2(15 CHAR),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#AUDIOS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -2186,6 +2197,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
   		  thewidth 				varchar2(50 CHAR) DEFAULT '0',
   		  theheight				varchar2(50 CHAR) DEFAULT '0',
   		  hashtag			   	VARCHAR2(100 CHAR),
+  		  av_thumb_url			varchar2(500 CHAR) DEFAULT NULL,
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
@@ -2253,6 +2265,19 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 	  	custom_id			varchar2(200 char),
 		custom_value		varchar2(2000 char),
 		host_id				number
+		)
+		</cfquery>
+		
+		<!--- RAZ-2831 : Metadata export template --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
+	  	exp_id				varchar2(100 char),
+		exp_field			varchar2(200 char),
+		exp_value			varchar2(2000 char),
+		exp_timestamp		timestamp, 
+		user_id				varchar2(100 char),
+		host_id				number,
+		PRIMARY KEY (exp_id)
 		)
 		</cfquery>
 		
@@ -2324,6 +2349,22 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			sf_prop_value 	varchar2(2000 char),
 			host_id 		number,
 			PRIMARY KEY (sf_id_r)
+		)
+		</cfquery>
+		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar2(100 char) NOT NULL,
+			host_id 					number DEFAULT NULL,
+			folder_id 					varchar2(100 char) DEFAULT NULL,
+			user_id						varchar2(100 char) DEFAULT NULL,
+			mail_interval_in_hours		number(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			asset_keywords				varchar2(3 char) DEFAULT 'F',
+			asset_description			varchar2(3 char) DEFAULT 'F',
+			PRIMARY KEY (fs_id)
 		)
 		</cfquery>
 		

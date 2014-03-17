@@ -23,10 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent extends="extQueryCaching" output="false">
- 	<!--- Global Object --->
-	<cfobject component="global.cfc.global" name="gobj">
 
+<cfcomponent extends="extQueryCaching" output="false">
+	<!--- Global Object --->
+	<cfobject component="global.cfc.global" name="gobj">
 	<!--- Check for a DB update --->
 	<cffunction name="update_for">
 		<!--- Param --->
@@ -126,8 +126,89 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
-		<!--- If update number is lower then 19(v. 1.6.5) --->
+		<!--- If update number is lower then 19 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 19>
+			<!--- RAZ-2940 : Remove constraints from images_text, audiots_text and videos_text tables --->
+			<cfset var thesql = "DROP CONSTRAINT">
+			<cfset var thetbl = "table_constraints">
+			<cfset var thetype = "FOREIGN KEY">
+			<cfif application.razuna.thedatabase EQ "mysql">
+				<cfset thesql = "DROP FOREIGN KEY">
+			<cfelseif application.razuna.thedatabase EQ "h2">
+				<cfset var thetbl = "constraints">
+				<cfset var thetype = "REFERENTIAL">
+			</cfif>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#"  name="getdel_sql">
+					select concat('alter table ',table_schema,'.',table_name,' #thesql# ',constraint_name, ';') altersql
+					from information_schema.#thetbl#
+					 where constraint_type='#thetype#' 
+					 and (lower(table_name) like '%_images_text'
+					 or  lower(table_name) like '%_audios_text'
+					  or  lower(table_name) like '%_videos_text')
+				</cfquery>
+				<cfloop query ="getdel_sql">
+					<cfquery datasource="#application.razuna.datasource#" name="remove_constraint">
+						#getdel_sql.altersql#
+					</cfquery>
+				</cfloop>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+
+			<!--- RAZ-2819 Add a UPC column in database tables for all file types --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> IMG_UPC_NUMBER #thevarchar#(15)
+				</cfquery>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> AUD_UPC_NUMBER #thevarchar#(15)
+				</cfquery>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> VID_UPC_NUMBER #thevarchar#(15)
+				</cfquery>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FILE_UPC_NUMBER #thevarchar#(15)
+				</cfquery>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_UPC_ENABLED #thevarchar#(5) DEFAULT 'false' 
+				</cfquery>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> UPC_SIZE #thevarchar#(2) DEFAULT NULL
+				</cfquery>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> UPC_FOLDER_FORMAT #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+			<!--- RAZ-2904 --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cloud_url_thumb #thevarchar#(500)
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			
 			<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -167,11 +248,28 @@
 					host_id						#theint#,
 					folder_id					#thevarchar#(100),
 					user_id						#thevarchar#(100),
-					mail_interval_in_hours		#theint#(6),
+					mail_interval_in_hours		#theint#,
 					last_mail_notification_time #thetimestamp#,
 			 		PRIMARY KEY (fs_id)
 				)
 				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2815 : Folder subscribe --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> asset_keywords #thevarchar#(3) DEFAULT 'F'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> asset_description #thevarchar#(3) DEFAULT 'F'
 				</cfquery>
 				<cfcatch type="any">
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -197,6 +295,57 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
+			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_SSL #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- Add column SET2_EMAIL_USE_TLS to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_EMAIL_USE_TLS #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2837 Add column SET2_RENDITION_METADATA to raz1_settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_RENDITION_METADATA #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2831 : Create EXPORT_TEMPLATE table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_export_template
+				(
+					exp_id				#thevarchar#(100),
+					exp_field			#thevarchar#(200),
+					exp_value			#thevarchar#(2000),
+					exp_timestamp		#thetimestamp#, 
+					user_id				#thevarchar#(100),
+					host_id				#theint#,
+					PRIMARY KEY (exp_id)
+				)
+				#tableoptions#
+				</cfquery>
+				<cfcatch type="any">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+
+		</cfif>
+		
+		<!--- If update number is lower then 17 (v. 1.6.2) --->
+		<cfif updatenumber.opt_value LT 18>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -1190,11 +1339,6 @@
 			</cftry>
 		
 		</cfif>
-	
-		<!--- If update number is lower then 17 (v. 1.6.x) --->
-		<cfif updatenumber.opt_value LT 17>
-			
-		</cfif>
 		
 
 		<!--- 
@@ -1208,17 +1352,17 @@
 			</cfcatch>
 		</cftry>
 		 --->
+
+		
 		<!--- Update value in db --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE options
 		SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dbupdateconfig#">
 		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
 		</cfquery>
-
+		<!--- Done --->
 		<!--- Fix db integrity issues if any --->
 		<cfset gobj.fixdbintegrityissues()>
-
-		<!--- Done --->
 	</cffunction>
 
 	<!--- DO DB update --->
@@ -1245,4 +1389,5 @@
 		)
 		</cfquery>
 	</cffunction>
+
 </cfcomponent>

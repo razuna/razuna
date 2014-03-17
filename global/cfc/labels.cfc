@@ -221,7 +221,7 @@
 		)
 		VALUES(
 			<cfqueryparam value="#theid#" cfsqltype="cf_sql_varchar" />,
-			<cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
+			<cfqueryparam value="#trim(thelabel)#" cfsqltype="cf_sql_varchar" />,
 			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" />,
 			<cfqueryparam value="#session.theuserid#" cfsqltype="cf_sql_varchar" />,
 			<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -290,6 +290,7 @@
 	<cffunction name="getlabels" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
+		<cfargument name="checkUPC" type="string" required="false" default="false" > 
 		<!--- Param --->
 		<cfset var l = "">
 		<cfset var qryct = "">
@@ -309,6 +310,9 @@
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			<cfif structKeyExists(arguments,'checkUPC') AND arguments.checkUPC EQ 'true'>
+				AND lower(label_text) = <cfqueryparam value="upc" cfsqltype="cf_sql_varchar" />
+			</cfif>
 			ORDER BY lower(label_text)
 			</cfquery>
 			<!--- Param --->
@@ -753,7 +757,7 @@
 			)
 			VALUES(
 				<cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />,
-				<cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
+				<cfqueryparam value="#trim(thelabel)#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" />,
 				<cfqueryparam value="#session.theuserid#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />,
@@ -765,11 +769,8 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#labels
 			SET 
-			label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />
-			<cfif structkeyexists(arguments.thestruct,"label_parent") AND arguments.thestruct.label_parent NEQ 0>
-				,
-				label_id_r = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
-			</cfif>
+			label_text = <cfqueryparam value="#trim(thelabel)#" cfsqltype="cf_sql_varchar" />, 
+			label_id_r = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
 			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			</cfquery>

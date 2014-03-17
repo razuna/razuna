@@ -42,7 +42,12 @@
 </cfif>
 <cfoutput>
 <div>
+	<!--- RAZ-2907 check the condition for bulk upload versions--->
+	<cfif !structkeyexists(attributes,"file_id")>
 	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&v=#createuuid()#<cfif structkeyexists(attributes,"fromshare")>&fromshare=true</cfif>" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
+	<cfelse>
+	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&nopreview=#attributes.nopreview#&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
+	</cfif>
 	<cfif attributes.nopreview EQ 0>		
 		<cfif structkeyexists(attributes,"_w")>
 			<a href="##" onclick="#theaddurl#';" style="float:right;">

@@ -97,7 +97,7 @@
 				<cfloop query="myDir">
 					<!--- Get the files --->
 					<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#" name="myFile" type="file">
-						<cfif !Ftpexistsfile(ftpdata=o, file="#arguments.thestruct.folderpath#/#myFile.name#")>
+						<cfif !Ftpexistsfile(ftpdata=o, file="#arguments.thestruct.folderpath#/#myFile.name#", passive=session.ftp_passive, stoponerror=false)>
 							<!--- Put the file on the FTP Site --->
 							<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myDir.name#/#myFile.name#", passive=session.ftp_passive)>
 						<cfelse>
@@ -119,7 +119,7 @@
 			<cfelse>
 				<!--- Get the files --->
 				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" name="myFile" type="file">
-				<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#myFile.name#")>
+				<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#myFile.name#", passive=session.ftp_passive, stoponerror=false)>
 					<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#myFile.name#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#/#myFile.name#", passive=session.ftp_passive)>
 				<cfelse>
 					<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
@@ -137,11 +137,11 @@
 				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" recurse="true">
 			</cfif>
 		<cfelse>
-			<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#")>
-		<!--- Put the file on the FTP Site --->
-        <cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#", passive=session.ftp_passive)>
-		<!--- Delete the file in the outgoing folder --->
-		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#">
+			<cfif !Ftpexistsfile(ftpdata=o ,file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", passive=session.ftp_passive, stoponerror=false)>
+				<!--- Put the file on the FTP Site --->
+				<cfset Ftpputfile(ftpdata=o, remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#", localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#", passive=session.ftp_passive)>
+				<!--- Delete the file in the outgoing folder --->
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#">
 			<cfelse>
 				<cfset listftp = Ftplist(ftpdata=o, directory="#arguments.thestruct.folderpath#")>
 				<cfquery name="q" dbtype="query" >

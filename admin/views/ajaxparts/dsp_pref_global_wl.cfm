@@ -36,6 +36,8 @@
 				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">#defaultsObj.trans("wl_news")#</a></li>
 				<!--- ISP setup --->
 				<li><a href="##wl_isp">#defaultsObj.trans("wl_hosting_setting")#</a></li>
+				<!--- Most recently updates --->
+				<li><a href="##wl_show_recent_updates">#defaultsObj.trans("wl_show_recent_updates")#</a></li>
 			</ul>
 			<!--- Options --->
 			<div id="wl_options">
@@ -134,6 +136,17 @@
 				<br /><br />
 				<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
 			</div>
+			<!--- show recent updates options --->
+			<div id="wl_show_recent_updates">
+				 #defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
+				<strong>Show list of most recently updated assets</strong><br />
+				<input type="radio" value="true" name="show_updates" <cfif application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
+				<input type="radio" value="false" name="show_updates" <cfif !application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
+				<br /><br />
+				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
+				<br /><br />
+				<div id="wlfeedback4" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
+			</div>
 		</div>
 	</form>
 
@@ -156,9 +169,11 @@
 			$("##wlfeedback").css("display","");
 			$("##wlfeedback2").css("display","");
 			$("##wlfeedback3").css("display","");
+			$("##wlfeedback4").css("display","");
 			$("##wlfeedback").html('#defaultsObj.trans("saved_changes")#');
 			$("##wlfeedback2").html('#defaultsObj.trans("saved_changes")#');
 			$("##wlfeedback3").html('#defaultsObj.trans("saved_changes")#');
+			$("##wlfeedback4").html('#defaultsObj.trans("saved_changes")#');
 			return false;
 		});
 		// Defaults

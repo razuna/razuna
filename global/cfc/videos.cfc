@@ -591,11 +591,17 @@
 			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
 			<cfinvokeargument name="logfiletype" value="vid">
 			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+			<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#videos
 		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#videos_text
+		WHERE vid_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Delete from collection --->
@@ -849,10 +855,16 @@
 				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
 				<cfinvokeargument name="logfiletype" value="vid">
 				<cfinvokeargument name="assetid" value="#i#">
+				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 			</cfinvoke>
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #arguments.thestruct.hostdbprefix#videos
 			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#videos_text
+			WHERE vid_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
 			<!--- Delete from collection --->
@@ -1029,7 +1041,7 @@
 	v.vid_create_date, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.cloud_url, v.cloud_url_org,
 	v.vid_change_time, v.vid_mimetype, v.vid_publisher, v.vid_ranking rank, v.vid_single_sale, v.vid_is_new,
 	v.vid_selection, v.vid_in_progress, v.vid_license, v.vid_name_org, v.vid_name_org filenameorg, v.shared, v.path_to_asset,
-	v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, v.vid_name_image, v.vid_meta, v.hashtag,
+	v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, v.vid_name_image, v.vid_meta, v.hashtag, v.vid_upc_number,
 	s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name,
 	fo.folder_name, '' as perm
 	FROM #session.hostdbprefix#videos v 
@@ -1042,7 +1054,7 @@
 	<!--- Get proper folderaccess --->
 	<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 	<!--- Add labels query --->
-	<cfif theaccess NEQ "">
+	<cfif details.recordcount neq 0 AND theaccess NEQ "">
 		<cfset QuerySetCell(details, "perm", theaccess)>
 	</cfif>
 	<!--- Get descriptions and keywords --->
@@ -1087,6 +1099,18 @@
 	<cfparam name="arguments.thestruct.vid_online" default="F">
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
+	<!--- RAZ-2837:: --->
+	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
+		<!--- Get additional renditions --->
+		<cfquery datasource="#variables.dsn#" name="getaddver">
+		SELECT av_id FROM #session.hostdbprefix#additional_versions
+		WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+		</cfquery>
+		<!--- Append additional renditions --->
+		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(getaddver.av_id)#',',')>
+		<!--- Append  renditions --->
+		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.vid_id)#',',')>
+	</cfif>	 
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 		<cfset var i = listfirst(i,"-")>
@@ -1158,6 +1182,16 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+
+		<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
+		<cfquery datasource="#variables.dsn#">
+		UPDATE #session.hostdbprefix#additional_versions
+		SET 
+		av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
+		WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
 		<!--- Save to the files table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<cfquery datasource="#variables.dsn#">
@@ -1165,6 +1199,9 @@
 			SET
 			vid_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			vid_online = <cfqueryparam value="#arguments.thestruct.vid_online#" cfsqltype="cf_sql_varchar">,
+			<cfif isdefined("arguments.thestruct.vid_upc")>
+				vid_upc_number = <cfqueryparam value="#arguments.thestruct.vid_upc#" cfsqltype="cf_sql_varchar">,
+			</cfif>
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1181,38 +1218,56 @@
 		<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.file_id#" />
 		<!--- Query again --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
-		SELECT vid_name_org, vid_filename, path_to_asset
+		SELECT vid_name_org, vid_filename, path_to_asset, folder_id_r
 		FROM #session.hostdbprefix#videos
 		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Select the record to get the original filename or assign if one is there --->
-		<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
-			<cfset arguments.thestruct.qrydetail.filenameorg = qryorg.vid_name_org>
-			<cfset arguments.thestruct.file_name = qryorg.vid_filename>
-			<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
+		<cfif qryorg.recordcount neq 0>
+			<!--- Select the record to get the original filename or assign if one is there --->
+			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
+				<cfset arguments.thestruct.qrydetail.filenameorg = qryorg.vid_name_org>
+				<cfset arguments.thestruct.file_name = qryorg.vid_filename>
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
+			<cfelse>
+				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+			</cfif>
+			<!--- If folder_id not passed in struct then set it  --->
+			<cfif not isdefined("arguments.thestruct.folder_id")>
+				<cfset arguments.thestruct.folder_id = qryorg.folder_id_r>
+			</cfif>
+			
+			<!--- Lucene --->
+			<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
+			<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
+			<!--- Local --->
+			<cfif application.razuna.storage EQ "local">
+				<!--- MD5 video --->
+				<cfif FileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+					<cfset var md5hash = hashbinary("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+					<!--- Update DB --->
+					<cfquery datasource="#variables.dsn#">
+					UPDATE #session.hostdbprefix#videos
+					SET hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+					WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				</cfif>
+			</cfif>
+			<!--- Log --->
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		<cfelse>
-			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
-		</cfif>
-		<!--- Lucene --->
-		<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
-		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
-		<!--- Local --->
-		<cfif application.razuna.storage EQ "local">
-			<!--- MD5 video --->
-			<cfif FileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
-				<cfset var md5hash = hashbinary("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
-				<!--- Update DB --->
-				<cfquery datasource="#variables.dsn#">
-				UPDATE #session.hostdbprefix#videos
-				SET hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
-				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
+			<!--- If udpaitng additional version then get info and log change--->
+			<cfquery datasource="#variables.dsn#" name="qryaddver">
+			SELECT av_link_title, folder_id_r
+			FROM #session.hostdbprefix#additional_versions
+			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif qryaddver.recordcount neq 0>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
 			</cfif>
 		</cfif>
-		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
@@ -1255,6 +1310,8 @@
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
 		<cfset cloud_url_org.newepoch = 0>
+		<!--- Set file id for API rendition --->
+		<cfset var newid = "0">
 		<cfparam name="arguments.thestruct.upl_template" default="0">
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
@@ -1504,7 +1561,12 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on converting your video" themessage="Your Video could not be converted to the format #ucase(theformat)#. This can happen when the source video is rendered with codecs that our conversion engine can not read/write.">
+				<!--- RAZ-2810 Customise email message --->
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "#ucase(theformat)#">
+				<cfinvoke component="defaults" method="trans" transid="video_convert_error_subject" values="#transvalues#" returnvariable="video_convert_error_sub" />
+				<cfinvoke component="defaults" method="trans" transid="video_convert_error_message" values="#transvalues#" returnvariable="video_convert_error_msg" />
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="#video_convert_error_sub#" themessage="#video_convert_error_msg#">
 			<cfelse>
 				<!--- If we are MP4 run it trough MP4Box --->
 				<cfif theformat EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
@@ -1639,6 +1701,31 @@
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
+
+				<!--- Check if UPC criterion is satisfied and needs to be enabled--->
+				<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
+					<cfinvokeargument name="folder_id" value="#arguments.thestruct.qrydetail.folder_id_r#"/>
+				</cfinvoke>
+				<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
+				 <cfif upcstruct.upcenabled>
+				 	<cfset var get_upc ="">
+				 	<!--- Get UPC number for asset  from database --->
+					<cfquery datasource="#application.razuna.datasource#" name="get_upc">
+						SELECT vid_upc_number as upcnumber FROM  #session.hostdbprefix#videos
+						WHERE vid_id =
+						 <cfif isDefined('arguments.thestruct.vid_group_id') AND arguments.thestruct.vid_group_id NEQ ''>
+							 <cfqueryparam value="#arguments.thestruct.vid_group_id#" cfsqltype="cf_sql_varchar">
+						<cfelse>
+							<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+						</cfif>
+					</cfquery>
+					
+					<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
+						<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
+						<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
+					</cfinvoke>
+				</cfif>
+
 				<!--- Update the video record with other information --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
@@ -1648,7 +1735,12 @@
 				<cfelse>
 					vid_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
 				</cfif>
-				vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">,
+				<!--- If UPC is enabled and product string is numeric then change filename --->
+				vid_filename = <cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
+							<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
+						<cfelse>
+							<cfqueryparam value="#previewvideo#" cfsqltype="cf_sql_varchar">
+						</cfif>, 
 				vid_custom_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">,
 				vid_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 				vid_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
@@ -1676,8 +1768,48 @@
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
+				<cfif structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true'>
+					<!--- RAZ-2837: Get descriptions and keywords --->
+					<cfquery datasource="#application.razuna.datasource#" name="qry_thevidtxt">
+						SELECT lang_id_r,vid_id_r, vid_description as thedesc, vid_keywords as thekeys
+						FROM #session.hostdbprefix#videos_text
+						WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<cfif qry_thevidtxt.recordcount neq 0>
+						<!--- Add to descriptions and keywords --->
+						<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#videos_text
+								(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+							VALUES(
+								<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+								<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
+								<cfqueryparam value="#qry_thevidtxt.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+								<cfqueryparam value="#qry_thevidtxt.thedesc#" cfsqltype="cf_sql_varchar">, 
+								<cfqueryparam value="#qry_thevidtxt.thekeys#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+						</cfquery>
+					</cfif>
+					<cfif structKeyExists(arguments.thestruct,'qry_cf') AND arguments.thestruct.qry_cf.recordcount NEQ 0>
+						<cfloop query="arguments.thestruct.qry_cf">
+							<cfquery datasource="#application.razuna.datasource#">
+								INSERT INTO #session.hostdbprefix#custom_fields_values
+								(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+								VALUES(
+								<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cf_id#">,
+								<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_value#">,
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+								<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+								)
+							</cfquery>
+						</cfloop>	
+					</cfif>
+				</cfif>
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qrydetail.folder_id_r#')>
 				<!--- Call Plugins --->
 				<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
 				<cfset arguments.thestruct.file_name = previewvideo>
@@ -1921,7 +2053,7 @@
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<!--- </cfthread> --->
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id)>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id,folderid='#arguments.thestruct.folder_id#')>
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function videos.move">

@@ -32,11 +32,12 @@
 	<cfargument name="mod_id" type="numeric" required="False" hint="modules.mod_id">
 	<cfargument name="mod_short" type="string" required="False" hint="modules.mod_short">
 	<cfargument name="host_id" type="numeric" required="false" default="0">
+	<cfargument name="check_upc_size" type="string" required="false" default="false">
 	<cfargument name="orderBy" type="string" required="false" default="groups.grp_mod_id, groups.grp_name, groups.grp_id" hint="""ORDER BY #yourtext#""">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
-	SELECT groups.grp_id,groups.grp_name,groups.grp_host_id,groups.grp_mod_id,groups.grp_translation_key
+	SELECT groups.grp_id,groups.grp_name,groups.grp_host_id,groups.grp_mod_id,groups.grp_translation_key,groups.upc_size,groups.upc_folder_format
 	FROM groups
 	WHERE (
 		groups.grp_host_id = <cfqueryparam value="#Arguments.host_id#" cfsqltype="cf_sql_numeric">
@@ -57,6 +58,10 @@
 				FROM modules
 				WHERE modules.mod_id = groups.grp_mod_id AND modules.mod_short = <cfqueryparam value="#Arguments.mod_short#" cfsqltype="cf_sql_varchar">
 				)
+	</cfif>
+	<cfif StructKeyExists(Arguments, "check_upc_size") AND arguments.check_upc_size EQ 'true'>
+		AND upc_size != '' 
+		AND upc_size is not null
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>

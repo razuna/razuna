@@ -80,8 +80,24 @@
 				</div>
 				<div style="float:right;padding-left:20px;padding-top:8px;">
 					<a href="##" onclick="loadcontent('rightside','#myself#c.search_advanced');$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a>
+					<cfif cgi.http_host CONTAINS "razuna.com">
+						<a href="##" style="padding-left:15px;" onclick="loadcontent('rightside','#myself#c.updater_tool');return false;"><strong style="color:red;">FILE RE-UPLOAD!</strong></a>
+					</cfif>
 				</div>
+				<!--- Enabled UPC search --->
+				<cfif prefs.set2_upc_enabled >
+				<div style="float:right;padding-left:20px;padding-top:8px;">
+					<a href="##" onclick="upcsearch();return false;">#myFusebox.getApplicationData().defaults.trans("link_upc_search")#</a>
+				</div>
+				</cfif>
 				</form>
+				<!--- UPC Search Popup window --->
+				<div id="popup_upcsearch" style="display:none;">
+					<tr>
+						<td width="1%" nowrap="true" style="font-weight:bold;"><strong>#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</strong></br></br>
+						<textarea name="search_upc" id="search_upc" cols="42"></textarea></td>
+					</tr>
+				</div>
 			</div>
 		<!--- </cfcachecontent> --->
 	</div>
@@ -175,6 +191,28 @@
 			document.form_account.target='myWin';
 			document.form_account.submit();
 		}
+		//UPC Search
+		function upcsearch(){
+			$( "##popup_upcsearch" ).dialog({
+				resizable: false,
+				height:200,
+				modal: true,
+				buttons: {
+				"#myFusebox.getApplicationData().defaults.trans("header_upc_search")#": function() {
+					if($('##search_upc').val() == ""){
+						alert("Please enter value for UPC Number");
+					} else {
+						$( this ).dialog( "close" );
+						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val());	
+					}
+					
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
 		// $(function() {
 		// 	var cache = {}, lastXhr;
 		// 	$( "##simplesearchtext" ).autocomplete({

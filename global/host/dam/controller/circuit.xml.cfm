@@ -327,6 +327,16 @@
 						</if>
 		  			</true>
 		  		</if>
+				<!-- Most Recently added assets -->
+				<if condition="application.razuna.show_recent_updates">
+					<true>
+						<!-- Params -->
+						<set name="attributes.logswhat" value="log_assets" />
+						<set name="attributes.is_dashboard_update" value="yes" />
+						<!-- CFC: Get log -->
+						<invoke object="myFusebox.getApplicationData().log" methodcall="get_log_assets(attributes)" returnvariable="attributes.qry_log" />
+		  			</true>
+		  		</if>
 				<!-- CFC: Get languages -->
 				<do action="languages" />
 				<!-- CFC: Custom fields -->
@@ -339,6 +349,8 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 				<!-- CFC: Get config -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('prerelease')" returnvariable="prerelease" />
+				<!-- CFC: Get settings -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 				<!-- CFC: Get plugin actions -->
 				<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_main_page',attributes)" returnvariable="pl" />
 				<!-- Get the Cache tag -->
@@ -1132,10 +1144,15 @@
 		<set name="attributes.type" value="doc" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.dllinkbasket" />
 	</fuseaction>
@@ -1164,10 +1181,14 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.noemail" value="true" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="thebasket" />
 		<!-- CFC: Send eMail -->
@@ -1230,6 +1251,8 @@
 		<set name="attributes.folderpath" value="#thispath#/incoming" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
 		<!-- Put session into attributes -->
 		<set name="attributes.artofimage" value="#session.artofimage#" />
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
@@ -1239,6 +1262,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- Do the upload from server which will add the zip file from above -->
@@ -2372,6 +2397,8 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" /> 
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Only if it NOT from search -->
 		<if condition="!#attributes.issearch#">
 			<true>
@@ -2730,6 +2757,9 @@
 		<do action="asset_get_settings" />
 		<!-- CFC: Get email messages -->
 		<invoke object="myFusebox.getApplicationData().email" methodcall="emailheaders(attributes)" returnvariable="qry_emails" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.asset_add_email_show" />
 	</fuseaction>
@@ -2855,8 +2885,16 @@
 		<set name="attributes.user_id" value="#session.theuserid#" />	
 		<set name="attributes.nopreview" value="0" overwrite="false" />
 		<set name="attributes.av" value="0" overwrite="false" />
+		<set name="attributes.thepath" value="#thispath#" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="upload(attributes)" returnvariable="result" />
+		<!-- RAZ-2907 upload Bulk versions -->
+		<!-- Versions Add -->
+		<if condition="structkeyexists(attributes,'extjs') AND attributes.extjs EQ 'T' ">
+			<true>
+				<do action = "versions_add" />
+			</true>
+		</if>		
 		<!-- Show -->
 		<do action="ajax.versions_upload" />
 	</fuseaction>
@@ -2934,6 +2972,8 @@
 	
 	<!-- Called from uploader directly -->
 	<fuseaction name="w_import_from_uploader">
+		<!-- Param -->
+		<set name="attributes.updater" value="false" overwrite="false" />
 		<!-- Get userid by apikey -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getUserbyApiKey(attributes.apikey)" returnvariable="qry_user" />
 		<!-- Set userid into session -->
@@ -2946,8 +2986,35 @@
 		<set name="attributes.nofolder" value="true" />
 		<!-- Set langcount -->
 		<set name="attributes.langcount" value="1" />
-		<!-- Finally call function to import from path -->
-		<do action="asset_add_path" />
+		<!-- If we are updater or not -->
+		<if condition="attributes.updater">
+			<true>
+				<!-- Call updater -->
+				<do action="asset_add_updater" />
+			</true>
+			<false>
+				<!-- Finally call function to import from path -->
+				<do action="asset_add_path" />
+			</false>
+		</if>
+	</fuseaction>
+
+	<!-- Add asset from path -->
+	<fuseaction name="asset_add_updater">
+		<!-- Param -->
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.link_path" value="#attributes.folder_path#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- CFC: Get image settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Add file -->
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath_updater(attributes)" />
 	</fuseaction>
 
 	<!-- Add asset from path -->
@@ -3657,6 +3724,13 @@
 		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+		<!-- Get UPC Number  -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -3768,6 +3842,13 @@
 		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+		<!-- Get UPC Number  -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -3853,6 +3934,26 @@
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="vid" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Get related videos -->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="attributes.qry_related" />
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<do action="custom_fields_save" />
+			</true>
+		</if>
+		<!-- CFC: Save file detail -->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
+		<!-- Variables for API -->
+		
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
@@ -3868,10 +3969,17 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="vid" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>
@@ -3880,10 +3988,17 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="vid" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>
@@ -3940,6 +4055,13 @@
 		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+		<!-- Get the groups of this user -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -4018,6 +4140,7 @@
 	<fuseaction name="images_detail_save">
 		<!-- Params -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
+		<set name="attributes.thefiletype" value="img" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -4025,6 +4148,10 @@
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
 		<set name="attributes.file_ids" value="#attributes.file_id#" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Get related images -->
+		<invoke object="myFusebox.getApplicationData().images" methodcall="relatedimages(attributes)" returnvariable="attributes.qry_related" />
 		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
 		<if condition="attributes.customfields NEQ 0">
 			<true>
@@ -4040,7 +4167,6 @@
 			</true>
 		</if>
 		<!-- Variables for API -->
-		<set name="attributes.thefiletype" value="img" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
@@ -4058,12 +4184,17 @@
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.cf_show" value="img" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert images -->	
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
@@ -4074,12 +4205,17 @@
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.cf_show" value="img" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert images -->	
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
@@ -4129,6 +4265,13 @@
 		</invoke>
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+		<!-- Get UPC Number  -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -4161,6 +4304,25 @@
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="aud" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: Get related audios -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="attributes.qry_related" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<do action="custom_fields_save" />
+			</true>
+		</if>
+		<!-- CFC: Save file detail -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
+		<!-- Variables for API -->
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
@@ -4219,14 +4381,19 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="aud" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get video settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />		
 	</fuseaction>
@@ -4235,12 +4402,17 @@
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.cf_show" value="aud" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get video settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_video.set2_rendition_metadata#" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
 		<!-- CFC: Convert video -->
@@ -4754,6 +4926,270 @@
 	</fuseaction>
 
 
+	<fuseaction name="searchupc">
+		<!-- Set search simple  -->
+		<set name="attributes.search_simple" value="false" />
+		<!-- Set database  -->
+		<set name="attributes.database" value="#application.razuna.thedatabase#" />
+		<!-- set default search count call -->
+		<set name="attributes.isCountOnly" value="0" />
+		<!-- set share attribute  -->
+		<set name="attributes.share" value="F" overwrite="false"/>
+		<!-- Include the aearch include -->
+		<do action="search_include" />
+		<!-- If we come from saved search we query folderaccess -->
+		<if condition="attributes.from_sf">
+			<true>
+				<!-- CFC: Get access -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />
+			</true>
+		</if>
+		<!-- ACTION: Search all -->
+		<if condition="attributes.thetype EQ 'all'">
+			<true>
+				<!-- CFC: Customization -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+				<set name="attributes.cs" value="#cs#" />
+				<!-- CFC: Get settings -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
+					<true>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- CFC: Combine searches -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files.qall" />
+					</true>
+					<false>
+						<!-- CFC: Combine searches -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files.qall" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files_count.qall" value="#qry_files.qall#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+					</false>
+				</if>
+			</true>
+		</if>
+		<!-- ACTION: Search Files -->
+		<if condition="attributes.thetype EQ 'doc'">
+			<true>
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_files" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_files#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_files" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_files#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
+			</true>
+		</if>
+		<!-- ACTION: Search Images -->
+		<if condition="attributes.thetype EQ 'img'">
+			<true>
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_images" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_images#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_images" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_images#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
+			</true>
+		</if>
+		<!-- ACTION: Search Videos -->
+		<if condition="attributes.thetype EQ 'vid'">
+			<true>
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_videos" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_videos#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />		
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_videos" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_videos#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
+			</true>
+		</if>
+		<!-- ACTION: Search Audios -->
+		<if condition="attributes.thetype EQ 'aud'">
+			<true>
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_audios" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_audios#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_audios" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_audios#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
+			</true>
+		</if>
+		<!-- Show -->
+		<if condition="!structkeyexists(attributes,'mobile_view')">
+			<true>
+				<if condition="!structkeyexists(attributes,'iscopymetadata')">
+					<true>
+						<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+							<true>
+								<do action="ajax.search" />
+							</true>
+							<false>
+								<do action="folder_content_results" />
+							</false>
+						</if>
+					</true>
+				</if>
+			</true>
+		</if>
+	</fuseaction>
+	
 	<!-- Simple Search -->
 	<fuseaction name="search_simple">
 		<!-- Params -->
@@ -4793,6 +5229,8 @@
 					<!-- CFC: Customization -->
 					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 					<set name="attributes.cs" value="#cs#" />
+					<!-- CFC: Get settings -->
+					<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 					<!-- Check the DataBase  -->
 					<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 						<true>
@@ -4833,6 +5271,8 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -4878,6 +5318,8 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -4923,6 +5365,8 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -4968,6 +5412,8 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get settings -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -6158,6 +6604,8 @@
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getUsersOfGroup" returnvariable="qry_groups_users">
 			<argument name="grp_id" value="2" />
 		</invoke>
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: Check if Janrain is enabled -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<!-- CFC: Get social -->
@@ -6254,6 +6702,8 @@
 	<fuseaction name="admin_user_api">
 		<!-- Param -->
 		<set name="attributes.reset" value="false" overwrite="false" />
+		<!-- CFC: Check API key -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
 		<!-- Get Admin groups of this user and put into list -->
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_usergroup">
 			<argument name="user_id" value="#attributes.user_id#" />
@@ -6261,8 +6711,6 @@
 			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
 		<set name="grpnrlist" value="#valuelist(qry_usergroup.grp_id)#" />
-		<!-- CFC: Check API key -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
 		<!-- Show -->
 		<do action="ajax.admin_user_api" />
 	</fuseaction>
@@ -6315,6 +6763,8 @@
 			<argument name="mod_short" value="#attributes.kind#" />
 			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.groups_list" />
 	</fuseaction>
@@ -6333,6 +6783,8 @@
 		<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetailedit(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get all users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Show -->
 		<do action="ajax.groups_detail" />
 	</fuseaction>
@@ -6886,6 +7338,8 @@
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
 		<!-- CFC: Get Customization -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_customization()" returnvariable="qry_customization" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(qry_customization.folder_redirect)" returnvariable="qry_foldername" />
 		<!-- CFC: Get fields -->
@@ -7842,6 +8296,8 @@
 		<do action="storage" /> -->
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- CFC: Get image settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
 		<!-- CFC: Query the versions -->
 		<invoke object="myFusebox.getApplicationData().versions" methodcall="get(attributes)" returnvariable="qry_versions" />
 		<!-- Show -->
@@ -7849,8 +8305,13 @@
 	</fuseaction>
 	<!-- Upload a new version -->
 	<fuseaction name="versions_add">
+		<!-- RAZ-2907 for set zip extraction value -->
 		<!-- Param -->
+		<if condition="!structkeyexists(attributes,'extjs')">
+			<true>
 		<set name="attributes.zip_extract" value="0" />
+			</true>
+		</if>
 		<set name="attributes.sendemail" value="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
@@ -8936,6 +9397,10 @@
 	<fuseaction name="meta_export_do">
 		<!-- Param -->
 		<set name="attributes.thepath" value="#thispath#" />
+		<!-- CFC: Get export template -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_export_template_details()" returnvariable="qry_details" />
+		<!-- Param -->
+		<set name="attributes.export_template" value="#qry_details#" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
 	</fuseaction>
@@ -8983,6 +9448,10 @@
 	<!-- Download Folder -->
 	<fuseaction name="download_folder_do">
 		<!-- Param -->
+		<set name="attributes.what" value="folder" overwrite="false" />
+		<set name="attributes.expwhat" value="folder" overwrite="false" />
+		<set name="attributes.meta_export" value="T" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.pages" value="download" />
 		<set name="attributes.download_thumbnails" value="false" overwrite="false" />
@@ -8997,9 +9466,31 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
 		<!-- CFC: Get all assets -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
-		
-		<!-- CFC: Show the progress download -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder(attributes)" />
+		<!-- Get UPC Number  -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
+		<!-- Check the current folder having label text as upc -->
+		<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
+			<argument name="theid" value="#attributes.folder_id#" />
+			<argument name="thetype" value="folder" />
+			<argument name="checkUPC" value="true" />
+		</invoke>
+		<!-- Check the UPC folder download -->
+		<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
+			<true>
+				<do action="meta_export_do" />
+				<!-- CFC: Show the progress UPC download -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
+			</true>
+			<false>
+			<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
+				<!-- RAZ-2901 CFC: Show the progress download -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
+			</false>
+		</if>
 	</fuseaction>
 	
 	<!--  -->
@@ -9161,6 +9652,7 @@
 	</fuseaction>
 	<!-- Show metadata for renditions -->
 	<fuseaction name="rend_meta">
+		<!-- <set name="attributes.av" value="0" /> -->
 		<!-- Get Languages -->
 		<do action="languages" />
 		<!-- Images -->
@@ -9171,8 +9663,21 @@
 				<set name="attributes.keys" value="img_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
-				<!-- Set filename -->
-				<set name="attributes.filename" value="#qry_detail.detail.img_filename#" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.detail.img_filename#" />
+					</false>
+				</if>
+			
 			</true>
 		</if>
 		<!-- Videos -->
@@ -9183,8 +9688,20 @@
 				<set name="attributes.keys" value="vid_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
-				<!-- Set filename -->
-				<set name="attributes.filename" value="#qry_detail.detail.vid_filename#" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.detail.vid_filename#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- Audios -->
@@ -9195,12 +9712,28 @@
 				<set name="attributes.keys" value="aud_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
-				<!-- Set filename -->
-				<set name="attributes.filename" value="#qry_detail.detail.aud_name#" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.detail.aud_name#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+
 		<!-- Show -->
 		<do action="ajax.rend_meta" />
 	</fuseaction>
@@ -9212,6 +9745,8 @@
 				<do action="custom_fields_save" />
 			</true>
 		</if>
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- Images -->
 		<if condition="attributes.thetype EQ 'img'">
 			<true>
@@ -9659,8 +10194,34 @@
 			</false>
 		</if>
 	</fuseaction>
+
+	<!-- Folder subscribe -->
+	<fuseaction name="folder_subscribe">
+		<!-- Param -->
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<set name="attributes.emailnotify" value="no" overwrite="false" />
+		<set name="attributes.emailinterval" value="0" overwrite="false" />
+		<!-- CFC: Subscribe -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubscribefolder(attributes.theid)" returnvariable="qry_folder" />
+		<!-- XFA -->
+		<xfa name="submitfolderform" value="c.folder_subscribe_save" />
+		<!-- Show -->
+		<do action="ajax.folder_subscribe" />
+	</fuseaction>
+
+	<!-- Save Folder subscribe details -->
+	<fuseaction name="folder_subscribe_save">
+		<!-- Param -->
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<!-- CFC: Subscribe -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
+	</fuseaction>
 	
-	
+	<!-- Run Folder subscribe schedule tasks -->
+	<fuseaction name="folder_subscribe_task">
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
+	</fuseaction>
 
 	<!-- Lucene index for hosted -->
 	<fuseaction name="req_index_update_hosted">
@@ -9671,5 +10232,48 @@
 		<!-- CFC: update -->
 		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted(thestruct=attributes)" />
 	</fuseaction>
+
+	<!-- Metadata export template -->
+	<fuseaction name="admin_export_template">
+		<!-- Param -->
+		<set name="attributes.meta_keys" value="id,filename" />
+		<set name="attributes.meta_default" value="labels,keywords,description,type" />
+		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- CFC: Get export template -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_export_template(attributes)" returnvariable="qry_export" />
+		<!-- Get Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(true)" returnvariable="meta_cf" />
+		<!-- Show metadata export template -->
+		<do action="ajax.admin_export_template" />
+	</fuseaction>
+
+	<!-- Metadata export template save -->
+	<fuseaction name="admin_export_template_save">
+		<!-- Path -->
+		<set name="attributes.thepathup" value="#ExpandPath('../../')#" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_export_template(attributes)" />
+	</fuseaction>
+
+	<!-- Updater Tool -->
+	<fuseaction name="updater_tool">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="updaterLogs()" returnvariable="qry_logs" />
+		<!-- Show -->
+		<do action="ajax.updater_tool" />
+	</fuseaction>
+
+	<!-- Metadata export template save -->
+	<fuseaction name="updater_tool_clean_log">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="updaterLogsClean()" />
+		<!-- Show -->
+		<do action="updater_tool" />
+	</fuseaction>
+
+
 
 </circuit>

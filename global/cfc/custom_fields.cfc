@@ -206,7 +206,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
-		<cfif i CONTAINS "cf_">
+		<cfif i CONTAINS "cf_" AND i DOES NOT CONTAIN "META_" >
 			<!--- <cfif arguments.thestruct[i] EQ "">
 				<cfcontinue>
 			</cfif> --->
@@ -214,34 +214,53 @@
 			<cfset theid = replacenocase("#i#", "cf_", "", "ALL")>
 			<!--- Remove carriage return and new line --->
 			<cfset thevalue = REReplace(arguments.thestruct[i], "\r\n|\n\r|\n|\r", "", "all")>
-			<!--- Insert or update --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT cf_id_r
-			FROM #session.hostdbprefix#custom_fields_values
-			WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-			AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			</cfquery>
-			<!--- Insert --->
-			<cfif qry.recordcount EQ 0>
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#custom_fields_values
-				(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-				VALUES(
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
-			<!--- Update --->
+			<!--- RAZ-2837 :: Update custom fields when renditions exists and rendition's metadata option is True --->
+			<cfif structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0 AND structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true'>
+				<cfif arguments.thestruct.thefiletype EQ 'img'>
+					<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.img_id)#',',')>
+				<cfelseif arguments.thestruct.thefiletype EQ 'aud'>
+					<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.aud_id)#',',')>
+				<cfelseif arguments.thestruct.thefiletype EQ 'vid'>
+					<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.vid_id)#',',')>
+				</cfif>	
+				<cfloop list="#arguments.thestruct.file_id#" index="index" delimiters="," >
+					<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#custom_fields_values
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">
+						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#index#">
+					</cfquery>
+				</cfloop>
 			<cfelse>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#custom_fields_values
-				SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">
+				<!--- Insert or update --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				SELECT cf_id_r
+				FROM #session.hostdbprefix#custom_fields_values
 				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				</cfquery>
+				<!--- Insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				<!--- Update --->
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#custom_fields_values
+					SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevalue#">
+					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+					</cfquery>
+				</cfif>
 			</cfif>
 		</cfif>
 	</cfloop>

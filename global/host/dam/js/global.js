@@ -904,26 +904,42 @@ function checksel(theid,theckb,kind){
 function addgrp(){
 	//Check to ensure group name is entered
 	var checkgrp= $('#grpnew').val();
+	var upcsize= $('#sizeofupc').val();
+	// RAZ-2824 :: Check the UPC folder structure is checked or not
+	if ($('input:radio[name=upc_folder_structure]:checked').length == 0) {
+		var upc_folder = $('[name=upc_folder_structure]').val();
+	}
+	else {
+		var upc_folder = $('input:radio[name=upc_folder_structure]:checked').val();
+	}
 	if(checkgrp=="")
 	{
 		alert('Please enter the group name!');
 		return false;
 	}
 	// Add the new group and show the updated list
-	loadcontent('admin_groups', 'index.cfm?fa=c.groups_add&kind=ecp&loaddiv=admin_groups&newgrp=' + encodeURIComponent($("#grpnew").val()));
+	loadcontent('admin_groups', 'index.cfm?fa=c.groups_add&kind=ecp&loaddiv=admin_groups&newgrp=' + encodeURIComponent($("#grpnew").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder);
 }
 function updategrp(grpid){
 	// Hide Window
 	destroywindow(2);
 	//Check to ensure group name is entered
 	var checkgrp= $('#grpname').val();
+	var upcsize= $('#editupcsize').val();
+	// RAZ-2824 :: Check the UPC folder structure is checked or not
+	if ($('input:radio[name=edit_upc_folder_structure]:checked').length == 0) {
+		var upc_folder = $('[name=edit_upc_folder_structure]').val();
+	}
+	else {
+		var upc_folder = $('input:radio[name=edit_upc_folder_structure]:checked').val(); 
+	}
 	if(checkgrp=="")
 	{
 		alert('Group name can not be empty!');
 		return false;
 	}
 	// Add the new group and show the updated list
-	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val()));
+	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder);
 }
 
 // SCHEDULER
@@ -1845,6 +1861,7 @@ function switchmainselection(thetype,thelinktext){
 // Image Tooltip
 $(document).tooltip({
 	items: "[img-tt]",
+	show: { delay: 800 },
 	content: function() {
 		 var element = $( this );
 		 var theimg = element.attr("src");

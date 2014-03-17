@@ -42,6 +42,7 @@ app.post('/', function (req, res, next) {
       form.append('hostid' , hostid);
       form.append('theid' , folderid);
       form.append('folder_path' , folder_path);
+      form.append('updater' , 'true');
     }
     catch(e){
       console.log('Oops, something is wrong calling the Razuna server!');

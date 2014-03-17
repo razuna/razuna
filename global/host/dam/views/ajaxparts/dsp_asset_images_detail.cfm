@@ -126,7 +126,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value; document.form#attributes.file_id#.img_upc.value = document.form#attributes.file_id#.fname.value.match(/\d+./g).toString().replace('.','');"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<!--- Description & Keywords --->
 							<cfloop query="qry_langs">
@@ -134,7 +134,7 @@
 									<cfset thisid = lang_id>
 									<tr>
 										<td valign="top" width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("description")#</td>
-										<td ><textarea name="img_desc_#thisid#" id="img_desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value;document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
+										<td ><textarea name="img_desc_#thisid#" id="img_desc_#thisid#" class="text" style="width:400px;height:60px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value;document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
 									</tr>
 									<tr>
 										<td valign="top" width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("keywords")#</td>
@@ -150,6 +150,23 @@
 										<cfif attributes.folderaccess EQ "R">
 											<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>
 										<cfelse>
+											<!--- RAZ-2207 Check Group/Users Permissions --->
+											<cfset flag = 0>
+											<cfif  qry_label_set.set2_labels_users EQ ''>
+												<cfset flag=1>
+											<cfelse>
+												<cfif qry_GroupsOfUser.recordcount NEQ 0>
+												<cfloop list = '#valuelist(qry_GroupsOfUser.grp_id)#' index="i" >
+													<cfif listfindnocase(qry_label_set.set2_labels_users,i,',') OR listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+														<cfset flag=1>
+													</cfif>
+												</cfloop>
+												<cfelse>
+													<cfif listfindnocase(qry_label_set.set2_labels_users,session.theuserid,',')>
+														<cfset flag = 1>
+													</cfif>	
+												</cfif>	
+											</cfif>
 											<cfif attributes.thelabelsqry.recordcount lte 200>
 												<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_img" onchange="razaddlabels('tags_img','#attributes.file_id#','img');" multiple="multiple">
 													<option value=""></option>
@@ -157,7 +174,7 @@
 														<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 													</cfloop>
 												</select>
-												<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+												<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 													<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 												</cfif>
 											<cfelse>
@@ -173,7 +190,7 @@
 															</cfif>
 														</cfloop>
 													</div>
-													<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+													<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 														<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false;" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 													</cfif>
 													<!--- Select label button --->
@@ -183,6 +200,13 @@
 										</cfif>
 									</td>
 								</tr>
+							</cfif>
+							<!--- UPC Number --->
+							<cfif prefs.set2_upc_enabled>
+							<tr>
+								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="img_upc" id="img_upc" value="#qry_detail.detail.img_upc_number#"></td>
+							</tr>
 							</cfif>
 							<tr>
 								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_size")#</td>
@@ -208,6 +232,14 @@
 								<td nowrap="true" valign="top">ID</td>
 								<td nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 							</tr>
+							<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields >
+								<!--- RAZ-2834 : Displays Custom field of All and Images --->
+								<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_images_metadata') AND cs.customfield_images_metadata NEQ '')>
+									<tr>
+										<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
+									</tr>
+								</cfif>
+							</cfif>
 						</table>
 					</td>
 				</tr>
@@ -393,8 +425,10 @@
 	}
 	// Submit form
 	function filesubmit(){
-		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords OR prefs.set2_upc_enabled>
 			var reqfield = false;
+			var isNumericField = false;
+			var str = '';
 			<cfif cs.req_filename>
 				var val_filename = $('##fname').val();
 				if (val_filename == '') reqfield = true;
@@ -408,7 +442,27 @@
 				if (val_keys == '') reqfield = true;
 			</cfif>
 			if (reqfield == true){
-				alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+				str = str +'#myFusebox.getApplicationData().defaults.trans("req_fields_error")#\n';
+			}
+			// UPC number size alert message
+			<cfif prefs.set2_upc_enabled>
+				var val_upc = $('##img_upc').val();
+				if(!$.isNumeric(val_upc) && val_upc!='') isNumericField = true;
+			
+				if(isNumericField == true){
+					str = str +'Only numeric values are allowed in UPC\n';
+				}
+				else if (val_upc.trim() !='' && val_upc.length <6){
+				 	str = str +'Incorrect UPC size. Please check UPC and try again.';
+				 }
+				// <cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
+				// if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
+				// 	str = str +'Enter the correct size of the UPC.The size of UPC is '+'#qry_GroupsOfUser.upc_size#';
+				// }
+				// </cfif>
+			</cfif>
+			if(str != ''){
+				alert(str);
 				return false;
 			}
 		</cfif>

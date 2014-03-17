@@ -247,6 +247,7 @@
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("general")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1886,7 +1887,7 @@
 			<!--- If template --->
 			<cfif arguments.thestruct.impp_template NEQ "">
 				<cfloop query="arguments.thestruct.template.impval">
-					<cfif imp_field EQ i AND !imp_key>
+					<cfif imp_field EQ listfirst(i,":") AND !imp_key>
 						<!--- <cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]> --->
 						<cfset var theid = imp_map>
 						<cfset var doloop = true>
@@ -1909,35 +1910,45 @@
 				AND v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.assetid)#">
 				AND v.cf_id_r = f.cf_id
 				</cfquery>
-				<!--- Insert --->
-				<cfif qry.recordcount EQ 0>
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#custom_fields_values
-					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-					VALUES(
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-				<!--- Update --->
-				<cfelse>
-					<!--- If append --->
-					<cfif arguments.thestruct.imp_write EQ "add" AND qry.cf_type NEQ "select">
-						<cfif cfvalue NEQ "">
-							<cfset var cfvalue = qry.cf_value & " " & cfvalue>
-						<cfelse>
-							<cfset var cfvalue = qry.cf_value>
+				<!--- Make sure custom field id exists --->
+				<cfquery datasource="#application.razuna.datasource#" name="iscf">
+				SELECT 1
+				FROM #session.hostdbprefix#custom_fields 
+				WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+				</cfquery>
+
+				 <!--- RAZ-2965: If custom field is found then do insert/update. This avoids database constraint errors --->
+				 <cfif iscf.recordcount neq 0>
+					<!--- Insert --->
+					<cfif qry.recordcount EQ 0>
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#custom_fields_values
+						(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+						VALUES(
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+						)
+						</cfquery>
+					<!--- Update --->
+					<cfelse>
+						<!--- If append --->
+						<cfif arguments.thestruct.imp_write EQ "add" AND qry.cf_type NEQ "select">
+							<cfif cfvalue NEQ "">
+								<cfset var cfvalue = qry.cf_value & " " & cfvalue>
+							<cfelse>
+								<cfset var cfvalue = qry.cf_value>
+							</cfif>
 						</cfif>
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#custom_fields_values
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">
+						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+						</cfquery>
 					</cfif>
-					<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#custom_fields_values
-					SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">
-					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-					</cfquery>
 				</cfif>
 			</cfif>
 			<!--- Param --->

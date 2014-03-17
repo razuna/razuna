@@ -31,10 +31,41 @@
 	<form name="grpdamadd" onsubmit="addgrp();return false;">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
+				<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</strong></td>
+				<cfif prefs.set2_upc_enabled>
+				<td ><strong>sizeofupc</strong></td>
+				<td ><strong>Create UPC folder Structure while downloading</strong></td>
+				</cfif>
+				<td >	
+				</td>
 			</tr>
 			<tr>
-				<td width="100%" colspan="2"><input type="text" size="40" name="grpnew" id="grpnew" /> <input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
+				<td colspan="2" width="20%">
+					<input type="text" size="40" name="grpnew" id="grpnew" /> 
+				</td>
+				<!---RAZ-2824 :: UPC folder structure download option enabled--->
+				<cfif prefs.set2_upc_enabled>
+				<td width="1%" colspan="">	
+					<select name="sizeofupc" id="sizeofupc" style="width:90px;">
+						<option value="">None</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+					</select>
+				</td>
+				<td width="27%" colspan="">
+					<input type="radio" name="upc_folder_structure" value="true" > #myFusebox.getApplicationData().defaults.trans("yes")# 
+					<input type="radio" name="upc_folder_structure" value="false" checked="true"> #myFusebox.getApplicationData().defaults.trans("no")#
+				</td>
+				<cfelse>
+					<input type = "hidden" name="sizeofupc" id="sizeofupc" value="">
+					<input type = "hidden" name="upc_folder_structure" id="upc_folder_structure" value="false">
+				</cfif>	
+				<td>	
+					<input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" />
+				</td>
 			</tr>
 		</table>
 	</form>

@@ -38,6 +38,18 @@
 		<tr class="list">
 			<td><iframe src="#myself#ajax.versions_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#" frameborder="false" scrolling="false" style="border:0px;width:500px;height:55px;" id="ifupload"></iframe></td>
 		</tr>
+		<!--- RAZ-2907 Add option for bulk upload versions --->
+		<tr>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#</th>
+		</tr>
+		<tr>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("versions_old_upload_desc")#</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="button" value="#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#" class="button" onclick="showwindow('#myself#c.asset_add_single&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&nopreview=0&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#',650,2);return false;";>
+			</td>
+		</tr>
 	</table>
 	</cfif>
 	<div id="status" style="width:95%;padding:10px;color:green;background-color:##FFFFE0;display:none;"></div>

@@ -30,7 +30,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
 	<cfquery datasource="#Variables.dsn#" name="qry">
-	SELECT v.ver_version, v.ver_date_add, v.ver_filename_org, v.asset_id_r, v.cloud_url_org,
+	SELECT v.ver_version,v.ver_extension, v.ver_date_add, v.ver_filename_org,v.ver_thumbnail,v.cloud_url_thumb,v.ver_type,v.asset_id_r, v.cloud_url_org,
 	u.user_login_name, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix#versions v LEFT JOIN users u ON u.user_id = v.ver_who
 	WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -87,11 +87,13 @@
 	<cfset var cloud_url_org = structnew()>
 	<cfset var cloud_url_2 = structnew()>
 	<cfset var cloud_url_version = structnew()>
+	<cfset var cloud_url_version_thumb = structnew()>
 	<cfset cloud_url_org.theurl = "">
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_version.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
+	<cfset cloud_url_version_thumb.theurl = "">
 	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -271,40 +273,19 @@
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset arguments.thestruct.qrycurrentversion.ver_filename_org = qrycurrentversion.ver_filename_org> 
 			<cfset arguments.thestruct.qry = qry>
-			<cfif arguments.thestruct.type EQ 'img'>
-				<!--- Create folder with the version --->
-				<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" mode="775">
-				</cfif>
-				<!--- Download the original file --->
-				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
-					<cfinvokeargument name="theasset" value="#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
+			<cfif arguments.thestruct.type EQ 'img' OR arguments.thestruct.type EQ 'vid' OR arguments.thestruct.type EQ 'doc'>
+				<!--- Move the current directory images to new version --->
+				<cfinvoke component="amazon" method="movefolder">
+					<cfinvokeargument name="folderpath" value="#arguments.thestruct.qry.path_to_asset#">
+					<cfinvokeargument name="folderpathdest" value="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
-				<!--- Params for resizeimage --->
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#arguments.thestruct.qrycurrentversion.ver_filename_org#">
-				<cfset arguments.thestruct.destination = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
-				<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
-				<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
-				<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
-				<cfset arguments.thestruct.newid = arguments.thestruct.therandom>
-				<cfset arguments.thestruct.thexmp.orgwidth = arguments.thestruct.qry.img_width>
-				<cfset arguments.thestruct.thexmp.orgheight = arguments.thestruct.qry.img_height>
-				<cfset arguments.thestruct.qryfile.extension = arguments.thestruct.qry.orgext>
-				<!--- resize original to thumb. This also returns the original width and height --->
-				<cfinvoke component="assets" method="resizeImage">
-					<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+				<!--- Copy the existing version images to current directory --->
+				<cfinvoke component="amazon" method="copyfolder">
+					<cfinvokeargument name="folderpath" value="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#">
+					<cfinvokeargument name="folderpathdest" value="#arguments.thestruct.qry.path_to_asset#">
+					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
 				</cfinvoke>
-				<!--- Upload Thumbnail --->
-				<cfthread name="thumbupload#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#attributes.intstruct.qry.path_to_asset#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qrysettings.set2_img_format#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/playback/#attributes.intstruct.type#/#attributes.intstruct.file_id#/#attributes.intstruct.version#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qrysettings.set2_img_format#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-					</cfinvoke>
-				</cfthread>
-				<cfthread action="join" name="thumbupload#arguments.thestruct.file_id#" />
 			</cfif>
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_thumbnail#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -312,11 +293,19 @@
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_filename_org#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Get the thumbnail --->
+			<cfif arguments.thestruct.type EQ "img">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ "vid">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ 'doc' AND arguments.thestruct.qry.orgext EQ 'PDF'>
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qry.filenameorg,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid, meta_data
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid, meta_data
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 		,
@@ -341,6 +330,7 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.orgext#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version_thumb.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thethumbname#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.hashtag#">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,
@@ -380,7 +370,7 @@
 		</cfquery>
 		<cfif qryv.RecordCount NEQ 0>
 			<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/playback/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
+				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			<cfelse>
 				<cfset arguments.thestruct.thesource = "#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#/#qryv.ver_filename_org#">
 			</cfif>
@@ -559,12 +549,14 @@
 	<cfset var cloud_url_2 = structnew()>
 	<cfset var cloud_url_org = structnew()>
 	<cfset var cloud_url_version = structnew()>
+	<cfset var cloud_url_version_thumb = structNew()>
 	<cfset cloud_url_org.theurl = "">
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_version.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset thumbnailname = "">
+	<cfset cloud_url_version_thumb.theurl = "">
 	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- Get windows or not --->
 	<cfinvoke component="global" method="iswindows" returnVariable="iswindows" />
@@ -842,7 +834,7 @@
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfilelocal.path_to_asset#">
-					<cfinvokeargument name="folderpathdest" value="#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
+					<cfinvokeargument name="folderpathdest" value="#session.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
@@ -875,11 +867,19 @@
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Get the thumbnail  --->
+			<cfif arguments.thestruct.type EQ "img">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ "vid">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ 'doc' AND arguments.thestruct.qryfilelocal.orgext EQ 'PDF'>
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid, meta_data
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid, meta_data
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 			,
@@ -904,6 +904,7 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.orgext#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version_thumb.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.hashtag#">,
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,
@@ -942,8 +943,18 @@
 			img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-			thumb_width = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">, 
-			thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
+			thumb_width = 
+			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_width)> 
+				<cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">
+			<cfelse>
+				null
+			</cfif>
+			, thumb_height = 
+			<cfif isnumeric(arguments.thestruct.qrysettings.set2_img_thumb_heigth)>
+				<cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">
+			<cfelse>
+				null
+			</cfif>,
 			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">, 
 			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
 			img_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#trim(cfthread["#ts#"].output)#">,
@@ -1127,5 +1138,386 @@
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
-
+	<!--- RAZ-2907 for bulk upload versions --->
+<cffunction name="upload_old_versions" output="false" >
+	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfset var cloud_url = structnew()>
+	<cfset var cloud_url_2 = structnew()>
+	<cfset var cloud_url_org = structnew()>
+	<cfset var cloud_url_version = structnew()>
+	<cfset cloud_url_org.theurl = "">
+	<cfset cloud_url.theurl = "">
+	<cfset cloud_url_2.theurl = "">
+	<cfset cloud_url_version.theurl = "">
+	<cfset cloud_url_org.newepoch = 0>
+	<cfset thumbnailname = "">
+	<cfset arguments.thestruct.therandom = createuuid("")>
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Get windows or not --->
+	<cfinvoke component="global" method="iswindows" returnVariable="iswindows" />
+	
+	<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.therandom#.sh">
+	<!--- Set Exiftool --->
+	<cfif isWindows>
+		<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<cfset arguments.thestruct.theexeff = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+	<cfelse>
+		<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		<cfset arguments.thestruct.theexeff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+	</cfif>
+	<cftry> 
+		<cfif arguments.thestruct.type EQ "img">
+			<!--- Params for resizeimage --->
+			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<cfset arguments.thestruct.destination = "#arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
+			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
+			<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
+			<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
+			<cfset arguments.thestruct.thexmp.orgwidth = "">
+			<cfset arguments.thestruct.thexmp.orgheight = "">
+			<cfset arguments.thestruct.newid = arguments.thestruct.therandom>
+			<cfset arguments.thestruct.filename_org = arguments.thestruct.qryfile.filename>
+			<cfset arguments.thestruct.org_ext = listlast("#arguments.thestruct.qryfile.filename#",'.')>
+			<cfset arguments.thestruct.path_to_asset = "#arguments.thestruct.folder_id#/#arguments.thestruct.type#/#arguments.thestruct.file_id#">
+			<!--- resize original to thumb. This also returns the original width and height --->
+			<cfinvoke component="assets" method="resizeImage">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+			</cfinvoke>
+			<!--- Get size of original and thumbnail --->
+			<cfset ts = arguments.thestruct.therandom>
+			<cfset ths = "t#arguments.thestruct.therandom#">
+			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
+				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" returnvariable="thread.orgsize">
+				<cfoutput>#trim(thread.orgsize)#</cfoutput>
+			</cfthread>
+			<cfthread name="#ths#" intstruct="#arguments.thestruct#" output="yes">
+				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.qryfile.path#/thumb_#attributes.intstruct.qryfile.file_id#.#attributes.intstruct.qrysettings.set2_img_format#" returnvariable="thread.orgsize">
+				<cfoutput>#trim(thread.orgsize)#</cfoutput>
+			</cfthread>
+			<cfthread action="join" name="#ts#,#ths#" timeout="6000" />
+			<!--- Size of original image --->
+			<cfset arguments.thestruct.org_size = cfthread['#ts#'].orgsize >
+			<!--- Size of original image --->
+			<cfset arguments.thestruct.thumb_size = cfthread['#ths#'].orgsize >
+			<!--- Write the sh script files --->
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#ts#w.sh">
+			<cfset arguments.thestruct.theshh = GetTempDirectory() & "/#ts#h.sh">
+			<!--- On Windows a .bat --->
+			<cfif iswindows>
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#ts#w.bat">
+				<cfset arguments.thestruct.theshh = GetTempDirectory() & "/#ts#h.bat">
+			</cfif>
+			<!--- Write script for getting height and weight --->
+			<cffile action="write" file="#arguments.thestruct.theshh#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.thesource#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.theexif# -S -s -ImageWidth #arguments.thestruct.thesource#" mode="777">
+			<!--- Get height and width --->
+			<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="theheight" />
+			<cfexecute name="#arguments.thestruct.theshw#" timeout="60" variable="thewidth" />
+			<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
+			<cfset arguments.thestruct.theheight = trim(listlast(theheight," "))>
+			<cfset arguments.thestruct.thewidth = trim(listlast(thewidth," "))>
+			<cfif !isNumeric(arguments.thestruct.theheight)>
+				<cfset arguments.thestruct.theheight = 0>
+			</cfif>
+			<cfif !isNumeric(arguments.thestruct.thewidth)>
+				<cfset arguments.thestruct.thewidth = 0>
+			</cfif>
+			<!--- Remove the temp file sh --->
+			<cffile action="delete" file="#arguments.thestruct.theshw#">
+			<cffile action="delete" file="#arguments.thestruct.theshh#">
+			<!--- Name for thumbnail upload --->
+			<cfset arguments.thestruct.thumbnailname_existing = "thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
+			<cfset arguments.thestruct.thumbnailname_new = arguments.thestruct.thumbnailname_existing>
+			<!--- GET RAW META --->
+			<cfif iswindows>
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_img_meta" />
+			<cfelse>
+				<!--- Write Script --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.ver_img_meta" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.thesh#">
+			</cfif>
+			<!--- MD5 Hash --->
+			<cfset arguments.thestruct.md5hash = hashbinary(arguments.thestruct.thesource)>
+		<!--- Videos --->
+		<cfelseif arguments.thestruct.type EQ "vid">
+			<!--- Params for resizeimage --->
+			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<!--- Put together the filenames --->
+			<cfset arguments.thestruct.thisvid.theorgimage = "#arguments.thestruct.qryfile.filenamenoext#" & ".jpg">
+			<!--- Just assign the current path to the finalpath --->
+			<cfset arguments.thestruct.thisvid.finalpath = arguments.thestruct.qryfile.path>
+			<cfset arguments.thestruct.thisvid.newid = arguments.thestruct.therandom>
+			<cfset arguments.thestruct.thetempdirectory = GetTempDirectory()>
+			<cfset arguments.thestruct.filename_org = arguments.thestruct.qryfile.filename>
+			<cfset arguments.thestruct.org_ext = listlast("#arguments.thestruct.qryfile.filename#",'.')>
+			<cfset arguments.thestruct.path_to_asset = "#arguments.thestruct.folder_id#/#arguments.thestruct.type#/#arguments.thestruct.file_id#">
+			<!--- Create thumbnail --->
+			<cfthread name="p#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
+				<cfinvoke component="videos" method="create_previews" thestruct="#attributes.intstruct#">
+			</cfthread>
+			<!--- Wait until Thumbnail is done --->
+			<cfthread action="join" name="p#arguments.thestruct.therandom#" timeout="6000" />
+			<cfdump var="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#"><cfdump var="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#">
+			<!--- Move thumbnail to incoming directory --->
+			<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
+			<!--- Check the platform and then decide on the ImageMagick tag --->
+			<cfif FindNoCase("Windows", server.os.name)>
+				<cfset arguments.thestruct.theidentify = """#arguments.thestruct.thetools.imagemagick#/identify.exe""">
+			<cfelse>
+				<cfset arguments.thestruct.theidentify = "#arguments.thestruct.thetools.imagemagick#/identify">
+			</cfif>
+			<!--- Get size of original --->
+			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
+				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.qryfile.filename#" returnvariable="thread.orgsize">
+				<cfoutput>#trim(thread.orgsize)#</cfoutput>
+			</cfthread>
+			<!--- Get image width --->
+			<cfset tw = "gw#arguments.thestruct.therandom#">
+			<cfthread name="#tw#" intstruct="#arguments.thestruct#" output="yes">
+				<cfexecute name="#attributes.intstruct.theexif#" arguments=" -S -s -ImageWidth #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="thread.orgwidth" />
+				<cfset orgwidth = trim(listlast(thread.orgwidth," "))>
+				<cfoutput>#trim(orgwidth)#</cfoutput>
+			</cfthread>
+			<!--- Get image height --->
+			<cfset th = "gh#arguments.thestruct.therandom#">
+			<cfthread name="#th#" intstruct="#arguments.thestruct#" output="yes">
+				<cfexecute name="#attributes.intstruct.theexif#" arguments="-S -s -ImageHeight #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="thread.orgheight" />
+				<cfset orgheight = trim(listlast(thread.orgheight," "))>
+				<cfoutput>#trim(orgheight)#</cfoutput>
+			</cfthread>
+			<!--- Join threads --->
+			<cfthread action="join" name="#ts#,#tw#,#th#" timeout="6000" />
+			<!--- Size of original --->
+			<cfset arguments.thestruct.org_size = cfthread['#ts#'].orgsize >
+			<!--- Image Width --->
+			<cfset arguments.thestruct.org_width = cfthread['#tw#'].orgwidth >	
+			<!--- Image height --->
+			<cfset arguments.thestruct.org_height = cfthread['#th#'].orgheight >	
+			<!--- Name for thumbnail upload --->
+			<cfset arguments.thestruct.thumbnailname_existing = replacenocase(arguments.thestruct.filename_org,".#arguments.thestruct.org_ext#",".jpg","all")>
+			<cfset arguments.thestruct.thumbnailname_new = arguments.thestruct.thisvid.theorgimage>
+			<!--- GET RAW META --->
+			<cfif iswindows>
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_vid_meta" />
+			<cfelse>
+				<!--- Write Script --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.ver_vid_meta" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.thesh#">
+			</cfif>
+			<!--- MD5 Hash --->
+			<cfset arguments.thestruct.md5hash = hashbinary("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#")>
+			<!--- Audios --->
+		<cfelseif arguments.thestruct.type EQ "aud">
+			<!--- Params for resizeimage --->
+			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<cfset arguments.thestruct.filename_org = arguments.thestruct.qryfile.filename>
+			<cfset arguments.thestruct.path_to_asset = "#arguments.thestruct.folder_id#/#arguments.thestruct.type#/#arguments.thestruct.file_id#">
+			<cfset arguments.thestruct.org_ext = listlast("#arguments.thestruct.qryfile.filename#",'.')>
+			<!--- Read Meta from audio file --->
+			<cfexecute name="#arguments.thestruct.theexif#" arguments="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" timeout="5" variable="idtags" />
+			<!--- Create Raw Audio file --->
+			<cfthread name="wav#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
+				<cfif attributes.intstruct.qryfile.extension NEQ "wav">
+					<cfexecute name="#attributes.intstruct.theexeff#" arguments="-i #attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename# #attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filenamenoext#.wav" timeout="10" />
+				</cfif>
+			</cfthread>
+			<!--- Wait until the WAV is done --->
+			<cfthread action="join" name="wav#arguments.thestruct.therandom#" />
+			<!--- Name for thumbnail upload --->
+			<cfset arguments.thestruct.thumbnailname_existing = replacenocase(arguments.thestruct.filename_org,".#arguments.thestruct.org_ext#",".wav","all")>
+			<cfset arguments.thestruct.thumbnailname_new = "#arguments.thestruct.qryfile.filenamenoext#.wav">
+			<!--- GET RAW META --->
+			<cfif iswindows>
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_aud_meta" />
+			<cfelse>
+				<!--- Write Script --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.ver_aud_meta" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.thesh#">
+			</cfif>
+			<!--- MD5 Hash --->
+			<cfset arguments.thestruct.md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+		<!--- Documents --->
+		<cfelse>
+			<!--- Params for resizeimage --->
+			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<cfset arguments.thestruct.filename_org = arguments.thestruct.qryfile.filename>
+			<cfset arguments.thestruct.path_to_asset = "#arguments.thestruct.folder_id#/#arguments.thestruct.type#/#arguments.thestruct.file_id#">
+			<cfset arguments.thestruct.org_ext = listlast("#arguments.thestruct.qryfile.filename#",'.')>
+			<!--- Name for thumbnail upload --->
+			<cfset arguments.thestruct.thumbnailname_existing = replacenocase(arguments.thestruct.filename_org,".pdf",".jpg","all")>
+			<cfset arguments.thestruct.thumbnailname_new = "#arguments.thestruct.qryfile.filenamenoext#.jpg">
+			<!--- GET RAW META --->
+			<cfif iswindows>
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="ver_file_meta" />
+			<cfelse>
+				<!--- Write Script --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<!--- Execute Script --->
+				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="ver_file_meta" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.thesh#">
+			</cfif>
+			<!--- MD5 Hash --->
+			<cfset arguments.thestruct.md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+			<!--- Remove the filename from the path --->
+			<cfset arguments.thestruct.qryfile.path = replacenocase(arguments.thestruct.qryfile.path,"/#arguments.thestruct.qryfile.filename#","","one")>	
+		</cfif>	
+		<!--- Create a new version number --->
+		<cfquery datasource="#arguments.thestruct.dsn#" name="qryversion">
+		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
+		FROM #session.hostdbprefix#versions
+		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Update the record in versions DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#versions
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid
+		<!--- For images --->
+		<cfif arguments.thestruct.type EQ "img">
+			, meta_data
+			,
+			thumb_width, thumb_height, img_width, img_height, img_size, thumb_size
+		<!--- For Videos --->
+		<cfelseif arguments.thestruct.type EQ "vid">
+			, meta_data
+			,
+			vid_size, vid_width, vid_height, vid_name_image
+		<!--- For Audios --->
+		<cfelseif arguments.thestruct.type EQ "aud">
+			, meta_data
+			,
+			vid_size
+		</cfif>
+		)
+		VALUES(
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
+		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filename_org#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_ext#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.md5hash#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+		<!--- For images --->
+		<cfif arguments.thestruct.type EQ "img">
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_img_meta#">,
+			<cfif isnumeric(arguments.thestruct.width)>
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.width#">
+			<cfelse>
+				null
+			</cfif>, 
+			<cfif isnumeric(arguments.thestruct.height)>
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.height#">
+			<cfelse>
+				null
+			</cfif>,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.theheight#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.thewidth#">, 
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumb_size#">
+		<!--- For Videos --->
+		<cfelseif arguments.thestruct.type EQ "vid">
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_vid_meta#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.org_width#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.org_height#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">
+		<!--- For Audios --->
+		<cfelseif arguments.thestruct.type EQ "aud">
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_aud_meta#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="">
+		</cfif>
+		)
+		</cfquery>
+		<cfif application.razuna.storage EQ "local">
+		<!--- Create folder with the version --->
+			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
+			</cfif>
+			<!--- Move the file to the versions directory --->
+			<cfif directoryExists("#arguments.thestruct.qryfile.path#")>
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
+			</cfif>
+			<cfif arguments.thestruct.org_ext EQ 'PDF'>
+				<!--- Create folder with the version inside razuna_pdf_images folder --->
+				<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" mode="775">
+				</cfif>
+				<!--- move {razuna_pdf_images folder} content {version #}  --->
+				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.thepdfdirectory#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.path_to_asset#/razuna_pdf_images/#qryversion.newversion#" fileaction="move" move="T">
+			</cfif>
+		<!--- Amazon --->
+		<cfelseif application.razuna.storage EQ "amazon">
+			<cfset arguments.thestruct.newversion = qryversion.newversion>
+			<cfset mtt = createuuid("")>
+			<!--- Move the file to the versions directory --->
+			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
+				<!--- Move --->
+				<cfinvoke component="amazon" method="movefolder">
+					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfile.path#">
+					<cfinvokeargument name="folderpathdest" value="/#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#">
+					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+				</cfinvoke>
+			</cfthread>
+			<!--- Wait for the move thread to finish --->
+			<cfthread action="join" name="#mtt#" />
+			<!--- Upload the new version to the old directory --->
+				
+			<cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
+				<!--- Upload Original --->
+				<cfinvoke component="amazon" method="Upload">
+					<cfinvokeargument name="key" value="/#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#/#attributes.intstruct.qryfile.filename#">
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
+					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+				</cfinvoke>
+			</cfthread>
+			<!--- Wait for the upload thread to finish --->
+			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
+			<!--- Upload Thumbnail --->
+			<cfthread name="ut#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
+				<cfinvoke component="amazon" method="Upload">
+					<cfinvokeargument name="key" value="/#attributes.intstruct.hostid#/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.newversion#/#attributes.intstruct.thumbnailname_new#">
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.thumbnailname_new#">
+					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+				</cfinvoke>
+			</cfthread>
+			<!--- Wait for the upload thread to finish --->
+			<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
+			<!--- Get SignedURL thumbnail --->
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Get SignedURL original --->
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Get SignedURL for the original in the versions --->
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
+		</cfif>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error in function versions.create">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
+	</cftry> 
+</cffunction>
 </cfcomponent>

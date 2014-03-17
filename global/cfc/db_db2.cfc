@@ -85,7 +85,9 @@
 			GRP_NAME 			VARCHAR(50), 
 			GRP_HOST_ID 		INT DEFAULT NULL, 
 			GRP_MOD_ID 			INT NOT NULL, 
-			GRP_TRANSLATION_KEY VARCHAR(50), 
+			GRP_TRANSLATION_KEY VARCHAR(50),
+			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
+			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false', 
 			PRIMARY KEY (GRP_ID), 
 			FOREIGN KEY (GRP_MOD_ID) REFERENCES #arguments.thestruct.theschema#.modules (MOD_ID) ON DELETE CASCADE
 		)
@@ -140,6 +142,7 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
+		  USER_EXPIRY_DATE DATE,
 		  PRIMARY KEY (USER_ID)
 		)
 		
@@ -1408,6 +1411,7 @@
 		  CLOUD_URL_EXP		   INT,
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
+		  FILE_UPC_NUMBER	   VARCHAR(15),
 		PRIMARY KEY (FILE_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1489,6 +1493,7 @@
 		  CLOUD_URL_EXP		  INT,
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
+		  IMG_UPC_NUMBER	  VARCHAR(15),
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1505,8 +1510,7 @@
 		  IMG_KEYWORDS     VARCHAR(4000),
 		  IMG_DESCRIPTION  VARCHAR(4000),
 		  HOST_ID				INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (IMG_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -1526,7 +1530,8 @@
 		  LOG_IP		 	VARCHAR(200), 
 		  LOG_TIMESTAMP 	TIMESTAMP,
 		  HOST_ID			INT,
-		  asset_id_r		VARCHAR(100),
+		  ASSET_ID_R		VARCHAR(100),
+		  FOLDER_ID			VARCHAR(100),
 		  PRIMARY KEY (LOG_ID)
 		)
 		
@@ -1678,7 +1683,7 @@
 		  SET2_NIRVANIX_PASS			VARCHAR(500),
 		  HOST_ID						INT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
-		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 'f',
+		  SET2_LABELS_USERS				VARCHAR(4000),
 		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'false',
 		  SET2_AKA_URL					VARCHAR(500),
 		  SET2_AKA_IMG					VARCHAR(200),
@@ -1687,7 +1692,9 @@
 		  SET2_AKA_DOC					VARCHAR(200),
 		  SET2_COLORSPACE_RGB			VARCHAR(5) DEFAULT 'false',
 		  SET2_CUSTOM_FILE_EXT			VARCHAR(5) DEFAULT 'true',
+		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
+		  SET2_UPC_ENABLED				VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1855,6 +1862,7 @@
 		CLOUD_URL_EXP		    INT,
 		IN_TRASH		   	    VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
+		VID_UPC_NUMBER			VARCHAR(15),
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1872,8 +1880,7 @@
 		  VID_DESCRIPTION  VARCHAR(4000),
 		  VID_TITLE		   VARCHAR(4000),
 		  HOST_ID			INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (VID_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -2050,6 +2057,7 @@
 			meta_data			CLOB,
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
+			cloud_url_thumb		VARCHAR(500),
 			PRIMARY KEY (rec_uuid)
 		)
 		
@@ -2105,6 +2113,7 @@
 		  	CLOUD_URL_EXP		INT,
 		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  	IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
+		  	AUD_UPC_NUMBER		VARCHAR(15),
 			PRIMARY KEY (aud_ID),
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2121,8 +2130,7 @@
 			aud_DESCRIPTION     VARCHAR(4000),
 			aud_KEYWORDS		VARCHAR(4000),
 			HOST_ID				INT,
-			PRIMARY KEY (ID_INC),
-			FOREIGN KEY (aud_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
+			PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -2224,6 +2232,7 @@
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
   		  hashtag			   	VARCHAR(100),
+  		  av_thumb_url			varchar(500),
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>
@@ -2291,6 +2300,19 @@
 	  	custom_id			varchar(200),
 		custom_value		varchar(2000),
 		host_id				int
+		)
+		</cfquery>
+		
+		<!--- RAZ-2831 : Metadata export template --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#export_template (
+	  	exp_id				varchar(100),
+		exp_field			varchar(200),
+		exp_value			varchar(2000),
+		exp_timestamp		timestamp, 
+		user_id				varchar(100),
+		host_id				int,
+		PRIMARY KEY (exp_id)
 		)
 		</cfquery>
 		
@@ -2365,7 +2387,21 @@
 		)
 		</cfquery>
 
-		
+		<!--- Folder subscribe --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe
+		(
+			fs_id  						varchar(100) NOT NULL,
+			host_id 					int DEFAULT NULL,
+			folder_id 					varchar(100) DEFAULT NULL,
+			user_id						varchar(100) DEFAULT NULL,
+			mail_interval_in_hours		int(6) DEFAULT NULL,
+			last_mail_notification_time timestamp DEFAULT NULL,
+			asset_keywords				varchar(3) DEFAULT 'F',
+			asset_description			varchar(3) DEFAULT 'F',
+			PRIMARY KEY (fs_id)
+		)
+		</cfquery>
 	</cffunction>
 	
 	

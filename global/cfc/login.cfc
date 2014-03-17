@@ -57,8 +57,8 @@
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Check for the user --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
 			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
@@ -76,6 +76,7 @@
 			AND ct.ct_u_h_user_id = u.user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfif>
+		AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 		</cfquery>
 		
 		<!--- Check the AD user --->
@@ -88,8 +89,8 @@
 				</cfquery> 
 				<cfif qryAdUser.RecordCount NEQ 0>
 					<!--- Check for the user --->
-					<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
-					SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
 						lower(u.user_login_name) = <cfqueryparam value="#lcase(qryAdUser.SamAccountname)#" cfsqltype="cf_sql_varchar"> 
@@ -107,6 +108,7 @@
 						AND ct.ct_u_h_user_id = u.user_id
 						AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 					</cfif>
+					AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 					</cfquery>
 					<!--- AD user name --->
 					<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
@@ -348,15 +350,24 @@
 		<cfargument name="email" required="yes" type="string">
 		<!--- create structure to store results in --->
 		<cfset thepass=structNew()>
+		<!--- RAZ-2810 Customise email message --->
+		<cfinvoke component="defaults" method="trans" transid="password_for_razuna" returnvariable="password_for_razuna_subject" />
+		<cfinvoke component="defaults" method="trans" transid="user_account_expired" returnvariable="user_account_expired_content" />
+		<cfinvoke component="defaults" method="trans" transid="user_lost_password" returnvariable="user_lost_password_content" />
+		<cfinvoke component="defaults" method="trans" transid="username" returnvariable="user_login_name" />
+		<cfinvoke component="defaults" method="trans" transid="password" returnvariable="user_login_password" />
 		<!--- Check the email address of this user if there then send pass if not return to the form --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass
+		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass, u.user_expiry_date
 		FROM users u, ct_users_hosts ct
 		WHERE (
 			lower(u.user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
 			OR lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
 			)
+		<!--- When password is requested from admin login then the hostid is not set in session and is set to 0 --->
+		<cfif session.hostid neq 0>
 		AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+		</cfif>
 		AND ct.ct_u_h_user_id = u.user_id
 		</cfquery>
 		<!--- check to see if a record has been found --->
@@ -368,28 +379,37 @@
 				<cfset thepass.aduser = "T">
 				<cfset thepass.notfound = "F">
 			<cfelse>
+				<cfif isdate(qryuser.user_expiry_date) and qryuser.user_expiry_date LTE now()>
+					<cfset thepass.expired = "T">
+				<cfelse>
+					<cfset thepass.expired = "F">	
+				</cfif>
 				<!--- User is not AD User --->
 				<cfset thepass.aduser = "F">
 				<!--- User is found thus send him an email --->
 				<cfset thepass.notfound = "F">
-				<!--- Create Random Password --->
-				<cfset var randompassword = randompass()>
-				<!--- Hash Password --->
-				<cfset newpass = hash(randompassword, "MD5", "UTF-8")>
-				<!--- Update DB with new password --->
-				<cfquery datasource="#variables.dsn#">
-				UPDATE users
-				SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newpass#">
-				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
-				</cfquery>
+				<cfif thepass.expired EQ 'F'> <!--- If the user account has not expired then reset password --->
+					<!--- Create Random Password --->
+					<cfset var randompassword = randompass()>
+					<!--- Hash Password --->
+					<cfset newpass = hash(randompassword, "MD5", "UTF-8")>
+					<!--- Update DB with new password --->
+					<cfquery datasource="#variables.dsn#">
+					UPDATE users
+					SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newpass#">
+					WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
+					</cfquery>
+				</cfif>
 				<!--- send email --->
-				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="Your password for Razuna" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
-	
-	It looks like you have lost your password. We have generated a random password for you. You can now login with your username and/or email address and the password below.
-	
-	Username: #qryuser.user_login_name#
-	Password: #randompassword#
-	
+				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="#password_for_razuna_subject#" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
+	<cfif thepass.expired EQ 'T'>
+		#user_account_expired_content#
+	<cfelse>	
+		#user_lost_password_content#
+		
+		#user_login_name#: #qryuser.user_login_name#
+		#user_login_password#: #randompassword#
+	</cfif>
 				</cfmail>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("users","true")>
@@ -470,11 +490,29 @@
 	<!--- FUNCTION: Request Access eMail --->
 	<cffunction name="reqaccessemail" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
-		<!--- Get admins --->
-		<cfinvoke component="global.cfc.groups_users" method="getadmins" returnvariable="theadmins">
-		<cfloop query="theadmins">
-			<cfinvoke component="email" method="send_email" to="#user_email#" subject="Razuna: User requests access" themessage="The user #arguments.thestruct.user_first_name# #arguments.thestruct.user_last_name# (#arguments.thestruct.user_email#) is requesting access to your Razuna. You should go to the Razuna Administration and grant or deny this user access now!">
-		</cfloop>
+
+		<!--- RAZ-2810 Customise email message --->
+		<cfset transvalues = arraynew()>
+		<cfset transvalues[1] = "#arguments.thestruct.user_first_name#">
+		<cfset transvalues[2] = "#arguments.thestruct.user_last_name#">
+		<cfset transvalues[3] = "#arguments.thestruct.user_email#">
+		<cfinvoke component="defaults" method="trans" transid="req_access_mail_subject" values="#transvalues#" returnvariable="req_access_mail_sub" />
+		<cfinvoke component="defaults" method="trans" transid="req_access_mail_message" values="#transvalues#" returnvariable="req_access_mail_msg" />
+
+		<!--- Get users to notify from new registration settings --->
+		<cfinvoke component="global.cfc.settings" method="getsettingsfromdam" returnvariable="prefs">
+		<!--- If no users found then notify admins --->
+		<cfif trim(prefs.set2_intranet_reg_emails) eq "">
+			<!--- Get admins --->
+			<cfinvoke component="global.cfc.groups_users" method="getadmins" returnvariable="theadmins">
+			<cfloop query="theadmins">
+				<cfinvoke component="email" method="send_email" to="#user_email#" subject="#req_access_mail_sub#" themessage="#req_access_mail_msg#">
+			</cfloop>
+		<cfelse>
+			<cfloop list="#prefs.set2_intranet_reg_emails#" index="user_email" delimiters=",">
+				<cfinvoke component="email" method="send_email" to="#user_email#" subject="#prefs.set2_intranet_reg_emails_sub#" themessage="#req_access_mail_msg#">
+			</cfloop>
+		</cfif>
 	</cffunction>
 	
 	<!--- Check user and host. This is if login form is only the email and pass --->

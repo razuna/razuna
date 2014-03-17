@@ -25,6 +25,12 @@
 --->
 <cfoutput>
 <div style="float:right;">
-	<a href="##" onclick="showwindow('#myself#ajax.folder_settings&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#','<cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>Collection Settings</cfif>',800,1);return false;"><cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>Collection Settings</cfif></a>
+	<cfif attributes.iscol EQ "f">
+		<a href="##" onclick="showwindow('#myself#c.folder_subscribe&theid=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_subscribe")#',800,1);return false;">
+		#myFusebox.getApplicationData().defaults.trans("folder_subscribe")#</a>
+		&nbsp;
+	</cfif>
+	<a href="##" onclick="showwindow('#myself#ajax.folder_settings&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#','<cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>Collection Settings</cfif>',800,1);return false;">
+	<cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>Collection Settings</cfif></a>
 </div>
 </cfoutput>

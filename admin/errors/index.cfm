@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<title>Razuna Errors</title>
 <meta charset="utf-8" />
 <head>
 	<link rel="stylesheet" type="text/css" href="js/datatables/css/jquery.dataTables.css">

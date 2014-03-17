@@ -27,7 +27,7 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td>
-				<input type="text" name="label_text_edit" id="label_text_edit" style="width:400px;" value="#qry_label.label_text#">
+				<input type="text" name="label_text_edit" id="label_text_edit_#attributes.label_id#" style="width:400px;" value="#qry_label.label_text#">
 				<br /><br />
 				Nest label under:<br />
 				<select name="sublabelofedit" id="sublabelofedit" style="width:240px;">
@@ -51,12 +51,12 @@
 // Update Comment
 function updatelabel(){
 	//check label for first char and letters
-	if(!isValidLabel('label_text_edit')){
-		alert('Please use first charactor as letters or numbers.');
+	if(!isValidLabel('label_text_edit_#attributes.label_id#')){
+		alert('The first character has to be a number or letter!');
 		return false;
 	}
 	// Get value
-	var thelab = $("##label_text_edit").val().trim();
+	var thelab = $("##label_text_edit_#attributes.label_id#").val();
 	var theparent = $("##sublabelofedit option:selected").val();
 	// Submit
 	if (thelab != "") {
@@ -70,6 +70,13 @@ function updatelabel(){
 		  });
 		  // Hide Window
 		  destroywindow(#attributes.closewin#);
+		  // Show labels
+		  <cfif structKeyExists(attributes,'file_id')>
+		  	loadcontent('show_labels','index.cfm?fa=c.search_label_for_asset&file_id=#attributes.file_id#&file_type=#attributes.file_type#&show=default');
+		  </cfif>
+			<cfif !structKeyExists(attributes,'file_id')>
+				$('##admin_labels').load('#myself#c.admin_labels');
+			</cfif>
 		});
 	}
 	else {

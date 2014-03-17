@@ -173,6 +173,15 @@
 <cffunction name="get_log_assets" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
+	
+	<!--- Get Dashboard most recently updated assets without paging records --->
+	<cfif structKeyExists(arguments.thestruct,"is_dashboard_update")>
+		<cfset temp_rowmaxpage_log = session.rowmaxpage_log>
+		<cfset temp_offset_log = session.offset_log>
+		<cfset session.rowmaxpage_log = 50>
+		<cfset session.offset_log = 0>
+	</cfif>
+	
 	<!--- Get all log entries --->
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_assets */ log_id
@@ -283,6 +292,12 @@
 			</cfif>
 		</cfif>
 	</cfquery>
+	<!--- Get Dashboard most recently updated assets without paging records --->
+	<cfif structKeyExists(arguments.thestruct,"is_dashboard_update")>
+		<cfset session.rowmaxpage_log = temp_rowmaxpage_log>
+		<cfset session.offset_log = temp_offset_log>
+	</cfif>
+	
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>

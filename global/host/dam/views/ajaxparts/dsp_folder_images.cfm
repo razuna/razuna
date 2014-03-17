@@ -79,7 +79,7 @@
 									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 										<div id="draggable#img_id#" type="#img_id#-img" class="theimg">
 											<!--- Show assets --->
-											<cfif link_kind EQ "">
+											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<cfif cloud_url NEQ "">
 														<img src="#cloud_url#" border="0" img-tt="img-tt">

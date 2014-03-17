@@ -238,7 +238,6 @@ The permissions and the users access to them must not be requested again every t
 		FROM users
 		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
-	<cfset console(arguments.user_id)>
 
 	<cfif localquery.recordcount neq 0>
 		<cfset var userexists = true>

@@ -701,4 +701,146 @@
 	<cfreturn doit>
 </cffunction>
 
+<!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
+<cffunction name="folder_subscribe_task" output="true" access="public" >
+	<!--- Get User subscribed folders --->
+	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
+		SELECT fs.*, fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
+		LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
+		WHERE 
+		<!--- H2 or MSSQL --->
+		<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
+			DATEADD(HOUR, mail_interval_in_hours, last_mail_notification_time)
+		<!--- MYSQL --->
+		<cfelseif application.razuna.thedatabase EQ "mysql">
+			DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
+		<!--- Oracle, DB2 ?? --->	
+		</cfif>
+		< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+	</cfquery>
+	<!--- Date Format --->
+	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
+	<!--- Get Assets Log of Subscribed folders --->
+	<cfoutput query="qGetUserSubscriptions">
+		<cfinvoke component="folders" method="init" returnvariable="foldersObj" />
+		<!--- Get Sub-folders of Folder subscribe --->
+		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
+		<!--- Get Updated Assets --->
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
+			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name
+			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
+				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
+			</cfif>
+  
+			FROM (
+
+				SELECT * FROM #session.hostdbprefix#log_assets 
+				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
+				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+				ORDER BY log_timestamp DESC
+
+				) l
+			LEFT JOIN users u ON l.log_user = u.user_id
+			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
+			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
+			</cfif>
+		</cfquery>
+		<!--- Email subject --->
+		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
+		<!--- Email content --->
+		<cfinvoke component="defaults" method="trans" transid="subscribe_email_content" returnvariable="email_content">
+		<!--- Email if assets are updated in Subscribed folders --->
+		<cfif qGetUpdatedAssets.recordcount>
+			<!--- Mail content --->
+			<cfsavecontent variable="mail" >
+				#email_content#<br>
+				<h3>Subscribed Folder: #qGetUserSubscriptions.folder_name#</h3>
+				<table border="1" cellpadding="4" cellspacing="0">
+					<tr>
+						<th nowrap="true">Date</th>
+						<th nowrap="true">Time</th>
+						<th nowrap="true">Folder/<br>Sub-Folder</th>
+						<th nowrap="true">Action</th>
+						<th >Details</th>
+						<th nowrap="true">Type of file</th>
+						<th nowrap="true">User</th>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<th>Asset Keywords</th>
+						</cfif>
+						<cfif qGetUserSubscriptions.asset_description eq 'T'>
+							<th>Asset Description</th>
+						</cfif>
+					</tr>
+				<cfloop query="qGetUpdatedAssets">
+					<tr >
+						<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
+						<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
+						<td valign="top">#qGetUpdatedAssets.folder_name#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
+						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<td>&nbsp;
+							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+								<cfcase value="img">
+									#qGetUpdatedAssets.img_keywords#
+								</cfcase>
+								<cfcase value="doc">
+									#qGetUpdatedAssets.file_keywords#
+								</cfcase>
+								<cfcase value="vid">
+									#qGetUpdatedAssets.vid_keywords#
+								</cfcase>
+								<cfcase value="aud">
+									#qGetUpdatedAssets.aud_keywords#
+								</cfcase>
+							</cfswitch>
+							</td>
+						</cfif>
+						<cfif qGetUserSubscriptions.asset_description eq 'T'>
+							<td>&nbsp;
+							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+								<cfcase value="img">
+									#qGetUpdatedAssets.img_description#
+								</cfcase>
+								<cfcase value="doc">
+									#qGetUpdatedAssets.file_desc#
+								</cfcase>
+								<cfcase value="vid">
+									#qGetUpdatedAssets.vid_description#
+								</cfcase>
+								<cfcase value="aud">
+									#qGetUpdatedAssets.aud_description#
+								</cfcase>
+							</cfswitch>
+							</td>
+						</cfif>
+					</tr>
+				</cfloop>
+				</table>
+			</cfsavecontent>
+
+			<!--- Set user id --->
+			<cfset arguments.thestruct.user_id = qGetUserSubscriptions.user_Id>
+			<!--- Get user details --->
+			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
+			<!--- Send the email --->
+			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" />
+			
+		</cfif>
+		<!--- Update Folder Subscribe --->
+		<cfquery datasource="#application.razuna.datasource#" name="update">
+			UPDATE #session.hostdbprefix#folder_subscribe 
+			SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
+		</cfquery>
+	</cfoutput>
+</cffunction>
+
 </cfcomponent>

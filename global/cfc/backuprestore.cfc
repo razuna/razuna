@@ -24,7 +24,9 @@
 *
 --->
 <cfcomponent extends="extQueryCaching">
-	
+	<!--- Global Object --->
+	<cfobject component="global.cfc.global" name="gobj">
+
 	<!--- Call this from the scheduled task --->
 	<cffunction name="backuptodbthread" output="true">
 		<cfargument name="thestruct" type="struct">
@@ -339,13 +341,13 @@
 								</cfif>
 							<cfelseif trim(listlast(lg,"-")) EQ "date">
 								<cfif evaluate(cl) EQ "">
-									<cfqueryparam cfsqltype="CF_SQL_DATE" value="#now()#">
+									NULL
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_DATE" value="#evaluate(cl)#">
 								</cfif>
 							<cfelseif trim(listlast(lg,"-")) EQ "timestamp" OR trim(listlast(lg,"-")) EQ "datetime">
 								<cfif evaluate(cl) EQ "">
-									<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+									NULL
 								<cfelse>
 									<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#evaluate(cl)#">
 								</cfif>
@@ -1029,13 +1031,13 @@
 									</cfif>
 								<cfelseif trim(listlast(lg,"-")) EQ "date">
 									<cfif evaluate(cl) EQ "">
-										<cfqueryparam cfsqltype="CF_SQL_DATE" value="#now()#">
+										NULL
 									<cfelse>
 										<cfqueryparam CFSQLType="CF_SQL_DATE" value="#evaluate(cl)#">
 									</cfif>
 								<cfelseif trim(listlast(lg,"-")) EQ "timestamp" OR trim(listlast(lg,"-")) EQ "datetime">
 									<cfif evaluate(cl) EQ "">
-										<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+										NULL
 									<cfelse>
 										<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#evaluate(cl)#">
 									</cfif>
@@ -1069,6 +1071,8 @@
 		<cfset resetcachetokenall()>
 		<!--- Final Feedback --->
 		<cfoutput><br><br><span style="font-weight:bold;color:green;">Restore done! You can <a href="##" onclick="window.close();">close this window now</a>.</span><br></cfoutput>	
+		<!--- Fix db integrity issues if any --->
+		<cfset gobj.fixdbintegrityissues()>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

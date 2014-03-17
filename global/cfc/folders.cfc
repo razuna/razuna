@@ -153,15 +153,20 @@
 <!--- GET FOLDER RECORD --->
 <cffunction name="getfolder" output="false" access="public" description="GET FOLDER RECORD" returntype="query">
 	<cfargument name="folder_id" required="yes" type="string">
+	<cfargument name="avoid_link_path" required="false" default="no"   type="string">
+	
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
 	<cfquery name="qLocal" datasource="#Variables.dsn#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolder */ f.folder_id, f.folder_id_r, f.folder_name, f.folder_level, f.folder_of_user,
-	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared,
+	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared, f.link_path,
 	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, share_dl_thumb
 	FROM #session.hostdbprefix#folders f
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfif structKeyExists(arguments,'avoid_link_path') AND arguments.avoid_link_path EQ 'yes'>
+		AND (f.link_path = '' OR f.link_path IS NULL)
+	</cfif>
 	<!--- *** START SECURITY *** --->
 	<!--- filter user folders
 	AND (
@@ -251,8 +256,17 @@
 <cffunction hint="GET THE GROUPS FOR THIS FOLDER" name="getfoldergroups" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="qrygroup" required="yes" type="query">
+	<cfargument name="in_folder_group" required="no" type="string" default="no" hint="Include the folder permission of current folder_id">
 	<!--- Set --->
-	<cfset var thegroups = 0>
+	<cfset var thegroups = QueryNew("grp_id_r")>
+	<cfset var listgroups="">
+	<!--- Check the current folder permission included or not  --->
+	<cfif structKeyExists(arguments,'in_folder_group') AND arguments.in_folder_group EQ 'yes'>
+		<cfset listgroups = 0>
+		<cfset listgroups = listappend(listgroups,'#ValueList(arguments.qrygroup.grp_id)#', ',')>
+	<cfelse>
+		<cfset listgroups = listappend(listgroups,'#ValueList(arguments.qrygroup.grp_id)#', ',')>
+	</cfif>
 	<!--- Query --->
 	<cfif arguments.qrygroup.recordcount NEQ 0>
 		<cfquery datasource="#variables.dsn#" name="thegroups" cachedwithin="1" region="razcache">
@@ -261,7 +275,7 @@
 		WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND grp_id_r IN (
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qrygroup.grp_id)#" list="true">
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listgroups#" list="true">
 						)
 		</cfquery>
 	</cfif>
@@ -1278,6 +1292,31 @@
 			</cfquery>
 		</cfif>
 	</cfloop>
+	<!--- Add sub folder to assign label upc based on the UPC upload  --->
+	<cfif structKeyExists(arguments.thestruct,'theid') AND arguments.thestruct.theid NEQ ''>
+		<!--- Check the current folder having label text as upc --->
+		<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.theid#" thetype="folder" checkUPC="true" returnvariable="arguments.thestruct.qry_labels">
+		<cfif arguments.thestruct.qry_labels NEQ ''>
+			<cfloop list="#arguments.thestruct.qry_labels#" index="idx" >
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO ct_labels
+					(
+						ct_label_id,
+						ct_id_r,
+						ct_type,
+						rec_uuid
+					)
+					VALUES
+					(
+						<cfqueryparam value="#idx#" cfsqltype="cf_sql_varchar" />,
+						<cfqueryparam value="#newfolderid#" cfsqltype="cf_sql_varchar" />,
+						<cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />,
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+				</cfquery>
+			</cfloop>
+		</cfif>
+	</cfif>
 	<!--- Apply custom setting to new folder --->
 	<cfinvoke method="apply_custom_shared_setting" folder_id="#newfolderid#" />
 	<!--- Log --->
@@ -1410,6 +1449,8 @@
 					ALTER TABLE #session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
 					</cfquery>
 				</cfif>
+				<!--- Delete Subscribe --->
+				<cfinvoke method="removesubscribefolder" folderid="#folderids#" />
 				<!--- Delete labels --->
 				<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.folder_id#" />
 				<!--- Delete files in this folder --->
@@ -2337,7 +2378,7 @@
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
 			SET folder_of_user = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
@@ -3125,10 +3166,10 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getallassets */ rn, id, filename, folder_id_r, ext, filename_org, kind, date_create, date_change, link_kind, link_path_url,
-		path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels
+		path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels, upc_number,extension
 		FROM (
 			SELECT ROWNUM AS rn, id, filename, folder_id_r, ext, filename_org, kind, date_create, date_change, link_kind, 
-			link_path_url, path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels
+			link_path_url, path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels, upc_number,extension
 			FROM (
 				SELECT i.img_id as id, i.img_filename as filename, i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org,
 				'img' as kind, i.img_create_date, i.img_create_time as date_create, i.img_change_time as date_change, 
@@ -3146,14 +3187,14 @@
 				lower(i.img_filename) as filename_forsort,
 				i.img_size as size,
 				i.hashtag, 
-				'' as labels
+				'' as labels, i.img_upc_number as upc_number, i.img_extension as extension
 				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				UNION ALL
-				SELECT v.vid_id as id, v.vid_filename as filename, v.folder_id_r, v.vid_extension as ext, v.vid_name_image as filename_org,
+				SELECT v.vid_id as id, v.vid_filename as filename, v.folder_id_r, v.vid_extension as ext, v.vid_name_org as filename_org,
 				'vid' as kind, v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 				v.path_to_asset, v.cloud_url, v.cloud_url, 
 				vt.vid_description as description, vt.vid_keywords as keywords, v.vid_height as vheight, v.vid_width as vwidth,
@@ -3169,7 +3210,7 @@
 				lower(v.vid_filename) as filename_forsort,
 				v.vid_size as size,
 				v.hashtag, 
-				'' as labels
+				'' as labels, v.vid_upc_number as upc_number, v.vid_extension as extension
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -3181,7 +3222,7 @@
 				f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url,
 				ft.file_desc as description, ft.file_keywords as keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
 				lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, 
-				'' as labels
+				'' as labels, f.file_upc_number as upc_number,  f.file_extension as extension
 				FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -3203,7 +3244,7 @@
 				lower(a.aud_name) as filename_forsort,
 				a.aud_size as size,
 				a.hashtag, 
-				'' as labels
+				'' as labels, a.aud_upc_number as upc_number, a.aud_extension as extension
 				FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -3226,7 +3267,7 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getallassets */ id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
-		path_to_asset, cloud_url, cloud_url_org, description, keywords, theformat, filename_forsort, size, hashtag
+		path_to_asset, cloud_url, cloud_url_org, description, keywords, theformat, filename_forsort, size, hashtag, upc_number, extension
 		FROM (
 			SELECT row_number() over() as rownr, i.img_id as id, i.img_filename as filename, 
 			i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
@@ -3244,7 +3285,7 @@
 			lower(i.img_filename) as filename_forsort,
 			i.img_size as size,
 			i.hashtag, 
-			'' as labels
+			'' as labels, i.img_upc_number as upc_number,  i.img_extension as extension
 			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
@@ -3252,7 +3293,7 @@
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
 			SELECT row_number() over() as rownr, v.vid_id as id, v.vid_filename as filename, v.folder_id_r,
-			v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
+			v.vid_extension as ext, v.vid_name_org as filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 			v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, v.vid_height as vheight, v.vid_width as vwidth,
 			(
@@ -3267,7 +3308,7 @@
 			lower(v.vid_filename) as filename_forsort,
 			v.vid_size as size,
 			v.hashtag, 
-			'' as labels
+			'' as labels, v.vid_upc_number as upc_number,  v.vid_extension as extension
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -3290,7 +3331,7 @@
 			lower(a.aud_name) as filename_forsort,
 			a.aud_size as size,
 			a.hashtag, 
-			'' as labels
+			'' as labels, a.aud_upc_number as upc_number, a.aud_extension as extension
 			FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -3301,7 +3342,7 @@
 			f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f. cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
-			lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
+			lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels, f.file_upc_number as upc_number, f.file_extension as extension
 			FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 			WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND f.in_trash = 'F'
@@ -3355,29 +3396,29 @@
 		lower(i.img_filename) as filename_forsort,
 		i.img_size as size,
 		i.hashtag,
-		'' as labels
+		'' as labels, i.img_upc_number as upc_number, i.img_extension as extension
 		<!--- custom metadata fields to show --->
 		<cfif  arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
-				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename">i
+				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">i
 				<cfelse>x
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
@@ -3387,7 +3428,7 @@
 		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
-		v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
+		v.vid_extension as ext, v.vid_name_org as filename_org, 'vid' as kind, v.is_available,
 		v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
 		(
@@ -3402,11 +3443,11 @@
 		lower(v.vid_filename) as filename_forsort,
 		v.vid_size as size,
 		v.hashtag,
-		'' as labels
+		'' as labels, v.vid_upc_number as upc_number, v.vid_extension as extension
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
@@ -3418,12 +3459,12 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
@@ -3448,21 +3489,21 @@
 		lower(a.aud_name) as filename_forsort,
 		a.aud_size as size,
 		a.hashtag,
-		'' as labels
+		'' as labels, a.aud_upc_number as upc_number, a.aud_extension as extension
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
@@ -3482,29 +3523,29 @@
 		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
-		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
+		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels, f.file_upc_number as upc_number, f.file_extension as extension
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
-				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
 				<cfelse>x
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
@@ -3675,9 +3716,9 @@
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, in_trash, username, perm, subhere, permfolder
+	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, in_trash,link_path, username, perm, subhere, permfolder
 	FROM (
-		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash, 
+		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash,f.link_path, 
 		<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 		<!--- Permission follow but not for sysadmin and admin --->
 		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
@@ -3729,8 +3770,12 @@
 					AND s1.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 				</cfif>
 				<!--- If this is a move then dont show the folder that we are moving --->
-				<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
+				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
 					AND s1.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+				</cfif>
+				<!--- RAZ-583 : exclude link folder from subfolder count --->
+				<cfif session.type NEQ ''>
+					AND (s1.link_path='' OR s1.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -3750,6 +3795,14 @@
 				AND fg3.folder_id_r = s2.folder_id
 				AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<!--- If this is a move then dont show the folder that we are moving --->
+				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
+					AND s2.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+				</cfif>
+				<!--- RAZ-583 : exclude link folder from subfolder count --->
+				<cfif session.type NEQ ''>
+					AND (s2.link_path='' OR s2.link_path IS NULL)
+				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
 				<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
@@ -3768,6 +3821,14 @@
 				AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND s3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND s3.host_id = fg4.host_id
+				<!--- If this is a move then dont show the folder that we are moving --->
+				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
+					AND s3.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+				</cfif>
+				<!--- RAZ-583 : exclude link folder from subfolder count --->
+				<cfif session.type NEQ ''>
+					AND (s3.link_path='' OR s3.link_path IS NULL)
+				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
 				<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
@@ -3825,57 +3886,7 @@
 			AND
 			f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 		<cfelse>
-			(
 				f.folder_id = f.folder_id_r
-				<!--- RAZ:2509 Sub-folder is visible to the user, although he has Full-access permission  --->
-				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-				OR 
-				<!--- Select folder_id in 'unlocked' permission and the parent folder permission is 'locked' --->
-				f.folder_id IN 
-				( 
-					SELECT folder_id FROM #session.hostdbprefix#folders 
-					WHERE folder_id_r IN 
-					(
-							SELECT folder_id FROM 
-							(
-								SELECT fdr.folder_id,
-								CASE 
-									<!--- Check permission on this folder --->
-									WHEN EXISTS(
-										SELECT fgp.folder_id_r
-										FROM #session.hostdbprefix#folders_groups fgp
-										WHERE fgp.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-										AND fgp.folder_id_r = fdr.folder_id
-										AND lower(fgp.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-										AND fgp.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-									) THEN 'unlocked'
-									<!--- When folder is shared for everyone --->
-									WHEN EXISTS(
-										SELECT fgp2.folder_id_r
-										FROM #session.hostdbprefix#folders_groups fgp2
-										WHERE fgp2.grp_id_r = '0'
-										AND fgp2.folder_id_r = fdr.folder_id
-										AND fgp2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-										AND lower(fgp2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-									) THEN 'unlocked' 
-									<!--- If this is the user folder or he is the owner --->
-									WHEN fdr.folder_owner = '#Session.theUserID#' THEN 'unlocked'
-									<!--- If this is the upload bin --->
-									WHEN fdr.folder_id = '1' THEN 'unlocked' <!--- Not sure about this condition, copied from existing implementation --->
-									<!--- If this is a collection --->
-									WHEN lower(fdr.folder_is_collection) = 't' THEN 'unlocked' 
-									<!--- If nothing meets the above lock the folder --->
-									ELSE 'locked'
-								END AS perm 
-								FROM #session.hostdbprefix#folders fdr
-								WHERE fdr.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							)AS fdr_perm WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="locked">
-					) 
-					AND folder_id != folder_id_r 
-				)
-				</cfif>
-			)
-			
 		</cfif>
 		<cfif iscol EQ "F">
 			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
@@ -3894,11 +3905,15 @@
 		) as itb
 	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	<!--- If this is a move then dont show the folder that we are moving --->
-	<cfif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR session.type EQ "movefile" OR session.type EQ "choosecollection">
+	<cfif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR session.type EQ "movefile" OR session.type EQ "choosecollection" OR session.type EQ "copyfolder">
 		AND (itb.permfolder = 'W' OR itb.permfolder = 'X')
-		<cfif session.type EQ "movefolder">
+		<cfif session.type EQ "movefolder" OR session.type EQ "copyfolder">
 			AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 		</cfif>
+	</cfif>
+	<!--- RAZ-583 : exclude link folder from select --->
+	<cfif session.type NEQ ''>
+		AND (link_path='' OR link_path IS NULL)
 	</cfif>
 	ORDER BY lower(folder_name)
 	</cfquery>
@@ -3948,7 +3963,7 @@
 					<!--- Copyfolder --->
 					<cfelseif session.type EQ "copyfolder">
 						<cfif session.thefolderorg NEQ folder_id>
-							<a href="##" onclick="loadcontent('div_forall','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){
+							<a href="##" onclick="loadcontent('div_forall','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#&inherit_perm='+$('##perm_inherit').is(':checked'), function(){
 								<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.<cfif iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');</cfif>
 							});$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');destroywindow(1);return false;">
 						</cfif>
@@ -4775,7 +4790,7 @@
 			<!--- If the folder_id_r is not the same the passed one --->
 			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 				<!--- Call this function again (need component otherwise it won't work for internal calls) --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
+				<cfinvoke component="folders" returnvariable="flist" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
 			</cfif>
 		</cfif>
 		<!--- Return --->	
@@ -4849,6 +4864,10 @@
 		<!--- Download renditions --->
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
+	<!--- RAZ-2831 : Move metadata export into folder --->
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
 	<cfflush>
@@ -4870,47 +4889,107 @@
 	<cfargument name="dl_folder" required="true" type="string">
 	<cfargument name="assetpath" required="true" type="string">
 	<cfargument name="awsbucket" required="false" type="string">
+	<cfargument name="rend_av" required="false" type="string" default="f">
 	<cfargument name="thestruct" required="false" type="struct">
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.akaimg" default="" />
 	<cfparam name="arguments.thestruct.akavid" default="" />
 	<cfparam name="arguments.thestruct.akaaud" default="" />
 	<cfparam name="arguments.thestruct.akadoc" default="" />
+	<!--- RAZ-2906: Get the dam settings --->
+	<cfinvoke component="global.cfc.settings"  method="getsettingsfromdam" returnvariable="arguments.thestruct.getsettings" />
+	<cfset var count = 1>
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
-		<!--- Set original --->
-		<cfset arguments.dl_originals = true>
-		<!--- Query with group values --->
-		<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
-		SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
-		FROM #session.hostdbprefix#images
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		UNION ALL
-		SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
-		FROM #session.hostdbprefix#videos
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		UNION ALL
-		SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
-		FROM #session.hostdbprefix#audios
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
-		</cfquery>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 'f'>
+			<!--- Set original --->
+			<cfset arguments.dl_originals = true>
+			<!--- Query with group values --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+			SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+			FROM #session.hostdbprefix#images
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION ALL
+			SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+			FROM #session.hostdbprefix#videos
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION ALL
+			SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+			FROM #session.hostdbprefix#audios
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			</cfquery>
+			<!--- RAZ-2901 : QoQ to change the sort order by filename --->
+			<cfquery name="arguments.dl_query" dbtype="query">
+				SELECT *
+				FROM arguments.dl_query
+				ORDER BY filename
+			</cfquery>
+		<cfelseif rend_av EQ 't'>
+			<!--- RAZ-2901 : Get additional renditions --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+				SELECT av_id, av_link_url, av_link_title, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+				FROM #session.hostdbprefix#images i 
+				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r and av.av_link = 0
+				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND i.img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+				FROM #session.hostdbprefix#videos v
+				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r and av.av_link = 0
+				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+				FROM #session.hostdbprefix#audios a
+				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r and av.av_link = 0
+				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND a.aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id, av_link_url, av_link_title, file_id, file_name filename, file_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'doc' as kind
+				FROM #session.hostdbprefix#files f
+				INNER JOIN raz1_additional_versions av ON file_id = av.asset_id_r and av.av_link = 0
+				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND f.file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
+				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+
+				ORDER BY av_link_title
+			</cfquery>
+	  	</cfif>
 	</cfif>
 	<!--- Loop over records --->
 	<cfloop query="arguments.dl_query">
 		<!--- Set var --->
 		<cfset var theorgname = "">
 		<!--- Feedback --->
+		<cfif rend_av EQ 'f'>
 		<cfoutput>. </cfoutput>
+		</cfif>
 		<cfflush>
+		<!--- RAZ-2906 : Get custom file name and original file name --->
+		<cfset var name = filename>
+		<cfset var theext = listlast(filename_org,".")>
+		<cfset var theorgext = theext>
+		<cfset var orgname = replaceNoCase('#replacenocase(filename_org,".#theext#","")#','_',' ','all')>
+		<!--- <cfset var orgname = replaceNoCase('#listfirst(filename_org,".")#','_',' ','all')> --->
+
 		<!--- If we have to get thumbnails then the name is different --->
 		<cfif arguments.dl_thumbnails AND kind EQ "img">
 			<cfset var theorgname = "thumb_#id#.#ext#">
 			<cfset var thefinalname = theorgname>
 			<cfset var thiscloudurl = cloud_url>
 			<cfset var theorgext = ext>
+			<cfset var tn = listfirst(filename,".")>
+			<cfset var thefinalname = "thumb_#tn#_#id#.#ext#">
 		<cfelseif arguments.dl_originals>
 			<cfset var theorgname = filename_org>
 			<cfset var thefinalname = filename>
@@ -4919,16 +4998,91 @@
 			<!--- If rendition we append the currentrow number in order to have same renditions formats still work --->
 			<cfif arguments.dl_renditions>
 				<cfset var tn = listfirst(filename,".")>
-				<cfset var te = listlast(filename_org,".")>
-				<cfset var thefinalname = tn & "_" & currentRow & "." & te>
+				<cfif find('.', filename_org)>
+					<cfset var te = "." & listlast(filename_org,".")>
+				<cfelse>
+					<cfset var te = "">
+				</cfif>
+				<cfset var thefinalname = "rend_" & tn & te>
 			</cfif>
 		</cfif>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 't'>
+			<cfset var tn = listfirst(av_link_title,".")>
+			<cfif find('.', av_link_title)>
+				<cfset var te = "." & listlast(av_link_title,".")>
+			<cfelse>
+				<cfset var te = "">
+			</cfif>
+			<cfset var avid = av_id>
+			<cfset var thefinalname = "add_rend_" & tn & "_#av_id#" & te>
+			<cfset var filename_av = listlast('#av_link_url#','/')>
+			<cfset var theorgname = filename_av>
+			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
+			<cfset var link_url = replacenocase('#fs#','#filename_av#','')>
+			<cfset var path_to_asset = reverse('#replacenocase('#reverse('#link_url#')#','/','','one')#')>
+		</cfif>
+
+		<cfset var the_org_ext = "." & theorgext>
+
 		<!--- Start download but only if theorgname is not empty --->
 		<cfif theorgname NEQ "">
-			<!--- Check if thefinalname has an extension. If not add the original one --->
-			<cfif listlast(thefinalname,".") NEQ theorgext>
-				<cfset var thefinalname = filename & "." & theorgext>
+			<!--- RAZ-2901 : Check for additional renditions --->
+			<cfif rend_av EQ 'f'>
+	        			<!--- Check if thefinalname has an extension. If not add the original one --->
+	        			<cfif listlast(thefinalname,".") NEQ theorgext>
+	        				<cfset var thefinalname = filename & "." & theorgext>
+	        			</cfif>
+	        			<!--- RAZ-2901 : Set Original Video name --->
+				<cfif kind EQ 'vid'>
+					<cfset var theorgname = filename_org>
+					<cfset var thefinalname = filename>
+					<cfset var theorgext = listlast(thefinalname,".")>
+				</cfif>
+				<cfif kind EQ 'vid' AND arguments.dl_renditions>
+					<cfset var tn = listfirst(filename,".")>
+					<cfif find('.', filename_org)>
+					<cfset var te = "." & listlast(filename_org,".")>
+					<cfelse>
+						<cfset var te = "">
+					</cfif>
+					<cfset var thefinalname = "rend_" & tn & te>
+				</cfif>
+			</cfif>		
+
+			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
+        			<!--- <cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
+        					<cfif arguments.dl_renditions>
+        						<!--- <cfset var thefinalname = replacenocase(thefinalname,".#theext#","","ALL")> --->
+        						<cfset var thefinalname = thefinalname>
+        					<cfelseif arguments.dl_thumbnails AND kind EQ "img">
+        						<cfset var thefinalname = "thumb_#id#">
+        					<cfelseif arguments.dl_originals>
+        						<cfset var thefinalname = filename>
+        					</cfif>
+        					<cfset var the_org_ext = "">
+        					<cfif listlast(thefinalname,".") neq theext>
+						<cfset thefinalname = replacenocase(thefinalname, ".#theext#","ALL")>
+					</cfif>
+        			<cfelse>
+        				<cfif listlast(thefinalname,".") neq theext>
+					<cfset thefinalname = thefinalname & ".#theext#">
+				</cfif>
+        			</cfif> --->
+        			<cfif rend_av EQ 'f' and not arguments.dl_thumbnails>
+        				<!--- Add filename extension if missing --->
+	        			<cfif listlast(thefinalname,".") neq theext>
+					<cfset thefinalname = thefinalname & ".#theext#">
+				</cfif>
 			</cfif>
+
+			<!--- RAZ-2901 : Rename if file already exists --->
+			<cfif arguments.dl_renditions AND fileexists('#arguments.dl_folder#/#thefinalname#')>
+				<cfset var thefinalname = "rend_" & tn & "_#count#" & te>
+			<cfelseif arguments.dl_originals AND fileexists('#arguments.dl_folder#/#thefinalname#')>
+				<cfset var thefinalname = listfirst(filename,".") & "_#count#" &  the_org_ext>
+			</cfif>
+				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
@@ -4969,19 +5123,25 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
-				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
-					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
-					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
-				</cfinvoke>
+					<cfinvoke component="amazon" method="Download">
+						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+						<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+					</cfinvoke>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif link_kind EQ "url">
-				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-							
-#link_path_url#" mode="775">
+				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:#link_path_url#" mode="775">
 			<!--- If this is a linked asset --->
 			<cfelseif link_kind EQ "lan">
 				<cffile action="copy" source="#link_path_url#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+			</cfif>
+			<!--- RAZ-2901 : Increment COUNT if previous filename is equal to current filename --->
+			<cfif rend_av EQ 'f'>
+				<cfif filename[currentrow-1] EQ filename[currentrow]>
+					<cfset var count = count + 1>
+				<cfelse> 
+					<cfset var count = 1>
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- Reset variables --->
@@ -4993,6 +5153,7 @@
 	<cfoutput><br /></cfoutput>
 	<cfflush>
 </cffunction>
+
 
 <!--- Store all values --->
 <cffunction name="store_values" output="false" returntype="void">
@@ -5496,15 +5657,38 @@
 <cffunction hint="COPY THE FOLDER TO THE GIVEN POSITION" name="copy" output="true">
 	<cfargument name="thestruct" type="struct">
 
-	<cftry>
+	<!---<cftry>--->
 		<!--- Get the reocord of the folder to be copied --->
 		<cfinvoke method="getfolder" returnvariable="tocopyfolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+			<cfinvokeargument name="avoid_link_path" value="no">
 		</cfinvoke>
+		<cfif tocopyfolderdetails.recordcount NEQ 0>
+			<cfif arguments.thestruct.count EQ 0>
+				<!--- Get all the group --->
+				<cfinvoke component="global.cfc.groups" method="getall" returnvariable="arguments.thestruct.qry_groups">
+					<cfinvokeargument name="mod_id" value="1">
+					<cfinvokeargument name="host_id" value="#session.hostid#">
+				</cfinvoke>
+				<!--- Parent folderId --->
+				<cfset arguments.thestruct.root_copy_folder_id = arguments.thestruct.intofolderid >
+			</cfif>
+			<!--- RAZ- 273 Copy folder have a inherit permission to checked  --->
+			<cfif structKeyExists(arguments.thestruct,"inherit_perm") AND arguments.thestruct.inherit_perm EQ 'true'>
+				<!--- Get the reocord of the folder to set the access permission --->
+				<cfinvoke method="getfoldergroups" returnvariable="tocopyfoldergroups" >
+					<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.root_copy_folder_id#">
+					<cfinvokeargument name="qrygroup" value="#arguments.thestruct.qry_groups#">
+					<cfinvokeargument name="in_folder_group" value="yes">
+				</cfinvoke>
+			<cfelse>
 		<!--- Get the reocord of the folder to set the access permission --->
-		<cfinvoke method="getfoldergroupszero" returnvariable="tocopyfoldergroups">
+				<cfinvoke method="getfoldergroups" returnvariable="tocopyfoldergroups">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+					<cfinvokeargument name="qrygroup" value="#arguments.thestruct.qry_groups#">
+					<cfinvokeargument name="in_folder_group" value="yes">
 		</cfinvoke>
+			</cfif>
 		<!--- Get the reocord of the folder into which the folder is to be copied --->
 		<cfinvoke method="getfolder" returnvariable="intofolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.intofolderid#">
@@ -5569,8 +5753,8 @@
 			</cfif>
 			)
 		</cfquery>
-		
 		<!--- Insert the Group and Permission --->
+			<cfif tocopyfoldergroups.recordcount NEQ 0>
 		<cfloop query="tocopyfoldergroups">
 			<cfquery datasource="#variables.dsn#">
 				INSERT INTO #session.hostdbprefix#folders_groups
@@ -5584,6 +5768,7 @@
 				)
 			</cfquery>
 		</cfloop>
+			</cfif>
 		<!--- Assign arguments --->
 		<cfset arguments.thestruct.dsn = variables.dsn>
 		<cfset arguments.thestruct.setid = variables.setid>
@@ -6215,6 +6400,7 @@
 		<!--- Get sub folders --->
 		<cfinvoke method="getsubfolders" returnvariable="tocopyfolderdetails">
 			<cfinvokeargument name="FOLDER_ID" value="#arguments.thestruct.tocopyfolderid#">
+				<cfinvokeargument name="avoid_link_path" value="yes">
 		</cfinvoke>
 		<!--- Loop the subfolder records and call the same function again --->
 		<cfif tocopyfolderdetails.recordcount>
@@ -6226,16 +6412,782 @@
 				</cfinvoke>
 			</cfloop>
 		</cfif>
-		<cfcatch type="any">
+		</cfif>
+		<!---<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error copy folder - #cgi.http_host#">
 				<cfdump var="#cfcatch#" />
 				<cfdump var="#arguments.thestruct#" />
 			</cfmail>
 		</cfcatch>
-	</cftry>
+	</cftry>--->
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
+<cffunction name="Extract_UPC" access="Public" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfargument name="sUPC" type="string" required="true">
+	<cfargument name="iUPC_Option" type="numeric" required="true">
+	<cfset Extract_UPC = "">
+	<cfset iLen = Len(sUPC)>
+	<cfset gb_strPkgeCode = "">
+	<cfif arguments.thestruct.dl_query.upc_number NEQ ''>
+		<cfswitch expression="#iUPC_Option#"> 
+			<cfcase value="10">
+				<cfswitch expression="#iLen#">
+					<cfcase value="14">
+						<cfset Extract_UPC = Mid(sUPC, 4, 10) >
+					</cfcase>	
+					<cfcase value="13">
+						<cfset Extract_UPC = Mid(sUPC, 3, 10) >
+					</cfcase>	
+					<cfcase value="12">
+						<cfset Extract_UPC = Mid(sUPC, 2, 10) >
+					</cfcase>	
+					<cfcase value="11">
+						<cfset Extract_UPC = Mid(sUPC, 2, 10) >
+					</cfcase>	
+					<cfdefaultcase>
+						<cfset Extract_UPC = sUPC >
+					</cfdefaultcase>	
+				</cfswitch>
+			</cfcase>
+			<cfcase value="11">
+				<cfswitch expression="#iLen#">
+					<cfcase value="14">
+						<cfset Extract_UPC = Mid(sUPC, 3, 11) >
+					</cfcase>	
+					<cfcase value="13">
+						<cfset Extract_UPC = Mid(sUPC, 2, 11) >
+					</cfcase>	
+					<cfcase value="12">
+						<cfset Extract_UPC = Left(sUPC, 11) >
+					</cfcase>	
+					<cfdefaultcase>
+						<cfset Extract_UPC = sUPC >
+					</cfdefaultcase>	
+				</cfswitch>
+			</cfcase>
+			<cfcase value="12">
+				<cfswitch expression="#iLen#">
+					<cfcase value="14">
+						<cfset Extract_UPC = Mid(sUPC, 3, 12) >
+					</cfcase>	
+					<cfcase value="13">
+						<cfset Extract_UPC = Mid(sUPC, 2, 12) >
+					</cfcase>	
+					<cfdefaultcase>
+						<cfset Extract_UPC = sUPC >
+					</cfdefaultcase>	
+				</cfswitch>
+			</cfcase>
+			<cfcase value="13">
+				<cfswitch expression="#iLen#">
+					<cfcase value="14">
+						<cfset Extract_UPC = Mid(sUPC, 2, 13) >
+					</cfcase>	
+					<cfdefaultcase>
+						<cfset Extract_UPC = sUPC >
+					</cfdefaultcase>	
+				</cfswitch>
+			</cfcase>							
+			<cfcase value="14">
+				<cfswitch expression="#iLen#">
+					<cfcase value="14">
+						<cfset Extract_UPC = sUPC >
+					</cfcase>	
+					<cfcase value="13">
+						<cfset Extract_UPC = "0" & sUPC >
+					</cfcase>	
+					<cfcase value="12">
+						<cfset Extract_UPC = "00" & sUPC >
+					</cfcase>
+					<cfcase value="11">
+						<cfset Extract_UPC = "000" & sUPC >
+					</cfcase>	
+					<cfdefaultcase>
+						<cfset Extract_UPC = sUPC >
+					</cfdefaultcase>	
+				</cfswitch>
+			</cfcase>
+		</cfswitch>
+	</cfif>
+	<cfreturn Extract_UPC >
+</cffunction>
+
+<!--- Find manufacturer String --->
+<cffunction name="Find_Manuf_String" output="false" access="public" >
+	<cfargument name="strManuf_UPC" type="string" required="true">
+	<cfset Find_Manuf_String = "" >
+	<cfset FldLen = Len(strManuf_UPC)>
+	<cftry>
+		<cfif strManuf_UPC NEQ ''>
+			<cfif FldLen LT 13>
+				<cfset Find_Manuf_String = Left(strManuf_UPC, (FldLen - 6))>
+			<cfelse>
+				<cfset Find_Manuf_String = Left(strManuf_UPC, (FldLen - 7))>
+			</cfif>
+			<cfif FldLen LT 13>
+				<cfif FldLen LT 6 >
+					<cfset Find_Manuf_String = "00000"	>
+				<cfelse>
+					<cfset Find_Manuf_String = Left(strManuf_UPC, (FldLen - 5))>
+				</cfif>
+			<cfelse>
+				<cfset Find_Manuf_String = Left(strManuf_UPC, (FldLen - 6))>   
+			</cfif>
+		</cfif>
+	<cfcatch><cfset  Find_Manuf_String = "ERROR"></cfcatch>
+	</cftry>	
+	<cfreturn Find_Manuf_String >
+</cffunction>
+
+<!--- Find product String --->
+<cffunction name="Find_Prod_String" output="false" access="public" >
+<cfargument name="strManuf_UPC" type="string" required="true">
+	<cfset Find_Prod_String = "">
+	<cfset FldLen = Len(strManuf_UPC)>
+	<cfif strManuf_UPC NEQ ''>
+		<cfif FldLen LT 14>
+			<cfif FldLen LT 13>
+				<cfset Find_Prod_String = Right(strManuf_UPC, 5)>
+			<cfelse>
+				<cfset Find_Prod_String = Right(strManuf_UPC, 6)>
+			</cfif>
+		<cfelse>
+			<cfset Find_Prod_String = Right(strManuf_UPC, 7)>
+		</cfif>
+	</cfif>	
+	<cfreturn Find_Prod_String >
+</cffunction>
+
+
+<!--- Download Folder --->
+<cffunction name="download_upc_folder" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset var thisstruct = structnew()>
+	<cfparam name="arguments.thestruct.awsbucket" default="" />
+	<cfparam name="arguments.thestruct.other_asset" default="false"/>
+	<cfparam name="arguments.thestruct.upc_asset_id" default=""/>
+	<cfparam name="arguments.thestruct.other_asset_id" default=""/>
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!---<cftry>--->
+		<!--- Set time for remove --->
+		<cfset var removetime = DateAdd("h", -2, "#now()#")>
+		<!--- Remove old directories --->
+		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thedirs">
+		<!--- Loop over dirs --->
+		<cfloop query="thedirs">
+			<!--- If a directory --->
+			<cfif type EQ "dir" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#name#" recurse="true" mode="775">
+			<cfelseif type EQ "file" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<!---<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
+	</cftry>--->
+	<!--- Create directory --->
+	<cfset var basketname = createuuid("")>
+	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<!--- Get Parent folder names --->
+	<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.folder_id#" returnvariable="crumbs" />
+	<cfset parentfoldersname = ''>
+	<cfloop list="#crumbs#" index="idx" delimiters=";">
+		<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
+	</cfloop>
+	<!--- Create Directory as per folder structure in Razuna --->
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	 
+		<cfloop query="arguments.thestruct.qry_files">
+			<cfif structKeyExists(arguments.thestruct,'qry_files') AND arguments.thestruct.qry_files.upc_number NEQ ''>
+				<cfset arguments.thestruct.dl_query.upc_number = arguments.thestruct.qry_files.upc_number >
+				<cfinvoke component="folders" method="Extract_UPC" returnvariable="extract_upcnumber">
+					<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
+					<cfinvokeargument name="sUPC" value="#arguments.thestruct.dl_query.upc_number#">
+					<cfinvokeargument name="iUPC_Option" value="#arguments.thestruct.qry_GroupsOfUser.upc_size#">
+				</cfinvoke>
+				<cfinvoke component="folders" method="Find_Manuf_String" returnvariable="arguments.thestruct.folder_name">
+					<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
+				</cfinvoke>
+				<cfinvoke component="folders" method="Find_Prod_String" returnvariable="arguments.thestruct.upc_name">
+					<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
+				</cfinvoke>
+				<cfif arguments.thestruct.folder_name eq "ERROR">
+					<cfthrow message="Error while converting UPC number '#arguments.thestruct.dl_query.upc_number#' to manufucturer string . Please check UPC number and make sure it is valid.">
+				</cfif>
+				<cfquery name="qry_upcgrp" dbtype="query">
+					SELECT * FROM arguments.thestruct.qry_GroupsOfUser WHERE upc_size <>'' AND upc_size is not null
+				</cfquery>
+				<cfif qry_upcgrp.recordcount gt 1>
+					<cftry>
+					<cfthrow message="User is is more than one UPC group which is not allowed.">
+					 <cfcatch type="any">
+						<cfset errobj.logerrors(cfcatch)/>
+						<cfoutput><font color="##CD5C5C"><strong>User is in more than one UPC group (i.e. a group with UPC size configured) which is not allowed.</strong></font> </cfoutput>
+						<cfabort>
+					</cfcatch>
+					</cftry>
+				</cfif>
+ 
+				<cfif structKeyExists(arguments.thestruct,'qry_GroupsOfUser') AND qry_upcgrp.upc_folder_format EQ 'true'>
+					<cfset create_dir_path = "#arguments.thestruct.newpath##parentfoldersname#/#arguments.thestruct.folder_name#">
+					<!--- Create Directory as per folder structure in Razuna --->
+					<cfif NOT directoryexists("#create_dir_path#")>
+						<cfdirectory action="create" directory="#create_dir_path#" mode="775">
+					</cfif>
+				<cfelse>
+					<cfset create_dir_path = "#arguments.thestruct.newpath##parentfoldersname#">
+				</cfif>
+				
+				<!--- set UPC assetID --->
+				<cfset arguments.thestruct.upc_asset_id = arguments.thestruct.qry_files.id>
+				<!--- Originals --->
+				<cfif arguments.thestruct.download_originals>
+					<!--- Feedback --->
+					<cfoutput>Grabbing all the originals<br /></cfoutput>
+					<cfflush>
+					<!--- Download originals --->
+					<cfinvoke method="download_upc_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#create_dir_path#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="yes"   />
+				</cfif>
+				<!--- Thumbnails --->
+				<cfif arguments.thestruct.download_thumbnails>
+					<!--- Feedback --->
+					<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+					<cfflush>
+					<!--- Download thumbnails --->
+					<cfinvoke method="download_upc_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#create_dir_path#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="yes"  />
+				</cfif>
+				<!--- Renditions --->
+				<cfif arguments.thestruct.download_renditions>
+					<!--- Feedback --->
+					<cfoutput>Grabbing all the renditions<br /></cfoutput>
+					<cfflush>
+					<!--- Download renditions --->
+					<cfinvoke method="download_upc_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#create_dir_path#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="yes"  />
+					<!--- Download additional renditions --->
+					<cfinvoke method="download_upc_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#create_dir_path#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="yes"  rend_av="t"  />
+				</cfif>
+			<cfelse>
+				<cfset arguments.thestruct.other_asset_id = listappend(arguments.thestruct.other_asset_id,'#arguments.thestruct.qry_files.id#',',')>
+				<cfset arguments.thestruct.other_asset = 'true'>
+			</cfif>
+		</cfloop>
+	
+	<!--- Other assets --->
+	<cfif arguments.thestruct.other_asset EQ 'true'>
+		<!--- Reset the UPC values --->
+		<cfset arguments.thestruct.folder_name = "">
+		<cfset arguments.thestruct.upc_name = "">
+		<cfset arguments.thestruct.upc_asset_id = "">
+		<!--- Create folders according to selection and download --->
+		<!--- Originals --->
+		<cfif arguments.thestruct.download_originals>
+			<!--- Feedback --->
+			<cfoutput>Grabbing all the originals<br /></cfoutput>
+			<cfflush>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#/originals" mode="775">
+			<!--- Download originals --->
+			<cfinvoke method="download_upc_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#/originals" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="no"/>
+		</cfif>
+		<!--- Thumbnails --->
+		<cfif arguments.thestruct.download_thumbnails>
+			<!--- Feedback --->
+			<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+			<cfflush>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#/thumbnails" mode="775">
+			<!--- Download thumbnails --->
+			<cfinvoke method="download_upc_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#/thumbnails" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="no"/>
+		</cfif>
+		
+		<!--- Renditions --->
+		<cfif arguments.thestruct.download_renditions>
+			<!--- Feedback --->
+			<cfoutput>Grabbing all the renditions<br /></cfoutput>
+			<cfflush>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#/renditions" mode="775">
+			<!--- Download renditions --->
+			<cfinvoke method="download_upc_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="no"/>
+			<cfinvoke method="download_upc_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" is_upc="no" rend_av='t'/>
+		</cfif>
+	</cfif>
+	<!--- RAZ-2831 : Move metadata export into folder --->
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
+	<cfflush>
+	
+	<!--- All done. ZIP and finish --->
+	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/folder_#arguments.thestruct.folder_id#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<!--- Zip path for download --->
+	<cfoutput><p><a href="outgoing/folder_#arguments.thestruct.folder_id#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Remove the temp folder --->
+	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes" />
+</cffunction>
+
+<!--- Select and download --->
+<cffunction name="download_upc_selected" output="false">
+	<cfargument name="dl_thumbnails" default="false" required="false">
+	<cfargument name="dl_originals" default="false" required="false">
+	<cfargument name="dl_renditions" default="false" required="false">
+	<cfargument name="dl_query" required="true" type="query">
+	<cfargument name="dl_folder" required="true" type="string">
+	<cfargument name="assetpath" required="true" type="string">
+	<cfargument name="awsbucket" required="false" type="string">
+	<cfargument name="thestruct" required="false" type="struct">
+	<cfargument name="is_upc" required="false" type="string">
+	<cfargument name="rend_av" required="false" type="string" default="f">
+	<!--- Params --->
+	<cfparam name="arguments.thestruct.akaimg" default="" />
+	<cfparam name="arguments.thestruct.akavid" default="" />
+	<cfparam name="arguments.thestruct.akaaud" default="" />
+	<cfparam name="arguments.thestruct.akadoc" default="" />
+	<!--- If we are renditions we query again and set some variables --->
+	<cfif arguments.dl_renditions>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 'f'>
+			<!--- Set original --->
+			<cfset arguments.dl_originals = true>
+			<!--- Query with group values --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+				SELECT img_id as id,img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind, img_upc_number as upc_number, img_extension as extension
+				FROM #session.hostdbprefix#images
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+				UNION ALL
+				SELECT vid_id as id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind, vid_upc_number as upc_number, vid_extension as extension
+				FROM #session.hostdbprefix#videos
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+				UNION ALL
+				SELECT aud_id as id,aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind, aud_upc_number as upc_number, aud_extension as extension
+				FROM #session.hostdbprefix#audios
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+			</cfquery>
+		<cfelseif rend_av EQ 't'>
+			<!--- RAZ-2901 : Get additional renditions --->
+			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+				SELECT av_id as id, av_link_url, av_link_title, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+				FROM #session.hostdbprefix#images i 
+				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r and av.av_link = 0
+				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id as id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+				FROM #session.hostdbprefix#videos v
+				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r and av.av_link = 0
+				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id as id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+				FROM #session.hostdbprefix#audios a
+				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r and av.av_link = 0
+				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				UNION ALL
+				SELECT av_id as id, av_link_url, av_link_title, file_id, file_name filename, file_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'doc' as kind
+				FROM #session.hostdbprefix#files f
+				INNER JOIN raz1_additional_versions av ON file_id = av.asset_id_r and av.av_link = 0
+				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif structKeyExists(arguments.thestruct,'upc_asset_id') AND arguments.thestruct.upc_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upc_asset_id#" list="Yes">)
+				<cfelseif structKeyExists(arguments.thestruct,'other_asset_id') AND arguments.thestruct.other_asset_id NEQ ''>
+					AND av.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.other_asset_id#" list="Yes">)
+				</cfif>
+				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			</cfquery>
+	  	</cfif>
+	</cfif>
+	<!--- Loop over records --->
+	<cfloop query="arguments.dl_query">
+		<cfif (arguments.is_upc EQ 'yes' AND (arguments.dl_query.id EQ '#arguments.thestruct.upc_asset_id#' OR arguments.dl_renditions)) OR (arguments.is_upc EQ 'no' AND (listfindnocase('#arguments.thestruct.other_asset_id#','#arguments.dl_query.id#') OR arguments.dl_renditions)) >
+		<!--- Set var --->
+		<cfset var theorgname = "">
+		<cfif not isdefined("extension")>
+			<cfset var extension = listlast(filename_org,".")>
+		</cfif>
+		
+		<!--- Feedback --->
+		<cfoutput>. </cfoutput>
+		<cfflush>
+			
+		<!--- If we have to get thumbnails then the name is different --->
+		<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
+			<cfif arguments.dl_thumbnails AND kind EQ "img">
+				<cfset var theorgname = "thumb_#id#.#ext#">
+				<cfset var thefinalname = theorgname>
+				<cfset var rendition_version = listlast(filename,'.')>
+				<cfset var thiscloudurl = cloud_url>
+				<cfset var theorgext = ext>
+			<cfelse>
+				<cfif kind EQ 'vid' AND (arguments.dl_originals OR arguments.dl_renditions)>
+					<cfset var theorgname = replace(filename_org,'#listlast(filename_org,'.')#','#extension#','one')>
+				<cfelseif not(arguments.dl_thumbnails)>
+					<cfset var theorgname = filename_org>
+				</cfif>
+				<cfset var rendition_version ="">
+				<cfif find('.', filename)>
+					<cfset rendition_version = listlast(filename,'.')>
+					<cfif not isnumeric(rendition_version)>
+						<cfset rendition_version ="">
+					<cfelse>
+						<cfset rendition_version ="." & rendition_version>
+					</cfif>
+				</cfif>
+				<cfset var theorgext = listlast(theorgname,".")>
+				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#theorgext#">
+				<cfset var thiscloudurl = cloud_url_org>
+			</cfif>
+		<cfelse>
+			<cfif arguments.dl_thumbnails AND kind EQ "img">
+				<cfset var theorgname = "thumb_#id#.#ext#">
+				<cfset var thefinalname = theorgname>
+				<cfset var thiscloudurl = cloud_url>
+				<cfset var theorgext = ext>
+			<cfelseif arguments.dl_originals>
+				<cfif kind EQ 'vid' AND (arguments.dl_originals OR arguments.dl_renditions)>
+					<cfset var theorgname = replace(filename_org,'#listlast(filename_org,'.')#','#extension#','one')>
+				<cfelse>
+					<cfset var theorgname = filename_org>
+				</cfif>
+				<cfset var thefinalname = filename>
+				<cfset var thiscloudurl = cloud_url_org>
+				<cfset var theorgext = listlast(filename_org,".")>
+				<!--- If rendition we append the currentrow number in order to have same renditions formats still work --->
+				<cfif arguments.dl_renditions>
+					<cfset var tn = listfirst(filename,".")>
+					<cfset var te = listlast(filename_org,".")>
+					<cfset var thefinalname = tn & "_" & currentRow & "." & te>
+				</cfif>
+			</cfif>
+		</cfif>
+
+		<cfif not isdefined("theorgext")>
+			<cfset var theorgext = extension>
+		</cfif>
+		<!--- RAZ-2901 : Check for additional renditions --->
+		<cfif rend_av EQ 't'>
+			<cfset var filename_av = listlast('#av_link_url#','/')>
+			<cfif arguments.is_upc EQ 'yes'>
+				<cfset var rendition_version ="">
+				<cfif find('.', av_link_title)>
+					<cfset rendition_version = listlast(av_link_title,'.')>
+					<cfif not isnumeric(rendition_version)>
+						<cfset rendition_version ="">
+					<cfelse>
+						<cfset rendition_version ="." & rendition_version>
+					</cfif>
+				</cfif>
+				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#theorgext#">
+			<cfelse>
+				<cfset var thefinalname = filename_av>
+			</cfif>
+			<cfset var theorgname = filename_av>
+			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
+			<cfset var link_url = replacenocase('#fs#','#filename_av#','')>
+			<cfset var path_to_asset = reverse('#replacenocase('#reverse('#link_url#')#','/','','one')#')>
+		</cfif>
+
+		<cfif not isdefined("thefinalname")>
+			<cfset thefinalname = theorgname>
+		</cfif>
+
+		<cfif not arguments.dl_thumbnails and arguments.is_upc EQ 'yes'>
+			<!--- Remove extension from filenames for UPC --->
+			<cfset thefinalname = replacenocase(replacenocase(thefinalname,".#extension#","","ALL"),".jpg","ALL")>
+		</cfif>
+		<!--- Start download but only if theorgname is not empty --->
+		<cfif theorgname NEQ "">
+			<cfset fileNameOK = true>
+			<cfset uniqueCount = 1>
+			<cfloop condition="#fileNameOK#">
+			       <cfif fileExists("#arguments.dl_folder#/#thefinalname#")>
+			       		<cfif find ('.',thefinalname)>
+			       			<cfset var suffix = "." & listLast(thefinalname,'.')>
+			       		<cfelse>
+			       			<cfset var suffix = "">
+			       		</cfif>
+					<cfset thefinalname = listfirst(listFirst(thefinalname,'.'),'_')&'_'&uniqueCount & suffix > 
+			               	<cfset uniqueCount = uniqueCount + 1>
+			       <cfelse>
+			               <cfset fileNameOK = false>        
+			       </cfif>        
+			</cfloop>
+			<!--- Local --->
+			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
+				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775" >
+			<!--- Nirvanix --->
+			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
+				<cftry>
+					<cfif thiscloudurl CONTAINS "http">
+						<cfhttp url="#thiscloudurl#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
+					</cfif>
+					<cfcatch type="any">
+						<cfset cfcatch.custom_message = "Nirvanix error on download in folder download in function folders.download_upc_selected">
+						<cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
+				</cftry>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND link_kind EQ "">
+				<!--- Define the Akamai type --->
+				<cfif kind EQ "img">
+					<cfset var akatype = arguments.thestruct.akaimg>
+				<cfelseif kind EQ "vid">
+					<cfset var akatype = arguments.thestruct.akavid>
+				<cfelseif kind EQ "aud">
+					<cfset var akatype = arguments.thestruct.akaaud>
+				<cfelse>
+					<cfset var akatype = arguments.thestruct.akadoc>
+				</cfif>
+				<!--- For thumbnails we copy from local --->
+				<cfif arguments.dl_thumbnails>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelse>
+					<cftry>
+						<cfhttp url="#arguments.thestruct.akaurl##akatype#/#thefinalname#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
+						<cfcatch type="any">
+							<cfset cfcatch.custom_message = "Akamai error on download in folder download in function folders.download_upc_selected">
+							<cfset errobj.logerrors(cfcatch)/>
+						</cfcatch>
+					</cftry>
+				</cfif>
+			<!--- Amazon --->
+			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
+				<cfinvoke component="amazon" method="Download">
+					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+				</cfinvoke>
+			<!--- If this is a URL we write a file in the directory with the PATH --->
+			<cfelseif link_kind EQ "url">
+				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:#link_path_url#" mode="775">
+			<!--- If this is a linked asset --->
+			<cfelseif link_kind EQ "lan">
+				<cffile action="copy" source="#link_path_url#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+			</cfif>
+		</cfif>
+		<!--- Reset variables --->
+		<cfset var theorgname = "">
+		<cfset var thefinalname = "">
+		<cfset var thiscloudurl = "">
+		</cfif>
+	</cfloop>
+	<!--- Feedback --->
+	<cfoutput><br /></cfoutput>
+	<cfflush>
+</cffunction>
+<!--- Subscribe E-mail notification --->
+<cffunction name="subscribe" access="public" output="true">
+	<cfargument name="thestruct" type="struct" required="true">
+	<cfparam name="arguments.thestruct.asset_keywords" default="F" >
+	<cfparam name="arguments.thestruct.asset_description" default="F" >
+	<!--- Subscribe details --->
+	<cfquery datasource="#application.razuna.datasource#" name="qfoldersubscribe">
+		SELECT * 
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	</cfquery>
+	<!--- If folder subscribe details already exists then delete else insert/update --->
+	<cfif arguments.thestruct.emailnotify EQ 'no'>
+		<!--- Delete Subscribe details --->
+		<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#folder_subscribe
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+			AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+		</cfquery>
+	<cfelse>
+		<cfif qfoldersubscribe.recordcount NEQ 0>
+			<!--- Update Subscribe details --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#folder_subscribe
+				SET 
+				fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+				mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				<cfif structKeyExists(arguments.thestruct,"asset_keywords")>
+				asset_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
+				</cfif>
+				<cfif structKeyExists(arguments.thestruct,"asset_description")>
+				asset_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
+				</cfif>
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+				AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+			</cfquery>
+		<cfelse>
+			<!--- Insert Subscribe details --->
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folder_subscribe
+				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time, asset_keywords, asset_description)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
+				)
+			</cfquery>
+		</cfif>
+	</cfif>
+</cffunction>
+
+<!--- GET SUBSCRIBE FOLDER RECORD --->
+<cffunction name="getsubscribefolder" output="false" access="public" returntype="query">
+	<cfargument name="folder_id" required="yes" type="string">
+	<!--- Subscribe folder details --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_folder">
+		SELECT * 
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
+		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	</cfquery>
+	<cfreturn qry_folder />
+</cffunction>
+
+<!--- REMOVE FOLDER SUBSCRIBE --->
+<cffunction name="removesubscribefolder" output="false" access="public">
+	<cfargument name="folderid" required="yes" type="string">
+	<cfloop list="#arguments.folderid#" index="ids">
+	<!--- Delete folder subscribe --->
+		<cfquery datasource="#application.razuna.datasource#" >
+		DELETE FROM #session.hostdbprefix#folder_subscribe 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ids#"> 
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		</cfquery> 
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- RAZ-2901 : Download Folder as per folder structure Razuna --->
+<cffunction name="download_folder_structure" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset var thisstruct = structnew()>
+	<cfparam name="arguments.thestruct.awsbucket" default="" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<cftry>
+		<!--- Set time for remove --->
+		<cfset var removetime = DateAdd("h", -2, "#now()#")>
+		<!--- Remove old directories --->
+		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thedirs">
+		<!--- Loop over dirs --->
+		<cfloop query="thedirs">
+			<!--- If a directory --->
+			<cfif type EQ "dir" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#name#" recurse="true" mode="775">
+			<cfelseif type EQ "file" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
+			<cfset errobj.logerrors(cfcatch)/>
+		</cfcatch>
+	</cftry>
+	<!--- Create directory --->
+	<cfset var basketname = createuuid("")>
+	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<!--- Get Parent folder names --->
+	<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.folder_id#" returnvariable="crumbs" />
+	<cfset parentfoldersname = ''>
+	<cfloop list="#crumbs#" index="idx" delimiters=";">
+		<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
+	</cfloop>
+	<!--- Create Directory as per folder structure in Razuna --->
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	<!--- Create folders according to selection and download --->
+	<!--- Thumbnails --->
+	<cfif arguments.thestruct.download_thumbnails>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/thumbnails" mode="775">
+		<!--- Download thumbnails --->
+		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Originals --->
+	<cfif arguments.thestruct.download_originals>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the originals<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		<!--- Download originals --->
+		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Renditions --->
+	<cfif arguments.thestruct.download_renditions>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the renditions<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		<!--- Download renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+		<!--- Download additional renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" rend_av="t" />
+	</cfif>
+	<!--- RAZ-2831 : Move metadata export into folder --->
+	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
+	<cfflush>
+	<!--- All done. ZIP and finish --->
+	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/folder_#arguments.thestruct.folder_id#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<!--- Zip path for download --->
+	<cfoutput><p><a href="outgoing/folder_#arguments.thestruct.folder_id#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Remove the temp folder --->
+	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes" />
+</cffunction>
 </cfcomponent>
