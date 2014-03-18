@@ -80,9 +80,7 @@
 				</div>
 				<div style="float:right;padding-left:20px;padding-top:8px;">
 					<a href="##" onclick="loadcontent('rightside','#myself#c.search_advanced');$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a>
-					<cfif cgi.http_host CONTAINS "razuna.com">
-						<a href="##" style="padding-left:15px;" onclick="loadcontent('rightside','#myself#c.updater_tool');return false;"><strong style="color:red;">FILE RE-UPLOAD!</strong></a>
-					</cfif>
+					<a href="##" style="padding-left:15px;" onclick="loadcontent('rightside','#myself#c.updater_tool');return false;"><strong style="color:red;">FILE RE-UPLOAD!</strong></a>
 				</div>
 				<!--- Enabled UPC search --->
 				<cfif prefs.set2_upc_enabled >
