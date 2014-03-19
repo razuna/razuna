@@ -768,33 +768,29 @@ function aspectwidth(inp,out,theform,theaspect){
 	}
 	document.forms[theform].elements[out].value = mynum;
 }
-
 function changeFormat(theform,inpheight,inpwidth,outheight,outwidth,ydpi,xdpi,inheight,inwidth,formatbox) {
-		    var formatbox = document.getElementById(formatbox);
+		    var formatbox = document.forms[theform].elements[formatbox];
 		    var selectedFormat = formatbox.options[formatbox.selectedIndex].value;
 		    if(selectedFormat == "inches") {
-
 		    	var heightinches = Math.round(inpheight.value / ydpi*100)/100;
 		    	document.forms[theform].elements[inheight].value = heightinches;
 
-		    	document.getElementById(outheight).style.display='none';
-		    	document.getElementById(inheight).style.display='';
+		    	document.forms[theform].elements[outheight].style.display='none';
+		    	document.forms[theform].elements[inheight].style.display='';
 
 		    	var widthinches = Math.round(inpwidth.value / xdpi*100)/100; 
 		    	document.forms[theform].elements[inwidth].value = widthinches;
 
-		    	document.getElementById(outwidth).style.display='none';
-		    	document.getElementById(inwidth).style.display='';
-
+		    	document.forms[theform].elements[outwidth].style.display='none';
+		    	document.forms[theform].elements[inwidth].style.display='';
 		    }
 
 		    if(selectedFormat == "pixels") {
+		    	document.forms[theform].elements[outheight].style.display='';
+		    	document.forms[theform].elements[inheight].style.display='none';
 
-		    	document.getElementById(outheight).style.display='';
-		    	document.getElementById(inheight).style.display='none';
-
-		    	document.getElementById(outwidth).style.display='';
-		    	document.getElementById(inwidth).style.display='none';
+		    	document.forms[theform].elements[outwidth].style.display='';
+		    	document.forms[theform].elements[inwidth].style.display='none';
 		    }
 	   }
 function updatePixels(theform,height,width,outheight,outwidth,ydpi,xdpi) {
