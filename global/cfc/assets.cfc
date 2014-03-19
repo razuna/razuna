@@ -4744,6 +4744,8 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Params --->
 	<cfset var theargsdc = "x">
 	<cfset var thecolorspace = "">
+	<cfset var thethumbheight = 0>
+	<cfset var thethumbwidth = 0>
 	<!--- Check the colorspace --->
 	<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
 		<cfset var thecolorspace = "-colorspace sRGB">
@@ -4756,11 +4758,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
 		<cfset var themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
 		<cfset var theffmpeg = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+		<cfset var theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 	<cfelse>
 		<cfset var theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
 		<cfset var thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
 		<cfset var themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
 		<cfset var theffmpeg = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
@@ -4821,7 +4825,11 @@ This is the main function called directly by a single upload else from addassets
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
 					<cfset var theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
 				<cfelseif thetype EQ "img">
-					<cfset arguments.thestruct.thumbname = "thumb_#theid#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+					<cfif  isdefined("arguments.thestruct.qry_existing.img_extension") AND arguments.thestruct.qry_existing.img_extension eq 'gif'>
+						<cfset arguments.thestruct.thumbname = "thumb_#theid#.gif">
+					<cfelse>
+						<cfset arguments.thestruct.thumbname = "thumb_#theid#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+					</cfif>
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
 					<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
 					<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
@@ -4852,16 +4860,6 @@ This is the main function called directly by a single upload else from addassets
 							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #resizeargs# #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
-					<!--- Call the component to read the XMP data --->
-					<cfset arguments.thestruct.thesource = arguments.thestruct.thumbpath>
-					<cfinvoke component = "global.cfc.xmp" method="xmpparse" returnvariable="xmlxmp" thestruct="#arguments.thestruct#">
-					<!--- Update DB with appropriate thumb height and width from XMP data --->
-					<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #thedb#
-					SET thumb_width = <cfqueryparam value="#xmlxmp.orgwidth#" cfsqltype="cf_sql_integer">,
-					thumb_height = <cfqueryparam value="#xmlxmp.orgheight#" cfsqltype="cf_sql_integer">
-					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
-					</cfquery>
 				</cfif>
 				<!--- Write script file --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theargs#" mode="777">
@@ -4927,39 +4925,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfif fileexists(arguments.thestruct.thumbpath)>
 						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
 					</cfif>
-				<!--- Nirvanix: delete file --->
-				<cfelseif application.razuna.storage EQ "nirvanix">
-					<!--- Delete existing preview --->
-					<cfinvoke component="nirvanix" method="DeleteFiles">
-						<cfinvokeargument name="filePath" value="/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#">
-						<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-					</cfinvoke>
-					<!--- Upload Thumbnail --->
-					<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#" action="run">
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
-							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thumbpath#">
-							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-						</cfinvoke>
-					</cfthread>
-					<!--- Wait for thread to finish --->
-					<cfthread action="join" name="upload#thescript#" />
-					<!--- Get signed URLS --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" nvxsession="#arguments.thestruct.nvxsession#">
-					<!--- Update DB --->
-					<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #thedb#
-					SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
-					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
-					</cfquery>
-					<!--- Remove the original and thumbnail --->
-					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
-						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
-					</cfif>
-					<!--- Delete old thumb (if there) --->
-					<cfif fileexists(arguments.thestruct.thumbpath)>
-						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
-					</cfif>
 				<!--- Akamai --->
 				<cfelseif application.razuna.storage EQ "akamai">
 					<!--- Movie thumbnail to local directory --->
@@ -4968,6 +4933,30 @@ This is the main function called directly by a single upload else from addassets
 					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
 						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
 					</cfif>
+				</cfif>
+
+				<!--- Get width and height for thumbnail--->
+				<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #arguments.thestruct.thumbpath#" timeout="60" variable="thethumbheight" />
+				<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #arguments.thestruct.thumbpath#" timeout="60" variable="thethumbwidth" />
+				
+				<cfset console("arguments.thestruct.thumbpath")>
+				<cfset console(arguments.thestruct.thumbpath)>
+				<cfset console("thethumbheight")>
+				<cfset console(thethumbheight)>
+				
+				<cfif thetype eq 'vid'>
+					<cfset var thumb_prefix = "vid">
+				<cfelse>
+					<cfset var thumb_prefix = "thumb">
+				</cfif>
+				<cfif isnumeric(thethumbwidth) AND isnumeric(thethumbheight)>
+					<!--- Update DB with appropriate thumb height and width from XMP data --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #thedb#
+					SET #thumb_prefix#_width = <cfqueryparam value="#thethumbwidth#" cfsqltype="cf_sql_integer">,
+					#thumb_prefix#_height = <cfqueryparam value="#thethumbheight#" cfsqltype="cf_sql_integer">
+					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
 				</cfif>
 			</cfif>
 			<cfcatch type="all">
