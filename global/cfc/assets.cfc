@@ -3113,7 +3113,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Set correct width and height parameters --->
 		<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
 		<cfif isnumeric(arguments.thestruct.width) AND isnumeric(arguments.thestruct.height)>
-			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x#arguments.thestruct.height#! #thecolorspace#">
+			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
 		<!--- If only height set then resize to given height preserving aspect ratio --->
 		<cfelseif isnumeric(arguments.thestruct.height)>
 			<cfset theImgConvertParams = "#alpha# -resize x#arguments.thestruct.height# #thecolorspace#">
@@ -5438,7 +5438,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfset var thumb_height = arguments.thestruct.qry_settings_image.set2_img_thumb_heigth>
 							<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
 							<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
-								<cfset var resizeargs =  "#thumb_width#x#thumb_height#!">
+								<cfset var resizeargs =  "#thumb_width#x">
 							<!--- If only height set then resize to given height preserving aspect ratio.  --->
 							<cfelseif isnumeric(thumb_height)>
 								<cfset var resizeargs = "x#thumb_height#">
