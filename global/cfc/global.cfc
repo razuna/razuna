@@ -1718,7 +1718,9 @@ Comment:<br>
 		SELECT l.file_name, l.hashtag, l.date_upload, l.file_status, u.user_first_name, u.user_last_name
 		FROM log_uploader l LEFT JOIN users u ON u.user_api_key = l.api_key
 		WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		GROUP BY l.hashtag, l.file_name
 		ORDER BY l.date_upload DESC
+		LIMIT 300
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry>

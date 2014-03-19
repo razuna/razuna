@@ -3113,7 +3113,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Set correct width and height parameters --->
 		<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
 		<cfif isnumeric(arguments.thestruct.width) AND isnumeric(arguments.thestruct.height)>
-			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x#arguments.thestruct.height#! #thecolorspace#">
+			<cfset theImgConvertParams = "#alpha# -resize #arguments.thestruct.width#x #thecolorspace#">
 		<!--- If only height set then resize to given height preserving aspect ratio --->
 		<cfelseif isnumeric(arguments.thestruct.height)>
 			<cfset theImgConvertParams = "#alpha# -resize x#arguments.thestruct.height# #thecolorspace#">
@@ -5291,256 +5291,274 @@ This is the main function called directly by a single upload else from addassets
 <!--- UPDATER: INSERT FROM PATH --->
 <cffunction name="addassetpath_updater" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
-	<!--- Now add all assets of this folder --->
-	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thefiles" type="file">
-	<!--- The tool paths --->
-	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
-	<cfset arguments.thestruct.theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
-	<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
-	<cfset arguments.thestruct.theexeff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-	<!--- Filter out hidden dirs --->
-	<cfquery dbtype="query" name="thefiles">
-	SELECT *
-	FROM thefiles
-	WHERE attributes != 'H'
-	</cfquery>
-	<!--- Loop over the assets --->
-	<cfloop query="thefiles">
-		<cfset var md5hash = "">
-		<cfset var filepath = "">
-		<cfset var thedir = "">
-		<cfset var filename = "">
-		<cfset var extension = "">
-		<!--- Params --->
-		<cfset var filepath = directory & "/" & name>
-		<cfset var thedir = directory>
-		<cfset var filename = listlast(name,FileSeparator())>
-		<cfset var filename_noext = listfirst(filename,".")>
-		<cfset var extension = listlast(filename,".")>
-		<!--- Get MD5 hash --->
-		<cfset var md5hash = hashbinary("#arguments.thestruct.folder_path#/#filename#")>
-		<!--- Check in file type for extension --->
-		<cfquery datasource="#application.razuna.datasource#" name="fileType">
-		SELECT type_type
-		FROM file_types
-		WHERE lower(type_id) = <cfqueryparam value="#lcase(extension)#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- According to type we query db --->
-		<cfif fileType.type_type EQ "img">
-			<cfset var db = "images">
-			<cfset var type = "image">
-			<cfset var type_type = "img">
-			<cfset var colname = "img_filename">
-			<cfset var colname_org = "img_filename_org">
-			<cfset var columns = "img_id as fileid, img_filename, folder_id_r">
-		<cfelseif fileType.type_type EQ "vid">
-			<cfset var db = "videos">
-			<cfset var type = "video">
-			<cfset var type_type = "vid">
-			<cfset var colname = "vid_filename">
-			<cfset var colname_org = "vid_name_org">
-			<cfset var columns = "vid_id as fileid, vid_filename, folder_id_r">
-		<cfelseif fileType.type_type EQ "aud">
-			<cfset var db = "audios">
-			<cfset var type = "audio">
-			<cfset var type_type = "aud">
-			<cfset var colname = "aud_name">
-			<cfset var colname_org = "aud_name_org">
-			<cfset var columns = "aud_id as fileid, aud_name, folder_id_r">
-		<cfelse>
-			<cfset var type_type = "doc">
-			<cfset var db = "files">
-			<cfset var type = "document">
-			<cfset var colname = "file_name">
-			<cfset var colname_org = "file_name_org">
-			<cfset var columns = "file_id as fileid, file_name, folder_id_r">
-		</cfif>
-		<!--- Now check db for same hashtag --->
-		<cfquery datasource="#application.razuna.datasource#" name="samefile">
-		SELECT #columns#
-		FROM #session.hostdbprefix##db#
-		WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-		</cfquery>
-		<!--- If found then --->
-		<cfif samefile.recordcount NEQ 0>
-			<!--- Loop over record because user could have the ame file in differen folder --->
-			<cfloop query="samefile">
-				<!--- Store path to file --->
-				<cfset path_to_file = "#arguments.thestruct.assetpath#/#session.hostid#/#folder_id_r#/#type_type#/#fileid#">
-				<!--- Create directory first --->
-				<cftry>
-					<cfdirectory action="create" directory="#path_to_file#" mode="775">
-					<!--- Error out --->
-					<cfcatch type="any">
+
+	<cfset consoleoutput(true)>
+	<cfset console("count: " & application.razuna.uploadcount)>
+
+	<!--- Conditional loop on uploadercount --->
+	<cfloop condition = "application.razuna.uploadcount GTE 3">
+	    <cfset sleep(2000)>
+	    <cfset console("count within while: " & application.razuna.uploadcount)>
+	</cfloop>
+	<!--- Increase uploadercount --->
+	<cfset application.razuna.uploadcount = application.razuna.uploadcount + 1>
+
+	<cftry>
+
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<cfset arguments.thestruct.theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
+		<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		<cfset arguments.thestruct.theexeff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+		<!--- Filter out hidden dirs --->
+		<!--- <cfloop query="thefiles"> --->
+			<cfset var md5hash = "">
+			<cfset var filepath = "">
+			<cfset var thedir = "">
+			<cfset var filename = "">
+			<cfset var extension = "">
+			<!--- Params --->
+			<cfset var filepath = arguments.thestruct.file_path>
+			<cfset var thedir = arguments.thestruct.folder_path>
+			<cfset var filename_org = trim(arguments.thestruct.filename_org)>
+			<cfset var filename = listlast(filepath,FileSeparator())>
+			<cfset var filename_noext = listfirst(filename,".")>
+			<cfset var extension = listlast(filename,".")>
+
+			<!--- Get MD5 hash --->
+			<cfset var md5hash = hashbinary("#filepath#")>
+			<!--- Check in file type for extension --->
+			<cfquery datasource="#application.razuna.datasource#" name="fileType">
+			SELECT type_type
+			FROM file_types
+			WHERE lower(type_id) = <cfqueryparam value="#lcase(extension)#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- According to type we query db --->
+			<cfif fileType.type_type EQ "img">
+				<cfset var db = "images">
+				<cfset var type = "image">
+				<cfset var type_type = "img">
+				<cfset var colname = "img_filename">
+				<cfset var colname_org = "img_filename_org">
+				<cfset var columns = "img_id as fileid, img_filename, folder_id_r">
+			<cfelseif fileType.type_type EQ "vid">
+				<cfset var db = "videos">
+				<cfset var type = "video">
+				<cfset var type_type = "vid">
+				<cfset var colname = "vid_filename">
+				<cfset var colname_org = "vid_name_org">
+				<cfset var columns = "vid_id as fileid, vid_filename, folder_id_r">
+			<cfelseif fileType.type_type EQ "aud">
+				<cfset var db = "audios">
+				<cfset var type = "audio">
+				<cfset var type_type = "aud">
+				<cfset var colname = "aud_name">
+				<cfset var colname_org = "aud_name_org">
+				<cfset var columns = "aud_id as fileid, aud_name, folder_id_r">
+			<cfelse>
+				<cfset var type_type = "doc">
+				<cfset var db = "files">
+				<cfset var type = "document">
+				<cfset var colname = "file_name">
+				<cfset var colname_org = "file_name_org">
+				<cfset var columns = "file_id as fileid, file_name, folder_id_r">
+			</cfif>
+			<!--- Now check db for same hashtag --->
+			<cfquery datasource="#application.razuna.datasource#" name="samefile">
+			SELECT #columns#
+			FROM #session.hostdbprefix##db#
+			WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+			OR lower(#colname#) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(filename_org)#">
+			</cfquery>
+			<!--- If found then --->
+			<cfif samefile.recordcount NEQ 0>
+				<!--- Loop over record because user could have the ame file in differen folder --->
+				<cfloop query="samefile">
+					<!--- Store path to file --->
+					<cfset var path_to_file = "#arguments.thestruct.assetpath#/#session.hostid#/#folder_id_r#/#type_type#/#fileid#">
+					<!--- Create directory first --->
+					<cftry>
+						<cfdirectory action="create" directory="#path_to_file#" mode="775">
+						<!--- Error out --->
+						<cfcatch type="any">
+							<cfset consoleoutput(true)>
+							<cfset console('Error on creating folder for file #filename#')>
+						</cfcatch>
+					</cftry>
+					<!--- Thread --->
+					<!--- Let's move file on file system --->
+					<!--- <cfthread name="#tt#" action="run" intstruct="#arguments.thestruct#"> --->
 						<cfset consoleoutput(true)>
-						<cfset console('Error on creating folder for file #filename#')>
-					</cfcatch>
-				</cftry>
-				<!--- Thread --->
-				<cfset tt = createuuid("")>
-				<cfset arguments.thestruct.filename = filename>
-				<cfset arguments.thestruct.path_to_file = path_to_file>
-				<!--- Let's move file on file system --->
-				<cfthread name="#tt#" action="run" intstruct="#arguments.thestruct#">
-					<cffile action="copy" source="#attributes.intstruct.folder_path#/#attributes.intstruct.filename#" destination="#attributes.intstruct.path_to_file#/#attributes.intstruct.filename#" mode="775">
-				</cfthread>
-				<!--- Wait for thread to finish --->
-				<cfthread action="join" name="#tt#" />	
-				<!--- Run the filecleanup --->
-				<cfinvoke component="global" method="convertname" returnvariable="filename_renamed" thename="#filename#">
-				<cfinvoke component="global" method="convertname" returnvariable="filename_renamed_noext" thename="#filename_noext#">
-				<!--- Update DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix##db#
-				SET
-				#colname_org# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filename_renamed#">
-				WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-				</cfquery>
-				<!--- Do the rename action on the file --->
-				<!--- Thread --->
-				<cfset tt = createuuid("")>
-				<cfset arguments.thestruct.filename_renamed = filename_renamed>
-				<cfthread name="#tt#" action="run" intstruct="#arguments.thestruct#">
-					<cffile action="rename" source="#attributes.intstruct.path_to_file#/#attributes.intstruct.filename#" destination="#attributes.intstruct.path_to_file#/#attributes.intstruct.filename_renamed#">
-				</cfthread>
-				<!--- Wait for thread to finish --->
-				<cfthread action="join" name="#tt#" />	
-				<!--- Create preview --->
-				<cfif type_type EQ "img" OR type_type EQ "vid">
-					<cfset arguments.thestruct.file_id = fileid & "-" & type_type>
-					<!--- Call recreate function --->
-					<cfinvoke method="recreatepreviewimagethread" thestruct="#arguments.thestruct#" />
-				<!--- For Files --->
-				<cfelseif type_type EQ "doc">
-					<!--- Set scripts --->
-					<cfset var ttpdf = Createuuid("")>
-					<cfset arguments.thestruct.thesh = "#GetTempDirectory()#/#ttpdf#.sh">
-					<cfset arguments.thestruct.thesht = "#GetTempDirectory()#/#ttpdf#t.sh">
-					<!--- PDF --->
-					<cfif extension EQ "pdf">
-						<cfset var thepdfimage = replacenocase(filename_renamed,".pdf",".jpg","all")>
-						<cfset var theorgfileflat = "#path_to_file#/#filename_renamed#[0]">
-						<cfset var theorgfile = "#path_to_file#/#filename_renamed#">
-						<!--- Create folder --->
-						<cfset var pdf_path = "#path_to_file#/razuna_pdf_images">
-						<cftry>
-							<cfdirectory action="create" directory="#pdf_path#" mode="775">
-							<cfcatch type="any"></cfcatch>
-						</cftry>
-						<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
-						<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
-						<cfset var thumb_height = arguments.thestruct.qry_settings_image.set2_img_thumb_heigth>
-						<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
-						<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
-							<cfset resizeargs =  "#thumb_width#x#thumb_height#!">
-						<!--- If only height set then resize to given height preserving aspect ratio.  --->
-						<cfelseif isnumeric(thumb_height)>
-							<cfset resizeargs = "x#thumb_height#">
-						<!--- If only width set then resize to given width preserving aspect ratio. --->
-						<cfelseif isnumeric(thumb_width)>
-							<cfset resizeargs = "#thumb_width#x">
+						<cfset console("copy:" & filepath & " to " & "#path_to_file#/#filename#")>
+						<cffile action="copy" source="#filepath#" destination="#path_to_file#/#filename#" mode="775">
+					<!--- </cfthread> --->
+					<!--- Wait for thread to finish --->
+					<!--- <cfthread action="join" name="#tt#" />	 --->
+					<!--- Run the filecleanup --->
+					<!--- <cfinvoke component="global" method="convertname" returnvariable="filename_renamed" thename="#filename#">
+					<cfinvoke component="global" method="convertname" returnvariable="filename_renamed_noext" thename="#filename_noext#"> --->
+					<!--- Update DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix##db#
+					SET
+					#colname_org# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">
+					WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					</cfquery>
+					<!--- Do the rename action on the file --->
+					<!--- Thread --->
+					<!--- <cfthread name="#tt#" action="run" intstruct="#arguments.thestruct#"> --->
+						<!--- <cffile action="rename" source="#path_to_file#/#filename#" destination="#path_to_file#/#filename_renamed#"> --->
+					<!--- </cfthread> --->
+					<!--- Wait for thread to finish --->
+					<!--- <cfthread action="join" name="#tt#" />	 --->
+					<!--- Create preview --->
+					<cfif type_type EQ "img" OR type_type EQ "vid">
+						<cfset arguments.thestruct.file_id = fileid & "-" & type_type>
+						<!--- Call recreate function --->
+						<cfinvoke method="recreatepreviewimagethread" thestruct="#arguments.thestruct#" />
+					<!--- For Files --->
+					<cfelseif type_type EQ "doc">
+						<!--- Set scripts --->
+						<cfset var ttpdf = Createuuid("")>
+						<cfset var thesh = "#GetTempDirectory()#/#ttpdf#.sh">
+						<cfset var thesht = "#GetTempDirectory()#/#ttpdf#t.sh">
+						<!--- PDF --->
+						<cfif extension EQ "pdf">
+							<cfset var thepdfimage = replacenocase(filename,".pdf",".jpg","all")>
+							<cfset var theorgfileflat = "#path_to_file#/#filename#[0]">
+							<cfset var theorgfile = "#path_to_file#/#filename#">
+							<!--- Create folder --->
+							<cfset var pdf_path = "#path_to_file#/razuna_pdf_images">
+							<cftry>
+								<cfdirectory action="create" directory="#pdf_path#" mode="775">
+								<cfcatch type="any"></cfcatch>
+							</cftry>
+							<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
+							<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
+							<cfset var thumb_height = arguments.thestruct.qry_settings_image.set2_img_thumb_heigth>
+							<!--- If both height and width are set then resize to exact height and width set. Aspect ratio ignored --->
+							<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
+								<cfset var resizeargs =  "#thumb_width#x">
+							<!--- If only height set then resize to given height preserving aspect ratio.  --->
+							<cfelseif isnumeric(thumb_height)>
+								<cfset var resizeargs = "x#thumb_height#">
+							<!--- If only width set then resize to given width preserving aspect ratio. --->
+							<cfelseif isnumeric(thumb_width)>
+								<cfset var resizeargs = "#thumb_width#x">
+							</cfif>
+							<!--- Script: Create thumbnail --->
+							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  #theorgfileflat# -resize #resizeargs# -colorspace sRGB -background white -flatten #path_to_file#/#thepdfimage#" mode="777">
+							<!--- Script: Create images --->
+							<cffile action="write" file="#thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 #theorgfile# #pdf_path#/#thepdfimage#" mode="777">
+							<!--- Execute --->
+							<!--- <cfthread name="#ttpdf#" action="run" pdfintstruct="#arguments.thestruct#"> --->
+								<cfexecute name="#thesh#" timeout="900" />
+								<cfexecute name="#thesht#" timeout="900" />
+							<!--- </cfthread> --->
+							<!--- Wait for thread to finish --->
+							<!--- <cfthread action="join" name="#ttpdf#" />					 --->
+							<!--- Delete scripts --->
+							<cffile action="delete" file="#thesh#">
+							<cffile action="delete" file="#thesht#">
+							<!--- If no PDF could be generated then copy the thumbnail placeholder --->
+							<cfif NOT fileexists("#path_to_file#/#thepdfimage#")>
+								<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#path_to_file#/#thepdfimage#" mode="775">
+							</cfif>
+						<!--- InDesign --->
+						<cfelseif extension EQ "indd">
+							<!--- Set vars --->
+							<cfset var indd_thumb = "#filename_noext#.jpg">
+							<!--- Write script --->
+							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theexif# -fast -fast2 #path_to_file#/#filename# -PageImage -b -listitem 0 > #path_to_file#/#indd_thumb#" mode="777">
+							<!--- Execute --->
+							<!--- <cfthread name="#ttpdf#" action="run" intstruct="#arguments.thestruct#"> --->
+								<cfexecute name="#thesh#" timeout="900" />
+							<!--- </cfthread> --->
+							<!--- Wait for thread to finish --->
+							<!--- <cfthread action="join" name="#ttpdf#" />					 --->
+							<!--- Delete scripts --->
+							<cffile action="delete" file="#thesh#">
 						</cfif>
-						<!--- Script: Create thumbnail --->
-						<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  #theorgfileflat# -resize #resizeargs# -colorspace sRGB -background white -flatten #path_to_file#/#thepdfimage#" mode="777">
-						<!--- Script: Create images --->
-						<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 #theorgfile# #pdf_path#/#thepdfimage#" mode="777">
-						<!--- Execute --->
-						<cfthread name="#ttpdf#" action="run" pdfintstruct="#arguments.thestruct#">
-							<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
-							<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
-						</cfthread>
-						<!--- Wait for thread to finish --->
-						<cfthread action="join" name="#ttpdf#" />					
-						<!--- Delete scripts --->
-						<cffile action="delete" file="#arguments.thestruct.thesh#">
-						<cffile action="delete" file="#arguments.thestruct.thesht#">
-						<!--- If no PDF could be generated then copy the thumbnail placeholder --->
-						<cfif NOT fileexists("#path_to_file#/#thepdfimage#")>
-							<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#path_to_file#/#thepdfimage#" mode="775">
+					<!--- For Audios --->
+					<cfelseif type_type EQ "aud">
+						<!--- Set scripts --->
+						<cfset var ttpdf = Createuuid("")>
+						<cfset var thesh = "#GetTempDirectory()#/#ttpdf#.sh">
+						<cfset var thesht = "#GetTempDirectory()#/#ttpdf#t.sh">
+						<!--- Create WAV file if file is not already a WAV--->
+						<cfif extension NEQ "wav">
+							<!--- Write files --->
+							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theexeff# -i #path_to_file#/#filename# #path_to_file#/#filename_noext#.wav" mode="777">
+							<!--- Execute --->
+							<cfset tt = createuuid("")>
+							<!--- <cfthread name="wav#tt#" intaudstruct="#arguments.thestruct#" action="run"> --->
+								<cfexecute name="#thesh#" timeout="60" />
+							<!--- </cfthread> --->
+							<!--- Wait until the WAV is done --->
+							<!--- <cfthread action="join" name="wav#tt#" /> --->
+							<!--- Delete scripts --->
+							<cffile action="delete" file="#thesh#">
 						</cfif>
-					<!--- InDesign --->
-					<cfelseif extension EQ "indd">
-						<!--- Set vars --->
-						<cfset var indd_thumb = "#filename_noext#.jpg">
-						<!--- Write script --->
-						<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 #path_to_file#/#filename_renamed# -PageImage -b -listitem 0 > #path_to_file#/#indd_thumb#" mode="777">
-						<!--- Execute --->
-						<cfthread name="#ttpdf#" action="run" intstruct="#arguments.thestruct#">
-							<cfexecute name="#attributes.intstruct.thesh#" timeout="900" />
-						</cfthread>
-						<!--- Wait for thread to finish --->
-						<cfthread action="join" name="#ttpdf#" />					
-						<!--- Delete scripts --->
-						<cffile action="delete" file="#arguments.thestruct.thesh#">
+						<!--- If we are a local link and are NOT a MP3 we create one to be able to play it in the browser --->
+						<cfif extension NEQ "mp3">
+							<!--- Write files --->
+							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theexeff# -i #path_to_file#/#filename# -ab 192k #path_to_file#/#filename_noext#.mp3" mode="777">
+							<!--- Execute --->
+							<!--- <cfthread name="mp3#tt#" intaudstruct="#arguments.thestruct#" action="run"> --->
+								<cfexecute name="#thesh#" timeout="60" />
+							<!--- </cfthread> --->
+							<!--- Wait until the MP3 is done --->
+							<!--- <cfthread action="join" name="mp3#tt#" /> --->
+							<!--- Delete scripts --->
+							<cffile action="delete" file="#thesh#">
+						</cfif>
 					</cfif>
-				<!--- For Audios --->
-				<cfelseif type_type EQ "aud">
-					<!--- Set scripts --->
-					<cfset var ttpdf = Createuuid("")>
-					<cfset arguments.thestruct.thesh = "#GetTempDirectory()#/#ttpdf#.sh">
-					<cfset arguments.thestruct.thesht = "#GetTempDirectory()#/#ttpdf#t.sh">
-					<!--- Create WAV file if file is not already a WAV--->
-					<cfif extension NEQ "wav">
-						<!--- Write files --->
-						<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i #path_to_file#/#filename_renamed# #path_to_file#/#filename_renamed_noext#.wav" mode="777">
-						<!--- Execute --->
-						<cfset var tt = createuuid("")>
-						<cfthread name="wav#tt#" intaudstruct="#arguments.thestruct#" action="run">
-							<cfexecute name="#attributes.intaudstruct.thesh#" timeout="60" />
-						</cfthread>
-						<!--- Wait until the WAV is done --->
-						<cfthread action="join" name="wav#tt#" />
-						<!--- Delete scripts --->
-						<cffile action="delete" file="#arguments.thestruct.thesh#">
-					</cfif>
-					<!--- If we are a local link and are NOT a MP3 we create one to be able to play it in the browser --->
-					<cfif extension NEQ "mp3">
-						<!--- Write files --->
-						<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i #path_to_file#/#filename_renamed# -ab 192k #path_to_file#/#filename_renamed_noext#.mp3" mode="777">
-						<!--- Execute --->
-						<cfset var tt = createuuid("")>
-						<cfthread name="mp3#tt#" intaudstruct="#arguments.thestruct#" action="run">
-							<cfexecute name="#attributes.intaudstruct.thesh#" timeout="60" />
-						</cfthread>
-						<!--- Wait until the MP3 is done --->
-						<cfthread action="join" name="mp3#tt#" />
-						<!--- Delete scripts --->
-						<cffile action="delete" file="#arguments.thestruct.thesh#">
-					</cfif>
-				</cfif>
+					<!--- Log it --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO log_uploader
+					(api_key, file_name, file_type, date_upload, file_status, host_id, hashtag)
+					VALUES(
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.apikey#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#filename_org#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#type#">,
+						<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="success">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					)
+					</cfquery>
+				</cfloop>
+			<!--- Filename can not be found --->
+			<cfelse>
 				<!--- Log it --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO log_uploader
-				(api_key, file_name, file_type, date_upload, file_status, host_id, hashtag)
+				(api_key, file_name, file_type, date_upload, file_status, file_comment, host_id)
 				VALUES(
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.apikey#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#filename_org#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#type#">,
 					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="success">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="error">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="File not found. Please upload within Razuna!">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
 				)
 				</cfquery>
-			</cfloop>
-		<!--- Filename can not be found --->
-		<cfelse>
-			<!--- Log it --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO log_uploader
-			(api_key, file_name, file_type, date_upload, file_status, file_comment, host_id)
-			VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.apikey#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#type#">,
-				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="error">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="File not found. Please upload within Razuna!">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			)
-			</cfquery>
-		</cfif>
-	</cfloop>
+			</cfif>
+		<!--- </cfloop> --->
+		
+		<cfcatch type="any">
+			<!--- Decrease uploadercount --->
+			<cfset application.razuna.uploadcount = application.razuna.uploadcount - 1>
+			<cfset consoleoutput(true)>
+			<cfset console('There was an error')>
+			<cfrethrow>
+		</cfcatch>
+
+	</cftry>
+
+	<!--- Decrease uploadercount --->
+	<cfset application.razuna.uploadcount = application.razuna.uploadcount - 1>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

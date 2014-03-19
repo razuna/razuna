@@ -14,6 +14,9 @@
 
 <cfset thisPath = ExpandPath(".")>
 
+<!--- Application wide var for upload --->
+<cfparam name="application.razuna.uploadcount" default="0">
+
 <!--- Set global params --->
 <cfparam name="fa" default="">
 <cfparam name="session.offset" default="0">
