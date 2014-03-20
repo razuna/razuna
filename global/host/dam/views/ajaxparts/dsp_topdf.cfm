@@ -9,7 +9,7 @@
 	<cfset thestorage = "#thisurl##cgi.context_path#/assets/#session.hostid#/">
 <!--- </cfif> --->
 <!--- The filename --->
-<cfset pdfname = "Razuna-" & dateformat(now(),"mmddyyyy") & "-" & qry_files.folder_id_r & ".pdf">
+<cfset pdfname = "PDF-" & dateformat(now(),"mmddyyyy") & "-" & qry_files.folder_id_r & ".pdf">
 <!--- Page Decision --->
 <cfswitch expression="#attributes.format#">
 	<cfcase value="9,12">
@@ -27,10 +27,13 @@
 <style>
 @page{
 	@top-center {
-		content: "Razuna http://razuna.com #attributes.header#";
+		content: "#attributes.header#";
 	}
 	@bottom-center {
-		content: "Page " counter(page) " of " counter(pages) "#attributes.footer#";
+		content: "#attributes.footer#";
+	}
+	@bottom-right {
+		content: "Page " counter(page) " of " counter(pages);
 	}
 }  
 table {

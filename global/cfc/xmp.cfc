@@ -1891,13 +1891,13 @@
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
 	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
 	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+		<cfoutput><p><a href="outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
@@ -1932,13 +1932,13 @@
 	</cfif>
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)>
 	<!--- Write file to file system --->
-	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#",true)>
+	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#",true)>
 	<!--- Serve the file --->
     <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
 	<!--- Feedback --->
 	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
 	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+		<cfoutput><p><a href="outgoing/metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
