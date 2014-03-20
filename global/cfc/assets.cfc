@@ -4389,7 +4389,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upa#" />
 				</cfif>
 				<!--- Upload the WAV --->
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
 					<cfthread name="#upw#" audstruct="#arguments.thestruct#" action="run">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.wav">
@@ -4410,7 +4410,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfthread>
 					<cfthread action="join" name="#upmp#" />
 				</cfif>
-				<!--- Rename the UPC addtional rendition image --->
+				<!--- Rename the UPC additional rendition image --->
 				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
 					<cfpause interval="5" />
 					<cfthread name="rename#upa#" intupstruct="#arguments.thestruct#" action="run">
