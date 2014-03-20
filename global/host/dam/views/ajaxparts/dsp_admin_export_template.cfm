@@ -29,6 +29,9 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
+					<br />
+					#myFusebox.getApplicationData().defaults.trans("export_template_desc")#
+					<br/><br/>
 					<em>(#myFusebox.getApplicationData().defaults.trans("multiselect")#)</em>
 					<br /><br />
 					<!--- IMAGES --->

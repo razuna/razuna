@@ -208,6 +208,15 @@
 								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="vid_upc" id="vid_upc" value="#qry_detail.detail.vid_upc_number#" ></td>
 							</tr>
 							</cfif>
+							<!--- CUSTOM FIELDS --->
+							<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+								<!--- RAZ-2834 : Displays Custom field of Videos --->
+								<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_videos_metadata') AND cs.customfield_videos_metadata NEQ '')>
+								<tr>
+									<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
+								</tr>
+								</cfif>
+							</cfif>
 							<tr>
 								<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_size")#</td>
 								<td width="1%" nowrap="true"><cfif qry_detail.detail.link_kind EQ "url">n/a<cfelse>#qry_detail.thesize# MB</cfif></td>
@@ -231,15 +240,6 @@
 								<td nowrap="true" valign="top">ID</td>
 								<td  nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 							</tr>
-								<!--- CUSTOM FIELDS --->
-								<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-									<!--- RAZ-2834 : Displays Custom field of Videos --->
-									<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_videos_metadata') AND cs.customfield_videos_metadata NEQ '')>
-									<tr>
-										<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
-									</tr>
-									</cfif>
-								</cfif>
 						</table>
 					</td>
 				</tr>
