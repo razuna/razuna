@@ -139,8 +139,29 @@ function convertimages(theform){
 	var convert_wm_png = $('#' + theform + ' #convert_wm_png option:selected').val();
 	var convert_wm_tif = $('#' + theform + ' #convert_wm_tif option:selected').val();
 	var convert_wm_bmp = $('#' + theform + ' #convert_wm_bmp option:selected').val();
+	
+	var inch_width_jpg = $('#' + theform + ' #inch_width_jpg').val();
+	var inch_height_jpg = $('#' + theform + ' #inch_height_jpg').val();
+	var inch_width_gif = $('#' + theform + ' #inch_width_gif').val();
+	var inch_height_gif = $('#' + theform + ' #inch_height_gif').val();
+	var inch_width_png = $('#' + theform + ' #inch_width_png').val();
+	var inch_height_png = $('#' + theform + ' #inch_height_png').val();
+	var inch_width_tif = $('#' + theform + ' #inch_width_tif').val();
+	var inch_height_tif = $('#' + theform + ' #inch_height_tif').val();
+	var inch_width_bmp = $('#' + theform + ' #inch_width_bmp').val();
+	var inch_height_bmp = $('#' + theform + ' #inch_height_bmp').val();
+
+	var formatbox_jpg = $('#' + theform + ' #formatbox_jpg').val();
+	var formatbox_gif = $('#' + theform + ' #formatbox_gif').val();
+	var formatbox_png = $('#' + theform + ' #formatbox_png').val();
+	var formatbox_bmp = $('#' + theform + ' #formatbox_bmp').val();
+	var formatbox_tif = $('#' + theform + ' #formatbox_tif').val();
+
+	var xres = $('#' + theform + ' #xres').val();
+	var yres = $('#' + theform + ' #yres').val();
+
 	// Call the Action
-	$('#statusconvertdummy').load('index.cfm?fa=c.images_convert', { convert_to:convertto, file_id:file_id, theorgname:theorgname, thepath:thepath, link_kind:link_kind, link_path_url:link_path_url, convert_width_jpg:convert_width_jpg, convert_height_jpg:convert_height_jpg, convert_dpi_jpg:convert_dpi_jpg, convert_width_gif:convert_width_gif, convert_height_gif:convert_height_gif, convert_dpi_gif:convert_dpi_gif, convert_width_png:convert_width_png, convert_height_png:convert_height_png, convert_dpi_png:convert_dpi_png, convert_width_tif:convert_width_tif, convert_height_tif:convert_height_tif, convert_dpi_tif:convert_dpi_tif, convert_width_bmp:convert_width_bmp, convert_height_bmp:convert_height_bmp, convert_dpi_bmp:convert_dpi_bmp, convert_wm_jpg:convert_wm_jpg, convert_wm_gif:convert_wm_gif, convert_wm_png:convert_wm_png, convert_wm_tif:convert_wm_tif, convert_wm_bmp:convert_wm_bmp } );
+	$('#statusconvertdummy').load('index.cfm?fa=c.images_convert', { convert_to:convertto, file_id:file_id, theorgname:theorgname, thepath:thepath, link_kind:link_kind, link_path_url:link_path_url, convert_width_jpg:convert_width_jpg, convert_height_jpg:convert_height_jpg, convert_dpi_jpg:convert_dpi_jpg, convert_width_gif:convert_width_gif, convert_height_gif:convert_height_gif, convert_dpi_gif:convert_dpi_gif, convert_width_png:convert_width_png, convert_height_png:convert_height_png, convert_dpi_png:convert_dpi_png, convert_width_tif:convert_width_tif, convert_height_tif:convert_height_tif, convert_dpi_tif:convert_dpi_tif, convert_width_bmp:convert_width_bmp, convert_height_bmp:convert_height_bmp, convert_dpi_bmp:convert_dpi_bmp, convert_wm_jpg:convert_wm_jpg, convert_wm_gif:convert_wm_gif, convert_wm_png:convert_wm_png, convert_wm_tif:convert_wm_tif, convert_wm_bmp:convert_wm_bmp ,inch_width_jpg : inch_width_jpg,inch_height_jpg :  inch_height_jpg, inch_width_gif :  inch_width_gif, inch_height_gif :  inch_height_gif, inch_width_png :  inch_width_png,  inch_height_png :  inch_height_png,  inch_width_tif :  inch_width_tif, inch_height_tif : inch_height_tif,  inch_width_bmp :  inch_width_bmp, inch_height_bmp :  inch_height_bmp, formatbox_jpg:formatbox_jpg, formatbox_png:formatbox_png, formatbox_gif:formatbox_gif, formatbox_bmp:formatbox_bmp, formatbox_tif:formatbox_tif, xres:xres, yres:yres} );
 }
 // For Image Renditions
 function convertexistimgrenditions(theform){
@@ -184,8 +205,28 @@ function convertexistimgrenditions(theform){
 	var convert_wm_png = $('#' + theform + ' #convert_wm_png option:selected').val();
 	var convert_wm_tif = $('#' + theform + ' #convert_wm_tif option:selected').val();
 	var convert_wm_bmp = $('#' + theform + ' #convert_wm_bmp option:selected').val();
+
+	var inch_width_jpg = $('#' + theform + ' #inch_width_jpg').val();
+	var inch_height_jpg = $('#' + theform + ' #inch_height_jpg').val();
+	var inch_width_gif = $('#' + theform + ' #inch_width_gif').val();
+	var inch_height_gif = $('#' + theform + ' #inch_height_gif').val();
+	var inch_width_png = $('#' + theform + ' #inch_width_png').val();
+	var inch_height_png = $('#' + theform + ' #inch_height_png').val();
+	var inch_width_tif = $('#' + theform + ' #inch_width_tif').val();
+	var inch_height_tif = $('#' + theform + ' #inch_height_tif').val();
+	var inch_width_bmp = $('#' + theform + ' #inch_width_bmp').val();
+	var inch_height_bmp = $('#' + theform + ' #inch_height_bmp').val();
+
+	var formatbox_jpg = $('#' + theform + ' #formatbox_jpg').val();
+	var formatbox_gif = $('#' + theform + ' #formatbox_gif').val();
+	var formatbox_png = $('#' + theform + ' #formatbox_png').val();
+	var formatbox_bmp = $('#' + theform + ' #formatbox_bmp').val();
+	var formatbox_tif = $('#' + theform + ' #formatbox_tif').val();
+
+	var xres = $('#' + theform + ' #xres').val();
+	var yres = $('#' + theform + ' #yres').val();
 	// Call the Action
-    $('#statusrenditionconvertdummy').load('index.cfm?fa=c.rendition_images_convert', { convert_to:convertto, file_id:file_id, img_group_id:img_group_id, theorgname:theorgname, thepath:thepath, link_kind:link_kind, link_path_url:link_path_url, convert_width_jpg:convert_width_jpg, convert_height_jpg:convert_height_jpg, convert_dpi_jpg:convert_dpi_jpg, convert_width_gif:convert_width_gif, convert_height_gif:convert_height_gif, convert_dpi_gif:convert_dpi_gif, convert_width_png:convert_width_png, convert_height_png:convert_height_png, convert_dpi_png:convert_dpi_png, convert_width_tif:convert_width_tif, convert_height_tif:convert_height_tif, convert_dpi_tif:convert_dpi_tif, convert_width_bmp:convert_width_bmp, convert_height_bmp:convert_height_bmp, convert_dpi_bmp:convert_dpi_bmp, convert_wm_jpg:convert_wm_jpg, convert_wm_gif:convert_wm_gif, convert_wm_png:convert_wm_png, convert_wm_tif:convert_wm_tif, convert_wm_bmp:convert_wm_bmp } );
+    $('#statusrenditionconvertdummy').load('index.cfm?fa=c.rendition_images_convert', { convert_to:convertto, file_id:file_id, img_group_id:img_group_id, theorgname:theorgname, thepath:thepath, link_kind:link_kind, link_path_url:link_path_url, convert_width_jpg:convert_width_jpg, convert_height_jpg:convert_height_jpg, convert_dpi_jpg:convert_dpi_jpg, convert_width_gif:convert_width_gif, convert_height_gif:convert_height_gif, convert_dpi_gif:convert_dpi_gif, convert_width_png:convert_width_png, convert_height_png:convert_height_png, convert_dpi_png:convert_dpi_png, convert_width_tif:convert_width_tif, convert_height_tif:convert_height_tif, convert_dpi_tif:convert_dpi_tif, convert_width_bmp:convert_width_bmp, convert_height_bmp:convert_height_bmp, convert_dpi_bmp:convert_dpi_bmp, convert_wm_jpg:convert_wm_jpg, convert_wm_gif:convert_wm_gif, convert_wm_png:convert_wm_png, convert_wm_tif:convert_wm_tif, convert_wm_bmp:convert_wm_bmp,inch_width_jpg : inch_width_jpg,inch_height_jpg :  inch_height_jpg, inch_width_gif :  inch_width_gif, inch_height_gif :  inch_height_gif, inch_width_png :  inch_width_png,  inch_height_png :  inch_height_png,  inch_width_tif :  inch_width_tif, inch_height_tif : inch_height_tif,  inch_width_bmp :  inch_width_bmp, inch_height_bmp :  inch_height_bmp, formatbox_jpg:formatbox_jpg, formatbox_png:formatbox_png, formatbox_gif:formatbox_gif, formatbox_bmp:formatbox_bmp, formatbox_tif:formatbox_tif, xres:xres, yres:yres } );
 }
 // For Video Coversion
 function convertvideos(theform){
