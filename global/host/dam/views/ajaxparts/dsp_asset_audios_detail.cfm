@@ -190,6 +190,15 @@
 								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="aud_upc" id="aud_upc" value="#qry_detail.detail.aud_upc_number#" ></td>
 							</tr>
 							</cfif>
+							<!--- CUSTOM FIELDS --->
+							<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+								<!--- RAZ-2834: Displays Custom field of Audios--->
+								<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_audios_metadata') AND cs.customfield_audios_metadata NEQ '')>
+								<tr>
+									<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
+								</tr>
+								</cfif>
+							</cfif>
 							<tr>
 								<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_size")#</td>
 								<td width="1%" nowrap="true"><cfif qry_detail.detail.link_kind NEQ "url">#qry_detail.thesize# MB<cfelse>n/a</cfif></td>
@@ -214,15 +223,6 @@
 								<td nowrap="true" valign="top">ID</td>
 								<td  nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 							</tr>
-								<!--- CUSTOM FIELDS --->
-								<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-									<!--- RAZ-2834: Displays Custom field of Audios--->
-									<cfif (structKeyExists(cs,'customfield_all_metadata') AND cs.customfield_all_metadata NEQ '') OR (structKeyExists(cs,'customfield_audios_metadata') AND cs.customfield_audios_metadata NEQ '')>
-									<tr>
-										<td colspan="2"><cfinclude template="inc_custom_meta_fields.cfm"></td>	
-									</tr>
-									</cfif>
-								</cfif>
 						</table>
 					</td>
 				</tr>
