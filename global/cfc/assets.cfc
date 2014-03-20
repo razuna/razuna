@@ -1879,7 +1879,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Fix path if this is coming from lan --->
 			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 				<cfset arguments.thestruct.qryfile.path = replace(arguments.thestruct.qryfile.path,listlast(arguments.thestruct.qryfile.path,'\/'),"","ALL")>
-			</cfif>	
+			</cfif>
 			<cfset arguments.thestruct.theorgfile = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfset arguments.thestruct.thepdfimagename = "#arguments.thestruct.qryfile.filenamenoext#.jpg">
@@ -2217,10 +2217,15 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
 			<cfset var upd = Createuuid("")>
+			<cfif arguments.thestruct.qryfile.extension EQ "indd">
+				<cfset arguments.thestruct.theamzasset = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<cfelse>
+				<cfset arguments.thestruct.theamzasset = "#arguments.thestruct.qryfile.path#">
+			</cfif>
 			<cfthread name="#upd#" action="run" intupstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Upload">
 					<cfinvokeargument name="key" value="/#attributes.intupstruct.qryfile.folder_id#/doc/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
-					<cfinvokeargument name="theasset" value="#attributes.intupstruct.qryfile.path#">
+					<cfinvokeargument name="theasset" value="#attributes.intupstruct.theamzasset#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intupstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
