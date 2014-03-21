@@ -1385,74 +1385,7 @@
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
 		</cfquery>
-		<!--- Update the record in versions DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid
-		<!--- For images --->
-		<cfif arguments.thestruct.type EQ "img">
-			, meta_data
-			,
-			thumb_width, thumb_height, img_width, img_height, img_size, thumb_size
-		<!--- For Videos --->
-		<cfelseif arguments.thestruct.type EQ "vid">
-			, meta_data
-			,
-			vid_size, vid_width, vid_height, vid_name_image
-		<!--- For Audios --->
-		<cfelseif arguments.thestruct.type EQ "aud">
-			, meta_data
-			,
-			vid_size
-		</cfif>
-		)
-		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filename_org#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_ext#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.md5hash#">,
-		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-		<!--- For images --->
-		<cfif arguments.thestruct.type EQ "img">
-			,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_img_meta#">,
-			<cfif isnumeric(arguments.thestruct.width)>
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.width#">
-			<cfelse>
-				null
-			</cfif>, 
-			<cfif isnumeric(arguments.thestruct.height)>
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.height#">
-			<cfelse>
-				null
-			</cfif>,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.theheight#">, 
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.thewidth#">, 
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumb_size#">
-		<!--- For Videos --->
-		<cfelseif arguments.thestruct.type EQ "vid">
-			,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_vid_meta#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.org_width#">, 
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.org_height#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">
-		<!--- For Audios --->
-		<cfelseif arguments.thestruct.type EQ "aud">
-			,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_aud_meta#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="">
-		</cfif>
-		)
-		</cfquery>
+		
 		<cfif application.razuna.storage EQ "local">
 		<!--- Create folder with the version --->
 			<cfif !directoryExists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#")>
@@ -1508,12 +1441,79 @@
 			<!--- Wait for the upload thread to finish --->
 			<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
 			<!--- Get SignedURL thumbnail --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#" awsbucket="#arguments.thestruct.awsbucket#">
-			<!--- Get SignedURL original --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.thumbnailname_new#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 		</cfif>
+		<!--- Update the record in versions DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#versions
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org,cloud_url_thumb, ver_thumbnail, hashtag, rec_uuid
+		<!--- For images --->
+		<cfif arguments.thestruct.type EQ "img">
+			, meta_data
+			,
+			thumb_width, thumb_height, img_width, img_height, img_size, thumb_size
+		<!--- For Videos --->
+		<cfelseif arguments.thestruct.type EQ "vid">
+			, meta_data
+			,
+			vid_size, vid_width, vid_height, vid_name_image
+		<!--- For Audios --->
+		<cfelseif arguments.thestruct.type EQ "aud">
+			, meta_data
+			,
+			vid_size
+		</cfif>
+		)
+		VALUES(
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
+		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filename_org#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_ext#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url.theurl#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.md5hash#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+		<!--- For images --->
+		<cfif arguments.thestruct.type EQ "img">
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_img_meta#">,
+			<cfif isnumeric(arguments.thestruct.width)>
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.width#">
+			<cfelse>
+				null
+			</cfif>, 
+			<cfif isnumeric(arguments.thestruct.height)>
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.height#">
+			<cfelse>
+				null
+			</cfif>,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.theheight#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.thewidth#">, 
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumb_size#">
+		<!--- For Videos --->
+		<cfelseif arguments.thestruct.type EQ "vid">
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_vid_meta#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.org_width#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.org_height#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">
+		<!--- For Audios --->
+		<cfelseif arguments.thestruct.type EQ "aud">
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_aud_meta#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="">
+		</cfif>
+		)
+		</cfquery>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.create">
 			<cfset errobj.logerrors(cfcatch)/>
