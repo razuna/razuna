@@ -4866,7 +4866,7 @@
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
@@ -4934,28 +4934,28 @@
 		<cfelseif rend_av EQ 't'>
 			<!--- RAZ-2901 : Get additional renditions --->
 			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
-				SELECT av_id, av_link_url, av_link_title, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+				SELECT av.av_id, av.av_type, av.av_link_url, av.av_link_title, av.folder_id_r, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
 				FROM #session.hostdbprefix#images i 
 				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r and av.av_link = 0
 				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND i.img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT av_id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+				SELECT av.av_id, av.av_type, av.av_link_url, av.av_link_title, av.folder_id_r, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
 				FROM #session.hostdbprefix#videos v
 				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r and av.av_link = 0
 				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND v.vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
 				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT av_id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+				SELECT av.av_id, av.av_type, av.av_link_url, av.av_link_title, av.folder_id_r, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
 				FROM #session.hostdbprefix#audios a
 				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r and av.av_link = 0
 				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND a.aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#valuelist(dl_query.id)#" list="yes">)
 				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT av_id, av_link_url, av_link_title, file_id, file_name filename, file_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'doc' as kind
+				SELECT av.av_id, av.av_type, av.av_link_url, av.av_link_title, av.folder_id_r, file_id, file_name filename, file_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'doc' as kind
 				FROM #session.hostdbprefix#files f
 				INNER JOIN raz1_additional_versions av ON file_id = av.asset_id_r and av.av_link = 0
 				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -5123,6 +5123,10 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
+					<cfif rend_av EQ 't'>
+						<cfset path_to_asset = "#folder_id_r#/#av_type#/#av_id#">
+						<cfset theorgname = av_link_title>
+					</cfif>
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
 						<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
@@ -6723,7 +6727,7 @@
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
@@ -6793,7 +6797,7 @@
 		<cfelseif rend_av EQ 't'>
 			<!--- RAZ-2901 : Get additional renditions --->
 			<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
-				SELECT av_id as id, av_link_url, av_link_title, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+				SELECT av_id as id, av_link_url, av_link_title, av.folder_id_r, av.av_type, img_id, img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
 				FROM #session.hostdbprefix#images i 
 				INNER JOIN raz1_additional_versions av ON i.img_id = av.asset_id_r and av.av_link = 0
 				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -6804,7 +6808,7 @@
 				</cfif>
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT av_id as id, av_link_url, av_link_title, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+				SELECT av_id as id, av_link_url, av_link_title, av.folder_id_r, av.av_type, vid_id, vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
 				FROM #session.hostdbprefix#videos v
 				INNER JOIN raz1_additional_versions av ON v.vid_id = av.asset_id_r and av.av_link = 0
 				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -6815,7 +6819,7 @@
 				</cfif>
 				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT av_id as id, av_link_url, av_link_title, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+				SELECT av_id as id, av_link_url, av_link_title, av.folder_id_r, av.av_type, aud_id, aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
 				FROM #session.hostdbprefix#audios a
 				INNER JOIN raz1_additional_versions av ON a.aud_id = av.asset_id_r and av.av_link = 0
 				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -6826,7 +6830,7 @@
 				</cfif>
 				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
-				SELECT av_id as id, av_link_url, av_link_title, file_id, file_name filename, file_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'doc' as kind
+				SELECT av_id as id, av_link_url, av_link_title, av.folder_id_r, av.av_type, file_id, file_name filename, file_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'doc' as kind
 				FROM #session.hostdbprefix#files f
 				INNER JOIN raz1_additional_versions av ON file_id = av.asset_id_r and av.av_link = 0
 				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -6994,6 +6998,10 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
+				<cfif rend_av EQ 't'>
+					<cfset path_to_asset = "#folder_id_r#/#av_type#/#id#">
+					<cfset theorgname = av_link_title>
+				</cfif>
 				<cfinvoke component="amazon" method="Download">
 					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
 					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
@@ -7177,7 +7185,7 @@
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
