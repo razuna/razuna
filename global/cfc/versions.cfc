@@ -205,75 +205,12 @@
 				 	<cfset var genjpgs = fobj.genpdfjpgs ("#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/#qrycurrentversion.ver_filename_org#","#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/razuna_pdf_images")>
 				</cfif>
 			</cfif>
-			
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset arguments.thestruct.qry = qry>
-			<!--- Move the file to the versions directory --->
-			<cfthread name="movemo#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<!--- Move --->
-				<cfinvoke component="nirvanix" method="MoveFolders">
-					<cfinvokeargument name="srcFolderPath" value="/#attributes.intstruct.qry.path_to_asset#">
-					<cfinvokeargument name="destFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<cfthread action="join" name="movemo#arguments.thestruct.file_id#" />
-			<cfthread name="movero#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<!--- Rename --->
-				<cfinvoke component="nirvanix" method="RenameFolders">
-					<cfinvokeargument name="folderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/#attributes.intstruct.file_id#">
-					<cfinvokeargument name="newFolderName" value="#attributes.intstruct.newversion#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<cfthread action="join" name="movero#arguments.thestruct.file_id#" />
-			<!--- Copy the new version to the old directory --->
-			<cfthread name="movec#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<!--- Copy --->
-				<cfinvoke component="nirvanix" method="CopyFolders">
-					<cfinvokeargument name="srcFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/#attributes.intstruct.version#">
-					<cfinvokeargument name="destFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/temp">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<cfthread action="join" name="movec#arguments.thestruct.file_id#" />
-			<cfset sleep(5000)>
-			<cfthread name="mover#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<!--- Rename --->
-				<cfinvoke component="nirvanix" method="RenameFolders">
-					<cfinvokeargument name="folderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/temp/#attributes.intstruct.version#">
-					<cfinvokeargument name="newFolderName" value="#attributes.intstruct.file_id#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<cfthread action="join" name="mover#arguments.thestruct.file_id#" />
-			<cfthread name="movem#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<!--- Since we have the id as the last element of the path to asset we need to take it apart --->
-				<cfset one = listgetat(attributes.intstruct.qry.path_to_asset,1,"/")>
-				<cfset two = listgetat(attributes.intstruct.qry.path_to_asset,2,"/")>
-				<cfset thepath = "#one#/#two#">
-				<!--- Move folder to original directory --->
-				<cfinvoke component="nirvanix" method="MoveFolders">
-					<cfinvokeargument name="srcFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/temp/#attributes.intstruct.file_id#">
-					<cfinvokeargument name="destFolderPath" value="/#thepath#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<cfthread action="join" name="movem#arguments.thestruct.file_id#" />
-			<!--- Get SignedURL thumbnail --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_thumbnail#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- Get SignedURL original --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_filename_org#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_version" theasset="versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qry.filenameorg#" nvxsession="#arguments.thestruct.nvxsession#">
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
 			<cfset arguments.thestruct.qrycurrentversion.ver_filename_org = qrycurrentversion.ver_filename_org> 
 			<cfset arguments.thestruct.qry = qry>
-			<cfif arguments.thestruct.type EQ 'img' OR arguments.thestruct.type EQ 'vid' OR arguments.thestruct.type EQ 'doc'>
+			<cfif arguments.thestruct.type EQ 'img' OR arguments.thestruct.type EQ 'vid' OR arguments.thestruct.type EQ 'doc' OR arguments.thestruct.type EQ 'aud'>
 				<!--- Move the current directory images to new version --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#arguments.thestruct.qry.path_to_asset#">
