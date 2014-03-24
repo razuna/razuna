@@ -5024,6 +5024,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = createuuid("")>
 	<cfset arguments.thestruct.thewidth = 0>
 	<cfset arguments.thestruct.theheight = 0>
+	<cfset arguments.thestruct.av_thumb_url ="">
+	
 	<!--- For API additional rendition OR version --->
 	<cfif structkeyexists(arguments.thestruct,'destfolderid') AND arguments.thestruct.destfolderid NEQ ''>
 		<cfset arguments.thestruct.folder_id = arguments.thestruct.destfolderid>
@@ -5191,23 +5193,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.av_link_url = "/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#">
 		<!--- thumb URL --->
 		<cfset arguments.thestruct.av_thumb_url = "/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
-	<!--- NIRVANIX --->
-	<cfelseif application.razuna.storage EQ "nirvanix">
-		<!--- Upload Original --->
-		<cfset var upt = Createuuid("")>
-		<cfthread name="#upt#" intstruct="#arguments.thestruct#" action="run">
-			<cfinvoke component="nirvanix" method="Upload">
-				<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#">
-				<cfinvokeargument name="uploadfile" value="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#">
-				<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-			</cfinvoke>
-		</cfthread>
-		<!--- Wait for thread to finish --->
-		<cfthread action="join" name="#upt#" />
-		<!--- Get signed URLS for original --->
-		<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloudurl" theasset="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" nvxsession="#arguments.thestruct.nvxsession#">
-		<!--- Set the URL --->
-		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
 	<!--- AMAZON --->
 	<cfelseif application.razuna.storage EQ "amazon">
 		<cfset var upt = Createuuid("")>
@@ -5219,24 +5204,27 @@ This is the main function called directly by a single upload else from addassets
 			</cfinvoke>
 		</cfthread>
 		<cfthread action="join" name="#upt#" />
-		<!--- Upload thumbnail --->
-		<cfset var uptn = Createuuid("")>
-		<cfthread name="#uptn#" intstruct="#arguments.thestruct#" action="run">
-			<cfinvoke component="amazon" method="Upload">
-				<cfinvokeargument name="key" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-				<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
-				<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-			</cfinvoke>
-		</cfthread>
-		<cfthread action="join" name="#uptn#" />
-		<!--- Get signed URLS for thumb --->
-		<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_thumb" key="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+
+		<cfif arguments.thestruct.thefiletype eq 'img'>
+			<!--- Upload thumbnail --->
+			<cfset var uptn = Createuuid("")>
+			<cfthread name="#uptn#" intstruct="#arguments.thestruct#" action="run">
+				<cfinvoke component="amazon" method="Upload">
+					<cfinvokeargument name="key" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
+					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+				</cfinvoke>
+			</cfthread>
+			<cfthread action="join" name="#uptn#" />
+			<!--- Get signed URLS for thumb --->
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_thumb" key="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- Set the thumb URL --->
+			<cfset arguments.thestruct.av_thumb_url = cloud_url_thumb.theurl>
+		</cfif>
 		<!--- Get signed URLS for original --->
 		<cfinvoke component="amazon" method="signedurl" returnVariable="cloudurl" key="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" awsbucket="#arguments.thestruct.awsbucket#">
 		<!--- Set the URL --->
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
-		<!--- Set the thumb URL --->
-		<cfset arguments.thestruct.av_thumb_url = cloud_url_thumb.theurl>
 	<!--- Akamai --->
 	<cfelseif application.razuna.storage EQ "akamai">
 		<cfset var upt = Createuuid("")>
