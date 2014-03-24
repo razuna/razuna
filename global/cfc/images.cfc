@@ -806,6 +806,7 @@
 	<cfparam name="arguments.thestruct.what" default="">
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
+	<cfset var renlist ="-1">
 	<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
 	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
 		<!--- Get additional renditions --->
@@ -814,9 +815,11 @@
 		WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 		</cfquery>
 		<!--- Append additional renditions --->
-		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(getaddver.av_id)#',',')>
+		<cfset renlist = listappend(renlist,'#valuelist(getaddver.av_id)#',',')>
 		<!--- Append  renditions --->
-		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.img_id)#',',')>
+		<cfset renlist = listappend(renlist,'#valuelist(arguments.thestruct.qry_related.img_id)#',',')>
+		<!--- Append to file_id list --->
+		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,renlist,',')>
 	</cfif>
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
@@ -895,15 +898,15 @@
 		</cfloop>
 
 		<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
-		
-			<cfquery datasource="#variables.dsn#">
-			UPDATE #session.hostdbprefix#additional_versions
-			SET 
-			av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
-			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-		
+		<cfquery datasource="#variables.dsn#">
+		UPDATE #session.hostdbprefix#additional_versions
+		SET 
+		av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
+		WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND av_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
+		</cfquery>
+	
 		<!--- Save to the images table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<cfquery datasource="#variables.dsn#">
@@ -916,6 +919,8 @@
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- Filter out renditions whose names we do not want to update --->
+			AND img_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
 		</cfif>
 		<!--- Update main record with dates --->
@@ -942,7 +947,7 @@
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryorg.folder_id_r#')>
 		<cfelse>
-			<!--- If udpaitng additional version then get info and log change--->
+			<!--- If updating additional version then get info and log change--->
 			<cfquery datasource="#variables.dsn#" name="qryaddver">
 			SELECT av_link_title, folder_id_r
 			FROM #session.hostdbprefix#additional_versions

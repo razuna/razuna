@@ -155,6 +155,10 @@
 		WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<!--- Go to top of loop if file data not in DB --->
+		<cfif qryfilenameorg.recordcount EQ 0>
+			<cfcontinue>
+		</cfif>
 		<!--- Assign link_kind --->
 		<cfset arguments.thestruct.qrydetail = qryfilenameorg>
 		<cfset arguments.thestruct.link_kind = qryfilenameorg.link_kind>

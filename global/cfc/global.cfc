@@ -885,6 +885,61 @@ Comment:<br>
 		       <cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 		</cfquery>
+		<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
+		<cfif structKeyExists(arguments.thestruct.prefs,'set2_rendition_metadata') AND arguments.thestruct.prefs.set2_rendition_metadata EQ 'true'>
+			<cfset var assettype = arguments.thestruct.type>
+			<cfset var thetbl = ''>
+			<cfif assettype eq 'aud'>
+				<cfset var thetbl = 'audios'>
+			<cfelseif assettype eq 'vid'>
+				<cfset var thetbl = 'videos'>
+			<cfelseif assettype eq 'img'>
+				<cfset var thetbl = 'images'>
+			</cfif>
+			<cfif thetbl neq ''>
+				<!--- RAZ-2837: Get descriptions and keywords --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry_details">
+					SELECT  lang_id_r, #assettype#_description as thedesc, #assettype#_keywords as thekeys
+					FROM #session.hostdbprefix##thetbl#_text
+					WHERE #assettype#_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif qry_details.recordcount neq 0>
+					<!--- Add to descriptions and keywords --->
+					<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix##thetbl#_text
+						(id_inc, #assettype#_id_r, lang_id_r, #assettype#_description, #assettype#_keywords, host_id)
+						VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#qry_details.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+						<cfqueryparam value="#ltrim(qry_details.thedesc)#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#ltrim(qry_details.thekeys)#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+					</cfquery>
+				</cfif>
+				<!-- CFC: Check for custom fields -->
+				<cfset arguments.thestruct.cf_show = assettype>
+				<cfinvoke component="global.cfc.custom_fields" method="getfields" returnvariable="arguments.thestruct.qry_cf" argumentcollection="#arguments#"/>
+				<cfif arguments.thestruct.qry_cf.recordcount NEQ 0>
+					<cfloop query="arguments.thestruct.qry_cf">
+						<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#custom_fields_values
+							(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+							VALUES(
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cf_id#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_value#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+							)
+						</cfquery>
+					</cfloop>	
+				</cfif>
+			</cfif>
+		</cfif>
+
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />

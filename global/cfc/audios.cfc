@@ -291,6 +291,7 @@
 	<cfparam name="arguments.thestruct.aud_online" default="F">
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
+	<cfset var renlist ="-1">
 	<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
 	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
 		<!--- Get additional renditions --->
@@ -299,9 +300,11 @@
 		WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 		</cfquery>
 		<!--- Append additional renditions --->
-		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(getaddver.av_id)#',',')>
+		<cfset renlist = listappend(renlist,'#valuelist(getaddver.av_id)#',',')>
 		<!--- Append  renditions --->
-		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.aud_id)#',',')>
+		<cfset renlist = listappend(renlist,'#valuelist(arguments.thestruct.qry_related.aud_id)#',',')>
+		<!--- Append to file_id list --->
+		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,renlist,',')>
 	</cfif>
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
@@ -382,6 +385,7 @@
 		av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
 		WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND av_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 		</cfquery>
 
 		<!--- Save to the files table --->
@@ -397,6 +401,8 @@
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- Filter out renditions whose names we do not want to update --->
+			AND aud_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
 		</cfif>
 		<!--- Update index --->
@@ -410,12 +416,16 @@
 		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.file_id#" />
 		<!--- Query --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
-		SELECT aud_name_org, aud_name, path_to_asset
+		SELECT aud_name_org, aud_name, path_to_asset, folder_id_r
 		FROM #session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfif qryorg.recordcount neq 0>
+			<!--- If folder_id not passed in struct then set it  --->
+			<cfif not isDefined("arguments.thestruct.folder_id")>
+				<cfset arguments.thestruct.folder_id = qryorg.folder_id_r>
+			</cfif>
 			<!--- Select the record to get the original filename or assign if one is there --->
 			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
 				<cfset arguments.thestruct.qrydetail.filenameorg = qryorg.aud_name_org>
@@ -426,7 +436,7 @@
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id,folderid='#arguments.thestruct.folder_id#')>
 		<cfelse>
-			<!--- If udpaitng additional version then get info and log change--->
+			<!--- If updating additional version then get info and log change--->
 			<cfquery datasource="#variables.dsn#" name="qryaddver">
 			SELECT av_link_title, folder_id_r
 			FROM #session.hostdbprefix#additional_versions

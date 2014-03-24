@@ -111,8 +111,10 @@
 			<tr>
 				<td colspan="2">
 					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_header")#</strong>
+					<br /><br/>
+					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_desc")#</strong>
 					<br />
-					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_desc")#
+					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_subdesc")#
 					<br /><br />
 					<input type="radio" name="set2_rendition_metadata" value="false" <cfif prefs.set2_rendition_metadata eq 'false' or prefs.set2_rendition_metadata eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_off")#
 					<br />
