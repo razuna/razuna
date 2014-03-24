@@ -109,6 +109,11 @@ function convertimages(theform){
            	}
       	}
    	}
+   	if (convertto=='')
+   	{
+   		alert('Please select atleast one format to convert to.');
+   		return;
+   	}
 	// Send Feedback to Div
    	document.getElementById('statusconvert').style.visibility = "visible";
 	$("#statusconvert").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("convert_feedback"))#</cfoutput>');
@@ -173,6 +178,11 @@ function convertexistimgrenditions(theform){
            		convertto += document.forms[theform].elements[i].value + ',';
            	}
       	}
+   	}
+   	if (convertto=='')
+   	{
+   		alert('Please select atleast one format to convert to.');
+   		return;
    	}
 	// Send Feedback to Div
    	document.getElementById('statusconvertreditions').style.visibility = "visible";
@@ -239,6 +249,11 @@ function convertvideos(theform){
            	}
       	}
    	}
+   	if (convertto=='')
+   	{
+   		alert('Please select atleast one format to convert to.');
+   		return;
+   	}
 	// Send Feedback to Div
 	document.getElementById('statusconvert').style.visibility = "visible";
 	$("#statusconvert").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("convert_feedback"))#</cfoutput>');
@@ -256,6 +271,11 @@ function convertexistvidrenditions(theform){
            		convertto += document.forms[theform].elements[i].value + ',';
            	}
       	}
+   	}
+   	if (convertto=='')
+   	{
+   		alert('Please select atleast one format to convert to.');
+   		return;
    	}
 	// Send Feedback to Div
    	document.getElementById('statusconvertreditions').style.visibility = "visible";
@@ -275,6 +295,12 @@ function convertaudios(theform){
            	}
       	}
    	}
+   	if (convertto=='')
+   	{
+   		alert('Please select atleast one format to convert to.');
+   		return;
+   	}
+
 	// Send Feedback to Div
    	$("#statusconvert").css("display","");
 	$("#statusconvert").fadeTo("fast", 100);
@@ -301,6 +327,11 @@ function convertexistaudrenditions(theform){
            		convertto += document.forms[theform].elements[i].value + ',';
            	}
       	}
+   	}
+   	if (convertto=='')
+   	{
+   		alert('Please select at least one format to convert to.');
+   		return;
    	}
 	// Send Feedback to Div
    	$("#statusconvertreditions").css("display","");
