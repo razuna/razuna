@@ -5325,6 +5325,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var type = "image">
 				<cfset var type_type = "img">
 				<cfset var colname = "img_filename">
+				<cfset var colid = "img_id">
 				<cfset var colname_org = "img_filename_org">
 				<cfset var columns = "img_id as fileid, img_filename, folder_id_r">
 			<cfelseif fileType.type_type EQ "vid">
@@ -5332,6 +5333,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var type = "video">
 				<cfset var type_type = "vid">
 				<cfset var colname = "vid_filename">
+				<cfset var colid = "vid_id">
 				<cfset var colname_org = "vid_name_org">
 				<cfset var columns = "vid_id as fileid, vid_filename, folder_id_r">
 			<cfelseif fileType.type_type EQ "aud">
@@ -5339,6 +5341,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var type = "audio">
 				<cfset var type_type = "aud">
 				<cfset var colname = "aud_name">
+				<cfset var colid = "aud_id">
 				<cfset var colname_org = "aud_name_org">
 				<cfset var columns = "aud_id as fileid, aud_name, folder_id_r">
 			<cfelse>
@@ -5346,6 +5349,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var db = "files">
 				<cfset var type = "document">
 				<cfset var colname = "file_name">
+				<cfset var colid = "file_id">
 				<cfset var colname_org = "file_name_org">
 				<cfset var columns = "file_id as fileid, file_name, folder_id_r">
 			</cfif>
@@ -5387,8 +5391,9 @@ This is the main function called directly by a single upload else from addassets
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix##db#
 					SET
-					#colname_org# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">
-					WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					#colname_org# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">,
+					path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id_r#/#type_type#/#fileid#">
+					WHERE #colid# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#fileid#">
 					</cfquery>
 					<!--- Do the rename action on the file --->
 					<!--- Thread --->
