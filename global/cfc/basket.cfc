@@ -365,7 +365,7 @@
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv">
+		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
 	</cfif>
 	<!--- Zip the folder --->
 	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
