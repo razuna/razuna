@@ -276,9 +276,8 @@
 				</cfcatch>
 			</cftry>
 			<!--- RAZ-2815 Save Folder Subscribe scheduled event in CFML scheduling engine --->
-			<cfset var newschid = createuuid()>
 			<cfschedule action="update"
-				task="RazScheduledUploadEvent[#newschid#]" 
+				task="RazFolderSubscribe" 
 				operation="HTTPRequest"
 				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
