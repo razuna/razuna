@@ -63,6 +63,7 @@
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
+	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<cfparam name="session.customfileid" default="">
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
@@ -164,7 +165,7 @@
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -179,6 +180,9 @@
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folderaccess EQ 'R'>
+			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
+		</cfif>
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -261,8 +265,8 @@
 		<cfset variables.cachetoken = getcachetoken("images")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#
-		FROM #session.hostdbprefix#images
+		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#, CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
+		FROM #session.hostdbprefix#images i
 		WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -711,7 +715,7 @@
 	i.thumb_height thumbheight, i.img_size ilength, i.thumb_size thumblength, i.hashtag,
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
-	i.img_remarks, i.img_extension, i.shared,i.img_upc_number, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
+	i.img_remarks, i.img_extension, i.shared,i.img_upc_number, i.expiry_date, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
 	s.set2_intranet_gen_download, s.set2_url_website,s.set2_custom_file_ext, u.user_first_name, u.user_last_name, fo.folder_name,
 	'' as perm
 	FROM #session.hostdbprefix#images i 
@@ -752,6 +756,7 @@
 <!--- GET THE IMAGE DETAILS FOR BASKET --->
 <cffunction name="detailforbasket" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.colaccess" default="">
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<cfparam default="0" name="session.thegroupofuser">
@@ -762,7 +767,7 @@
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename,
 	'' as perm
 	FROM #session.hostdbprefix#images i
-	WHERE 
+	WHERE 1=1 AND
 	<cfif arguments.thestruct.related EQ "T">
 		i.img_group
 	<cfelse>
@@ -772,6 +777,9 @@
 	= '0'
 	<cfelse>
 	IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qrybasket.cart_product_id)#" list="true">)
+	</cfif>
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 	</cfif>
 	</cfquery>
 	<!--- Get proper folderaccess --->
@@ -913,6 +921,11 @@
 			UPDATE #session.hostdbprefix#images
 			SET 
 			img_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
+			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
+				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
+			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
+				expiry_date = null,
+			</cfif>
 			<cfif isdefined("arguments.thestruct.img_upc")>
 				img_upc_number = <cfqueryparam value="#arguments.thestruct.img_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>

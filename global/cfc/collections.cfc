@@ -381,6 +381,7 @@
 <!--- GET COLLECTION ASSETS --->
 <cffunction name="get_assets" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.colaccess" default="">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_assetscol */ ct.col_id_r, ct.file_id_r as cart_product_id, ct.col_file_type, ct.col_item_order, ct.col_file_format,
@@ -430,9 +431,19 @@
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					)
 		END as theextension
-	FROM #session.hostdbprefix#collections_ct_files ct
+	FROM #session.hostdbprefix#collections_ct_files ct 
+	LEFT JOIN #session.hostdbprefix#images i on ct.file_id_r = i.img_id
+	LEFT JOIN #session.hostdbprefix#audios a on ct.file_id_r = a.aud_id
+	LEFT JOIN #session.hostdbprefix#videos v on ct.file_id_r = v.vid_id
+	LEFT JOIN #session.hostdbprefix#files f on ct.file_id_r = f.file_id
 	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
+		AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
+		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
+		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
+	</cfif>
 	GROUP BY ct.col_id_r, ct.file_id_r, ct.col_file_type, ct.col_item_order, ct.col_file_format
 	ORDER BY ct.col_item_order
 	</cfquery>
@@ -1310,6 +1321,7 @@
 <cffunction name="getallassets" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<cfparam name="arguments.thestruct.pages" default="">
+	<cfparam name="arguments.thestruct.colaccess" default="">
 	<!--- Param --->
 	<cfset var qry = structnew()>
 	<!--- If the collection has no files then set the the "IN" value to 0 or else we get errors in SQL --->
@@ -1349,7 +1361,7 @@
 			SELECT ROW_NUMBER() OVER ( ORDER BY theorder) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
 	</cfif>
-	SELECT DISTINCT /* #variables.cachetoken#getallassetscol */ i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.is_available,
+	SELECT DISTINCT /* #variables.cachetoken#getallassetscol*/ i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.is_available,
 	'img' as kind, it.img_description description, it.img_keywords keywords, link_kind, link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org,
 	'0' as vheight, '0' as vwidth, i.hashtag,
 		(
@@ -1371,6 +1383,9 @@
 	AND ct.file_id_r = i.img_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
 	AND (i.img_group IS NULL OR i.img_group = '')
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
+	</cfif>
 	UNION ALL
 	SELECT DISTINCT v.vid_id id, v.vid_name_org filename, v.folder_id_r, v.vid_extension ext, v.vid_name_image filename_org, v.is_available,
 	'vid' as kind, vt.vid_description description, vt.vid_keywords keywords, link_kind, link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org,
@@ -1394,6 +1409,10 @@
 	AND ct.file_id_r = v.vid_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="vid">
 	AND (v.vid_group IS NULL OR v.vid_group = '')
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
+	</cfif>
+
 	UNION ALL
 	SELECT DISTINCT a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_extension ext, a.aud_name_org filename_org, a.is_available,
 	'aud' as kind, aut.aud_description description, aut.aud_keywords keywords, link_kind, link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org,
@@ -1417,6 +1436,9 @@
 	AND ct.file_id_r = a.aud_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="aud">
 	AND (a.aud_group IS NULL OR a.aud_group = '')
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
+	</cfif>
 	UNION ALL
 	SELECT DISTINCT f.file_id id, f.file_name filename, f.folder_id_r, f.file_extension ext, f.file_name_org filename_org, f.is_available,
 	f.file_type as kind, ft.file_desc description, ft.file_keywords keywords, link_kind, link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org,
@@ -1439,6 +1461,10 @@
 	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
+	</cfif>
+
 	<!--- For pagination --->
 	<cfif NOT structKeyExists(arguments.thestruct,"searchtext")>
 		<!--- MSSQL --->
@@ -1455,8 +1481,19 @@
 	</cfquery>
 	<!--- Get the total --->
 	<cfquery datasource="#variables.dsn#" name="qry.qry_filecount">
-		SELECT count(ct.col_id_r) AS thetotal FROM #session.hostdbprefix#collections_ct_files ct
+		SELECT count(ct.col_id_r) AS thetotal 
+		FROM #session.hostdbprefix#collections_ct_files ct
+		LEFT JOIN #session.hostdbprefix#images i on ct.file_id_r = i.img_id
+		LEFT JOIN #session.hostdbprefix#audios a on ct.file_id_r = a.aud_id
+		LEFT JOIN #session.hostdbprefix#videos v on ct.file_id_r = v.vid_id
+		LEFT JOIN #session.hostdbprefix#files f on ct.file_id_r = f.file_id
 		WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+		<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
+		AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
+		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
+		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
+		</cfif>
 	</cfquery>
 	<!--- Put together the lists for a collections search --->
 	<cfquery dbtype="query" name="qry.listimg">

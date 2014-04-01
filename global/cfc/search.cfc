@@ -312,6 +312,17 @@
 					AND (i.img_group IS NULL OR i.img_group = '') --->
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+					<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+					AND CASE 
+					<!--- Check if admin user --->
+					WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+					<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+					WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+					<!--- If rendition then look at expiry_date for original asset --->
+					WHEN NOT (i.img_group is null OR i.img_group='')
+					 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#images WHERE img_id = i.img_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
+					ELSE 1 END  = 1
+
 			    	<cfset q_start = q_end + 1>
 			    	<cfset q_end = q_end + sqlInCluseLimit>
 			    </cfloop>
@@ -459,6 +470,13 @@
 							AND f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 						</cfif>
 						AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+						AND CASE 
+						<!--- Check if admin user --->
+						WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+						ELSE 1 END  = 1
 						<cfset q_start = q_end + 1>
 				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
@@ -620,6 +638,16 @@
 						AND (v.vid_group IS NULL OR v.vid_group = '') --->
 						AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+						AND CASE 
+						<!--- Check if admin user --->
+						WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+						<!--- If rendition then look at expiry_date for original asset --->
+						WHEN NOT (v.vid_group is null OR v.vid_group='')
+						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#videos WHERE vid_id = v.vid_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
+						ELSE 1 END  = 1
 						<cfset q_start = q_end + 1>
 				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
@@ -778,6 +806,16 @@
 						AND (a.aud_group IS NULL OR a.aud_group = '') --->
 						AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+						AND CASE 
+						<!--- Check if admin user --->
+						WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+						<!--- If rendition then look at expiry_date for original asset --->
+						WHEN NOT (a.aud_group is null OR a.aud_group='')
+						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#audios WHERE aud_id = a.aud_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
+						ELSE 1 END  = 1
 						<cfset q_start = q_end + 1>
 				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>

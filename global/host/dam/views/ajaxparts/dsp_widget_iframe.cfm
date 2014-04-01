@@ -189,7 +189,8 @@
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
 										<cfelse>
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></a>
+											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0" width="160"></a>
 										</cfif>
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

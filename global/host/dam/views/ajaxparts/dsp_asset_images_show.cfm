@@ -23,6 +23,11 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- If asset has expired then show appropriate message --->
+<cfif isdefined("qry_detail.expiry_date_actual") AND isdate(qry_detail.expiry_date_actual) AND qry_detail.expiry_date_actual lt now()>
+	Asset has expired. Please contact administrator to gain access to this asset.<cfabort>
+</cfif>
+
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <cfif cgi.context_path EQ "">
 	<cfset thestorageurl = "//#cgi.http_host#/assets/#session.hostid#/">

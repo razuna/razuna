@@ -128,7 +128,85 @@
 		
 		<!--- If update number is lower then 19 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 19>
-			<!--- RAZ-2940 : Remove constraints from images_text, audiots_text and videos_text tables --->
+			<!--- Set global vars for mysql --->
+			<cfif application.razuna.thedatabase EQ "mysql">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						  SET GLOBAL innodb_large_prefix = 1;
+					</cfquery>
+				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						  SET GLOBAL innodb_file_format = barracuda;
+					</cfquery>
+				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="#application.razuna.datasourceq#">
+						  SET GLOBAL innodb_file_per_table = true;
+					</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfif>
+			<!--- RAZ-549 Add scheduled task for asset expiry --->
+			<cfschedule action="update"
+				task="RazAssetExpiry" 
+				operation="HTTPRequest"
+				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.asset_expiry_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="300"
+			>
+			<!--- RAZ-549 Add columns for asset expiry --->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<!--- RAZ-549 Insert asset expiry labels for existing hosts --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="gethosts">
+					select host_id from hosts
+				</cfquery>
+				<cfloop query="gethosts">
+					<cfquery datasource="#application.razuna.datasource#" name="islabelexists">
+						SELECT 1 FROM raz1_labels WHERE host_id =<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#gethosts.host_id#">
+						AND label_text = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+					</cfquery>
+					<cfif islabelexists.recordcount eq 0>
+						<!--- Insert label for asset expiry --->
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO raz1_labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
+						VALUES (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
+							<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">,
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#gethosts.host_id#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+							)
+						</cfquery>
+					</cfif>
+				</cfloop>
+				<cfcatch type="any">
+					   <cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2940 : Remove constraints from images_text, audios_text and videos_text tables --->
 			<cfset var thesql = "DROP CONSTRAINT">
 			<cfset var thetbl = "table_constraints">
 			<cfset var thetype = "FOREIGN KEY">

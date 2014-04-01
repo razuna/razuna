@@ -264,7 +264,29 @@
 					endTime="23:59 PM"
 					interval="120"
 				>
+			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
+			<cfschedule action="update"
+				task="RazAssetExpiry" 
+				operation="HTTPRequest"
+				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.asset_expiry_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="300"
+			>
 			</cfif>
+			<!--- Insert label for asset expiry --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
+			VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
+					<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">,
+					<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#hostid.id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+					)
+			</cfquery>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfset resetcachetoken("users")>

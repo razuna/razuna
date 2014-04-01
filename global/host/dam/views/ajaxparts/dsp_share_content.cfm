@@ -268,7 +268,8 @@
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<img src="#cloud_url#" border="0" width="160">
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160">
+										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+										<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0" width="160">
 									</cfif>
 								<cfelseif link_kind EQ "url">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
@@ -285,7 +286,7 @@
 									<img src="#cloud_url#" border="0">
 								<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
 									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-									<cfif FileExists("#ExpandPath("../../")##thestorage##path_to_asset#/#thethumb#") IS "no">
+									<cfif FileExists("#ExpandPath("../../../")##thestorage##path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 									<cfelse>
 										<img src="#thestorage##path_to_asset#/#thethumb#" border="0">

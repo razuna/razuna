@@ -23,6 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- If asset has expired then show appropriate message --->
+<cfif isdefined("qry_detail_aud.detail.expiry_date_actual") AND isdate(qry_detail_aud.detail.expiry_date_actual) AND qry_detail_aud.detail.expiry_date_actual lt now()>
+	Asset has expired. Please contact administrator to gain access to this asset.<cfabort>
+</cfif>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>

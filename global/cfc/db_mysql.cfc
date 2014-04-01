@@ -1583,6 +1583,7 @@
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		  IMG_UPC_NUMBER	  VARCHAR(15),
+		  EXPIRY_DATE DATE,
 		PRIMARY KEY (IMG_ID),
 		KEY #arguments.thestruct.host_db_prefix#img_name (IMG_FILENAME),
 	  	KEY #arguments.thestruct.host_db_prefix#img_name_org (IMG_FILENAME_ORG),

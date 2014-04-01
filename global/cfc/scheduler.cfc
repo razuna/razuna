@@ -843,4 +843,90 @@
 	</cfoutput>
 </cffunction>
 
+<cffunction name="asset_expiry_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
+	<!--- Get assets that  have expired --->
+	<cfquery datasource="#application.razuna.datasource#" name="getexpired_assets">
+	SELECT img_id id, host_id, 'img' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id)label_id FROM raz1_images i WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id))
+	UNION
+	SELECT aud_id id, host_id, 'aud' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id)label_id  FROM raz1_audios a WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired') AND host_id=a.host_id)
+
+	UNION
+	SELECT vid_id id, host_id, 'vid' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id)label_id FROM raz1_videos v WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired') AND host_id=v.host_id)
+
+	UNION
+	SELECT file_id id, host_id, 'doc' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id)label_id FROM raz1_files f WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired') AND host_id=f.host_id)
+	</cfquery>
+	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
+	<cfloop query="getexpired_assets">
+		<cfif getexpired_assets.label_id NEQ ''>
+			<!--- Insert label for asset expiry --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO ct_labels (ct_label_id,ct_id_r,ct_type,rec_uuid)
+			VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#type#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+				)
+			</cfquery>
+			<!--- Update indexing flag --->
+			<cfif type EQ 'img'>
+				<cfset var tbl = 'images'>
+				<cfset var col = 'img_id'>
+			<cfelseif type EQ 'aud'>
+				<cfset var tbl = 'audios'>
+				<cfset var col = 'aud_id'>
+			<cfelseif type EQ 'vid'>
+				<cfset var tbl = 'videos'>
+				<cfset var col = 'vid_id'>
+			<cfelseif type EQ 'doc'>
+				<cfset var tbl = 'files'>
+				<cfset var col = 'file_id'>
+			</cfif>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_#tbl# SET is_indexed = 0
+			WHERE #col# =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
+			</cfquery>
+		</cfif>
+	</cfloop>
+	<!--- Get assets that  were expired but now have been reset --->
+	<cfquery datasource="#application.razuna.datasource#" name="getreset_assets">
+	SELECT i.img_id id, rec_uuid FROM ct_labels c, raz1_images i WHERE i.img_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id)
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	UNION
+	SELECT a.aud_id id, rec_uuid FROM ct_labels c, raz1_audios a WHERE a.aud_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id)
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	UNION
+	SELECT v.vid_id id, rec_uuid FROM ct_labels c, raz1_videos v WHERE v.vid_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id)
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	UNION
+	SELECT f.file_id id, rec_uuid FROM ct_labels c, raz1_files f WHERE f.file_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id)
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	</cfquery>
+	<cfset var resetlist = valuelist(getreset_assets.rec_uuid)>
+	<cfset var assetlist = valuelist(getreset_assets.id)>
+	<cfif resetlist neq ''>
+		<!--- Remove expired label from assets  that have been reset --->
+		<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_labels WHERE rec_uuid IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#resetlist#" list="true">)
+		</cfquery>
+		<!--- Update indexing statuses --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_images SET is_indexed = 0 WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_audios SET is_indexed = 0 WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_videos SET is_indexed = 0 WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_files SET is_indexed = 0 WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+	</cfif>
+	<!--- Reset labels cache if labels have been modified--->
+	<cfif getexpired_assets.recordcount NEQ 0 OR getreset_assets.recordcount NEQ 0>
+		<cfset resetcachetoken("labels","true")>
+	</cfif>
+</cffunction>
+
 </cfcomponent>

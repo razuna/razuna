@@ -43,6 +43,7 @@
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
+	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
@@ -147,7 +148,7 @@
 		</cfif>
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ 
 		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
-		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
+		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change, a.expiry_date
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">att
@@ -160,6 +161,9 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folderaccess EQ 'R'>
+			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
+		</cfif>
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -219,8 +223,8 @@
 	a.cloud_url, a.cloud_url_org, a.aud_group,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
-	a.path_to_asset, a.lucene_key, a.aud_upc_number, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
-	u.user_first_name, u.user_last_name, fo.folder_name,
+	a.path_to_asset, a.lucene_key, a.aud_upc_number, a.expiry_date,s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
+	u.user_first_name, u.user_last_name, fo.folder_name, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual,
 	'' as perm
 	FROM #session.hostdbprefix#audios a 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = a.host_id
@@ -395,6 +399,11 @@
 			SET
 			aud_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			aud_online = <cfqueryparam value="#arguments.thestruct.aud_online#" cfsqltype="cf_sql_varchar">,
+			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
+				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
+			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
+				expiry_date = null,
+			</cfif>
 			<cfif isdefined("arguments.thestruct.aud_upc")>
 				aud_upc_number = <cfqueryparam value="#arguments.thestruct.aud_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>
