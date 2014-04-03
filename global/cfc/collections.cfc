@@ -1697,7 +1697,6 @@
 		<cfelse>
 			<cfset arguments.thestruct.file_id = i>
 		</cfif>
-		<cfdump var="#arguments.thestruct.file_id#">
 		<!--- update the collection files --->
 		<cfinvoke method="restoreasset" thestruct="#arguments.thestruct#">
 	</cfloop>
