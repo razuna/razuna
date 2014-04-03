@@ -1074,6 +1074,7 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER      VARCHAR(15), 
+		  EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_FK_HOST FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1520,6 +1521,7 @@
 		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
 		VID_UPC_NUMBER      	VARCHAR(15),
+		EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_FK1 FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1737,6 +1739,7 @@
 		    IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		    IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
 		    AUD_UPC_NUMBER      VARCHAR(15),
+		    EXPIRY_DATE DATE,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
