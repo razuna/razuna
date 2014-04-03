@@ -23,6 +23,12 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Turn expiry date input into a jQuery datepicker --->
+  <script>
+	  $(function() {
+	    $( "#expiry_date" ).datepicker();
+	  });
+  </script>
 <!--- Storage Decision --->
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <cfoutput>
@@ -54,7 +60,8 @@
 	<div id="tab_detail#attributes.file_id#">
 		<ul>
 			<li><a href="##detailinfo">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
-			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+			<!--- RAZ-549: Added in condition to not show renditions, versions and sharing tabs when asset has expired --->
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<li><a href="##convertt" onclick="loadrenvid();return false;">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<cfif cs.tab_metadata>
@@ -62,7 +69,7 @@
 			</cfif>
 			<!--- VERSIONS --->
 			<!--- attributes.folderaccess NEQ "R" AND condition removed for RAZ-2905 --->
-			<cfif qry_detail.detail.link_kind NEQ "url">
+			<cfif qry_detail.detail.link_kind NEQ "url" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<cfif qry_detail.detail.link_kind NEQ "lan">
 					<cfif cs.tab_versions>
 						<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("versions_header")#</a></li>
@@ -73,7 +80,7 @@
 			<cfif cs.tab_comments>
 				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
-			<cfif attributes.folderaccess NEQ "R">
+			<cfif attributes.folderaccess NEQ "R" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<cfif cs.tab_sharing_options>
 					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				</cfif>
@@ -327,7 +334,7 @@
 				</cfif>
 			</div>
 		</cfif>
-		<cfif qry_detail.detail.link_kind NEQ "url">
+		<cfif qry_detail.detail.link_kind NEQ "url" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 			<!--- Convert Videos --->
 			<cfif cs.tab_convert_files>
 				<div id="convertt">

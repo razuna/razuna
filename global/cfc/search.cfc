@@ -195,7 +195,7 @@
 					i.hashtag,
 					fo.folder_name,
 					'' as labels,
-					i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace,
+					i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
 					<!--- Check if this folder belongs to a user and lock/unlock --->
 					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 						'unlocked' as perm,
@@ -357,7 +357,7 @@
 						'0' as vwidth, '0' as vheight, '0' as theformat, lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
 						fo.folder_name,
 						'' as labels,
-						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,
+						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							'unlocked' as perm,
 						<cfelse>
@@ -523,7 +523,7 @@
 						v.hashtag,
 						fo.folder_name,
 						'' as labels,
-						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,
+						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
 						<!--- Check if this folder belongs to a user and lock/unlock --->
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							'unlocked' as perm,
@@ -692,7 +692,7 @@
 						a.hashtag,
 						fo.folder_name,
 						'' as labels,
-						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,
+						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
 						<!--- Check if this folder belongs to a user and lock/unlock --->
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							'unlocked' as perm,

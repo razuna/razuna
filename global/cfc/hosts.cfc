@@ -268,7 +268,7 @@
 			<cfschedule action="update"
 				task="RazAssetExpiry" 
 				operation="HTTPRequest"
-				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.asset_expiry_task"
+				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.w_asset_expiry_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="00:01 AM"
 				endTime="23:59 PM"

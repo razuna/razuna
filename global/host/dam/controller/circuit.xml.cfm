@@ -10275,7 +10275,7 @@
 	</fuseaction>
 
 	<!-- Schedule asset expiry task -->
-	<fuseaction name="asset_expiry_task">
+	<fuseaction name="w_asset_expiry_task">
 		<!-- CFC: Run task -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
 	</fuseaction>

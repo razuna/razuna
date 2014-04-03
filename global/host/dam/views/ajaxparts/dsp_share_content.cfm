@@ -127,10 +127,12 @@
 											<img src="#link_path_url#" border="0">
 										</cfif>
 									</div>
-									<div>
-										<input type="checkbox" name="file_id" value="#id#-img" onclick="selectone();">
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
-									</div>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<div>
+											<input type="checkbox" name="file_id" value="#id#-img" onclick="selectone();">
+											<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										</div>
+									</cfif>
 									<br>
 									<strong>#left(filename,50)#</strong>
 								<cfelse>
@@ -144,10 +146,12 @@
 										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 										<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0" width="160"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif>
 									</div>
-									<div>
-										<input type="checkbox" name="file_id" value="#id#-vid" onclick="selectone();">
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
-									</div>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<div>
+											<input type="checkbox" name="file_id" value="#id#-vid" onclick="selectone();">
+											<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										</div>
+									</cfif>
 									<br>
 									<strong>#left(filename,50)#</strong>
 								<cfelse>
@@ -159,10 +163,12 @@
 									<div class="theimg">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">
 									</div>
-									<div>
-										<input type="checkbox" name="file_id" value="#id#-aud" onclick="selectone();">
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
-									</div>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<div>
+											<input type="checkbox" name="file_id" value="#id#-aud" onclick="selectone();">
+											<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										</div>
+									</cfif>
 									<br>
 									<strong>#left(filename,50)#</strong>
 								<cfelse>
@@ -185,10 +191,12 @@
 											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0"></cfif>
 										</cfif>
 									</div>
-									<div>
-										<input type="checkbox" name="file_id" value="#id#-doc" onclick="selectone();">
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
-									</div>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<div>
+											<input type="checkbox" name="file_id" value="#id#-doc" onclick="selectone();">
+											<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										</div>
+									</cfif>
 									<br>
 									<strong>#left(filename,50)#</strong>
 								<cfelse>
@@ -261,7 +269,9 @@
 								<cfelseif link_kind EQ "url">
 									<img src="#link_path_url#" border="0" width="120">
 								</cfif>
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								</cfif>
 							<!--- Videos --->
 							<cfelseif kind EQ "vid">
 								<cfif link_kind NEQ "url">
@@ -274,11 +284,15 @@
 								<cfelseif link_kind EQ "url">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
 								</cfif>
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								</cfif>
 							<!--- Audios --->
 							<cfelseif kind EQ "aud">
 								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="120" border="0">
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								</cfif>
 							<!--- All other files --->
 							<cfelse>
 								<!--- If it is a PDF we show the thumbnail --->
@@ -294,9 +308,13 @@
 								<cfelse>
 									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0"></cfif>
 								</cfif>
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								</cfif>
 							</cfif>
+							<cfif expiry_date EQ '' OR expiry_date GTE now()>
 							#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+							</cfif>
 						</td>
 						<td valign="top"><b>#filename#</b><cfif description NEQ ""><br />#description#</cfif><br />
 							<div style="width:300px;">

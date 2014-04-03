@@ -80,6 +80,19 @@
 --->
 		</cfif>
 	</cfloop>
+	<!--- Remove expired assets from cart --->
+	<cfquery datasource="#variables.dsn#" name="removeexpired">
+		DELETE c FROM #session.hostdbprefix#cart c 
+		LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
+		LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
+		LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid'
+		LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc'
+		WHERE 
+		i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+		OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+		OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+		OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
