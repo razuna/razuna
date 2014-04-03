@@ -33,7 +33,7 @@
 			<tr>
 				<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</strong></td>
 				<cfif prefs.set2_upc_enabled>
-				<td ><strong>sizeofupc</strong></td>
+				<td ><strong>UPC Size</strong></td>
 				<td ><strong>Create UPC folder Structure while downloading</strong></td>
 				</cfif>
 				<td >	

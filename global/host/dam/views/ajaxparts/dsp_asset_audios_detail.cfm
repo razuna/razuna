@@ -23,6 +23,12 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Turn expiry date input into a jQuery datepicker --->
+  <script>
+	  $(function() {
+	    $( "#expiry_date" ).datepicker();
+	  });
+  </script>
 <cfoutput>
 	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#" onsubmit="filesubmit();return false;">
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
@@ -45,7 +51,8 @@
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<!--- Convert --->
-			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+			<!--- RAZ-549: Added in condition to not show renditions, versions and sharing tabs when asset has expired --->
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<li><a href="##convertt" onclick="loadrenaud();return false;">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<!--- Metadata --->
@@ -54,7 +61,7 @@
 			</cfif>
 			<!--- VERSIONS --->
 			<!--- attributes.folderaccess NEQ "R" AND condition removed for RAZ-2905 --->
-			<cfif qry_detail.detail.link_kind NEQ "url" AND qry_detail.detail.link_kind NEQ "lan">
+			<cfif qry_detail.detail.link_kind NEQ "url" AND qry_detail.detail.link_kind NEQ "lan" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<cfif cs.tab_versions>
 					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("versions_header")#</a></li>
 				</cfif>
@@ -63,7 +70,7 @@
 			<cfif cs.tab_comments>
 				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
-			<cfif attributes.folderaccess NEQ "R">
+			<cfif attributes.folderaccess NEQ "R" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<cfif cs.tab_sharing_options>
 					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				</cfif>
@@ -109,7 +116,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.aud_upc.value = document.form#attributes.file_id#.fname.value.split('.')[0];}"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.aud_upc.value = document.form#attributes.file_id#.fname.value.split('.')[0];}</cfif>"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<!--- Desc --->
 							<cfloop query="qry_langs">
@@ -183,6 +190,11 @@
 									</td>
 								</tr>
 							</cfif>
+							<!--- Expiry date for asset--->
+							<tr>
+								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("expiry_date")#</td>
+								<td width="100%" nowrap="true"><input type="text" style="width:70px;" name="expiry_date" id="expiry_date" value="#dateformat(qry_detail.detail.expiry_date,'mm/dd/yyyy')#"></td>
+							</tr>
 							<!--- UPC Number --->
 							<cfif prefs.set2_upc_enabled>
 							<tr>
@@ -297,7 +309,7 @@
 			</div>
 		</cfif>
 		<!--- Convert Audios --->
-		<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+		<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 			<div id="convertt">
 				<cfif session.hosttype EQ 0>
 					<cfinclude template="dsp_host_upgrade.cfm">
@@ -382,6 +394,16 @@
 				return false;
 			}
 		</cfif>
+		// Check expiry date is a valid date
+		var expirydate= $('##expiry_date').val();
+		if (expirydate !='')
+		{
+			var isdate = Date.parse(expirydate);
+			if (isNaN(isdate)) {
+			      alert('Please enter a valid expiry date.');
+			      return false;
+			}
+		}
 		$("##updatefile").css("display","");
 		loadinggif('updatefile');
 		$("##updatefile").fadeTo("fast", 100);

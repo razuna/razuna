@@ -39,7 +39,9 @@
 						<cfelse>
 							<input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" tabindex="1" />
 						</cfif>
+						<br/>
 						<cfif prefs.set2_upc_enabled>
+							<strong>UPC Size</strong>
 							<select name="editupcsize" id="editupcsize" style="margin-left:10px;width:90px;">
 								<option value="">None</option>
 								<option value="10" <cfif qry_detail.upc_size EQ 10 >selected=selected</cfif>>10</option>

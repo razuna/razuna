@@ -23,6 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- If asset has expired then show appropriate message --->
+<cfif isdefined("qry_binary.qfile.expiry_date_actual") AND isdate(qry_binary.qfile.expiry_date_actual) AND qry_binary.qfile.expiry_date_actual lt now()>
+	Asset has expired. Please contact administrator to gain access to this asset.<cfabort>
+</cfif>
 <cfparam default="F" name="attributes.download">
 <cfparam default="" name="qry_binary.qfile.link_kind">
 <cfparam default="false" name="attributes.av">

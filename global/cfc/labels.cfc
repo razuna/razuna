@@ -374,9 +374,15 @@
 		<!--- Query --->
 		<cfinvoke method="labels_query" thestruct="#arguments.thestruct#" id="#arguments.id#" returnVariable="qry" />
 		<!--- Output for tree --->
-		<cfoutput query="qry">
+		<cfloop query="qry">
+			<!--- If label is expiry label then only show for admins --->
+			<cfif label_text EQ 'Asset has expired' AND structKeyExists(request,"securityObj") AND NOT (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+					<cfcontinue>
+			</cfif>
+			<cfoutput>
 			<li id="#label_id#"<cfif subhere NEQ ""> class="closed"</cfif>><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.labels_main&label_id=#label_id#');return false;"><ins>&nbsp;</ins>#label_text# (#label_count#)</a></li>
-		</cfoutput>
+			</cfoutput>
+		</cfloop>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -409,7 +415,26 @@
 			(
 				SELECT count(ct.ct_label_id)
 				FROM ct_labels ct
+				LEFT JOIN #session.hostdbprefix#images i ON ct.ct_id_r = i.img_id
+				LEFT JOIN #session.hostdbprefix#audios a ON ct.ct_id_r = a.aud_id
+				LEFT JOIN #session.hostdbprefix#videos v ON ct.ct_id_r = v.vid_id
+				LEFT JOIN #session.hostdbprefix#files f ON ct.ct_id_r = f.file_id
 				WHERE ct.ct_label_id = l.label_id
+				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+				AND CASE 
+				<!--- Check if admin user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					) THEN 0
+				ELSE 1 END  = 1
+
 			) AS label_count,
 			(
 				SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>label_id
@@ -459,9 +484,27 @@
 		SELECT DISTINCT /* #variables.cachetoken#labels_count */
 			(
 				SELECT count(ct_label_id)
-				FROM ct_labels
+				FROM ct_labels l
+				LEFT JOIN #session.hostdbprefix#images i ON l.ct_id_r = i.img_id
+				LEFT JOIN #session.hostdbprefix#audios a ON l.ct_id_r = a.aud_id
+				LEFT JOIN #session.hostdbprefix#videos v ON l.ct_id_r = v.vid_id
+				LEFT JOIN #session.hostdbprefix#files f ON l.ct_id_r = f.file_id
 				WHERE ct_type IN (<cfqueryparam value="img,vid,aud,doc" cfsqltype="cf_sql_varchar" list="Yes" />)
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+				AND CASE 
+				<!--- Check if admin user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					) THEN 0
+				ELSE 1 END  = 1
 			) AS count_assets,
 			(
 				SELECT count(ct_label_id)
@@ -550,7 +593,7 @@
 			 i.img_id id, i.img_filename filename, 
 			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url, 'R' as permfolder
+			i.path_to_asset, i.cloud_url, 'R' as permfolder, i.expiry_date
 			FROM #session.hostdbprefix#images i, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
@@ -564,6 +607,13 @@
 				AND mssql_ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			)	
 			</cfif>
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
 				<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
@@ -571,7 +621,7 @@
 				f.file_id id, f.file_name filename, f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url, 'R' as permfolder
+			f.path_to_asset, f.cloud_url, 'R' as permfolder, f.expiry_date
 			FROM #session.hostdbprefix#files f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
@@ -585,6 +635,13 @@
 				AND mssql_ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			)	
 			</cfif>
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
 			<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
@@ -592,7 +649,7 @@
 			v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url, 'R' as permfolder
+			v.path_to_asset, v.cloud_url, 'R' as permfolder, v.expiry_date
 			FROM #session.hostdbprefix#videos v, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = v.vid_id
@@ -606,6 +663,13 @@
 					AND mssql_ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 				)	
 			</cfif>
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
 			<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
@@ -613,7 +677,7 @@
 			a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url, 'R' as permfolder
+			a.path_to_asset, a.cloud_url, 'R' as permfolder, a.expiry_date
 			FROM #session.hostdbprefix#audios a, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
@@ -627,6 +691,13 @@
 					AND mssql_ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 				)	
 			</cfif>
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			ORDER BY #sortby#
 			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2"> 
 				LIMIT #offset#,#arguments.rowmaxpage# 

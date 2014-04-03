@@ -58,6 +58,7 @@
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
+	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
@@ -156,7 +157,7 @@
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change, v.expiry_date
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
@@ -170,6 +171,9 @@
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folderaccess EQ 'R'>
+			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
+		</cfif>
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -192,7 +196,7 @@
 		WHERE vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfquery>
 	</cfif>
-	<!--- Only get the labels if in the combinded view --->
+	<!--- Only get the labels if in the combined view --->
 	<cfif session.view EQ "combined">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetokenlabels = getcachetoken("labels")>
@@ -240,7 +244,7 @@
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getdetailsvid */ #arguments.columnlist#,
+	SELECT /* #variables.cachetoken#getdetailsvid */ #arguments.columnlist#, CASE WHEN NOT(v.vid_group ='' OR v.vid_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_group) ELSE expiry_date END expiry_date_actual,
 	<cfif listfind(session.thegroupofuser,"1",",") NEQ 0 OR listfind(session.thegroupofuser,"2",",") NEQ 0>
 		'unlocked' as perm
 	<cfelse>
@@ -287,6 +291,11 @@
 	<cfargument name="thepath" default="" required="no" type="string">
 	<cfargument name="thewebroot" default="" required="no" type="string">
 	<cfset randomvalue = createuuid()>
+	<!--- If asset has expired then show appropriate message --->
+	<cfif isdefined("arguments.thestruct.videodetails.expiry_date_actual") AND isdate(arguments.thestruct.videodetails.expiry_date_actual) AND arguments.thestruct.videodetails.expiry_date_actual lt now()>
+		<cfset thevideo = "Asset has expired. Please contact administrator to gain access to this asset.">
+		<cfreturn thevideo>
+	</cfif>		
 	<cfparam name="arguments.thestruct.v" default="p">
 	<!--- Now show the video file according to extension. If it is a preview movie then set the extension always to MOV --->
 	<cfif arguments.thestruct.videofield EQ "video_preview" OR arguments.thestruct.v EQ "p">
@@ -1041,7 +1050,7 @@
 	v.vid_create_date, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.cloud_url, v.cloud_url_org,
 	v.vid_change_time, v.vid_mimetype, v.vid_publisher, v.vid_ranking rank, v.vid_single_sale, v.vid_is_new,
 	v.vid_selection, v.vid_in_progress, v.vid_license, v.vid_name_org, v.vid_name_org filenameorg, v.shared, v.path_to_asset,
-	v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, v.vid_name_image, v.vid_meta, v.hashtag, v.vid_upc_number,
+	v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, v.vid_name_image, v.vid_meta, v.hashtag, v.vid_upc_number,v.expiry_date,
 	s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name,
 	fo.folder_name, '' as perm
 	FROM #session.hostdbprefix#videos v 
@@ -1202,6 +1211,11 @@
 			SET
 			vid_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			vid_online = <cfqueryparam value="#arguments.thestruct.vid_online#" cfsqltype="cf_sql_varchar">,
+			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
+				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
+			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
+				expiry_date = null,
+			</cfif>
 			<cfif isdefined("arguments.thestruct.vid_upc")>
 				vid_upc_number = <cfqueryparam value="#arguments.thestruct.vid_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>
