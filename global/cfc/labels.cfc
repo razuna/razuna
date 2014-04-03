@@ -423,7 +423,7 @@
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 				AND CASE 
 				<!--- Check if admin user --->
-				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION
@@ -494,7 +494,7 @@
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 				AND CASE 
 				<!--- Check if admin user --->
-				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION
@@ -610,7 +610,7 @@
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
@@ -638,7 +638,7 @@
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
@@ -666,7 +666,7 @@
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
@@ -694,7 +694,7 @@
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in (1,2)) THEN 1
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
