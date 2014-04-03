@@ -1258,6 +1258,8 @@
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
 		<set name="attributes.artofaudio" value="#session.artofaudio#" />
 		<set name="attributes.artoffile" value="#session.artoffile#" />
+		<!-- Preserve langcount attribute in langs as it is overwritten by asset_upload_server method  and is needed by savedesckey method afterwards -->
+		<set name="attributes.langs" value="#attributes.langcount#" /> 
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1268,6 +1270,8 @@
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- Do the upload from server which will add the zip file from above -->
 		<do action="asset_upload_server" />
+		<!-- CFC: save description and keywords -->
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="savedesckey(attributes)" />
 	</fuseaction>
 	<!-- Basket Save as COLLECTION FORM -->
 	<fuseaction name="basket_saveas_collection">

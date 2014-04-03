@@ -411,6 +411,36 @@
 	<cfreturn arguments.thestruct.zipname>
 </cffunction>
 
+<cffunction name = "savedesckey" hint="Save description and keywords for file">
+	<cfargument name="thestruct" type="struct">
+	<!--- Get id of file created --->
+	<cfquery datasource="#application.razuna.datasource#" name="getfileid" >
+		SELECT file_id FROM #session.hostdbprefix#files WHERE file_name = '#arguments.thestruct.thefile#'
+	</cfquery>
+	<!--- Add the description and keywords to file database--->
+	<cfif structkeyexists(arguments.thestruct,"langs")>
+		<cfloop list="#arguments.thestruct.langs#" index="langindex">
+			<cfset var thedesc = evaluate("arguments.thestruct.file_desc_#langindex#")>
+			<cfset var thekey = evaluate("arguments.thestruct.file_keywords_#langindex#")>
+			<cfset console("langindex")>
+			<cfset console(langindex)>
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#files_desc
+				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
+				VALUES(
+				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#getfileid.file_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#thedesc#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#thekey#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+			</cfquery>
+		</cfloop>
+	</cfif>
+	<cfreturn>
+</cffunction>
+
 <!--- WRITE FILES TO SYSTEM --->
 <cffunction name="writefiles" output="true">
 	<cfargument name="thestruct" type="struct">
