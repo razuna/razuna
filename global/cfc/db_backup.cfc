@@ -44,8 +44,8 @@
 			) 
 			</cfquery>
 			<cfcatch type="database">
-				<cfset cfcatch.custom_message = "Error while setting up database in function db_backup.setup">
-				<cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error while setting up database in function db_backup.setup">
+				<cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Look into the information schema and get all the tables --->
