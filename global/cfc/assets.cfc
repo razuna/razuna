@@ -4622,6 +4622,18 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset var cloud_url = structnew()>
+	<cfset var thethumbheight = 0>
+	<cfset var thethumbwidth = 0>
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+	<cfif isWindows>
+		<cfset var theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+	<cfelse>
+		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
+	</cfif>
+
 	<!--- Query the image --->
 	<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
 	<!--- If record return zero records then abort --->
@@ -4649,45 +4661,32 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var newpath = replacenocase(qry.path, qry.filename, "", "all")>
 		<cfset arguments.thestruct.thedest = newpath & "/" & arguments.thestruct.newname>
 		<cffile action="rename" source="#qry.path#/#qry.filename#" destination="#arguments.thestruct.thedest#">
+		<!--- Get width and height for thumbnail--->
+		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #arguments.thestruct.thedest#" timeout="60" variable="thethumbheight" />
+		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #arguments.thestruct.thedest#" timeout="60" variable="thethumbwidth" />
+
+		<!--- Update database --->
+		<cfif arguments.thestruct.type EQ "vid">
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos
+			SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
+			vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+			WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		<cfelseif arguments.thestruct.type EQ "img">
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
+			thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+			WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfif>
+
 		<!--- Upload or move to designated area --->
 		<cfif application.razuna.storage EQ "local">
 			<cffile action="move" source="#arguments.thestruct.thedest#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.newname#" mode="775">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- Delete existing preview --->
-			<cfinvoke component="nirvanix" method="DeleteFiles">
-				<cfinvokeargument name="filePath" value="/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.newname#">
-				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-			</cfinvoke>
-			<!--- Upload it --->
-			<cfset var upa = Createuuid("")>
-			<cfthread name="#upa#" intstruct="#arguments.thestruct#" action="run">
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thedest#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait --->
-			<cfthread action="join" name="#upa#" />
-			<!--- Get signed URLS --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.newname#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- Update DB --->
-			<cfif arguments.thestruct.type EQ "vid">
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#videos
-				SET cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
-				WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-			<cfelseif arguments.thestruct.type EQ "img">
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#images
-				SET cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
-				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-			</cfif>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset var upa = Createuuid("")>
