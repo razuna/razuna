@@ -48,7 +48,7 @@
 					<tr class="list">
 						<td valign="top">
 							<div id="iframe" valign="top">
-								<iframe src="#myself#ajax.isp_settings_upload" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
+								<iframe src="#myself#ajax.isp_settings_upload&logoimg=true" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
 					       	</div>
 						</td>
 						<td valign="top">

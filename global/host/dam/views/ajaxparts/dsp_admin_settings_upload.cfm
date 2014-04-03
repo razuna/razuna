@@ -35,9 +35,10 @@
 <cfinput type="hidden" name="thepathup" value="#ExpandPath("../../")#">
 <cfinput type="hidden" name="uploadnow" value="T">
 <cfinput type="hidden" name="thefield" value="thefile">
-<cfif !structKeyExists(attributes,"loginimg") AND !structKeyExists(attributes,"favicon")>
+<cfif structKeyExists(attributes,"logoimg") AND attributes.logoimg EQ "true">
+	<cfinput type="hidden" name="logoimg" value="true">
 	<cfinput size="50" type="file" name="thefile" validate="regular_expression" pattern="logo.jpg" validateat="onSubmit" required="true" message="Name your file logo.jpg!" />
-<cfelseif structKeyExists(attributes,"favicon")>
+<cfelseif structKeyExists(attributes,"favicon") AND attributes.favicon eq "true">
 	<cfinput type="hidden" name="favicon" value="true">
 	<cfinput size="50" type="file" name="thefile" validate="regular_expression" pattern="favicon.ico" validateat="onSubmit" required="true" message="Name your file favicon.ico!" />
 <cfelse>
