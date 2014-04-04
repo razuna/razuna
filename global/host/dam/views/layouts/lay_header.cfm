@@ -201,7 +201,7 @@
 						alert("Please enter value for UPC Number");
 					} else {
 						$( this ).dialog( "close" );
-						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val());	
+						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","));	
 					}
 					
 				},
