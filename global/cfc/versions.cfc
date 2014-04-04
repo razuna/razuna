@@ -498,6 +498,7 @@
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset thumbnailname = "">
 	<cfset cloud_url_version_thumb.theurl = "">
+	<cfset var isAnimGIF = 0>
 	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- Get windows or not --->
 	<cfinvoke component="global" method="iswindows" returnVariable="iswindows" />
@@ -522,13 +523,19 @@
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
 			SELECT 
 			img_id, folder_id_r, img_filename_org file_name_org, thumb_width, thumb_height, hashtag,
-			img_width, img_height, img_size, thumb_size, img_extension orgext, path_to_asset, cloud_url, cloud_url_org, img_meta as metadata
+			img_width, img_height, img_size, thumb_size, img_extension orgext, path_to_asset, cloud_url, cloud_url_org, img_meta as metadata, thumb_extension thumbext
 			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<!--- Check if image is an animated GIF. Remove double quotes from path if present --->
+			<cfinvoke component="assets" method="isAnimatedGIF" imagepath="#replace(arguments.thestruct.thesource,'"','','ALL')#" thepathim= "#arguments.thestruct.thetools.imagemagick#" returnvariable="isAnimGIF">
+			<!--- animated GIFs can only be converted to GIF --->
+			<cfif isAnimGIF>
+				<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
+			</cfif>
 			<cfset arguments.thestruct.destination = "#arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
 			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
@@ -1093,6 +1100,7 @@
 	<cfset cloud_url_version.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset thumbnailname = "">
+	<cfset var isAnimGIF = 0>
 	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -1112,6 +1120,12 @@
 		<cfif arguments.thestruct.type EQ "img">
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<!--- Check if image is an animated GIF. Remove double quotes from path if present --->
+			<cfinvoke component="assets" method="isAnimatedGIF" imagepath="#replace(arguments.thestruct.thesource,'"','','ALL')#" thepathim= "#arguments.thestruct.thetools.imagemagick#" returnvariable="isAnimGIF">
+			<!--- animated GIFs can only be converted to GIF --->
+			<cfif isAnimGIF>
+				<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
+			</cfif>
 			<cfset arguments.thestruct.destination = "#arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
 			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
