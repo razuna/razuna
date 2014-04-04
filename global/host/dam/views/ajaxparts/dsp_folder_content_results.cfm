@@ -146,7 +146,11 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+												<cfif fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
+													<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+												<cfelse>
+													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+												</cfif>
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
