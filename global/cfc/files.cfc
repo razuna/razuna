@@ -1019,7 +1019,7 @@
 				<cfquery name="qFile" datasource="#variables.dsn#">
 				SELECT  img_id, img_filename, img_extension as extension, 
 				thumb_extension, img_filename_org filenameorg, folder_id_r, link_kind, link_path_url, path_to_asset, 
-				cloud_url, cloud_url_org, img_size as thesize, , CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
+				cloud_url, cloud_url_org, img_size as thesize, CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
 				FROM #session.hostdbprefix#images i
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
