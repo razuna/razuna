@@ -1972,6 +1972,7 @@
 <!--- Add to query --->
 <cffunction name="add_to_query" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
 		<!--- Add row local query --->
 		<cfset QueryAddRow(arguments.thestruct.tq,1)>
@@ -2026,7 +2027,7 @@
 									FROM arguments.thestruct.qry_cf
 									WHERE cf_text = '#cf_text#'
 								</cfquery>
-	          							<cfset QuerySetCell(arguments.thestruct.tq, "#cf_text#:#cf_id#", "#qcf.cf_value#")>
+	          							<cfset QuerySetCell(arguments.thestruct.tq, "#cf_text#:#cf_id#", "#StrEscUtils.unescapeHTML(qcf.cf_value)#")>
           							</cfif>
           						</cfloop>
 					</cfloop>
@@ -2077,6 +2078,7 @@
 	<cfloop query="arguments.thestruct.qry_cf">
 		<!--- Replace foreign chars in column names --->
 		<cfset cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id_r#">
+		<cfset arguments.thestruct.qry_cf.cf_value =StrEscUtils.unescapeHTML(arguments.thestruct.qry_cf.cf_value)>
 		<!--- Set Cell --->
 		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
 	</cfloop>
