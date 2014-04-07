@@ -1240,18 +1240,24 @@
 		<cfelse>
 			<cfset var csarguments = "">	
 		</cfif>	
-		
+
+		<!--- If extension is TGA or AI then turn off alpha --->
+		<cfif arguments.thestruct.qry_detail.img_extension eq 'tga' or arguments.thestruct.qry_detail.img_extension eq 'ai'>
+			<cfset alpha = '-alpha off'>
+		<cfelse>
+			<cfset alpha = ''>	
+		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
 			<cfif thepixin eq 'inches'>
 				<cfparam name="arguments.thestruct.xres" default = "90">
 				<cfparam name="arguments.thestruct.yres" default = "90">
-				<cfset var theimarguments = "#theoriginalasset# #csarguments# -resize #newImgWidth#x#newImgHeight# -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
+				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
 			<cfelse>
-				<cfset var theimarguments = "#theoriginalasset# #csarguments# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
+				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
 			</cfif>
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# #csarguments# -resample #thedpi# #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
 		</cfif>
 
 		<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
