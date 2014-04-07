@@ -3160,6 +3160,7 @@
 <!--- Get all assets of this folder --->
 <cffunction name="getallassets" output="true" returnType="query">
 	<cfargument name="thestruct" type="struct" required="true">
+	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<!--- Sometimes folderid is empty --->
 	<cfif arguments.thestruct.folder_id EQ "">
 		<cfset arguments.thestruct.folder_id = 0>

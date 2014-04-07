@@ -1530,8 +1530,12 @@
 		img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">, 
 		img_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">, 
 		thumb_extension = <cfqueryparam value="#thumb_extension#" cfsqltype="cf_sql_varchar">, 
-		thumb_width = <cfqueryparam value="#thethumbwidth#" cfsqltype="cf_sql_numeric">,
-		thumb_height =<cfqueryparam value="#thethumbheight#" cfsqltype="cf_sql_numeric">, 
+		<cfif isNumeric(#thethumbwidth#)>
+			thumb_width = <cfqueryparam value="#thethumbwidth#" cfsqltype="cf_sql_numeric">,
+		</cfif>
+		<cfif isNumeric(#thethumbheight#)>
+			thumb_height =<cfqueryparam value="#thethumbheight#" cfsqltype="cf_sql_numeric">, 
+		</cfif>
 		<cfif isNumeric(#thewidth#)>
 			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
 		</cfif>

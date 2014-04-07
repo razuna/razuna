@@ -3076,7 +3076,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfif ext eq 'tga'>
 			<cfset alpha = '-alpha off'>
 		<cfelse>
-			<cfset alpha = ''>	
+			<cfset alpha = ''>
 		</cfif>
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
@@ -4665,25 +4665,26 @@ This is the main function called directly by a single upload else from addassets
 		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #arguments.thestruct.thedest#" timeout="60" variable="thethumbheight" />
 		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #arguments.thestruct.thedest#" timeout="60" variable="thethumbwidth" />
 
-		<!--- Update database --->
-		<cfif arguments.thestruct.type EQ "vid">
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#videos
-			SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-			vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
-			WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-		<cfelseif arguments.thestruct.type EQ "img">
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-			thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
-			WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+		<cfif isnumeric(thethumbheight) AND isnumeric(thethumbwidth)>
+			<!--- Update database --->
+			<cfif arguments.thestruct.type EQ "vid">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#videos
+				SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
+				vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+				WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelseif arguments.thestruct.type EQ "img">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images
+				SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
+				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
 		</cfif>
-
 		<!--- Upload or move to designated area --->
 		<cfif application.razuna.storage EQ "local">
 			<cffile action="move" source="#arguments.thestruct.thedest#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.newname#" mode="775">
@@ -5082,7 +5083,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- According to win or lin --->
 		<cfif iswindows()>
 			<cfset var theexe = """#thetools.exiftool#/exiftool.exe""">
-			<!--- Get with and heigth --->
+			<!--- Get width and height --->
 			<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" variable="arguments.thestruct.thewidth" timeout="30" />
 			<cfexecute name="#theexe#" arguments="-S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" variable="arguments.thestruct.theheight" timeout="30" />
 		<cfelse>
@@ -5108,6 +5109,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Trim --->
 		<cfset arguments.thestruct.thewidth = trim(arguments.thestruct.thewidth)>
 		<cfset arguments.thestruct.theheight = trim(arguments.thestruct.theheight)>
+		<cfif not isnumeric(arguments.thestruct.thewidth)>
+			<cfset arguments.thestruct.thewidth = 0>
+		</cfif>
+		<cfif not isnumeric(arguments.thestruct.theheight)>
+			<cfset arguments.thestruct.theheight = 0>
+		</cfif>
 	</cfif>
 	<!--- MD5 Hash --->
 	<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#")>
