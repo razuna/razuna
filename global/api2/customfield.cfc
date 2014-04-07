@@ -143,7 +143,7 @@
 						VALUES(
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;','ALL')#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
 						)
@@ -152,7 +152,7 @@
 					<cfelse>
 						<cfquery datasource="#application.razuna.api.dsn#">
 						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
-						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;','ALL')#">
 						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
 						</cfquery>
