@@ -2582,6 +2582,9 @@ This is the main function called directly by a single upload else from addassets
 	<cfif isdefined("arguments.thestruct.thefilenameoriginal") AND NOT isdefined("arguments.thestruct.theoriginalfilename")>
 		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilenameoriginal>
 	</cfif>
+	<cfif not isdefined("arguments.thestruct.theoriginalfilename") AND isdefined('arguments.thestruct.lanorgname')>
+		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.lanorgname>
+	</cfif>
 	<!--- Check the asset upload based on the UPC  --->
 	<cfinvoke method="assetuploadupc" returnvariable="arguments.thestruct.upc_name" >
 		<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
@@ -6847,6 +6850,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="assetfrom" type="string" required="true" >
 	<!--- param --->
 	<cfparam name="arguments.thestruct.upc_name" default="" >
+	<cfparam name="arguments.thestruct.theoriginalfilename" default="" >
 	<!--- Get settings dam details --->
 	<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="prefs">
 	<!--- Get current user UPC Details  --->
