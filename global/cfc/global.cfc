@@ -814,6 +814,8 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
+		<cfset var tmpstruct = structnew()>
+		<cfparam name="arguments.thestruct.prefs" default="#tmpstruct#" type="struct">
 
 		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
 		<cfif upcstruct.upcenabled>
