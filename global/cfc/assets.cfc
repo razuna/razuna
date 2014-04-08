@@ -2578,7 +2578,10 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
 	<cfset arguments.thestruct.isWindows = isWindows()>
-	
+	<!--- At times the orignal filename is stored in a different var so check for it and put it in proper var --->
+	<cfif isdefined("arguments.thestruct.thefilenameoriginal") AND NOT isdefined("arguments.thestruct.theoriginalfilename")>
+		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilenameoriginal>
+	</cfif>
 	<!--- Check the asset upload based on the UPC  --->
 	<cfinvoke method="assetuploadupc" returnvariable="arguments.thestruct.upc_name" >
 		<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
@@ -3257,6 +3260,10 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.theuserid = session.theuserid>
 	<cfset arguments.thestruct.storage = application.razuna.storage>
 	<cfset arguments.thestruct.theplaceholderpic = arguments.thestruct.rootpath & "global/host/dam/images/placeholders/novideo.png">
+	<!--- At times the orignal filename is stored in a different var so check for it and put it in proper var --->
+	<cfif isdefined("arguments.thestruct.thefilenameoriginal") AND NOT isdefined("arguments.thestruct.theoriginalfilename")>
+		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilenameoriginal>
+	</cfif>
 	<!--- init function internal vars --->
 	<cfset var theDBurl = "">
 	<cfset var iLoop = "">
@@ -4097,6 +4104,10 @@ This is the main function called directly by a single upload else from addassets
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
+	<!--- At times the orignal filename is stored in a different var so check for it and put it in proper var --->
+	<cfif isdefined("arguments.thestruct.thefilenameoriginal") AND NOT isdefined("arguments.thestruct.theoriginalfilename")>
+		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilenameoriginal>
+	</cfif>
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
 		<!--- RAZ-2907 Call the component for Bulk upload versions --->
