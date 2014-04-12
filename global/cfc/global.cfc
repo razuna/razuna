@@ -814,8 +814,9 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
-		<cfset var tmpstruct = structnew()>
-		<cfparam name="arguments.thestruct.prefs" default="#tmpstruct#" type="struct">
+		<cfif not isdefined("arguments.thestruct.prefs")>
+			<cfset arguments.thestruct.prefs - structnew()>
+		</cfif>
 
 		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
 		<cfif upcstruct.upcenabled>
@@ -1689,6 +1690,8 @@ Comment:<br>
 		<cfset var upcstruct = structnew()>
 		<cfset upcstruct.upcenabled = false>
 		<cfset upcstruct.upcgrpsize = "">
+		<cfset upcstruct.upcgrpid = "">
+		<cfset upcstruct.createupcfolder = false>
 		<!--- Check if UPC enabled in settings --->
 		<cfquery datasource="#application.razuna.datasource#" name="is_upc_enabled">
 			SELECT set2_upc_enabled FROM #session.hostdbprefix#settings_2
@@ -1708,7 +1711,7 @@ Comment:<br>
 
 		<!--- Check if user is part of a group for which UPC size is set--->
 		<cfquery datasource="#application.razuna.datasource#" name="grp_upc_size">
-			SELECT upc_size FROM groups g, ct_groups_users u
+			SELECT g.upc_size, g.grp_id, g.upc_folder_format FROM groups g, ct_groups_users u
 			WHERE g.grp_id = u.ct_g_u_grp_id
 			AND u.ct_g_u_user_id = '#session.theuserid#'
 			AND g.upc_size is not null
@@ -1718,6 +1721,8 @@ Comment:<br>
 		 <cfif is_upc_enabled.set2_upc_enabled eq 'true' and  is_folder_upc_label.recordcount neq 0 and isnumeric(grp_upc_size.upc_size)>
 		 	<cfset upcstruct.upcenabled = true>
 		 	<cfset upcstruct.upcgrpsize = grp_upc_size.upc_size>
+		 	<cfset upcstruct.upcgrpid = grp_upc_size.grp_id>
+		 	<cfset upcstruct.createupcfolder = grp_upc_size.upc_folder_format>
 		 </cfif>
 		 <cfreturn upcstruct>
 	</cffunction>

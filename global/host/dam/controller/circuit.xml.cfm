@@ -9474,6 +9474,7 @@
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
 			<argument name="user_id" value="#session.theuserid#" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="check_upc_size" value="true" />
 		</invoke>
 		<!-- Check the current folder having label text as upc -->
 		<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >

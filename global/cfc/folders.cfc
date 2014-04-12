@@ -5059,7 +5059,7 @@
 			<cfset var thiscloudurl = cloud_url>
 			<cfset var theorgext = ext>
 			<cfset var tn = listfirst(filename,".")>
-			<cfset var thefinalname = "thumb_#tn#_#id#.#ext#">
+			<cfset var thefinalname = theorgname>
 		<cfelseif arguments.dl_originals>
 			<cfset var theorgname = filename_org>
 			<cfset var thefinalname = filename>
@@ -5067,20 +5067,20 @@
 			<cfset var theorgext = listlast(filename_org,".")>
 			<!--- If rendition we append the currentrow number in order to have same renditions formats still work --->
 			<cfif arguments.dl_renditions>
-				<cfset var tn = listfirst(filename,".")>
 				<cfif find('.', filename_org)>
 					<cfset var te = "." & listlast(filename_org,".")>
 				<cfelse>
 					<cfset var te = "">
 				</cfif>
+				<cfset var tn = replacenocase(filename,te,"")>
 				<cfset var thefinalname = "rend_" & tn & te>
 			</cfif>
 		</cfif>
 		<!--- RAZ-2901 : Check for additional renditions --->
 		<cfif rend_av EQ 't'>
 			<cfset var tn = listfirst(av_link_title,".")>
-			<cfif find('.', av_link_title)>
-				<cfset var te = "." & listlast(av_link_title,".")>
+			<cfif find('.', av_link_url)>
+				<cfset var te = "." & listlast(av_link_url,".")>
 			<cfelse>
 				<cfset var te = "">
 			</cfif>
@@ -5150,8 +5150,11 @@
 			<cfif arguments.dl_renditions AND fileexists('#arguments.dl_folder#/#thefinalname#')>
 				<cfset var thefinalname = "rend_" & tn & "_#count#" & te>
 			<cfelseif arguments.dl_originals AND fileexists('#arguments.dl_folder#/#thefinalname#')>
-				<cfset var thefinalname = listfirst(filename,".") & "_#count#" &  the_org_ext>
+				<cfset var thefinalname = replacenocase(thefinalname,'.'&listlast(thefinalname,'.'),'')  & "_#count#" &  the_org_ext>
 			</cfif>
+
+			<!--- convert the filename without space and foreign chars --->
+			<cfinvoke component="global" method="convertname" returnvariable="thefinalname" thename="#thefinalname#">
 				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
@@ -6983,6 +6986,7 @@
 		<!--- RAZ-2901 : Check for additional renditions --->
 		<cfif rend_av EQ 't'>
 			<cfset var filename_av = listlast('#av_link_url#','/')>
+			<cfset extension = listlast('#av_link_url#','.')>
 			<cfif arguments.is_upc EQ 'yes'>
 				<cfset var rendition_version ="">
 				<cfif find('.', av_link_title)>
@@ -6993,7 +6997,7 @@
 						<cfset rendition_version ="." & rendition_version>
 					</cfif>
 				</cfif>
-				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#theorgext#">
+				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#extension#">
 			<cfelse>
 				<cfset var thefinalname = filename_av>
 			</cfif>
@@ -7028,6 +7032,9 @@
 			               <cfset fileNameOK = false>        
 			       </cfif>        
 			</cfloop>
+			<!--- convert the filename without space and foreign chars --->
+			<cfinvoke component="global" method="convertname" returnvariable="thefinalname" thename="#thefinalname#">
+
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775" >
