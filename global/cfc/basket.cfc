@@ -575,14 +575,14 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.thename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
 									
 		#attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "lan">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thename#" mode="775">
+					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thename#" mode="775">
 				</cfthread>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
@@ -818,7 +818,7 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.qry.img_filename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.img_filename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
@@ -827,7 +827,7 @@
 			<!--- If this is a linked asset --->
 			<cfelseif qry.link_kind EQ "lan">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
+					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thefinalname#" mode="775">
 				</cfthread>
 				<!--- Wait for the thread above until the file is downloaded fully --->
 				<cfthread action="join" name="#thethreadid#" />
@@ -1033,14 +1033,14 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.qry.vid_filename#.txt" output="This asset is located on a external source. Here is the direct link (or the embeeded code) to the asset:
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.vid_filename#.txt" output="This asset is located on a external source. Here is the direct link (or the embeeded code) to the asset:
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
 			<cfelseif qry.link_kind EQ "lan">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#" mode="775">
 				</cfthread>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
@@ -1210,7 +1210,7 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.qry.aud_name#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.aud_name#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
@@ -1218,10 +1218,10 @@
 			<cfelseif qry.link_kind EQ "lan">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cfif attributes.intstruct.theart EQ "audio">
-						<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#" mode="775">
 					<!--- different format --->
 					<cfelse>
-						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.aud_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.aud_name_org#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#" mode="775">
 					</cfif>
 				</cfthread>
 			</cfif>
