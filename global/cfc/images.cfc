@@ -893,9 +893,10 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
-
-		<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
 		
+		<!--- Save to the images table --->
+		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
+			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#additional_versions
 			SET 
@@ -903,9 +904,6 @@
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-		
-		<!--- Save to the images table --->
-		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#images
 			SET 
