@@ -3004,8 +3004,6 @@ This is the main function called directly by a single upload else from addassets
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
-					<cfset console("here")>
-
 	</cfif>
 	<!--- Update is_available flag for URL asset --->
 	<cfif !application.razuna.rfs AND arguments.thestruct.qryfile.link_kind EQ "url">
