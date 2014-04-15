@@ -591,10 +591,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="ver_img_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="ver_img_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="ver_img_meta" />
 				<!--- Delete scripts --->
@@ -661,10 +661,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="ver_vid_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="ver_vid_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="ver_vid_meta" />
 				<!--- Delete scripts --->
@@ -698,10 +698,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="ver_aud_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="ver_aud_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="ver_aud_meta" />
 				<!--- Delete scripts --->
@@ -725,10 +725,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="ver_file_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="ver_file_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="ver_file_meta" />
 				<!--- Delete scripts --->
@@ -1188,10 +1188,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_img_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_img_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.ver_img_meta" />
 				<!--- Delete scripts --->
@@ -1261,10 +1261,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_vid_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_vid_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.ver_vid_meta" />
 				<!--- Delete scripts --->
@@ -1295,10 +1295,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_aud_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.ver_aud_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.ver_aud_meta" />
 				<!--- Delete scripts --->
@@ -1319,10 +1319,10 @@
 			<!--- GET RAW META --->
 			<cfif iswindows>
 				<!--- Execute Script --->
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" timeout="60" variable="ver_file_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" timeout="60" variable="ver_file_meta" />
 			<cfelse>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="ver_file_meta" />
 				<!--- Delete scripts --->

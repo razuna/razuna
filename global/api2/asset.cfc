@@ -1175,10 +1175,10 @@
 					<!--- Check windows --->
 					<cfif FindNoCase("Windows", server.os.name)>
 						<!--- Execute Script --->
-						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="img_meta" />
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" timeout="60" variable="img_meta" />
 					<cfelse>
 						<!--- Write Script --->
-						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" mode="777">
 						<!--- Execute Script --->
 						<cfexecute name="#thesh#" timeout="60" variable="img_meta" />
 						<!--- Delete scripts --->
@@ -1273,10 +1273,10 @@
 					<!--- Check windows --->
 					<cfif FindNoCase("Windows", server.os.name)>
 						<!--- Execute Script --->
-						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="vid_meta" />
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" timeout="60" variable="vid_meta" />
 					<cfelse>
 						<!--- Write Script --->
-						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" mode="777">
 						<!--- Execute Script --->
 						<cfexecute name="#thesh#" timeout="60" variable="vid_meta" />
 						<!--- Delete scripts --->
@@ -1322,10 +1322,10 @@
 					<!--- Check windows --->
 					<cfif FindNoCase("Windows", server.os.name)>
 						<!--- Execute Script --->
-						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="aud_meta" />
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" timeout="60" variable="aud_meta" />
 					<cfelse>
 						<!--- Write Script --->
-						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" mode="777">
 						<!--- Execute Script --->
 						<cfexecute name="#thesh#" timeout="60" variable="aud_meta" />
 						<!--- Delete scripts --->
@@ -1371,10 +1371,10 @@
 					<!--- Check windows --->
 					<cfif FindNoCase("Windows", server.os.name)>
 						<!--- Execute Script --->
-						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" timeout="60" variable="file_meta" />
+						<cfexecute name="#theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" timeout="60" variable="file_meta" />
 					<cfelse>
 						<!--- Write Script --->
-						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory #thesource#" mode="777">
+						<cffile action="write" file="#thesh#" output="#theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #thesource#" mode="777">
 						<!--- Execute Script --->
 						<cfexecute name="#thesh#" timeout="60" variable="file_meta" />
 						<!--- Delete scripts --->

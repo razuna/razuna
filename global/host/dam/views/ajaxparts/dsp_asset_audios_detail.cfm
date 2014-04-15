@@ -293,7 +293,7 @@
 					<br />
 					<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">&gt; Raw Metadata</div></a>
 					<div id="rawmetadata" style="display:none;padding-top:10px;">
-						<textarea class="text" style="width:700px;height:400px;">#qry_detail.detail.aud_meta#</textarea>
+						<div style="height:400px;overflow:auto;">#ParagraphFormat(qry_detail.detail.aud_meta)#</div>
 					</div>
 				</cfif>
 				<!--- Submit Button --->
