@@ -392,6 +392,8 @@
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<cfparam default="false" name="arguments.thestruct.emailinfo">
+	<!--- Var --->
+	<cfset var is_sysadmin = false>
 	
 	<!--- Check that there is no user already with the same email address. Since this is the detail we already have a user with the same email address so we exclude this user from the search --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
@@ -408,7 +410,8 @@
 		<cfif NOT structkeyexists(arguments.thestruct,"dam")>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE users
-			SET user_in_admin = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
+			SET 
+			user_in_admin = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
 			user_in_dam = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">
 			WHERE user_id = <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
@@ -416,6 +419,14 @@
 		<!--- Hash Password --->
 		<cfif structKeyExists(arguments.thestruct,"user_pass")>
 			<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
+		</cfif>
+		<!--- Check to see if user is systemadmin --->
+		<cfinvoke component="groups_users" method="getUsersOfGroup" grp_id="1" returnvariable="qry_group" />
+		<!--- Check if user is in list --->
+		<cfset var sysadminfound = listfind(valueList(qry_group.user_id), arguments.thestruct.user_id, ",")>
+		<!--- Set sysadmin --->
+		<cfif sysadminfound GT 0>
+			<cfset var is_sysadmin = true>
 		</cfif>
 		<!--- Update the User in the DB --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -451,18 +462,39 @@
 		DELETE FROM ct_users_hosts
 		WHERE ct_u_h_user_id = <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
-		<!--- Insert the user to the user host cross table --->
-		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
-			<cfquery datasource="#application.razuna.datasource#">
-			insert into ct_users_hosts
-			(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
-			values(
-			<cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#thehostid#" cfsqltype="CF_SQL_NUMERIC">,
-			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-			)
+		<!--- if not sysadmin simply get select hostids --->
+		<cfif !is_sysadmin>
+			<!--- Insert the user to the user host cross table --->
+			<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO ct_users_hosts
+				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#thehostid#" cfsqltype="CF_SQL_NUMERIC">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfloop>
+		<!--- we are a sysadmin --->
+		<cfelse>
+			<!--- Get all hosts --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
+			SELECT host_id
+			FROM hosts
 			</cfquery>
-		</cfloop>
+			<cfloop delimiters="," index="thehostid" list="#valuelist(qry_hosts.host_id)#">
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO ct_users_hosts
+				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#thehostid#" cfsqltype="CF_SQL_NUMERIC">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfloop>
+		</cfif>
 		<!--- Send email to user --->
 		<cfif arguments.thestruct.emailinfo>
 			<cfinvoke method="emailinfo" user_id="#arguments.thestruct.user_id#" userpass="#arguments.thestruct.user_pass#" >

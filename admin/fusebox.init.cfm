@@ -26,10 +26,10 @@
 <cfparam name="attributes.to" default="">
 
 <cfif structkeyexists(session,"hostid") AND session.hostid EQ "">
-	<cfset session.hostid = 0>
+	<cfset session.hostid = 1>
 </cfif>
 
-<cfparam name="session.hostid" default="0">
+<cfparam name="session.hostid" default="1">
 <cfparam name="cookie.loginnameadmin" default="">
 <cfparam name="cookie.loginpassadmin" default="">
 <cfparam name="session.offset" default="0">

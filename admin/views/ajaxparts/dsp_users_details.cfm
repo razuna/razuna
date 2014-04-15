@@ -208,9 +208,16 @@
 	$(document).ready(function(){
 		$("##userdetailadd").validate({
 			submitHandler: function(form) {
-				jQuery(form).ajaxSubmit({
-					success: adminuserfeedback
-				});
+				// Check that some hosts are selected
+				if($('##user_hosts input[type=checkbox]:checked').length == 0){
+			       alert("Please select at least one host this user belongs to!");
+			       return false;
+			    }
+			    else {
+					jQuery(form).ajaxSubmit({
+						success: adminuserfeedback
+					});
+				}
 			},
 			rules: {
 				user_first_name: "required",
