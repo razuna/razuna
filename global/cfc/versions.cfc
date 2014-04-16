@@ -144,7 +144,7 @@
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#Variables.dsn#" name="qry">
-			SELECT folder_id_r, file_name_org filenameorg, file_extension orgext, path_to_asset, hashtag, file_meta as metadata
+			SELECT folder_id_r, file_name_org filenameorg, file_extension orgext, path_to_asset, hashtag, file_meta as metadata, file_size
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -255,6 +255,9 @@
 		<cfelseif arguments.thestruct.type EQ "aud">
 		,
 		vid_size
+		<cfelse>
+		,
+		file_size
 		</cfif>
 		)
 		VALUES(
@@ -292,6 +295,9 @@
 		<cfelseif arguments.thestruct.type EQ "aud">
 		,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.aud_size#">
+		<cfelse>
+		,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.file_size#">
 		</cfif>
 		)
 		</cfquery>
@@ -299,7 +305,7 @@
 		<cfquery datasource="#Variables.dsn#" name="qryv">
 		SELECT 
 		ver_filename_org, ver_extension, thumb_width, thumb_height, img_width, img_height, img_size, thumb_size,
-		vid_size, vid_width, vid_height, vid_name_image, hashtag, cloud_url_org, meta_data
+		vid_size, vid_width, vid_height, vid_name_image, hashtag, cloud_url_org, meta_data, file_size
 		FROM #session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
@@ -454,6 +460,9 @@
 			SET 
 			file_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
+			<cfif isnumeric(qryv.file_size)>
+				file_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.file_size#">,
+			</cfif>
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
@@ -712,7 +721,7 @@
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
-			SELECT file_id, folder_id_r, file_name_org, file_extension orgext, path_to_asset, cloud_url, cloud_url_org, hashtag, file_meta as metadata
+			SELECT file_id, folder_id_r, file_name_org, file_extension orgext, path_to_asset, cloud_url, cloud_url_org, hashtag, file_meta as metadata, file_size
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -735,7 +744,12 @@
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+			<cfif arguments.thestruct.qryfile.path contains arguments.thestruct.qryfile.filename>
+				<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#')>
+			<cfelse>
+				<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+			</cfif>
+			
 			<!--- Remove the filename from the path --->
 			<cfset arguments.thestruct.qryfile.path = replacenocase(arguments.thestruct.qryfile.path,"/#arguments.thestruct.qryfile.filename#","","one")>
 		</cfif>
@@ -840,6 +854,9 @@
 		<cfelseif arguments.thestruct.type EQ "aud">
 			,
 			vid_size
+		<cfelse>
+			,
+			file_size
 		</cfif>
 		)
 		VALUES(
@@ -877,6 +894,9 @@
 		<cfelseif arguments.thestruct.type EQ "aud">
 			,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.aud_size#">
+		<cfelse>
+			,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.file_size#">
 		</cfif>
 		)
 		</cfquery>
@@ -1052,6 +1072,7 @@
 			file_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 			file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			file_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.thesize#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
@@ -1304,6 +1325,18 @@
 				<!--- Delete scripts --->
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
+			<!--- Get size of original --->
+			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
+				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thesource#" returnvariable="thread.orgsize">
+				<cfoutput>#trim(thread.orgsize)#</cfoutput>
+			</cfthread>
+
+			<!--- Join threads --->
+			<cfthread action="join" name="#ts#" timeout="6000" />
+			<!--- Size of original --->
+			<cfset arguments.thestruct.org_size = cfthread['#ts#'].orgsize >
+
 			<!--- MD5 Hash --->
 			<cfset arguments.thestruct.md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
 		<!--- Documents --->
@@ -1328,6 +1361,19 @@
 				<!--- Delete scripts --->
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
+
+			<!--- Get size of original --->
+			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
+				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thesource#" returnvariable="thread.orgsize">
+				<cfoutput>#trim(thread.orgsize)#</cfoutput>
+			</cfthread>
+
+			<!--- Join threads --->
+			<cfthread action="join" name="#ts#" timeout="6000" />
+			<!--- Size of original --->
+			<cfset arguments.thestruct.org_size = cfthread['#ts#'].orgsize >
+
 			<!--- MD5 Hash --->
 			<cfset arguments.thestruct.md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
 			<!--- Remove the filename from the path --->
@@ -1419,6 +1465,8 @@
 			, meta_data
 			,
 			vid_size
+		<cfelse>
+			, file_size
 		</cfif>
 		)
 		VALUES(
@@ -1465,7 +1513,9 @@
 		<cfelseif arguments.thestruct.type EQ "aud">
 			,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.ver_aud_meta#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">
+		<cfelse>
+			,<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.org_size#">
 		</cfif>
 		)
 		</cfquery>
