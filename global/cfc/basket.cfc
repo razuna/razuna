@@ -209,7 +209,37 @@
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
-			END as cart_size
+			END as cart_size,
+			CASE 
+				WHEN c.cart_file_type = 'doc' 
+					THEN (
+						SELECT file_upc_number
+						FROM #session.hostdbprefix#files 
+						WHERE file_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'img'
+					THEN (
+						SELECT img_upc_number
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid'
+					THEN (
+						SELECT vid_upc_number
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'aud'
+					THEN (
+						SELECT aud_upc_number
+						FROM #session.hostdbprefix#audios 
+						WHERE aud_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as upc_number
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
