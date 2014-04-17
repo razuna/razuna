@@ -1053,6 +1053,15 @@
 		<!-- Show -->
 		<do action="ajax.users_check" />
 	</fuseaction>
+	<!-- Loading API page -->
+	<fuseaction name="users_api">
+		<!-- Param -->
+		<set name="attributes.reset" value="false" overwrite="false" />
+		<!-- CFC: Check API key -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
+		<!-- Show -->
+		<do action="ajax.users_api" />
+	</fuseaction>
 
 	<!--  -->
 	<!-- END: USERS -->
