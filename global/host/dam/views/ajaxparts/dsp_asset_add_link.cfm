@@ -42,7 +42,7 @@
 				<td nowrap="true" style="padding-top:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_asset_store")#</strong></td>
 			</tr>
 			<tr>
-				<td><input name="link_kind" type="radio" value="url" checked="true"> On public URL <input name="link_kind" type="radio" value="urlvideo"> Video with embedded player <cfif !application.razuna.isp><input name="link_kind" type="radio" value="lan"> Available on my local network</cfif></td>
+				<td><input name="link_kind" type="radio" value="url" checked="true" onclick="togglefileinput(1)"> On public URL <input name="link_kind" type="radio" value="urlvideo" onclick="togglefileinput(1)"> Video with embedded player <cfif !application.razuna.isp><input name="link_kind" type="radio" value="lan" onclick="togglefileinput(0)"> Available on my local network</cfif></td>
 			</tr>
 			<tr>
 				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_path_url")#</strong></td>
@@ -57,10 +57,10 @@
 				<td><input type="radio" name="link_download" value="no" checked="true">#myFusebox.getApplicationData().defaults.trans("no")# <input type="radio" name="link_download" value="yes">#myFusebox.getApplicationData().defaults.trans("yes")#</td>
 			</tr> --->
 			<tr>
-				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
+				<td width="1%" nowrap="true" style="padding-top:7px;"><span id="filelabel"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></span></td>
 			</tr>
 			<tr>
-				<td width="100%"><input name="link_file_name" type="text" style="width:550px;"></td>
+				<td width="100%"><input name="link_file_name" id="link_file_name" type="text" style="width:550px;"></td>
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-top:20px;"><div style="float:left;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#myFusebox.getApplicationData().defaults.trans("header_add_asset")#" class="button" onclick="addlink();"></div></td>
@@ -70,6 +70,20 @@
 		</form>
 		<!--- JS for form --->
 		<script language="javascript">
+			function togglefileinput(display)
+			{
+				if(display==0)
+				{
+					$("##link_file_name").css("display","none");
+					$("##filelabel").css("display","none");
+				}
+				else
+				{
+					$("##link_file_name").css("display","");
+					$("##filelabel").css("display","");
+				}
+
+			}
 			function addlink(){
 				$("##addlinkstatus").css("display","");
 				loadinggif('addlinkstatus');
