@@ -127,7 +127,7 @@
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
 		<!--- If update number is lower then 19 (v. 1.6.5) --->
-		<cfif updatenumber.opt_value LT 19>
+		<cfif updatenumber.opt_value LT 20>
 			<!--- Set global vars for mysql --->
 			<cfif application.razuna.thedatabase EQ "mysql">
 				<cftry>
