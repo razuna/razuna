@@ -1227,10 +1227,15 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.noemail" value="true" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- CFC: Upload to FTP -->
