@@ -182,7 +182,7 @@
 											<img src="#cloud_url#" border="0">
 										<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
 											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-											<cfif FileExists("#ExpandPath("../../../")##thestorage##path_to_asset#/#thethumb#") IS "no">
+											<cfif FileExists("#attributes.prefs.set2_path_to_assets#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 												-#filename_org#-<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
 											<cfelse>
 												<img src="#thestorage##path_to_asset#/#thethumb#" border="0">
@@ -300,7 +300,7 @@
 									<img src="#cloud_url#" border="0">
 								<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
 									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-									<cfif FileExists("#ExpandPath("../../../")##thestorage##path_to_asset#/#thethumb#") IS "no">
+									<cfif FileExists("#attributes.prefs.set2_path_to_assets#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 									<cfelse>
 										<img src="#thestorage##path_to_asset#/#thethumb#" border="0">

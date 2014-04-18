@@ -998,6 +998,8 @@
 		<xfa name="folder" value="c.folder" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Load users favorites -->
 		<invoke object="myFusebox.getApplicationData().favorites" methodcall="readfavorites(attributes)" returnvariable="qry_favorites" />
 		<set name="attributes.qrybasket" value="#qry_favorites#" />
@@ -1091,6 +1093,8 @@
 	<fuseaction name="basket">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- Load include -->
 		<do action="basket_include" />
 		<!-- Show -->
@@ -1109,6 +1113,8 @@
 		<set name="attributes.fromshare" value="F" overwrite="false" />
 		<set name="qry_folder.share_dl_org" value="F" overwrite="false" />
 		<set name="qry_folder.share_order" value="" overwrite="false" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- Load include -->
 		<do action="basket_include" />
 		<!-- Show -->
@@ -1436,7 +1442,9 @@
 		<!-- CFC: Permissions of this Collection -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.colaccess" />
 		<!-- CFC: Get assets of Collections -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />		
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<if condition="qry_assets.recordcount NEQ 0">
 			<true>
 				<set name="attributes.qrybasket" value="#qry_assets#" />
@@ -8095,6 +8103,8 @@
 		<do action="languages" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
