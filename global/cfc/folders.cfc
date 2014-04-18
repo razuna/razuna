@@ -5341,7 +5341,7 @@
 	<cfif arguments.thestruct.folder_id_r EQ 0>
 		AND folder_id_r = folder_id
 	<cfelse>
-		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfif>
 	<cfif arguments.thestruct.folder_id NEQ 0>
 		AND folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
