@@ -50,7 +50,10 @@
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <!--- Default file name when prompted to download --->
 <cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
-<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
+<!--- Ignore content-length attribute for previews --->
+<cfif v neq 'p'>
+	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
+</cfif>
 <!--- File is external --->
 <cfif qry_binary.qfile.link_kind EQ "url">
 	<!--- Get file --->
