@@ -432,7 +432,7 @@
 			WHERE
 			<cfif Arguments.folderid gt 0>
 				f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
-				AND f.folder_id_r != f.folder_id
+				AND f.folder_id_r <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id
 			<cfelse>
 				f.folder_id = f.folder_id_r
 			</cfif>

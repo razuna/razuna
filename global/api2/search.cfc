@@ -1039,11 +1039,11 @@
 					WHERE qry_doc.extension = <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
 				</cfcase>
 				<cfcase value="other">
-					WHERE qry_doc.extension != <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension != <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension != <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension != <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-					AND qry_doc.extension != <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
+					WHERE qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
 				</cfcase>
 			</cfswitch>
 			</cfquery>

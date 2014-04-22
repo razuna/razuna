@@ -33,19 +33,25 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the group --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT grp_id, grp_name
-			FROM groups
-			WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-			</cfquery>
-			<!--- If group does not exist do the insert --->
-			<cfif qry.recordcount EQ 0>
-				<cfset thexml = querynew("responsecode,message")>
-				<cfset queryaddrow(thexml,1)>
-				<cfset querysetcell(thexml,"responsecode","1")>
-				<cfset querysetcell(thexml,"message","Group with the ID could not be found")>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Query the group --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				SELECT grp_id, grp_name
+				FROM groups
+				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				</cfquery>
+				<!--- If group does not exist do the insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfset thexml = querynew("responsecode,message")>
+					<cfset queryaddrow(thexml,1)>
+					<cfset querysetcell(thexml,"responsecode","1")>
+					<cfset querysetcell(thexml,"message","Group with the ID could not be found")>
+				</cfif>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -62,18 +68,24 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the group --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT grp_id, grp_name
-			FROM groups
-			WHERE grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-			</cfquery>
-			<!--- If group does not exist do the insert --->
-			<cfif qry.recordcount EQ 0>
-				<cfset thexml = querynew("responsecode,message")>
-				<cfset queryaddrow(thexml,1)>
-				<cfset querysetcell(thexml,"responsecode","1")>
-				<cfset querysetcell(thexml,"message","Group(s) with the ID could not be found")>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Query the group --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				SELECT grp_id, grp_name
+				FROM groups
+				WHERE grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				</cfquery>
+				<!--- If group does not exist do the insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfset thexml = querynew("responsecode,message")>
+					<cfset queryaddrow(thexml,1)>
+					<cfset querysetcell(thexml,"responsecode","1")>
+					<cfset querysetcell(thexml,"message","Group(s) with the ID could not be found")>
+				</cfif>
+			<!--- User not systemadmin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -91,29 +103,35 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the group --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
-			FROM users u, ct_users_hosts ct
-			WHERE EXISTS(
-				SELECT ctg.ct_g_u_user_id
-				FROM ct_groups_users ctg INNER JOIN groups g ON ctg.ct_g_u_grp_id = g.grp_id
-				WHERE(
-					g.grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-					OR g.grp_host_id IS NULL
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Query the group --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+				SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
+				FROM users u, ct_users_hosts ct
+				WHERE EXISTS(
+					SELECT ctg.ct_g_u_user_id
+					FROM ct_groups_users ctg INNER JOIN groups g ON ctg.ct_g_u_grp_id = g.grp_id
+					WHERE(
+						g.grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+						OR g.grp_host_id IS NULL
+					)
+					AND g.grp_id IN (<cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+					AND ctg.ct_g_u_user_id = u.user_id
 				)
-				AND g.grp_id IN (<cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-				AND ctg.ct_g_u_user_id = u.user_id
-			)
-			AND ct.ct_u_h_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-			AND u.user_id = ct.ct_u_h_user_id
-			</cfquery>
-			<!--- If user does not exist do the insert --->
-			<cfif qry.recordcount EQ 0>
-				<cfset thexml = querynew("responsecode,message")>
-				<cfset queryaddrow(thexml,1)>
-				<cfset querysetcell(thexml,"responsecode","1")>
-				<cfset querysetcell(thexml,"message","Group(s) with the ID could not be found")>
+				AND ct.ct_u_h_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				AND u.user_id = ct.ct_u_h_user_id
+				</cfquery>
+				<!--- If user does not exist do the insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfset thexml = querynew("responsecode,message")>
+					<cfset queryaddrow(thexml,1)>
+					<cfset querysetcell(thexml,"responsecode","1")>
+					<cfset querysetcell(thexml,"message","Group(s) with the ID could not be found")>
+				</cfif>
+			<!--- User not systemadmin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -131,37 +149,43 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Check that we don't have the same grou name already --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_samegrp">
-			SELECT grp_id
-			FROM groups
-			WHERE lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="CF_SQL_VARCHAR">
-			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-			</cfquery>
-			<!--- If group does not exist do the insert --->
-			<cfif qry_samegrp.recordcount EQ 0>
-				<!--- Create new ID --->
-				<cfset newgrpid = createuuid()>
-				<!--- Insert the group into the DB --->
-				<cfquery datasource="#application.razuna.api.dsn#">
-				INSERT INTO	groups
-				(grp_id, grp_name, grp_host_id, grp_mod_id)
-				VALUES(
-				<cfqueryparam value="#newgrpid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.grp_name#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-				)
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Check that we don't have the same grou name already --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry_samegrp">
+				SELECT grp_id
+				FROM groups
+				WHERE lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="CF_SQL_VARCHAR">
+				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 				</cfquery>
-				<!--- Response --->
-				<cfset thexml.responsecode = 0>
-				<cfset thexml.message = "Group has been added successfully">
-				<cfset thexml.grp_id = newgrpid>
-			<!--- group exist thus fail message --->
+				<!--- If group does not exist do the insert --->
+				<cfif qry_samegrp.recordcount EQ 0>
+					<!--- Create new ID --->
+					<cfset newgrpid = createuuid()>
+					<!--- Insert the group into the DB --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					INSERT INTO	groups
+					(grp_id, grp_name, grp_host_id, grp_mod_id)
+					VALUES(
+					<cfqueryparam value="#newgrpid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.grp_name#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+					)
+					</cfquery>
+					<!--- Response --->
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "Group has been added successfully">
+					<cfset thexml.grp_id = newgrpid>
+				<!--- group exist thus fail message --->
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Group already exists">
+					<cfset thexml.grp_id = qry_samegrp.grp_id>
+				</cfif>
+			<!--- User not systemadmin --->
 			<cfelse>
-				<cfset thexml.responsecode = 1>
-				<cfset thexml.message = "Group already exists">
-				<cfset thexml.grp_id = qry_samegrp.grp_id>
+				<cfset var thexml = noaccess()>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -180,29 +204,35 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query the group --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-			SELECT grp_id
-			FROM groups
-			WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-			</cfquery>
-			<!--- group found --->
-			<cfif qry.recordcount EQ 1>
-				<cfquery datasource="#application.razuna.api.dsn#">
-				UPDATE groups
-				SET grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="CF_SQL_VARCHAR">
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Query the group --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT grp_id
+				FROM groups
 				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 				</cfquery>
-				<!--- Response --->
-				<cfset thexml.responsecode = 0>
-				<cfset thexml.message = "Group has been updated successfully">
-				<cfset thexml.grp_id = qry.grp_id>
-			<!--- NOT found --->
+				<!--- group found --->
+				<cfif qry.recordcount EQ 1>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					UPDATE groups
+					SET grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+					</cfquery>
+					<!--- Response --->
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "Group has been updated successfully">
+					<cfset thexml.grp_id = qry.grp_id>
+				<!--- NOT found --->
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Group with the ID could not be found">
+				</cfif>
+			<!--- User not systemadmin --->
 			<cfelse>
-				<cfset thexml.responsecode = 1>
-				<cfset thexml.message = "Group with the ID could not be found">
+				<cfset var thexml = noaccess()>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -220,27 +250,34 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-			SELECT grp_id
-			FROM groups
-			WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
-			</cfquery>
-			<!--- group found --->
-			<cfif qry.recordcount EQ 1>
-				<cfquery datasource="#application.razuna.api.dsn#">
-				DELETE FROM groups
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT grp_id
+				FROM groups
 				WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+				AND (grp_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR"> OR grp_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">)
 				</cfquery>
-				<!--- Response --->
-				<cfset thexml.responsecode = 0>
-				<cfset thexml.message = "Group has been removed successfully">
-				<cfset thexml.grp_id = qry.grp_id>
-			<!--- NOT found --->
+				<!--- group found --->
+				<cfif qry.recordcount EQ 1>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					DELETE FROM groups
+					WHERE grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+					</cfquery>
+					<!--- Response --->
+					<cfset thexml.responsecode = 0>
+					<cfset thexml.message = "Group has been removed successfully">
+					<cfset thexml.grp_id = qry.grp_id>
+				<!--- NOT found --->
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Group with the ID could not be found">
+				</cfif>
+			<!--- User not systemadmin --->
 			<cfelse>
-				<cfset thexml.responsecode = 1>
-				<cfset thexml.message = "Group with the ID could not be found">
+				<cfset var thexml = noaccess()>
 			</cfif>
 			<!--- No session found --->
 		<cfelse>
