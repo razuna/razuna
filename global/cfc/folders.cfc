@@ -2402,6 +2402,7 @@
 		<cfset log_folders(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.folder_name# (ID: #arguments.thestruct.folder_id#)')>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("labels")>
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<!--- Set the Action2 var --->
 		<cfset this.action2="done">

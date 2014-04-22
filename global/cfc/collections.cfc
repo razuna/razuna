@@ -1284,6 +1284,7 @@
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("labels")>
 	<cfset resetcachetoken("folders")>
 </cffunction>
 
