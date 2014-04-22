@@ -56,16 +56,20 @@
 					<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#">
 				</cfif>
 				View
-			</cfif>
-			<cfif qry_detail.detail.link_kind NEQ "lan">
 				</a>
 			</cfif>
-			 | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">Download</a>
+			<cfif qry_detail.detail.link_kind EQ "lan">
+				<strong>Original</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)
+				<br />
+			</cfif>
+			 <cfif qry_detail.detail.link_kind NEQ "lan">| </cfif><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">Download</a>
 			<!--- Nirvanix --->
 			<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
 				<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#</i>
 			</cfif>
+			<cfif qry_detail.detail.link_kind NEQ "lan">
 			 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
+			</cfif>
 			<div id="divo#attributes.file_id#" style="display:none;">
 				<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" />
 				<cfif application.razuna.storage EQ "local">

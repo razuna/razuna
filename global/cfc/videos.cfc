@@ -1424,10 +1424,10 @@
 			<cfset var inputpath = "#arguments.thestruct.link_path_url#">
 		</cfif>
 		<!--- Check the platform and then decide on the ffmpeg tag --->
+		<cfset var inputpath = """#inputpath#""">
 		<cfif isWindows>
 			<cfset var theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
 			<cfset var theimexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
-			<cfset var inputpath = """#inputpath#""">
 			<cfset var inputpathimage = """#inputpathimage#""">
 			<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
 		<cfelse>

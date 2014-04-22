@@ -1327,7 +1327,7 @@
 			<cfset var theext = "txt">
 		</cfif>
 		<!--- If the user did not enter a filename we read the filename from the file --->
-		<cfif arguments.thestruct.link_file_name NEQ "">
+		<cfif arguments.thestruct.link_file_name NEQ "" AND arguments.thestruct.link_kind NEQ "lan">
 			<cfset var thefilename = arguments.thestruct.link_file_name>
 		</cfif>
 		<!--- Replace any p or br in the textarea --->
@@ -3035,9 +3035,20 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var thearguments = """#arguments.imagepath#""">
 	<cfelse>
 		<cfset var theidentify = "#Arguments.thepathim#/identify">
-		<cfset var thearguments = replace(arguments.imagepath," ","\ ","all")>
-		<cfset var thearguments = replace(thearguments,"&","\&","all")>
-		<cfset var thearguments = replace(thearguments,"'","\'","all")>
+		<!--- Check to make sure paths are not already escaped --->
+		<cfif findnocase('\ ', arguments.imagepath) EQ 0>
+			<cfset var thearguments = replace(arguments.imagepath," ","\ ","all")>
+		<cfelse>
+			<cfset var thearguments =arguments.imagepath>
+		</cfif>
+		
+		<cfif findnocase('\&', arguments.imagepath) EQ 0>
+			<cfset var thearguments = replace(thearguments,"&","\&","all")>
+		</cfif>
+
+		<cfif findnocase("\'", arguments.imagepath) EQ 0>
+			<cfset var thearguments = replace(thearguments,"'","\'","all")>
+		</cfif>
 	</cfif>
 	<!--- get image information as string using identify (ImageMagick)
 	<cfexecute name="#theidentify#" arguments="#arguments.imagepath#" timeout="5" variable="theidentifyresult" /> --->
