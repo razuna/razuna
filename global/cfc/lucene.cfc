@@ -126,7 +126,8 @@
 		<cftry>
 			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
 			<cfcatch type="any">
-				<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
+				<cfset console("--- ERROR removing lock file: - #now()# ---")>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -235,7 +236,8 @@
 			<cftry>
 				<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
 				<cfcatch type="any">
-					<cfset console("--- ERROR removing lock file: #cfthread.message# - #cfthread.detail# - #now()# ---")>
+					<cfset console("--- ERROR removing lock file: - #now()# ---")>
+					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
 		</cfif>
