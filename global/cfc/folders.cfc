@@ -2686,6 +2686,7 @@
 	<!--- Param --->
 	<cfparam name="session.showsubfolders" default="F">
 	<cfparam name="session.customfileid" default="">
+	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<cfset var thefolderlist = "">
 	<!--- Show assets from subfolders or not --->
 	<cfif arguments.thestruct.folder_id NEQ "">
