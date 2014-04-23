@@ -1327,7 +1327,7 @@
 			<cfset var theext = "txt">
 		</cfif>
 		<!--- If the user did not enter a filename we read the filename from the file --->
-		<cfif arguments.thestruct.link_file_name NEQ "">
+		<cfif arguments.thestruct.link_file_name NEQ "" AND arguments.thestruct.link_kind NEQ "lan">
 			<cfset var thefilename = arguments.thestruct.link_file_name>
 		</cfif>
 		<!--- Replace any p or br in the textarea --->
@@ -3035,9 +3035,20 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var thearguments = """#arguments.imagepath#""">
 	<cfelse>
 		<cfset var theidentify = "#Arguments.thepathim#/identify">
-		<cfset var thearguments = replace(arguments.imagepath," ","\ ","all")>
-		<cfset var thearguments = replace(thearguments,"&","\&","all")>
-		<cfset var thearguments = replace(thearguments,"'","\'","all")>
+		<!--- Check to make sure paths are not already escaped --->
+		<cfif findnocase('\ ', arguments.imagepath) EQ 0>
+			<cfset var thearguments = replace(arguments.imagepath," ","\ ","all")>
+		<cfelse>
+			<cfset var thearguments =arguments.imagepath>
+		</cfif>
+		
+		<cfif findnocase('\&', arguments.imagepath) EQ 0>
+			<cfset var thearguments = replace(thearguments,"&","\&","all")>
+		</cfif>
+
+		<cfif findnocase("\'", arguments.imagepath) EQ 0>
+			<cfset var thearguments = replace(thearguments,"'","\'","all")>
+		</cfif>
 	</cfif>
 	<!--- get image information as string using identify (ImageMagick)
 	<cfexecute name="#theidentify#" arguments="#arguments.imagepath#" timeout="5" variable="theidentifyresult" /> --->
@@ -3681,10 +3692,39 @@ This is the main function called directly by a single upload else from addassets
 	<cfreturn arguments.thestruct.thisvid.newid />
 </cffunction>
 
+<cffunction name="getsubfolders" output="true">
+	<cfargument name="folder_id" required="true" type="string">
+	<cfset var sflist = "-1">
+	<cfquery name="getsubfolder" datasource="#application.razuna.datasource#">
+	SELECT folder_id, folder_name from #session.hostdbprefix#folders f
+	WHERE  folder_id_r =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
+	</cfquery>
+	<cfloop query="getsubfolder">
+		<cfset sflist = listappend(sflist,getsubfolder.folder_id)>
+		<cfset tmp = getsubfolders(getsubfolder.folder_id)>
+	</cfloop>
+	<cfreturn sflist>
+</cffunction>
+
+
 <!--- EXTRACT A COMPRESSED FILE (ZIP) ------------------------------------------------------------>
 <cffunction name="extractFromZip" output="true" access="private">
-	<cfargument name="thestruct" type="struct">	
+	<cfargument name="thestruct" type="struct">
 	<cftry>
+		<!--- Check if archive is a Razuna Versions archive in which cases already existing files are versioned. User must be admin to use this feature  --->
+		<cfif arguments.thestruct.qryfile.filename contains 'RazunaVersions' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+			<cfset var razver = true>
+			<!--- Get folders in trash to omit later when checking for file exists in database query --->
+			<cfinvoke component="global.cfc.folders" method="gettrashfolder" returnvariable="trashfolders">
+			<cfset var trashfolderlist = listappend(-1,valuelist(trashfolders.id))>
+			<!--- Look for subfolders of trash folders --->
+			<cfloop query="trashfolders">
+				<cfinvoke component="global.cfc.folders" method="getchildfolders" parentid = "#trashfolders.id#" returnvariable="sflist">
+				<cfset trashfolderlist = listappend(trashfolderlist,sflist)>
+			</cfloop>
+		<cfelse>
+			<cfset var razver = false>
+		</cfif>
 		<!--- Remove the ZIP file from the files DB. This is being created on normal file upload and is not needed --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#files
@@ -3759,6 +3799,7 @@ This is the main function called directly by a single upload else from addassets
 				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
 				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 				AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+				ORDER BY folder_create_time DESC
 				</cfquery>
 				<cfset var thedirlen = listLen(thedir.name, FileSeparator())-1>
 				<cfset temp = rootfolderId>
@@ -3772,6 +3813,7 @@ This is the main function called directly by a single upload else from addassets
 					AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+					ORDER BY folder_create_time DESC
 					</cfquery>
 					<cfset temp= qryGetFolderDetails.folder_id >
 				</cfloop>
@@ -3902,6 +3944,7 @@ This is the main function called directly by a single upload else from addassets
 						AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+						ORDER BY folder_create_time DESC
 						</cfquery>
 						<cfset temp = qryGetFolderDetails.folder_id>
 					</cfloop>
@@ -3948,6 +3991,137 @@ This is the main function called directly by a single upload else from addassets
 					WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
+
+					<!--- If this is a RazunaVersions.zip Archive then version existing files --->
+					<cfif razver>
+						<!--- Set file type --->
+						<cfset arguments.thestruct.type = fileType.type_type>
+						<cfif arguments.thestruct.type EQ ''>
+							<cfset arguments.thestruct.type = 'doc'>
+						</cfif>
+						<!--- Check if  file exists in system --->
+						<cfset var thefilename = listlast(name,FileSeparator())>
+						<cfset var thefilename_noext = replacenocase(thefilename, '.' & lcase(fileNameExt.theext),'')>
+						<cfif thefilename does not contain "RazunaVersions"> <!--- Omit the zip file itself --->
+							<cfif arguments.thestruct.type eq 'img'>
+								<cfset var colname = 'img'>
+								<cfset var fileprefix = 'file'>
+								<cfset var tblname = 'images'>
+							<cfelseif arguments.thestruct.type eq 'aud'>
+								<cfset var colname = 'aud'>
+								<cfset var fileprefix = ''>
+								<cfset var tblname = 'audios'>
+							<cfelseif arguments.thestruct.type eq 'vid'>
+								<cfset var colname = 'vid'>
+								<cfset var fileprefix = 'file'>
+								<cfset var tblname = 'videos'>
+							<cfelse>
+								<cfset var colname = 'file'>
+								<cfset var fileprefix = ''>
+								<cfset var tblname = 'files'>
+							</cfif>
+							
+							<!--- Check if file already exists in which case we create a new version for it --->
+							<cfquery name="filename_exists" datasource="#application.razuna.datasource#">
+								SELECT #colname#_id id
+								FROM #session.hostdbprefix##tblname#
+								WHERE (lower(#colname#_#fileprefix#name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thefilename)#"> 
+								OR (lower(#colname#_#fileprefix#name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thefilename_noext)#"> 
+									AND #colname#_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(fileNameExt.theext)#">))
+								AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+								<cfif findnocase(arguments.thestruct.type,'img,vid,aud')>
+									AND (#colname#_group IS NULL OR #colname#_group ='')
+								</cfif>
+								AND folder_id_r NOT IN (<cfqueryparam value="#trashfolderlist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							</cfquery>
+							<!--- Must be exactly one record of existing file, if multiple then skip as we can't figure out which one to attach version to in that case --->
+							<cfif filename_exists.recordcount eq 1>
+								<cfset arguments.thestruct.qryfile.file_id= filename_exists.id>
+								<!--- If PDF then we generate images for the pages --->
+								<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+									<cfset arguments.thestruct.thetempdirectory = arguments.thestruct.theincomingtemppath>
+									<cfset var ttpdf = Createuuid("")>
+									<!--- If this is a linked asset --->
+									<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+										<!--- Create var with temp directory to hold the thumbnail and images --->
+										<cfset arguments.thestruct.theorgfileflat = "#arguments.thestruct.qryfile.path#[0]">
+										<cfset arguments.thestruct.theorgfile = arguments.thestruct.qryfile.path>
+										<cfset arguments.thestruct.theorgfileraw = arguments.thestruct.qryfile.path>
+										<!--- The name for the pdf --->
+										<cfset var getlast = listlast(arguments.thestruct.qryfile.path,"/\")>
+										<cfset arguments.thestruct.thepdfimage = replacenocase(getlast,".pdf",".jpg","all")>
+									<!--- For importpath --->
+									<cfelseif arguments.thestruct.importpath NEQ "" AND arguments.thestruct.importpath>
+										<!--- Create var with temp directory to hold the thumbnail and images --->
+										<cfset arguments.thestruct.theorgfileflat = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#[0]">
+										<cfset arguments.thestruct.theorgfile = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+										<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+										<!--- The name for the pdf --->
+										<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
+										<!--- Create temp folder --->
+										<cfdirectory action="create" directory="#arguments.thestruct.thetempdirectory#" mode="775" />
+									<cfelse>
+										<cfset arguments.thestruct.theorgfileflat = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#[0]">
+										<cfset arguments.thestruct.theorgfile = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+										<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+										<!--- The name for the pdf --->
+										<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
+									</cfif>
+																
+									<!--- Create a temp folder to hold the PDF images --->
+									<cfset arguments.thestruct.thepdfdirectory = "#arguments.thestruct.thetempdirectory#/#createuuid('')#/razuna_pdf_images">
+									<!--- Create folder to hold the images --->
+									<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
+									 <cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
+									<cfset var thumb_width = arguments.thestruct.qrysettings.set2_img_thumb_width>
+									<cfset var thumb_height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
+									<!--- If both height and width are set then resize to exact height and width set. --->
+									<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
+										<cfset resizeargs =  "#thumb_width#x#thumb_height#">
+									<!--- If only height set then resize to given height preserving aspect ratio.  --->
+									<cfelseif isnumeric(thumb_height)>
+										<cfset resizeargs = "x#thumb_height#">
+									<!--- If only width set then resize to given width preserving aspect ratio. --->
+									<cfelseif isnumeric(thumb_width)>
+										<cfset resizeargs = "#thumb_width#x">
+									</cfif>
+									<!--- Script: Create thumbnail --->
+									<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+									<!--- Script: Create images --->
+									<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+									<!--- Execute --->
+									<cfthread name="#ttpdf#" action="run" pdfintstruct="#arguments.thestruct#">
+										<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
+										<cfif application.razuna.storage NEQ "amazon">
+											<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
+										</cfif>
+									</cfthread>
+									<!--- Wait for thread to finish --->
+									<cfthread action="join" name="#ttpdf#" />					
+									<!--- Delete scripts --->
+									<cffile action="delete" file="#arguments.thestruct.thesh#">
+									<cffile action="delete" file="#arguments.thestruct.thesht#">
+									<!--- If no PDF could be generated then copy the thumbnail placeholder --->
+									<cfif NOT fileexists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#")>
+										<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="775">
+									</cfif>
+									<!--- RAZ-2480 : Setting link_path_url for the PDF type files --->
+									<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+										<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#">
+									<cfelse>
+										<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+									</cfif> 
+								</cfif>
+								<!--- End PDF --->
+								<!--- Finally create the version --->
+								<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+							 	<!--- Go back to top of loop --->
+							 	<cfcontinue>
+							</cfif>
+						</cfif>
+					</cfif>
+
 					<!--- Create inserts --->
 					<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 					<!--- Now start the file mumbo jumbo --->

@@ -49,6 +49,9 @@
 						<option value="img_width"<cfif listFind(qry_export.images_metadata,"img_width")> selected="selected"</cfif>>Width</option>
 						<option value="img_height"<cfif listFind(qry_export.images_metadata,"img_height")> selected="selected"</cfif>>Height</option>
 						<option value="img_size"<cfif listFind(qry_export.images_metadata,"img_size")> selected="selected"</cfif>>Size</option>
+						<cfif prefs.set2_upc_enabled>
+							<option value="img_upc_number"<cfif listFind(qry_export.images_metadata,"img_upc_number")> selected="selected"</cfif>>UPC Number</option>
+						</cfif>
 						<!--- Extended metadata --->
 						<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 						<cfloop list="#attributes.meta_img#" index="i">
@@ -79,6 +82,9 @@
 						<option value="vid_width"<cfif listFind(qry_export.videos_metadata,"vid_width")> selected="selected"</cfif>>Width</option>
 						<option value="vid_height"<cfif listFind(qry_export.videos_metadata,"vid_height")> selected="selected"</cfif>>Height</option>
 						<option value="vid_size"<cfif listFind(qry_export.videos_metadata,"vid_size")> selected="selected"</cfif>>Size</option>
+						<cfif prefs.set2_upc_enabled>
+							<option value="vid_upc_number"<cfif listFind(qry_export.videos_metadata,"vid_upc_number")> selected="selected"</cfif>>UPC Number</option>
+						</cfif>
 						<!--- Custom fields --->
 						<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields")# ---</option>
 						<cfloop query="meta_cf">
@@ -101,6 +107,9 @@
 						<option value="file_create_time"<cfif listFind(qry_export.files_metadata,"file_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="file_change_time"<cfif listFind(qry_export.files_metadata,"file_change_time")> selected="selected"</cfif>>Change Date</option>
 						<option value="file_size"<cfif listFind(qry_export.files_metadata,"file_size")> selected="selected"</cfif>>Size</option>
+						<cfif prefs.set2_upc_enabled>
+							<option value="file_upc_number"<cfif listFind(qry_export.files_metadata,"file_upc_number")> selected="selected"</cfif>>UPC Number</option>
+						</cfif>
 						<!--- Extended metadata --->
 						<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 						<cfloop list="#attributes.meta_doc#" index="i">
@@ -129,6 +138,9 @@
 						<option value="aud_create_time"<cfif listFind(qry_export.audios_metadata,"aud_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="aud_change_time"<cfif listFind(qry_export.audios_metadata,"aud_change_time")> selected="selected"</cfif>>Change Date</option>
 						<option value="aud_size"<cfif listFind(qry_export.audios_metadata,"aud_size")> selected="selected"</cfif>>Size</option>
+						<cfif prefs.set2_upc_enabled>
+							<option value="aud_upc_number"<cfif listFind(qry_export.audios_metadata,"aud_upc_number")> selected="selected"</cfif>>UPC Number</option>
+						</cfif>
 						<!--- Custom fields --->
 						<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields")# ---</option>
 						<cfloop query="meta_cf">

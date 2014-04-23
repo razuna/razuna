@@ -1613,16 +1613,16 @@
 		<!--- Get selected metadata to export --->
 		<cfloop query="arguments.thestruct.export_template">
 			<cfif exp_field EQ 'images_metadata'>
-				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_create_time,img_change_time,img_width,img_height,img_size", "id,filename,description,keywords,create_date,change_date,width,height,size")>
+				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number", "id,filename,description,keywords,create_date,change_date,width,height,size,upc_number")>
 			</cfif>
 			<cfif exp_field EQ 'files_metadata'>
-				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_create_time,file_change_time,file_size", "id,filename,description,keywords,create_date,change_date,size")>
+				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_create_time,file_change_time,file_size,file_upc_number", "id,filename,description,keywords,create_date,change_date,size,upc_number")>
 			</cfif>
 			<cfif exp_field EQ 'audios_metadata'>
-				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_create_time,aud_change_time,aud_size", "id,filename,description,keywords,create_date,change_date,size")>
+				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_create_time,aud_change_time,aud_size,aud_upc_number", "id,filename,description,keywords,create_date,change_date,size,upc_number")>
 			</cfif>
 			<cfif exp_field EQ 'videos_metadata'>
-				<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_create_time,vid_change_time,vid_width,vid_height,vid_size", "id,filename,description,keywords,create_date,change_date,width,height,size")>
+				<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_create_time,vid_change_time,vid_width,vid_height,vid_size,vid_upc_number", "id,filename,description,keywords,create_date,change_date,width,height,size,upc_number")>
 			</cfif>
 		</cfloop>
 		<!--- Set Columns for Export --->
@@ -1665,6 +1665,7 @@
 			<cfset arguments.thestruct.width = cart_width>
 			<cfset arguments.thestruct.height = cart_height>
 			<cfset arguments.thestruct.size = cart_size>
+			<cfset arguments.thestruct.upc_number = upc_number>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
@@ -1677,7 +1678,7 @@
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
-		img_filename as url_file_name, cloud_url_org, img_create_date AS create_date, img_change_date AS change_date, img_size AS size, img_width AS width, img_height AS height
+		img_filename as url_file_name, cloud_url_org, img_create_date AS create_date, img_change_date AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1686,7 +1687,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_date, vid_change_date, vid_size, vid_width AS width, vid_height AS height
+		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_date, vid_change_date, vid_size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1695,7 +1696,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_date, aud_change_date, aud_size, '' AS width, '' As height
+		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_date, aud_change_date, aud_size, '' AS width, '' As height, aud_upc_number as upc_number
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1704,7 +1705,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_date, file_change_date, file_size, '' AS width, '' AS height
+		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_date, file_change_date, file_size, '' AS width, '' AS height, file_upc_number as upc_number
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
@@ -1724,6 +1725,7 @@
 			<cfset arguments.thestruct.width = width>
 			<cfset arguments.thestruct.height = height>
 			<cfset arguments.thestruct.size = size>
+			<cfset arguments.thestruct.upc_number = upc_number>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
@@ -1770,7 +1772,7 @@
 			<!--- Get foldername --->
 			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
 			<cfset arguments.thestruct.foldername = foldername>
-			<!--- Get Lables --->
+			<!--- Get Labels --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
@@ -1798,7 +1800,7 @@
 			<!--- Get foldername --->
 			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
 			<cfset arguments.thestruct.foldername = foldername>
-			<!--- Get Lables --->
+			<!--- Get Labels --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
@@ -1860,7 +1862,7 @@
 			<!--- Get foldername --->
 			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
 			<cfset arguments.thestruct.foldername = foldername>
-			<!--- Get Lables --->
+			<!--- Get Labels --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
@@ -1970,9 +1972,10 @@
 </cffunction>
 
 <!--- Add to query --->
-<cffunction name="add_to_query" output="false">
+<cffunction name="add_to_query" >
 	<cfargument name="thestruct" type="struct">
-	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
+<!--- 			<cfdump var="#arguments.thestruct.tq#")>
+ --->	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
 		<!--- Add row local query --->
 		<cfset QueryAddRow(arguments.thestruct.tq,1)>
@@ -2007,6 +2010,10 @@
 						<!--- Add Size --->
 						<cfif ("#idx#" EQ "img_size" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_size" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_size" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_size" AND "#arguments.thestruct.filetype#" EQ "aud")> 
 							<cfset QuerySetCell(arguments.thestruct.tq, "size", arguments.thestruct.size)>
+						</cfif>
+						<!--- Add UPC number --->
+						<cfif ("#idx#" EQ "img_upc_number" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_upc_number" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_upc_number" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_upc_number" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "upc_number", arguments.thestruct.upc_number)>
 						</cfif>
 						<!--- Add keywords and description --->
 						<cfif arguments.thestruct.qry_text.recordcount NEQ 0>

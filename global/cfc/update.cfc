@@ -127,7 +127,7 @@
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
 		<!--- If update number is lower then 19 (v. 1.6.5) --->
-		<cfif updatenumber.opt_value LT 19>
+		<cfif updatenumber.opt_value LT 20>
 			<!--- Set global vars for mysql --->
 			<cfif application.razuna.thedatabase EQ "mysql">
 				<cftry>
@@ -159,6 +159,15 @@
 				endTime="23:59 PM"
 				interval="300"
 			>
+			<!--- Add column to store file_size for versions --->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> file_size #thevarchar#(100)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
 			<!--- RAZ-549 Add columns for asset expiry --->
 			<cftry>
 				 <cfquery datasource="#application.razuna.datasource#">

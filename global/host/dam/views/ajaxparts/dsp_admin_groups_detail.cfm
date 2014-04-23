@@ -59,7 +59,7 @@
 				<!--- RAZ-2824 :: UPC folder structure download option enabled. ---> 
 				<cfif prefs.set2_upc_enabled>
 				<tr>
-					<td><strong>Create UPC folder Structure while downloading</strong>
+					<td><strong>Create UPC folder structure while downloading</strong>
 						<input type="radio" name="edit_upc_folder_structure" value="true" <cfif qry_detail.upc_folder_format EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
 						<input type="radio" name="edit_upc_folder_structure" value="false" <cfif qry_detail.upc_folder_format EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
 					</td>

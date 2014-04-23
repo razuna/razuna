@@ -37,15 +37,12 @@
 						<cfif qry_detail.detail.link_kind EQ "lan">
 							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
 							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">Download</a>
-							<br />#qry_detail.detail.link_path_url#
+							<br />
 						<cfelse>
 							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
 							<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" target="_blank"></cfif>View</a> | 
 							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">Download</a>
-							<!--- Nirvanix --->
-							<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
-								<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#</i>
-							</cfif>
+							
 							| <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
 							<!--- Direct link --->
