@@ -29,19 +29,20 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_related">
 			<tr>
-				<td width="55">
+				<td width="65" align="center">
 					 <!--- Thumbnail --->
 					 <cfset args = structNew()>
 					 <cfset args.thumb_img_id= img_id>
 					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
 					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''> 
 					 	<a href="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" target="_blank">
-					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" height="50" width="50">
+					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" height="50">
 					 	</a>
 					 <cfelse>
-					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50" width="50"></a>
+					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50"></a>
 					 </cfif>
 				</td>
+				<td width="5"></td>
 				<td valign="top">
 					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)<br />
 					<cfif attributes.s EQ "F">
