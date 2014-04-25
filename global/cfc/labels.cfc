@@ -869,7 +869,7 @@
 			</cfloop>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache" result="myqry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getlabelsfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection, '' AS perm
 			FROM #session.hostdbprefix#folders f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -885,8 +885,6 @@
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND fg.grp_permission IN  ('R','W','X'))
 			)
 			</cfquery>
-			<cfset console(myqry.sql)>
-			<cfset console(myqry.sqlparameters)>
 			<!--- Get proper folderaccess --->
 			<cfloop query="qry">
 				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
