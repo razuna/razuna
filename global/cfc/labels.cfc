@@ -425,6 +425,8 @@
 				<!--- Ensure user is folder owner or has access to folder in which asset resides --->
 				AND 
 				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  fo.folder_id AND folder_owner = '#session.theuserid#' 
 					UNION
@@ -527,6 +529,8 @@
 				<!--- Ensure user has access to folder in which asset resides --->
 				AND 
 				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
 					UNION
@@ -576,6 +580,8 @@
 				<!--- Ensure user has access to folder --->
 				AND 
 				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#session.theuserid#' )
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
@@ -589,6 +595,8 @@
 				<!--- Ensure user has access to collection --->
 				AND 
 				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#session.theuserid#' )
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.col_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
@@ -679,6 +687,8 @@
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
@@ -713,6 +723,8 @@
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0) AND fg.grp_permission IN  ('R','W','X'))
@@ -747,6 +759,8 @@
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
@@ -781,6 +795,8 @@
 			</cfif>
 			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
 			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
@@ -823,6 +839,8 @@
 			<!--- Ensure user has access to folder  --->
 			AND 
 			(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				folder_owner = '#session.theuserid#' 
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND fg.grp_permission IN  ('R','W','X'))
@@ -848,6 +866,8 @@
 			<!--- Ensure user has access to collection --->
 			AND 
 			(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
 				col_owner = '#session.theuserid#' 
 				OR
 				EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND (f.grp_id_r = cc.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
