@@ -330,6 +330,32 @@
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				AND i.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.istruct.available#">
+				<!--- Check permissions --->
+				AND CASE
+					<!--- Check if admin --->
+					WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))  THEN 'unlocked'
+					<!--- Check permission on this folder --->
+					WHEN EXISTS(
+						SELECT fg.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg
+						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg.folder_id_r = i.folder_id_r
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						) THEN 'unlocked'
+					<!--- When folder is shared for everyone --->
+					WHEN EXISTS(
+						SELECT fg2.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg2
+						WHERE fg2.grp_id_r = '0'
+						AND fg2.folder_id_r = i.folder_id_r
+						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						) THEN 'unlocked'
+					<!--- When user is folder owner --->
+					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
+					ELSE 'locked' 
+				        END = 'unlocked'
 				<!--- Only if we have dates --->
 				<cfif arguments.istruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -376,6 +402,11 @@
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry_img.recordcount>
 		<cfset QueryAddcolumn(qry_img, "cnt", "integer", amount)>
+		<!--- If no records in query returned then a null row is inserted by the QueryAddColumn above so filter it out --->
+		<cfquery name="qry_img" dbtype="query">
+			SELECT * FROM qry_img WHERE id IS NOT NULL
+		</cfquery>
+
 		<!--- Return --->
 		<cfreturn qry_img />
 	</cffunction>
@@ -544,6 +575,32 @@
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				AND v.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.vstruct.available#">
+				<!--- Check Permissions --->
+				AND CASE
+					<!--- Check if admin --->
+					WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))  THEN 'unlocked'
+					<!--- Check permission on this folder --->
+					WHEN EXISTS(
+						SELECT fg.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg
+						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg.folder_id_r = v.folder_id_r
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						) THEN 'unlocked'
+					<!--- When folder is shared for everyone --->
+					WHEN EXISTS(
+						SELECT fg2.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg2
+						WHERE fg2.grp_id_r = '0'
+						AND fg2.folder_id_r = v.folder_id_r
+						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						) THEN 'unlocked'
+					<!--- When user is folder owner --->
+					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
+					ELSE 'locked'
+				END = 'unlocked'
 				<!--- Only if we have dates --->
 				<cfif arguments.vstruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -586,10 +643,14 @@
 					<cfif arguments.vstruct.ui>, v.vid_group, v.is_available, v.link_kind, v.link_path_url</cfif>
 			ORDER BY #session.sortby# 
 		</cfquery>
+
 		<!--- Add the amount of assets to the query --->
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry_vid.recordcount>
 		<cfset QueryAddcolumn(qry_vid, "cnt", "integer", amount)>
+		<cfquery name="qry_vid" dbtype="query">
+			SELECT * FROM qry_vid WHERE id IS NOT NULL
+		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_vid />
 	</cffunction>
@@ -754,6 +815,32 @@
 
 				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				AND a.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.astruct.available#">
+				<!--- Check Permissions --->
+				AND CASE
+					<!--- Check if admin --->
+					WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))  THEN 'unlocked'
+					<!--- Check permission on this folder --->
+					WHEN EXISTS(
+						SELECT fg.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg
+						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg.folder_id_r = a.folder_id_r
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						) THEN 'unlocked'
+					<!--- When folder is shared for everyone --->
+					WHEN EXISTS(
+						SELECT fg2.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg2
+						WHERE fg2.grp_id_r = '0'
+						AND fg2.folder_id_r = a.folder_id_r
+						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						) THEN 'unlocked'
+					<!--- When user is folder owner --->
+					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
+					ELSE 'locked'
+				END = 'unlocked'
 				<!--- Only if we have dates --->
 				<cfif arguments.astruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -802,6 +889,9 @@
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry_aud.recordcount>
 		<cfset QueryAddcolumn(qry_aud, "cnt", "integer", amount)>
+		<cfquery name="qry_aud" dbtype="query">
+			SELECT * FROM qry_aud WHERE id IS NOT NULL
+		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_aud />
 	</cffunction>
@@ -973,6 +1063,32 @@
 				</cfif>
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				AND f.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fstruct.available#">
+				<!--- Check Permissions --->
+				AND CASE
+					<!--- Check if admin --->
+					WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))  THEN 'unlocked'
+					<!--- Check permission on this folder --->
+					WHEN EXISTS(
+						SELECT fg.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg
+						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg.folder_id_r = f.folder_id_r
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						) THEN 'unlocked'
+					<!--- When folder is shared for everyone --->
+					WHEN EXISTS(
+						SELECT fg2.folder_id_r
+						FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg2
+						WHERE fg2.grp_id_r = '0'
+						AND fg2.folder_id_r = f.folder_id_r
+						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						) THEN 'unlocked'
+					<!--- When user is folder owner --->
+					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
+					ELSE 'locked'
+				END = 'unlocked'
 				<!--- Only if we have dates --->
 				<cfif arguments.fstruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -1017,10 +1133,6 @@
 			<cfif arguments.fstruct.ui>, f.is_available, f.link_kind, f.link_path_url</cfif>
 	        ORDER BY #session.sortby#
 		</cfquery>
-		<!--- Add the amount of assets to the query --->
-		<cfset var amount = ArrayNew(1)>
-		<cfset amount[1] = qry_doc.recordcount>
-		<cfset QueryAddcolumn(qry_doc, "cnt", "integer", amount)>
 		<!--- If we query for doc only and have a filetype we filter the results --->
 		<cfif arguments.fstruct.show NEQ "all" AND arguments.fstruct.show EQ "doc" AND arguments.fstruct.doctype NEQ "">
 			<cfquery dbtype="query" name="qry_doc">
@@ -1048,6 +1160,13 @@
 			</cfswitch>
 			</cfquery>
 		</cfif>
+		<!--- Add the amount of assets to the query --->
+		<cfset var amount = ArrayNew(1)>
+		<cfset amount[1] = qry_doc.recordcount>
+		<cfset QueryAddcolumn(qry_doc, "cnt", "integer", amount)>
+		<cfquery name="qry_doc" dbtype="query">
+			SELECT * FROM qry_doc WHERE id IS NOT NULL
+		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_doc />
 	</cffunction>
@@ -1102,10 +1221,16 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfset updateSearch(api_key=arguments.api_key,assetid=arguments.assetid)>
-			<!--- Feedback --->
-			<cfset thexml.responsecode = 0>
-			<cfset thexml.message = "Indexing successfully triggered">
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<cfset updateSearch(api_key=arguments.api_key,assetid=arguments.assetid)>
+				<!--- Feedback --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Indexing successfully triggered">
+			<!--- User not admin --->
+		<cfelse>
+			<cfset var thexml = noaccess("s")>
+		</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>

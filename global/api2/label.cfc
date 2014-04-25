@@ -32,15 +32,21 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Get Cachetoken --->
-			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getall */ label_id, label_text, label_path
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
-			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
-			ORDER BY label_path
-			</cfquery>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Get Cachetoken --->
+				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				SELECT /* #cachetoken#getall */ label_id, label_text, label_path
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+				WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				ORDER BY label_path
+				</cfquery>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
@@ -57,16 +63,25 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Get Cachetoken --->
-			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getlabel */ label_id, label_text, label_path
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
-			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
-			AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.label_id#" list="Yes">)
-			ORDER BY label_path
-			</cfquery>
+			<!--- Get permission for label --->
+			<cfset var labelaccess = checkLabelPerm(arguments.label_id)>
+			<!--- If user has access --->
+			<cfif labelaccess>
+				<!--- Get Cachetoken --->
+				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				SELECT /* #cachetoken#getlabel */ label_id, label_text, label_path
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l
+				WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.label_id#" list="Yes">)
+				ORDER BY label_path
+				</cfquery>
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var thexml = noaccess()>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
@@ -85,20 +100,26 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set Values --->
-			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
-			<!--- Set Arguments --->
-			<cfset arguments.thestruct.label_id = arguments.label_id>
-			<cfset arguments.thestruct.label_text = arguments.label_text>
-			<cfset arguments.thestruct.label_parent = arguments.label_parent>
-			<!--- call internal method --->
-			<cfinvoke component="global.cfc.labels" method="admin_update" thestruct="#arguments.thestruct#" returnVariable="lid">
-			<!--- Return --->
-			<cfset thexml.responsecode = 0>
-			<cfset thexml.message = "Label successfully added or updated">
-			<cfset thexml.label_id = lid>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Set Values --->
+				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+				<!--- Set Arguments --->
+				<cfset arguments.thestruct.label_id = arguments.label_id>
+				<cfset arguments.thestruct.label_text = arguments.label_text>
+				<cfset arguments.thestruct.label_parent = arguments.label_parent>
+				<!--- call internal method --->
+				<cfinvoke component="global.cfc.labels" method="admin_update" thestruct="#arguments.thestruct#" returnVariable="lid">
+				<!--- Return --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Label successfully added or updated">
+				<cfset thexml.label_id = lid>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess("s")>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
@@ -115,18 +136,24 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set Values --->
-			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
-			<!--- Loop over label_id and remove them --->
-			<cfloop list="#arguments.label_id#" index="i" delimiters=",">
-				<!--- Call internal function --->
-				<cfinvoke component="global.cfc.labels" method="admin_remove" id="#i#">
-			</cfloop>
-			<!--- Return --->
-			<cfset thexml.responsecode = 0>
-			<cfset thexml.message = "Label(s) successfully removed">
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Set Values --->
+				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+				<!--- Loop over label_id and remove them --->
+				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
+					<!--- Call internal function --->
+					<cfinvoke component="global.cfc.labels" method="admin_remove" id="#i#">
+				</cfloop>
+				<!--- Return --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Label(s) successfully removed">
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess("s")>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
@@ -146,50 +173,60 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- If we replace, then remove all labels for this record first --->
-			<cfif !arguments.append>
-				<cfquery datasource="#application.razuna.api.dsn#">
-				DELETE FROM ct_labels
-				WHERE ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
-				AND ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
-				</cfquery>
-			</cfif>
-			<!--- Loop over label_id and add them --->
-			<cfloop list="#arguments.label_id#" index="i" delimiters=",">
-				<!--- Add to DB --->				
-				<cftry>
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.asset_id)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+
+				<!--- If we replace, then remove all labels for this record first --->
+				<cfif !arguments.append>
 					<cfquery datasource="#application.razuna.api.dsn#">
-					INSERT INTO ct_labels
-					(
-						ct_label_id,
-						ct_id_r,
-						ct_type,
-						rec_uuid
-					)
-					VALUES
-					(
-						<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
-						<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />,
-						<cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />,
-						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
+					DELETE FROM ct_labels
+					WHERE ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
+					AND ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
 					</cfquery>
-					<cfcatch type="database">
-						<cfset consoleoutput(true)>
-						<cfset console(cfcatch)>
-					</cfcatch>
-				</cftry>
-			</cfloop>
-			<!--- Update Dates --->
-			<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.asset_type#" fileid="#arguments.asset_id#" />
-			<!--- Call workflow --->
-			<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.asset_id)>
-			<!--- Flush cache --->
-			<cfset resetcachetoken(arguments.api_key,"search")>
-			<cfset resetcachetoken(arguments.api_key,"labels")>
-			<!--- Return --->
-			<cfset thexml.responsecode = 0>
-			<cfset thexml.message = "Label(s) added to asset successfully">
+				</cfif>
+				<!--- Loop over label_id and add them --->
+				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
+					<!--- Add to DB --->				
+					<cftry>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						INSERT INTO ct_labels
+						(
+							ct_label_id,
+							ct_id_r,
+							ct_type,
+							rec_uuid
+						)
+						VALUES
+						(
+							<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
+							<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />,
+							<cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />,
+							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+						)
+						</cfquery>
+						<cfcatch type="database">
+							<cfset consoleoutput(true)>
+							<cfset console(cfcatch)>
+						</cfcatch>
+					</cftry>
+				</cfloop>
+				<!--- Update Dates --->
+				<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.asset_type#" fileid="#arguments.asset_id#" />
+				<!--- Call workflow --->
+				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.asset_id)>
+				<!--- Flush cache --->
+				<cfset resetcachetoken(arguments.api_key,"search")>
+				<cfset resetcachetoken(arguments.api_key,"labels")>
+				<!--- Return --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Label(s) added to asset successfully">
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var thexml = noaccess("s")>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
@@ -207,22 +244,31 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Loop over label_id and remove them --->
-			<cfloop list="#arguments.label_id#" index="i" delimiters=",">
-				<cfquery datasource="#application.razuna.api.dsn#">
-				DELETE FROM ct_labels
-				WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
-				AND ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
-				</cfquery>
-			</cfloop>
-			<!--- Call workflow --->
-			<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.asset_id)>
-			<!--- Flush cache --->
-			<cfset resetcachetoken(arguments.api_key,"search")>
-			<cfset resetcachetoken(arguments.api_key,"labels")>
-			<!--- Return --->
-			<cfset thexml.responsecode = 0>
-			<cfset thexml.message = "Label(s) removed from asset successfully">
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+				<!--- Loop over label_id and remove them --->
+				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
+					<cfquery datasource="#application.razuna.api.dsn#">
+					DELETE FROM ct_labels
+					WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
+					AND ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
+					</cfquery>
+				</cfloop>
+				<!--- Call workflow --->
+				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.asset_id)>
+				<!--- Flush cache --->
+				<cfset resetcachetoken(arguments.api_key,"search")>
+				<cfset resetcachetoken(arguments.api_key,"labels")>
+				<!--- Return --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Label(s) removed from asset successfully">
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var thexml = noaccess("s")>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
@@ -240,18 +286,27 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Get Cachetoken --->
-			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path, ct.ct_id_r as assetid
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
-			WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
-			AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
-			AND ct.ct_label_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
-			AND l.label_id = ct.ct_label_id
-			AND l.host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
-			</cfquery>
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+				<!--- Get Cachetoken --->
+				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+				SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path, ct.ct_id_r as assetid
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
+				WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
+				AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
+				AND ct.ct_label_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
+			<!--- No access --->
+			<cfelse>
+				<!--- Return --->
+				<cfset var thexml = noaccess()>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
@@ -274,7 +329,7 @@
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfset session.sortby = "name">
-			<!--- Call internal function --->
+			<!--- Call internal function, method labels_assets already checks proper permissions for user and returns appropriate labels--->
 			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="thexml">
 		<!--- No session found --->
 		<cfelse>
@@ -294,28 +349,34 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Get Cachetoken --->
-			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qryLabels" cachedwithin="1" region="razcache">
-				SELECT /* #cachetoken#searchlabela */ label_id, label_text, label_path
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
-				WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
-				<cfif arguments.searchfor NEQ '*'>
-					AND (label_text LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />
-					OR label_path LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />)
-				</cfif>	
-				ORDER BY label_path
-			</cfquery>
-			<!--- Get labels if more than 1000 labels --->
-			<cfif  qryLabels.RecordCount GT 1000 AND arguments.overridemax EQ 0>
-				<cfquery dbtype="query" name="q" maxrows="1000">
-					SELECT * FROM qryLabels
-				</cfquery>			
-				<cfset thexml.responsecode = 1>
-				<cfset thexml.message = "The search returned more than a 1000 records: #qryLabels.RecordCount# records. If you still wish to continue please use the 'overridemax' parameter. Doing so may take up server resources so please do it at own risk.">
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Get Cachetoken --->
+				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qryLabels" cachedwithin="1" region="razcache">
+					SELECT /* #cachetoken#searchlabela */ label_id, label_text, label_path
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+					WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+					<cfif arguments.searchfor NEQ '*'>
+						AND (label_text LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />
+						OR label_path LIKE <cfqueryparam value="%#arguments.searchfor#%" cfsqltype="cf_sql_varchar" />)
+					</cfif>	
+					ORDER BY label_path
+				</cfquery>
+				<!--- Get labels if more than 1000 labels --->
+				<cfif  qryLabels.RecordCount GT 1000 AND arguments.overridemax EQ 0>
+					<cfquery dbtype="query" name="q" maxrows="1000">
+						SELECT * FROM qryLabels
+					</cfquery>			
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "The search returned more than a 1000 records: #qryLabels.RecordCount# records. If you still wish to continue please use the 'overridemax' parameter. Doing so may take up server resources so please do it at own risk.">
+				<cfelse>
+					<cfset thexml = qryLabels>
+				</cfif>
+			<!--- User not admin --->
 			<cfelse>
-				<cfset thexml = qryLabels>
+				<cfset var thexml = noaccess("s")>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
