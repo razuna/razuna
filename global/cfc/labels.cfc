@@ -425,6 +425,7 @@
 				<!--- Ensure user is folder owner or has access to folder in which asset resides --->
 				AND 
 				(
+				<!--- Check if  user is admin --->
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
 				EXISTS (
@@ -441,18 +442,34 @@
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' 
 					) 
 				OR
+				<!--- Check if folder privilege is 'Everyone', groupid=0 --->
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  fo.folder_id = f.folder_id_r  AND f.grp_id_r = '0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#collections_groups f WHERE c.col_id = f.col_id_r AND f.grp_id_r = '0' 
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND  f.grp_id_r = '0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0) AND fg.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0'
+					)
+				OR
+				<!--- Check is user is in group that has access --->
+				EXISTS (
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('R','W','X')
 					)
 				)
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -542,13 +559,23 @@
 					) 
 				OR
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
 					UNION
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0) AND fg.grp_permission IN  ('R','W','X')
+					SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0'
+					)
+				OR
+				EXISTS (
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('R','W','X')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('R','W','X')
 					)
 				)
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -584,7 +611,9 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#session.theuserid#' )
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE l.ct_id_r = f.folder_id_r AND  f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X'))
 				)
 			) AS count_folders,
 			(
@@ -599,7 +628,9 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#session.theuserid#' )
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.col_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM  #session.hostdbprefix#collections_groups f WHERE l.ct_id_r = f.col_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X'))
 				)
 			) AS count_collections
 		FROM ct_labels
@@ -691,7 +722,9 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
@@ -727,7 +760,9 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0) AND fg.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('R','W','X'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
@@ -763,7 +798,9 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('R','W','X'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
@@ -799,7 +836,9 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' ) 
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND (f.grp_id_r = c.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE a.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('R','W','X'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
@@ -830,7 +869,7 @@
 			</cfloop>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache" result="myqry">
 			SELECT /* #variables.cachetoken#getlabelsfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection, '' AS perm
 			FROM #session.hostdbprefix#folders f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -846,6 +885,8 @@
 				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND fg.grp_permission IN  ('R','W','X'))
 			)
 			</cfquery>
+			<cfset console(myqry.sql)>
+			<cfset console(myqry.sqlparameters)>
 			<!--- Get proper folderaccess --->
 			<cfloop query="qry">
 				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
@@ -870,7 +911,9 @@
 				OR
 				col_owner = '#session.theuserid#' 
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND (f.grp_id_r = cc.ct_g_u_grp_id OR f.grp_id_r = 0) AND f.grp_permission IN  ('R','W','X'))
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections_groups f WHERE c.col_id = f.col_id_r AND  f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('R','W','X'))
 			)
 			GROUP BY c.col_id, c.folder_id_r, ct.col_name
 			</cfquery>
