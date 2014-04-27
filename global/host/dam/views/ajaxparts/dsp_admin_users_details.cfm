@@ -175,10 +175,10 @@
 							</cfif>
 							<br /><br />
 							<!--- Show the rest of the groups  --->
-							<!--- <cfloop query="qry_groups">
+							<cfloop query="qry_groups">
 								<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
 								<br />
-							</cfloop> --->
+							</cfloop>
 						</cfif>
 					<!--- simply show the names of the groups for non admin users --->
 					<cfelse>
