@@ -114,7 +114,7 @@
 			<!--- Loop over the assetid --->
 			<cfloop list="#arguments.assetid#" index="i" delimiters=",">
 				<!--- Get permission for asset (folder) --->
-				<cfset var folderaccess = checkFolderPerm(i)>
+				<cfset var folderaccess = checkFolderPerm(arguments.api_key, i)>
 				<!--- If user has access --->
 				<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 					<!--- Loop over struct --->

@@ -81,7 +81,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.id_related)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.id_related)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Create internal struct --->

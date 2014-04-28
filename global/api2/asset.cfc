@@ -35,7 +35,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Param --->
@@ -373,7 +373,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Set db and id --->
@@ -416,7 +416,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
@@ -704,7 +704,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
@@ -1030,7 +1030,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Set file id --->
@@ -1176,7 +1176,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get exiftool.exe file path --->
@@ -1488,7 +1488,7 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Instantiate local vars --->

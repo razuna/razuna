@@ -64,7 +64,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for label --->
-			<cfset var labelaccess = checkLabelPerm(arguments.label_id)>
+			<cfset var labelaccess = checkLabelPerm(arguments.api_key, arguments.label_id)>
 			<!--- If user has access --->
 			<cfif labelaccess>
 				<!--- Get Cachetoken --->
@@ -174,7 +174,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.asset_id)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.asset_id)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 
@@ -245,7 +245,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Loop over label_id and remove them --->
@@ -287,7 +287,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
