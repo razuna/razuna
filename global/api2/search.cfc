@@ -340,7 +340,7 @@
 						FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg
 						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND fg.folder_id_r = i.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 						) THEN 'unlocked'
 					<!--- When folder is shared for everyone --->
@@ -350,7 +350,7 @@
 						WHERE fg2.grp_id_r = '0'
 						AND fg2.folder_id_r = i.folder_id_r
 						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
 					<!--- When user is folder owner --->
 					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -585,7 +585,7 @@
 						FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg
 						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND fg.folder_id_r = v.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 						) THEN 'unlocked'
 					<!--- When folder is shared for everyone --->
@@ -595,7 +595,7 @@
 						WHERE fg2.grp_id_r = '0'
 						AND fg2.folder_id_r = v.folder_id_r
 						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
 					<!--- When user is folder owner --->
 					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -825,7 +825,7 @@
 						FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg
 						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND fg.folder_id_r = a.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 						) THEN 'unlocked'
 					<!--- When folder is shared for everyone --->
@@ -835,7 +835,7 @@
 						WHERE fg2.grp_id_r = '0'
 						AND fg2.folder_id_r = a.folder_id_r
 						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
 					<!--- When user is folder owner --->
 					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -1073,7 +1073,7 @@
 						FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg
 						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND fg.folder_id_r = f.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 						) THEN 'unlocked'
 					<!--- When folder is shared for everyone --->
@@ -1083,7 +1083,7 @@
 						WHERE fg2.grp_id_r = '0'
 						AND fg2.folder_id_r = f.folder_id_r
 						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
 					<!--- When user is folder owner --->
 					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'

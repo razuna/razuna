@@ -59,12 +59,13 @@
 	<cffunction name="getlabel" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="label_id" required="true">
+		<cfset privileges = 'r,w,x'> <!--- Only users with read, write or full access permissions can call this method --->
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for label --->
-			<cfset var labelaccess = checkLabelPerm(arguments.api_key, arguments.label_id)>
+			<cfset var labelaccess = checkLabelPerm(arguments.api_key, arguments.label_id, privileges)>
 			<!--- If user has access --->
 			<cfif labelaccess>
 				<!--- Get Cachetoken --->
@@ -169,12 +170,13 @@
 		<cfargument name="asset_id" required="true">
 		<cfargument name="asset_type" required="true">
 		<cfargument name="append" required="false" default="true">
+		<cfset privileges = 'w,x'> <!--- Only users with write or full access permissions can call this method --->
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.asset_id)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.asset_id, privileges)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 
@@ -240,12 +242,13 @@
 		<cfargument name="api_key" required="true">
 		<cfargument name="label_id" required="true">
 		<cfargument name="asset_id" required="true">
+		<cfset privileges = 'w,x'> <!--- Only users with write or full access permissions can call this method --->
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid,privileges)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Loop over label_id and remove them --->
@@ -289,7 +292,7 @@
 			<!--- Get permission for asset (folder) --->
 			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R" OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 				<!--- Query --->

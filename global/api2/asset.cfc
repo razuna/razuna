@@ -37,7 +37,7 @@
 			<!--- Get permission for asset (folder) --->
 			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Param --->
 				<cfset thestorage = "">
 				<!--- Images --->
@@ -375,7 +375,7 @@
 			<!--- Get permission for asset (folder) --->
 			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Set db and id --->
 				<cfif arguments.assettype EQ "img">
 					<cfset var thedb = "xmp">
@@ -617,9 +617,10 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- If user is in admin --->
-			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
-
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Put values into struct to be compatible with global cfcs --->
 				<cfset orgstruct = structnew()>
 				<cfset orgstruct.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
@@ -682,7 +683,7 @@
 				<!--- Feedback --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "Asset(s) have been removed successfully">
-		<!--- User not admin --->
+		<!---No access --->
 		<cfelse>
 			<cfset var thexml = noaccess("s")>
 		</cfif>
@@ -706,7 +707,7 @@
 			<!--- Get permission for asset (folder) --->
 			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
 				<cfset var cachetokenvid = getcachetoken(arguments.api_key,"videos")>
 				<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
@@ -965,8 +966,10 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- If user is in admin --->
-			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+			<!--- Get permission for asset (folder) --->
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Params --->
 				<cfset var s = structNew()>
 				<cfset s.folder_id = arguments.destination_folder>
@@ -1003,7 +1006,7 @@
 					<cfset thexml.responsecode = 0>
 					<cfset thexml.message = "Asset(s) have been moved successfully">
 				</cfif>
-			<!--- User not admin --->
+			<!--- No access --->
 			<cfelse>
 				<cfset var thexml = noaccess()>
 			</cfif>
@@ -1490,7 +1493,7 @@
 			<!--- Get permission for asset (folder) --->
 			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Instantiate local vars --->
 				<cfset var thestruct = structnew()>
 				<cfset var theqry= querynew("responsecode,message")>

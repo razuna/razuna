@@ -39,7 +39,7 @@
 			<!--- Get permission for folder --->
 			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folderid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
 				<cfset var cachetokenvid = getcachetoken(arguments.api_key,"videos")>
 				<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
@@ -414,8 +414,10 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- If user is in admin --->
-			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+			 <!--- Get permission for folder --->
+			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folderid)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 				<!--- Query folder --->
@@ -491,7 +493,7 @@
 					</cfif>
 				
 				<cfset thexml = qry>
-			<!--- User not admin --->
+			<!--- No access --->
 			<cfelse>
 				<cfset var thexml = noaccess()>
 			</cfif>
@@ -515,7 +517,7 @@
 			<!--- Get permission for folder --->
 			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folderid)>
 			<!--- If user has access --->
-			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
@@ -571,23 +573,30 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- If user is in admin --->
-			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
-				<!--- Create a new ID --->
-				<cfset var newfolderid = createuuid("")>
-				<!--- If this is on level 1 then have the main id inserted else query for it --->
-				<cfif arguments.folder_related EQ "">
-					<cfset var themainidr = newfolderid>
-					<cfset var thelevel = 1>
-				<cfelse>
-					<cfquery datasource="#application.razuna.api.dsn#" name="qrymainfid">
-					SELECT folder_main_id_r, folder_level
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders
-					WHERE folder_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_related#">
-					</cfquery>
-					<cfset var themainidr = qrymainfid.folder_main_id_r>
-					<cfset var thelevel = qrymainfid.folder_level + 1>
+			<!--- Create a new ID --->
+			<cfset var newfolderid = createuuid("")>
+			<!--- If this is on level 1 then have the main id inserted else query for it --->
+			<cfif arguments.folder_related EQ "">
+				<cfset var themainidr = newfolderid>
+				<cfset var thelevel = 1>
+				<!--- If folder on root level then check to ensure user is admin --->
+				<cfif not(listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0)>
+					<cfset var thexml = noaccess("s")>
+					<cfreturn thexml>
 				</cfif>
+			<cfelse>
+				<cfquery datasource="#application.razuna.api.dsn#" name="qrymainfid">
+				SELECT folder_main_id_r, folder_level
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders
+				WHERE folder_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_related#">
+				</cfquery>
+				<cfset var themainidr = qrymainfid.folder_main_id_r>
+				<cfset var thelevel = qrymainfid.folder_level + 1>
+			</cfif>
+			<!--- Get permission for folder --->
+			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folder_related)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Insert --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#folders
@@ -642,7 +651,7 @@
 				<cfset thexml.folder_id = newfolderid>
 				<!--- Apply custom settings to new folder --->
 				<cfinvoke component="global.cfc.folders" method="apply_custom_shared_setting" folder_id="#newfolderid#" />
-			<!--- User not admin --->
+			<!--- No access --->
 			<cfelse>
 				<cfset var thexml = noaccess("s")>
 			</cfif>
@@ -662,8 +671,10 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- If user is in admin --->
-			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+			<!--- Get permission for folder --->
+			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folder_id)>
+			<!--- If user has access --->
+			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<cfif arguments.folder_id NEQ 1 AND arguments.folder_id NEQ 2>
 					<!--- Struct --->
 					<cfset var fs = structnew()>
@@ -724,7 +735,7 @@
 					<cfset thexml.responsecode = 1>
 					<cfset thexml.message = "You can not remove default folders!">
 				</cfif>
-			<!--- User not admin --->
+			<!--- No access --->
 			<cfelse>
 				<cfset var thexml = noaccess("s")>
 			</cfif>

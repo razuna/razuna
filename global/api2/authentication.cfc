@@ -102,10 +102,10 @@
 			<cfset var thexml = querynew("responsecode,message")>
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
-			<cfset querysetcell(thexml,"message","Login not valid! Check API Key and that the user is Administrator")>
+			<cfset querysetcell(thexml,"message","Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.")>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
-			<cfset thexml.message = "Login not valid! Check API Key and that user is Administrator">
+			<cfset thexml.message = "Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.">
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -119,10 +119,10 @@
 			<cfset var thexml = querynew("responsecode,message")>
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
-			<cfset querysetcell(thexml,"message","Login not valid! Check API Key and ensure that the user has the appropriate permissions for access. User must have write privileges on data.")>
+			<cfset querysetcell(thexml,"message","No permissible data found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.")>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
-			<cfset thexml.message = "Login not valid! Check API Key and ensure that the user has the appropriate permissions for access. User must have write privileges on data.">
+			<cfset thexml.message = "No permissible data found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.">
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -324,8 +324,8 @@
 
 	<!--- Check permissions on asset based on the folder permissions in which it resides --->
     <!--- Check to see if user has permission to access folder in which asset resides. There can be 3 cases:
-	1) User has been granted write or full access (w or x) access privileges on folder containing asset
-	2) Folder containing asset has write or full access (w or x) access for everyone (groupid=0)
+	1) User has been granted appropriate access privileges on folder containing asset
+	2) Folder containing asset has appropriate access for everyone (groupid=0)
 	3) User is owner of folder (folder_owner column in raz1_folders) containing asset
 	--->
 	<cffunction name="checkFolderPerm" access="public" output="no">
@@ -453,10 +453,11 @@
 		<cfreturn folderaccess />
 	</cffunction>
 
-	<!--- Get folder access for user --->
+	<!--- Get label permissions for user --->
 	<cffunction hint="Get Label Permissions" name="checkLabelPerm" output="true" returntype="string">
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="label_id" required="true" type="string">
+		<cfargument name="privileges" required="true" type="string">
 		<!--- Param --->
 		<cfset var fprop = "">
 		<!--- Set the access rights for this folder --->
@@ -495,30 +496,30 @@
 					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders WHERE folder_id =  fo.folder_id_r AND folder_owner = '#session.theuserid#' 
 					) 
 				OR
-				<!--- Check if folder containing asset that has label is accessible to 'Everyone' and that user has write or full access privileges on it   --->
+				<!--- Check if folder containing asset that has label is accessible to 'Everyone' and that user has appropriate access privileges on it   --->
 				EXISTS (
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND lower(f.grp_permission) IN  ('w','x')
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND lower(f.grp_permission) IN  ('w','x')
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND lower(f.grp_permission) IN  ('w','x')
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND lower(fg.grp_permission) IN  ('w','x')
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  fo.folder_id = fg.folder_id_r AND fg.grp_id_r = '0' AND lower(fg.grp_permission) IN  ('w','x')
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  fo.folder_id = fg.folder_id_r AND fg.grp_id_r = '0' AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					)
 				OR
-				<!--- Check if folder containing asset that has label is accessible to a group that user belows to and that he has write or full access privileges on it  --->
+				<!--- Check if folder containing asset that has label is accessible to a group that user belows to and that he has appropriate access privileges on it  --->
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('w','x')
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('w','x')
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('w','x')
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('w','x')
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('w','x')
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					)
 				)
 			</cfquery>
