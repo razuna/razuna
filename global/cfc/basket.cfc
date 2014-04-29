@@ -82,6 +82,7 @@
 	</cfloop>
 	<!--- Remove expired assets from cart --->
 	<cfquery datasource="#variables.dsn#" name="removeexpired">
+		<cfif application.razuna.thedatabase NEQ "h2">
 		DELETE c FROM #session.hostdbprefix#cart c 
 		LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
 		LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
@@ -92,6 +93,24 @@
 		OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 		OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 		OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+		<cfelse>
+		DELETE FROM #session.hostdbprefix#cart c
+			WHERE EXISTS (
+			SELECT 1 FROM #session.hostdbprefix#cart cc
+			LEFT JOIN #session.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img'
+			LEFT JOIN #session.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud'
+			LEFT JOIN #session.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid'
+			LEFT JOIN #session.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc'
+			WHERE
+			c.cart_product_id=cc.cart_product_id
+			AND
+			(i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			)
+		)
+		</cfif>
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
