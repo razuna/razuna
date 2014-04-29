@@ -81,8 +81,11 @@
 	<cfargument name="thestruct" type="Struct">
 	<cfparam name="arguments.thestruct.grp_id_assigneds_ecp" type="string" default="">
 	<cfparam name="arguments.thestruct.grp_id_assigneds_adm" type="string" default="">
-	<!--- Delete all groups from this user --->
-	<cfinvoke method="deleteUser" thestruct="#arguments.thestruct#">
+	<!--- If not new user then delete old groups for user --->
+	<cfif isdefined("arguments.thestruct.newid")>
+		<!--- Delete all groups from this user --->
+		<cfinvoke method="deleteUser" thestruct="#arguments.thestruct#">
+	</cfif>
 	<!--- Insert user to the group cross table --->
 	<cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
 		<cfif Left(myform, Len("webgroup_")) eq "webgroup_">

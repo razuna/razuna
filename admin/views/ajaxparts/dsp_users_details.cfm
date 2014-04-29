@@ -23,6 +23,14 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+
+<!--- Turn expiry date input into a jQuery datepicker --->
+  <script>
+	  $(function() {
+	    $( "#user_expirydate").datepicker();
+	  });
+  </script>
+
 <cfoutput>
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
 <input type="hidden" name="#theaction#" value="c.users_save">
