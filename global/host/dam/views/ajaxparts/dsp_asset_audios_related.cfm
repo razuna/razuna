@@ -33,7 +33,7 @@
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F">
-						<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)<br />
+						<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB) [#aud_name#]<br />
 						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank">
 					<cfelse>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank">
