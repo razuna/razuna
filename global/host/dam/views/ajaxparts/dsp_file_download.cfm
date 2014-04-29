@@ -66,7 +66,7 @@
 				<cfloop query="qry_share_options">
 					<cfif asset_format EQ theid>
 						<tr>
-							<td><strong>#ucase(theext)#</strong><br><cfif theilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
+							<td><strong>#ucase(theext)#</strong><br><cfif theilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel<br>[#attributes.qry_related.img_filename#]</td>
 							<td valign="top">
 								<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 									<a href="#myself#c.serve_file&file_id=#theid#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
@@ -106,7 +106,7 @@
 				<cfloop query="qry_share_options">
 					<cfif asset_format EQ theid>
 						<tr>
-							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB) #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
+							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB) #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel<br>[#attributes.qry_related.vid_filename#]</td>
 							<td valign="top">
 								<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 									<a href="#myself#c.serve_file&file_id=#theid#&type=vid&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
@@ -144,7 +144,7 @@
 				<cfloop query="qry_share_options">
 					<cfif asset_format EQ theid>
 						<tr>
-							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</td>
+							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)<br>[#attributes.qry_related.aud_name#]</td>
 							<td valign="top">
 								<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 									<a href="#myself#c.serve_file&file_id=#theid#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
