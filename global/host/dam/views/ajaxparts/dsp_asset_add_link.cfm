@@ -41,8 +41,16 @@
 			<tr>
 				<td nowrap="true" style="padding-top:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_asset_store")#</strong></td>
 			</tr>
+			<!--- Hide UPC settings if storage is not local --->
+			 <cfif !application.razuna.storage eq 'local'>
+			 	<cfset csshide= "style='display:none'">
+			 <cfelse> 
+			 	<cfset csshide= "">
+			</cfif>
 			<tr>
-				<td><input name="link_kind" type="radio" value="url" checked="true" onclick="togglefileinput(1)"> On public URL <input name="link_kind" type="radio" value="urlvideo" onclick="togglefileinput(1)"> Video with embedded player <cfif !application.razuna.isp><input name="link_kind" type="radio" value="lan" onclick="togglefileinput(0)"> Available on my local network</cfif></td>
+				<td><input name="link_kind" type="radio" value="url" checked="true" onclick="togglefileinput(1)"> On public URL <input name="link_kind" type="radio" value="urlvideo" onclick="togglefileinput(1)"> Video with embedded player <cfif !application.razuna.isp>
+				<span  #csshide#><input name="link_kind" type="radio" value="lan" onclick="togglefileinput(0)"> Available on my local network</span>
+				</cfif></td>
 			</tr>
 			<tr>
 				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_path_url")#</strong></td>
