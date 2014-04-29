@@ -941,15 +941,18 @@
 		<cfset var theimgpath = "login">
 	<cfelse>
 		<cfset var theimgpath = "favicon">
-		<!--- just remove any previous directory (like this we prevent having more the one image) --->
-		<cfif directoryExists("#arguments.thestruct.thepathup#/global/host/#theimgpath#/#session.hostid#")>
-			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
-		</cfif>
 	</cfif>
-	<!--- Create directory if not there already to hold this logo --->
+
+	<!--- Just remove any previous directory (like this we prevent having more the one image) --->
+	<cfif directoryExists("#arguments.thestruct.thepathup#/global/host/#theimgpath#/#session.hostid#")>
+		<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
+	</cfif>
+
 	<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#")>
+		 <!--- Create directory if not there already to hold this logo --->
 		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" mode="775">
 	</cfif>
+
 	<!---  Upload file --->
 	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" result="result" nameconflict="overwrite" mode="775">
 	<!--- Set variables that show the file in the GUI --->
@@ -978,6 +981,13 @@
 	</cftry>
 	<!---  Upload file --->
 	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" result="result" nameconflict="overwrite" mode="775">
+	<!--- Update wm_image_path with uploaded filename --->
+	<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#wm_templates_val
+		SET wm_image_path = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.wm_temp_id#/#result.serverFile#">
+		WHERE wm_temp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.wm_temp_id#">
+	</cfquery>
+
 	<!--- Create var --->
 	<cfset s.fordbpath = "#arguments.thestruct.wm_temp_id#/#result.serverFile#">
 	<cfset s.imgpath = "global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#/#result.serverFile#">

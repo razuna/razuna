@@ -94,7 +94,7 @@
 								<cfloop query="qry_thefile">
 									<cfif myid EQ file_id>
 										<!--- If it is a PDF we show the thumbnail --->
-										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "INDD")>
 											<img src="#cloud_url#" border="0">
 										<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "INDD")>
 											<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>

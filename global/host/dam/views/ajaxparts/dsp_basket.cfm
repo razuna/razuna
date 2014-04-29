@@ -93,7 +93,7 @@
 										<cfif myid EQ file_id>
 											<a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;">
 												<!--- If it is a PDF we show the thumbnail --->
-												<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+												<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND  (file_extension EQ "PDF" OR file_extension EQ "INDD")>
 													<img src="#cloud_url#" border="0">
 												<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "INDD")>
 													<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
