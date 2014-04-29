@@ -108,7 +108,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND (folder_is_collection IS NULL OR folder_is_collection = '')
 			AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">
-			AND folder_id_r != folder_id
+			AND folder_id_r <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> folder_id
 			ORDER BY folder_name
 			</cfquery>
 			<!--- If more found then call this function again --->

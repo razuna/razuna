@@ -30,13 +30,16 @@
 
 <div id="theuser">
 	<ul>
-		<cfif #attributes.user_id# eq 0>
+		<cfif attributes.user_id EQ 0>
 			<li><a href="##user">#defaultsObj.trans("user_add")#</a></li>
 		<cfelse>
 			<li><a href="##user">#defaultsObj.trans("user_edit")#</a></li>
 		</cfif>
 		<li><a href="##groups">#defaultsObj.trans("groups")#</a></li>
 		<li><a href="##user_hosts">Tenants/Hosts</a></li>
+		<cfif attributes.user_id NEQ 0>
+			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.users_api&user_id=#attributes.user_id#');">API Key</a></li>
+		</cfif>
 	</ul>
 	<!--- User --->
 	<div id="user">
@@ -187,6 +190,10 @@
 			</cfloop>
 		</table>
 	</div>
+	<!--- API --->
+	<cfif attributes.user_id NEQ 0>
+		<div id="tab_api"></div>
+	</cfif>
 	<!--- <div id="submit" style="float:right;padding:10px;"><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button" tabindex="13"></div> --->
 
 	<div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>

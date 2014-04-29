@@ -223,6 +223,10 @@
 	<fuseaction name="randompass">
   		<include template="dsp_randompass" />
 	</fuseaction>
+	<!-- Users API -->
+	<fuseaction name="users_api">
+  		<include template="dsp_users_api" />
+	</fuseaction>
 
 	<!-- Groups -->
 	<fuseaction name="groups">
