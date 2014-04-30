@@ -1303,47 +1303,19 @@
 		<cfif application.razuna.storage EQ "local">
 			<!--- Get the directory list --->
 			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- Call ListFolder --->
-			<cfinvoke component="nirvanix" method="listfolder" returnvariable="filesxml">
-				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-				<cfinvokeargument name="folderpath" value="/#qry_thefile.path_to_asset#/razuna_pdf_images/">
-				<cfinvokeargument name="pagenumber" value="1">
-				<cfinvokeargument name="pagesize" value="100">
-			</cfinvoke>
-			<!--- XPath of the XML returned from Nirvanix --->
-			<cfset mysearch = xmlsearch(filesxml, "/Response/ListFolder/File")>
-			<!--- Set an empty query --->
-			<cfset lqry.qry_pdfjpgs = QueryNew("Name")>
-			<!--- Get lenght of Array --->
-			<cfset nr = arraylen(mysearch)>
-			<!--- Loop over XML and add it to query --->
-			<cfif nr IS NOT 0>
-				<cfloop from="1" to="#nr#" index="i">
-					<cfset newRow = QueryAddRow(lqry.qry_pdfjpgs, i)>
-					<cfset temp = QuerySetCell(lqry.qry_pdfjpgs, "Name", "#mysearch[i].Name.xmltext#", i)>
+			<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
+			<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
+				<cfset theloopstart = 0>
+				<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
+				<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
+				<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9].jpg","","ONE")>
+				<cfloop from="#theloopstart#" to="#looptil#" index="i">
+					<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
 				</cfloop>
+				<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
+			<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
+				<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
 			</cfif>
-			<!--- QoQ to filter out the null values since Nirvanix pagesize is so huge --->
-			<cfquery dbtype="query" name="lqry.qry_pdfjpgs">
-			SELECT *
-			FROM lqry.qry_pdfjpgs
-			WHERE name IS NOT NULL
-			</cfquery>
-		</cfif>
-		<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
-		<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
-			<cfset theloopstart = 0>
-			<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
-			<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
-			<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9].jpg","","ONE")>
-			<cfloop from="#theloopstart#" to="#looptil#" index="i">
-				<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
-			</cfloop>
-			<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
-		<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
-			<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
 		</cfif>
 		<!--- Return --->
 		<cfreturn lqry>

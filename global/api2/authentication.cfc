@@ -46,24 +46,16 @@
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #theapikey##thehostid#checkdb */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
-		FROM users u, ct_users_hosts ct, ct_groups_users gu
-		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
-		AND u.user_id = ct.ct_u_h_user_id
+		SELECT  /* #theapikey##thehostid#checkdb */  u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
+		FROM users u INNER JOIN ct_users_hosts ct ON u.user_id = ct.ct_u_h_user_id
+		LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id <!--- Left join on groups since users that are non admin can now also access the API and they may not be part of any groups --->
+		WHERE user_api_key =<cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
-		</cfif>
-		AND gu.ct_g_u_user_id = u.user_id
-		<!---
-		AND (
-			gu.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">
-			OR
-			gu.ct_g_u_grp_id = <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">
-		)
-		--->
+		</cfif> 
 		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
-		<!--- If timeout is within the last 30 minutes then extend it again --->
+		<!--- If user not found then deny access --->
 		<cfif qry.recordcount EQ 0>
 			<!--- Set --->
 			<cfset var status = false>
@@ -87,8 +79,10 @@
 			<cfset session.theuserid = qry.user_id>
 			<cfset session.thelangid = 1>
 			<cfset session.login = "T">
-			<!--- Put result into session --->
-			<cfset session.thegroupofuser = valuelist(qry.grpid)>
+			<!--- Put user groups into session if present--->
+			<cfif listlen(valuelist(qry.grpid)) GT 0>
+				<cfset session.thegroupofuser = valuelist(qry.grpid)>
+			</cfif>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
@@ -352,6 +346,8 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				OR 
+				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
@@ -363,6 +359,8 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				OR 
+				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
@@ -374,6 +372,8 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				OR 
+				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			UNION ALL
 			SELECT a.folder_id_r, f.folder_owner, fg.grp_id_r, fg.grp_permission
@@ -385,6 +385,8 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				OR 
+				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			</cfquery>
 			<!--- If the user is the folder owner he has full access --->
@@ -432,6 +434,8 @@
 				fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
 				OR
 				fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				OR 
+				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 				)
 			</cfquery>
 			<!--- If the user is the folder owner he has full access --->
