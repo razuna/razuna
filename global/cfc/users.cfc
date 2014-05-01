@@ -923,7 +923,7 @@
 	<cfinvoke component="defaults" method="trans" transid="user_login_info_email_contactus" returnvariable="login_info_email_contactus" />
 	<cfinvoke component="defaults" method="trans" transid="user_login_info_email_subject" returnvariable="login_info_email_subject" />
 	<!--- The message --->
-	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />#user_login_info_email_content#<br /><br />Login: #session.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_email#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />#login_info_email_contactus#</cfoutput>
+	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />#user_login_info_email_content#<br /><br />Login: #session.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_login_name#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />#login_info_email_contactus#</cfoutput>
 	</cfsavecontent>
 	<!--- Send the email --->
 	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#login_info_email_subject#" themessage="#m#">
