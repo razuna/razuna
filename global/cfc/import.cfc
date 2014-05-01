@@ -290,6 +290,7 @@
 		<cfset var c_thekeywords = "keywords" />
 		<cfset var c_thedescription = "description" />
 		<cfset var c_thelabels = "labels" />
+		<cfset var c_theupcnumber = "upc_number" />
 		<!--- Params XMP --->
 		<cfset var c_theiptcsubjectcode = "iptcsubjectcode" />
 		<cfset var c_thecreator = "creator" />
@@ -384,11 +385,26 @@
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 					</cfif>
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_theupcnumber = gettemplatevalue(arguments.thestruct.impp_template,"upc_number")>
+					</cfif>
 					<!--- Images: main table --->
 					<cfif evaluate(c_thefilename) NEQ "">
 						<cfquery dataSource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#images
 						SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						<cfif arguments.thestruct.expwhat NEQ "all">
+							AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+						</cfif>
+						</cfquery>
+					</cfif>
+					<!--- UPC --->
+					<cfif evaluate(c_theupcnumber) NEQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#images
+						SET img_upc_number= <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_theupcnumber)#">
 						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 						<cfif arguments.thestruct.expwhat NEQ "all">

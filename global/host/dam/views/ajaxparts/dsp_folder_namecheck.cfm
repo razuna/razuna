@@ -26,8 +26,8 @@
 <cfoutput>
 <cfif attributes.samefoldername>
 	<div style="clear:both;"></div>
-	<div style="color:red;font-weight:bold;">A folder with this name already exists!</div>
-	<div style="color:grey;font-size:8pt;">Please check trash too for folders with this name if you can not find it in this folder. </div>
+	<div style="color:red;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("folder_exists")#</div>
+	<div style="color:grey;font-size:8pt;">#myFusebox.getApplicationData().defaults.trans("folder_exists_desc")#</div>
 	<script type="text/javascript">
 		$('##form_folder#attributes.folder_id#').keydown(function(event){
 		    if(event.keyCode == 13) {
