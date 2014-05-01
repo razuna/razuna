@@ -159,6 +159,15 @@
 			var num = $('##thefields .clonefield').length;
 			// Add one
 			var newNum = new Number(num + 1);
+			var isexists = true;
+			// If field already exists then choose another number. Can happen when fields are removed
+			 while (isexists)
+			 {
+			 	if ($( '##div_metafield_' + newNum).length)
+			 		newNum = newNum + 1;
+			 	else
+			 		isexists = false;
+			 }
 			// create the new element via clone(), and manipulate it's ID using newNum value
 	        var newElem = $('##div_metafield_0').clone().attr('id', 'div_metafield_' + newNum);
 	         // Append the element
