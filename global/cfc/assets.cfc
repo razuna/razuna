@@ -3829,12 +3829,14 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var fname = name>
 				<cfset var fidr = folderIdr>
 			</cfif>			
+			<!--- Set the new folderid --->
+			<cfset var newfolderidinsert = createuuid("")>
 			<!--- Add the Folder to DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#folders
 			(folder_id, folder_name, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id, folder_level)
 			values (
-			<cfqueryparam value="#createuuid("")#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#newfolderidinsert#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#fname#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR">,
@@ -3847,6 +3849,47 @@ This is the main function called directly by a single upload else from addassets
 			<cfqueryparam value="#folderlevel#" cfsqltype="cf_sql_numeric">
 			)
 			</cfquery>
+			<!--- Add the workflow to the just created folder --->
+			<cftry>
+				<!--- Query for existing workflows --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry_wf">
+				SELECT wf.wf_id_r, wa.wf_action
+				FROM #session.hostdbprefix#workflow_folders wf, #session.hostdbprefix#workflow_actions wa
+				WHERE wf.folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">
+				AND wa.wf_id_r = wf.wf_id_r
+				AND lower(wa.wf_type) = <cfqueryparam value="wf_event" cfsqltype="CF_SQL_VARCHAR">
+				AND wa.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add workflows to just created folder --->
+				<cfloop query="qry_wf">
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#workflow_folders
+					(folder_id_r, wf_id_r)
+					VALUES(
+						<cfqueryparam value="#newfolderidinsert#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#wf_id_r#" cfsqltype="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+					<!--- Insert into plugin actions --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO plugins_actions
+					(action, comp, func, args, p_id, host_id)
+					VALUES(
+						<cfqueryparam value="#wf_action#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="settings" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="executeWorkflow" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="wfid:#wf_id_r#,folderid:#newfolderidinsert#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="273ZRZ123RURWQEASD" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+				</cfloop>
+				<!--- Catch --->
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
+				</cfcatch>
+			</cftry>
 		</cfloop>
 		<cfset resetcachetoken("folders")>
 		<cfset sleep(2000)>
