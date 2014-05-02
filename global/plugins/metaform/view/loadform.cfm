@@ -43,94 +43,87 @@
 										<cfif thefield NEQ "">
 											<!--- desc and keys are textareas --->
 											<cfif thefield EQ "keywords" OR thefield EQ "description">
-												#ucase(thefield)#<br />
-												<textarea class="text" name="#id#_#thefield#" id="#id#_#thefield#" style="width:400px;height:40px;"></textarea>
 												<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
 													<cfset thereq = true>
 												<cfelse>
 													<cfset thereq = false>
 												</cfif>
+												#ucase(thefield)#<cfif thereq> *</cfif><br />
+												<textarea class="text" name="#id#_#thefield#" id="#id#_#thefield#" style="width:400px;height:40px;"></textarea>
+												<a href ="javascript:void(0)" onclick="copytextfield('#thefield#',$('###id#_#thefield#').val())">Copy to all</a>
 												<cfif thereq>
 													<cfset forjs = forjs & ",#id#_#thefield#:text">
 												</cfif>
 											<!--- Custom fields --->
 											<cfelseif mf_cf NEQ "">
-												#ucase(cf_text)#<br />
-												<!--- For text --->
-												<cfif cf_type EQ "text">
-													<input type="text" style="width:400px;" id="#id#_cf_#cf_id#" name="#id#_cf_#cf_id#" />
+												<cfif result.cfc.pl.loadform.qry_fields.cf_show EQ "all" OR (result.cfc.pl.loadform.qry_fields.cf_show EQ result.cfc.pl.loadform.qry_files.type)>
 													<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
 														<cfset thereq = true>
 													<cfelse>
 														<cfset thereq = false>
 													</cfif>
-													<cfif thereq>
-														<cfset forjs = forjs & ",#id#_cf_#cf_id#:text">
-													</cfif>
-												<!--- Radio --->
-												<cfelseif cf_type EQ "radio">
-													<input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="T" checked="true">yes <input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="F">no
-													<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
-														<cfset thereq = true>
-													<cfelse>
-														<cfset thereq = false>
-													</cfif>
-													<cfif thereq>
-														<cfset forjs = forjs & ",#id#_cf_#cf_id#:radio">
-													</cfif>
-												<!--- Textarea --->
-												<cfelseif cf_type EQ "textarea">
-													<textarea name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" style="width:400px;height:60px;"></textarea>
-													<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
-														<cfset thereq = true>
-													<cfelse>
-														<cfset thereq = false>
-													</cfif>
-													<cfif thereq>
-														<cfset forjs = forjs & ",#id#_cf_#cf_id#:text">
-													</cfif>
-												<!--- Select --->
-												<cfelseif cf_type EQ "select">
-													<select name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" style="width:410px;">
-														<option value=""></option>
-														<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
-															<option value="#i#">#i#</option>
-														</cfloop>
-													</select>
-													<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
-														<cfset thereq = true>
-													<cfelse>
-														<cfset thereq = false>
-													</cfif>
-													<cfif thereq>
-														<cfset forjs = forjs & ",#id#_cf_#cf_id#:select">
+													#ucase(cf_text)#<cfif thereq> *</cfif><br />
+													<!--- For text --->
+													<cfif cf_type EQ "text">
+														<input type="text" style="width:400px;" id="#id#_cf_#cf_id#" name="#id#_cf_#cf_id#" />
+														<a href ="javascript:void(0)" onclick="copytextfield('cf_#cf_id#',$('###id#_cf_#cf_id#').val())">Copy to all</a>
+														<cfif thereq>
+															<cfset forjs = forjs & ",#id#_cf_#cf_id#:text">
+														</cfif>
+													<!--- Radio --->
+													<cfelseif cf_type EQ "radio">
+														<input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="T">yes <input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="F" checked="true">no
+														&nbsp;&nbsp;<a href ="javascript:void(0)" onclick="copyradiofield('cf_#cf_id#',$('input:radio[name=#id#_cf_#cf_id#]:checked').val())">Copy to all</a>
+														<cfif thereq>
+															<cfset forjs = forjs & ",#id#_cf_#cf_id#:radio">
+														</cfif>
+													<!--- Textarea --->
+													<cfelseif cf_type EQ "textarea">
+														<textarea name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" style="width:400px;height:60px;"></textarea>
+														<a href ="javascript:void(0)" onclick="copytextfield('cf_#cf_id#',$('###id#_cf_#cf_id#').val())">Copy to all</a>
+														<cfif thereq>
+															<cfset forjs = forjs & ",#id#_cf_#cf_id#:text">
+														</cfif>
+													<!--- Select --->
+													<cfelseif cf_type EQ "select">
+														<select name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" style="width:410px;">
+															<option value=""></option>
+															<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
+																<option value="#i#">#i#</option>
+															</cfloop>
+														</select>
+														<a href ="javascript:void(0)" onclick="copytextfield('cf_#cf_id#',$('###id#_cf_#cf_id#').val())">Copy to all</a>
+														<cfif thereq>
+															<cfset forjs = forjs & ",#id#_cf_#cf_id#:select">
+														</cfif>
 													</cfif>
 												</cfif>
 											<cfelseif thefield EQ "labels">
-												#ucase(thefield)#<br />
+												<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
+													<cfset thereq = true>
+												<cfelse>
+													<cfset thereq = false>
+												</cfif>
+												#ucase(thefield)#<cfif thereq> *</cfif><br />
 												<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" name="#id#_#thefield#" id="#id#_#thefield#"multiple="multiple">
 													<option value=""></option>
 													<cfloop query="result.cfc.pl.loadform.qry_labels">
 														<option value="#label_id#">#label_path#</option>
 													</cfloop>
 												</select>
-												<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
-													<cfset thereq = true>
-												<cfelse>
-													<cfset thereq = false>
-												</cfif>
+												<a href ="javascript:void(0)" onclick="copylabelfield('_labels',$('###id#_#thefield#').val())">Copy to all</a>
 												<cfif thereq>
 													<cfset forjs = forjs & ",#id#_#thefield#:chosen">
 												</cfif>
 											<!--- Input fields --->
 											<cfelse>
-												#ucase(thefield)#<br />
-												<input type="text" name="#id#_#thefield#" id="#id#_#thefield#" style="width:400px;" />
 												<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
 													<cfset thereq = true>
 												<cfelse>
 													<cfset thereq = false>
 												</cfif>
+												#ucase(thefield)#<cfif thereq> *</cfif><br />
+												<input type="text" name="#id#_#thefield#" id="#id#_#thefield#" style="width:400px;" />
 												<cfif thereq>
 													<cfset forjs = forjs & ",#id#_#thefield#:text">
 												</cfif>
@@ -151,6 +144,27 @@
 			</form>
 			<!--- JS --->
 			<script type="text/javascript">
+				function copytextfield(field, value)
+				{
+					$("[id*="+field+"]").each(function() {
+					        $(this).val(value);
+					    });
+				}
+				function copyradiofield(field, value)
+				{
+					$("[id*="+field+"]").each(function() {
+					        var radioName = $(this).prop("name");
+					        $("input:radio[name="+radioName+"][value ="+ value + "]").prop('checked', true);
+					    });
+					
+				}
+				function copylabelfield(field, value)
+				{
+					$("[id*="+field).each(function() {
+					        $(this).val(value);
+					        $(this).trigger("chosen:updated");
+					    });
+				}
 				// Activate Chosen
 				$(".chzn-select").chosen();
 				// Submit
