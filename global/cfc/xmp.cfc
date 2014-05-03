@@ -1613,16 +1613,16 @@
 		<!--- Get selected metadata to export --->
 		<cfloop query="arguments.thestruct.export_template">
 			<cfif exp_field EQ 'images_metadata'>
-				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number", "id,filename,description,keywords,create_date,change_date,width,height,size,upc_number")>
+				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_labels,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number,img_type,img_folder_id,img_foldername,img_file_url", "id,filename,description,keywords,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url")>
 			</cfif>
 			<cfif exp_field EQ 'files_metadata'>
-				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_create_time,file_change_time,file_size,file_upc_number", "id,filename,description,keywords,create_date,change_date,size,upc_number")>
+				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_labels,file_create_time,file_change_time,file_size,file_upc_number,file_type,file_folder_id,file_foldername,file_file_url", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url")>
 			</cfif>
 			<cfif exp_field EQ 'audios_metadata'>
-				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_create_time,aud_change_time,aud_size,aud_upc_number", "id,filename,description,keywords,create_date,change_date,size,upc_number")>
+				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_labels,aud_create_time,aud_change_time,aud_size,aud_upc_number,aud_type,aud_folder_id,aud_foldername,aud_file_url", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url")>
 			</cfif>
 			<cfif exp_field EQ 'videos_metadata'>
-				<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_create_time,vid_change_time,vid_width,vid_height,vid_size,vid_upc_number", "id,filename,description,keywords,create_date,change_date,width,height,size,upc_number")>
+				<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_labels,vid_create_time,vid_change_time,vid_width,vid_height,vid_size,vid_upc_number,vid_type,vid_folder_id,vid_foldername,vid_file_url", "id,filename,description,keywords,labels,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url")>
 			</cfif>
 		</cfloop>
 		<!--- Set Columns for Export --->
@@ -1987,6 +1987,22 @@
 						<cfif ("#idx#" EQ "img_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_id")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
 							<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
 						</cfif>
+						<!--- Add Type --->
+						<cfif ("#idx#" EQ "img_type" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_type" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_type"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_type")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "type", arguments.thestruct.filetype)>
+						</cfif>
+						<!--- Add FolderID --->
+						<cfif ("#idx#" EQ "img_folder_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_folder_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_folder_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_folder_id")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
+						</cfif>
+						<!--- Add Folder Name --->
+						<cfif ("#idx#" EQ "img_foldername" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_foldername" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_foldername"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_foldername")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
+						</cfif>
+						<!--- Add File URL --->
+						<cfif ("#idx#" EQ "img_file_url" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_foldername" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_foldername"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_foldername")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
+						</cfif>
 						<!--- Add File Name --->
 						<cfif ("#idx#" EQ "img_filename" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_name" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_filename" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_name" AND "#arguments.thestruct.filetype#" EQ "aud")> 
 							<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
@@ -2024,6 +2040,12 @@
 								<cfif ("#idx#" EQ "img_description" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_desc" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_description" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_description" AND "#arguments.thestruct.filetype#" EQ "aud")>
 									<cfset QuerySetCell(arguments.thestruct.tq, "description", arguments.thestruct.qry_text.description)>
 								</cfif>
+							</cfif>
+						</cfif>
+						<!--- Add Labels --->
+						<cfif ("#idx#" EQ "img_labels" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_labels" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_labels" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_labels" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfif arguments.thestruct.qry_labels NEQ "">
+								<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
 							</cfif>
 						</cfif>
 						<!--- Add custom fields --->
