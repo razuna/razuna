@@ -966,16 +966,29 @@
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Select the record to get the original filename or assign if one is there --->
-			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
-				<cfset arguments.thestruct.qrydetail.filenameorg = qryfileupdate.file_name_org>
-				<cfset arguments.thestruct.filenameorg = qryfileupdate.file_name_org>
-				<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
+			<cfif qryfileupdate.recordcount neq 0>
+				<!--- Select the record to get the original filename or assign if one is there --->
+				<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
+					<cfset arguments.thestruct.qrydetail.filenameorg = qryfileupdate.file_name_org>
+					<cfset arguments.thestruct.filenameorg = qryfileupdate.file_name_org>
+					<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
+				<cfelse>
+					<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+				</cfif>
+				<!--- Log --->
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 			<cfelse>
-				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+				<!--- If updating additional version then get info and log change--->
+				<cfquery datasource="#variables.dsn#" name="qryaddver">
+				SELECT av_link_title, folder_id_r
+				FROM #session.hostdbprefix#additional_versions
+				WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif qryaddver.recordcount neq 0>
+					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
+				</cfif>
 			</cfif>
-			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
