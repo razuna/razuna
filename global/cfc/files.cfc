@@ -751,15 +751,17 @@
 		WHERE f.file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Get proper folderaccess --->
-		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
-		<!--- Add labels query --->
-		<cfif theaccess NEQ "">
-			<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfif details.recordcount NEQ 0>
+			<!--- Get proper folderaccess --->
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfif theaccess NEQ "">
+				<cfset QuerySetCell(details, "perm", theaccess)>
+			</cfif>
 		</cfif>
 		<!--- Get descriptions and keywords --->
 		<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detaildescfiles */ lang_id_r, file_keywords, file_desc
+		SELECT /* #variables.cachetoken#detaildescfiles */ lang_id_r, file_keywords, file_desc, file_desc as thedesc, file_keywords as thekeys
 		FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
@@ -887,7 +889,7 @@
 			<!--- Only if not from batch function --->
 			<cfif arguments.thestruct.frombatch NEQ "T">
 				<!--- If PDF save XMP data --->
-				<cfif arguments.thestruct.file_extension EQ "pdf" AND arguments.thestruct.link_kind NEQ "url">
+				<cfif isdefined("arguments.thestruct.file_extension") AND arguments.thestruct.file_extension EQ "pdf" AND arguments.thestruct.link_kind NEQ "url">
 					<!--- Check if info is in DB --->
 					<cfquery datasource="#variables.dsn#" name="qryfilesxmp">
 					SELECT asset_id_r

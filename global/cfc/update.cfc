@@ -232,7 +232,8 @@
 					 where constraint_type='#thetype#' 
 					 and (lower(table_name) like '%_images_text'
 					 or  lower(table_name) like '%_audios_text'
-					  or  lower(table_name) like '%_videos_text')
+					 or  lower(table_name) like '%_videos_text'
+					 or  lower(table_name) like '%_files_desc')
 				</cfquery>
 				<cfloop query ="getdel_sql">
 					<cfquery datasource="#application.razuna.datasource#" name="remove_constraint">

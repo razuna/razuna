@@ -1518,8 +1518,7 @@
 		PRIMARY KEY (ID_INC),
 		KEY #arguments.thestruct.host_db_prefix#fd_idr (file_id_r),
 	    KEY #arguments.thestruct.host_db_prefix#fd_hostid (HOST_ID),
-	    KEY #arguments.thestruct.host_db_prefix#fd_lang (LANG_ID_R),
-		FOREIGN KEY (FILE_ID_R)	REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+	    KEY #arguments.thestruct.host_db_prefix#fd_lang (LANG_ID_R)
 		)
 		#this.tableoptions#
 		</cfquery>

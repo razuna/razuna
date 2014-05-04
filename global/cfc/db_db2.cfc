@@ -1429,8 +1429,7 @@
 		  FILE_DESC      VARCHAR(4000),
 		  FILE_KEYWORDS  VARCHAR(4000),
 		  HOST_ID				INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (FILE_ID_R)	REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>

@@ -9748,6 +9748,30 @@
 				</if>
 			</true>
 		</if>
+		<!-- Files -->
+		<if condition="attributes.thetype EQ 'doc'">
+			<true>
+				<!-- Set field names -->
+				<set name="attributes.desc" value="file_desc_" />
+				<set name="attributes.keys" value="file_keywords_" />
+				<!-- CFC: Get file detail -->
+				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.file_name#" />
+					</false>
+				</if>
+			</true>
+		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 

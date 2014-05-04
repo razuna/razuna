@@ -1411,10 +1411,7 @@
 		  FILE_DESC      VARCHAR2(4000 CHAR),
 		  FILE_KEYWORDS  VARCHAR2(4000 CHAR),
 		  HOST_ID		 NUMBER,
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_DESC_PK PRIMARY KEY (ID_INC),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_DESC_FK_FILE FOREIGN KEY (FILE_ID_R)
-	REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID)
-	ON DELETE CASCADE ENABLE
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_DESC_PK PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>

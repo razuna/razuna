@@ -1091,9 +1091,7 @@
 		  FILE_KEYWORDS  VARCHAR(2000),
 		  ID_INC		 VARCHAR(100),
 		  HOST_ID		 BIGINT,
-		  PRIMARY KEY (ID_INC),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_DESC_FK_FILE FOREIGN KEY (FILE_ID_R)
-		REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
