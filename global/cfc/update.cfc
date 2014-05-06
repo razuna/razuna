@@ -149,16 +149,7 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 			</cfif>
-			<!--- RAZ-549 Add scheduled task for asset expiry --->
-			<cfschedule action="update"
-				task="RazAssetExpiry" 
-				operation="HTTPRequest"
-				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.w_asset_expiry_task"
-				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-				startTime="00:01 AM"
-				endTime="23:59 PM"
-				interval="300"
-			>
+		
 			<!--- Add column to store file_size for versions --->
 			<cftry>
 				 <cfquery datasource="#application.razuna.datasource#">
@@ -363,15 +354,32 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-			<!--- RAZ-2815 Save Folder Subscribe scheduled event in CFML scheduling engine --->
+
+			<!--- Get the correct paths for hosted vs non-hosted --->
+			<cfif !application.razuna.isp>
+				<cfset var taskpath =  "http://#cgi.http_host#/#cgi.context_path#/raz1/dam">
+			<cfelse>
+				<cfset var taskpath =  "http://#cgi.http_host#/admin">
+			</cfif>
+			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
 				task="RazFolderSubscribe" 
 				operation="HTTPRequest"
-				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
+				url="#taskpath#/index.cfm?fa=c.folder_subscribe_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="00:01 AM"
 				endTime="23:59 PM"
 				interval="120"
+			>
+			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
+			<cfschedule action="update"
+				task="RazAssetExpiry" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.w_asset_expiry_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="300"
 			>
 			<!--- RAZ-2815 Add FOLDER_ID Column in raz1_log_assets --->
 			<cftry>

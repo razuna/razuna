@@ -1398,4 +1398,17 @@
 	<fuseaction name="debug">
 		<do action="v.debug" />	
 	</fuseaction>
+
+	<!-- Run Folder subscribe schedule tasks -->
+	<fuseaction name="folder_subscribe_task">
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
+	</fuseaction>
+
+	<!-- Schedule asset expiry task -->
+	<fuseaction name="w_asset_expiry_task">
+		<!-- CFC: Run task -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
+	</fuseaction>
+
 </circuit>

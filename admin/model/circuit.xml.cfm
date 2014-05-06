@@ -78,6 +78,12 @@
 			<argument name="baseLocale" value="en" />
 			<argument name="admin" value="admin" />
 		</instantiate>
+		<!-- Scheduler -->
+		<instantiate class="scheduler" object="myFusebox.getApplicationData().scheduler" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+			<argument name="setid" value="#application.razuna.setid#" />
+		</instantiate>
 	</fuseaction>
 
 </circuit>

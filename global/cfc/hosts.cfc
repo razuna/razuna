@@ -251,29 +251,33 @@
 					interval="120"
 				>
 			</cfif>
-			<!--- Add scheduled task for folders subscribe but only for not isp setup --->
+			<!--- Add scheduled tasks --->
+			<!--- Get the correct paths for hosted vs non-hosted --->
 			<cfif !application.razuna.isp>
-				<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
-				<cfschedule action="update"
-					task="RazFolderSubscribe" 
-					operation="HTTPRequest"
-					url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
-					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-					startTime="00:01 AM"
-					endTime="23:59 PM"
-					interval="120"
-				>
+				<cfset var taskpath =  "http://#cgi.http_host#/#cgi.context_path#/raz1/dam">
+			<cfelse>
+				<cfset var taskpath =  "http://#cgi.http_host#/admin">
+			</cfif>
+			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+			<cfschedule action="update"
+				task="RazFolderSubscribe" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.folder_subscribe_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="120"
+			>
 			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
 			<cfschedule action="update"
 				task="RazAssetExpiry" 
 				operation="HTTPRequest"
-				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.w_asset_expiry_task"
+				url="#taskpath#/index.cfm?fa=c.w_asset_expiry_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="00:01 AM"
 				endTime="23:59 PM"
 				interval="300"
 			>
-			</cfif>
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
