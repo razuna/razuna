@@ -1613,7 +1613,7 @@
 		<!--- Get selected metadata to export --->
 		<cfloop query="arguments.thestruct.export_template">
 			<cfif exp_field EQ 'images_metadata'>
-				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_labels,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number,img_type,img_folder_id,img_foldername,img_file_url", "id,filename,description,keywords,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url")>
+				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_labels,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number,img_type,img_folder_id,img_foldername,img_file_url", "id,filename,description,keywords,labels,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url")>
 			</cfif>
 			<cfif exp_field EQ 'files_metadata'>
 				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_labels,file_create_time,file_change_time,file_size,file_upc_number,file_type,file_folder_id,file_foldername,file_file_url", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url")>
@@ -1974,8 +1974,7 @@
 <!--- Add to query --->
 <cffunction name="add_to_query" >
 	<cfargument name="thestruct" type="struct">
-<!--- 			<cfdump var="#arguments.thestruct.tq#")>
- --->	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
+	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
 		<!--- Add row local query --->
 		<cfset QueryAddRow(arguments.thestruct.tq,1)>
