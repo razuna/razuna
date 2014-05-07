@@ -278,6 +278,13 @@
 				endTime="23:59 PM"
 				interval="300"
 			>
+			<cfif application.razuna.isp>
+				<cfset var x = structnew()>
+				<cfset x.hostid = hostid.id>
+				<cfset x.hosted = true>
+				<!-- CFC: Call indexing -->
+				<cfinvoke component="lucene" method="index_update" thestruct="#x#" />
+			</cfif>
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
