@@ -431,7 +431,11 @@
 		<set name="attributes.cf_show" value="users" />
 		<set name="attributes.cf_in_form" value="true" />
 		<set name="attributes.file_id" value="0" />
+		<set name="session.theuserid" value="0" />
+		<set name="session.thegroupofuser" value="0" />
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />	
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.req_access" />
 	</fuseaction>

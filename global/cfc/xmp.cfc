@@ -1999,7 +1999,7 @@
 							<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
 						</cfif>
 						<!--- Add File URL --->
-						<cfif ("#idx#" EQ "img_file_url" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_foldername" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_foldername"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_foldername")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+						<cfif ("#idx#" EQ "img_file_url" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_file_url" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_file_url"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_file_url")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
 							<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
 						</cfif>
 						<!--- Add File Name --->

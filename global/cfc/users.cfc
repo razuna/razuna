@@ -917,16 +917,22 @@
 <cffunction name="emailinfo" output="true">
 	<cfargument name="user_id" required="true" type="string">
 	<cfargument name="userpass" required="true" type="string">
+	<cfset var prefs="">
 	<!--- Get the record --->
 	<cfinvoke method="details" thestruct="#arguments#" returnvariable="qry_user" />
-	<cfinvoke component="defaults" method="trans" transid="user_login_info_email" returnvariable="user_login_info_email_content" />
-	<cfinvoke component="defaults" method="trans" transid="user_login_info_email_contactus" returnvariable="login_info_email_contactus" />
-	<cfinvoke component="defaults" method="trans" transid="user_login_info_email_subject" returnvariable="login_info_email_subject" />
-	<!--- The message --->
-	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />#user_login_info_email_content#<br /><br />Login: #session.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_login_name#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />#login_info_email_contactus#</cfoutput>
-	</cfsavecontent>
+	<!--- Get email settings --->
+	<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="prefs">
+	<cfset var email_body = prefs. set2_new_user_email_body>
+	<cfset var email_subject = prefs. set2_new_user_email_sub>
+	<!--- Insert username and password into body --->
+	<cfset email_body =replacenocase(email_body,"$username$", "#qry_user.user_login_name#","ONE")>
+	<cfif arguments.userpass NEQ "">
+		<cfset email_body =replacenocase(email_body,"$password$", "#arguments.userpass#","ONE")>
+	<cfelse>
+		<cfset email_body =replacenocase(email_body,"$password$", "_hidden_","ONE")>
+	</cfif>
 	<!--- Send the email --->
-	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#login_info_email_subject#" themessage="#m#">
+	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#email_subject#" themessage="#email_body#">
 	<cfreturn />
 </cffunction>
 
