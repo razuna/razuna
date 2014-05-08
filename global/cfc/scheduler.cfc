@@ -725,12 +725,17 @@
 		<cfinvoke component="folders" method="init" returnvariable="foldersObj" />
 		<!--- Get Sub-folders of Folder subscribe --->
 		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
+		<!--- Get UPC setting --->
+		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
-		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets" result="myqry">
 			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
 				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
+			</cfif>
+			<cfif damset.set2_upc_enabled EQ 'true'>
+				, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number 
 			</cfif>
   
 			FROM (
@@ -749,7 +754,16 @@
 				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
 			</cfif>
+			<cfif damset.set2_upc_enabled EQ 'true'>
+				LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
+				LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
+				LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
+				LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
+			</cfif>
 		</cfquery>
+		<cfset console(myqry.sql)>
+		<cfset console(myqry.sqlparameters)>
+
 		<!--- Email subject --->
 		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
 		<!--- Email content --->
@@ -765,40 +779,39 @@
 						<th nowrap="true">Date</th>
 						<th nowrap="true">Time</th>
 						<th nowrap="true">Folder/<br>Sub-Folder</th>
-						<th nowrap="true">Action</th>
-						<th >Details</th>
-						<th nowrap="true">Type of file</th>
-						<th nowrap="true">User</th>
-						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
-							<th>Asset Keywords</th>
+						<cfif damset.set2_upc_enabled EQ 'true'>
+							<th>UPC Number</th>
 						</cfif>
 						<cfif qGetUserSubscriptions.asset_description eq 'T'>
 							<th>Asset Description</th>
 						</cfif>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<th>Asset Keywords</th>
+						</cfif>
+						<th nowrap="true">Action</th>
+						<th >Details</th>
+						<th nowrap="true">Type of file</th>
+						<th nowrap="true">User</th>
 					</tr>
 				<cfloop query="qGetUpdatedAssets">
 					<tr >
 						<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
 						<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
 						<td valign="top">#qGetUpdatedAssets.folder_name#</td>
-						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
-						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
-						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
-						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
-						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+						<cfif damset.set2_upc_enabled EQ 'true'>
 							<td>&nbsp;
 							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 								<cfcase value="img">
-									#qGetUpdatedAssets.img_keywords#
+									#qGetUpdatedAssets.img_upc_number#
 								</cfcase>
 								<cfcase value="doc">
-									#qGetUpdatedAssets.file_keywords#
+									#qGetUpdatedAssets.file_upc_number#
 								</cfcase>
 								<cfcase value="vid">
-									#qGetUpdatedAssets.vid_keywords#
+									#qGetUpdatedAssets.vid_upc_number#
 								</cfcase>
 								<cfcase value="aud">
-									#qGetUpdatedAssets.aud_keywords#
+									#qGetUpdatedAssets.aud_upc_number#
 								</cfcase>
 							</cfswitch>
 							</td>
@@ -821,6 +834,28 @@
 							</cfswitch>
 							</td>
 						</cfif>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<td>&nbsp;
+							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+								<cfcase value="img">
+									#qGetUpdatedAssets.img_keywords#
+								</cfcase>
+								<cfcase value="doc">
+									#qGetUpdatedAssets.file_keywords#
+								</cfcase>
+								<cfcase value="vid">
+									#qGetUpdatedAssets.vid_keywords#
+								</cfcase>
+								<cfcase value="aud">
+									#qGetUpdatedAssets.aud_keywords#
+								</cfcase>
+							</cfswitch>
+							</td>
+						</cfif>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
+						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
 					</tr>
 				</cfloop>
 				</table>
