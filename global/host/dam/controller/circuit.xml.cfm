@@ -10330,4 +10330,10 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
 	</fuseaction>
 
+	<!-- Run Folder subscribe schedule tasks -->
+	<fuseaction name="w_lucene_update_index">
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted()"/>
+	</fuseaction>
+
 </circuit>
