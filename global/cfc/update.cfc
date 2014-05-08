@@ -126,8 +126,8 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
-		<!--- If update number is lower then 22 (v. 1.6.5) --->
-		<cfif updatenumber.opt_value LT 22>
+		<!--- If update number is lower then 23 (v. 1.6.5) --->
+		<cfif updatenumber.opt_value LT 23>
 			<!--- Set global vars for mysql --->
 			<cfif application.razuna.thedatabase EQ "mysql">
 				<cftry>
@@ -159,6 +159,20 @@
 				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
 				 </cfcatch>
 			</cftry>
+
+			<!--- Add columns for new uew email settings--->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_NEW_USER_EMAIL_SUB #thevarchar#(500)
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_NEW_USER_EMAIL_BODY  #thevarchar#(4000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+
 			<!--- RAZ-549 Add columns for asset expiry --->
 			<cftry>
 				 <cfquery datasource="#application.razuna.datasource#">
