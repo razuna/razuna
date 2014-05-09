@@ -9863,6 +9863,12 @@
 				<set name="session.sortby" value="#url.sortby#" />
 			</true>
 		</if>
+		<!-- If there is a customparam then set it in a session -->
+		<if condition="structkeyexists(url,'customparams')">
+			<true>
+				<set name="session.customparams" value="#url.customparams#" />
+			</true>
+		</if>
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
