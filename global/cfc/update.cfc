@@ -126,8 +126,55 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
-		<!--- If update number is lower then 23 (v. 1.6.5) --->
-		<cfif updatenumber.opt_value LT 23>
+		<cftry>
+			<!--- Fix language id's if incorrect --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '1' WHERE lang_name ='English'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '2' WHERE lang_name ='German'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '3' WHERE lang_name ='French'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '4' WHERE lang_name ='Dutch'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '5' WHERE lang_name ='Danish'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '6' WHERE lang_name ='Arabic'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '7' WHERE lang_name ='Vietnamese'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '8' WHERE lang_name ='Romanian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '9' WHERE lang_name ='Spanish'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '10' WHERE lang_name ='Italian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '11' WHERE lang_name ='Norwegian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '12' WHERE lang_name ='Slovenian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '13' WHERE lang_name ='Ukrainian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '14' WHERE lang_name ='Brazilian'
+			</cfquery>
+		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+		</cftry>
+
+		<!--- If update number is lower then 24 (v. 1.6.5) --->
+		<cfif updatenumber.opt_value LT 24>
 			<!--- Set global vars for mysql --->
 			<cfif application.razuna.thedatabase EQ "mysql">
 				<cftry>
