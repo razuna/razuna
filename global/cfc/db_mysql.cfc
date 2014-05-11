@@ -2204,6 +2204,7 @@
 			HOST_ID			INT,
 			rec_uuid			VARCHAR(100),
 			PRIMARY KEY (rec_uuid),
+			UNIQUE KEY  UNIQUE_HOSTID_LANGID (lang_id,HOST_ID),
 			KEY #arguments.thestruct.host_db_prefix#l_active (lang_active),
   			KEY #arguments.thestruct.host_db_prefix#l_hostid (HOST_ID)
 		)

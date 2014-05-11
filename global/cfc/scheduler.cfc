@@ -728,8 +728,9 @@
 		<!--- Get UPC setting --->
 		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
-		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets" result="myqry">
-			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
+			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
+			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url 
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
 				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
@@ -739,30 +740,24 @@
 			</cfif>
   
 			FROM (
-
 				SELECT * FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 				ORDER BY log_timestamp DESC
-
 				) l
 			LEFT JOIN users u ON l.log_user = u.user_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
+			LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
+			LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
+			LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
+			LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
 			</cfif>
-			<cfif damset.set2_upc_enabled EQ 'true'>
-				LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
-				LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
-				LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
-				LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
-			</cfif>
 		</cfquery>
-		<cfset console(myqry.sql)>
-		<cfset console(myqry.sqlparameters)>
 
 		<!--- Email subject --->
 		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
@@ -792,6 +787,7 @@
 						<th >Details</th>
 						<th nowrap="true">Type of file</th>
 						<th nowrap="true">User</th>
+						<th>File URL</th>
 					</tr>
 				<cfloop query="qGetUpdatedAssets">
 					<tr >
@@ -856,6 +852,43 @@
 						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
 						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
+						<td align="center" valign="top" width="80">
+						<!--- If action is not file delete then show file url --->
+						<cfif qGetUpdatedAssets.log_action NEQ 'delete'>
+							<cfif application.razuna.storage EQ "local">
+								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+									<cfcase value="img">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+									</cfcase>
+									<cfcase value="doc">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+									</cfcase>
+									<cfcase value="vid">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+									</cfcase>
+									<cfcase value="aud">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+									</cfcase>
+								</cfswitch>
+							<cfelse>
+								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+									<cfcase value="img">
+										#img_cloud_url#
+									</cfcase>
+									<cfcase value="doc">
+										#file_cloud_url#
+									</cfcase>
+									<cfcase value="vid">
+										#vid_cloud_url#
+									</cfcase>
+									<cfcase value="aud">
+										#aud_cloud_url#
+									</cfcase>
+								</cfswitch>
+								
+							</cfif>
+						</cfif>
+						</td>
 					</tr>
 				</cfloop>
 				</table>

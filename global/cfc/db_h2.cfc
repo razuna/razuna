@@ -1699,6 +1699,7 @@
 			lang_active		VARCHAR(2) default 'f',
 			host_id			BIGINT,
 			rec_uuid		VARCHAR(100),
+			CONSTRAINT HOSTID_LANGID UNIQUE (HOST_ID, LANG_ID), 
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>

@@ -1678,7 +1678,7 @@
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
-		img_filename as url_file_name, cloud_url_org, img_create_date AS create_date, img_change_date AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number
+		img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1687,7 +1687,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_date, vid_change_date, vid_size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number
+		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1696,7 +1696,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_date, aud_change_date, aud_size, NULL AS width, NULL As height, aud_upc_number as upc_number
+		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1705,7 +1705,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_date, file_change_date, file_size, NULL AS width, NULL As height, file_upc_number as upc_number
+		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
@@ -1731,16 +1731,59 @@
 		</cfloop>
 	<!--- This is coming from a file list --->
 	<cfelse>
+		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Loop over filelist --->
 		<cfloop list="#session.file_id#" delimiters="," index="i">
 			<!--- The first part is the ID the last the type --->
 			<cfset arguments.thestruct.file_id = listfirst(i, "-")>
 			<cfset arguments.thestruct.filetype = listlast(i, "-")>
-			<!--- Set query --->
-			<cfset QueryAddRow(arguments.thestruct.qry,1)>
-			<cfset QuerySetCell(arguments.thestruct.qry, "id", arguments.thestruct.file_id)>
-			<!--- Get the files --->
-			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
+
+			<!--- Get details about file --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			<cfif arguments.thestruct.filetype EQ 'img'>
+			SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
+			img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number
+			FROM #session.hostdbprefix#images
+			WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			<cfelseif arguments.thestruct.filetype EQ 'vid'>
+			SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number
+			FROM #session.hostdbprefix#videos
+			WHERE  vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			<cfelseif arguments.thestruct.filetype EQ 'aud'>
+			SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number
+			FROM #session.hostdbprefix#audios
+			WHERE  aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			<cfelse>
+			SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number
+			FROM #session.hostdbprefix#files
+			WHERE
+			 file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			</cfif>
+			</cfquery>
+			<!--- Loop over items --->
+			<cfloop query="qry">
+				<!--- Set query --->
+				<cfset QueryAddRow(arguments.thestruct.qry,1)>
+				<cfset QuerySetCell(arguments.thestruct.qry, "id", theid)>
+				<cfset arguments.thestruct.file_id = theid>
+				<cfset arguments.thestruct.filetype = thetype>
+				<cfset arguments.thestruct.create_date = create_date>
+				<cfset arguments.thestruct.change_date = change_date>
+				<cfset arguments.thestruct.width = width>
+				<cfset arguments.thestruct.height = height>
+				<cfset arguments.thestruct.size = size>
+				<cfset arguments.thestruct.upc_number = upc_number>
+				<!--- Get the files --->
+				<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
+			</cfloop>
 		</cfloop>
 	</cfif>
 	<!--- We got the query ready, continue export --->
