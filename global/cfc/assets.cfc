@@ -978,6 +978,9 @@
 				<cfif len(thefile.serverFileExt) GT 9>
 					<cfset thefile.serverFileExt = "txt">
 				</cfif>
+				<cfif thefile.serverFileExt  eq 'zip'>
+					<cfset var iszip = true>
+				</cfif>
 			</cfif>
 			<!--- Rename the file so that we can remove any spaces --->
 			<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
@@ -1051,6 +1054,17 @@
 				<cfelse>
 					<cfset var thefiletype = "other">
 				</cfif>
+				<!--- If this is a zip file then get tempid from temp table for zip file as the tempid is changed from original after extraction --->
+				<cfif isdefined("iszip")>
+					<cfquery datasource="#application.razuna.datasource#" name="gettempid">
+					SELECT tempid
+					FROM  #session.hostdbprefix#assets_temp
+					WHERE lower(filename) = <cfqueryparam value="#lcase(arguments.thestruct.thefilename)#" cfsqltype="cf_sql_varchar">
+					ORDER BY DATE_ADD DESC
+					</cfquery>
+					<cfset arguments.thestruct.tempid = gettempid.tempid>
+				</cfif>
+
 				<!--- Return Message --->
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
