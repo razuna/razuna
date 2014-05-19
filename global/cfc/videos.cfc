@@ -1044,6 +1044,8 @@
 	<cfset var qry = structnew()>
 	<cfset var details = "">
 	<cfset var desc = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Get details --->
 	<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailvid */ v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_extension, v.vid_online, v.vid_owner,
