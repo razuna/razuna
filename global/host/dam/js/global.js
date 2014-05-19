@@ -768,6 +768,50 @@ function aspectwidth(inp,out,theform,theaspect){
 	}
 	document.forms[theform].elements[out].value = mynum;
 }
+function changeFormat(theform,inpheight,inpwidth,outheight,outwidth,ydpi,xdpi,inheight,inwidth,formatbox) {
+		    var formatbox = document.forms[theform].elements[formatbox];
+		    var selectedFormat = formatbox.options[formatbox.selectedIndex].value;
+		    if(selectedFormat == "inches") {
+		    	var heightinches = Math.round(inpheight.value / ydpi*100)/100;
+		    	document.forms[theform].elements[inheight].value = heightinches;
+
+		    	document.forms[theform].elements[outheight].style.display='none';
+		    	document.forms[theform].elements[inheight].style.display='';
+
+		    	var widthinches = Math.round(inpwidth.value / xdpi*100)/100; 
+		    	document.forms[theform].elements[inwidth].value = widthinches;
+
+		    	document.forms[theform].elements[outwidth].style.display='none';
+		    	document.forms[theform].elements[inwidth].style.display='';
+		    }
+
+		    if(selectedFormat == "pixels") {
+		    	document.forms[theform].elements[outheight].style.display='';
+		    	document.forms[theform].elements[inheight].style.display='none';
+
+		    	document.forms[theform].elements[outwidth].style.display='';
+		    	document.forms[theform].elements[inwidth].style.display='none';
+		    }
+	   }
+function updatePixels(theform,height,width,outheight,outwidth,ydpi,xdpi) {
+   		var heightpixels = height.value * ydpi;
+   		document.forms[theform].elements[outheight].value = heightpixels;
+   		var widthpixels = width.value * xdpi;
+   		document.forms[theform].elements[outwidth].value = widthpixels;
+   }
+   // Will convert the value given in the width and set it in the height
+function aspectheightin(inp,out,theform,theaspect){
+	//Check that the input value is mod, if not correct it
+	var theheight = Math.round(inp.value / theaspect*100)/100;
+	document.forms[theform].elements[out].value = theheight;
+}
+// Will convert the value given in the heigth and set it in the width
+function aspectwidthin(inp,out,theform,theaspect){
+	//Check that the input value is mod, if not correct it
+	var theheight = Math.round(inp.value * theaspect*100)/100;
+	document.forms[theform].elements[out].value = theheight;
+}
+
 // Save Comment
 function addcomment(fileid,type,folderid,iscol){
 	var thecomment = $('#assetComment').val();

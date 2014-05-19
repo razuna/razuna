@@ -27,7 +27,7 @@
 	<div id="tab_addassets">
 		<ul>
 			<li><a href="##addsingle">#myFusebox.getApplicationData().defaults.trans("header_add_asset")#</a></li>
-			<cfif !application.razuna.isp AND cs.tab_add_from_server>
+			<cfif !application.razuna.isp AND cs.tab_add_from_server AND application.razuna.storage eq 'local'>
 				<li><a href="##addserver">#myFusebox.getApplicationData().defaults.trans("header_add_asset_server")#</a></li>
 			</cfif>
 			<cfif cs.tab_add_from_email>
@@ -41,7 +41,7 @@
 			</cfif>
 		</ul>
 		<div id="addsingle" style="padding:0px;margin:0px;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
-		<cfif !application.razuna.isp AND cs.tab_add_from_server>
+		<cfif !application.razuna.isp AND cs.tab_add_from_server AND application.razuna.storage eq 'local'>
 			<div id="addserver">
 				<p><a href="##" onclick="showwindow('#myself##xfa.addserver#&folder_id=#folder_id#','#myFusebox.getApplicationData().defaults.trans("header_add_asset_server")#',800,2);">#myFusebox.getApplicationData().defaults.trans("import_from_folder")#</a> #myFusebox.getApplicationData().defaults.trans("import_from_folder_custom")#.</p>
 				<p>

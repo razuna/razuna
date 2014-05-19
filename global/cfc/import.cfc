@@ -290,6 +290,7 @@
 		<cfset var c_thekeywords = "keywords" />
 		<cfset var c_thedescription = "description" />
 		<cfset var c_thelabels = "labels" />
+		<cfset var c_theupcnumber = "upc_number" />
 		<!--- Params XMP --->
 		<cfset var c_theiptcsubjectcode = "iptcsubjectcode" />
 		<cfset var c_thecreator = "creator" />
@@ -343,6 +344,13 @@
 				<cfif arguments.thestruct.impp_template NEQ "">
 					<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 				</cfif>
+
+				<cfif NOT isdefined("#c_thisid#") >
+					<cfoutput><strong><font color="##CD5C5C">The 'ID' key column is missing in the file. Please ensure the 'ID' key column is present in the file or if using a import template make sure to define a mapping to a key column.</font></strong></cfoutput>
+					<cfflush>
+					<cfabort>
+				</cfif> 
+
 				<!--- Query for existence of the record --->
 				<cftry>
 					<cfquery dataSource="#application.razuna.datasource#" name="found">
@@ -384,11 +392,26 @@
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 					</cfif>
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_theupcnumber = gettemplatevalue(arguments.thestruct.impp_template,"upc_number")>
+					</cfif>
 					<!--- Images: main table --->
-					<cfif evaluate(c_thefilename) NEQ "">
+					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
 						<cfquery dataSource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#images
 						SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						<cfif arguments.thestruct.expwhat NEQ "all">
+							AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+						</cfif>
+						</cfquery>
+					</cfif>
+					<!--- UPC --->
+					<cfif isdefined("#c_theupcnumber#") AND evaluate(c_theupcnumber) NEQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#images
+						SET img_upc_number= <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_theupcnumber)#">
 						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 						<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1216,17 +1239,19 @@
 					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
-				<cfquery dataSource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#videos
-				SET 
-				vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				<cfif arguments.thestruct.expwhat NEQ "all">
-					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfquery dataSource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#videos
+					SET 
+					vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<cfif arguments.thestruct.expwhat NEQ "all">
+						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+					</cfif>
+					</cfquery>
 				</cfif>
-				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
 				<cfquery dataSource="#application.razuna.datasource#" name="khere">
@@ -1378,17 +1403,19 @@
 					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
-				<cfquery dataSource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#audios
-				SET 
-				aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				<cfif arguments.thestruct.expwhat NEQ "all">
-					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfquery dataSource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#audios
+					SET 
+					aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<cfif arguments.thestruct.expwhat NEQ "all">
+						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+					</cfif>
+					</cfquery>
 				</cfif>
-				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
 				<cfquery dataSource="#application.razuna.datasource#" name="khere">
@@ -1548,17 +1575,19 @@
 					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
-				<cfquery dataSource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#files
-				SET 
-				file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				<cfif arguments.thestruct.expwhat NEQ "all">
-					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+					<cfquery dataSource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files
+					SET 
+					file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<cfif arguments.thestruct.expwhat NEQ "all">
+						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+					</cfif>
+					</cfquery>
 				</cfif>
-				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
 				<cfquery dataSource="#application.razuna.datasource#" name="khere">
@@ -1624,7 +1653,7 @@
 					SET 
 					file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 					file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
-					WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
+					WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					</cfquery>
 				</cfif>

@@ -63,6 +63,7 @@
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
+	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<cfparam name="session.customfileid" default="">
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
@@ -164,7 +165,7 @@
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -179,6 +180,9 @@
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folderaccess EQ 'R'>
+			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
+		</cfif>
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -261,8 +265,8 @@
 		<cfset variables.cachetoken = getcachetoken("images")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#
-		FROM #session.hostdbprefix#images
+		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#, CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
+		FROM #session.hostdbprefix#images i
 		WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -711,7 +715,7 @@
 	i.thumb_height thumbheight, i.img_size ilength, i.thumb_size thumblength, i.hashtag,
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
-	i.img_remarks, i.img_extension, i.shared,i.img_upc_number, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
+	i.img_remarks, i.img_extension, i.shared,i.img_upc_number, i.expiry_date, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
 	s.set2_intranet_gen_download, s.set2_url_website,s.set2_custom_file_ext, u.user_first_name, u.user_last_name, fo.folder_name,
 	'' as perm
 	FROM #session.hostdbprefix#images i 
@@ -752,6 +756,7 @@
 <!--- GET THE IMAGE DETAILS FOR BASKET --->
 <cffunction name="detailforbasket" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.colaccess" default="">
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<cfparam default="0" name="session.thegroupofuser">
@@ -762,7 +767,7 @@
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename,
 	'' as perm
 	FROM #session.hostdbprefix#images i
-	WHERE 
+	WHERE 1=1 AND
 	<cfif arguments.thestruct.related EQ "T">
 		i.img_group
 	<cfelse>
@@ -772,6 +777,9 @@
 	= '0'
 	<cfelse>
 	IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qrybasket.cart_product_id)#" list="true">)
+	</cfif>
+	<cfif arguments.thestruct.colaccess EQ 'R'>
+		AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 	</cfif>
 	</cfquery>
 	<!--- Get proper folderaccess --->
@@ -806,6 +814,7 @@
 	<cfparam name="arguments.thestruct.what" default="">
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
+	<cfset var renlist ="-1">
 	<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
 	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
 		<!--- Get additional renditions --->
@@ -814,9 +823,11 @@
 		WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 		</cfquery>
 		<!--- Append additional renditions --->
-		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(getaddver.av_id)#',',')>
+		<cfset renlist = listappend(renlist,'#valuelist(getaddver.av_id)#',',')>
 		<!--- Append  renditions --->
-		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,'#valuelist(arguments.thestruct.qry_related.img_id)#',',')>
+		<cfset renlist = listappend(renlist,'#valuelist(arguments.thestruct.qry_related.img_id)#',',')>
+		<!--- Append to file_id list --->
+		<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,renlist,',')>
 	</cfif>
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
@@ -893,7 +904,6 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
-		
 		<!--- Save to the images table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
@@ -903,17 +913,26 @@
 			av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND av_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
+	
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#images
 			SET 
 			img_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
+			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
+				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
+			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
+				expiry_date = null,
+			</cfif>
 			<cfif isdefined("arguments.thestruct.img_upc")>
 				img_upc_number = <cfqueryparam value="#arguments.thestruct.img_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- Filter out renditions whose names we do not want to update --->
+			AND img_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 			</cfquery>
 		</cfif>
 		<!--- Update main record with dates --->
@@ -940,7 +959,7 @@
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryorg.folder_id_r#')>
 		<cfelse>
-			<!--- If udpaitng additional version then get info and log change--->
+			<!--- If updating additional version then get info and log change--->
 			<cfquery datasource="#variables.dsn#" name="qryaddver">
 			SELECT av_link_title, folder_id_r
 			FROM #session.hostdbprefix#additional_versions
@@ -1005,6 +1024,10 @@
 	<!--- Now get the extension and the name after the position from above --->
 	<cfset var thenamenoext = listfirst(arguments.thestruct.qry_detail.img_filename_org, ".")>
 	<cfset var thename = thenamenoext & ".#arguments.thestruct.qry_detail.img_extension#">
+	<cfset var thethumbheight = 0>
+	<cfset var thethumbwidth = 0>
+	<!--- Pixels or inches --->
+	<cfset var thepixin = "pixels">
 	<!--- Set vars for thread --->
 	<cfset arguments.thestruct.thisfolder = thisfolder>
 	<cfset arguments.thestruct.thename = thename>
@@ -1145,6 +1168,7 @@
 				<cfset var newImgWidth  = arguments.thestruct.qry_detail.img_width>
 				<cfset var newImgHeight = arguments.thestruct.qry_detail.img_height>
 			</cfif>
+
 			<!--- DPI --->
 			<cfif qry_d.recordcount EQ 0>
 				<cfset var thedpi = "">
@@ -1171,6 +1195,10 @@
 				<cfset var newImgWidth  = evaluate("convert_width_#theformat#")>
 				<cfset var newImgHeight = evaluate("convert_height_#theformat#")>
 				<cfset var thedpi = evaluate("convert_dpi_#theformat#")>
+				<cfif structKeyExists(thestruct,"formatbox_#theformat#")>
+					<cfset thepixin =  evaluate("formatbox_#theformat#")>
+				</cfif>
+				
 				<!--- If there is a watermark being selected grab it here --->
 				<cfif "convert_wm_#theformat#" NEQ "">
 					<cfset var wmid = evaluate("convert_wm_#theformat#")>
@@ -1186,16 +1214,23 @@
 		<cfif isWindows>
 			<cfset var theoriginalasset = """#theargument#""">
 			<cfset var theformatconv = """#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#""">
-			<cfset var thethumbtconv = """#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#""">
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat eq 'gif'>
+				<cfset var thethumbtconv = """#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_detail.thumb_extension#""">
+			<cfelse>
+				<cfset var thethumbtconv = """#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#""">
+			</cfif>
 		<cfelse>
 			<cfset var theoriginalasset = theargument>
 			<cfset var nameforim = replace(arguments.thestruct.thenamenoext," ","\ ","all")>
 			<cfset var nameforim = replace(nameforim,"&","\&","all")>
 			<cfset var nameforim = replace(nameforim,"'","\'","all")>
 			<cfset var theformatconv = "#thisfolder#/#nameforim#.#theformat#">
-			<cfset var thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat eq 'gif'>
+				<cfset var thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_detail.thumb_extension#">
+			<cfelse>
+				<cfset var thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+			</cfif>
 		</cfif>
-
 		<!--- Check if colorspace attribute for sRGB is set to 'T' in settings. If so it will override the colorspace parameter passed. --->
 		<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
 			<cfset var csarguments = "-set colorspace sRGB">
@@ -1205,13 +1240,50 @@
 		<cfelse>
 			<cfset var csarguments = "">	
 		</cfif>	
+
+		<!--- If extension is TGA or AI then turn off alpha --->
+		<cfif arguments.thestruct.qry_detail.img_extension eq 'tga' or arguments.thestruct.qry_detail.img_extension eq 'ai'>
+			<cfset alpha = '-alpha off'>
+		<cfelse>
+			<cfset alpha = ''>	
+		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfset var theimarguments = "#theoriginalasset# #csarguments# -resize #newImgWidth#x#newImgHeight# #theflatten##theformatconv#">
+			<cfif thepixin eq 'inches'>
+				<cfparam name="arguments.thestruct.xres" default = "90">
+				<cfparam name="arguments.thestruct.yres" default = "90">
+				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
+			<cfelse>
+				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
+			</cfif>
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# #csarguments# -resample #thedpi# #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
 		</cfif>
-		<cfset var theimargumentsthumb = "#theformatconv# #csarguments# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# #theflatten##thethumbtconv#">
+
+		<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
+		<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
+		<cfset var thumb_height = arguments.thestruct.qry_settings_image.set2_img_thumb_heigth>
+		<!--- If both height and width are set then resize to exact height and width set. --->
+		<cfif isnumeric(thumb_width) AND isnumeric(thumb_height)>
+			<cfset resizeargs =  "#thumb_width#x#thumb_height#">
+		<!--- If only height set then resize to given height preserving aspect ratio.  --->
+		<cfelseif isnumeric(thumb_height)>
+			<cfset resizeargs = "x#thumb_height#">
+		<!--- If only width set then resize to given width preserving aspect ratio. --->
+		<cfelseif isnumeric(thumb_width)>
+			<cfset resizeargs = "#thumb_width#x">
+		</cfif>
+
+		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'>
+			<cfif theformat NEQ 'gif' >
+				<cfset var theimargumentsthumb = "#theoriginalasset#[0] #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
+			<cfelse>
+				<cfset var theimargumentsthumb = "#theoriginalasset# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
+			</cfif>
+		<cfelse>
+			<cfset var theimargumentsthumb = "#theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
+		</cfif>
+
 		<!--- Create script files --->
 		<cfset var thescript = createuuid()>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
@@ -1297,23 +1369,36 @@
 		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat NEQ 'gif' AND theformat NEQ 'tif'>
 			<cffile action="rename" source="#thisfolder#/#arguments.thestruct.thenamenoext#-0.#theformat#" destination="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" />
 		</cfif>
+
 		<cfexecute name="#theexif#" arguments="-TagsFromFile #theoriginalasset# -all:all#thedpitags# #theformatconv#" timeout="60" />
-		<!--- Get size of original and thumnail --->
+		<!--- Get size of original and thumbnail --->
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" returnvariable="orgsize">
-		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" returnvariable="thumbsize">
+		<cfinvoke component="global" method="getfilesize" filepath="#thethumbtconv#" returnvariable="thumbsize">
 		<!--- Get width and height --->
 		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #theformatconv#" timeout="60" variable="theheight" />
 		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #theformatconv#" timeout="60" variable="thewidth" />
+		<!--- Get width and height for thumbnail--->
+		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #thethumbtconv#" timeout="60" variable="thethumbheight" />
+		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #thethumbtconv#" timeout="60" variable="thethumbwidth" />
 		<!--- MD5 Hash --->
 		<cfif FileExists("#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#")>
 			<cfset var md5hash = hashbinary("#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#")>
 		</cfif>
+
 		<!---Create record--->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#images
 		(img_id)
 		VALUES(<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">)
 		</cfquery>
+
+		<!--- Set proper extension if animated gif --->
+		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat EQ 'gif'>
+			<cfset arguments.thestruct.theext = arguments.thestruct.theformat>
+		<cfelse>
+			<cfset arguments.thestruct.theext = arguments.thestruct.qry_settings_image.set2_img_format>
+		</cfif>
+		<cfset arguments.thestruct.thethumbtconv = thethumbtconv>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<cfset arguments.thestruct.theexe = theexe >
@@ -1325,48 +1410,11 @@
 			<!--- Move original image --->
 			<cffile action="move" source="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#theformat#" mode="775">
 			<!--- Move thumbnail --->
-			<!--- No Thumbnail for GIF file --->
-			<cfif arguments.thestruct.qry_detail.thumb_extension NEQ 'gif'>
-				<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
-					<cffile action="move" source="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#" destination="#attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#" mode="775">
-				</cfthread>
-				<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
-			</cfif>
-			<!--- Check the source file is animated then create a thumb image --->
-			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'> 
-				<cfif theformat NEQ 'gif' >
-					<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
-						<cfexecute name="#attributes.intstruct.theexe#" arguments="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension#[0] #attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#" timeout="300" />
+			<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">				
+				<cffile action="move" source="#attributes.intstruct.thethumbtconv#" destination="#attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.theext#" mode="775">
 			</cfthread>
-					<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
-				<cfelse>
-					<cfthread name="uploadthumb#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
-						<cfexecute name="#attributes.intstruct.theexe#" arguments="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.qry_detail.img_id#.#attributes.intstruct.qry_detail.thumb_extension# #attributes.intstruct.assetpath#/#attributes.intstruct.host_id#/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.theformat#" timeout="300" />
-					</cfthread>
-					<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
-				</cfif>
-			</cfif>	
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
-				<!--- Upload Original Image --->
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.thenamenoext#.#attributes.intstruct.theformat#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-				<!--- Upload Thumbnail --->
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for thread to finish --->
-			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
-			<!--- Get signed URLS --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#" nvxsession="#arguments.thestruct.nvxsession#">
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
+			<cfthread action="join" name="uploadthumb#theformat##arguments.thestruct.newid#" />
+
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
@@ -1377,35 +1425,14 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 				<!--- Upload Thumbnail --->
-				<!--- No Thumbnail for GIF file --->
-				<cfif attributes.intstruct.qry_detail.thumb_extension NEQ 'gif'>
-					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-					</cfinvoke>
-				</cfif>
+				<cfinvoke component="amazon" method="Upload">
+					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.theext#"\>
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.thethumbtconv#">
+					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+				</cfinvoke>
 			</cfthread>
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
-			<!--- Check the source file is animated then create a thumb image --->
-			<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'> 
-				<cfif theformat NEQ 'gif'>
-					<cfexecute name="#theexe#" arguments="#arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.qry_detail.img_id#.#arguments.thestruct.qry_detail.thumb_extension#[0] #arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" timeout="300" />
-					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
-						<cfinvokeargument name="theasset" value="#arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
-						<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-					</cfinvoke>
-				<cfelse>
-					<cfinvoke component="s3" method="copyObject">
-						<cfinvokeargument name="oldBucketName" value="#arguments.thestruct.awsbucket#">
-						<cfinvokeargument name="newBucketName" value="#arguments.thestruct.awsbucket#">
-						<cfinvokeargument name="oldFileKey" value="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.qry_detail.img_id#/thumb_#arguments.thestruct.file_id#.#theformat#">
-						<cfinvokeargument name="newFileKey" value="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#theformat#">
-					</cfinvoke>
-				</cfif>
-			</cfif>	
 			<!--- Get signed URLS --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Check the source file is animated or not. --->
@@ -1424,12 +1451,6 @@
 					<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
 					<cfinvokeargument name="thefilename" value="#attributes.intstruct.thenamenoext#.#attributes.intstruct.theformat#">
 				</cfinvoke>
-				<!--- Upload Thumbnail --->
-				<!--- <cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke> --->
 			</cfthread>
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
@@ -1509,8 +1530,12 @@
 		img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">, 
 		img_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">, 
 		thumb_extension = <cfqueryparam value="#thumb_extension#" cfsqltype="cf_sql_varchar">, 
-		thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
-		thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
+		<cfif isNumeric(#thethumbwidth#)>
+			thumb_width = <cfqueryparam value="#thethumbwidth#" cfsqltype="cf_sql_numeric">,
+		</cfif>
+		<cfif isNumeric(#thethumbheight#)>
+			thumb_height =<cfqueryparam value="#thethumbheight#" cfsqltype="cf_sql_numeric">, 
+		</cfif>
 		<cfif isNumeric(#thewidth#)>
 			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
 		</cfif>
@@ -1606,9 +1631,9 @@
 		<cfset arguments.thestruct.thenamenoext = replace(arguments.thestruct.thenamenoext,"_#arguments.thestruct.newid#","","one")>
 	</cfloop>
 	<!--- Remove folder --->
-	<cfif directoryexists(thisfolder)>
+	<!--- <cfif directoryexists(thisfolder)>
 		<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
-	</cfif>
+	</cfif> --->
 	<!--- Return renditioned file id for API rendition --->
 	<cfset var newid = arguments.thestruct.newid>
 	<!--- Flush Cache --->

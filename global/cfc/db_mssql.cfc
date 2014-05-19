@@ -1426,6 +1426,7 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER	   VARCHAR(15),
+		  EXPIRY_DATE DATETIME,
 		  PRIMARY KEY (FILE_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1442,8 +1443,7 @@
 		  FILE_DESC      NVARCHAR(max),
 		  FILE_KEYWORDS  NVARCHAR(max),
 		  HOST_ID		 INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (FILE_ID_R)	REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -1508,6 +1508,7 @@
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		  IMG_UPC_NUMBER	  VARCHAR(15),
+		  EXPIRY_DATE DATETIME,
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1709,6 +1710,8 @@
 		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  SET2_UPC_ENABLED				VARCHAR(5) DEFAULT 'false',
+		  SET2_NEW_USER_EMAIL_SUB  VARCHAR(500),
+		  SET2_NEW_USER_EMAIL_BODY  VARCHAR(4000),
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1877,6 +1880,7 @@
 		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
 		VID_UPC_NUMBER			VARCHAR(15),
+		EXPIRY_DATE DATETIME,
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2044,6 +2048,7 @@
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
 			cloud_url_thumb		VARCHAR(500),
+			file_size			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
 		
@@ -2060,9 +2065,17 @@
 			rec_uuid		VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
-		
 		</cfquery>
-		
+		<cftry>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE UNIQUE NONCLUSTERED INDEX [UNIQUE_HOSTID_LANGID] ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#languages
+		(
+		[lang_id] ASC,
+		[HOST_ID] ASC
+		)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+		</cfquery>
+		<cfcatch type="any"></cfcatch>
+		</cftry>
 		<!--- AUDIOS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios
@@ -2100,6 +2113,7 @@
 		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  	IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
 		  	AUD_UPC_NUMBER		VARCHAR(15),
+		  	EXPIRY_DATE DATETIME,
 			PRIMARY KEY (aud_ID),
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)

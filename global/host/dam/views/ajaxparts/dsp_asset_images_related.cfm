@@ -29,21 +29,22 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_related">
 			<tr>
-				<td width="55">
+				<td width="65" align="center">
 					 <!--- Thumbnail --->
 					 <cfset args = structNew()>
 					 <cfset args.thumb_img_id= img_id>
 					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
 					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''> 
 					 	<a href="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" target="_blank">
-					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" height="50" width="50">
+					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" height="50">
 					 	</a>
 					 <cfelse>
-					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50" width="50"></a>
+					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50"></a>
 					 </cfif>
 				</td>
+				<td width="5"></td>
 				<td valign="top">
-					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)<br />
+					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)  [#img_filename#]<br />
 					<cfif attributes.s EQ "F">
 						<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 					<cfelse>
@@ -54,8 +55,8 @@
 					 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a> 
 					 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;">Direct Link</a>
 					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
-					 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_images&file_id=#img_id#&img_group_id=#img_group#&thetype=img&cf_show=img&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
-					<cfif attributes.folderaccess NEQ "R">
+					 <cfif attributes.folderaccess NEQ "R">
+						 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_images&file_id=#img_id#&img_group_id=#img_group#&thetype=img&cf_show=img&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 						 | <a href="##" onclick="remren('#img_id#');return false;">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
 					</cfif>
 					<div id="divo#img_id#" style="display:none;">

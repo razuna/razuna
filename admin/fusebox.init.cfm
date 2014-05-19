@@ -26,10 +26,10 @@
 <cfparam name="attributes.to" default="">
 
 <cfif structkeyexists(session,"hostid") AND session.hostid EQ "">
-	<cfset session.hostid = 0>
+	<cfset session.hostid = 1>
 </cfif>
 
-<cfparam name="session.hostid" default="0">
+<cfparam name="session.hostid" default="1">
 <cfparam name="cookie.loginnameadmin" default="">
 <cfparam name="cookie.loginpassadmin" default="">
 <cfparam name="session.offset" default="0">
@@ -71,7 +71,7 @@
 </cfif>
 
 <!--- Log User Out when Session.login has expired. Timeout of Sessions is set above --->
-<cfif not IsDefined("Attributes.fa") or (Attributes.fa neq "c.login" and Attributes.fa neq "c.dologin" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa DOES NOT CONTAIN "update" AND application.razuna.firsttime NEQ "true" AND attributes.fa NEQ "c.runschedbackup" AND attributes.fa NEQ "c.logoff")>
+<cfif not IsDefined("Attributes.fa") or (Attributes.fa neq "c.login" and Attributes.fa neq "c.dologin" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa DOES NOT CONTAIN "update" AND application.razuna.firsttime NEQ "true" AND attributes.fa NEQ "c.runschedbackup" AND attributes.fa NEQ "c.logoff" AND attributes.fa NEQ "c.folder_subscribe_task" AND attributes.fa DOES NOT CONTAIN "c.w_")>
 	<cfif NOT structkeyexists(session,"login") OR session.login EQ "F" OR NOT structkeyexists(session,"thelang") OR NOT structkeyexists(session,"hostid") OR NOT structkeyexists(request,"securityobj")>
 		<script language="javascript" type="text/javascript">
 			top.location.href = "<cfoutput>#self#?c.logoff</cfoutput>";

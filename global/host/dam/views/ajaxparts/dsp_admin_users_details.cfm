@@ -24,7 +24,13 @@
 *
 --->
 
-<cfoutput>
+<!--- Turn expiry date input into a jQuery datepicker --->
+  <script>
+	  $(function() {
+	    $( "#user_expirydate" ).datepicker();
+	  });
+  </script>
+  <cfoutput>
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
 <input type="hidden" name="#theaction#" value="c.users_save">
 <input type="hidden" name="user_id" value="#attributes.user_id#">
@@ -117,7 +123,7 @@
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<tr>
 					<td><strong>#myFusebox.getApplicationData().defaults.trans("user_expirydate")#</strong></td>
-					<td><input name="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
+					<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
 				</tr>
 				<tr>
 					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>

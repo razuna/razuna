@@ -32,17 +32,23 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set values --->
-			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
-			<!--- Call internal --->
-			<cfinvoke component="global.cfc.custom_fields" method="get" returnVariable="qry">
-			<!--- QoQ --->
-			<cfquery dbtype="query" name="thexml">
-			SELECT cf_id id, cf_type type, cf_enabled enabled, cf_show show, cf_text text
-			FROM qry
-			</cfquery>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Set values --->
+				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+				<!--- Call internal --->
+				<cfinvoke component="global.cfc.custom_fields" method="get" returnVariable="qry">
+				<!--- QoQ --->
+				<cfquery dbtype="query" name="thexml">
+				SELECT cf_id id, cf_type type, cf_enabled enabled, cf_show show, cf_text text
+				FROM qry
+				</cfquery>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
@@ -63,23 +69,29 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set Values --->
-			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
-			<!--- Set Arguments --->
-			<cfset arguments.thestruct.langcount = 1>
-			<cfset arguments.thestruct.cf_text_1 = arguments.field_text>
-			<cfset arguments.thestruct.cf_type = arguments.field_type>
-			<cfset arguments.thestruct.cf_enabled = arguments.field_enabled>
-			<cfset arguments.thestruct.cf_show = arguments.field_show>
-			<cfset arguments.thestruct.cf_select_list = arguments.field_select_list>
-			<!--- call internal method --->
-			<cfinvoke component="global.cfc.custom_fields" method="add" thestruct="#arguments.thestruct#" returnVariable="theid">
-			<!--- Return --->
-			<cfset thexml.responsecode = 0>
-			<cfset thexml.message = "Custom field successfully added">
-			<cfset thexml.field_id = theid>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Set Values --->
+				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+				<!--- Set Arguments --->
+				<cfset arguments.thestruct.langcount = 1>
+				<cfset arguments.thestruct.cf_text_1 = arguments.field_text>
+				<cfset arguments.thestruct.cf_type = arguments.field_type>
+				<cfset arguments.thestruct.cf_enabled = arguments.field_enabled>
+				<cfset arguments.thestruct.cf_show = arguments.field_show>
+				<cfset arguments.thestruct.cf_select_list = arguments.field_select_list>
+				<!--- call internal method --->
+				<cfinvoke component="global.cfc.custom_fields" method="add" thestruct="#arguments.thestruct#" returnVariable="theid">
+				<!--- Return --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Custom field successfully added">
+				<cfset thexml.field_id = theid>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess("s")>
+			</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout("s")>
@@ -101,120 +113,129 @@
 			<cfset thejson = DeserializeJSON(arguments.field_values)>
 			<!--- Loop over the assetid --->
 			<cfloop list="#arguments.assetid#" index="i" delimiters=",">
-				<!--- Loop over struct --->
-				<cfloop array="#thejson#" index="f">
-					<!--- Check to see if there is a record --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-					SELECT cf_id_r
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
-					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
-					</cfquery>
-					<!--- ORIGINAL CODE
-					INSERT COMMENT
-					<cfif qry.recordcount EQ 0>
-						<cfquery datasource="#application.razuna.api.dsn#">
-						INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
-						(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-						VALUES(
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-						)
-						</cfquery>
-					UPDATE COMMENT
-					<cfelse>
-						<cfquery datasource="#application.razuna.api.dsn#">
-						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
-						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">
-						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-						</cfquery>
-					</cfif>
-					--->
-					<!--- Anthony Rodriguez Edit --->
-					<!--- Insert --->
-					<cfif qry.recordcount EQ 0>
-						<cfquery datasource="#application.razuna.api.dsn#">
-						INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
-						(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-						VALUES(
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-						)
-						</cfquery>
-					<!--- Update --->
-					<cfelse>
-						<cfquery datasource="#application.razuna.api.dsn#">
-						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
-						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">
+				<!--- Get permission for asset (folder) --->
+				<cfset var folderaccess = checkFolderPerm(arguments.api_key, i)>
+				<!--- If user has access --->
+				<cfif folderaccess EQ "W" OR folderaccess EQ "X">
+					<!--- Loop over struct --->
+					<cfloop array="#thejson#" index="f">
+						<!--- Check to see if there is a record --->
+						<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+						SELECT cf_id_r
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
 						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
 						</cfquery>
-					</cfif>
-					<!--- End Anthony Rodriguez Edit --->
-					<!--- Nick Ryan Edit --->
-					<!--- Check to see if item is part of select list --->
-					<cfquery datasource="#application.razuna.api.dsn#" name="qry2">
-					SELECT cf_id, cf_select_list
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
-					WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-					</cfquery>
-					<cfset oldselectlist = listFind(qry2.cf_select_list, "#ReplaceNoCase(f[2],',','&##44;')#")>
-					<!--- If not in list, update it --->
-					<cfif oldselectlist is 0>
-						<cfif len(trim(f[2]))>
-							<cfset newselectlist =  listAppend(qry2.cf_select_list, "#ReplaceNoCase(f[2],',','&##44;')#", ",")>
+						<!--- ORIGINAL CODE
+						INSERT COMMENT
+						<cfif qry.recordcount EQ 0>
 							<cfquery datasource="#application.razuna.api.dsn#">
-							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
-							SET cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newselectlist#">
-							WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-							AND cf_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="select">
+							INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+							(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+							VALUES(
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+							)
 							</cfquery>
-						</cfif>						
-					</cfif>
-					<!--- End Nick Ryan Edit --->
-				</cfloop>
-				<!--- update change date (since we don't know the type we simply update all) --->
-				<cfquery datasource="#application.razuna.api.dsn#">
-				Update #application.razuna.api.prefix["#arguments.api_key#"]#images
-				SET 
-				img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-				</cfquery>
-				<cfquery datasource="#application.razuna.api.dsn#">
-				Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
-				SET 
-				vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-				</cfquery>
-				<cfquery datasource="#application.razuna.api.dsn#">
-				Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
-				SET 
-				aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-				</cfquery>
-				<cfquery datasource="#application.razuna.api.dsn#">
-				Update #application.razuna.api.prefix["#arguments.api_key#"]#files
-				SET 
-				file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
-				</cfquery>
-				<!--- Call workflow --->
-				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
+						UPDATE COMMENT
+						<cfelse>
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+							SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">
+							WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+							AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+							</cfquery>
+						</cfif>
+						--->
+						<!--- Anthony Rodriguez Edit --->
+						<!--- Insert --->
+						<cfif qry.recordcount EQ 0>
+							<cfquery datasource="#application.razuna.api.dsn#">
+							INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+							(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+							VALUES(
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;','ALL')#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+							)
+							</cfquery>
+						<!--- Update --->
+						<cfelse>
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+							SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;','ALL')#">
+							WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+							AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
+							</cfquery>
+						</cfif>
+						<!--- End Anthony Rodriguez Edit --->
+						<!--- Nick Ryan Edit --->
+						<!--- Check to see if item is part of select list --->
+						<cfquery datasource="#application.razuna.api.dsn#" name="qry2">
+						SELECT cf_id, cf_select_list
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
+						WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+						</cfquery>
+						<cfset oldselectlist = listFind(qry2.cf_select_list, "#ReplaceNoCase(f[2],',','&##44;')#")>
+						<!--- If not in list, update it --->
+						<cfif oldselectlist is 0>
+							<cfif len(trim(f[2]))>
+								<cfset newselectlist =  listAppend(qry2.cf_select_list, "#ReplaceNoCase(f[2],',','&##44;')#", ",")>
+								<cfquery datasource="#application.razuna.api.dsn#">
+								UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
+								SET cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#newselectlist#">
+								WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+								AND cf_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="select">
+								</cfquery>
+							</cfif>						
+						</cfif>
+						<!--- End Nick Ryan Edit --->
+					</cfloop>
+					<!--- update change date (since we don't know the type we simply update all) --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#images
+					SET 
+					img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
+					SET 
+					vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
+					SET 
+					aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#files
+					SET 
+					file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+					<!--- Call workflow --->
+					<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
+				<!--- No access --->
+				<cfelse>
+					<!--- Return --->
+					<cfset var thexml = noaccess("s")>
+				</cfif>
 			</cfloop>
 			<!--- Reset cache --->
 			<cfset resetcachetoken(arguments.api_key,"images")>

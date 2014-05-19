@@ -1489,6 +1489,7 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER	   VARCHAR(15),
+		  EXPIRY_DATE DATE,
 		PRIMARY KEY (FILE_ID),
 		KEY #arguments.thestruct.host_db_prefix#files_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#files_name (FILE_NAME),
@@ -1517,8 +1518,7 @@
 		PRIMARY KEY (ID_INC),
 		KEY #arguments.thestruct.host_db_prefix#fd_idr (file_id_r),
 	    KEY #arguments.thestruct.host_db_prefix#fd_hostid (HOST_ID),
-	    KEY #arguments.thestruct.host_db_prefix#fd_lang (LANG_ID_R),
-		FOREIGN KEY (FILE_ID_R)	REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+	    KEY #arguments.thestruct.host_db_prefix#fd_lang (LANG_ID_R)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -1583,6 +1583,7 @@
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		  IMG_UPC_NUMBER	  VARCHAR(15),
+		  EXPIRY_DATE DATE,
 		PRIMARY KEY (IMG_ID),
 		KEY #arguments.thestruct.host_db_prefix#img_name (IMG_FILENAME),
 	  	KEY #arguments.thestruct.host_db_prefix#img_name_org (IMG_FILENAME_ORG),
@@ -1807,6 +1808,8 @@
 		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  SET2_UPC_ENABLED				VARCHAR(5) DEFAULT 'false',
+		  SET2_NEW_USER_EMAIL_SUB  	VARCHAR(500),
+		  SET2_NEW_USER_EMAIL_BODY  	VARCHAR(4000),
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),
   		  KEY #arguments.thestruct.host_db_prefix#set2_id (SET2_ID),
@@ -1992,6 +1995,7 @@
 		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
 		VID_UPC_NUMBER 			VARCHAR(15),
+		EXPIRY_DATE DATE,
 		PRIMARY KEY (VID_ID),
 		KEY #arguments.thestruct.host_db_prefix#vid_group (vid_group),
 	    KEY #arguments.thestruct.host_db_prefix#vid_folderid (folder_id_r),
@@ -2184,6 +2188,7 @@
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
 			cloud_url_thumb		VARCHAR(500),
+			file_size			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
 		#this.tableoptions#
@@ -2199,6 +2204,7 @@
 			HOST_ID			INT,
 			rec_uuid			VARCHAR(100),
 			PRIMARY KEY (rec_uuid),
+			UNIQUE KEY  UNIQUE_HOSTID_LANGID (lang_id,HOST_ID),
 			KEY #arguments.thestruct.host_db_prefix#l_active (lang_active),
   			KEY #arguments.thestruct.host_db_prefix#l_hostid (HOST_ID)
 		)
@@ -2242,6 +2248,7 @@
 		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  	IS_INDEXED		 	VARCHAR(1) DEFAULT 0,
 		  	AUD_UPC_NUMBER		VARCHAR(15),
+		  	EXPIRY_DATE DATE,
 			PRIMARY KEY (aud_ID),
 			KEY #arguments.thestruct.host_db_prefix#aud_hostid (HOST_ID),
 	     	KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),

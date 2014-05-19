@@ -814,6 +814,9 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
+		<cfif not isdefined("arguments.thestruct.prefs")>
+			<cfset arguments.thestruct.prefs - structnew()>
+		</cfif>
 
 		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
 		<cfif upcstruct.upcenabled>
@@ -885,6 +888,61 @@ Comment:<br>
 		       <cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 		</cfquery>
+		<!--- RAZ-2837 : Copy/Update original file's metadata to rendition --->
+		<cfif structKeyExists(arguments.thestruct.prefs,'set2_rendition_metadata') AND arguments.thestruct.prefs.set2_rendition_metadata EQ 'true'>
+			<cfset var assettype = arguments.thestruct.type>
+			<cfset var thetbl = ''>
+			<cfif assettype eq 'aud'>
+				<cfset var thetbl = 'audios'>
+			<cfelseif assettype eq 'vid'>
+				<cfset var thetbl = 'videos'>
+			<cfelseif assettype eq 'img'>
+				<cfset var thetbl = 'images'>
+			</cfif>
+			<cfif thetbl neq ''>
+				<!--- RAZ-2837: Get descriptions and keywords --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry_details">
+					SELECT  lang_id_r, #assettype#_description as thedesc, #assettype#_keywords as thekeys
+					FROM #session.hostdbprefix##thetbl#_text
+					WHERE #assettype#_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif qry_details.recordcount neq 0>
+					<!--- Add to descriptions and keywords --->
+					<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix##thetbl#_text
+						(id_inc, #assettype#_id_r, lang_id_r, #assettype#_description, #assettype#_keywords, host_id)
+						VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#qry_details.lang_id_r#" cfsqltype="cf_sql_numeric">, 
+						<cfqueryparam value="#ltrim(qry_details.thedesc)#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#ltrim(qry_details.thekeys)#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+					</cfquery>
+				</cfif>
+				<!-- CFC: Check for custom fields -->
+				<cfset arguments.thestruct.cf_show = assettype>
+				<cfinvoke component="global.cfc.custom_fields" method="getfields" returnvariable="arguments.thestruct.qry_cf" argumentcollection="#arguments#"/>
+				<cfif arguments.thestruct.qry_cf.recordcount NEQ 0>
+					<cfloop query="arguments.thestruct.qry_cf">
+						<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#custom_fields_values
+							(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+							VALUES(
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cf_id#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_value#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+							)
+						</cfquery>
+					</cfloop>	
+				</cfif>
+			</cfif>
+		</cfif>
+
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />
@@ -1632,6 +1690,8 @@ Comment:<br>
 		<cfset var upcstruct = structnew()>
 		<cfset upcstruct.upcenabled = false>
 		<cfset upcstruct.upcgrpsize = "">
+		<cfset upcstruct.upcgrpid = "">
+		<cfset upcstruct.createupcfolder = false>
 		<!--- Check if UPC enabled in settings --->
 		<cfquery datasource="#application.razuna.datasource#" name="is_upc_enabled">
 			SELECT set2_upc_enabled FROM #session.hostdbprefix#settings_2
@@ -1651,7 +1711,7 @@ Comment:<br>
 
 		<!--- Check if user is part of a group for which UPC size is set--->
 		<cfquery datasource="#application.razuna.datasource#" name="grp_upc_size">
-			SELECT upc_size FROM groups g, ct_groups_users u
+			SELECT g.upc_size, g.grp_id, g.upc_folder_format FROM groups g, ct_groups_users u
 			WHERE g.grp_id = u.ct_g_u_grp_id
 			AND u.ct_g_u_user_id = '#session.theuserid#'
 			AND g.upc_size is not null
@@ -1661,6 +1721,8 @@ Comment:<br>
 		 <cfif is_upc_enabled.set2_upc_enabled eq 'true' and  is_folder_upc_label.recordcount neq 0 and isnumeric(grp_upc_size.upc_size)>
 		 	<cfset upcstruct.upcenabled = true>
 		 	<cfset upcstruct.upcgrpsize = grp_upc_size.upc_size>
+		 	<cfset upcstruct.upcgrpid = grp_upc_size.grp_id>
+		 	<cfset upcstruct.createupcfolder = grp_upc_size.upc_folder_format>
 		 </cfif>
 		 <cfreturn upcstruct>
 	</cffunction>

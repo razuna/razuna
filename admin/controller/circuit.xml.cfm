@@ -1011,23 +1011,21 @@
 		<!-- CFC: If it is a new user then add, else update -->
 		<if condition="#attributes.user_id# EQ 0">
 			<true>
+				<!-- CFC: Insert user to groups -->
+				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
 				<!-- CFC: Add user to db -->
 				<invoke object="myFusebox.getApplicationData().users" methodcall="add(attributes)" returnvariable="attributes.newid" />
 				<!-- CFC: Get all modules -->
 				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct()" returnvariable="attributes.module_id_struct" />
-				<!-- CFC: Insert user to groups -->
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
 			</true>
 			<false>
 				<set name="attributes.newid" value="#attributes.user_id#" />
 				<!-- CFC: Get all modules -->
 				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct()" returnvariable="attributes.module_id_struct" />
-				<!-- CFC: Remove groups from user
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="deleteUser(attributes)" /> -->
-				<!-- CFC: Update the user -->
-				<invoke object="myFusebox.getApplicationData().users" methodcall="update(attributes)" />
 				<!-- CFC: Insert user to groups -->
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
+				<!-- CFC: Update the user -->
+				<invoke object="myFusebox.getApplicationData().users" methodcall="update(attributes)" />
 			</false>
 		</if>
 	</fuseaction>
@@ -1054,6 +1052,15 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="check(attributes)" returnvariable="qry_check" />
 		<!-- Show -->
 		<do action="ajax.users_check" />
+	</fuseaction>
+	<!-- Loading API page -->
+	<fuseaction name="users_api">
+		<!-- Param -->
+		<set name="attributes.reset" value="false" overwrite="false" />
+		<!-- CFC: Check API key -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
+		<!-- Show -->
+		<do action="ajax.users_api" />
 	</fuseaction>
 
 	<!--  -->
@@ -1391,4 +1398,17 @@
 	<fuseaction name="debug">
 		<do action="v.debug" />	
 	</fuseaction>
+
+	<!-- Run Folder subscribe schedule tasks -->
+	<fuseaction name="folder_subscribe_task">
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
+	</fuseaction>
+
+	<!-- Schedule asset expiry task -->
+	<fuseaction name="w_asset_expiry_task">
+		<!-- CFC: Run task -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
+	</fuseaction>
+
 </circuit>

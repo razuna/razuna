@@ -725,24 +725,32 @@
 		<cfinvoke component="folders" method="init" returnvariable="foldersObj" />
 		<!--- Get Sub-folders of Folder subscribe --->
 		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
+		<!--- Get UPC setting --->
+		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
-			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name
+			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
+			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url 
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
 				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
 			</cfif>
+			<cfif damset.set2_upc_enabled EQ 'true'>
+				, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number 
+			</cfif>
   
 			FROM (
-
 				SELECT * FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 				ORDER BY log_timestamp DESC
-
 				) l
 			LEFT JOIN users u ON l.log_user = u.user_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
+			LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
+			LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
+			LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
+			LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
@@ -750,6 +758,7 @@
 				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
 			</cfif>
 		</cfquery>
+
 		<!--- Email subject --->
 		<cfinvoke component="defaults" method="trans" transid="subscribe_email_subject" returnvariable="email_subject">
 		<!--- Email content --->
@@ -765,40 +774,40 @@
 						<th nowrap="true">Date</th>
 						<th nowrap="true">Time</th>
 						<th nowrap="true">Folder/<br>Sub-Folder</th>
-						<th nowrap="true">Action</th>
-						<th >Details</th>
-						<th nowrap="true">Type of file</th>
-						<th nowrap="true">User</th>
-						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
-							<th>Asset Keywords</th>
+						<cfif damset.set2_upc_enabled EQ 'true'>
+							<th>UPC Number</th>
 						</cfif>
 						<cfif qGetUserSubscriptions.asset_description eq 'T'>
 							<th>Asset Description</th>
 						</cfif>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<th>Asset Keywords</th>
+						</cfif>
+						<th nowrap="true">Action</th>
+						<th >Details</th>
+						<th nowrap="true">Type of file</th>
+						<th nowrap="true">User</th>
+						<th>File URL</th>
 					</tr>
 				<cfloop query="qGetUpdatedAssets">
 					<tr >
 						<td nowrap="true" valign="top">#dateformat(qGetUpdatedAssets.log_timestamp, "#dateformat#")#</td>
 						<td nowrap="true" valign="top">#timeFormat(qGetUpdatedAssets.log_timestamp, 'HH:mm:ss')#</td>
 						<td valign="top">#qGetUpdatedAssets.folder_name#</td>
-						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
-						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
-						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
-						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
-						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+						<cfif damset.set2_upc_enabled EQ 'true'>
 							<td>&nbsp;
 							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 								<cfcase value="img">
-									#qGetUpdatedAssets.img_keywords#
+									#qGetUpdatedAssets.img_upc_number#
 								</cfcase>
 								<cfcase value="doc">
-									#qGetUpdatedAssets.file_keywords#
+									#qGetUpdatedAssets.file_upc_number#
 								</cfcase>
 								<cfcase value="vid">
-									#qGetUpdatedAssets.vid_keywords#
+									#qGetUpdatedAssets.vid_upc_number#
 								</cfcase>
 								<cfcase value="aud">
-									#qGetUpdatedAssets.aud_keywords#
+									#qGetUpdatedAssets.aud_upc_number#
 								</cfcase>
 							</cfswitch>
 							</td>
@@ -821,6 +830,65 @@
 							</cfswitch>
 							</td>
 						</cfif>
+						<cfif qGetUserSubscriptions.asset_keywords eq 'T'>
+							<td>&nbsp;
+							<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+								<cfcase value="img">
+									#qGetUpdatedAssets.img_keywords#
+								</cfcase>
+								<cfcase value="doc">
+									#qGetUpdatedAssets.file_keywords#
+								</cfcase>
+								<cfcase value="vid">
+									#qGetUpdatedAssets.vid_keywords#
+								</cfcase>
+								<cfcase value="aud">
+									#qGetUpdatedAssets.aud_keywords#
+								</cfcase>
+							</cfswitch>
+							</td>
+						</cfif>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_action#</td>
+						<td valign="top">#qGetUpdatedAssets.log_desc#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.log_file_type#</td>
+						<td nowrap="true" align="center" valign="top">#qGetUpdatedAssets.user_first_name# #qGetUpdatedAssets.user_last_name#</td>
+						<td align="center" valign="top" width="80">
+						<!--- If action is not file delete then show file url --->
+						<cfif qGetUpdatedAssets.log_action NEQ 'delete'>
+							<cfif application.razuna.storage EQ "local">
+								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+									<cfcase value="img">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+									</cfcase>
+									<cfcase value="doc">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+									</cfcase>
+									<cfcase value="vid">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+									</cfcase>
+									<cfcase value="aud">
+										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+									</cfcase>
+								</cfswitch>
+							<cfelse>
+								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
+									<cfcase value="img">
+										#img_cloud_url#
+									</cfcase>
+									<cfcase value="doc">
+										#file_cloud_url#
+									</cfcase>
+									<cfcase value="vid">
+										#vid_cloud_url#
+									</cfcase>
+									<cfcase value="aud">
+										#aud_cloud_url#
+									</cfcase>
+								</cfswitch>
+								
+							</cfif>
+						</cfif>
+						</td>
 					</tr>
 				</cfloop>
 				</table>
@@ -841,6 +909,113 @@
 			WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 	</cfoutput>
+</cffunction>
+
+<cffunction name="asset_expiry_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
+	<!--- Check if expiry label is not present for a host --->
+	<cfquery datasource="#application.razuna.datasource#" name="getmissing_labels">
+	SELECT h.HOST_ID 
+	FROM raz1_labels l RIGHT JOIN hosts h
+	ON l.label_text='Asset has expired' AND l.host_id=h.host_id AND l.label_id_r = '0'
+	WHERE label_id IS NULL
+	</cfquery>
+	<cfloop query="getmissing_labels">
+		<!--- Insert label for asset expiry if missing --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO raz1_labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
+		VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
+				<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">,
+				<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#getmissing_labels.host_id#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+				)
+		</cfquery>
+	</cfloop>
+	<!--- Get assets that  have expired --->
+	<cfquery datasource="#application.razuna.datasource#" name="getexpired_assets">
+	SELECT img_id id, host_id, 'img' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')label_id FROM raz1_images i WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
+	UNION
+	SELECT aud_id id, host_id, 'aud' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')label_id  FROM raz1_audios a WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
+
+	UNION
+	SELECT vid_id id, host_id, 'vid' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0')label_id FROM raz1_videos v WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
+
+	UNION
+	SELECT file_id id, host_id, 'doc' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')label_id FROM raz1_files f WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=f.host_id AND label_id_r = '0'))
+	</cfquery>
+	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
+	<cfloop query="getexpired_assets">
+		<cfif getexpired_assets.label_id NEQ ''>
+			<!--- Insert label for asset expiry --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO ct_labels (ct_label_id,ct_id_r,ct_type,rec_uuid)
+			VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#type#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+				)
+			</cfquery>
+			<!--- Update indexing flag --->
+			<cfif type EQ 'img'>
+				<cfset var tbl = 'images'>
+				<cfset var col = 'img_id'>
+			<cfelseif type EQ 'aud'>
+				<cfset var tbl = 'audios'>
+				<cfset var col = 'aud_id'>
+			<cfelseif type EQ 'vid'>
+				<cfset var tbl = 'videos'>
+				<cfset var col = 'vid_id'>
+			<cfelseif type EQ 'doc'>
+				<cfset var tbl = 'files'>
+				<cfset var col = 'file_id'>
+			</cfif>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_#tbl# SET is_indexed = 0
+			WHERE #col# =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
+			</cfquery>
+		</cfif>
+	</cfloop>
+	<!--- Get assets that  were expired but now have been reset --->
+	<cfquery datasource="#application.razuna.datasource#" name="getreset_assets">
+	SELECT i.img_id id, rec_uuid FROM ct_labels c, raz1_images i WHERE i.img_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	UNION
+	SELECT a.aud_id id, rec_uuid FROM ct_labels c, raz1_audios a WHERE a.aud_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	UNION
+	SELECT v.vid_id id, rec_uuid FROM ct_labels c, raz1_videos v WHERE v.vid_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0')
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	UNION
+	SELECT f.file_id id, rec_uuid FROM ct_labels c, raz1_files f WHERE f.file_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')
+	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
+	</cfquery>
+	<cfset var resetlist = valuelist(getreset_assets.rec_uuid)>
+	<cfset var assetlist = valuelist(getreset_assets.id)>
+	<cfif resetlist neq ''>
+		<!--- Remove expired label from assets  that have been reset --->
+		<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_labels WHERE rec_uuid IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#resetlist#" list="true">)
+		</cfquery>
+		<!--- Update indexing statuses --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_images SET is_indexed = 0 WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_audios SET is_indexed = 0 WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_videos SET is_indexed = 0 WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_files SET is_indexed = 0 WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+		</cfquery>
+	</cfif>
+	<!--- Reset labels cache if labels have been modified--->
+	<cfif getexpired_assets.recordcount NEQ 0 OR getreset_assets.recordcount NEQ 0>
+		<cfset resetcachetoken("labels","true")>
+	</cfif>
 </cffunction>
 
 </cfcomponent>

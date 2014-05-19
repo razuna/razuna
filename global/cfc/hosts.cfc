@@ -251,20 +251,56 @@
 					interval="120"
 				>
 			</cfif>
-			<!--- Add scheduled task for folders subscribe but only for not isp setup --->
+			<!--- Add scheduled tasks --->
+			<!--- Get the correct paths for hosted vs non-hosted --->
 			<cfif !application.razuna.isp>
-				<cfset var newschid = createuuid()>
-				<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
-				<cfschedule action="update"
-					task="RazScheduledUploadEvent[#newschid#]" 
-					operation="HTTPRequest"
-					url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
-					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-					startTime="00:01 AM"
-					endTime="23:59 PM"
-					interval="120"
-				>
+				<cfset var taskpath =  "http://#cgi.http_host#/#cgi.context_path#/raz1/dam">
+			<cfelse>
+				<cfset var taskpath =  "http://#cgi.http_host#/admin">
 			</cfif>
+			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+			<cfschedule action="update"
+				task="RazFolderSubscribe" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.folder_subscribe_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="120"
+			>
+			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
+			<cfschedule action="update"
+				task="RazAssetExpiry" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.w_asset_expiry_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="300"
+			>
+			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
+			<!--- <cfif application.razuna.isp> --->
+				<cfschedule action="update"
+					task="RazLuceneIndexUpdate" 
+					operation="HTTPRequest"
+					url="http://#cgi.http_host#/#cgi.context_path#/raz#hostid.id#/dam?fa=c.w_lucene_update_index"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
+					interval="once"
+				>
+			<!--- </cfif> --->
+			<!--- Insert label for asset expiry --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
+			VALUES  (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
+					<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">,
+					<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#hostid.id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+					)
+			</cfquery>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfset resetcachetoken("users")>

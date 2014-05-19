@@ -25,6 +25,8 @@
 --->
 <cfoutput>
 	<cfinclude template="inc_images_links.cfm">
+	<!--- Flag to specify whether to run javascript calculations on page or not --->
+	<cfset docalcs = true>
 	<br />
 	<cfif attributes.folderaccess NEQ "R">
 		<div class="collapsable"><div class="headers">&gt; Create new renditions</div></div>
@@ -36,10 +38,24 @@
 					<cfset theaspectratio = 0>
 				</cfcatch>
 			</cftry>
+			<cfif qry_detail.detail.orgheight EQ 0 OR theaspectratio EQ 0 OR qry_xmp.xres EQ 0>
+				<!--- Turn off javascript calculations on page because there is not enough data to support them --->
+				<cfset docalcs = false>
+			</cfif>
 			<tr class="list">
+				<input type="hidden" name="xres" id="xres" value="#qry_xmp.xres#">
+				<input type="hidden" name="yres" id="yres" value="#qry_xmp.yres#">
 				<td width="1%" nowrap="true"><input type="checkbox" name="convert_to" value="jpg"></td>
 				<td width="1%" nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',0)" style="text-decoration:none;">JPEG (Joint Photographic Experts Group)</a></td>
-				<td width="1%" nowrap="true"><input type="text" size="4" name="convert_width_jpg" id="convert_width_jpg" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" onchange="aspectheight(this,'convert_height_jpg','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> x <input type="text" size="4" name="convert_height_jpg" id="convert_height_jpg" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" onchange="aspectwidth(this,'convert_width_jpg','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> or <input type="text" size="4" name="convert_dpi_jpg" id="convert_dpi_jpg" maxlength="3"> dpi</td>
+				<td width="1%" nowrap="true"><input type="text" size="4" name="convert_width_jpg" id="convert_width_jpg" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" <cfif docalcs>onchange="aspectheight(this,'convert_height_jpg','form#attributes.file_id#',#theaspectratio#);"</cfif> maxlength="4"> 
+				<input type="text" size="4" name="inch_width_jpg" id="inch_width_jpg" <cfif docalcs>onchange="aspectheightin(this,'inch_height_jpg','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_jpg,inch_width_jpg,'convert_height_jpg','convert_width_jpg',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> x <input type="text" size="4" name="convert_height_jpg" id="convert_height_jpg" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" <cfif docalcs>onchange="aspectwidth(this,'convert_width_jpg','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_height_jpg" id="inch_height_jpg" <cfif docalcs>onchange="aspectwidthin(this,'inch_width_jpg','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_jpg,inch_width_jpg,'convert_height_jpg','convert_width_jpg',#qry_xmp.yres#,#qry_xmp.xres#);" </cfif>maxlength="4" style="display: none;">
+				<select name="formatbox_jpg" id="formatbox_jpg" <cfif docalcs>onchange="changeFormat('form#attributes.file_id#',convert_height_jpg,convert_width_jpg,'convert_height_jpg','convert_width_jpg',#qry_xmp.xres#,#qry_xmp.yres#,'inch_height_jpg','inch_width_jpg','formatbox_jpg')"</cfif>>
+					<option value="pixels">Pixels</option>
+					<option value="inches">Inches</option>
+				</select>
+				or <input type="text" size="4" name="convert_dpi_jpg" id="convert_dpi_jpg" maxlength="3"> dpi
+
+				</td>
 				<!--- Watermark --->
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
@@ -77,7 +93,14 @@
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="gif"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',1)" style="text-decoration:none;">GIF (Graphic Interchange Format)</a></td>
-				<td><input type="text" size="4" name="convert_width_gif" id="convert_width_gif" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" onchange="aspectheight(this,'convert_height_gif','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> x <input type="text" size="4" name="convert_height_gif" id="convert_height_gif" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" onchange="aspectwidth(this,'convert_width_gif','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> or <input type="text" size="4" name="convert_dpi_gif" id="convert_dpi_gif" maxlength="3"> dpi</td>
+				<td><input type="text" size="4" name="convert_width_gif" id="convert_width_gif" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" <cfif docalcs>onchange="aspectheight(this,'convert_height_gif','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_width_gif" id="inch_width_gif" <cfif docalcs>onchange="aspectheightin(this,'inch_height_gif','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_gif,inch_width_gif,'convert_height_gif','convert_width_gif',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> x <input type="text" size="4" name="convert_height_gif" id="convert_height_gif" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" <cfif docalcs>onchange="aspectwidth(this,'convert_width_gif','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_height_gif" id="inch_height_gif" <cfif docalcs>onchange="aspectwidthin(this,'inch_width_gif','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_gif,inch_width_gif,'convert_height_gif','convert_width_gif',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> 
+
+				<select name="formatbox_gif" id="formatbox_gif" <cfif docalcs>onchange="changeFormat('form#attributes.file_id#',convert_height_gif,convert_width_gif,'convert_height_gif','convert_width_gif',#qry_xmp.xres#,#qry_xmp.yres#,'inch_height_gif','inch_width_gif','formatbox_gif')"</cfif>>
+					<option value="pixels">Pixels</option>
+					<option value="inches">Inches</option>
+				</select>
+
+				or <input type="text" size="4" name="convert_dpi_gif" id="convert_dpi_gif" maxlength="3"> dpi</td>
 				<!--- Watermark --->
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
@@ -94,7 +117,14 @@
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="png"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',2)" style="text-decoration:none;">PNG (Portable (Public) Network Graphic)</a></td>
-				<td><input type="text" size="4" name="convert_width_png" id="convert_width_png" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" onchange="aspectheight(this,'convert_height_png','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> x <input type="text" size="4" name="convert_height_png" id="convert_height_png" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" onchange="aspectwidth(this,'convert_width_png','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> or <input type="text" size="4" name="convert_dpi_png" id="convert_dpi_png" maxlength="3"> dpi</td>
+				<td><input type="text" size="4" name="convert_width_png" id="convert_width_png" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" <cfif docalcs>onchange="aspectheight(this,'convert_height_png','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_width_png" id="inch_width_png" <cfif docalcs>onchange="aspectheightin(this,'inch_height_png','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_png,inch_width_png,'convert_height_png','convert_width_png',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> x <input type="text" size="4" name="convert_height_png" id="convert_height_png" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" <cfif docalcs>onchange="aspectwidth(this,'convert_width_png','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_height_png" id="inch_height_png" <cfif docalcs>onchange="aspectwidthin(this,'inch_width_png','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_png,inch_width_png,'convert_height_png','convert_width_png',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> 
+
+				<select name="formatbox_png" id="formatbox_png" <cfif docalcs>onchange="changeFormat('form#attributes.file_id#',convert_height_png,convert_width_png,'convert_height_png','convert_width_png',#qry_xmp.xres#,#qry_xmp.yres#,'inch_height_png','inch_width_png','formatbox_png')"</cfif>>
+					<option value="pixels">Pixels</option>
+					<option value="inches">Inches</option>
+				</select>
+
+				or <input type="text" size="4" name="convert_dpi_png" id="convert_dpi_png" maxlength="3"> dpi</td>
 				<!--- Watermark --->
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
@@ -111,7 +141,14 @@
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="tif"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',3)" style="text-decoration:none;">TIFF (Tagged Image Format File)</a></td>
-				<td><input type="text" size="4" name="convert_width_tif" id="convert_width_tif" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" onchange="aspectheight(this,'convert_height_tif','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> x <input type="text" size="4" name="convert_height_tif" id="convert_height_tif" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" onchange="aspectwidth(this,'convert_width_tif','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> or <input type="text" size="4" name="convert_dpi_tif" id="convert_dpi_tif" maxlength="3"> dpi</td>
+				<td><input type="text" size="4" name="convert_width_tif" id="convert_width_tif" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" <cfif docalcs>onchange="aspectheight(this,'convert_height_tif','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_width_tif" id="inch_width_tif" <cfif docalcs>onchange="aspectheightin(this,'inch_height_tif','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_tif,inch_width_tif,'convert_height_tif','convert_width_tif',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> x <input type="text" size="4" name="convert_height_tif" id="convert_height_tif" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" <cfif docalcs>onchange="aspectwidth(this,'convert_width_tif','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_height_tif" id="inch_height_tif" <cfif docalcs>onchange="aspectwidthin(this,'inch_width_tif','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_tif,inch_width_tif,'convert_height_tif','convert_width_tif',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> 
+
+				<select name="formatbox_tif" id="formatbox_tif" <cfif docalcs>onchange="changeFormat('form#attributes.file_id#',convert_height_tif,convert_width_tif,'convert_height_tif','convert_width_tif',#qry_xmp.xres#,#qry_xmp.yres#,'inch_height_tif','inch_width_tif','formatbox_tif')"</cfif>>
+					<option value="pixels">Pixels</option>
+					<option value="inches">Inches</option>
+				</select>
+
+				or <input type="text" size="4" name="convert_dpi_tif" id="convert_dpi_tif" maxlength="3"> dpi</td>
 				<!--- Watermark --->
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
@@ -128,7 +165,14 @@
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="bmp"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',4)" style="text-decoration:none;">BMP (Windows OS/2 Bitmap Graphics)</a></td>
-				<td><input type="text" size="4" name="convert_width_bmp" id="convert_width_bmp" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" onchange="aspectheight(this,'convert_height_bmp','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> x <input type="text" size="4" name="convert_height_bmp" id="convert_height_bmp" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" onchange="aspectwidth(this,'convert_width_bmp','form#attributes.file_id#',#theaspectratio#);" maxlength="4"> or <input type="text" size="4" name="convert_dpi_bmp" id="convert_dpi_bmp" maxlength="3"> dpi</td>
+				<td><input type="text" size="4" name="convert_width_bmp" id="convert_width_bmp" value="<cfif qry_detail.detail.orgwidth EQ 0>500<cfelse>#qry_detail.detail.orgwidth#</cfif>" <cfif docalcs>onchange="aspectheight(this,'convert_height_bmp','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_width_bmp" id="inch_width_bmp" <cfif docalcs>onchange="aspectheightin(this,'inch_height_bmp','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_bmp,inch_width_bmp,'convert_height_bmp','convert_width_bmp',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> x <input type="text" size="4" name="convert_height_bmp" id="convert_height_bmp" value="<cfif qry_detail.detail.orgheight EQ 0>500<cfelse>#qry_detail.detail.orgheight#</cfif>" <cfif docalcs>onchange="aspectwidth(this,'convert_width_bmp','form#attributes.file_id#',#theaspectratio#);" </cfif>maxlength="4"> <input type="text" size="4" name="inch_height_bmp" id="inch_height_bmp" <cfif docalcs>onchange="aspectwidthin(this,'inch_width_bmp','form#attributes.file_id#',#theaspectratio#);updatePixels('form#attributes.file_id#',inch_height_bmp,inch_width_bmp,'convert_height_bmp','convert_width_bmp',#qry_xmp.yres#,#qry_xmp.xres#);"</cfif> maxlength="4" style="display: none;"> 
+
+				<select name="formatbox_bmp" id="formatbox_bmp" <cfif docalcs>onchange="changeFormat('form#attributes.file_id#',convert_height_bmp,convert_width_bmp,'convert_height_bmp','convert_width_bmp',#qry_xmp.xres#,#qry_xmp.yres#,'inch_height_bmp','inch_width_bmp','formatbox_bmp')"</cfif>>
+					<option value="pixels">Pixels</option>
+					<option value="inches">Inches</option>
+				</select>
+
+				or <input type="text" size="4" name="convert_dpi_bmp" id="convert_dpi_bmp" maxlength="3"> dpi</td>
 				<!--- Watermark --->
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">

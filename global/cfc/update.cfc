@@ -126,9 +126,169 @@
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		
-		<!--- If update number is lower then 19 (v. 1.6.5) --->
-		<cfif updatenumber.opt_value LT 19>
-			<!--- RAZ-2940 : Remove constraints from images_text, audiots_text and videos_text tables --->
+		<cftry>
+			<!--- Fix language id's if incorrect --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '1' WHERE lang_name ='English'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '2' WHERE lang_name ='German'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '3' WHERE lang_name ='French'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '4' WHERE lang_name ='Dutch'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '5' WHERE lang_name ='Danish'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '6' WHERE lang_name ='Arabic'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '7' WHERE lang_name ='Vietnamese'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '8' WHERE lang_name ='Romanian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '9' WHERE lang_name ='Spanish'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '10' WHERE lang_name ='Italian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '11' WHERE lang_name ='Norwegian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '12' WHERE lang_name ='Slovenian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '13' WHERE lang_name ='Ukrainian'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_languages SET lang_id = '14' WHERE lang_name ='Brazilian'
+			</cfquery>
+		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+		</cftry>
+
+		<!--- If update number is lower then 25 (v. 1.6.5) --->
+		<cfif updatenumber.opt_value LT 25>
+			<cftry>
+			<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				<cfquery datasource="#arguments.thestruct.dsn#">
+					CREATE UNIQUE NONCLUSTERED INDEX [UNIQUE_HOSTID_LANGID] ON raz1_languages
+					(
+					[lang_id] ASC,
+					[HOST_ID] ASC
+					)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+				</cfquery>
+			<cfelseif application.razuna.thedatabase EQ "mysql">
+				<cfquery datasource="#arguments.thestruct.dsn#">
+					ALTER TABLE raz1_languages ADD UNIQUE INDEX  UNIQUE_HOSTID_LANGID (host_id, lang_id)
+				</cfquery>
+			<cfelseif application.razuna.thedatabase EQ "h2">
+				<cfquery  datasource="#arguments.thestruct.dsn#">
+					ALTER TABLE raz1_languages ADD CONSTRAINT UNIQUE_HOSTID_LANGID UNIQUE(host_id,lang_id)
+				</cfquery>
+			</cfif>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Set global vars for mysql --->
+			<cfif application.razuna.thedatabase EQ "mysql">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						  SET GLOBAL innodb_large_prefix = 1;
+					</cfquery>
+				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						  SET GLOBAL innodb_file_format = barracuda;
+					</cfquery>
+				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="#application.razuna.datasourceq#">
+						  SET GLOBAL innodb_file_per_table = true;
+					</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfif>
+		
+			<!--- Add column to store file_size for versions --->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_versions add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> file_size #thevarchar#(100)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+
+			<!--- Add columns for new uew email settings--->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_NEW_USER_EMAIL_SUB #thevarchar#(500)
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_NEW_USER_EMAIL_BODY  #thevarchar#(4000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+
+			<!--- RAZ-549 Add columns for asset expiry --->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<!--- RAZ-549 Insert asset expiry labels for existing hosts --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="gethosts">
+					select host_id from hosts
+				</cfquery>
+				<cfloop query="gethosts">
+					<cfquery datasource="#application.razuna.datasource#" name="islabelexists">
+						SELECT 1 FROM raz1_labels WHERE host_id =<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#gethosts.host_id#">
+						AND label_text = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+					</cfquery>
+					<cfif islabelexists.recordcount eq 0>
+						<!--- Insert label for asset expiry --->
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO raz1_labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
+						VALUES (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
+							<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">,
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#gethosts.host_id#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
+							)
+						</cfquery>
+					</cfif>
+				</cfloop>
+				<cfcatch type="any">
+					   <cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+			<!--- RAZ-2940 : Remove constraints from images_text, audios_text and videos_text tables --->
 			<cfset var thesql = "DROP CONSTRAINT">
 			<cfset var thetbl = "table_constraints">
 			<cfset var thetype = "FOREIGN KEY">
@@ -145,7 +305,8 @@
 					 where constraint_type='#thetype#' 
 					 and (lower(table_name) like '%_images_text'
 					 or  lower(table_name) like '%_audios_text'
-					  or  lower(table_name) like '%_videos_text')
+					 or  lower(table_name) like '%_videos_text'
+					 or  lower(table_name) like '%_files_desc')
 				</cfquery>
 				<cfloop query ="getdel_sql">
 					<cfquery datasource="#application.razuna.datasource#" name="remove_constraint">
@@ -275,16 +436,32 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-			<!--- RAZ-2815 Save Folder Subscribe scheduled event in CFML scheduling engine --->
-			<cfset var newschid = createuuid()>
+
+			<!--- Get the correct paths for hosted vs non-hosted --->
+			<cfif !application.razuna.isp>
+				<cfset var taskpath =  "http://#cgi.http_host#/#cgi.context_path#/raz1/dam">
+			<cfelse>
+				<cfset var taskpath =  "http://#cgi.http_host#/admin">
+			</cfif>
+			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
-				task="RazScheduledUploadEvent[#newschid#]" 
+				task="RazFolderSubscribe" 
 				operation="HTTPRequest"
-				url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.folder_subscribe_task"
+				url="#taskpath#/index.cfm?fa=c.folder_subscribe_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="00:01 AM"
 				endTime="23:59 PM"
 				interval="120"
+			>
+			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
+			<cfschedule action="update"
+				task="RazAssetExpiry" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.w_asset_expiry_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="300"
 			>
 			<!--- RAZ-2815 Add FOLDER_ID Column in raz1_log_assets --->
 			<cftry>

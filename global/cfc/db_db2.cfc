@@ -1412,6 +1412,7 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER	   VARCHAR(15),
+		  EXPIRY_DATE DATE,
 		PRIMARY KEY (FILE_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1428,8 +1429,7 @@
 		  FILE_DESC      VARCHAR(4000),
 		  FILE_KEYWORDS  VARCHAR(4000),
 		  HOST_ID				INT,
-		PRIMARY KEY (ID_INC),
-		FOREIGN KEY (FILE_ID_R)	REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+		PRIMARY KEY (ID_INC)
 		)
 		
 		</cfquery>
@@ -1494,6 +1494,7 @@
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		  IMG_UPC_NUMBER	  VARCHAR(15),
+		  EXPIRY_DATE DATE,
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1695,6 +1696,8 @@
 		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  SET2_UPC_ENABLED				VARCHAR(5) DEFAULT 'false',
+		  SET2_NEW_USER_EMAIL_SUB  	VARCHAR(500),
+		  SET2_NEW_USER_EMAIL_BODY  	VARCHAR(4000),
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1863,6 +1866,7 @@
 		IN_TRASH		   	    VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
 		VID_UPC_NUMBER			VARCHAR(15),
+		EXPIRY_DATE DATE,
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2058,6 +2062,7 @@
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
 			cloud_url_thumb		VARCHAR(500),
+			file_size			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
 		
@@ -2114,6 +2119,7 @@
 		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  	IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
 		  	AUD_UPC_NUMBER		VARCHAR(15),
+		  	EXPIRY_DATE DATE,
 			PRIMARY KEY (aud_ID),
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)

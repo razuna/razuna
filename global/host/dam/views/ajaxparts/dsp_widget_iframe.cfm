@@ -168,8 +168,10 @@
 									</cfif>
 								</div>
 								<strong>#filename#</strong>
-								<br>
-								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br>
+									<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 							</cfif>
@@ -189,15 +191,18 @@
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
 										<cfelse>
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></a>
+											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0" width="160"></a>
 										</cfif>
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 									</cfif>
 								</div>
 								<strong>#filename#</strong>
-								<br>
-								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br>
+									<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 							</cfif>
@@ -215,8 +220,10 @@
 									<a href="##" onclick="window.open('#myself#c.sa&f=#theid#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></a>
 								</div>
 								<strong>#filename#</strong>
-								<br>
-								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								<cfif expiry_date EQ '' OR expiry_date GTE now()>
+									<br>
+									<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 							</cfif>
@@ -244,8 +251,10 @@
 								<strong>#filename#</strong>
 								<!--- For now download pf PDF is allows independent of setting in the widget preferences --->
 								<!--- <cfif qry_widget.widget_dl_org EQ "t"> --->
-									<br>
-									<a href="#myself#c.serve_file&file_id=#id#&type=doc&jsessionid=#session.SessionID#">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<br>
+										<a href="#myself#c.serve_file&file_id=#id#&type=doc&jsessionid=#session.SessionID#">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+									</cfif>
 								<!--- </cfif> --->
 							<cfelse>
 								The upload of "#filename#" is still in progress!

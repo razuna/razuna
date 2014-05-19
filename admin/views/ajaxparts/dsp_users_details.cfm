@@ -23,6 +23,14 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+
+<!--- Turn expiry date input into a jQuery datepicker --->
+  <script>
+	  $(function() {
+	    $( "#user_expirydate").datepicker();
+	  });
+  </script>
+
 <cfoutput>
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
 <input type="hidden" name="#theaction#" value="c.users_save">
@@ -30,13 +38,16 @@
 
 <div id="theuser">
 	<ul>
-		<cfif #attributes.user_id# eq 0>
+		<cfif attributes.user_id EQ 0>
 			<li><a href="##user">#defaultsObj.trans("user_add")#</a></li>
 		<cfelse>
 			<li><a href="##user">#defaultsObj.trans("user_edit")#</a></li>
 		</cfif>
 		<li><a href="##groups">#defaultsObj.trans("groups")#</a></li>
 		<li><a href="##user_hosts">Tenants/Hosts</a></li>
+		<cfif attributes.user_id NEQ 0>
+			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.users_api&user_id=#attributes.user_id#');">API Key</a></li>
+		</cfif>
 	</ul>
 	<!--- User --->
 	<div id="user">
@@ -187,6 +198,10 @@
 			</cfloop>
 		</table>
 	</div>
+	<!--- API --->
+	<cfif attributes.user_id NEQ 0>
+		<div id="tab_api"></div>
+	</cfif>
 	<!--- <div id="submit" style="float:right;padding:10px;"><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button" tabindex="13"></div> --->
 
 	<div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>
@@ -208,9 +223,16 @@
 	$(document).ready(function(){
 		$("##userdetailadd").validate({
 			submitHandler: function(form) {
-				jQuery(form).ajaxSubmit({
-					success: adminuserfeedback
-				});
+				// Check that some hosts are selected
+				if($('##user_hosts input[type=checkbox]:checked').length == 0){
+			       alert("Please select at least one host this user belongs to!");
+			       return false;
+			    }
+			    else {
+					jQuery(form).ajaxSubmit({
+						success: adminuserfeedback
+					});
+				}
 			},
 			rules: {
 				user_first_name: "required",

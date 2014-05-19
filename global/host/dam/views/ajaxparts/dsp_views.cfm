@@ -27,9 +27,9 @@
 	<cfcontent type="application/xml; charset=UTF-8">
 	<cfoutput>#theview#</cfoutput>
 <cfelseif attributes.thisview EQ "xls">
-	<cfheader name="content-disposition" value="filename=Razuna.xls" />
+	<cfheader name="content-disposition" value="filename=Assets.xls" />
 	<cfcontent type="application/vnd.ms-excel" deleteFile="yes" file="#GetTempDirectory()#/#theview#" />
 <cfelseif attributes.thisview EQ "doc">
-	<cfheader name="content-disposition" value="filename=Razuna.doc" />
+	<cfheader name="content-disposition" value="filename=Assets.doc" />
 	<cfcontent type="application/vnd.ms-word" variable="#theview#" />
 </cfif>

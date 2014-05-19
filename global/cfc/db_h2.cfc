@@ -1074,6 +1074,7 @@
 		  IN_TRASH		   	   VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		   VARCHAR(1) DEFAULT 0,
 		  FILE_UPC_NUMBER      VARCHAR(15), 
+		  EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_FK_HOST FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1090,9 +1091,7 @@
 		  FILE_KEYWORDS  VARCHAR(2000),
 		  ID_INC		 VARCHAR(100),
 		  HOST_ID		 BIGINT,
-		  PRIMARY KEY (ID_INC),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_DESC_FK_FILE FOREIGN KEY (FILE_ID_R)
-		REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC)
 		)
 		</cfquery>
 		
@@ -1156,6 +1155,7 @@
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		  IMG_UPC_NUMBER      VARCHAR(15),
+		  EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_FK_HOSTID FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1352,6 +1352,8 @@
 		  SET2_RENDITION_METADATA		VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  SET2_UPC_ENABLED				VARCHAR(5) DEFAULT 'false',
+		  SET2_NEW_USER_EMAIL_SUB 	VARCHAR(500),
+		  SET2_NEW_USER_EMAIL_BODY  	VARCHAR(4000),
 		  PRIMARY KEY (rec_uuid),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_2_FK FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1519,6 +1521,7 @@
 		IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
 		IS_INDEXED		  		VARCHAR(1) DEFAULT 0,
 		VID_UPC_NUMBER      	VARCHAR(15),
+		EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_FK1 FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1682,6 +1685,7 @@
 			hashtag				VARCHAR(100),
 			rec_uuid			VARCHAR(100),
 			cloud_url_thumb		VARCHAR(500),
+			file_size			VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
@@ -1695,6 +1699,7 @@
 			lang_active		VARCHAR(2) default 'f',
 			host_id			BIGINT,
 			rec_uuid		VARCHAR(100),
+			CONSTRAINT HOSTID_LANGID UNIQUE (HOST_ID, LANG_ID), 
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
@@ -1736,6 +1741,7 @@
 		    IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		    IS_INDEXED		  	VARCHAR(1) DEFAULT 0,
 		    AUD_UPC_NUMBER      VARCHAR(15),
+		    EXPIRY_DATE DATE,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)

@@ -238,12 +238,12 @@
     <variables>
       <url>true</url>
       <form>true</form>
-      <cookie>true</cookie>
+      <cookie>false</cookie>
       <cgi>true</cgi>
-      <client>true</client>
+      <client>false</client>
       <server>true</server>
       <request>true</request>
-      <session>true</session>
+      <session>false</session>
       <application>true</application>
       <local>true</local>
       <cffile>true</cffile>

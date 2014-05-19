@@ -24,6 +24,11 @@
 *
 --->
 <cfoutput>
+	<script type="text/javascript"  src='#dynpath#/global/js/ckeditor/ckeditor.js'> </script>
+	<script type="text/javascript">
+		CKEDITOR.replace( 'set2_new_user_email_body' );
+	</script>
+
 	<!--- Set Languages --->
 	<form name="form_admin_settings" id="form_admin_settings" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="c.isp_settings_langsave">
@@ -111,8 +116,10 @@
 			<tr>
 				<td colspan="2">
 					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_header")#</strong>
+					<br /><br/>
+					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_desc")#</strong>
 					<br />
-					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_desc")#
+					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_subdesc")#
 					<br /><br />
 					<input type="radio" name="set2_rendition_metadata" value="false" <cfif prefs.set2_rendition_metadata eq 'false' or prefs.set2_rendition_metadata eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_off")#
 					<br />
@@ -140,14 +147,17 @@
 			</tr>
 			<!--- Set the FROM address for emails --->
 			<tr>
-				<th colspan="2" class="textbold">Set FROM address for eMail messages</th>
+				<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("from_email_header")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">Razuna will send out notification, statuses or other relevant eMails to you and your users. By default those message come from "server@razuna.com". If you need to change this you can do so below.</td>
+				<td colspan="2">
+					#myFusebox.getApplicationData().defaults.trans("from_email_desc")#
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2"><input type="text" name="set2_email_from" size="60" value="#prefs.set2_email_from#" /></td>
 			</tr>
+
 			<!--- email settings for new registration from site --->
 			<tr>
 				<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</th>
@@ -167,9 +177,47 @@
 			<tr>
 				<td colspan="2"><input type="text" name="set2_intranet_reg_emails_sub" size="60" value="#prefs.set2_intranet_reg_emails_sub#" /></td>
 			</tr>
+
+			<!--- New User Welcome Email settings  --->
+			<tr>
+				<th colspan="2" class="textbold">
+					#myFusebox.getApplicationData().defaults.trans("new_user_email_header")#
+				</th>
+			</tr>
+
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("new_user_email_desc")#</td>
+			</tr>
+
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("new_user_email_subject")#</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="text" name="set2_new_user_email_sub" size="60" value="#prefs.set2_new_user_email_sub#" /></td>
+			</tr>
+
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("new_user_email_body")#</td>
+			</tr>
+
+			<tr>
+				<td colspan="2"><textarea name="set2_new_user_email_body"  id="set2_new_user_email_body"  class="ckeditor" maxlength="5">
+				<cfif  prefs.set2_new_user_email_body neq "">
+					#prefs.set2_new_user_email_body#
+				<cfelse>
+				#myFusebox.getApplicationData().defaults.trans("user_login_info_email")# <br>
+				Username: $username$<br>
+				Password: $password$
+				</cfif>
+				
+
+				</textarea></td>
+			</tr>
+
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>
+
 			<!--- Languages --->
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');return false;">#myFusebox.getApplicationData().defaults.trans("language_update")#</a></th>
@@ -221,6 +269,13 @@
 	<script language="JavaScript" type="text/javascript">
 		// Submit Form
 		$("##form_admin_settings").submit(function(e){
+			// Need to update ckeditor text area before form submit so that the current value is grabbed on submit for AJAX call
+			CKEDITOR.instances["set2_new_user_email_body"].updateElement();
+			if ($('##set2_new_user_email_body').val().length >=4000)
+				{
+				alert ('Email body must be less than 4000 characters. '); 
+				return false;
+				}
 			// Get values
 			var url = formaction("form_admin_settings");
 			var items = formserialize("form_admin_settings");

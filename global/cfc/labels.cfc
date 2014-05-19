@@ -374,9 +374,15 @@
 		<!--- Query --->
 		<cfinvoke method="labels_query" thestruct="#arguments.thestruct#" id="#arguments.id#" returnVariable="qry" />
 		<!--- Output for tree --->
-		<cfoutput query="qry">
+		<cfloop query="qry">
+			<!--- If label is expiry label then only show for admins --->
+			<cfif label_text EQ 'Asset has expired' AND structKeyExists(request,"securityObj") AND NOT (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+					<cfcontinue>
+			</cfif>
+			<cfoutput>
 			<li id="#label_id#"<cfif subhere NEQ ""> class="closed"</cfif>><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.labels_main&label_id=#label_id#');return false;"><ins>&nbsp;</ins>#label_text# (#label_count#)</a></li>
-		</cfoutput>
+			</cfoutput>
+		</cfloop>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -409,7 +415,78 @@
 			(
 				SELECT count(ct.ct_label_id)
 				FROM ct_labels ct
+				LEFT JOIN #session.hostdbprefix#images i ON ct.ct_id_r = i.img_id AND ct.ct_type =<cfqueryparam value="img" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#audios a ON ct.ct_id_r = a.aud_id AND ct.ct_type =<cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#videos v ON ct.ct_id_r = v.vid_id AND ct.ct_type =<cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#files fi ON ct.ct_id_r = fi.file_id  AND ct.ct_type =<cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#folders fo ON ct.ct_id_r = fo.folder_id  AND ct.ct_type =<cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#collections c ON ct.ct_id_r = c.col_id  AND ct.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/>
 				WHERE ct.ct_label_id = l.label_id
+				<!--- Ensure user is folder owner or has access to folder in which asset resides --->
+				AND 
+				(
+				<!--- Check if  user is admin --->
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  fo.folder_id AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  c.col_id AND col_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  fi.folder_id_r AND folder_owner = '#session.theuserid#' 
+					) 
+				OR
+				<!--- Check if folder privilege is 'Everyone', groupid=0 --->
+				EXISTS (
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  fo.folder_id = f.folder_id_r  AND f.grp_id_r = '0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#collections_groups cg WHERE c.col_id = cg.col_id_r AND cg.grp_id_r = '0' 
+					UNION
+					SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND  f.grp_id_r = '0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE fi.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					)
+				OR
+				<!--- Check is user is in group that has access --->
+				EXISTS (
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups cg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND c.col_id = cg.col_id_r AND cg.grp_id_r = cc.ct_g_u_grp_id AND lower(cg.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					)
+				)
+				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+				AND CASE 
+				<!--- Check if admin user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND fi.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					) THEN 0
+				ELSE 1 END  = 1
+
 			) AS label_count,
 			(
 				SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>label_id
@@ -459,9 +536,62 @@
 		SELECT DISTINCT /* #variables.cachetoken#labels_count */
 			(
 				SELECT count(ct_label_id)
-				FROM ct_labels
+				FROM ct_labels l
+				LEFT JOIN #session.hostdbprefix#images i ON l.ct_id_r = i.img_id AND l.ct_type =<cfqueryparam value="img" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#audios a ON l.ct_id_r = a.aud_id AND l.ct_type =<cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#videos v ON l.ct_id_r = v.vid_id AND l.ct_type =<cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#files f ON l.ct_id_r = f.file_id AND l.ct_type =<cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
 				WHERE ct_type IN (<cfqueryparam value="img,vid,aud,doc" cfsqltype="cf_sql_varchar" list="Yes" />)
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				<!--- Ensure user has access to folder in which asset resides --->
+				AND 
+				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' 
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' 
+					) 
+				OR
+				EXISTS (
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
+					UNION
+					SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0'
+					)
+				OR
+				EXISTS (
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('r','w','x')
+					)
+				)
+				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+				AND CASE 
+				<!--- Check if admin user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					UNION
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					) THEN 0
+				ELSE 1 END  = 1
 			) AS count_assets,
 			(
 				SELECT count(ct_label_id)
@@ -471,15 +601,37 @@
 			) AS count_comments,
 			(
 				SELECT count(ct_label_id)
-				FROM ct_labels
+				FROM ct_labels l
 				WHERE ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				<!--- Ensure user has access to folder --->
+				AND 
+				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#session.theuserid#' )
+				OR
+				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE l.ct_id_r = f.folder_id_r AND  f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+				)
 			) AS count_folders,
 			(
 				SELECT count(ct_label_id)
-				FROM ct_labels
+				FROM ct_labels l
 				WHERE ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				<!--- Ensure user has access to collection --->
+				AND 
+				(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#session.theuserid#' )
+				OR
+				EXISTS (SELECT 1 FROM  #session.hostdbprefix#collections_groups f WHERE l.ct_id_r = f.col_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+				)
 			) AS count_collections
 		FROM ct_labels
 		</cfquery>
@@ -550,7 +702,7 @@
 			 i.img_id id, i.img_filename filename, 
 			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url, 'R' as permfolder
+			i.path_to_asset, i.cloud_url, 'R' as permfolder, i.expiry_date
 			FROM #session.hostdbprefix#images i, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
@@ -564,6 +716,23 @@
 				AND mssql_ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			)	
 			</cfif>
+			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
+			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' ) 
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+			   )
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
 				<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
@@ -571,7 +740,7 @@
 				f.file_id id, f.file_name filename, f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url, 'R' as permfolder
+			f.path_to_asset, f.cloud_url, 'R' as permfolder, f.expiry_date
 			FROM #session.hostdbprefix#files f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
@@ -585,6 +754,23 @@
 				AND mssql_ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			)	
 			</cfif>
+			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
+			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' ) 
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('r','w','x'))
+			   )
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
 			<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
@@ -592,7 +778,7 @@
 			v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url, 'R' as permfolder
+			v.path_to_asset, v.cloud_url, 'R' as permfolder, v.expiry_date
 			FROM #session.hostdbprefix#videos v, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = v.vid_id
@@ -606,6 +792,23 @@
 					AND mssql_ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 				)	
 			</cfif>
+			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
+			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' ) 
+				OR
+				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+			   )
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
 			<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
@@ -613,7 +816,7 @@
 			a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url, 'R' as permfolder
+			a.path_to_asset, a.cloud_url, 'R' as permfolder, a.expiry_date
 			FROM #session.hostdbprefix#audios a, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
@@ -627,6 +830,23 @@
 					AND mssql_ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 				)	
 			</cfif>
+			<!--- Ensure user is owner of folder or has access to folder in which asset resides --->
+			AND (
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' ) 
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE a.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x'))
+			   )
+			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
+			AND CASE 
+			<!--- Check if admin user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
+			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			ELSE 1 END  = 1
 			ORDER BY #sortby#
 			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2"> 
 				LIMIT #offset#,#arguments.rowmaxpage# 
@@ -655,6 +875,15 @@
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.folder_id
 			AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />
+			<!--- Ensure user has access to folder  --->
+			AND 
+			(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				folder_owner = '#session.theuserid#' 
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND lower(fg.grp_permission) IN  ('r','w','x'))
+			)
 			</cfquery>
 			<!--- Get proper folderaccess --->
 			<cfloop query="qry">
@@ -673,6 +902,17 @@
 			AND ctl.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ctl.ct_id_r = c.col_id
 			AND ctl.ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
+			<!--- Ensure user has access to collection --->
+			AND 
+			(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				col_owner = '#session.theuserid#' 
+				OR
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections_groups f WHERE c.col_id = f.col_id_r AND  f.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x'))
+			)
 			GROUP BY c.col_id, c.folder_id_r, ct.col_name
 			</cfquery>
 			<!--- Get proper folderaccess --->

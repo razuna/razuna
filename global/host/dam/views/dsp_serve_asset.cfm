@@ -23,6 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- If asset has expired then show appropriate message --->
+<cfif isdefined("qry_binary.qfile.expiry_date_actual") AND isdate(qry_binary.qfile.expiry_date_actual) AND qry_binary.qfile.expiry_date_actual lt now()>
+	Asset has expired. Please contact administrator to gain access to this asset.<cfabort>
+</cfif>
 <cfparam default="F" name="attributes.download">
 <cfparam default="" name="qry_binary.qfile.link_kind">
 <cfparam default="false" name="attributes.av">
@@ -46,10 +50,10 @@
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <!--- Default file name when prompted to download --->
 <cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
-<cfif isdefined("v") AND v NEQ "p">
+<!--- Ignore content-length attribute for previews --->
+<cfif isdefined("v") AND v neq "p">
 	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
 </cfif>
-
 <!--- File is external --->
 <cfif qry_binary.qfile.link_kind EQ "url">
 	<!--- Get file --->

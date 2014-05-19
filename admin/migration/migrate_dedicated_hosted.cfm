@@ -3,8 +3,8 @@
 <!--- From dedicated server to hosted --->
 
 <!--- Set the locl db and host id --->
-<cfset thedb = "mysql">
-<cfset thehostid = "3893">
+<cfset thedb = "">
+<cfset thehostid = "">
 <!--- Set remote DB --->
 <cfset remotedb = "razuna_hosted">
 <!--- List of tables that need to be fetched and value to be transfered --->

@@ -431,7 +431,11 @@
 		<set name="attributes.cf_show" value="users" />
 		<set name="attributes.cf_in_form" value="true" />
 		<set name="attributes.file_id" value="0" />
+		<set name="session.theuserid" value="0" />
+		<set name="session.thegroupofuser" value="0" />
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />	
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.req_access" />
 	</fuseaction>
@@ -998,6 +1002,8 @@
 		<xfa name="folder" value="c.folder" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Load users favorites -->
 		<invoke object="myFusebox.getApplicationData().favorites" methodcall="readfavorites(attributes)" returnvariable="qry_favorites" />
 		<set name="attributes.qrybasket" value="#qry_favorites#" />
@@ -1091,6 +1097,8 @@
 	<fuseaction name="basket">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- Load include -->
 		<do action="basket_include" />
 		<!-- Show -->
@@ -1109,6 +1117,8 @@
 		<set name="attributes.fromshare" value="F" overwrite="false" />
 		<set name="qry_folder.share_dl_org" value="F" overwrite="false" />
 		<set name="qry_folder.share_order" value="" overwrite="false" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- Load include -->
 		<do action="basket_include" />
 		<!-- Show -->
@@ -1227,10 +1237,15 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.noemail" value="true" />
+		<set name="attributes.what" value="basket" overwrite="false" />
+		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Action: Export Metadata -->
+		<do action="meta_export_do" />
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- CFC: Upload to FTP -->
@@ -1258,6 +1273,8 @@
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
 		<set name="attributes.artofaudio" value="#session.artofaudio#" />
 		<set name="attributes.artoffile" value="#session.artoffile#" />
+		<!-- Preserve langcount attribute in langs as it is overwritten by asset_upload_server method  and is needed by savedesckey method afterwards -->
+		<set name="attributes.langs" value="#attributes.langcount#" /> 
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1268,6 +1285,8 @@
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- Do the upload from server which will add the zip file from above -->
 		<do action="asset_upload_server" />
+		<!-- CFC: save description and keywords -->
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="savedesckey(attributes)" />
 	</fuseaction>
 	<!-- Basket Save as COLLECTION FORM -->
 	<fuseaction name="basket_saveas_collection">
@@ -1429,8 +1448,12 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- CFC: Get detail of Collections -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Permissions of this Collection -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.colaccess" />
 		<!-- CFC: Get assets of Collections -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />		
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<if condition="qry_assets.recordcount NEQ 0">
 			<true>
 				<set name="attributes.qrybasket" value="#qry_assets#" />
@@ -2061,7 +2084,7 @@
 		<!-- CFC: Permissions of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get the total of files count and kind of files -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="fileTotalAllTypes(attributes.folder_id)" returnvariable="qry_fileTotalAllTypes" />
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="fileTotalAllTypes(attributes.folder_id, attributes.folderaccess)" returnvariable="qry_fileTotalAllTypes" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
@@ -2123,6 +2146,8 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Folder access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get folder info -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
@@ -2132,8 +2157,6 @@
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
 		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
-		<!-- CFC: Folder access -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get files -->
@@ -2188,11 +2211,11 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
+		<!-- CFC: Folder access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
 		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
-		<!-- CFC: Folder access -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get images -->
@@ -2247,11 +2270,11 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
+		<!-- CFC: Folder access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
 		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
-		<!-- CFC: Folder access -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- Action: Get asset path -->
@@ -2324,11 +2347,11 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
+		<!-- CFC: Folder access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
 		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
-		<!-- CFC: Folder access -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get files -->
@@ -2932,6 +2955,8 @@
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Upload -->
 		<if condition="attributes.av EQ 0">
 			<true>
@@ -3727,11 +3752,6 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
-		<!-- Get UPC Number  -->
-		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
-			<argument name="user_id" value="#session.theuserid#" />
-			<argument name="host_id" value="#session.hostid#" />
-		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -3845,11 +3865,6 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
-		<!-- Get UPC Number  -->
-		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
-			<argument name="user_id" value="#session.theuserid#" />
-			<argument name="host_id" value="#session.hostid#" />
-		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -4058,11 +4073,6 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
-		<!-- Get the groups of this user -->
-		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
-			<argument name="user_id" value="#session.theuserid#" />
-			<argument name="host_id" value="#session.hostid#" />
-		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -4268,11 +4278,6 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
-		<!-- Get UPC Number  -->
-		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
-			<argument name="user_id" value="#session.theuserid#" />
-			<argument name="host_id" value="#session.hostid#" />
-		</invoke>
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plwx" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
@@ -6391,7 +6396,7 @@
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().images" method="filedetail" returnvariable="qry_detail">
 			<argument name="theid" value="#attributes.f#" />
-			<argument name="thecolumn" value="img_id,thumb_width,thumb_height,folder_id_r,img_width,img_height,img_filename_org,thumb_extension,img_extension,img_filename,path_to_asset,cloud_url,cloud_url_org,hashtag" />
+			<argument name="thecolumn" value="img_id,thumb_width,thumb_height,folder_id_r,img_width,img_height,img_filename_org,thumb_extension,img_extension,img_filename,path_to_asset,cloud_url,cloud_url_org,hashtag,expiry_date" />
 		</invoke>
 		<!-- Do -->
 		<do action="ajax.serve_image" />
@@ -7013,7 +7018,7 @@
 		<!-- Param -->
 		<set name="attributes.meta_keys" value="id,filename" />
 		<set name="attributes.meta_default" value="labels,keywords,description,type" />
-		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
+		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,upc_number" />
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
 		<!-- Get Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(true)" returnvariable="attributes.meta_cf" />
@@ -8107,6 +8112,8 @@
 		<do action="languages" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
@@ -8124,12 +8131,14 @@
 						</invoke>
 					</true>
 				</if>
+				<!-- CFC: Permissions of this folder -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 				<!-- CFC: Get folder share options -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolderproperties(attributes.folder_id)" returnvariable="qry_folder" />
 				<!-- CFC: Get subfolders -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 				<!-- CFC: Get the total file count -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry.qry_filecount" />
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id, attributes.folderaccess)" returnvariable="qry.qry_filecount" />
 				<set name="attributes.qry_filecount" value="#qry.qry_filecount.thetotal#" overwrite="false" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry.qry_files" />
@@ -8140,6 +8149,8 @@
 				<set name="attributes.share" value="T" />
 				<!-- CFC: Get folder share options -->
 				<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_folder" />
+				<!-- CFC: Get permissions for collection -->
+				<set name="attributes.colaccess" value="#qry_folder.colaccess#" />
 				<!-- CFC: Get assets of Collections -->
 				<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="attributes.qry_files" />
 				<!-- CFC: Query the assets -->
@@ -8911,12 +8922,14 @@
 						</invoke>
 					</true>
 				</if>
+				<!-- CFC: Permissions of this folder -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 				<!-- CFC: Get folder share options -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolderproperties(attributes.folder_id)" returnvariable="qry_folder" />
 				<!-- CFC: Get subfolders -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id,attributes.external)" returnvariable="qry_subfolders" />
 				<!-- CFC: Get the total file count -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry.qry_filecount" />
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id,attributes.folderaccess)" returnvariable="qry.qry_filecount" />
 				<set name="attributes.qry_filecount" value="#qry.qry_filecount.thetotal#" overwrite="false" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry.qry_files" />
@@ -8925,6 +8938,10 @@
 				<!-- Param -->
 				<set name="attributes.col_id" value="#qry_widget.col_id_r#" />
 				<set name="attributes.share" value="T" />
+				<!-- CFC: Get folder share options -->
+				<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_folder" />
+				<!-- CFC: Get permissions for collection -->
+				<set name="attributes.colaccess" value="#qry_folder.colaccess#" />
 				<!-- CFC: Get assets of Collections -->
 				<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="attributes.qry_files" />
 				<!-- CFC: Query the assets -->
@@ -9287,6 +9304,11 @@
 	<fuseaction name="labels_main">
 		<!-- CFC: count how many label types there are -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" />
+		<!-- Get the assets -->
+		<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="qry_labels_assets">
+			<argument name="label_id" value="#attributes.label_id#" />
+			<argument name="label_kind" value="asset" />
+		</invoke>
 		<!-- Show -->
 		<do action="ajax.labels_main" />
 	</fuseaction>
@@ -9471,6 +9493,7 @@
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
 			<argument name="user_id" value="#session.theuserid#" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="check_upc_size" value="true" />
 		</invoke>
 		<!-- Check the current folder having label text as upc -->
 		<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
@@ -9729,6 +9752,30 @@
 				</if>
 			</true>
 		</if>
+		<!-- Files -->
+		<if condition="attributes.thetype EQ 'doc'">
+			<true>
+				<!-- Set field names -->
+				<set name="attributes.desc" value="file_desc_" />
+				<set name="attributes.keys" value="file_keywords_" />
+				<!-- CFC: Get file detail -->
+				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<!-- If additional version then get filename from additional_versions table -->
+				<if condition ="isdefined('attributes.av') AND attributes.av eq '1'">
+					<true>
+						<set name="attributes.useavid" value="1" />
+						<!-- CFC: Get Additional versions -->
+						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
+					</true>	
+					<false>
+						<!-- Set filename -->
+						<set name="attributes.filename" value="#qry_detail.file_name#" />
+					</false>
+				</if>
+			</true>
+		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 
@@ -9814,6 +9861,12 @@
 		<if condition="structkeyexists(url,'sortby')">
 			<true>
 				<set name="session.sortby" value="#url.sortby#" />
+			</true>
+		</if>
+		<!-- If there is a customparam then set it in a session -->
+		<if condition="structkeyexists(url,'customparams')">
+			<true>
+				<set name="session.customparams" value="#url.customparams#" />
 			</true>
 		</if>
 		<!-- Param -->
@@ -10241,6 +10294,8 @@
 		<set name="attributes.meta_default" value="labels,keywords,description,type" />
 		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- CFC: Get export template -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_export_template(attributes)" returnvariable="qry_export" />
 		<!-- Get Custom fields -->
@@ -10273,6 +10328,18 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="updaterLogsClean()" />
 		<!-- Show -->
 		<do action="updater_tool" />
+	</fuseaction>
+
+	<!-- Schedule asset expiry task -->
+	<fuseaction name="w_asset_expiry_task">
+		<!-- CFC: Run task -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
+	</fuseaction>
+
+	<!-- Run Folder subscribe schedule tasks -->
+	<fuseaction name="w_lucene_update_index">
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted()"/>
 	</fuseaction>
 
 </circuit>

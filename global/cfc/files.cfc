@@ -71,6 +71,7 @@
 		<!--- Set pages var --->
 		<cfparam name="arguments.thestruct.pages" default="">
 		<cfparam name="arguments.thestruct.thisview" default="">
+		<cfparam name="arguments.thestruct.folderaccess" default="">
 		<!--- If we need to show subfolders --->
 		<cfif session.showsubfolders EQ "T">
 			<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
@@ -209,7 +210,7 @@
 			</cfif>
 			
 			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
-			file_create_time date_create, file_change_date date_change
+			file_create_time date_create, file_change_date date_change, f.expiry_date
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
@@ -242,6 +243,9 @@
 			</cfif>
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif arguments.thestruct.folderaccess EQ 'R'>
+				AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
+			</cfif>
 			<!--- MySQL --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				ORDER BY #sortby#
@@ -738,7 +742,7 @@
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Get details --->
 		<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detailfiles */ f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_create_date, f.file_create_time, f.file_change_date, f.file_change_time, f.file_owner, f.file_name, f.file_remarks, f.file_name_org, f.file_name_org filenameorg, f.shared, f.link_path_url, f.link_kind, f.file_size, f.file_meta, f.path_to_asset, f.cloud_url, f.cloud_url_org, f.file_upc_number, s.set2_doc_download, s.set2_intranet_gen_download, s.set2_url_website, s.set2_path_to_assets, u.user_first_name, u.user_last_name, fo.folder_name,
+		SELECT /* #variables.cachetoken#detailfiles */ f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_create_date, f.file_create_time, f.file_change_date, f.file_change_time, f.file_owner, f.file_name, f.file_remarks, f.file_name_org, f.file_name_org filenameorg, f.shared, f.link_path_url, f.link_kind, f.file_size, f.file_meta, f.path_to_asset, f.cloud_url, f.cloud_url_org, f.file_upc_number, f.expiry_date, s.set2_doc_download, s.set2_intranet_gen_download, s.set2_url_website, s.set2_path_to_assets, u.user_first_name, u.user_last_name, fo.folder_name,
 		'' as perm
 		FROM #session.hostdbprefix#files f
 		LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#variables.setid#"> AND s.host_id = f.host_id
@@ -747,15 +751,17 @@
 		WHERE f.file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Get proper folderaccess --->
-		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
-		<!--- Add labels query --->
-		<cfif theaccess NEQ "">
-			<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfif details.recordcount NEQ 0>
+			<!--- Get proper folderaccess --->
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfif theaccess NEQ "">
+				<cfset QuerySetCell(details, "perm", theaccess)>
+			</cfif>
 		</cfif>
 		<!--- Get descriptions and keywords --->
 		<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detaildescfiles */ lang_id_r, file_keywords, file_desc
+		SELECT /* #variables.cachetoken#detaildescfiles */ lang_id_r, file_keywords, file_desc, file_desc as thedesc, file_keywords as thekeys
 		FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
@@ -883,7 +889,7 @@
 			<!--- Only if not from batch function --->
 			<cfif arguments.thestruct.frombatch NEQ "T">
 				<!--- If PDF save XMP data --->
-				<cfif arguments.thestruct.file_extension EQ "pdf" AND arguments.thestruct.link_kind NEQ "url">
+				<cfif isdefined("arguments.thestruct.file_extension") AND arguments.thestruct.file_extension EQ "pdf" AND arguments.thestruct.link_kind NEQ "url">
 					<!--- Check if info is in DB --->
 					<cfquery datasource="#variables.dsn#" name="qryfilesxmp">
 					SELECT asset_id_r
@@ -928,6 +934,11 @@
 					UPDATE #session.hostdbprefix#files
 					SET 
 					file_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
+					<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
+						expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
+					<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
+						expiry_date = null,
+					</cfif>
 					<cfif isdefined("arguments.thestruct.file_upc")>
 						file_upc_number = <cfqueryparam value="#arguments.thestruct.file_upc#" cfsqltype="cf_sql_varchar">,
 					</cfif>
@@ -955,16 +966,29 @@
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Select the record to get the original filename or assign if one is there --->
-			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
-				<cfset arguments.thestruct.qrydetail.filenameorg = qryfileupdate.file_name_org>
-				<cfset arguments.thestruct.filenameorg = qryfileupdate.file_name_org>
-				<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
+			<cfif qryfileupdate.recordcount neq 0>
+				<!--- Select the record to get the original filename or assign if one is there --->
+				<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
+					<cfset arguments.thestruct.qrydetail.filenameorg = qryfileupdate.file_name_org>
+					<cfset arguments.thestruct.filenameorg = qryfileupdate.file_name_org>
+					<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
+				<cfelse>
+					<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+				</cfif>
+				<!--- Log --->
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 			<cfelse>
-				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
+				<!--- If updating additional version then get info and log change--->
+				<cfquery datasource="#variables.dsn#" name="qryaddver">
+				SELECT av_link_title, folder_id_r
+				FROM #session.hostdbprefix#additional_versions
+				WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<cfif qryaddver.recordcount neq 0>
+					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
+				</cfif>
 			</cfif>
-			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -1010,8 +1034,8 @@
 				<cfquery name="qFile" datasource="#variables.dsn#">
 				SELECT  img_id, img_filename, img_extension as extension, 
 				thumb_extension, img_filename_org filenameorg, folder_id_r, link_kind, link_path_url, path_to_asset, 
-				cloud_url, cloud_url_org, img_size as thesize
-				FROM #session.hostdbprefix#images
+				cloud_url, cloud_url_org, img_size as thesize, CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
+				FROM #session.hostdbprefix#images i
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -1043,8 +1067,8 @@
 			<cfelseif arguments.thestruct.type EQ "vid">
 				<cfquery name="qFile" datasource="#variables.dsn#">
 				SELECT vid_filename, vid_extension as extension, vid_name_org filenameorg, 
-				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vid_size as thesize
-				FROM #session.hostdbprefix#videos
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vid_size as thesize, CASE WHEN NOT(v.vid_group ='' OR v.vid_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_group) ELSE expiry_date END expiry_date_actual
+				FROM #session.hostdbprefix#videos v
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -1066,8 +1090,8 @@
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#">
 				SELECT  aud_name, aud_extension as extension, aud_name_org filenameorg, 
-				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aud_size as thesize
-				FROM #session.hostdbprefix#audios
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aud_size as thesize, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual
+				FROM #session.hostdbprefix#audios a
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -1090,8 +1114,8 @@
 				<cfquery name="qFile" datasource="#variables.dsn#">
 				SELECT file_name, file_extension as extension, file_name_org filenameorg, 
 				folder_id_r, link_path_url, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org,
-				file_size as thesize
-				FROM #session.hostdbprefix#files
+				file_size as thesize, expiry_date expiry_date_actual
+				FROM #session.hostdbprefix#files f
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -1294,47 +1318,19 @@
 		<cfif application.razuna.storage EQ "local">
 			<!--- Get the directory list --->
 			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- Call ListFolder --->
-			<cfinvoke component="nirvanix" method="listfolder" returnvariable="filesxml">
-				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-				<cfinvokeargument name="folderpath" value="/#qry_thefile.path_to_asset#/razuna_pdf_images/">
-				<cfinvokeargument name="pagenumber" value="1">
-				<cfinvokeargument name="pagesize" value="100">
-			</cfinvoke>
-			<!--- XPath of the XML returned from Nirvanix --->
-			<cfset mysearch = xmlsearch(filesxml, "/Response/ListFolder/File")>
-			<!--- Set an empty query --->
-			<cfset lqry.qry_pdfjpgs = QueryNew("Name")>
-			<!--- Get lenght of Array --->
-			<cfset nr = arraylen(mysearch)>
-			<!--- Loop over XML and add it to query --->
-			<cfif nr IS NOT 0>
-				<cfloop from="1" to="#nr#" index="i">
-					<cfset newRow = QueryAddRow(lqry.qry_pdfjpgs, i)>
-					<cfset temp = QuerySetCell(lqry.qry_pdfjpgs, "Name", "#mysearch[i].Name.xmltext#", i)>
+			<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
+			<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
+				<cfset theloopstart = 0>
+				<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
+				<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
+				<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9].jpg","","ONE")>
+				<cfloop from="#theloopstart#" to="#looptil#" index="i">
+					<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
 				</cfloop>
+				<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
+			<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
+				<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
 			</cfif>
-			<!--- QoQ to filter out the null values since Nirvanix pagesize is so huge --->
-			<cfquery dbtype="query" name="lqry.qry_pdfjpgs">
-			SELECT *
-			FROM lqry.qry_pdfjpgs
-			WHERE name IS NOT NULL
-			</cfquery>
-		</cfif>
-		<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
-		<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
-			<cfset theloopstart = 0>
-			<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
-			<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
-			<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9].jpg","","ONE")>
-			<cfloop from="#theloopstart#" to="#looptil#" index="i">
-				<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
-			</cfloop>
-			<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
-		<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
-			<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
 		</cfif>
 		<!--- Return --->
 		<cfreturn lqry>
