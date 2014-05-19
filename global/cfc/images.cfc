@@ -707,6 +707,8 @@
 	<cfset var theprevsize = 0>
 	<cfset var qry = structnew()>
 	<cfparam default="0" name="session.thegroupofuser">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
