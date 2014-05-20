@@ -770,6 +770,10 @@
 <!--- Do the Import ---------------------------------------------------------------------->
 <cffunction name="users_import" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfif NOT fileexists("#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#")>
+		<cfoutput><h3>The file is not readable. Please upload it again!</h3></cfoutput>
+		<cfabort>
+	</cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>
 	<!--- Feedback --->
