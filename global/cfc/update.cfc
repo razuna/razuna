@@ -178,20 +178,20 @@
 			<cftry>
 			<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
 			<cfif application.razuna.thedatabase EQ "mssql">
-				<cfquery datasource="#arguments.thestruct.dsn#">
-					CREATE UNIQUE NONCLUSTERED INDEX [UNIQUE_HOSTID_LANGID] ON raz1_languages
-					(
-					[lang_id] ASC,
-					[HOST_ID] ASC
-					)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE UNIQUE NONCLUSTERED INDEX [UNIQUE_HOSTID_LANGID] ON raz1_languages
+				(
+				[lang_id] ASC,
+				[HOST_ID] ASC
+				)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 				</cfquery>
 			<cfelseif application.razuna.thedatabase EQ "mysql">
-				<cfquery datasource="#arguments.thestruct.dsn#">
-					ALTER TABLE raz1_languages ADD UNIQUE INDEX  UNIQUE_HOSTID_LANGID (host_id, lang_id)
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_languages ADD UNIQUE INDEX  UNIQUE_HOSTID_LANGID (host_id, lang_id)
 				</cfquery>
 			<cfelseif application.razuna.thedatabase EQ "h2">
-				<cfquery  datasource="#arguments.thestruct.dsn#">
-					ALTER TABLE raz1_languages ADD CONSTRAINT UNIQUE_HOSTID_LANGID UNIQUE(host_id,lang_id)
+				<cfquery  datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_languages ADD CONSTRAINT UNIQUE_HOSTID_LANGID UNIQUE(host_id,lang_id)
 				</cfquery>
 			</cfif>
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
@@ -200,19 +200,19 @@
 			<cfif application.razuna.thedatabase EQ "mysql">
 				<cftry>
 					<cfquery datasource="#application.razuna.datasource#">
-						  SET GLOBAL innodb_large_prefix = 1;
+				  	SET GLOBAL innodb_large_prefix = 1;
 					</cfquery>
 				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 					<cfquery datasource="#application.razuna.datasource#">
-						  SET GLOBAL innodb_file_format = barracuda;
+					SET GLOBAL innodb_file_format = barracuda;
 					</cfquery>
 				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 					<cfquery datasource="#application.razuna.datasourceq#">
-						  SET GLOBAL innodb_file_per_table = true;
+					SET GLOBAL innodb_file_per_table = true;
 					</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
