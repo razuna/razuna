@@ -1528,17 +1528,22 @@ Comment:<br>
 				<cfset thepath = trim(i)>
 			</cfif>
 		</cfloop>
-		<!--- Parse XML --->
-		<cffile action="read" file="#thepath#" variable="thexml" />
-		<cfset var x = xmlParse(thexml)>
-		<cfset var thexml = xmlSearch(x, "//typemap/type/")>
-		<cfset var fontlist = "">
-		<!--- Loop over XML and create list --->
-		<cfloop array="#thexml#" index="f">
-			<cfset fontlist = fontlist & "," & f[1].xmlAttributes.fullname & ":" & f[1].xmlAttributes.name>
-		</cfloop>
-		<!--- Set local fontlist into struct --->
-		<cfset qry.fontlist = fontlist>
+		<cfif thepath contains ".xml">
+			<!--- Parse XML --->
+			<cffile action="read" file="#thepath#" variable="thexml" />
+			<cfset var x = xmlParse(thexml)>
+			<cfset var thexml = xmlSearch(x, "//typemap/type/")>
+			<cfset var fontlist = "">
+			<!--- Loop over XML and create list --->
+			<cfloop array="#thexml#" index="f">
+				<cfset fontlist = fontlist & "," & f[1].xmlAttributes.fullname & ":" & f[1].xmlAttributes.name>
+			</cfloop>
+			<!--- Set local fontlist into struct --->
+			<cfset qry.fontlist = fontlist>
+		<cfelse>
+			<!--- Set default font --->
+			<cfset qry.fontlist = 'Times Regular:Times-Roman,Helvetica Regular:Helvetica'>
+		</cfif>
 		<!--- Return --->
 		<cfreturn qry />
 	</cffunction>
