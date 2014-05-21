@@ -1520,6 +1520,8 @@ Comment:<br>
 		<cfelse>
 			<cfset var theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
 		</cfif>
+		<!--- Set thepath variable --->
+		<cfset var thepath = "">
 		<!--- Get installed fonts and create list --->	
 		<cfexecute name="#theimconvert#" arguments="-list font" variable="x" timeout="60" />
 		<!--- Loops over result and grab the path to the XML --->
