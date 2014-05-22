@@ -5160,7 +5160,13 @@
 				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
+				<cftry>
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfcatch type="any">
+						<cfset cfcatch.custom_message = "File '#theorgname#' is missing">
+						<cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
+				</cftry>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
 				<cftry>

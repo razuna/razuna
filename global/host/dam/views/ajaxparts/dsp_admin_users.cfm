@@ -50,6 +50,8 @@
 	</div>
 	<!--- Clear --->
 	<div style="clear:both;"></div>
+	<div>#myFusebox.getApplicationData().defaults.trans("admin_user_note")#</div>
+
 	<!--- The results --->
 	<div id="uresults">
 		<form id="form_users_list" name="form_users_list" action="#self#" method="post">

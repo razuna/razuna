@@ -1011,10 +1011,10 @@
 		<!-- CFC: If it is a new user then add, else update -->
 		<if condition="#attributes.user_id# EQ 0">
 			<true>
-				<!-- CFC: Insert user to groups -->
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
 				<!-- CFC: Add user to db -->
 				<invoke object="myFusebox.getApplicationData().users" methodcall="add(attributes)" returnvariable="attributes.newid" />
+				<!-- CFC: Insert user to groups -->
+				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
 				<!-- CFC: Get all modules -->
 				<invoke object="myFusebox.getApplicationData().modules" methodcall="getIdStruct()" returnvariable="attributes.module_id_struct" />
 			</true>
