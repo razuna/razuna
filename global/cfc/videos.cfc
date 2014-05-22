@@ -500,17 +500,18 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- If we are MP4 run it trough MP4Box (but only if MP4Box is present) --->
 	<cfif arguments.thestruct.qryfile.extension EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
-		<cfset var ttmp4 = createuuid("")>
-		<cfif arguments.thestruct.isWindows>
-			<cfset arguments.thestruct.themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
-		<cfelse>
-			<cfset arguments.thestruct.themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
-		</cfif>
-		<cfthread name="#ttmp4#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.themp4#" arguments="-inter 500 #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.qryfile.filename#" timeout="9999" />
-		</cfthread>
-		<!--- Wait for the thread above until the file is fully converted --->
-		<cfthread action="join" name="#ttmp4#" />
+		<cftry>
+			<cfif arguments.thestruct.isWindows>
+				<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
+			<cfelse>
+				<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
+			</cfif>
+			<cfexecute name="#themp4#" arguments="-inter 500 #arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" timeout="90" errorVariable="err" />
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
 	</cfif>
 	<!--- RFS --->
 	<cfif !application.razuna.rfs>

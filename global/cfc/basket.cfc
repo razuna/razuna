@@ -749,6 +749,20 @@
 			</cfinvoke>
 			<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 			 <cfif upcstruct.upcenabled>
+			 	<cfquery name="qry_upcgrp" dbtype="query">
+					SELECT * FROM arguments.thestruct.qry_GroupsOfUser WHERE upc_size <>'' AND upc_size is not null
+				</cfquery>
+				<cfif qry_upcgrp.recordcount gt 1>
+					<cfinvoke component="defaults" method="trans" transid="upc_user_multi_grps" returnvariable="upc_user_multi_grps" />
+					<cftry>
+					<cfthrow message="User is in more than one UPC group which is not allowed.">
+					 <cfcatch type="any">
+						<cfset errobj.logerrors(cfcatch)/>
+						<cfoutput><font color="##CD5C5C"><strong>#upc_user_multi_grps#</strong></font> </cfoutput>
+						<cfabort>
+					</cfcatch>
+					</cftry>
+				</cfif>
 				<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
 					<cfinvokeargument name="upcnumber" value="#upcnum#"/>
 					<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>

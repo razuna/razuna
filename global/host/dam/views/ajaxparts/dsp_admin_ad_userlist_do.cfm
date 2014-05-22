@@ -4,7 +4,7 @@
 	<!--- Create a new three-column query, specifying the column data types --->
 	<form  name="ad_user_form" id="ad_user_form" action="#self#" method="post" >
 		<input type="hidden" name="#theaction#" value="c.ad_server_users_save">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+		<table width="100%" border="1" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th><input type="checkbox" name="check_all" id="check_all" value="" /></th>
 				<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
@@ -12,7 +12,7 @@
 				<th>#myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
 				<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
 				<th>#myFusebox.getApplicationData().defaults.trans("email")#</th>
-				<th colspan="2"></th>
+				<th>#myFusebox.getApplicationData().defaults.trans("ad_status")#</th>
 			</tr>
 	        <cfif results.recordcount NEQ 0>
 				<cfoutput query="results">
@@ -32,25 +32,26 @@
 					<input type="hidden" name="user_fax_#currentrow#" class="#currentrow#" value="#facsimileTelephoneNumber#" disabled="disabled">
 					<cfinvoke component="global.cfc.users" method="check_email"  returnvariable="qCheckUser"  email=#mail# >
 					<tr>
-						<td valign="top" nowrap width="5%"><cfif qCheckUser.recordcount EQ 0><input type="checkbox" name="ad_users" class="ad_users" id="ad_users" value="#currentrow#" /></cfif></td>
+						<td valign="top" nowrap width="5%"><cfif qCheckUser.recordcount EQ 0 AND results.mail NEQ ""><input type="checkbox" name="ad_users" class="ad_users" id="ad_users" value="#currentrow#" /></cfif></td>
 						<td valign="top" nowrap width="20%">#SamAccountname#</td>
 						<td valign="top" nowrap width="20%" >#givenName#</td>
 						<td valign="top" nowrap width="20%" >#sn#</td>
 						<td valign="top" nowrap width="30%">#company#</td>
 						<td valign="top" nowrap width="5%">#mail#</td>
+						<td valign="top" nowrap><cfif qCheckUser.recordcount NEQ 0>Imported<cfelse>Not Imported</cfif></td>
 					</tr>
 				</cfoutput>
 			</cfif>
 		</table>
-		<div id="submit" style="float:right;padding:10px;">
-			<div style="float:left;padding-right:10px;">
+		<br/><br/>
+		<div id="submit">
 				<span style="vertical-align:top;">#myFusebox.getApplicationData().defaults.trans("group_by")#:</span>
 				<select name="grp_id_assigneds" multiple="multiple" size="5" style="width:150px;">
 	    			<cfloop query="qry_groups">
 			    		<option value=#grp_id# >#grp_name#</option>
 					</cfloop>
 				</select>
-			</div>
+			<br/><br/>
 			<input type="button" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" id="add">
 		</div>
 	</form>

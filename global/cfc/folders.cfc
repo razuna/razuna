@@ -5160,7 +5160,13 @@
 				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
+				<cftry>
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfcatch type="any">
+						<cfset cfcatch.custom_message = "File '#theorgname#' is missing">
+						<cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
+				</cftry>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
 				<cftry>
@@ -6709,16 +6715,16 @@
 					SELECT * FROM arguments.thestruct.qry_GroupsOfUser WHERE upc_size <>'' AND upc_size is not null
 				</cfquery>
 				<cfif qry_upcgrp.recordcount gt 1>
+					<cfinvoke component="defaults" method="trans" transid="upc_user_multi_grps" returnvariable="upc_user_multi_grps" />
 					<cftry>
-					<cfthrow message="User is is more than one UPC group which is not allowed.">
+					<cfthrow message="User is in more than one UPC group which is not allowed.">
 					 <cfcatch type="any">
 						<cfset errobj.logerrors(cfcatch)/>
-						<cfoutput><font color="##CD5C5C"><strong>User is in more than one UPC group (i.e. a group with UPC size configured) which is not allowed.</strong></font> </cfoutput>
+						<cfoutput><font color="##CD5C5C"><strong>#upc_user_multi_grps#</strong></font> </cfoutput>
 						<cfabort>
 					</cfcatch>
 					</cftry>
 				</cfif>
- 
 				<cfif structKeyExists(arguments.thestruct,'qry_GroupsOfUser') AND qry_upcgrp.upc_folder_format EQ 'true'>
 					<cfset create_dir_path = "#arguments.thestruct.newpath##parentfoldersname#/#arguments.thestruct.folder_name#">
 					<!--- Create Directory as per folder structure in Razuna --->

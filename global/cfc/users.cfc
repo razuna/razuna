@@ -212,28 +212,30 @@
 <!--- Add AD Server --->
 <cffunction name="ad_server_user">
 	<cfargument name="thestruct" type="Struct">
-	<cfloop list="#arguments.thestruct.ad_users#" index="i" delimiters="," >
-		<cfset arguments.thestruct.user_first_name = evaluate("arguments.thestruct.user_first_name_#i#")>
-		<cfset arguments.thestruct.user_last_name = evaluate("arguments.thestruct.user_last_name_#i#")>
-		<cfset arguments.thestruct.intrauser = "T">
-		<cfset arguments.thestruct.user_active = "T">
-		<cfset arguments.thestruct.user_pass = "">
-		<cfset arguments.thestruct.hostid = session.hostid>
-		<cfset arguments.thestruct.user_login_name = evaluate("arguments.thestruct.user_login_name_#i#")>
-		<cfset arguments.thestruct.user_email = evaluate("arguments.thestruct.user_email_#i#")>
-		<cfset arguments.thestruct.user_company = evaluate("arguments.thestruct.user_company_#i#")>
-		<cfset arguments.thestruct.user_street = evaluate("arguments.thestruct.user_street_#i#")>
-		<cfset arguments.thestruct.user_zip = evaluate("arguments.thestruct.user_zip_#i#")>
-		<cfset arguments.thestruct.user_city = evaluate("arguments.thestruct.user_city_#i#")>
-		<cfset arguments.thestruct.user_country = evaluate("arguments.thestruct.user_country_#i#")>
-		<cfset arguments.thestruct.user_phone = evaluate("arguments.thestruct.user_phone_#i#")>
-		<cfset arguments.thestruct.user_phone_2 = evaluate("arguments.thestruct.user_phone_2_#i#")>
-		<cfset arguments.thestruct.user_mobile = evaluate("arguments.thestruct.user_mobile_#i#")>
-		<cfset arguments.thestruct.user_fax = evaluate("arguments.thestruct.user_fax_#i#")>
-		<cfif arguments.thestruct.user_login_name NEQ '' OR arguments.thestruct.user_email NEQ ''> 
-			<cfinvoke method="add"  thestruct="#arguments.thestruct#">
-		</cfif>
-	</cfloop> 
+	<cfif isdefined("arguments.thestruct.ad_users")>
+		<cfloop list="#arguments.thestruct.ad_users#" index="i" delimiters="," >
+			<cfset arguments.thestruct.user_first_name = evaluate("arguments.thestruct.user_first_name_#i#")>
+			<cfset arguments.thestruct.user_last_name = evaluate("arguments.thestruct.user_last_name_#i#")>
+			<cfset arguments.thestruct.intrauser = "T">
+			<cfset arguments.thestruct.user_active = "T">
+			<cfset arguments.thestruct.user_pass = "">
+			<cfset arguments.thestruct.hostid = session.hostid>
+			<cfset arguments.thestruct.user_login_name = evaluate("arguments.thestruct.user_login_name_#i#")>
+			<cfset arguments.thestruct.user_email = evaluate("arguments.thestruct.user_email_#i#")>
+			<cfset arguments.thestruct.user_company = evaluate("arguments.thestruct.user_company_#i#")>
+			<cfset arguments.thestruct.user_street = evaluate("arguments.thestruct.user_street_#i#")>
+			<cfset arguments.thestruct.user_zip = evaluate("arguments.thestruct.user_zip_#i#")>
+			<cfset arguments.thestruct.user_city = evaluate("arguments.thestruct.user_city_#i#")>
+			<cfset arguments.thestruct.user_country = evaluate("arguments.thestruct.user_country_#i#")>
+			<cfset arguments.thestruct.user_phone = evaluate("arguments.thestruct.user_phone_#i#")>
+			<cfset arguments.thestruct.user_phone_2 = evaluate("arguments.thestruct.user_phone_2_#i#")>
+			<cfset arguments.thestruct.user_mobile = evaluate("arguments.thestruct.user_mobile_#i#")>
+			<cfset arguments.thestruct.user_fax = evaluate("arguments.thestruct.user_fax_#i#")>
+			<cfif arguments.thestruct.user_login_name NEQ '' OR arguments.thestruct.user_email NEQ ''> 
+				<cfinvoke method="add"  thestruct="#arguments.thestruct#">
+			</cfif>
+		</cfloop> 
+	</cfif>
 </cffunction>
 
 <!--- Add user --->

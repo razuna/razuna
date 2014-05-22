@@ -1163,6 +1163,12 @@
 		<do action="storage" />
 		<!-- Action: Export Metadata -->
 		<do action="meta_export_do" />
+		<!-- Get user groups  -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="check_upc_size" value="true" />
+		</invoke>
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.dllinkbasket" />
 	</fuseaction>
@@ -9489,7 +9495,7 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
 		<!-- CFC: Get all assets -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
-		<!-- Get UPC Number  -->
+		<!-- Get user groups  -->
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
 			<argument name="user_id" value="#session.theuserid#" />
 			<argument name="host_id" value="#session.hostid#" />
