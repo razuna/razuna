@@ -2327,7 +2327,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
 	</cfquery>
 	<!--- Setting this to false since we changed how we do it for hosted since 1.6.5 --->
-	<cfset CronEnable(False)>
+	<!--- Put a try/catch around it as it throws internal errors at times --->
+	<cftry>
+		<cfset CronEnable(False)>
+		<cfcatch></cfcatch>
+	</cftry>
+	
 	<!--- If this is for ISP we do a general scheduler task for indexing files --->
 	<cfif arguments.thestruct.conf_isp>
 		<!--- Save scheduled event in CFML scheduling engine --->
