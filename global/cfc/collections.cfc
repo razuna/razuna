@@ -477,6 +477,7 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("labels")>
 </cffunction>
 
 <!--- GET COLLECTION FILES FROM TRASH --->
@@ -912,6 +913,7 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("general")>
 	<cfset resetcachetoken("folder")>
+	<cfset resetcachetoken("labels")>
 	<cfif isDefined('local.istrash') AND local.istrash EQ "trash">
 		<cfset var is_trash = "intrash">
 	<cfelse>
@@ -946,6 +948,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1073,6 +1076,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("labels")>
 </cffunction>
 
 <!--- REMOVE COLLECTION --->
@@ -1117,6 +1121,7 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("general")>
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 </cffunction>
 
 
@@ -1133,6 +1138,7 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("general")>
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 </cffunction>
 
 <!--- UPDATE --->

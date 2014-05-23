@@ -422,6 +422,13 @@
 				LEFT JOIN #session.hostdbprefix#folders fo ON ct.ct_id_r = fo.folder_id  AND ct.ct_type =<cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
 				LEFT JOIN #session.hostdbprefix#collections c ON ct.ct_id_r = c.col_id  AND ct.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/>
 				WHERE ct.ct_label_id = l.label_id
+				<!--- Exclude assets in trash --->
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#audios where ct.ct_id_r = aud_id AND ct.ct_type ='aud' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#images where ct.ct_id_r = img_id AND ct.ct_type ='img' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#videos where ct.ct_id_r = vid_id AND ct.ct_type ='vid' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#files where ct.ct_id_r = file_id AND ct.ct_type ='doc' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#folders where ct.ct_id_r = folder_id AND ct.ct_type ='folder' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#collections where ct.ct_id_r = col_id AND ct.ct_type ='collection' AND in_trash = 'T')
 				<!--- Ensure user is folder owner or has access to folder in which asset resides --->
 				AND 
 				(
@@ -543,19 +550,24 @@
 				LEFT JOIN #session.hostdbprefix#files f ON l.ct_id_r = f.file_id AND l.ct_type =<cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
 				WHERE ct_type IN (<cfqueryparam value="img,vid,aud,doc" cfsqltype="cf_sql_varchar" list="Yes" />)
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				<!--- Exclude assets in trash --->
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#audios where l.ct_id_r = aud_id AND l.ct_type ='aud' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#images where l.ct_id_r = img_id AND l.ct_type ='img' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#videos where l.ct_id_r = vid_id AND l.ct_type ='vid' AND in_trash = 'T')
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#files where l.ct_id_r = file_id AND l.ct_type ='doc' AND in_trash = 'T')
 				<!--- Ensure user has access to folder in which asset resides --->
 				AND 
 				(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
 				EXISTS (
-					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
 					UNION
-					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
 					UNION
-					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
 					UNION
-					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#' 
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
 					) 
 				OR
 				EXISTS (
@@ -602,14 +614,16 @@
 			(
 				SELECT count(ct_label_id)
 				FROM ct_labels l
+				LEFT JOIN #session.hostdbprefix#folders fo ON l.ct_id_r = fo.folder_id  AND l.ct_type =<cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
 				WHERE ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#folders where l.ct_id_r = folder_id AND l.ct_type ='folder' AND in_trash = 'T')
 				<!--- Ensure user has access to folder --->
 				AND 
 				(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#session.theuserid#' )
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  l.ct_id_r AND folder_owner = '#session.theuserid#' AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">)
 				OR
 				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE l.ct_id_r = f.folder_id_r AND  f.grp_id_r = '0')
 				OR
@@ -619,14 +633,16 @@
 			(
 				SELECT count(ct_label_id)
 				FROM ct_labels l
+				LEFT JOIN #session.hostdbprefix#collections c ON l.ct_id_r = c.col_id  AND l.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/>
 				WHERE ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+				AND NOT EXISTS (select 1 from #session.hostdbprefix#collections where l.ct_id_r = col_id AND l.ct_type ='collection' AND in_trash = 'T')
 				<!--- Ensure user has access to collection --->
 				AND 
 				(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
-				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#session.theuserid#' )
+				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  l.ct_id_r AND col_owner = '#session.theuserid#' AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">)
 				OR
 				EXISTS (SELECT 1 FROM  #session.hostdbprefix#collections_groups f WHERE l.ct_id_r = f.col_id_r AND f.grp_id_r = '0')
 				OR
@@ -706,6 +722,7 @@
 			FROM #session.hostdbprefix#images i, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
+			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND i.img_id NOT IN (
@@ -744,6 +761,7 @@
 			FROM #session.hostdbprefix#files f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
+			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND f.file_id NOT IN (
@@ -782,6 +800,7 @@
 			FROM #session.hostdbprefix#videos v, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = v.vid_id
+			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND v.vid_id NOT IN (
@@ -820,6 +839,7 @@
 			FROM #session.hostdbprefix#audios a, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
+			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND a.aud_id NOT IN (
@@ -874,6 +894,7 @@
 			FROM #session.hostdbprefix#folders f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.folder_id
+			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />
 			<!--- Ensure user has access to folder  --->
 			AND 
@@ -901,6 +922,7 @@
 			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND ctl.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ctl.ct_id_r = c.col_id
+			AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ctl.ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
 			<!--- Ensure user has access to collection --->
 			AND 

@@ -1384,6 +1384,7 @@
 	<cfinvoke method="trash_folder_thread" thestruct="#arguments.thestruct#" returnvariable="parent_folder_id"/>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn parent_folder_id />
 </cffunction>
@@ -1794,6 +1795,7 @@
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("search")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1840,6 +1842,7 @@
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("search")>
+	<cfset resetcachetoken("labels")>
 	<cfreturn />
 </cffunction>
 
@@ -1901,6 +1904,7 @@
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("search")>
+	<cfset resetcachetoken("labels")>
 	<cfreturn />
 </cffunction>
 
@@ -1935,6 +1939,7 @@
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("search")>
+	<cfset resetcachetoken("labels")>
 	<cfreturn />
 </cffunction>
 
@@ -1954,6 +1959,7 @@
 	<cfset session.thefileid = ids>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<cfreturn />
 </cffunction>
 
@@ -2009,6 +2015,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2026,6 +2033,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2080,6 +2088,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />	
 </cffunction>
@@ -2132,6 +2141,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2189,6 +2199,20 @@
 		<cfset arguments.thestruct.id = valuelist(qrydoc.file_id)>
 		<cfinvoke component="files" method="removefilemany" thestruct="#arguments.thestruct#" />
 	</cfif>
+	<!--- Collections --->
+	<cfquery datasource="#application.razuna.datasource#" name="qrycol">
+	Select col_id 
+	FROM #session.hostdbprefix#collections
+	WHERE folder_id_r = <cfqueryparam value="#arguments.thefolderid#" cfsqltype="CF_SQL_VARCHAR">
+	AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
+	<cfif qrycol.recordcount NEQ 0>
+		<cfloop query="qrycol">
+			<cfset arguments.thestruct.id = col_id>
+			<cfinvoke component="collections" method="remove" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		
+	</cfif>
 	<!--- Now check in all asset dbs again for the same folder. If we have no record anymore, remove the folder from the file system --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryfolder">
 	SELECT img_id as id
@@ -2211,7 +2235,7 @@
 	<cfif qryfolder.recordcount EQ 0>
 		<!--- Delete Folder --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfif directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thefolderid#")>
+			<cfif isdefined("arguments.thestruct.assetpath") AND directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thefolderid#")>
 				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thefolderid#" recurse="true">
 			</cfif>
 		<cfelseif application.razuna.storage EQ "nirvanix">
@@ -2231,6 +2255,7 @@
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("search")>
+	<cfset resetcachetoken("labels")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
