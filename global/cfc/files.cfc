@@ -377,6 +377,7 @@
 			<cfset resetcachetoken("files")>
 			<cfset resetcachetoken("folders")>
 			<cfset resetcachetoken("search")>
+			<cfset resetcachetoken("labels")>
 		</cfif>
 		<cfreturn />
 	</cffunction>
@@ -394,6 +395,7 @@
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("labels")>
 		<!--- return --->
 		<cfreturn />
 	</cffunction>
@@ -416,6 +418,7 @@
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("labels")>
 		<cfreturn />
 	</cffunction>
 	
@@ -570,6 +573,7 @@
 			<cfset resetcachetoken("files")>
 			<cfset resetcachetoken("folders")>
 			<cfset resetcachetoken("search")>
+			<cfset resetcachetoken("labels")>
 		</cfif>
 		<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
 			<cfset var is_trash = "intrash">
