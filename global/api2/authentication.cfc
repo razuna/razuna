@@ -113,10 +113,10 @@
 			<cfset var thexml = querynew("responsecode,message")>
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
-			<cfset querysetcell(thexml,"message","No permissible data found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.")>
+			<cfset querysetcell(thexml,"message","No permissible data or action found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.")>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
-			<cfset thexml.message = "No permissible data found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.">
+			<cfset thexml.message = "No permissible data or action found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.">
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>

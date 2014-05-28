@@ -357,7 +357,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for folder --->
-			<cfset var folderaccess = checkFolderAccess(arguments.folderid)>
+			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folderid)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "R" OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Query --->

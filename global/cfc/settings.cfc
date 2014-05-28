@@ -2592,36 +2592,36 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Get AD users --->
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
-
+		<cfset var results = querynew('')>
 		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
 			<cfset ldapfilter = "(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
 		<cfelse>
 			<cfset ldapfilter="(&(objectClass=user))" >
 		</cfif>
-		
 		<!--- Set AD default port --->
 		<cfif Not structKeyExists(arguments.thestruct,'ad_server_port') OR arguments.thestruct.ad_server_port EQ ''>
 			<cfset arguments.thestruct.ad_server_port = 389>
 		</cfif>
-		
-		<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
-			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-				port = "#arguments.thestruct.ad_server_port#"
-			scope="subtree" 
-			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-			filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
-				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
-		<cfelse>
-			<cfldap server = "#arguments.thestruct.ad_server_name#" 
-				port = "#arguments.thestruct.ad_server_port#"
-			scope="subtree" 
-			action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-			filter="(&(objectClass=user))" 
-				attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-			sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  >
-		</cfif>
-
+		<cftry>
+			<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
+				<cfldap server = "#arguments.thestruct.ad_server_name#" 
+					port = "#arguments.thestruct.ad_server_port#"
+				scope="subtree" 
+				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+				filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
+					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
+			<cfelse>
+				<cfldap server = "#arguments.thestruct.ad_server_name#" 
+					port = "#arguments.thestruct.ad_server_port#"
+				scope="subtree" 
+				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+				filter="(&(objectClass=user))" 
+					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
+			</cfif>
+		<cfcatch></cfcatch>
+		</cftry>
 		<cfreturn results/>
 	</cffunction>
 		

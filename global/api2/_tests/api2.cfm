@@ -3,29 +3,44 @@
 --- TEST API --- 
 Please set your API keys below and run this template to test if all API calls check out successfully.
 Some API calls can be modified.
-
+Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5AJgMs-gxgVTDf9VTwTg_Q/edit?usp=sharing for documentation
 --->
 
 <!--- SET API KEY --->
-<cfset apikey_admin = "EA65B1C041E348AFAB9672353A0243DD"> <!--- Admin --->
-<cfset apikey_sysadmin = "6A6773CD3F35482585C31EB2B00F34BB"> <!--- SYS Admin --->
-<cfset apikey_user = ""> <!--- User --->
+<cfset apikey_admin = "05D8992CD25D492ABE53607C91481429"> <!--- Admin --->
+<cfset apikey_sysadmin = "8AF56E0FD4164F91B0F0964043164651"> <!--- SYS Admin --->
+<cfset apikey_user_perm = "22A68EEBC95B4CE581CA97E9E1762AC8"> <!--- User with permission --->
+<cfset apikey_user_noperm = "970CC574ADD942C6B4ACB818226D4F4B"> <!--- User without permission --->
 
 <!--- SET URL OF API --->
-<cfset apiurl = "http://razunabd.local:8080/global/api2/">
+<cfset apiurl = "http://razunabd.local:8080/razuna/global/api2/">
 
 <!--- Group ID --->
-<cfset grpid = "13E33EB4-4A82-4CF7-B1DAA549DA80E86B">
+<cfset grpid = "A6959EB0-E22C-4C76-AAD1640785E5B2CA">
 
-<!--- FILE ID --->
-<cfset assetid = "ABD7016F474F48BAA6094C9B499622F5">
-<cfset assettype = "img">
+<!--- ASSET ID --->
+<cfset assetid = "F9C76429463B4A74914C212AA401EACC">
+<cfset assettype = "doc">
 
+<!--- FOLDERID --->
+<cfset destination_folderid  = "1ABCB8E675754DE8A3866ADF7072C0BA">
+<cfset original_folderid = "C1F848F5E9974346A32B87FCF6F0B735">
+<cfset foldername  = "Test_Folder">
+
+<!--- COLLECTIONID --->
+<cfset collection_folderid = "427BB557EBC14A02BE7009591AB5E440">
+<cfset collectionid = "627E416703B14F65A22A8BDB2D2E7DB8">
+<!--- PDF document --->
+<cfset fileid = "F9C76429463B4A74914C212AA401EACC">
+
+<!--- Label --->
+<cfset labelid = "AE6346805C24492180BB7E9C4912D823">
+
+<!--- SEARCH TEXT --->
+<cfset searchfor = "sync*">
 <!--- ----------------------------------------------------------------------------- --->
 <!--- NOTHING ELSE FOR YOU TO DO HERE --->
 <!--- ----------------------------------------------------------------------------- --->
-
-<cfflush>
 
 <!--- HOSTS --->
 
@@ -380,27 +395,924 @@ Some API calls can be modified.
 <br>
 <cfflush>
 
-<!--- LABELS --->
+<cfoutput>
 
-<!--- getlabelofasset --->
-<!--- <cfhttp url="#apiurl#label.cfc?method=getlabelofasset&api_key=#apikey#&asset_id=BB59AB4D207F41C79408E5DC04B8651A&asset_type=img"></cfhttp> --->
+<!--- ############################ ASSETS #################################### --->
+<h1>ASSETS</h1>
 
-<!--- getassetsoflabel --->
-<!--- <cfhttp url="#apiurl#label.cfc?method=getassetoflabel&api_key=#apikey#&label_id=2CCD111DD3B14E58AE4FB0062809866C"></cfhttp> --->
+<!--- ************* GET ASSET ************** --->
 
-<!--- setassetlabel --->
-<!--- <cfhttp url="#apiurl#label.cfc?method=setassetlabel&api_key=#apikey#&label_id=2CCD111DD3B14E58AE4FB0062809866C&asset_id=6E7D588C81B742AB89C181BF9969784A&asset_type=img"></cfhttp> --->
+<strong>getAsset(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getasset&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAsset(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getasset&api_key=#apikey_admin#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAsset(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getasset&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAsset(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getasset&api_key=#apikey_user_noperm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush> 
+
+
+<!--- ************* GET METADATA************** --->
+<strong>getMetadata(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getmetadata&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#&assetmetadata=creator"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getMetadata(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getmetadata&api_key=#apikey_admin#&assetid=#assetid#&assettype=#assettype#&assetmetadata=creator"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getMetadata(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getmetadata&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#&assetmetadata=creator"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getMetadata(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getmetadata&api_key=#apikey_user_noperm#&assetid=#assetid#&assettype=#assettype#&assetmetadata=creator"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* GET RENDITIONS ************** --->
+<strong>getRenditions(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getrenditions&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getRenditions(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getrenditions&api_key=#apikey_admin#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getRenditions(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getrenditions&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getRenditions(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getrenditions&api_key=#apikey_user_noperm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
 
 
+<!--- ************* SET METADATA************** --->
+
+<strong>setMetadata( as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=setmetadata&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#&assetmetadata=[[%22img_keywords%22,%22Razuna_Rocks,temp%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setMetadata(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=setmetadata&api_key=#apikey_admin#&assetid=#assetid#&assettype=#assettype#&assetmetadata=[[%22img_keywords%22,%22Razuna_Rocks,temp%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setMetadata(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=setmetadata&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#&assetmetadata=[[%22img_keywords%22,%22Razuna_Rocks,temp%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setMetadata(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=setmetadata&api_key=#apikey_user_noperm#&assetid=#assetid#&assettype=#assettype#&assetmetadata=[[%22img_keywords%22,%22Razuna_Rocks,temp%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush> 
+</cfoutput>
+
+<!--- ************* MOVE************** --->
+ <strong>Move(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_sysadmin#&assetid=#assetid#&destination_folder=#destination_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush> 
+<!--- Put file back in original folder --->
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_sysadmin#&assetid=#assetid#&destination_folder=#original_folderid#"></cfhttp>
+
+<strong>Move(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_admin#&assetid=#assetid#&destination_folder=#destination_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+<!--- Put file back in original folder --->
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_admin#&assetid=#assetid#&destination_folder=#original_folderid#"></cfhttp>
+
+
+<strong>Move(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#&destination_folder=#destination_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+<!--- Put file back in original folder --->
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_user_perm#&assetid=#assetid#&destination_folder=#original_folderid#"></cfhttp>
+
+
+<strong>Move(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_user_noperm#&assetid=#assetid#&destination_folder=#destination_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush> 
+</cfoutput>
+
+<!--- Put file back in original folder --->
+<cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_user_noperm#&assetid=#assetid#&destination_folder=#original_folderid#"></cfhttp>
+
+
+<!--- ************* CREATE RENDITIONS ************** --->
+<strong>createRenditions(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=createrenditions&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#&convertdata=[[[%22convert_to%22,%22jpg%22],[%22convert_width_jpg%22,%22500%22],[%22convert_height_jpg%22,%22374%22],[%22convert_dpi_jpg%22,%22%22],[%22convert_wm_jpg%22,%22%22]]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>createRenditions(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=createrenditions&api_key=#apikey_admin#&assetid=#assetid#&assettype=#assettype#&convertdata=[[[%22convert_to%22,%22jpg%22],[%22convert_width_jpg%22,%22500%22],[%22convert_height_jpg%22,%22374%22],[%22convert_dpi_jpg%22,%22%22],[%22convert_wm_jpg%22,%22%22]]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>createRenditions(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=createrenditions&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#&convertdata=[[[%22convert_to%22,%22jpg%22],[%22convert_width_jpg%22,%22500%22],[%22convert_height_jpg%22,%22374%22],[%22convert_dpi_jpg%22,%22%22],[%22convert_wm_jpg%22,%22%22]]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>createRenditions(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=createrenditions&api_key=#apikey_user_noperm#&assetid=#assetid#&assettype=#assettype#&convertdata=[[[%22convert_to%22,%22jpg%22],[%22convert_width_jpg%22,%22500%22],[%22convert_height_jpg%22,%22374%22],[%22convert_dpi_jpg%22,%22%22],[%22convert_wm_jpg%22,%22%22]]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
 
 
+<!--- ************* REGENERATE METADATA ************** --->
+<strong>regenerateMetadata(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=regeneratemetadata&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>regenerateMetadata(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=regeneratemetadata&api_key=#apikey_admin#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>regenerateMetadata(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=regeneratemetadata&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>regenerateMetadata(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=regeneratemetadata&api_key=#apikey_user_noperm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* GET PDF IMAGES ************** --->
+<strong>getPDFImages(as System Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getpdfimages&api_key=#apikey_sysadmin#&assetid=#fileid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getPDFImages(as Admin)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getpdfimages&api_key=#apikey_admin#&assetid=#fileid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getPDFImages(as User with Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getpdfimages&api_key=#apikey_user_perm#&assetid=#fileid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getPDFImages(as User without Permission)</strong>
+<cfhttp url="#apiurl#asset.cfc?method=getpdfimages&api_key=#apikey_user_noperm#&assetid=#fileid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* REMOVE************** --->
+<!--- Uncoment and run cases one by one. Assetids will need ot be changed manually here.--->
+<!--- <strong>getAsset(as System Admin)</strong>
+ <cfhttp url="#apiurl#asset.cfc?method=remove&api_key=#apikey_sysadmin#&assetid=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAsset(as Admin)</strong>
+<!--- Get Asset --->
+<cfhttp url="#apiurl#asset.cfc?method=remove&api_key=#apikey_admin#&assetid=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAsset(as User with Permission)</strong>
+<!--- Get Asset --->
+<cfhttp url="#apiurl#asset.cfc?method=remove&api_key=#apikey_user_perm#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAsset(as User without Permission)</strong>
+<!--- Get Asset --->
+<cfhttp url="#apiurl#asset.cfc?method=remove&api_key=#apikey_user_noperm#&assetid=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>  
+--->
+<!--- ############################ FOLDER #################################### --->
+<h1>FOLDER</h1>
+<!--- ************* GET ASSETS ************** --->
+<strong>getAssets(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey_sysadmin#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssets(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey_admin#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssets(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey_user_perm#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssets(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey_user_noperm#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<!--- ************* GET FOLDERS ************** --->
+<strong>getFolders(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey_sysadmin#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolders(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey_admin#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolders(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey_user_perm#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolders(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey_user_noperm#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
 
 
+<!--- ************* GET FOLDER ************** --->
+<strong>getFolder(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_sysadmin#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolder(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_admin#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolder(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_user_perm#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolder(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_user_noperm#&folderid=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
 
+
+<!--- ************* SET FOLDER ************** --->
+<strong>setFolder(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_sysadmin#&folder_name=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setFolder(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_admin#&folder_name=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<!--- Only admin users can create folders on root so even users with permission should not be allowed that so this case should fail. --->
+<strong>setFolder(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_perm#&folder_name=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<!---Users with permissions can create sub folders so this case should pass. --->
+<strong>setFolder(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_perm#&folder_name=#foldername#&folder_related=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setFolder(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_noperm#&folder_name=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* SET FOLDER PERMISSION ************** --->
+<strong>setFolderPermissions(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolderpermissions&api_key=#apikey_sysadmin#&permissions=[[%22#destination_folderid#%22,%220%22,%22X%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setFolderPermissions(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolderpermissions&api_key=#apikey_admin#&permissions=[[%22#destination_folderid#%22,%220%22,%22X%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setFolderPermissions(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolderpermissions&api_key=#apikey_user_perm#&permissions=[[%22#destination_folderid#%22,%220%22,%22X%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setFolderPermissions(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolderpermissions&api_key=#apikey_user_noperm#&permissions=[[%22#destination_folderid#%22,%220%22,%22X%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* REMOVE FOLDER ************** --->
+<!--- Run one by one. Will need to change folderids manually --->
+<!--- <strong>removeFolder(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_sysadmin#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeFolder(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_admin#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeFolder(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_user_perm#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeFolder(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_user_noperm#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+ --->
+ 
+<!--- ############################ LABELS #################################### --->
+<h1>LABELS</h1>
+<!--- ************* GET ALL ************** --->
+<strong>getAll(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getall&api_key=#apikey_sysadmin#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAll(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getall&api_key=#apikey_admin#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAll(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getall&api_key=#apikey_user_perm#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAll(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getall&api_key=#apikey_user_noperm#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+ 
+
+<!--- ************* GET LABEL ************** --->
+<strong>getLabel(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabel&api_key=#apikey_sysadmin#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getLabel(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabel&api_key=#apikey_admin#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getLabel(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabel&api_key=#apikey_user_perm#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getLabel(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabel&api_key=#apikey_user_noperm#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+
+<!--- ************* SET LABEL ************** --->
+<strong>setLabel(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setlabel&api_key=#apikey_sysadmin#&label_id=#labelid#&label_text=test_label"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setLabel(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setlabel&api_key=#apikey_admin#&label_text=test_label"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setLabel(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setlabel&api_key=#apikey_user_perm#&label_id=#labelid#&label_text=test_label"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setLabel(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setlabel&api_key=#apikey_user_noperm#&label_id=#labelid#&label_text=test_label"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+
+<!--- ************* SET ASSET LABEL ************** --->
+<strong>setAssetLabel(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setassetlabel&api_key=#apikey_sysadmin#&label_id=#labelid#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setAssetLabel(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setassetlabel&api_key=#apikey_admin#&label_id=#labelid#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setAssetLabel(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setassetlabel&api_key=#apikey_user_perm#&label_id=#labelid#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>setAssetLabel(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=setassetlabel&api_key=#apikey_user_noperm#&label_id=#labelid#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<!--- ************* GET LABEL OF ASSET ************** --->
+<strong>getLabelOfAsset(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabelofasset&api_key=#apikey_sysadmin#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getLabelOfAsset(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabelofasset&api_key=#apikey_admin#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getLabelOfAsset(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabelofasset&api_key=#apikey_user_perm#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getLabelOfAsset(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getlabelofasset&api_key=#apikey_user_noperm#&asset_id=#assetid#&asset_type=#assettype#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* GET ASSET OF LABEL ************** --->
+<strong>getAssetOfLabel(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getassetoflabel&api_key=#apikey_sysadmin#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssetOfLabel(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getassetoflabel&api_key=#apikey_admin#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssetOfLabel(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getassetoflabel&api_key=#apikey_user_perm#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssetOfLabel(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=getassetoflabel&api_key=#apikey_user_noperm#&label_id=#labelid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+
+<!--- ************* SEARCH LABEL ************** --->
+<strong>searchLabel(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=searchlabel&api_key=#apikey_sysadmin#&searchfor=UPC"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchLabel(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=searchlabel&api_key=#apikey_admin#&searchfor=UPC"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchLabel(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=searchlabel&api_key=#apikey_user_perm#&searchfor=UPC"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchLabel(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=searchlabel&api_key=#apikey_user_noperm#&searchfor=UPC"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+
+<!--- ************* REMOVE ASSET LABEL ************** --->
+<strong>removeAssetLabel(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=removeassetlabel&api_key=#apikey_sysadmin#&label_id=#labelid#&asset_id=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeAssetLabel(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=removeassetlabel&api_key=#apikey_admin#&label_id=#labelid#&asset_id=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeAssetLabel(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=removeassetlabel&api_key=#apikey_user_perm#&label_id=#labelid#&asset_id=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeAssetLabel(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=removeassetlabel&api_key=#apikey_user_noperm#&label_id=#labelid#&asset_id=#assetid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+--->
+
+<!--- ************* REMOVE LABEL ************** --->
+<!--- Run one by one. Labelid will need to be set manually --->
+<!--- <strong>remove(as System Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=remove&api_key=#apikey_sysadmin#&label_id=A0D2BA3A470741BFAEDE0B1665D1B183"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>remove(as Admin)</strong>
+<cfhttp url="#apiurl#label.cfc?method=remove&api_key=#apikey_admin#&label_id=FAF1E775B98F4D4AB74151EE1F5562EB"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>remove(as User with Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=remove&api_key=#apikey_user_perm#&label_id=A0D2BA3A470741BFAEDE0B1665D1B183"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>remove(as User without Permission)</strong>
+<cfhttp url="#apiurl#label.cfc?method=remove&api_key=#apikey_user_noperm#&label_id=A0D2BA3A470741BFAEDE0B1665D1B183"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+--->
+
+<!--- ############################ COLLECTION #################################### --->
+<h1>COLLECTION</h1>
+<!--- ************* GET COLLECTIONS ************** --->
+<strong>getCollections(as System Admin)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getcollections&api_key=#apikey_sysadmin#&folderid=#collection_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getCollections(as Admin)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getcollections&api_key=#apikey_admin#&folderid=#collection_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getCollections(as User with Permission)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getcollections&api_key=#apikey_user_perm#&folderid=#collection_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getCollections(as User without Permission)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getcollections&api_key=#apikey_user_noperm#&folderid=#collection_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* GET ASSETS FOR COLLECTION ************** --->
+<strong>getAssets(as System Admin)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getassets&api_key=#apikey_sysadmin#&collectionid=#collectionid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssets(as Admin)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getassets&api_key=#apikey_admin#&collectionid=#collectionid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssets(as User with Permission)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getassets&api_key=#apikey_user_perm#&collectionid=#collectionid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getAssets(as User without Permission)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=getassets&api_key=#apikey_user_noperm#&collectionid=#collectionid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ************* SEARCH COLLECTION ************** --->
+<strong>search(as System Admin)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=search&api_key=#apikey_sysadmin#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>search(as Admin)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=search&api_key=#apikey_admin#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>search(as User with Permission)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=search&api_key=#apikey_user_perm#&id=#collectionid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>search(as User without Permission)</strong>
+<cfhttp url="#apiurl#collection.cfc?method=search&api_key=#apikey_user_noperm#&id=#collectionid#&name=testcol"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+
+<!--- ############################ SEARCH #################################### --->
+<h1>SEARCH</h1>
+<!--- ************* SEARCH ASSETS ************** --->
+<strong>searchAssets(as System Admin)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchassets&api_key=#apikey_sysadmin#&searchfor=#searchfor#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchAssets(as Admin)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchassets&api_key=#apikey_admin#&searchfor=#searchfor#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchAssets(as User with Permission)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchassets&api_key=#apikey_user_perm#&searchfor=#searchfor#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchAssets(as User without Permission)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchassets&api_key=#apikey_user_noperm#&searchfor=#searchfor#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<!--- ************* SEARCH INDEX ************** --->
+<strong>searchIndex(as System Admin)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchindex&api_key=#apikey_sysadmin#&assetid=all"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchIndex(as Admin)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchindex&api_key=#apikey_admin#&assetid=all"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchIndex(as User with Permission)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchindex&api_key=#apikey_user_perm#&assetid=all"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>searchIndex(as User without Permission)</strong>
+<cfhttp url="#apiurl#search.cfc?method=searchindex&api_key=#apikey_user_noperm#&assetid=all"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+</cfoutput>
 <!--- Set Metadata Bulk
 <cfset j = arrayNew(2)>
 <cfset a = arrayNew(2)>
@@ -484,91 +1396,4 @@ Some API calls can be modified.
 	<cfhttpparam name="folderid" value="D897F2B3BBC6492383CBA6DB46DA5927" type="url" />
 	<cfhttpparam name="dbdirect" value="true" type="url" />
 </cfhttp> --->
-
-
-
-
-
-<!--- ASSETS --->
-
-<!--- Get Asset --->
-<!--- <cfhttp url="#apiurl#asset.cfc?method=getasset&api_key=#apikey#&assetid=36ECD57F52B04E8CAA2AD18CB462802F&assettype=img"></cfhttp> --->
-
-<!--- Set Metadata --->
-<!--- <cfset j = arrayNew(2)>
-<cfset j[1][1] = "file_name">
-<cfset j[1][2] = "Denise">
-<!--- <cfset j[2][1] = "lang_id_r">
-<cfset j[2][2] = "1"> --->
-
-<cfset j = SerializeJSON(j)>
-
-<cfhttp url="#apiurl#asset.cfc?method=setmetadata">
-	<cfhttpparam name="api_key" value="#apikey#" type="url" />
-	<cfhttpparam name="assetid" value="6203F996347A452D9C3F295CFF4AC493" type="url" />
-	<cfhttpparam name="assettype" value="img" type="url" />
-	<cfhttpparam name="assetmetadata" value="#j#" type="url" />
-</cfhttp> --->
-
-<!--- getrenditions --->
-<!--- <cfhttp url="#apiurl#asset.cfc?method=getrenditions&api_key=#apikey#&assetid=#assetid#&assettype=#assettype#"></cfhttp>
-<cfoutput>
-	<strong>getRenditions</strong>
-	<br>
-	#cfhttp.filecontent#
-	<br>
-</cfoutput>
-<br>
-<cfflush> --->
-
-<!--- move --->
-<!--- <cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey#&assetid=#assetid#&destination_folder=7405A6474800468583EC933B0C703545"></cfhttp> --->
-
-<!--- COLLECTIONS --->
-
-<!--- Search --->
-<!--- <cfhttp url="#apiurl#collection.cfc?method=search&api_key=#apikey#&released=true"></cfhttp> --->
-
-<!--- Get collections --->
-<!--- <cfhttp url="#apiurl#collection.cfc?method=getcollections&api_key=#apikey#&folderid=D62A445A09E348D782C4DA80B66D0F58"></cfhttp>  --->
-
-<!--- Get assets --->
-<!--- <cfhttp url="#apiurl#collection.cfc?method=getassets&api_key=#apikey#&collectionid=07B7E56559B54E429E70F37BB68CB6E9"></cfhttp> --->
-
-<!--- FOLDERS --->
-
-<!--- Getfolders --->
-<!--- <cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey#"></cfhttp> --->
-
-<!--- Get single folder --->
-<!--- <cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey#&folderid=8CAD593EF3C343DBAED80E149075C0C1"></cfhttp> --->
-
-<!--- Get assets in folder --->
-<!--- <cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey#&folderid=35B513F47B6847B883DA5D81DBE56440&showsubfolders=false"></cfhttp> --->
-
-<!--- <cfset j = arrayNew(2)>
-<cfset j[1][1] = "EA4191FB6E0F40D2AFE3ABB85E41118A">
-<cfset j[1][2] = "13E33EB4-4A82-4CF7-B1DAA549DA80E86B">
-<cfset j[1][3] = "X">
-<cfset j[2][1] = "EA4191FB6E0F40D2AFE3ABB85E41118A">
-<cfset j[2][2] = "8931CF69-7FB1-476D-9D2B00F63D9D439A">
-<cfset j[2][3] = "W">
-<cfset j[3][1] = "EA4191FB6E0F40D2AFE3ABB85E41118A">
-<cfset j[3][2] = "0">
-<cfset j[3][3] = "W">
-
-<cfset j = SerializeJSON(j)>
-
-<!--- Set folder permission --->
-<cfhttp url="#apiurl#folder.cfc?method=setFolderPermissions">
-	<cfhttpparam name="api_key" value="#apikey#" type="url" />
-	<cfhttpparam name="permissions" value="#j#" type="url" />
-</cfhttp> --->
-
-<!--- Search --->
-<!--- <cfhttp url="#apiurl#search.cfc?method=searchindex&api_key=#apikey#"></cfhttp> --->
-
-
-
-<cfabort>
 

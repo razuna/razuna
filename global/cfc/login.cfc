@@ -82,6 +82,7 @@
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
+				<cftry>
 				<!--- Get LDAP User list --->
 				<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments.thestruct#">
 				<cfquery dbtype="query" name="qryAdUser" >
@@ -113,6 +114,8 @@
 					<!--- AD user name --->
 					<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
 				</cfif>
+				<cfcatch></cfcatch>
+				</cftry>
 			</cfif>
 		</cfif>
 		
