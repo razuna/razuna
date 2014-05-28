@@ -53,6 +53,7 @@
 		</div>
 	</div>
 </cfoutput>
+<!---
 <script language="JavaScript" type="text/javascript">
 	// Detect Firebug
 	if (window.console && window.console.firebug) {
@@ -61,3 +62,4 @@
 		$("#firebugalert").html('Hi there, Developer. The Firebug extension can significantly degrade the performance of Razuna. We recommend that you disable it for Razuna!<br />');
 	}
 </script>
+--->

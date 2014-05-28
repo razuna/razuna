@@ -1171,12 +1171,12 @@ function reloadfields(){
 // On document ready
 $(document).ready(function() {
 	// Detect Firebug
-	if (window.console && (window.console.firebug || window.console.exception)) {
-		//Firebug is enabled
-		$("#firebugalert").css({'display':'','padding':'10px','background-color':'#FFFFE0','color':'#900','font-weight':'bold','text-align':'center'});
-		$("#firebugalert").html('Hi there, Developer. The Firebug extension can significantly degrade the performance of Razuna. We recommend that you disable it for Razuna!');
-		$("#firebugalert").after('<div style="clear:both;"></div>');
-	}
+	// if (window.console && (window.console.firebug || window.console.exception)) {
+	// 	//Firebug is enabled
+	// 	$("#firebugalert").css({'display':'','padding':'10px','background-color':'#FFFFE0','color':'#900','font-weight':'bold','text-align':'center'});
+	// 	$("#firebugalert").html('Hi there, Developer. The Firebug extension can significantly degrade the performance of Razuna. We recommend that you disable it for Razuna!');
+	// 	$("#firebugalert").after('<div style="clear:both;"></div>');
+	// }
 	// Account window
 	function showaccount(){
 		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            

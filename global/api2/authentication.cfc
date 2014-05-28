@@ -419,8 +419,8 @@
 		<cfset var folderaccess = "n">
 		<!--- If there is no session for webgroups set --->
 		<cfparam default="0" name="session.thegroupofuser">
-		<!--- If user is in admin or sysadmin group he has full access --->
-		<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+		<!--- If user is in admin or sysadmin group he has full access. If root folder requested than also grant access as folder access then is checked for each individual folder. --->
+		<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0 OR arguments.folder_id EQ 0>
 			<cfset var folderaccess = "x">
 		<!--- Else we need to query group access for this user --->
 		<cfelse>

@@ -19,8 +19,8 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfset grpid = "A6959EB0-E22C-4C76-AAD1640785E5B2CA">
 
 <!--- ASSET ID --->
-<cfset assetid = "F9C76429463B4A74914C212AA401EACC">
-<cfset assettype = "doc">
+<cfset assetid = "C649BCE0824147DBAD42402DA294CB26">
+<cfset assettype = "img">
 
 <!--- FOLDERID --->
 <cfset destination_folderid  = "1ABCB8E675754DE8A3866ADF7072C0BA">
@@ -521,7 +521,6 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
 <cfdump var="#jsonstruct#">
 <cfflush> 
-</cfoutput>
 
 <!--- ************* MOVE************** --->
  <strong>Move(as System Admin)</strong>
@@ -559,7 +558,6 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
 <cfdump var="#jsonstruct#">
 <cfflush> 
-</cfoutput>
 
 <!--- Put file back in original folder --->
 <cfhttp url="#apiurl#asset.cfc?method=move&api_key=#apikey_user_noperm#&assetid=#assetid#&destination_folder=#original_folderid#"></cfhttp>
@@ -713,6 +711,14 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
+<!--- In this case only subfolders that user has access too will return its assets --->
+<strong>getAssets for Subfolders also(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey_user_perm#&folderid=#original_folderid#&showsubfolders=true"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
 <strong>getAssets(as User without Permission)</strong>
 <cfhttp url="#apiurl#folder.cfc?method=getassets&api_key=#apikey_user_noperm#&folderid=#original_folderid#"></cfhttp>
 <br>#cfhttp.filecontent#<br>
@@ -749,7 +755,19 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
+<strong>getFolders on root(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey_sysadmin#&folderid=0"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
+<strong>getFolders on root (as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolders&api_key=#apikey_user_perm#&folderid=0"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
 <!--- ************* GET FOLDER ************** --->
 <strong>getFolder(as System Admin)</strong>
@@ -782,9 +800,16 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 
 
 
-<!--- ************* SET FOLDER ************** --->
+<!--- ************* SET AND REMOVE FOLDER ************** --->
 <strong>setFolder(as System Admin)</strong>
 <cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_sysadmin#&folder_name=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeFolder(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_sysadmin#&folder_id=#jsonstruct.folder_id#"></cfhttp>
 <br>#cfhttp.filecontent#<br>
 <cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
 <cfdump var="#jsonstruct#">
@@ -797,7 +822,14 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
-<!--- Only admin users can create folders on root so even users with permission should not be allowed that so this case should fail. --->
+<strong>removeFolder(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_admin#&folder_id=#jsonstruct.folder_id#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<!--- Only admin users can create folders on root so even users with permission should not be allowed that so these cases should fail. --->
 <strong>setFolder(as User with Permission)</strong>
 <cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_perm#&folder_name=#foldername#"></cfhttp>
 <br>#cfhttp.filecontent#<br>
@@ -808,6 +840,13 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <!---Users with permissions can create sub folders so this case should pass. --->
 <strong>setFolder(as User with Permission)</strong>
 <cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_perm#&folder_name=#foldername#&folder_related=#original_folderid#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>removeFolder(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_admin#&folder_id=#jsonstruct.folder_id#"></cfhttp>
 <br>#cfhttp.filecontent#<br>
 <cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
 <cfdump var="#jsonstruct#">
@@ -850,38 +889,6 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
-
-<!--- ************* REMOVE FOLDER ************** --->
-<!--- Run one by one. Will need to change folderids manually --->
-<!--- <strong>removeFolder(as System Admin)</strong>
-<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_sysadmin#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
-<br>#cfhttp.filecontent#<br>
-<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
-<cfdump var="#jsonstruct#">
-<cfflush>
-
-<strong>removeFolder(as Admin)</strong>
-<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_admin#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
-<br>#cfhttp.filecontent#<br>
-<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
-<cfdump var="#jsonstruct#">
-<cfflush>
-
-<strong>removeFolder(as User with Permission)</strong>
-<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_user_perm#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
-<br>#cfhttp.filecontent#<br>
-<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
-<cfdump var="#jsonstruct#">
-<cfflush>
-
-<strong>removeFolder(as User without Permission)</strong>
-<cfhttp url="#apiurl#folder.cfc?method=removefolder&api_key=#apikey_user_noperm#&folder_id=37361D85DD3C4B059D7A893F8347571C"></cfhttp>
-<br>#cfhttp.filecontent#<br>
-<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
-<cfdump var="#jsonstruct#">
-<cfflush>
-
- --->
  
 <!--- ############################ LABELS #################################### --->
 <h1>LABELS</h1>
