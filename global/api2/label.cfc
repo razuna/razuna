@@ -185,29 +185,36 @@
 					<cfquery datasource="#application.razuna.api.dsn#">
 					DELETE FROM ct_labels
 					WHERE ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
-					AND ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
 					</cfquery>
 				</cfif>
 				<!--- Loop over label_id and add them --->
 				<cfloop list="#arguments.label_id#" index="i" delimiters=",">
 					<!--- Add to DB --->				
 					<cftry>
-						<cfquery datasource="#application.razuna.api.dsn#">
-						INSERT INTO ct_labels
-						(
-							ct_label_id,
-							ct_id_r,
-							ct_type,
-							rec_uuid
-						)
-						VALUES
-						(
-							<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
-							<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />,
-							<cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />,
-							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-						)
+						<!--- Only add label if it doesn't already exist to avoid duplicates --->
+						<cfquery datasource="#application.razuna.api.dsn#" name="checklabel">
+						SELECT 1 FROM ct_labels
+						WHERE ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
+						AND ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
 						</cfquery>
+						<cfif checklabel.recordcount EQ 0>
+							<cfquery datasource="#application.razuna.api.dsn#">
+							INSERT INTO ct_labels
+							(
+								ct_label_id,
+								ct_id_r,
+								ct_type,
+								rec_uuid
+							)
+							VALUES
+							(
+								<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
+								<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />,
+								<cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />,
+								<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+							)
+							</cfquery>
+						</cfif>
 						<cfcatch type="database">
 							<cfset consoleoutput(true)>
 							<cfset console(cfcatch)>
@@ -248,7 +255,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid,privileges)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.asset_id,privileges)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Loop over label_id and remove them --->
@@ -290,7 +297,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
-			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.assetid)>
+			<cfset var folderaccess = checkFolderPerm(arguments.api_key, arguments.asset_id)>
 			<!--- If user has access --->
 			<cfif folderaccess EQ "R" OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->

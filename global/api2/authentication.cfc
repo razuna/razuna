@@ -113,10 +113,10 @@
 			<cfset var thexml = querynew("responsecode,message")>
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
-			<cfset querysetcell(thexml,"message","No permissible data found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.")>
+			<cfset querysetcell(thexml,"message","No permissible data or action found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.")>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
-			<cfset thexml.message = "No permissible data found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.">
+			<cfset thexml.message = "No permissible data or action found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.">
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -419,8 +419,8 @@
 		<cfset var folderaccess = "n">
 		<!--- If there is no session for webgroups set --->
 		<cfparam default="0" name="session.thegroupofuser">
-		<!--- If user is in admin or sysadmin group he has full access --->
-		<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+		<!--- If user is in admin or sysadmin group he has full access. If root folder requested than also grant access as folder access then is checked for each individual folder. --->
+		<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0 OR arguments.folder_id EQ 0>
 			<cfset var folderaccess = "x">
 		<!--- Else we need to query group access for this user --->
 		<cfelse>

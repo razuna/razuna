@@ -53,8 +53,35 @@
 				</cfif>
 				<!--- Show assets from subfolders or not --->
 				<cfif arguments.showsubfolders>
+					<cfset var thefolders= queryNew("")>
+					<!--- Flush cache --->
+					<cfset resetcachetoken(arguments.api_key,"folders")>
 					<cfinvoke component="global.cfc.folders" method="getfoldersinlist" dsn="#application.razuna.api.dsn#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" database="#application.razuna.api.thedatabase#" folder_id="#arguments.folderid#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" returnvariable="thefolders">
-					<cfset thefolderlist = arguments.folderid & "," & ValueList(thefolders.folder_id)>
+					<cfif thefolders.recordcount NEQ 0>
+						<cfset var qryArray = ArrayNew(1)>
+						<cfloop  query="thefolders">
+							<cfset qryArray[thefolders.currentrow]  = '1'>
+						</cfloop>
+					
+						<cfset queryaddcolumn(thefolders,"folderperm","varchar",qryArray)>
+
+						<!--- Check folder permissions for each folder --->
+						<cfloop query="thefolders">
+							<cfinvoke component="global.api2.authentication" method="checkFolderAccess" api_key = "#arguments.api_key#" folder_id = "#thefolders.folder_id#" returnvariable="checkflaccess">
+							<cfif !(checkflaccess EQ "R"  OR checkflaccess EQ "W" OR checkflaccess EQ "X")>
+								<cfset querysetcell(thefolders,"folderperm",'0', thefolders.currentrow)>
+							</cfif>
+						</cfloop>
+						<!--- Get only folders that user has permissions for --->
+						<cfquery dbtype="query" name="thefolders">
+							SELECT * FROM thefolders WHERE folderperm = '1'
+						</cfquery>
+						<!--- Delete temporary folderperm column --->
+						<cfset querydeletecolumn(thefolders,"folderperm")>
+
+						<cfset thefolderlist = arguments.folderid & "," & ValueList(thefolders.folder_id)>
+					</cfif>
+
 				<cfelse>
 					<cfset thefolderlist = arguments.folderid>
 				</cfif>	
@@ -439,7 +466,7 @@
 						AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 						AND s.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">) THEN 'true' ELSE 'false' END
 					)
-					AS hassubfolders, '' totalassets, '' totalimg, '' totalvid, '' totaldoc, '' totalaud , '' howmanycollections
+					AS hassubfolders, '' totalassets, '' totalimg, '' totalvid, '' totaldoc, '' totalaud , '' howmanycollections, '1' folderperm
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 				LEFT JOIN users u ON u.user_id = f.folder_owner
 				WHERE
@@ -458,39 +485,54 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				ORDER BY f.folder_name
-				</cfquery>			
-					<!--- If this is NOT for a collection --->
-					<cfif arguments.collectionfolder EQ "false">
-						<cfset session.showsubfolders = "F">
-						<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-						<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-						<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
-						<cfloop query="qry">
-							<!--- Query total count --->
-							<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#qry.folder_id#" returnvariable="totalassets">
-							<!--- Query total count for individual files --->
-							<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#qry.folder_id#" returnvariable="totaltypes">
-							<!--- Create additional query fields --->
-							<cfset querysetcell(qry,"totalassets",totalassets.thetotal, qry.currentrow)>
-							<cfset querysetcell(qry,"totalimg",totaltypes.img, qry.currentrow)>
-							<cfset querysetcell(qry,"totalvid",totaltypes.vid, qry.currentrow)>
-							<cfset querysetcell(qry,"totaldoc",totaltypes.files, qry.currentrow)>
-							<cfset querysetcell(qry,"totalaud",totaltypes.aud, qry.currentrow)>
-						</cfloop>
-					<!--- This is for a collection --->
-					<cfelse>
-						<cfloop query="qry">
-							<!--- Query how many collections are in this folder --->
-							<cfquery datasource="#application.razuna.api.dsn#" name="q">
-							SELECT count(col_id) as howmanycollections
-							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections
-							WHERE folder_id_r  =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.folder_id#">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-							AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-							</cfquery>
-							<cfset querysetcell(qry,"howmanycollections",q.howmanycollections, qry.currentrow)>
-						</cfloop>
+				</cfquery>
+
+				<!--- Check folder permissions for each folder --->
+				<cfloop query="qry">
+					<cfinvoke component="global.api2.authentication" method="checkFolderAccess" api_key = "#arguments.api_key#" folder_id = "#qry.folder_id#" returnvariable="checkflaccess">
+					<cfif !(checkflaccess EQ "R"  OR checkflaccess EQ "W" OR checkflaccess EQ "X")>
+						<cfset querysetcell(qry,"folderperm",'0', qry.currentrow)>
 					</cfif>
+				</cfloop>
+				<!--- Get only folders that user has permissions for --->
+				<cfquery dbtype="query" name="qry">
+					SELECT * FROM qry WHERE folderperm = '1'
+				</cfquery>
+				<!--- Delete temporary folderperm column --->
+				<cfset querydeletecolumn(qry,"folderperm")>
+
+				<!--- If this is NOT for a collection --->
+				<cfif arguments.collectionfolder EQ "false">
+					<cfset session.showsubfolders = "F">
+					<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+					<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+					<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
+					<cfloop query="qry">
+						<!--- Query total count --->
+						<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#qry.folder_id#" returnvariable="totalassets">
+						<!--- Query total count for individual files --->
+						<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#qry.folder_id#" returnvariable="totaltypes">
+						<!--- Create additional query fields --->
+						<cfset querysetcell(qry,"totalassets",totalassets.thetotal, qry.currentrow)>
+						<cfset querysetcell(qry,"totalimg",totaltypes.img, qry.currentrow)>
+						<cfset querysetcell(qry,"totalvid",totaltypes.vid, qry.currentrow)>
+						<cfset querysetcell(qry,"totaldoc",totaltypes.files, qry.currentrow)>
+						<cfset querysetcell(qry,"totalaud",totaltypes.aud, qry.currentrow)>
+					</cfloop>
+				<!--- This is for a collection --->
+				<cfelse>
+					<cfloop query="qry">
+						<!--- Query how many collections are in this folder --->
+						<cfquery datasource="#application.razuna.api.dsn#" name="q">
+						SELECT count(col_id) as howmanycollections
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections
+						WHERE folder_id_r  =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.folder_id#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+						AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+						</cfquery>
+						<cfset querysetcell(qry,"howmanycollections",q.howmanycollections, qry.currentrow)>
+					</cfloop>
+				</cfif>
 				
 				<cfset thexml = qry>
 			<!--- No access --->

@@ -395,7 +395,7 @@
 			<!--- No access --->
 			<cfelse>
 				<!--- Return --->
-				<cfset var thexml = noaccess()>
+				<cfset var qrymeta = noaccess()>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -1008,11 +1008,11 @@
 				</cfif>
 			<!--- No access --->
 			<cfelse>
-				<cfset var thexml = noaccess()>
+				<cfset var thexml = noaccess("s")>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
-			<cfset var thexml = timeout()>
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
