@@ -81,6 +81,30 @@
 		</cfquery>
 	</cffunction>
 	
+	<cffunction name="index_update_firsttime" access="public" output="false" returntype="void">
+			<cfargument name="host_id" required="true">
+			<cfset console("host_id")>
+			<cfset console(host_id)>
+			<cfset var hosts =querynew("")>
+			<!--- Query hosts --->
+			<cfquery datasource="#application.razuna.datasource#" name="hosts">
+			SELECT host_id, host_shard_group
+			FROM hosts
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
+			AND ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
+			<cfif cgi.http_host CONTAINS "razuna.com">
+				AND host_type != 0
+			</cfif>
+			</cfquery>
+			<cfset console(hosts)>
+			<cfinvoke method="index_update">
+				<cfinvokeargument name="hostid" value="#arguments.host_id#" />
+				<cfinvokeargument name="prefix" value="#hosts.host_shard_group#" />
+				<cfinvokeargument name="hosted" value="true" />
+				<cfinvokeargument name="assetid" value="all" />
+			</cfinvoke>
+	</cffunction>
+
 	<!--- INDEX: Update --->
 	<cffunction name="index_update_hosted" access="public" output="false" returntype="void">
 		<!--- Name of lock file --->

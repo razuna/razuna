@@ -266,7 +266,7 @@
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="00:01 AM"
 				endTime="23:59 PM"
-				interval="120"
+				interval="500"
 			>
 			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
 			<cfschedule action="update"
@@ -283,7 +283,7 @@
 				<cfschedule action="update"
 					task="RazLuceneIndexUpdate" 
 					operation="HTTPRequest"
-					url="http://#cgi.http_host#/#cgi.context_path#/raz#hostid.id#/dam?fa=c.w_lucene_update_index"
+					url="http://#cgi.http_host#/#cgi.context_path#/raz#hostid.id#/dam?fa=c.w_lucene_update_index&host_id=#hostid.id#"
 					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 					startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
 					interval="once"
