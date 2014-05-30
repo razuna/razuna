@@ -10342,7 +10342,7 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
 	</fuseaction>
 
-	<!-- Run Folder subscribe schedule tasks -->
+	<!-- Run Lucene rebuild index task -->
 	<fuseaction name="w_lucene_update_index">
 		<set name="attributes.host_id" value="#url.host_id#" />
 		<!-- CFC: Get the Schedule -->

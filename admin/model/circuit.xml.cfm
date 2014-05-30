@@ -84,6 +84,11 @@
 			<argument name="database" value="#application.razuna.thedatabase#" />
 			<argument name="setid" value="#application.razuna.setid#" />
 		</instantiate>
+		<!-- Lucene -->
+		<instantiate class="lucene" object="myFusebox.getApplicationData().lucene" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
 	</fuseaction>
 
 </circuit>

@@ -279,16 +279,16 @@
 				interval="300"
 			>
 			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
-			<!--- <cfif application.razuna.isp> --->
+			<cfif application.razuna.isp>
 				<cfschedule action="update"
 					task="RazLuceneIndexUpdate" 
 					operation="HTTPRequest"
-					url="http://#cgi.http_host#/#cgi.context_path#/raz#hostid.id#/dam?fa=c.w_lucene_update_index&host_id=#hostid.id#"
+					url="#taskpath#/index.cfm?fa=c.w_lucene_update_index&host_id=#hostid.id#"
 					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 					startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
 					interval="once"
 				>
-			<!--- </cfif> --->
+			</cfif>
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)

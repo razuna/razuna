@@ -37,6 +37,7 @@
 		<class alias="plugins" classpath="global.cfc.plugins" type="component" constructor="init"/>
 		<class alias="resourcemanager" classpath="global.cfc.ResourceManager" type="component" constructor="init"/>
 		<class alias="scheduler" classpath="global.cfc.scheduler" type="component" constructor="init"/>
+		<class alias="lucene" classpath="global.cfc.lucene" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>
