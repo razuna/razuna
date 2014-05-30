@@ -520,7 +520,7 @@
 		</cfquery>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while inserting default values in function hosts.insert_default_values">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>	
 	</cftry>
 	<cfreturn />
@@ -725,7 +725,7 @@
 			
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error while removing tables in function hosts.remove">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Since 1.4 we only remove records in the DB and don't drop tables anymore --->

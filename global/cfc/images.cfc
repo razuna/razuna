@@ -663,7 +663,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while deleting in function images.deletefromfilesystem">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- REMOVE RELATED FOLDERS ALSO!!!! --->
@@ -688,7 +688,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error while deleting related folders in function images.deletefromfilesystem">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -1255,9 +1255,11 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfif thepixin eq 'inches'>
-				<cfparam name="arguments.thestruct.xres" default = "90">
-				<cfparam name="arguments.thestruct.yres" default = "90">
+			<cfif thepixin EQ 'inches'>
+				<cfif NOT isdefined("arguments.thestruct.xres") OR NOT isnumeric(arguments.thestruct.xres)>
+					<cfset arguments.thestruct.xres = "72">
+					<cfset arguments.thestruct.yres = "72">
+				</cfif>
 				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
 			<cfelse>
 				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
@@ -1265,7 +1267,6 @@
 		<cfelse>
 			<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
 		</cfif>
-
 		<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
 		<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
 		<cfset var thumb_height = arguments.thestruct.qry_settings_image.set2_img_thumb_heigth>
@@ -1615,9 +1616,19 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="inches">,
+			<cfif thedpi NEQ "">
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
+			<cfelse>
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.yres#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xres#">,
+			</cfif>
+			<cfif isdefined("arguments.thestruct.resunit")>
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.resunit#">,
+			<cfelse>
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="inches">,
+			</cfif>
+			
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry_colorspace.colorspace#">
 		)
 		</cfquery>

@@ -396,7 +396,7 @@
 			</cfsavecontent>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		</cfoutput>
@@ -496,7 +496,7 @@
 				</cfif>
 				<cfcatch type="any">
 				    <cfset cfcatch.custom_message = "Error writing xml file in function xmp.xmpwrite">
-					<cfset errobj.logerrors(cfcatch)/> 
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> 
 				</cfcatch>
 			</cftry>
 		<!--- Storage: Nirvanix --->
@@ -689,7 +689,7 @@
 						</cfquery>
 						<cfcatch type="any">
 							<cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
-							<cfset errobj.logerrors(cfcatch)/>
+							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 						</cfcatch>
 					</cftry>
 				</cfif>
@@ -697,7 +697,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function xmp.xmpwritekeydesc_thread">
-			<!--- <cfset errobj.logerrors(cfcatch)/> --->
+			<!--- <cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -1302,7 +1302,7 @@
 		<!--- Catch the error --->
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function xmp.xmpparse">
-		 	<cfset errobj.logerrors(cfcatch)/>
+		 	<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return variable --->
@@ -1454,7 +1454,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in metadata writing for files in function xmp.metatofilethread">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	<!--- Storage: Nirvanix --->
@@ -2324,7 +2324,7 @@
 					</cfquery>
 					<cfcatch type="database">
 						<cfset cfcatch.custom_message = "Database error while adding keywords and description to asset in function xmp.setmetadata">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>

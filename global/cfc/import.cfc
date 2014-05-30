@@ -1376,7 +1376,7 @@
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
 					<cfset cfcatch.custom_message = "Database error in function import.doimportaudios">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -1547,7 +1547,7 @@
 				<cfcatch type="database">
 					<h2>Oops... #cfcatch.message#</h2>
 					<cfset cfcatch.custom_message = "Database error in function import.doimportdocs">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>

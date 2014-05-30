@@ -408,7 +408,7 @@
 					</cfquery>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.playback">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -482,7 +482,7 @@
 		<cfset arguments.thestruct.filenameorg = qry.filenameorg>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.playback">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Reset folders cachetoken so preview images update --->
@@ -1005,7 +1005,7 @@
 				</cfquery>
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.create">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		<!--- Videos --->
@@ -1099,7 +1099,7 @@
 		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.create">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry> 
 	<!--- Reset folders cachetoken so preview images update --->
@@ -1521,7 +1521,7 @@
 		</cfquery>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.create">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry> 
 </cffunction>

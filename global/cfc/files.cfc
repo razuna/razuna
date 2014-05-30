@@ -713,7 +713,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function files.deletefromfilesystem">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />

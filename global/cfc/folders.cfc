@@ -392,7 +392,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function folders.add">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				<cfabort>
 			</cfcatch>
 		</cftry>
@@ -1487,7 +1487,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while removing folder - #cgi.http_host# in function folders.remove_folder_thread">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -3136,7 +3136,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while moving folder - #cgi.http_host# in function folders.move">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -4926,7 +4926,7 @@
 		</cfloop>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Create directory --->
@@ -5189,7 +5189,7 @@
 				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
 				<cfcatch type="any">
 						<cfset cfcatch.custom_message = "File '#theorgname#' is missing">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			<!--- Nirvanix --->
@@ -5200,7 +5200,7 @@
 					</cfif>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Nirvanix error on download in folder download in function folders.download_selected">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			<!--- Akamai --->
@@ -5223,7 +5223,7 @@
 						<cfhttp url="#arguments.thestruct.akaurl##akatype#/#thefinalname#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
 						<cfcatch type="any">
 							<cfset cfcatch.custom_message = "Akamai error on download in folder download in function folders.download_selected">
-							<cfset errobj.logerrors(cfcatch)/>
+							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 						</cfcatch>
 					</cftry>
 				</cfif>
@@ -6703,7 +6703,7 @@
 		</cfloop>
 		<!---<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>--->
 	<!--- Create directory --->
@@ -6744,7 +6744,7 @@
 					<cftry>
 					<cfthrow message="User is in more than one UPC group which is not allowed.">
 					 <cfcatch type="any">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 						<cfoutput><font color="##CD5C5C"><strong>#upc_user_multi_grps#</strong></font> </cfoutput>
 						<cfabort>
 					</cfcatch>
@@ -7079,7 +7079,7 @@
 					</cfif>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Nirvanix error on download in folder download in function folders.download_upc_selected">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			<!--- Akamai --->
@@ -7102,7 +7102,7 @@
 						<cfhttp url="#arguments.thestruct.akaurl##akatype#/#thefinalname#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
 						<cfcatch type="any">
 							<cfset cfcatch.custom_message = "Akamai error on download in folder download in function folders.download_upc_selected">
-							<cfset errobj.logerrors(cfcatch)/>
+							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 						</cfcatch>
 					</cftry>
 				</cfif>
@@ -7248,7 +7248,7 @@
 		</cfloop>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function folders.download_folder">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Create directory --->

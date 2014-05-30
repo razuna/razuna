@@ -131,7 +131,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.addassetserver">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	
@@ -552,7 +552,7 @@
 					</cfif>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in function assets.addassetscheduledserverthread">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -563,7 +563,7 @@
 		<cffile action="delete" file="#arguments.thestruct.directory#/#lockfile#" />
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error deleting lock file in function assets.addassetscheduledserverthread">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -667,7 +667,7 @@
 						<cffile action="delete" file="#arguments.thestruct.thepath#/incoming/emails/#arguments.thestruct.thefilename#">
 						<cfcatch type="any">
 							<cfset cfcatch.custom_message = "Error removing attachment from email folder in function assets.addassetemail">
-							<cfset errobj.logerrors(cfcatch)/>
+							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 						</cfcatch>
 					</cftry>
 				</cfloop>
@@ -802,7 +802,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -1306,7 +1306,7 @@
 		</cfif>
 		<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.create_inserts">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1425,7 +1425,7 @@
 		<!--- Catch --->
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error from LINK upload in function assets.addassetlink">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1500,7 +1500,7 @@
 			<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#thesubject#" themessage="#mailmessage#">
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error sending email in function assets.addassetemail">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 		</cftry>
 	</cfif>
@@ -1753,8 +1753,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfloop>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message ="Error in function assets.removeasset">
-				<cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfthread>
@@ -2796,7 +2794,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in images text table for jpg in function assets.importimagesthread"/>
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Move or upload to the right places --->
@@ -2859,7 +2857,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfinvoke>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in uploading original image to Nirvanix in function assets.importimagesthread">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -2877,7 +2875,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="upload#arguments.thestruct.newid#" />
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in uploading thumbnail image to Nirvanix in function assets.importimagesthread">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 				<!--- Get thumb file size --->
@@ -2942,7 +2940,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error in image upload to amazon in function assets.importimagesthread">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		<!--- AKAMAI --->
@@ -2986,7 +2984,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error in image upload to akamai in function assets.importimagesthread">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -3253,7 +3251,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.resizeImage">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -4240,7 +4238,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.extractFromZip">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -5217,7 +5215,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			<cfcatch type="all">
 				<cfset cfcatch.custom_message = "Error in function assets.recreatepreviewimagethread">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -5988,7 +5986,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.level = arguments.thestruct.thislevel>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.addassetpath2">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -6087,7 +6085,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.level = arguments.thestruct.thislevel2>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.addassetpath3">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
@@ -6697,7 +6695,7 @@ This is the main function called directly by a single upload else from addassets
 				<p>#cfcatch.message#</p>
 			</cfoutput>
 			<cfset cfcatch.custom_message = "Error in function assets.add_av_from_path">	
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			<cfflush>
 			<cfabort>
 		</cfcatch>
@@ -7080,7 +7078,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function assets.extractFromZip">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />

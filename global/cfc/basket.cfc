@@ -351,7 +351,7 @@
 		</cfloop>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function basket.writebasket">
-			<cfset errObj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Feedback --->
@@ -757,7 +757,7 @@
 					<cftry>
 					<cfthrow message="User is in more than one UPC group which is not allowed.">
 					 <cfcatch type="any">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 						<cfoutput><font color="##CD5C5C"><strong>#upc_user_multi_grps#</strong></font> </cfoutput>
 						<cfabort>
 					</cfcatch>
@@ -1332,7 +1332,7 @@
 		<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#thesubject#" themessage="#mailmessage#">
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while sending email in function basket.basket_order">
-			<cfset errObj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Flush Cache --->

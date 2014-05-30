@@ -193,7 +193,7 @@
 					<cfset cfcatch.cfhttp_response = cfhttp>
 					<cfset cfcatch.storagenode = storagenode>
 					<cfset cfcatch.func_arguments = arguments>
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
@@ -247,7 +247,7 @@
 				<cfset cfcatch.custom_message = "Error in function nirvanix.GetStorageNode">
 				<cfset cfcatch.cfhttp_filecontent = cfhttp.filecontent>
 				<cfset cfcatch.func_arguments = arguments>
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				<cfabort>
 			</cfcatch>
 		</cftry>
@@ -281,7 +281,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.CreateFolders">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -324,7 +324,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.RenameFolders">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -354,7 +354,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.CopyFolders">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -384,7 +384,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.MoveFolders">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -493,7 +493,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.DeleteFiles">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -544,7 +544,7 @@
 			</cfhttp>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.RemoveHostedItem">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -567,7 +567,7 @@
 			</cfhttp>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.CreateHostedItem">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<cfreturn />
@@ -687,21 +687,21 @@
 					<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error setting usage amount in function nirvanix.GetAccountUsage">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 				<cftry>
 					<cfset x.UBU = nvxUBU[1].TotalUsageAmount.xmlText>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error setting usage amount in function nirvanix.GetAccountUsage">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 				<cftry>
 					<cfset x.TSU = nvxTSU[1].TotalUsageAmount.xmlText>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error setting usage amount in function nirvanix.GetAccountUsage">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 				<!--- Add bandwidth together --->
@@ -747,7 +747,7 @@
 				</cfif>
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error in function nirvanix.GetAccountUsage">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -884,7 +884,7 @@
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function nirvanix.signedurlthread">
 				<cfset cfcatch.thestruct = arguments.thestruct>
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				<!--- Set Downloadtoken --->
 				<cfset var theurl = "node1.nirvanix.com">
 			</cfcatch>
