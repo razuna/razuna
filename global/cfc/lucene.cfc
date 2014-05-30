@@ -94,14 +94,16 @@
 				AND host_type != 0
 			</cfif>
 			</cfquery>
-			<cfset console("*********RUNNING ONE TIME INDEXING TASK FOR NEW HOST #hosts.host_name#*************")>
-			<cfset console(hosts)>
-			<cfinvoke method="index_update">
-				<cfinvokeargument name="hostid" value="#arguments.host_id#" />
-				<cfinvokeargument name="prefix" value="#hosts.host_shard_group#" />
-				<cfinvokeargument name="hosted" value="true" />
-				<cfinvokeargument name="assetid" value="all" />
-			</cfinvoke>
+			<cfif hosts.recordcount NEQ 0>
+				<cfset console("*********RUNNING ONE TIME INDEXING TASK FOR NEW HOST #hosts.host_name#*************")>
+				<cfset console(hosts)>
+				<cfinvoke method="index_update">
+					<cfinvokeargument name="hostid" value="#arguments.host_id#" />
+					<cfinvokeargument name="prefix" value="#hosts.host_shard_group#" />
+					<cfinvokeargument name="hosted" value="true" />
+					<cfinvokeargument name="assetid" value="all" />
+				</cfinvoke>
+			</cfif>
 	</cffunction>
 
 	<!--- INDEX: Update --->
