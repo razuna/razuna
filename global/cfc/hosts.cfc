@@ -291,6 +291,8 @@
 			</cfif>
 			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
 			<cftry>
+				<!--- Create collection --->
+				<cfset CollectionCreate(collection=hostid.id,relative=true,path="/WEB-INF/collections/#hostid.id#")>
 				<cfset CollectionIndexcustom( collection=#hostid.id#, key="delete", body="#createuuid()#", title="#createuuid()#")>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
@@ -650,7 +652,11 @@
 				</cfif>
 			</cfif>
 			<!--- Remove the Collection --->
-			<!--- <cfset CollectionDelete(arguments.thestruct.id)> --->
+			<cftry>
+				<cfcollection action="delete" collection="#arguments.thestruct.id#" />
+				<cfcatch></cfcatch>
+			</cftry>
+			 
 			<!--- Remove the Host entry --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM hosts
