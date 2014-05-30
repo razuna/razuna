@@ -281,7 +281,7 @@
 			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
 			<cfif application.razuna.isp>
 				<cfschedule action="update"
-					task="RazLuceneIndexUpdate" 
+					task="RazLuceneIndexUpdate_#hostid.id#" 
 					operation="HTTPRequest"
 					url="#taskpath#/index.cfm?fa=c.w_lucene_update_index&host_id=#hostid.id#"
 					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
@@ -289,6 +289,11 @@
 					interval="once"
 				>
 			</cfif>
+			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
+			<cftry>
+				<cfset CollectionIndexcustom( collection=#hostid.id#, key="delete", body="#createuuid()#", title="#createuuid()#")>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
