@@ -224,7 +224,7 @@
 				<cfcatch>   <cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
-					<cfquery datasource="#application.razuna.datasourceq#">
+					<cfquery datasource="#application.razuna.datasource#">
 					SET GLOBAL innodb_file_per_table = true;
 					</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
