@@ -570,7 +570,7 @@
 			<!--- cfcatch --->
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function videos.create_previews">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfif>
@@ -982,7 +982,7 @@
 				</cfif>
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error while deleting related folders in function videos.deletefromfilesystem">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -996,7 +996,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error on removing a video from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#) in function videos.deletefromfilesystem">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -1853,7 +1853,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function videos.convertvideo">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn newid>
@@ -2082,7 +2082,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function videos.move">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->

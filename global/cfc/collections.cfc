@@ -1029,7 +1029,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while moviing item in collection in function collections.move">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>

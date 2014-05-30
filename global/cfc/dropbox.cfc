@@ -98,7 +98,7 @@
 					</cfhttp>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in function dropbox.metadata_and_thumbnails">
-						<cfset errobj.logerrors(cfcatch)/>
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 					</cfcatch>
 				</cftry>
 				</cfif>
@@ -163,7 +163,7 @@
 				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error while downloading dropbox file in function dropbox.downloadfilesthread">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfloop>

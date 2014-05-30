@@ -82,7 +82,7 @@
 		<cfreturn thelangs>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error with database in function defaults.getlangs">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>

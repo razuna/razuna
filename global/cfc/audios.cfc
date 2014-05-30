@@ -260,7 +260,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error getting audio details in function audios.detail">
 			<cfset cfcatch.aud_details = details>
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			<cfabort>
 		</cfcatch>
 	</cftry>
@@ -882,7 +882,7 @@
 				</cfif>
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error while looping over records in function audios.deletefromfilesystem">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -896,7 +896,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while removing a audio from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#) in function audios.deletefromfilesystem">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -962,7 +962,7 @@
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error while moving audio in function audios.move">
-				<cfset errobj.logerrors(cfcatch)/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->
@@ -1466,7 +1466,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while converting audio in function audios.convertaudiothread">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfset errobj.logerrors(cfcatch)/>	
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>	
 		</cfcatch>
 	</cftry>
 	<!--- Return file id for API rendition --->
@@ -1619,7 +1619,7 @@
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#zipname#">
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while deleting file in function audios.writeaudio">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>

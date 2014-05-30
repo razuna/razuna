@@ -179,7 +179,7 @@
 		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved">
 		<cfcatch>
 			<cfset cfcatch.custom_message = "Error in function scheduler.add">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -303,7 +303,7 @@
 		<cfset variables.cachetoken = resetcachetoken("logs")>
 		<cfcatch type="database">
 			<cfset cfcatch.custom_message = "Database error in function scheduler.tolog">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -435,7 +435,7 @@
 		<cfcatch>
 			<!--- Log the error --->
 			<cfset cfcatch.custom_message = "Error in function scheduler.update">
-			<cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -496,7 +496,7 @@
 			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]">
 			<cfset returncode = "sched_error">
 			<cfset cfcatch.custom_message = "Error in function scheduler.run">
-			<cfset errobj.logerrors(cfcatch)/>		
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>		
 		</cfcatch>
 	</cftry>
 	<cfreturn returncode>

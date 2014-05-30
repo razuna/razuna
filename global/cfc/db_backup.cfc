@@ -45,7 +45,7 @@
 			</cfquery>
 			<cfcatch type="database">
 				<!--- <cfset cfcatch.custom_message = "Error while setting up database in function db_backup.setup">
-				<cfset errobj.logerrors(cfcatch)/> --->
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Look into the information schema and get all the tables --->
@@ -97,7 +97,7 @@
 				<!--- Catch --->
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error while creating table in function db_backup.setup">
-					<cfset errobj.logerrors(cfcatch)/>
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 		</cfloop>
