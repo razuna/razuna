@@ -1411,4 +1411,11 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
 	</fuseaction>
 
+	<!-- Run Lucene rebuild index task -->
+	<fuseaction name="w_lucene_update_index">
+		<set name="attributes.host_id" value="#url.host_id#" />
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_firsttime(attributes.host_id)"/>
+	</fuseaction>
+
 </circuit>

@@ -266,7 +266,7 @@
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="00:01 AM"
 				endTime="23:59 PM"
-				interval="120"
+				interval="500"
 			>
 			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
 			<cfschedule action="update"
@@ -279,16 +279,23 @@
 				interval="300"
 			>
 			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
-			<!--- <cfif application.razuna.isp> --->
+			<cfif application.razuna.isp>
 				<cfschedule action="update"
-					task="RazLuceneIndexUpdate" 
+					task="RazLuceneIndexUpdate_#hostid.id#" 
 					operation="HTTPRequest"
-					url="http://#cgi.http_host#/#cgi.context_path#/raz#hostid.id#/dam?fa=c.w_lucene_update_index"
+					url="#taskpath#/index.cfm?fa=c.w_lucene_update_index&host_id=#hostid.id#"
 					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 					startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
 					interval="once"
 				>
-			<!--- </cfif> --->
+			</cfif>
+			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
+			<cftry>
+				<!--- Create collection --->
+				<cfset CollectionCreate(collection=hostid.id,relative=true,path="/WEB-INF/collections/#hostid.id#")>
+				<cfset CollectionIndexcustom( collection=#hostid.id#, key="delete", body="#createuuid()#", title="#createuuid()#")>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
@@ -645,7 +652,11 @@
 				</cfif>
 			</cfif>
 			<!--- Remove the Collection --->
-			<!--- <cfset CollectionDelete(arguments.thestruct.id)> --->
+			<cftry>
+				<cfcollection action="delete" collection="#arguments.thestruct.id#" />
+				<cfcatch></cfcatch>
+			</cftry>
+			 
 			<!--- Remove the Host entry --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM hosts
