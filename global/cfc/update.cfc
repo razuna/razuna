@@ -173,8 +173,21 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If update number is lower then 25 (v. 1.6.5) --->
-		<cfif updatenumber.opt_value LT 25>
+		<!--- If update number is lower then 26 (v. 1.6.5) --->
+		<cfif updatenumber.opt_value LT 26>
+			<cftry>
+			<!--- Add default value in database for welcome emails --->
+			<cfquery  name="checkemailset" datasource="#application.razuna.datasource#">
+				SELECT rec_uuid FROM raz1_settings_2 WHERE (set2_new_user_email_sub ='' OR set2_new_user_email_sub is NULL) AND (set2_new_user_email_body = '' OR set2_new_user_email_body is NULL)
+			</cfquery>
+			<cfloop query = "checkemailset">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_settings_2 SET set2_new_user_email_sub ='Welcome!', set2_new_user_email_body = '<p>Dear User,<br />Your Razuna account login information are as follows:<br />Username: $username$<br />Password: $password$</p>'
+				WHERE rec_uuid= <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#checkemailset.rec_uuid#">
+				</cfquery>
+			</cfloop>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<cftry>
 			<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
 			<cfif application.razuna.thedatabase EQ "mssql">
