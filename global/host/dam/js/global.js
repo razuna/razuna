@@ -10,7 +10,7 @@ function showwindow(theurl,thetitle,thew,thewin) {
 	// Load Content into Dialog
 	$('#thewindowcontent' + thewin).load(theurl).dialog({
 		// RAZ-2718 Decode User's first and last name for title
-		title: decodeURI(thetitle),
+		title: unescape(thetitle),
 		modal: true,
 		autoOpen: false,
 		width: thew,
