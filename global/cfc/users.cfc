@@ -930,6 +930,12 @@
 	<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="prefs">
 	<cfset var email_body = prefs. set2_new_user_email_body>
 	<cfset var email_subject = prefs. set2_new_user_email_sub>
+	<cfif email_subject EQ ''>
+		<cfset email_subject = 'Welcome!'>
+	</cfif>
+	<cfif email_body EQ ''>
+		<cfset email_body = '<p>Dear User,<br />Your Razuna account login information are as follows:<br />Username: $username$<br />Password: $password$</p>'>
+	</cfif>
 	<!--- Insert username and password into body --->
 	<cfset email_body =replacenocase(email_body,"$username$", "#qry_user.user_login_name#","ONE")>
 	<cfif arguments.userpass NEQ "">
