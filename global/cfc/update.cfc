@@ -313,7 +313,13 @@
 			</cfif>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#"  name="getdel_sql">
-					select concat('alter table ',table_schema,'.',table_name,' #thesql# ',constraint_name, ';') altersql
+					select 
+					<cfif application.razuna.thedatabase NEQ "mssql">
+					concat('alter table ',table_schema,'.',table_name,' #thesql# ',constraint_name, ';') 
+					<cfelse>
+					'alter table ' + table_schema + '.' + table_name + ' #thesql# ' + constraint_name + ';'
+					</cfif>
+					altersql
 					from information_schema.#thetbl#
 					 where constraint_type='#thetype#' 
 					 and (lower(table_name) like '%_images_text'
