@@ -68,7 +68,7 @@
 		AND c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 	</cfif>
 	AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.released#">
-	GROUP BY c.col_id, c.change_date, ct.col_name, c.col_released
+	GROUP BY c.col_id, c.change_date, ct.col_name, c.col_released, c.col_owner
 	</cfquery>
 	<!--- Query to get unlocked collections only --->
 	<cfquery dbtype="query" name="qry.collist">

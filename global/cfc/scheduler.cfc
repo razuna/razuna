@@ -743,7 +743,6 @@
 				SELECT * FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
-				ORDER BY log_timestamp DESC
 				) l
 			LEFT JOIN users u ON l.log_user = u.user_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
@@ -757,6 +756,7 @@
 				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
 				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
 			</cfif>
+			ORDER BY l.log_timestamp DESC
 		</cfquery>
 
 		<!--- Email subject --->
