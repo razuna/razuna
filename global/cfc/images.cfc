@@ -1321,17 +1321,17 @@
 		</cfswitch>
 		<!--- Convert image to desired format --->
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
+			<cfexecute name="#attributes.intstruct.thesh#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="1#thescript#" />
 		<!--- Since the image can not be read we use img to convert to itself --->
 		<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.thesht#" timeout="60" />
+			<cfexecute name="#attributes.intstruct.thesht#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="2#thescript#" />
 		<!--- Thumb it --->
 		<cfthread name="3#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.theshtt#" timeout="60" />
+			<cfexecute name="#attributes.intstruct.theshtt#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="3#thescript#" />
 		<!--- Delete scripts --->
@@ -1360,7 +1360,7 @@
 				<!--- Write script --->
 				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
 				<!--- Execute it --->
-				<cfexecute name="#arguments.thestruct.theshwm#" timeout="60" />
+				<cfexecute name="#arguments.thestruct.theshwm#" timeout="180" />
 				<!--- Delete it --->
 				<cffile action="delete" file="#arguments.thestruct.theshwm#">
 			</cfif>
