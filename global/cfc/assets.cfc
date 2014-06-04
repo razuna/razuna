@@ -1138,7 +1138,7 @@
 <!--- Create Inserts --->
 <cffunction name="create_inserts" output="true" access="public">
 	<cfargument name="tempid" type="string">
-	<cfargument name="thstruct" type="struct">
+	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset var qry_file = "">
 	<cfset var qry_mime = "">
@@ -5816,16 +5816,34 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.folder_path,"/\")>
 	<!--- Since we come from the uploader we dont create the folder --->
 	<cfif !arguments.thestruct.nofolder>
-	<!--- Add the folder --->
-	<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
-	<!--- If we store on the file system we create the folder here --->
-	<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
-	</cfif>
+		<!--- Check to see if folder already exists and use existing if present else add folder --->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
+		</cfif>
 	<cfelse>
 		<!--- Set the folder id  --->
 		<cfset new_folder_id = arguments.thestruct.theid>
@@ -5846,10 +5864,11 @@ This is the main function called directly by a single upload else from addassets
 	<cfflush>
 	<!--- New folder id into struct --->
 	<cfset arguments.thestruct.new_folder_id = new_folder_id>
+	<cfobject component="global.cfc.global" name="gobj">
 	<!--- Loop over the assets --->
 	<cfloop query="thefiles">
 		<!--- Feedback --->
-		<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+		<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 		<cfflush>
 		<!--- Params --->
 		<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -5907,15 +5926,34 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -5936,10 +5974,12 @@ This is the main function called directly by a single upload else from addassets
 			<cfflush>
 			<!--- New folder id into struct --->
 			<cfset arguments.thestruct.new_folder_id = new_folder_id>
+
+			<cfobject component="global.cfc.global" name="gobj">
 			<!--- Loop over the assets --->
 			<cfloop query="thefiles">
 				<!--- Feedback --->
-				<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+				<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 				<cfflush>
 				<!--- Params --->
 				<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6006,15 +6046,33 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -6035,10 +6093,11 @@ This is the main function called directly by a single upload else from addassets
 			<cfflush>
 			<!--- New folder id into struct --->
 			<cfset arguments.thestruct.new_folder_id = new_folder_id>
+			<cfobject component="global.cfc.global" name="gobj">
 			<!--- Loop over the assets --->
 			<cfloop query="thefiles">
 				<!--- Feedback --->
-				<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+				<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 				<cfflush>
 				<!--- Params --->
 				<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6105,15 +6164,33 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -6133,10 +6210,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfflush>
 		<!--- New folder id into struct --->
 		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<cfobject component="global.cfc.global" name="gobj">
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6198,15 +6276,33 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -6226,10 +6322,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfflush>
 		<!--- New folder id into struct --->
 		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<cfobject component="global.cfc.global" name="gobj">
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6291,15 +6388,33 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -6319,10 +6434,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfflush>
 		<!--- New folder id into struct --->
 		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<cfobject component="global.cfc.global" name="gobj">
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6384,15 +6500,33 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -6412,10 +6546,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfflush>
 		<!--- New folder id into struct --->
 		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<cfobject component="global.cfc.global" name="gobj">
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6477,15 +6612,33 @@ This is the main function called directly by a single upload else from addassets
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
 		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
-		<!--- Add the folder --->
-		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- Add the folder if it doesn't already exist--->
+		<cfset var chkfolder  = "">
+		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = 'F'
+		</cfquery>
+		<!--- If only one folder with same name found then use that else create a new folder --->
+		<cfif chkfolder.recordcount EQ 1>
+			<cfparam name="arguments.thestruct.langcount" default="1" />
+			<cfset new_folder_id = chkfolder.folder_id>
+		<cfelse>
+			<!--- Add the folder --->
+			<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		</cfif>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
@@ -6505,10 +6658,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfflush>
 		<!--- New folder id into struct --->
 		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<cfobject component="global.cfc.global" name="gobj">
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#size#KB)<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())# (#gobj.convertbytes(size)#)<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -6565,6 +6719,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<cftry>
 		<cfset var md5hash = "">
+		<cfset var md5here = "">
 		<!--- Create a unique name for the temp directory to hold the file --->
 		<cfset arguments.thestruct.tempid = createuuid("")>
 		<!--- Get file extension --->
@@ -6591,13 +6746,19 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 			<!--- Check if we have to check for md5 records --->
 			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
-			<!--- Check for the same MD5 hash in the existing records --->
-			<cfif checkformd5>
-				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<!--- If duplicate record check is turned on then search through entire system else only search in folder --->
+			<cfif checkformd5> 
+				<cfset var checkinfolder = "" >
 			<cfelse>
-				<cfset var md5here = 0>
+				<cfset var checkinfolder = arguments.thestruct.folder_id>
 			</cfif>
-			<!--- If file does not exsist continue else send user an eMail --->
+			<!--- Check for the same MD5 hash in the existing records --->
+			<!--- Put a lock around it as this in a thread and without it duplicate files are sometimes possible as the checks run simultaenously--->
+			<cflock  scope="session" type="exclusive" timeout="10">
+				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" checkinfolder="#checkinfolder#"/>
+			</cflock>
+
+			<!--- If file does not exist then add --->
 			<cfif md5here EQ 0>
 				<!--- Add to temp db --->
 				<cfquery datasource="#application.razuna.datasource#">
@@ -6631,17 +6792,20 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 				<!--- </cfthread> --->
 			<cfelse>
-				<!--- RAZ-2810 Customise email message --->
-				<cfset transvalues = arraynew()>
-				<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
-				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
-				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
-				<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
+				<!--- Send out email if duplicate check is turned on  --->
+				<cfif checkinfolder EQ "">
+					<!--- RAZ-2810 Customise email message --->
+					<cfset transvalues = arraynew()>
+					<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+					<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
+					<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
+					<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#">
+				</cfif>
 			</cfif>
 		<cfcatch type="any">
 			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
-			<cfset cfcatch.custom_message = "The file '#arguments.thestruct.filename#' could not be proccessed in function assets.addassetpathfiles!">
-			<!--- <cfset errobj.logerrors(cfcatch,false)/> --->
+			<!--- <cfset cfcatch.custom_message = "The file '#arguments.thestruct.filename#' could not be proccessed in function assets.addassetpathfiles!">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch,false)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -6649,16 +6813,17 @@ This is the main function called directly by a single upload else from addassets
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
+	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
 	<!--- Param --->
 	<cfset var rec = 0>
 	<!--- Images --->
-	<cfinvoke component="images" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryimg" />
+	<cfinvoke component="images" method="checkmd5" md5hash="#arguments.md5hash#" checkinfolder="#arguments.checkinfolder#" returnvariable="qryimg" />
 	<!--- videos --->
-	<cfinvoke component="videos" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryvid" />
+	<cfinvoke component="videos" method="checkmd5" md5hash="#arguments.md5hash#" checkinfolder="#arguments.checkinfolder#" returnvariable="qryvid" />
 	<!--- Files --->
-	<cfinvoke component="files" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qrydoc" />
+	<cfinvoke component="files" method="checkmd5" md5hash="#arguments.md5hash#" checkinfolder="#arguments.checkinfolder#" returnvariable="qrydoc" />
 	<!--- Audios --->
-	<cfinvoke component="audios" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryaud" />
+	<cfinvoke component="audios" method="checkmd5" md5hash="#arguments.md5hash#" checkinfolder="#arguments.checkinfolder#" returnvariable="qryaud" />
 	<!--- Put each result into var --->
 	<cfset var rec = qryimg.recordcount>
 	<cfif !rec>
