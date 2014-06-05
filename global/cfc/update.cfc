@@ -458,9 +458,9 @@
 
 			<!--- Get the correct paths for hosted vs non-hosted --->
 			<cfif !application.razuna.isp>
-				<cfset var taskpath =  "http://#cgi.http_host#/#cgi.context_path#/raz1/dam">
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam">
 			<cfelse>
-				<cfset var taskpath =  "http://#cgi.http_host#/admin">
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/admin">
 			</cfif>
 			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
@@ -1506,7 +1506,7 @@
 						<cfschedule action="update"
 							task="RazScheduledUploadEvent[#newschid#]" 
 							operation="HTTPRequest"
-							url="http://#cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
+							url="#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
 							startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 							startTime="00:01 AM"
 							endTime="23:59 PM"
