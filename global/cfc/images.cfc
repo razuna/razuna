@@ -1119,9 +1119,9 @@
 		<cfset var thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
 	</cfif>
 	<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
-	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai">
+	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai" OR arguments.thestruct.qry_detail.img_extension EQ "tif" OR arguments.thestruct.qry_detail.img_extension EQ "tiff">
 		<cfset var theargument = "#arguments.thestruct.thesource#[0]">
-		<cfset var theflatten = "">
+		<cfset var theflatten = "-flatten ">
 	<cfelse>
 		<cfset var theargument = "#arguments.thestruct.thesource#">
 		<cfset var theflatten = "">
