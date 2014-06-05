@@ -1491,6 +1491,7 @@
 	<!--- GET PDF XMP --->
 	<cffunction name="getpdfxmp" output="false">
 		<cfargument name="thestruct" type="struct">
+		<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
@@ -1516,6 +1517,9 @@
 		WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		<cfif isdefined("arguments.checkinfolder") AND arguments.checkinfolder NEQ "">
+		AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.checkinfolder#">
+		</cfif>
 		</cfquery>
 		<cfreturn qry />
 	</cffunction>

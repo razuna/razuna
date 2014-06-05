@@ -136,7 +136,7 @@
 			SELECT f.mf_type, f.mf_value, f.mf_order, f.mf_cf, c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, c.cf_select_list, ct.cf_text
 			FROM #getHostPrefix()#metaform f
 			LEFT JOIN #session.hostdbprefix#custom_fields c ON c.cf_id = f.mf_cf 
-			LEFT JOIN (SELECT cf_id_r, cf_text FROM #session.hostdbprefix#custom_fields_text GROUP BY cf_id_r) AS ct ON ct.cf_id_r = c.cf_id
+			LEFT JOIN (SELECT cf_id_r, cf_text FROM #session.hostdbprefix#custom_fields_text GROUP BY cf_id_r, cf_text) AS ct ON ct.cf_id_r = c.cf_id
 			WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#getHostID()#">
 			AND f.mf_order <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
 			</cfquery>

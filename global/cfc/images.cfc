@@ -1014,6 +1014,8 @@
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset var thetempids = "">
 	<cfset var md5hash = "">
+	<cfparam name="arguments.thestruct.xres" default="">
+	<cfparam name="arguments.thestruct.yres" default="">
 	<cfparam name="arguments.thestruct.upl_template" default="0">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -1321,17 +1323,17 @@
 		</cfswitch>
 		<!--- Convert image to desired format --->
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
+			<cfexecute name="#attributes.intstruct.thesh#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="1#thescript#" />
 		<!--- Since the image can not be read we use img to convert to itself --->
 		<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.thesht#" timeout="60" />
+			<cfexecute name="#attributes.intstruct.thesht#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="2#thescript#" />
 		<!--- Thumb it --->
 		<cfthread name="3#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.theshtt#" timeout="60" />
+			<cfexecute name="#attributes.intstruct.theshtt#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="3#thescript#" />
 		<!--- Delete scripts --->
@@ -1360,7 +1362,7 @@
 				<!--- Write script --->
 				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
 				<!--- Execute it --->
-				<cfexecute name="#arguments.thestruct.theshwm#" timeout="60" />
+				<cfexecute name="#arguments.thestruct.theshwm#" timeout="180" />
 				<!--- Delete it --->
 				<cffile action="delete" file="#arguments.thestruct.theshwm#">
 			</cfif>
@@ -2025,6 +2027,7 @@
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
+	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- Query --->
@@ -2034,6 +2037,9 @@
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+	<cfif isdefined("arguments.checkinfolder") AND arguments.checkinfolder NEQ "">
+	AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.checkinfolder#">
+	</cfif>
 	</cfquery>
 	<cfreturn qry />
 </cffunction>
