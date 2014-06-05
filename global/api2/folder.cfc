@@ -45,6 +45,7 @@
 				<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
 				<cfset var cachetokenaud = getcachetoken(arguments.api_key,"audios")>
 				<cfset var cachetokendoc = getcachetoken(arguments.api_key,"files")>
+				<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 				<!--- Param --->
 				<cfset thestorage = "">
 				<!--- If the folderid is empty then set it to 0 --->
@@ -56,32 +57,27 @@
 					<cfset var thefolders= queryNew("")>
 					<!--- Flush cache --->
 					<cfset resetcachetoken(arguments.api_key,"folders")>
-					<cfinvoke component="global.cfc.folders" method="getfoldersinlist" dsn="#application.razuna.api.dsn#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" database="#application.razuna.api.thedatabase#" folder_id="#arguments.folderid#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" returnvariable="thefolders">
-					<cfif thefolders.recordcount NEQ 0>
-						<cfset var qryArray = ArrayNew(1)>
-						<cfloop  query="thefolders">
-							<cfset qryArray[thefolders.currentrow]  = '1'>
-						</cfloop>
-					
-						<cfset queryaddcolumn(thefolders,"folderperm","varchar",qryArray)>
-
-						<!--- Check folder permissions for each folder --->
-						<cfloop query="thefolders">
-							<cfinvoke component="global.api2.authentication" method="checkFolderAccess" api_key = "#arguments.api_key#" folder_id = "#thefolders.folder_id#" returnvariable="checkflaccess">
-							<cfif !(checkflaccess EQ "R"  OR checkflaccess EQ "W" OR checkflaccess EQ "X")>
-								<cfset querysetcell(thefolders,"folderperm",'0', thefolders.currentrow)>
-							</cfif>
-						</cfloop>
-						<!--- Get only folders that user has permissions for --->
-						<cfquery dbtype="query" name="thefolders">
-							SELECT * FROM thefolders WHERE folderperm = '1'
-						</cfquery>
-						<!--- Delete temporary folderperm column --->
-						<cfset querydeletecolumn(thefolders,"folderperm")>
-
-						<cfset thefolderlist = arguments.folderid & "," & ValueList(thefolders.folder_id)>
-					</cfif>
-
+					<cfquery datasource="#application.razuna.api.dsn#" name="thefolders" cachedwithin="1" region="razcache">
+					SELECT /* #cachetoken#getfolders */ folder_id
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
+					LEFT JOIN  #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
+					WHERE f.folder_id != f.folder_id_r
+					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#">
+					AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
+					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					<!--- Check to ensure user has permissions for folder --->
+					AND 
+					(
+						EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+						OR
+						fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+						OR
+						fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
+						OR 
+						f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+					)
+					</cfquery>
+					<cfset thefolderlist = listappend(arguments.folderid, ValueList(thefolders.folder_id))>
 				<cfelse>
 					<cfset thefolderlist = arguments.folderid>
 				</cfif>	
@@ -447,8 +443,9 @@
 			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
 				<!--- Get Cachetoken --->
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
+
 				<!--- Query folder --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner, 
 				 (SELECT <cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> folder_desc from #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc WHERE folder_id_r = f.folder_id AND lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric"> 
 				 	<cfif application.razuna.api.thedatabase EQ "oracle">
@@ -481,32 +478,28 @@
 				<cfelse>
 					AND lower(f.folder_is_collection) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 				</cfif>
-				 
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				<!--- Check to ensure user has permissions for folder --->
+				AND 
+				(
+					EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+					OR
+					EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r = '0')
+					OR
+					EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">))
+					OR 
+					f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+				)
 				ORDER BY f.folder_name
 				</cfquery>
-
-				<!--- Check folder permissions for each folder --->
-				<cfloop query="qry">
-					<cfinvoke component="global.api2.authentication" method="checkFolderAccess" api_key = "#arguments.api_key#" folder_id = "#qry.folder_id#" returnvariable="checkflaccess">
-					<cfif !(checkflaccess EQ "R"  OR checkflaccess EQ "W" OR checkflaccess EQ "X")>
-						<cfset querysetcell(qry,"folderperm",'0', qry.currentrow)>
-					</cfif>
-				</cfloop>
-				<!--- Get only folders that user has permissions for --->
-				<cfquery dbtype="query" name="qry">
-					SELECT * FROM qry WHERE folderperm = '1'
-				</cfquery>
-				<!--- Delete temporary folderperm column --->
-				<cfset querydeletecolumn(qry,"folderperm")>
 
 				<!--- If this is NOT for a collection --->
 				<cfif arguments.collectionfolder EQ "false">
 					<cfset session.showsubfolders = "F">
 					<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 					<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-					<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
+					<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 					<cfloop query="qry">
 						<!--- Query total count --->
 						<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#qry.folder_id#" returnvariable="totalassets">
@@ -564,7 +557,7 @@
 				<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
