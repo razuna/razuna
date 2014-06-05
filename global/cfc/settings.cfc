@@ -2339,7 +2339,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfschedule action="update"
 			task="GlobalIndex" 
 			operation="HTTPRequest"
-			url="http://#cgi.http_host#/#cgi.context_path#/admin/lucene.cfm"
+			url="#session.thehttp##cgi.http_host#/#cgi.context_path#/admin/lucene.cfm"
 			startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 			startTime="00:01 AM"
 			endTime="23:59 PM"
