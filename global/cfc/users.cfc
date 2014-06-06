@@ -644,7 +644,7 @@
 	<cfflush>
 	<!--- Query users --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active
+	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active, u.user_expiry_date
 	FROM ct_users_hosts uh, users u LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id
 	WHERE (
 		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
@@ -652,13 +652,14 @@
 		)
 	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 	AND gu.ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '1'
-	GROUP BY u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active
+	GROUP BY u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active,u.user_expiry_date
 	</cfquery>
 	<!--- Add column to qry --->
 	<cfset var MyArray = ArrayNew(1)>
 	<cfset MyArray[1] = "">
 	<cfset QueryAddcolumn(qry, "groupid", "varchar", MyArray)>
 	<cfset QueryAddcolumn(qry, "password", "varchar", MyArray)>
+	<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
 	<!--- Loop over records and update each record with the groupid --->
 	<cfloop query="qry">
 		<!--- Get groupid --->
@@ -669,6 +670,7 @@
 		</cfquery>
 		<!--- Now update record --->
 		<cfset QuerySetcell(qry, "groupid", valuelist(qrygrp.ct_g_u_grp_id), currentrow )>
+		<cfset QuerySetcell(qry, "user_expiry_date", dateformat(qry.user_expiry_date,'#thedateformat#'), currentrow )>
 	</cfloop>
 	<!--- Remove the user_id column --->
 	<cfset QueryDeletecolumn( qry, "user_id" )>
@@ -718,10 +720,12 @@
 	<cfelseif arguments.theformat EQ "xlsx">
 		<cfset var sxls = spreadsheetnew(true)>
 	</cfif>
+
 	<!--- Create header row --->
-	<cfset var therows = "login_name,first_name,last_name,email,active,groupid,password">
+	<cfset var therows = "login_name,first_name,last_name,email,active, user_expiry_date,groupid,password">
 	<cfset SpreadsheetAddrow(sxls, therows, 1)>
 	<cfset SpreadsheetFormatRow(sxls, {bold=TRUE, alignment="left"}, 1)>
+
 	<cfset SpreadsheetColumnfittosize(sxls, "1-#len(therows)#")>
 	<cfset SpreadsheetSetcolumnwidth(sxls, 1, 5000)>
 	<cfset SpreadsheetSetcolumnwidth(sxls, 2, 5000)>
@@ -732,11 +736,13 @@
 	<!--- Add orders from query --->
 	<cfset SpreadsheetAddRows(sxls, arguments.theqry, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<cfset SpreadsheetFormatcolumn(sxls, {bold=true}, "1-6")>
 	<!--- Check the directory already exists --->
 	<cfif ! directoryExists("#arguments.thepath#/outgoing")>
 		<!--- create directory --->
 		<cfdirectory action="create" directory="#arguments.thepath#/outgoing" mode="777">
 	</cfif>
+
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#",true)>
 	<!--- Feedback --->
