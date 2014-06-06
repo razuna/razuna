@@ -2607,7 +2607,7 @@
 		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache" result="yoqry">
+	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#filetotalcount */
 		(
 		SELECT count(fi.file_id)
