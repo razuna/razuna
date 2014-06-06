@@ -106,6 +106,7 @@
 <!--- Get fields for the detail view of assets --->
 <cffunction name="getfields" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.cf_show" default="">
 	<!--- Param --->
 	<cfset var list="">
 	<cfif StructKeyExists(session,"thefileid") AND session.thefileid NEQ "">
