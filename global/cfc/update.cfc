@@ -175,19 +175,7 @@
 
 		<!--- If update number is lower then 26 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 26>
-			<cftry>
-			<!--- Add default value in database for welcome emails --->
-			<cfquery  name="checkemailset" datasource="#application.razuna.datasource#">
-				SELECT rec_uuid FROM raz1_settings_2 WHERE (set2_new_user_email_sub ='' OR set2_new_user_email_sub is NULL) AND (set2_new_user_email_body = '' OR set2_new_user_email_body is NULL)
-			</cfquery>
-			<cfloop query = "checkemailset">
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE raz1_settings_2 SET set2_new_user_email_sub ='Welcome!', set2_new_user_email_body = '<p>Dear User,<br />Your Razuna account login information are as follows:<br />Username: $username$<br />Password: $password$</p>'
-				WHERE rec_uuid= <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#checkemailset.rec_uuid#">
-				</cfquery>
-			</cfloop>
-			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
-			</cftry>
+			
 			<cftry>
 			<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
 			<cfif application.razuna.thedatabase EQ "mssql">
@@ -253,6 +241,19 @@
 				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
 				 </cfcatch>
 			</cftry>
+			<cftry>
+				<!--- Add default value in database for welcome emails --->
+				<cfquery  name="checkemailset" datasource="#application.razuna.datasource#">
+					SELECT rec_uuid FROM raz1_settings_2 WHERE (set2_new_user_email_sub ='' OR set2_new_user_email_sub is NULL) AND (set2_new_user_email_body = '' OR set2_new_user_email_body is NULL)
+				</cfquery>
+				<cfloop query = "checkemailset">
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE raz1_settings_2 SET set2_new_user_email_sub ='Welcome!', set2_new_user_email_body = '<p>Dear User,<br />Your Razuna account login information are as follows:<br />Username: $username$<br />Password: $password$</p>'
+					WHERE rec_uuid= <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#checkemailset.rec_uuid#">
+					</cfquery>
+				</cfloop>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 
 			<!--- RAZ-549 Add columns for asset expiry --->
 			<cftry>
@@ -275,17 +276,17 @@
 			<!--- RAZ-549 Insert asset expiry labels for existing hosts --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#" name="gethosts">
-					select host_id from hosts
+					select host_id, host_shard_group from hosts
 				</cfquery>
 				<cfloop query="gethosts">
 					<cfquery datasource="#application.razuna.datasource#" name="islabelexists">
-						SELECT 1 FROM raz1_labels WHERE host_id =<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#gethosts.host_id#">
+						SELECT 1 FROM #host_shard_group#labels WHERE host_id =<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#gethosts.host_id#">
 						AND label_text = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">
 					</cfquery>
 					<cfif islabelexists.recordcount eq 0>
 						<!--- Insert label for asset expiry --->
 						<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO raz1_labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
+						INSERT INTO #host_shard_group#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
 						VALUES (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="Asset has expired">,
 							<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
