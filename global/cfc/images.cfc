@@ -1308,10 +1308,10 @@
 		</cfif>
 		<!--- If we are a RAW image --->
 		<cfswitch expression="#arguments.thestruct.qry_detail.img_extension#">
-			<cfcase value="3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
+			<cfcase value="nef,x3f,arw,mrw,crw,cr2,3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
 				<!--- Write files --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -w -b 1.8 -c #theoriginalasset# > #theformatconv#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theimarguments#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #replace(theimarguments,theoriginalasset,theformatconv)#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
 			</cfcase>
 			<cfdefaultcase>
