@@ -1310,7 +1310,7 @@
 		<cfswitch expression="#arguments.thestruct.qry_detail.img_extension#">
 			<cfcase value="nef,x3f,arw,mrw,crw,cr2,3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -w -b 1.8 -c #theoriginalasset# > #theformatconv#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -e -c #theoriginalasset# > #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #replace(theimarguments,theoriginalasset,theformatconv)#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
 			</cfcase>
@@ -1336,6 +1336,22 @@
 			<cfexecute name="#attributes.intstruct.theshtt#" timeout="180" />
 		</cfthread>
 		<cfthread action="join" name="3#thescript#" />
+
+		<cftry>
+		<cfif arguments.thestruct.qry_detail.img_extension EQ "cr2">
+			<cfset var orientation = "">
+			<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
+			<cfexecute name="#theexif#" arguments="-Orientation -n #theformatconv#" timeout="120" variable="orientation"/>
+			<cfif orientation NEQ "" AND orientation contains "8">
+				<cfexecute name="#themogrify#" arguments="-rotate -90 #theformatconv#" timeout="120"/>
+					<cfexecute name="#themogrify#" arguments="-rotate -90 #thethumbtconv#" timeout="120"/>
+			<cfelseif orientation NEQ "" AND orientation contains "6">
+				<cfexecute name="#themogrify#" arguments="-rotate 90 #theformatconv#" timeout="120" />
+				<cfexecute name="#themogrify#" arguments="-rotate 90 #thethumbtconv#" timeout="120" />
+			</cfif>
+		</cfif>
+		<cfcatch></cfcatch>
+		</cftry>
 		<!--- Delete scripts --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">

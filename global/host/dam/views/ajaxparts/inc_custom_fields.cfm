@@ -130,7 +130,7 @@
 						</cfif>
 						<select name="cf_#cf_id#" id="cf_select_#listlast(cf_id,'-')#" <cfif listFindNoCase(custom_fields,'#qry_cf.cf_id#',',')> onchange="document.form#attributes.file_id#.cf_meta_select_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_select_#listlast(cf_id,'-')#.value;" </cfif> style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
 							<option value=""></option>
-							<cfloop list="#ltrim(ListSort(cf_select_list, 'text', 'asc', ','))#" index="i">
+							<cfloop list="#ltrim(ListSort(replace(cf_select_list,', ',',','ALL'), 'text', 'asc', ','))#" index="i">
 								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
 							</cfloop>
 						</select>

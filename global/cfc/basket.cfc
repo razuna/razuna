@@ -780,7 +780,7 @@
 
 					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##rendition_version#">
 					<!--- Remove extension from filenames for UPC --->
-					<cfset thefinalname = replacenocase(replacenocase(thefinalname,".#theext#","","ALL"),".jpg","ALL")>
+					<cfset arguments.thestruct.thefinalname = replacenocase(replacenocase(arguments.thestruct.thefinalname,".#theext#","","ALL"),".jpg","ALL")>
 				</cfif>
 			</cfif>
 			
@@ -803,8 +803,8 @@
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 			<!--- If extension is missing then put it in  --->
-			<cfif listlast(thefinalname,'.') NEQ theext>
-				<cfset thefinalname = thefinalname & ".#theext#">
+			<cfif !upcstruct.upcenabled AND listlast(arguments.thestruct.thefinalname,'.') NEQ theext>
+				<cfset arguments.thestruct.thefinalname = arguments.thestruct.thefinalname & ".#theext#">
 			</cfif>
 
 			<!--- RAZ-2918:: If the file have same name in basket then rename the file --->
