@@ -254,9 +254,11 @@
 <!--- INSERT SCHEDULED ASSETS FROM SERVER  --->
 <cffunction name="addassetscheduledserverthread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Name of lock file --->
 	<cfset var lockfile = ".lock">
-	<cfif iswindows()>
+	<cfif arguments.thestruct.iswindows>
 		<cfset var lockfile = "lock">
 	</cfif>
 	<!--- Check for the lock file --->
@@ -265,7 +267,7 @@
 	<cfelse>
 		<cffile action="write" file="#arguments.thestruct.directory#/#lockfile#" output="x" mode="775" />
 		<!--- On Windows make it hidden --->
-		<cfif iswindows()>
+		<cfif arguments.thestruct.iswindows>
 			<cfset FileSetattribute("#arguments.thestruct.directory#/#lockfile#","hidden")>
 		</cfif>
 	</cfif>
@@ -1765,9 +1767,10 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = 1>
 	<!--- New ID --->
 	<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Set Params --->
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
-	<cfset arguments.thestruct.iswindows = iswindows()>
 	<cfset arguments.thestruct.file_meta = "">
 	<cfset arguments.thestruct.pathorg = arguments.thestruct.qryfile.path>
 	<cfset var ttpdf = Createuuid("")>
@@ -2573,6 +2576,8 @@ This is the main function called directly by a single upload else from addassets
 <!--- IMPORT INTO DB AND IMAGEMAGICK STUFF (called from the various image uploads components) ---->
 <cffunction name="importimagesthread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- init function internal vars --->
 	<cfset var cloud_url = structnew()>
 	<cfset var cloud_url_org = structnew()>
@@ -2589,7 +2594,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.database = application.razuna.thedatabase>
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
-	<cfset arguments.thestruct.isWindows = isWindows()>
 	<!--- At times the orignal filename is stored in a different var so check for it and put it in proper var --->
 	<cfif isdefined("arguments.thestruct.thefilenameoriginal") AND NOT isdefined("arguments.thestruct.theoriginalfilename")>
 		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilenameoriginal>
@@ -3039,10 +3043,12 @@ This is the main function called directly by a single upload else from addassets
 <!--- declare function-internal variables --->
 <cfset var theidentifyresult = "">
 <cfset var thescript = createuuid()>
+<!--- Go grab the platform --->
+<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 <!--- check if file ends with ".gif" --->
 <cfif Right(arguments.imagepath, 4) eq ".gif">
 	<!--- Check the platform and then decide on the ImageMagick tag --->
-	<cfif isWindows()>
+	<cfif arguments.thestruct.isWindows>
 		<cfset var theidentify = """#Arguments.thepathim#/identify.exe""">
 		<cfset var thearguments = """#arguments.imagepath#""">
 	<cfelse>
@@ -3066,7 +3072,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfexecute name="#theidentify#" arguments="#arguments.imagepath#" timeout="5" variable="theidentifyresult" /> --->
 	<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
 	<!--- On Windows a bat --->
-	<cfif isWindows()>
+	<cfif arguments.thestruct.isWindows>
 		<cfset var thesh = gettempdirectory() & "/#thescript#.bat">
 	</cfif>
 	<!--- Write files --->
@@ -3101,6 +3107,8 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="resizeImagethread" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<cftry>
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 		<cfset var thecolorspace = "">
 		<!--- Check the colorspace --->
 		<cfif arguments.thestruct.qrysettings.set2_colorspace_rgb>
@@ -3128,7 +3136,7 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="delete" file="#arguments.thestruct.destination#" />
 		</cfif>
 		<!--- Check the platform and then decide on the ImageMagick/DCRaw tag --->
-		<cfif isWindows()>
+		<cfif arguments.thestruct.isWindows>
 			<cfset arguments.thestruct.theimconvert = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
 			<cfset arguments.thestruct.themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
 			<cfset arguments.thestruct.thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
@@ -3148,7 +3156,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.sh">
 		<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#reimtt#wt.sh">
 		<!--- On Windows a .bat --->
-		<cfif iswindows()>
+		<cfif arguments.thestruct.iswindows>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#reimtt#.bat">
 			<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.bat">
 			<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.bat">
@@ -3321,8 +3329,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfset var iLoop = "">
 	<cfset var vid_meta = "">
 	<cfset arguments.thestruct.vid_meta = "">
-	<!--- function body --->
-	<cfset arguments.thestruct.iswindows = iswindows()>
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
 		<!--- RAZ-2907 Call the component for Bulk upload versions --->
@@ -3396,7 +3404,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Wait --->
 			<cfthread action="join" name="preview#arguments.thestruct.thisvid.newid#" />
 			<!--- Check the platform and then decide on the ImageMagick tag --->
-			<cfif isWindows()>
+			<cfif arguments.thestruct.isWindows>
 				<cfset arguments.thestruct.theidentify = """#arguments.thestruct.thetools.imagemagick#/identify.exe""">
 				<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 				<cfset arguments.thestruct.theorg = """#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#""">
@@ -3433,7 +3441,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesht = gettempdirectory() & "/#thescript#t.sh">
 			<cfset arguments.thestruct.theshex = gettempdirectory() & "/#thescript#ex.sh">
 			<!--- On Windows a bat --->
-			<cfif isWindows()>
+			<cfif arguments.thestruct.isWindows>
 				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#thescript#.bat">
 				<cfset arguments.thestruct.thesht = gettempdirectory() & "/#thescript#t.bat">
 				<cfset arguments.thestruct.theshex = gettempdirectory() & "/#thescript#ex.bat">
@@ -4351,7 +4359,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
 	<cfset arguments.thestruct.storage = application.razuna.storage>
 	<cfset arguments.thestruct.theuserid = session.theuserid>
-	<cfset arguments.thestruct.iswindows = iswindows()>
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- thread --->
 	<cfset var tt = Createuuid("")>
 	<!--- Params --->
@@ -4896,8 +4905,8 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
-	<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-	<cfif isWindows>
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<cfif arguments.thestruct.isWindows>
 		<cfset var theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 	<cfelse>
 		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
@@ -5024,10 +5033,12 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
 		<cfset var thecolorspace = "-colorspace sRGB">
 	</cfif>
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Check the platform and then decide on the ImageMagick tag --->
-	<cfif isWindows()>
+	<cfif arguments.thestruct.isWindows>
 		<cfset var theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
 		<cfset var thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
 		<cfset var themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
@@ -5081,7 +5092,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.sh">
 				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
 				<!--- On Windows a .bat --->
-				<cfif iswindows()>
+				<cfif arguments.thestruct.iswindows>
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 					<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.bat">
 					<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.bat">
@@ -5314,7 +5325,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.thewidth = 0>
 	<cfset arguments.thestruct.theheight = 0>
 	<cfset arguments.thestruct.av_thumb_url ="">
-	
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- For API additional rendition OR version --->
 	<cfif structkeyexists(arguments.thestruct,'destfolderid') AND arguments.thestruct.destfolderid NEQ ''>
 		<cfset arguments.thestruct.folder_id = arguments.thestruct.destfolderid>
@@ -5370,7 +5382,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- The tool paths --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="thetools" />
 		<!--- According to win or lin --->
-		<cfif iswindows()>
+		<cfif arguments.thestruct.iswindows>
 			<cfset var theexe = """#thetools.exiftool#/exiftool.exe""">
 			<!--- Get width and height --->
 			<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" variable="arguments.thestruct.thewidth" timeout="30" />
@@ -5430,7 +5442,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.thesource = "#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 	<cfset arguments.thestruct.destination = "#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 	<cfset arguments.thestruct.qryfile.extension = arguments.thestruct.qrysettings.set2_img_format>
-	<cfset arguments.thestruct.isWindows = isWindows()>
 	<cfif arguments.thestruct.isWindows>
 		<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 		<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
