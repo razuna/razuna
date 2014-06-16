@@ -3218,6 +3218,21 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
 		<cfset var thumbheight = trim(listlast(thumbheight," "))>
 		<cfset var thumbwidth = trim(listlast(thumbwidth," "))>
+
+		<cftry>
+		<cfif arguments.thestruct.qryfile.extension EQ "cr2">
+			<cfset var orientation = "">
+			<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
+			<cfexecute name="#arguments.thestruct.thexif#" arguments="-Orientation -n #arguments.thestruct.destination#" timeout="120" variable="orientation"/>
+			<cfif orientation NEQ "" AND orientation contains "8">
+				<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate -90 #arguments.thestruct.destination#" timeout="120"/>
+			<cfelseif orientation NEQ "" AND orientation contains "6">
+				<cfexecute name="#arguments.thestruct.themogrify#" arguments="-rotate 90 #arguments.thestruct.destination#" timeout="120" />
+			</cfif>
+		</cfif>
+		<cfcatch></cfcatch>
+		</cftry>
+		
 		<!--- Remove the temp file sh --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.theshm#">
@@ -5103,6 +5118,12 @@ This is the main function called directly by a single upload else from addassets
 					<cfelseif isnumeric(thumb_width)>
 						<cfset resizeargs = "#thumb_width#x">
 					</cfif>
+					<!--- If extension is TGA then turn off alpha --->
+					<cfif isdefined("arguments.thestruct.qry_existing.img_extension") AND arguments.thestruct.qry_existing.img_extension eq 'tga'>
+						<cfset alpha = '-alpha off'>
+					<cfelse>
+						<cfset alpha = ''>
+					</cfif>
 					<!--- Create the args for conversion --->
 					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
@@ -5111,12 +5132,12 @@ This is the main function called directly by a single upload else from addassets
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
 						<cfcase value="nef,x3f,arw,mrw,crw,cr2,3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
-							<cfset var theargs = "#thedcraw# -w -b 1.8 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
 							<cfset var theargsdc = "#themogrify# -resize #resizeargs# #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->
 						<cfdefaultcase>
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #resizeargs# #thecolorspace# #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# #alpha# -resize #resizeargs# #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
 				</cfif>
@@ -5151,6 +5172,20 @@ This is the main function called directly by a single upload else from addassets
 				<cfthread name="con2#thescript#" intstruct="#arguments.thestruct#" action="run">
 					<cfexecute name="#attributes.intstruct.theshdc#" timeout="60" />
 				</cfthread>
+				
+				<cftry>
+				<cfif arguments.thestruct.qry_existing.img_extension EQ "cr2">
+					<cfset var orientation = "">
+					<!--- Check orientation for CR2 images and rotate it properly if it is not properly rotated for viewing--->
+					<cfexecute name="#theexif#" arguments="-Orientation -n #arguments.thestruct.thumbpath#" timeout="120" variable="orientation"/>
+					<cfif orientation NEQ "" AND orientation contains "8">
+						<cfexecute name="#themogrify#" arguments="-rotate -90 #arguments.thestruct.thumbpath#" timeout="120" />
+					<cfelseif orientation NEQ "" AND orientation contains "6">
+						<cfexecute name="#themogrify#" arguments="-rotate 90 #arguments.thestruct.thumbpath#" timeout="120" />
+					</cfif>
+				</cfif>
+				<cfcatch></cfcatch>
+				</cftry>
 				<!--- Wait --->
 				<cfthread action="join" name="con2#thescript#" />
 				<!--- Delete scripts --->
