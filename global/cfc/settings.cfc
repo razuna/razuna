@@ -2676,6 +2676,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<!--- Now loop over the fieldnames and do an insert for each record found --->
 			<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 				<cfif i NEQ "apply_global">
+					<cfif evaluate(trim(i)) NEQ "">
 					<cfquery dataSource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#export_template
 					(exp_id, exp_field, exp_value, exp_timestamp, host_id, user_id)
@@ -2688,6 +2689,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 						<cfqueryparam value="#session.theuserid#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
+					</cfif>
 				</cfif>
 			</cfloop>
 		</cfif>
