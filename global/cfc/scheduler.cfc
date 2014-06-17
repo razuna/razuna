@@ -652,7 +652,7 @@
 			<!--- Get LDAP User list --->
 				
 			<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments#">
-			<Cfif results.recordcount NEQ 0>
+			<cfif results.recordcount NEQ 0>
 				<cfset emailList = valuelist(results.mail)>
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 					SELECT u.user_email
@@ -661,14 +661,15 @@
 					AND ct.ct_u_h_host_id = <cfqueryparam value="#doit.qry_detail.host_id#" cfsqltype="cf_sql_numeric">
 					AND ct.ct_u_h_user_id = u.user_id
 				</cfquery>
+				<cfset var adlist = quotedvaluelist(qry.user_email)>
 				<cfquery dbtype="query" name="qryResults">
 					select * from results
-					where mail not in (<cfqueryparam value="#valuelist(qry.user_email)#" cfsqltype="cf_sql_varchar" list="true" >)
+					where mail not in ('#adlist#')
 				</cfquery>
 				<cfif qryResults.recordcount NEQ 0>
 					<cfloop query="qryResults" >
-						<cfset arguments.thestruct.user_first_name = qryResults.firstname>
-						<cfset arguments.thestruct.user_last_name = qryResults.lastname>
+						<cfset arguments.thestruct.user_first_name = qryResults.givenname>
+						<cfset arguments.thestruct.user_last_name = qryResults.sn>
 						<cfset arguments.thestruct.intrauser = "T">
 						<cfset arguments.thestruct.user_active = "T">
 						<cfset arguments.thestruct.user_pass = "">
