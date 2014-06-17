@@ -1641,7 +1641,7 @@
 		</cfif>
 		<cfset arguments.thestruct.meta_fields="#listremoveduplicates(arguments.thestruct.meta_fields)#">
 	<cfelse>
-		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,create_date,change_date,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	</cfif>
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
@@ -2018,6 +2018,7 @@
 <cffunction name="add_to_query" >
 	<cfargument name="thestruct" type="struct">
 	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
+	<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
 		<!--- Add row local query --->
 		<cfset QueryAddRow(arguments.thestruct.tq,1)>
@@ -2051,11 +2052,11 @@
 						</cfif>
 						<!--- Add create time --->
 						<cfif ("#idx#" EQ "img_create_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_create_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_create_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_create_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
-							<cfset QuerySetCell(arguments.thestruct.tq, "create_date", arguments.thestruct.create_date)>
+							<cfset QuerySetCell(arguments.thestruct.tq, "create_date", dateformat(arguments.thestruct.create_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.create_date,'HH:mm:ss'))>
 						</cfif>
 						<!--- Add Change time --->
 						<cfif ("#idx#" EQ "img_change_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_change_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_change_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_change_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
-							<cfset QuerySetCell(arguments.thestruct.tq, "change_date", arguments.thestruct.change_date)>
+							<cfset QuerySetCell(arguments.thestruct.tq, "change_date", dateformat(arguments.thestruct.change_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.change_date,'HH:mm:ss'))>
 						</cfif>
 						<!--- Add Width --->
 						<cfif ("#idx#" EQ "img_width" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_width" AND "#arguments.thestruct.filetype#" EQ "vid")> 
@@ -2120,6 +2121,10 @@
 		<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
 		<!--- Add folder_name --->
 		<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
+		<!--- Add create_date --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "create_date", dateformat(arguments.thestruct.create_date,'#thedateformat#') & "  " & timeformat(arguments.thestruct.create_date,'HH:mm:ss'))>
+		<!--- Add change_date --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "change_date", dateformat(arguments.thestruct.change_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.change_date,'HH:mm:ss'))>
 		<!--- Add Labels --->
 		<cfif arguments.thestruct.qry_labels NEQ "">
 			<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
