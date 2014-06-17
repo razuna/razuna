@@ -107,7 +107,7 @@
 						<cfelse>
 							<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
 						</cfif>
-						<a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50"></a>
+						<cfif qry_av.assets.av_thumb_url NEQ ""><a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50"></a></cfif>
 					</td>
 				</cfif>
 				<td valign="top" nowrap="nowrap" style="width:400px"><a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em></td>
