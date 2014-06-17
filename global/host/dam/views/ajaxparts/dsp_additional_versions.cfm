@@ -93,14 +93,14 @@
 		<!--- Show exsiting --->
 		<cfif qry_av.assets.recordcount NEQ 0>
 			<tr>
-				<cfif qry_av.assets.av_type eq 'img'><th>Thumb</th></cfif>
+				<cfif qry_av.assets.av_type eq 'img' AND qry_av.assets.av_thumb_url NEQ ""><th>Thumb</th></cfif>
 				<th>#myFusebox.getApplicationData().defaults.trans("title")#</th>
 				<th colspan="2">URL</th>
 			</tr>
 		</cfif>
 		<cfloop query="qry_av.assets">
 			<tr class="list">
-				<cfif av_type eq 'img'>
+				<cfif av_type eq 'img' AND qry_av.assets.av_thumb_url NEQ "">
 					<td>
 						<cfif application.razuna.storage EQ 'local'>
 							<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>

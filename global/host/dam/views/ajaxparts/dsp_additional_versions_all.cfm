@@ -34,7 +34,7 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_av.assets">
 		<tr>
-			<cfif av_type eq 'img'>
+			<cfif av_type eq 'img' AND qry_av.assets.av_thumb_url NEQ "">
 				<td width="55" align="center">
 					<cfif application.razuna.storage EQ 'local'>
 					<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
