@@ -1119,21 +1119,31 @@
 			<cfcatch type="any"></cfcatch>
 		</cftry>
 		
+		<cftry>
+			<!--- Get height and width --->
+			<cfset xmp.orgwidth = gettoken(trim(#thexml[1]["Composite:ImageSize"].xmltext#),1,'x')>
+			<cfset xmp.orgheight = gettoken(trim(#thexml[1]["Composite:ImageSize"].xmltext#),2,'x')>
+		<cfcatch type="any"></cfcatch>
+		</cftry>
+
 		<!--- Get fileType --->
 		<cftry>
 			<cfset xmp.filetype = trim(#thexml[1]["File:FileType"].xmltext#)>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+
 		<!--- Get information according to filetype --->
 		<cfif xmp.filetype EQ "psd">
-			<cftry>
-				<cfset xmp.orgwidth = trim(#thexml[1]["Photoshop:ImageWidth"].xmltext#)>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
-			<cftry>
-				<cfset xmp.orgheight = trim(#thexml[1]["Photoshop:ImageHeight"].xmltext#)>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
+			<cfif xmp.orgwidth EQ "" AND xmp.orgheight EQ "">
+				<cftry>
+					<cfset xmp.orgwidth = trim(#thexml[1]["Photoshop:ImageWidth"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfset xmp.orgheight = trim(#thexml[1]["Photoshop:ImageHeight"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
 			<cftry>
 				<cfset xmp.colorspace = trim(#thexml[1]["Photoshop:ColorMode"].xmltext#)>
 				<cfcatch type="any"></cfcatch>
@@ -1151,14 +1161,16 @@
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		<cfelseif xmp.filetype EQ "png">
-			<cftry>
-				<cfset xmp.orgwidth = trim(#thexml[1]["PNG:ImageWidth"].xmltext#)>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
-			<cftry>
-				<cfset xmp.orgheight = trim(#thexml[1]["PNG:ImageHeight"].xmltext#)>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
+			<cfif xmp.orgwidth EQ "" AND xmp.orgheight EQ "">
+				<cftry>
+					<cfset xmp.orgwidth = trim(#thexml[1]["PNG:ImageWidth"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfset xmp.orgheight = trim(#thexml[1]["PNG:ImageHeight"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
 			<cftry>
 				<cfset xmp.colorspace = trim(#thexml[1]["PNG:ColorType"].xmltext#)>
 				<cfcatch type="any"></cfcatch>
@@ -1176,64 +1188,80 @@
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		<cfelse>
-			<!--- Width --->
-			<cftry>
-				<cfset xmp.orgwidth = trim(#thexml[1]["File:ImageWidth"].xmltext#)>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
 			<cfif xmp.orgwidth EQ "">
+				<!--- Width --->
 				<cftry>
-					<cfset xmp.orgwidth = trim(#thexml[1]["IFD0:ImageWidth"].xmltext#)>
+					<cfset xmp.orgwidth = trim(#thexml[1]["File:ImageWidth"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
-			</cfif>
-			<cfif xmp.orgwidth EQ "">
-				<cftry>
-					<cfset xmp.orgwidth = trim(#thexml[1]["ExifIFD:ExifImageWidth"].xmltext#)>
-					<cfcatch type="any"></cfcatch>
-				</cftry>
-			</cfif>
-			<cfif xmp.orgwidth EQ "">
-				<cftry>
-					<cfset xmp.orgwidth = trim(#thexml[1]["SubIFD1:ImageWidth"].xmltext#)>
-					<cfcatch type="any"></cfcatch>
-				</cftry>
-			</cfif>
-			<cfif xmp.orgwidth EQ "">
-            	<cftry>
-                	<cfset xmp.orgwidth = trim(#thexml[1]["#xmp.filetype#:ImageWidth"].xmltext#)>
-                    <cfcatch type="any"></cfcatch>
-                </cftry>
-          	</cfif>
+				<cfif xmp.orgwidth EQ "">
+					<cftry>
+						<cfset xmp.orgwidth = trim(#thexml[1]["SubIFD1:ImageWidth"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgwidth EQ "">
+					<cftry>
+						<cfset xmp.orgwidth = trim(#thexml[1]["SubIFD:ImageWidth"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgwidth EQ "">
+					<cftry>
+						<cfset xmp.orgwidth = trim(#thexml[1]["IFD0:ImageWidth"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgwidth EQ "">
+					<cftry>
+						<cfset xmp.orgwidth = trim(#thexml[1]["ExifIFD:ExifImageWidth"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgwidth EQ "">
+			            	<cftry>
+			                	<cfset xmp.orgwidth = trim(#thexml[1]["#xmp.filetype#:ImageWidth"].xmltext#)>
+			                   	<cfcatch type="any"></cfcatch>
+			                	</cftry>
+			          	</cfif>
+		          </cfif>
 			<!--- Height --->
-			<cftry>
-				<cfset xmp.orgheight = trim(#thexml[1]["File:ImageHeight"].xmltext#)>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
 			<cfif xmp.orgheight EQ "">
 				<cftry>
-					<cfset xmp.orgheight = trim(#thexml[1]["IFD0:ImageHeight"].xmltext#)>
+					<cfset xmp.orgheight = trim(#thexml[1]["File:ImageHeight"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
-			</cfif>
-			<cfif xmp.orgheight EQ "">
-				<cftry>
-					<cfset xmp.orgheight = trim(#thexml[1]["ExifIFD:ExifImageHeight"].xmltext#)>
-					<cfcatch type="any"></cfcatch>
-				</cftry>
-			</cfif>
-			<cfif xmp.orgheight EQ "">
-				<cftry>
-					<cfset xmp.orgheight = trim(#thexml[1]["SubIFD1:ImageHeight"].xmltext#)>
-					<cfcatch type="any"></cfcatch>
-				</cftry>
-			</cfif>
-			<cfif xmp.orgheight EQ "">
-            	<cftry>
-                	<cfset xmp.orgheight = trim(#thexml[1]["#xmp.filetype#:ImageHeight"].xmltext#)>
-                    <cfcatch type="any"></cfcatch>
-                 </cftry>
-            </cfif>
+				<cfif xmp.orgheight EQ "">
+					<cftry>
+						<cfset xmp.orgheight = trim(#thexml[1]["SubIFD1:ImageHeight"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgheight EQ "">
+					<cftry>
+						<cfset xmp.orgheight = trim(#thexml[1]["SubIFD:ImageHeight"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgheight EQ "">
+					<cftry>
+						<cfset xmp.orgheight = trim(#thexml[1]["IFD0:ImageHeight"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgheight EQ "">
+					<cftry>
+						<cfset xmp.orgheight = trim(#thexml[1]["ExifIFD:ExifImageHeight"].xmltext#)>
+						<cfcatch type="any"></cfcatch>
+					</cftry>
+				</cfif>
+				<cfif xmp.orgheight EQ "">
+			            	<cftry>
+			                	<cfset xmp.orgheight = trim(#thexml[1]["#xmp.filetype#:ImageHeight"].xmltext#)>
+				             <cfcatch type="any"></cfcatch>
+				             </cftry>
+			            </cfif>
+		        	</cfif>
 			<!--- ColorSpace --->
 			<cftry>
 				<cfset xmp.colorspace = trim(#thexml[1]["ICC-header:ColorSpaceData"].xmltext#)>

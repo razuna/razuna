@@ -1309,8 +1309,31 @@
 		<!--- If we are a RAW image --->
 		<cfswitch expression="#arguments.thestruct.qry_detail.img_extension#">
 			<cfcase value="nef,x3f,arw,mrw,crw,cr2,3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
+				<cfset var  checkwidth = 0>
+				<cfset var  dclist = 0>
+				<cfset var  thmbwidth = 0>
+				<cfset var  fullwidth = 1000>
+				<cftry>
+					<!--- Get embedded thumb and actual image width information for comparision --->
+					<cfexecute name="#thedcraw#" arguments="-i -v #theoriginalasset#" variable="checkwidth" timeout="120"/>
+					<cfset dclist = REReplace(checkwidth,"#chr(13)#|#chr(9)#|\n|\r","@","ALL")>
+					<cfset dclist = REReplace(dclist,":","@@","ALL")>
+					<cfset var thmbsizeidx = listfindnocase(dclist,'Thumb size','@@')>
+					<cfset  thmbwidth = gettoken(dclist,thmbsizeidx+1,'@@')>
+					<cfset  thmbwidth = gettoken(thmbwidth,1,'x')>
+					<cfset  var fullsizeidx = listfindnocase(dclist,'Full size','@@')>
+					<cfset  fullwidth = gettoken(dclist,fullsizeidx+1,'@@')>
+					<cfset  fullwidth = gettoken(fullwidth,1,'x')>
+				<cfcatch></cfcatch>
+				</cftry>
+				<!--- Check if embedded thumb is close to full size. If not then extract from actual image (much slower). --->
+				<cfif isnumeric(fullwidth) AND isnumeric(thmbwidth) AND (fullwidth - thmbwidth) GT 200>
+					<cfset var dcrawparam   = "-w">
+				<cfelse>
+					<cfset var dcrawparam   = "-e">
+				</cfif>
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -e -c #theoriginalasset# > #theformatconv#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# #dcrawparam# -c #theoriginalasset# > #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #replace(theimarguments,theoriginalasset,theformatconv)#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
 			</cfcase>
