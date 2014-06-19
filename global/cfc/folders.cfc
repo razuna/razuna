@@ -3502,7 +3502,10 @@
 				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+		FROM #session.hostdbprefix#images i 
+		LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 
+		LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+		LEFT JOIN ct_aliases a ON a.asset_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">) AND a.type = 'img'
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
