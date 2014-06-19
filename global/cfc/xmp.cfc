@@ -2104,14 +2104,16 @@
 						</cfif>
 						<!--- Add keywords and description --->
 						<cfif arguments.thestruct.qry_text.recordcount NEQ 0>
-							<cfif arguments.thestruct.qry_text.tid EQ arguments.thestruct.file_id>
-								<cfif ("#idx#" EQ "img_keywords" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_keywords" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_keywords" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_keywords" AND "#arguments.thestruct.filetype#" EQ "aud")> 
-									<cfset QuerySetCell(arguments.thestruct.tq, "keywords", arguments.thestruct.qry_text.keywords)>
+							<cfloop query="arguments.thestruct.qry_text">
+								<cfif tid EQ arguments.thestruct.file_id>
+									<cfif ("#idx#" EQ "img_keywords" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_keywords" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_keywords" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_keywords" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+										<cfset QuerySetCell(arguments.thestruct.tq, "keywords", arguments.thestruct.qry_text.keywords)>
+									</cfif>
+									<cfif ("#idx#" EQ "img_description" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_desc" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_description" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_description" AND "#arguments.thestruct.filetype#" EQ "aud")>
+										<cfset QuerySetCell(arguments.thestruct.tq, "description", arguments.thestruct.qry_text.description)>
+									</cfif>
 								</cfif>
-								<cfif ("#idx#" EQ "img_description" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_desc" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_description" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_description" AND "#arguments.thestruct.filetype#" EQ "aud")>
-									<cfset QuerySetCell(arguments.thestruct.tq, "description", arguments.thestruct.qry_text.description)>
-								</cfif>
-							</cfif>
+							</cfloop>
 						</cfif>
 						<!--- Add Labels --->
 						<cfif ("#idx#" EQ "img_labels" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_labels" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_labels" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_labels" AND "#arguments.thestruct.filetype#" EQ "aud")> 
