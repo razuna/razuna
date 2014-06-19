@@ -5880,6 +5880,12 @@
 				<set name="session.savehere" value="c.restore_selected_files_do" />
 			</true>
 		</if>
+		<!-- If we create an alias -->
+		<if condition="session.type EQ 'alias'">
+			<true>
+				<set name="session.savehere" value="c.alias_create" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.choose_folder" />
 	</fuseaction>
@@ -5906,6 +5912,11 @@
 		START: MOVING FOLDER AND FILES
 	-->
 	
+	<!-- Alias -->
+	<fuseaction name="alias_create">
+		<invoke object="myFusebox.getApplicationData().images" methodcall="alias_create(attributes)" />
+	</fuseaction>
+
 	<!-- Set params for the choose folder dialog -->
 	<fuseaction name="move_file">
 		<!-- Param -->

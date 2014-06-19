@@ -2232,12 +2232,43 @@
 <cffunction name="getAllFolderAsset" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#application.razuna.datasource#" name="qry_data">
-		SELECT img_id AS id,img_filename AS filename
-		FROM #session.hostdbprefix#images
-		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
-		AND img_group IS NULL
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	SELECT img_id AS id,img_filename AS filename
+	FROM #session.hostdbprefix#images
+	WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+	AND img_group IS NULL
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry_data>
 </cffunction>
+
+<!--- Create Alias --->
+<cffunction name="alias_create" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
+	<cfset console(session)> --->
+
+	<!--- Loop over session.file_id --->
+	<cfloop list="#session.file_id#" index="file">
+		<!--- The first part is the id --->
+		<cfset var fileid = listfirst(file,"-")>
+		<!--- The second part is the type --->
+		<cfset var filetype = listlast(file,"-")>
+		<!--- Add to DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO ct_aliases
+		(asset_id_r, folder_id_r, type, rec_uuid)
+		VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetype#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+		)
+		</cfquery>
+	</cfloop>
+
+
+
+</cffunction>
+
 </cfcomponent>

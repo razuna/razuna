@@ -4145,6 +4145,15 @@
 					<!--- From Smart Folder --->
 					<cfelseif session.type EQ "sf_download">
 						<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;">
+					<!--- Alias --->
+					<cfelseif session.type EQ "alias">
+						<cfif session.thefolderorg NEQ folder_id>
+							<cfif arguments.thestruct.kind EQ "search">
+								<a href="##" onclick="$('##div_choosefolder_status').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select the folder in the list above!<br />You can close this window.');});">
+							<cfelse>
+								<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select the folder in the list above!<br />You can close this window.');});">
+							</cfif>
+						</cfif>
 					</cfif>
 					<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif>
 					<cfif session.thefolderorg NEQ folder_id></a></cfif>
