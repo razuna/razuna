@@ -140,6 +140,12 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<cfif attributes.folder_id NEQ folder_id_r>
+										<div style="float:right">
+											<em>(Alias)</em>
+										</div>
+										<div style="clear:both;"></div>
+									</cfif>
 								<cfelse>
 									The upload of "#img_filename#" is still in progress!
 									<br /><br>
@@ -205,6 +211,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#img_filename#" is still in progress!
 								<br /><br>
@@ -299,7 +311,7 @@
 					<tr class="list thumbview">
 						<td align="center">
 							<cfif is_available>
-									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<!--- Show assets --->
 									<div id="draggable#img_id#-img" type="#img_id#-img">
 										<cfif link_kind NEQ "url">
@@ -317,6 +329,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#img_filename#" is still in progress!
 								<br />

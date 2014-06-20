@@ -127,6 +127,12 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<cfif attributes.folder_id NEQ folder_id_r>
+										<div style="float:right">
+											<em>(Alias)</em>
+										</div>
+										<div style="clear:both;"></div>
+									</cfif>
 								<cfelse>
 									The upload of "#aud_name#" is still in progress!
 									<br /><br>
@@ -179,6 +185,12 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#aud_name#" is still in progress!
 								<br /><br>
@@ -282,6 +294,12 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#aud_name#" is still in progress!
 								<br />

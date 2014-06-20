@@ -143,6 +143,12 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<cfif attributes.folder_id NEQ folder_id_r>
+										<div style="float:right">
+											<em>(Alias)</em>
+										</div>
+										<div style="clear:both;"></div>
+									</cfif>
 								<cfelse>
 									The upload of "#file_name#" is still in progress!
 									<br /><br>
@@ -211,6 +217,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#file_name#" is still in progress!
 								<br /><br>
@@ -330,6 +342,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#file_name#" is still in progress!
 								<br />

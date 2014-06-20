@@ -122,9 +122,6 @@
 					<!--- Images --->
 					<cfif kind EQ "img">
 						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
-							<cfif attributes.folder_id NEQ folder_id_r>
-							ALIAS
-							</cfif>
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -168,7 +165,6 @@
 									</cfif>
 									</div>
 								</a>
-								
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 								</div>
@@ -219,6 +215,12 @@
 										</cfif>
 										<br />
 									</cfloop>
+								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
@@ -328,6 +330,12 @@
 										<br />
 									</cfloop>
 								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -418,6 +426,12 @@
 										</cfif>
 										<br />
 									</cfloop>
+								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
@@ -530,6 +544,12 @@
 										<br />
 									</cfloop>
 								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -631,6 +651,12 @@
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -734,6 +760,12 @@
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -824,6 +856,12 @@
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -930,6 +968,12 @@
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -1018,6 +1062,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1104,6 +1154,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1177,6 +1233,12 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1266,6 +1328,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
