@@ -139,6 +139,18 @@
 	<cfelse>
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
+		<!--- For aliases --->
+		<cfset var alias = '0,'>
+		<!--- Query Aliases --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+		FROM ct_aliases
+		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">
+		</cfquery>
+		<cfif qry_aliases.recordcount NEQ 0>
+			<cfset var alias = valueList(qry_aliases.asset_id_r)>
+		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
@@ -164,6 +176,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
+		OR a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view

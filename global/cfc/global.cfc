@@ -1803,4 +1803,50 @@ Comment:<br>
 		</cfquery>
 	</cffunction>
 
+	<!--- Create Alias --->
+	<cffunction name="alias_create" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Loop over session.file_id --->
+		<cfloop list="#session.file_id#" index="file">
+			<!--- The first part is the id --->
+			<cfset var fileid = listfirst(file,"-")>
+			<!--- The second part is the type --->
+			<cfset var filetype = listlast(file,"-")>
+			<!--- Add to DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO ct_aliases
+			(asset_id_r, folder_id_r, type, rec_uuid)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetype#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+			)
+			</cfquery>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("audios")>
+	</cffunction>
+
+	<!--- Remove Alias --->
+	<cffunction name="alias_remove" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Remove --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM ct_aliases
+		WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("audios")>
+	</cffunction>
+
 </cfcomponent>

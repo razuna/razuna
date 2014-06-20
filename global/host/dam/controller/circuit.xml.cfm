@@ -5914,7 +5914,19 @@
 	
 	<!-- Alias -->
 	<fuseaction name="alias_create">
-		<invoke object="myFusebox.getApplicationData().images" methodcall="alias_create(attributes)" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="alias_create(attributes)" />
+	</fuseaction>
+
+	<!-- Alias Remove -->
+	<fuseaction name="alias_remove">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="alias_remove(attributes)" />
+		<!-- Show -->
+		<if condition="attributes.loaddiv EQ 'content'">
+			<true>
+				<do action="folder" />
+			</true>
+		</if>
 	</fuseaction>
 
 	<!-- Set params for the choose folder dialog -->

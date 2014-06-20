@@ -875,4 +875,9 @@
 		<include template="dsp_updater_tool" />
 	</fuseaction>
 
+	<!-- Alias -->
+	<fuseaction name="trash_alias">
+		<include template="win_trash_alias" />
+	</fuseaction>
+
 </circuit>

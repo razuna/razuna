@@ -158,6 +158,18 @@
 	<cfelse>
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
+		<!--- For aliases --->
+		<cfset var alias = '0,'>
+		<!--- Query Aliases --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#imgaliases */ asset_id_r, type
+		FROM ct_aliases
+		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">
+		</cfquery>
+		<cfif qry_aliases.recordcount NEQ 0>
+			<cfset var alias = valueList(qry_aliases.asset_id_r)>
+		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
@@ -183,6 +195,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
+		OR i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -2239,36 +2252,6 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry_data>
-</cffunction>
-
-<!--- Create Alias --->
-<cffunction name="alias_create" output="false">
-	<cfargument name="thestruct" type="struct">
-	<!--- <cfset consoleoutput(true)>
-	<cfset console(arguments.thestruct)>
-	<cfset console(session)> --->
-
-	<!--- Loop over session.file_id --->
-	<cfloop list="#session.file_id#" index="file">
-		<!--- The first part is the id --->
-		<cfset var fileid = listfirst(file,"-")>
-		<!--- The second part is the type --->
-		<cfset var filetype = listlast(file,"-")>
-		<!--- Add to DB --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO ct_aliases
-		(asset_id_r, folder_id_r, type, rec_uuid)
-		VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetype#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
-		)
-		</cfquery>
-	</cfloop>
-
-
-
 </cffunction>
 
 </cfcomponent>

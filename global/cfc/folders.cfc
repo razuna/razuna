@@ -3446,6 +3446,28 @@
 	<cfelse>
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
+		<!--- For aliases --->
+		<cfset var alias_img = '0,'>
+		<cfset var alias_vid = '0,'>
+		<cfset var alias_aud = '0,'>
+		<cfset var alias_doc = '0,'>
+		<!--- Query Aliases --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+		FROM ct_aliases
+		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfquery>
+		<cfloop query="qry_aliases">
+			<cfif type EQ "img">
+				<cfset var alias_img = alias_img & asset_id_r & ','>
+			<cfelseif type EQ "vid">
+				<cfset var alias_vid = alias_vid & asset_id_r & ','>
+			<cfelseif type EQ "aud">
+				<cfset var alias_aud = alias_aud & asset_id_r & ','>
+			<cfelseif type EQ "doc">
+				<cfset var alias_doc = alias_doc & asset_id_r & ','>
+			</cfif>
+		</cfloop>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
@@ -3505,7 +3527,6 @@
 		FROM #session.hostdbprefix#images i 
 		LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 
 		LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
-		LEFT JOIN ct_aliases a ON a.asset_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">) AND a.type = 'img'
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -3513,6 +3534,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
+		OR i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_img#" list="true">)
 
 		UNION ALL
 		SELECT v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
@@ -3563,6 +3585,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
+		OR v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_vid#" list="true">)
 
 		UNION ALL
 		SELECT a.aud_id as id, a.aud_name as filename, a.in_trash,a.folder_id_r, 
@@ -3613,6 +3636,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
+		OR a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_aud#" list="true">)
 
 		UNION ALL
 		SELECT f.file_id as id, f.file_name as filename,f.in_trash, f.folder_id_r, 
@@ -3651,6 +3675,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
+		OR f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_doc#" list="true">)
 
 		<!--- MSSQL --->
 		<cfif application.razuna.thedatabase EQ "mssql">
