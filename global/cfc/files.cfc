@@ -1289,34 +1289,42 @@
 			<cfset arguments.thestruct.qrydoc = "">
 			<!--- Get file details --->
 			<cfinvoke method="filedetail" theid="#arguments.thestruct.doc_id#" thecolumn="file_name, folder_id_r, file_name_org filenameorg, lucene_key, link_kind, path_to_asset" returnvariable="arguments.thestruct.qrydoc">
-			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.qrydoc.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
-				<!--- Update DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#files
-				SET 
-				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
-					<!--- Execute workflow --->
-					<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
-					<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
-					<cfset arguments.thestruct.thefiletype = "doc">
-					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
-					<cfset arguments.thestruct.folder_action = false>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfset arguments.thestruct.folder_action = true>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-				<!--- </cfthread> --->
-				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
+			<!--- Check if this is an alias --->
+			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.doc_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
+			<!--- If this is an alias --->
+			<cfif qry_alias>
+				<!--- Move alias --->
+				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.doc_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#" />
+			<cfelse>
+				<!--- Ignore if the folder id is the same --->
+				<cfif arguments.thestruct.qrydoc.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
+					<!--- Update DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files
+					SET 
+					folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+						<!--- Update Dates --->
+						<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
+						<!--- Execute workflow --->
+						<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
+						<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
+						<cfset arguments.thestruct.thefiletype = "doc">
+						<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+						<cfset arguments.thestruct.folder_action = false>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfset arguments.thestruct.folder_action = true>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+					<!--- </cfthread> --->
+					<!--- Log --->
+					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
+				</cfif>
 			</cfif>
 			<!--- Flush Cache --->
 			<cfset resetcachetoken("folders")>

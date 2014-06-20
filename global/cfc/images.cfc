@@ -1936,36 +1936,44 @@
 		<cfset arguments.thestruct.storage = application.razuna.storage>
 		<!--- Move --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.img_id#" thecolumn="img_filename, folder_id_r" returnvariable="arguments.thestruct.qryimg">
-		<!--- Ignore if the folder id is the same --->
-		<cfif arguments.thestruct.qryimg.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryimg.folder_id_r>
-			<!--- Update DB --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET 
-			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-			in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
-			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-				<!--- Update Dates --->
-				<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.img_id#" />
-				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
-				<!--- Execute workflow --->
-				<cfset arguments.thestruct.fileid = arguments.thestruct.img_id>
-				<cfset arguments.thestruct.file_name = arguments.thestruct.qryimg.img_filename>
-				<cfset arguments.thestruct.thefiletype = "img">
-				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
-				<cfset arguments.thestruct.folder_action = false>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-				<cfset arguments.thestruct.folder_action = true>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-			<!--- </cfthread> --->
-			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id,folderid='#arguments.thestruct.folder_id#')>
+		<!--- Check if this is an alias --->
+		<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.img_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
+		<!--- If this is an alias --->
+		<cfif qry_alias>
+			<!--- Move alias --->
+			<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.img_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#" />
+		<cfelse>
+			<!--- Ignore if the folder id is the same --->
+			<cfif arguments.thestruct.qryimg.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryimg.folder_id_r>
+				<!--- Update DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images
+				SET 
+				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+					<!--- Update Dates --->
+					<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.img_id#" />
+					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
+					<!--- Execute workflow --->
+					<cfset arguments.thestruct.fileid = arguments.thestruct.img_id>
+					<cfset arguments.thestruct.file_name = arguments.thestruct.qryimg.img_filename>
+					<cfset arguments.thestruct.thefiletype = "img">
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+					<cfset arguments.thestruct.folder_action = false>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfset arguments.thestruct.folder_action = true>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+				<!--- </cfthread> --->
+				<!--- Log --->
+				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id,folderid='#arguments.thestruct.folder_id#')>
+			</cfif>
 		</cfif>
 	<cfreturn />
 </cffunction>

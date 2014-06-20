@@ -1849,4 +1849,46 @@ Comment:<br>
 		<cfset resetcachetoken("audios")>
 	</cffunction>
 
+	<!--- Check for alias --->
+	<cffunction name="getAlias" output="false">
+		<cfargument name="asset_id_r" type="string" required="true">
+		<cfargument name="folder_id_r" type="string" required="true">
+		<!--- Param --->
+		<cfset var qry = ''>
+		<cfset var exists = false>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT asset_id_r 
+		FROM ct_aliases
+		WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.asset_id_r#">
+		AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id_r#">
+		</cfquery>
+		<!--- If exists set to true --->
+		<cfif qry.recordcount NEQ 0>
+			<cfset exists = true>
+		</cfif>
+		<!--- Return --->
+		<cfreturn exists />
+	</cffunction>
+
+	<!--- Move alias --->
+	<cffunction name="moveAlias" output="false">
+		<cfargument name="asset_id_r" type="string" required="true">
+		<cfargument name="new_folder_id_r" type="string" required="true">
+		<cfargument name="pre_folder_id_r" type="string" required="true">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE ct_aliases
+		SET folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.new_folder_id_r#">
+		WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.asset_id_r#">
+		AND folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pre_folder_id_r#">
+		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("audios")>
+	</cffunction>
+
 </cfcomponent>
