@@ -1003,6 +1003,15 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Make sure there is no ' in the label text --->
 		<cfset var thelabel = replace(arguments.thestruct.label_text,"'","","all")>
+		<!--- Check if parent label exists. If not then add to root --->
+		<cfquery datasource="#application.razuna.datasource#" name="parentcheck">
+			SELECT 1 FROM  #session.hostdbprefix#labels WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
+		</cfquery>
+
+		<cfif parentcheck.recordcount EQ 0>
+			<cfset arguments.thestruct.label_parent = 0>
+		</cfif>
+
 		<!--- If label_id EQ 0 --->
 		<cfif arguments.thestruct.label_id EQ 0>
 			<cfset arguments.thestruct.label_id = createuuid("")>
@@ -1078,7 +1087,7 @@
 		<!--- Set into list --->
 		<cfset llist = qry.label_text & "/" & arguments.llist> 
 		<!--- Call this again if this label_id_r is not empty --->
-		<cfif qry.label_id_r NEQ 0>
+		<cfif qry.recordcount NEQ 0 AND qry.label_id_r NEQ 0>
 			<!--- Set into list --->
 			<cfinvoke method="label_get_path" label_id="#qry.label_id_r#" llist="#llist#" returnVariable="llist" />	
 		</cfif>
