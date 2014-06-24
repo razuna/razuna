@@ -845,9 +845,13 @@
 					    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
 					    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
 					    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult 
+						WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+							<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
+								AND permfolder IS NOT NULL
+							</cfif>
+							AND kind IS NOT NULL
 							<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
-									WHERE 
-									RowNum >
+									AND RowNum >
 										CASE WHEN 
 											(
 												SELECT count(RowNum) FROM myresult 
@@ -1697,6 +1701,7 @@
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND permfolder IS NOT NULL
 					</cfif>
+					AND kind IS NOT NULL
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 							LIMIT #mysqloffset#,#session.rowmaxpage#
@@ -1711,9 +1716,13 @@
 					    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
 					    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
 					    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult 
+					    	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+							<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
+								AND permfolder IS NOT NULL
+							</cfif>
+							AND kind IS NOT NULL
 							<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
-									WHERE 
-									RowNum >
+									AND RowNum >
 										CASE WHEN 
 											(
 												SELECT count(RowNum) FROM myresult 
