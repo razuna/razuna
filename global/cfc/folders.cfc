@@ -3510,7 +3510,10 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
-
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		UNION ALL
 		SELECT v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
 		v.vid_extension as ext, v.vid_name_org as filename_org, 'vid' as kind, v.is_available,
@@ -3560,7 +3563,10 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
-
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		UNION ALL
 		SELECT a.aud_id as id, a.aud_name as filename, a.in_trash,a.folder_id_r, 
 		a.aud_extension as ext, a.aud_name_org as filename_org, 'aud' as kind, a.is_available,
@@ -3610,7 +3616,10 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
-
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		UNION ALL
 		SELECT f.file_id as id, f.file_name as filename,f.in_trash, f.folder_id_r, 
 		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
@@ -3648,7 +3657,10 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
-
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		<!--- MSSQL --->
 		<cfif application.razuna.thedatabase EQ "mssql">
 			<cfif !structKeyExists(arguments.thestruct,'widget_style') OR arguments.thestruct.widget_style NEQ 's'>
@@ -3673,14 +3685,6 @@
 			</cfif>
 		</cfif>
 	</cfquery>
-	</cfif>
-	<!--- If coming from custom view and the session.customfileid is not empty --->
-	<cfif session.customfileid NEQ "">
-		<cfquery dbtype="query" name="qry">
-		SELECT *
-		FROM qry
-		WHERE id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
-		</cfquery>
 	</cfif>
 	<!--- Only get the labels if in the combinded view --->
 	<cfif session.view EQ "combined">
