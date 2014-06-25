@@ -178,7 +178,7 @@
 			<!--- Alias db --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-					CREATE TABLE raz1_alias 
+					CREATE TABLE ct_aliases 
 					(	
 						asset_id_r		#thevarchar#(100) DEFAULT NULL,
 						folder_id_r		#thevarchar#(100) DEFAULT NULL,
