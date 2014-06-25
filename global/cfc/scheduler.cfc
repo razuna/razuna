@@ -954,7 +954,8 @@
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id 
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notificaiton to groups with write and full access permissions --->
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION
@@ -964,7 +965,8 @@
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id 
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notificaiton to groups with write and full access permissions --->
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
 	UNION
@@ -974,7 +976,8 @@
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notificaiton to groups with write and full access permissions --->
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
 	UNION
@@ -984,7 +987,8 @@
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id 
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notificaiton to groups with write and full access permissions --->
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=fi.host_id AND label_id_r = '0'))
 	</cfquery>
@@ -1021,7 +1025,7 @@
 				<cfset var col = 'file_id'>
 			</cfif>
 			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_#tbl# SET is_indexed = 0
+			UPDATE raz1_#tbl# SET is_indexed = '0'
 			WHERE #col# =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
 			</cfquery>
 		</cfif>
@@ -1049,16 +1053,16 @@
 		</cfquery>
 		<!--- Update indexing statuses --->
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_images SET is_indexed = 0 WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_images SET is_indexed = '0' WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_audios SET is_indexed = 0 WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_audios SET is_indexed = '0' WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_videos SET is_indexed = 0 WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_videos SET is_indexed = '0' WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_files SET is_indexed = 0 WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_files SET is_indexed = '0' WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 	</cfif>
 	<!--- Reset labels cache if labels have been modified--->
