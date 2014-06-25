@@ -151,6 +151,18 @@
 	<cfelse>
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
+		<!--- For aliases --->
+		<cfset var alias = '0,'>
+		<!--- Query Aliases --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#vidaliases */ asset_id_r, type
+		FROM ct_aliases
+		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="vid">
+		</cfquery>
+		<cfif qry_aliases.recordcount NEQ 0>
+			<cfset var alias = valueList(qry_aliases.asset_id_r)>
+		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -174,6 +186,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
+		OR v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -2050,35 +2063,43 @@
 			<cfset arguments.thestruct.storage = application.razuna.storage>
 			<!--- Move --->
 			<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
-			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.qryvid.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
-				<!--- Update DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#videos
-				SET 
-				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
-					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
-					<!--- Execute workflow --->
-					<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
-					<cfset arguments.thestruct.file_name = arguments.thestruct.qryvid.vid_filename>
-					<cfset arguments.thestruct.thefiletype = "vid">
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfset arguments.thestruct.folder_action = true>
-					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-				<!--- </cfthread> --->
-				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id,folderid='#arguments.thestruct.folder_id#')>
+			<!--- Check if this is an alias --->
+			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.vid_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
+			<!--- If this is an alias --->
+			<cfif qry_alias>
+				<!--- Move alias --->
+				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.vid_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#" />
+			<cfelse>
+				<!--- Ignore if the folder id is the same --->
+				<cfif arguments.thestruct.qryvid.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
+					<!--- Update DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#videos
+					SET 
+					folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+						<!--- Update Dates --->
+						<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
+						<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+						<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
+						<!--- Execute workflow --->
+						<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
+						<cfset arguments.thestruct.file_name = arguments.thestruct.qryvid.vid_filename>
+						<cfset arguments.thestruct.thefiletype = "vid">
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfset arguments.thestruct.folder_action = true>
+						<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+					<!--- </cfthread> --->
+					<!--- Log --->
+					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id,folderid='#arguments.thestruct.folder_id#')>
+				</cfif>
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function videos.move">
