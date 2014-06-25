@@ -173,29 +173,49 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
+		<!--- If less then 28 (1.6.6) --->
+		<cfif updatenumber.opt_value LT 28>
+			<!--- Alias db --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					CREATE TABLE raz1_alias 
+					(	
+						asset_id_r		#thevarchar#(100) DEFAULT NULL,
+						folder_id_r		#thevarchar#(100) DEFAULT NULL,
+						type			#thevarchar#(10) DEFAULT NULL,
+						rec_uuid		#thevarchar#(100) DEFAULT NULL,
+						KEY asset_id_r (asset_id_r),
+						KEY folder_id_r (folder_id_r)
+					)
+					#tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+		</cfif>
+
 		<!--- If update number is lower then 26 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 26>
 			
 			<cftry>
-			<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
-			<cfif application.razuna.thedatabase EQ "mssql">
-				<cfquery datasource="#application.razuna.datasource#">
-				CREATE UNIQUE NONCLUSTERED INDEX [UNIQUE_HOSTID_LANGID] ON raz1_languages
-				(
-				[lang_id] ASC,
-				[HOST_ID] ASC
-				)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-				</cfquery>
-			<cfelseif application.razuna.thedatabase EQ "mysql">
-				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE raz1_languages ADD UNIQUE INDEX  UNIQUE_HOSTID_LANGID (host_id, lang_id)
-				</cfquery>
-			<cfelseif application.razuna.thedatabase EQ "h2">
-				<cfquery  datasource="#application.razuna.datasource#">
-				ALTER TABLE raz1_languages ADD CONSTRAINT UNIQUE_HOSTID_LANGID UNIQUE(host_id,lang_id)
-				</cfquery>
-			</cfif>
-			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
+				<cfif application.razuna.thedatabase EQ "mssql">
+					<cfquery datasource="#application.razuna.datasource#">
+					CREATE UNIQUE NONCLUSTERED INDEX [UNIQUE_HOSTID_LANGID] ON raz1_languages
+					(
+					[lang_id] ASC,
+					[HOST_ID] ASC
+					)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+					</cfquery>
+				<cfelseif application.razuna.thedatabase EQ "mysql">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_languages ADD UNIQUE INDEX  UNIQUE_HOSTID_LANGID (host_id, lang_id)
+					</cfquery>
+				<cfelseif application.razuna.thedatabase EQ "h2">
+					<cfquery  datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_languages ADD CONSTRAINT UNIQUE_HOSTID_LANGID UNIQUE(host_id,lang_id)
+					</cfquery>
+				</cfif>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<!--- Set global vars for mysql --->
 			<cfif application.razuna.thedatabase EQ "mysql">
