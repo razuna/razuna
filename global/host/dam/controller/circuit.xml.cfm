@@ -9348,6 +9348,7 @@
 		<xfa name="detailimg" value="c.images_detail" />
 		<xfa name="detailvid" value="c.videos_detail" />
 		<xfa name="detailaud" value="c.audios_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Param -->
 		<set name="kind" value="all" />
 		<set name="url.kind" value="all" />
@@ -9368,8 +9369,14 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="qry_labels_text" />
 		<!-- CFC: count how many label types there are -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Get the assets -->
 		<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="qry_labels_assets">
+			<argument name="thestruct" value="#attributes#" />
 			<argument name="label_id" value="#attributes.label_id#" />
 			<argument name="label_kind" value="#attributes.label_kind#" />
 			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />

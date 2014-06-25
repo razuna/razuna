@@ -659,6 +659,7 @@
 	<cffunction name="labels_assets" output="false" access="public">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="label_kind" type="string" required="true">
+		<cfargument name="thestruct" type="struct" required="false">
 		<cfargument name="rowmaxpage" type="string" required="false" default="25">
 		<cfargument name="offset" type="string" required="false" default="0">
 		<cfargument name="fromapi" required="false" default="false">
@@ -718,12 +719,37 @@
 			 i.img_id id, i.img_filename filename, 
 			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url, 'R' as permfolder, i.expiry_date
-			FROM #session.hostdbprefix#images i, ct_labels ct
+			i.path_to_asset, i.cloud_url, 'R' as permfolder, i.expiry_date, f.folder_name
+			<!--- custom metadata fields to show --->
+			<cfif  arguments.thestruct.cs.images_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">i
+					<cfelse>x
+					</cfif>.#m#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.files_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
+			AND i.folder_id_r = f.folder_id
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND i.img_id NOT IN (
 				SELECT TOP #min# mssql_i.img_id
@@ -757,12 +783,37 @@
 				f.file_id id, f.file_name filename, f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url, 'R' as permfolder, f.expiry_date
-			FROM #session.hostdbprefix#files f, ct_labels ct
+			f.path_to_asset, f.cloud_url, 'R' as permfolder, f.expiry_date, fo.folder_name
+			<!--- custom metadata fields to show --->
+			<cfif arguments.thestruct.cs.images_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.files_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+					,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
+					<cfelse>x
+					</cfif>.#m#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			FROM ct_labels ct, #session.hostdbprefix#folders fo, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
+			AND f.folder_id_r = fo.folder_id
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND f.file_id NOT IN (
 				SELECT TOP #min# mssql_f.file_id
@@ -796,12 +847,36 @@
 			v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url, 'R' as permfolder, v.expiry_date
-			FROM #session.hostdbprefix#videos v, ct_labels ct
+			v.path_to_asset, v.cloud_url, 'R' as permfolder, v.expiry_date, f.folder_name
+			<!--- custom metadata fields to show --->
+			<cfif arguments.thestruct.cs.images_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+					<cfelse>v
+					</cfif>.#m#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.files_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = v.vid_id
 			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
+			AND v.folder_id_r = f.folder_id
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND v.vid_id NOT IN (
 					SELECT TOP #min# mssql_v.vid_id
@@ -835,12 +910,36 @@
 			a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url, 'R' as permfolder, a.expiry_date
-			FROM #session.hostdbprefix#audios a, ct_labels ct
+			a.path_to_asset, a.cloud_url, 'R' as permfolder, a.expiry_date, f.folder_name
+			<!--- custom metadata fields to show --->
+			<cfif arguments.thestruct.cs.images_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.files_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+					,null AS #listlast(m," ")#
+				</cfloop>
+			</cfif>
+			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
+					<cfelse>a
+					</cfif>.#m#
+				</cfloop>
+			</cfif>
+			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
 			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
+			AND a.folder_id_r = f.folder_id
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND a.aud_id NOT IN (
 					SELECT TOP #min# mssql_a.aud_id
