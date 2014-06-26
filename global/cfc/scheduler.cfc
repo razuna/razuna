@@ -704,6 +704,32 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
+	<!--- Only run this code between 1am - 2am. This will give people time to correct any mistakes they migth have made before we delete the entries.  --->
+	<cfif hour(now()) EQ '1'>
+		<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
+		<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
+			SELECT  f.folder_id,u.user_id
+			FROM #session.hostdbprefix#folders f 
+			INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
+			INNER JOIN users u ON u.user_id = fs.user_id
+			WHERE
+			<!--- User is not folder_owner --->
+			f.folder_owner <>  fs.user_id 
+			 <!--- Folder is not shared with everybody --->
+			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0') 
+			<!--- User is not part of group that has access to folder --->
+			AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r) 
+		</cfquery>
+		<cfloop query="getusers_wo_access">
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE
+			FROM #session.hostdbprefix#folder_subscribe
+			WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
+			AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+		</cfloop>
+	</cfif>
+
 	<!--- Get User subscribed folders --->
 	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
 		SELECT fs.*, fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs

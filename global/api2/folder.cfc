@@ -828,6 +828,8 @@
 						AND host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
 						</cfquery>
 					</cfif>
+					<!--- Check group 'folder_subscribe' setting and add all users in this group to receive folder notifications if set to true --->
+					<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#f[2]#'>
 				</cfloop>
 				
 				<!--- Flush cache --->

@@ -32,16 +32,21 @@
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</strong></td>
+				<td ><strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong></td>
 				<cfif prefs.set2_upc_enabled>
-				<td ><strong>UPC Size</strong></td>
-				<td ><strong>Create UPC folder structure while downloading</strong></td>
+				<td ><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_size_text")#</strong></td>
+				<td ><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_folder_text")#</strong></td>
 				</cfif>
-				<td >	
+				<td >
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" width="20%">
 					<input type="text" size="40" name="grpnew" id="grpnew" /> 
+				</td>
+				<td width="27%" colspan="">
+					<input type="radio" name="folder_subscribe" value="true" > #myFusebox.getApplicationData().defaults.trans("yes")# 
+					<input type="radio" name="folder_subscribe" value="false" checked="true"> #myFusebox.getApplicationData().defaults.trans("no")#
 				</td>
 				<!---RAZ-2824 :: UPC folder structure download option enabled--->
 				<cfif prefs.set2_upc_enabled>

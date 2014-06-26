@@ -2395,6 +2395,8 @@
 				WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Check group 'folder_subscribe' setting and add users in group to receive folder notifications if set to true --->
+				<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#grpid#'>
 			</cfif>
 		</cfloop>
 		<!--- If the user want this folder to himself then we set appropriate --->
@@ -7212,12 +7214,9 @@
 				fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
 				mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
 				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				<cfif structKeyExists(arguments.thestruct,"asset_keywords")>
+				auto_entry  = 'false',
 				asset_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
-				</cfif>
-				<cfif structKeyExists(arguments.thestruct,"asset_description")>
 				asset_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
-				</cfif>
 				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
 				AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 			</cfquery>

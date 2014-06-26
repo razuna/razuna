@@ -77,7 +77,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#variables.dsn#" name="localquery">
-	SELECT grp_name, upc_size, upc_folder_format
+	SELECT grp_name, upc_size, upc_folder_format, folder_subscribe
 	FROM groups
 	WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -131,14 +131,15 @@
 	<cfset var newgrpid = createuuid()>
 	<cfquery datasource="#variables.dsn#">
 	INSERT INTO	groups
-	(grp_id, grp_name, grp_host_id, grp_mod_id, upc_size, upc_folder_format)
+	(grp_id, grp_name, grp_host_id, grp_mod_id, upc_size, upc_folder_format, folder_subscribe)
 	VALUES(
 	<cfqueryparam value="#newgrpid#" cfsqltype="CF_SQL_VARCHAR">,
 	<cfqueryparam value="#arguments.thestruct.newgrp#" cfsqltype="cf_sql_varchar">,
 	<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
 	<cfqueryparam value="#arguments.thestruct.modules_dam_id#" cfsqltype="cf_sql_numeric">,
 	<cfqueryparam value="#arguments.thestruct.sizeofupc#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam value="#arguments.thestruct.upc_folder_structure#" cfsqltype="cf_sql_varchar">
+	<cfqueryparam value="#arguments.thestruct.upc_folder_structure#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#arguments.thestruct.folder_subscribe#" cfsqltype="cf_sql_varchar">
 	)
 	</cfquery>
 	<cfreturn newgrpid>
@@ -148,18 +149,68 @@
 <!--- Update one record --->
 <cffunction hint="Update one record" name="update" returntype="void">
 	<cfargument name="thestruct" type="Struct">
+	<cfquery datasource="#variables.dsn#" name="getfolder_subscribe_bef_change">
+		SELECT folder_subscribe FROM groups WHERE  grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
 	<cfquery datasource="#variables.dsn#">
 		UPDATE groups
 		SET	grp_name = <cfqueryparam value="#arguments.thestruct.grpname#" cfsqltype="cf_sql_varchar">
+			,folder_subscribe = <cfqueryparam value="#arguments.thestruct.folder_subscribe#" cfsqltype="cf_sql_varchar">
 		<cfif structKeyExists(arguments.thestruct,'sizeofupc') AND arguments.thestruct.sizeofupc NEQ 0>
 			,upc_size = <cfqueryparam value="#arguments.thestruct.sizeofupc#" cfsqltype="CF_SQL_VARCHAR">
 			,upc_folder_format = <cfqueryparam value="#arguments.thestruct.upc_folder_structure#" cfsqltype="cf_sql_varchar">
 		</cfif>
 		WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
+	<!--- If folder subscribe setting for group is being changed to true then add all users in the group to get folder notifications --->
+	<cfif arguments.thestruct.folder_subscribe EQ 'true' AND getfolder_subscribe_bef_change.folder_subscribe EQ 'false'>
+		<cfinvoke method="add_grp_users2notify" group_id='#arguments.thestruct.grp_id#'>
+	</cfif>
 	<cfreturn />
 </cffunction>
-
+<!--- ------------------------------------------------------------------------------------- --->
+<cffunction hint="Add users of a group to receive folder notifications" name="add_grp_users2notify" returntype="void">
+	<cfargument name="group_id" type="string" required="true">
+	<cfargument name="user_id" type="string" required="false" hint="optional userid to pass in">
+	
+	<!--- Check if folder_subscribe for group is set to true --->
+	<cfquery datasource="#application.razuna.datasource#" name="checkgrpsettings">
+		SELECT folder_subscribe FROM groups WHERE  grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
+	<!--- If folder_subscribe is set to true for group then add all users in group to receive folder notifications --->
+	<cfif checkgrpsettings.folder_subscribe EQ 'true'>
+		<cfquery datasource="#application.razuna.datasource#" name="getusers_fs">
+			SELECT fg.folder_id_r, cu.ct_g_u_user_id user_id FROM ct_groups_users cu, #session.hostdbprefix#folders_groups fg, #session.hostdbprefix#folders f
+			WHERE cu.ct_g_u_grp_id = fg.grp_id_r
+			AND f.folder_id = fg.folder_id_r
+			AND cu.ct_g_u_grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND fg.grp_id_r <>'0'
+			AND (f.folder_is_collection <>'T' OR f.folder_is_collection is null OR f.folder_is_collection ='')
+			AND f.in_trash ='F'
+			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folder_subscribe fs WHERE fs.folder_id = fg.folder_id_r AND fs.user_id = cu.ct_g_u_user_id)
+			<cfif isDefined("arguments.user_id")>
+				AND cu.ct_g_u_user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
+			</cfif>
+		</cfquery>
+		<cfloop query = "getusers_fs">
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folder_subscribe
+				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time, asset_keywords, asset_description, auto_entry)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#getusers_fs.folder_id_r#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#getusers_fs.user_id#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="1">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+				)
+			</cfquery>
+		</cfloop>
+	</cfif>
+</cffunction>
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Delete one record --->
 <cffunction hint="Delete one record" name="remove" returntype="void">
