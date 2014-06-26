@@ -7302,7 +7302,9 @@
 	<!--- Create directory --->
 	<cfset var basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
-	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<cfif !directoryexists("#arguments.thestruct.newpath#")>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	</cfif>
 	<!--- Get Parent folder names --->
 	<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.folder_id#" returnvariable="crumbs" />
 	<cfset parentfoldersname = ''>
@@ -7310,7 +7312,9 @@
 		<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 	</cfloop>
 	<!--- Create Directory as per folder structure in Razuna --->
-	<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	<cfif !directoryexists("#arguments.thestruct.newpath##parentfoldersname#")>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	</cfif>
 	<!--- Create folders according to selection and download --->
 	<!--- Thumbnails --->
 	<cfif arguments.thestruct.download_thumbnails>
@@ -7326,7 +7330,9 @@
 		<!--- Feedback --->
 		<cfoutput>Grabbing all the originals<br /></cfoutput>
 		<cfflush>
-		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		<cfif !directoryexists("#arguments.thestruct.newpath#/originals")>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		</cfif>
 		<!--- Download originals --->
 		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
@@ -7335,7 +7341,9 @@
 		<!--- Feedback --->
 		<cfoutput>Grabbing all the renditions<br /></cfoutput>
 		<cfflush>
-		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		<cfif !directoryexists("#arguments.thestruct.newpath#/renditions")>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		</cfif>
 		<!--- Download renditions --->
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 		<!--- Download additional renditions --->
