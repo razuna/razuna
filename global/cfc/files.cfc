@@ -201,6 +201,18 @@
 		<cfelse>
 			<!--- MySQL Offset --->
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
+			<!--- For aliases --->
+			<cfset var alias = '0,'>
+			<!--- Query Aliases --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+			FROM ct_aliases
+			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+			AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">
+			</cfquery>
+			<cfif qry_aliases.recordcount NEQ 0>
+				<cfset var alias = valueList(qry_aliases.asset_id_r)>
+			</cfif>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 			<!--- MSSQL --->
@@ -246,6 +258,7 @@
 			<cfif arguments.thestruct.folderaccess EQ 'R'>
 				AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 			</cfif>
+			OR f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 			<!--- MySQL --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				ORDER BY #sortby#
@@ -1276,34 +1289,42 @@
 			<cfset arguments.thestruct.qrydoc = "">
 			<!--- Get file details --->
 			<cfinvoke method="filedetail" theid="#arguments.thestruct.doc_id#" thecolumn="file_name, folder_id_r, file_name_org filenameorg, lucene_key, link_kind, path_to_asset" returnvariable="arguments.thestruct.qrydoc">
-			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.qrydoc.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
-				<!--- Update DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#files
-				SET 
-				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
-					<!--- Execute workflow --->
-					<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
-					<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
-					<cfset arguments.thestruct.thefiletype = "doc">
-					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
-					<cfset arguments.thestruct.folder_action = false>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfset arguments.thestruct.folder_action = true>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-				<!--- </cfthread> --->
-				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
+			<!--- Check if this is an alias --->
+			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.doc_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
+			<!--- If this is an alias --->
+			<cfif qry_alias>
+				<!--- Move alias --->
+				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.doc_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#" />
+			<cfelse>
+				<!--- Ignore if the folder id is the same --->
+				<cfif arguments.thestruct.qrydoc.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
+					<!--- Update DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files
+					SET 
+					folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+						<!--- Update Dates --->
+						<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
+						<!--- Execute workflow --->
+						<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
+						<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
+						<cfset arguments.thestruct.thefiletype = "doc">
+						<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+						<cfset arguments.thestruct.folder_action = false>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfset arguments.thestruct.folder_action = true>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+					<!--- </cfthread> --->
+					<!--- Log --->
+					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
+				</cfif>
 			</cfif>
 			<!--- Flush Cache --->
 			<cfset resetcachetoken("folders")>

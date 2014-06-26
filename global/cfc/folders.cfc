@@ -3446,6 +3446,28 @@
 	<cfelse>
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
+		<!--- For aliases --->
+		<cfset var alias_img = '0,'>
+		<cfset var alias_vid = '0,'>
+		<cfset var alias_aud = '0,'>
+		<cfset var alias_doc = '0,'>
+		<!--- Query Aliases --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+		FROM ct_aliases
+		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfquery>
+		<cfloop query="qry_aliases">
+			<cfif type EQ "img">
+				<cfset var alias_img = alias_img & asset_id_r & ','>
+			<cfelseif type EQ "vid">
+				<cfset var alias_vid = alias_vid & asset_id_r & ','>
+			<cfelseif type EQ "aud">
+				<cfset var alias_aud = alias_aud & asset_id_r & ','>
+			<cfelseif type EQ "doc">
+				<cfset var alias_doc = alias_doc & asset_id_r & ','>
+			</cfif>
+		</cfloop>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
@@ -3502,7 +3524,9 @@
 				,null AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+		FROM #session.hostdbprefix#images i 
+		LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 
+		LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -3560,6 +3584,11 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
+		OR v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_vid#" list="true">)
 
 		UNION ALL
 		SELECT a.aud_id as id, a.aud_name as filename, a.in_trash,a.folder_id_r, 
@@ -3610,6 +3639,11 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
+		OR a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_aud#" list="true">)
 
 		UNION ALL
 		SELECT f.file_id as id, f.file_name as filename,f.in_trash, f.folder_id_r, 
@@ -3648,6 +3682,11 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
+		OR f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_doc#" list="true">)
 
 		<!--- MSSQL --->
 		<cfif application.razuna.thedatabase EQ "mssql">
@@ -4145,6 +4184,15 @@
 					<!--- From Smart Folder --->
 					<cfelseif session.type EQ "sf_download">
 						<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;" style="white-space:normal;">
+					<!--- Alias --->
+					<cfelseif session.type EQ "alias">
+						<cfif session.thefolderorg NEQ folder_id>
+							<cfif arguments.thestruct.kind EQ "search">
+								<a href="##" onclick="$('##div_choosefolder_status').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select the folder in the list above!<br />You can close this window.');});">
+							<cfelse>
+								<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select the folder in the list above!<br />You can close this window.');});">
+							</cfif>
+						</cfif>
 					</cfif>
 					<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif>
 					<cfif session.thefolderorg NEQ folder_id></a></cfif>

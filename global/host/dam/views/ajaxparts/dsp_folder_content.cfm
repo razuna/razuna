@@ -165,7 +165,6 @@
 									</cfif>
 									</div>
 								</a>
-								
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 								</div>
@@ -181,7 +180,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
@@ -211,6 +215,12 @@
 										</cfif>
 										<br />
 									</cfloop>
+								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
@@ -282,7 +292,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
@@ -314,6 +329,12 @@
 										</cfif>
 										<br />
 									</cfloop>
+								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
@@ -368,7 +389,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
@@ -400,6 +426,12 @@
 										</cfif>
 										<br />
 									</cfloop>
+								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
@@ -474,7 +506,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
@@ -506,6 +543,12 @@
 										</cfif>
 										<br />
 									</cfloop>
+								</cfif>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
 								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
@@ -599,10 +642,21 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -697,10 +751,21 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -782,10 +847,21 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>									
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>									
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -883,10 +959,21 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
+							<cfif attributes.folder_id NEQ folder_id_r>
+								<div style="float:right">
+									<em>(Alias)</em>
+								</div>
+								<div style="clear:both;"></div>
+							</cfif>
 						</td>
 						<!--- Keywords, etc --->
 						<td valign="top" width="100%">
@@ -975,6 +1062,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1000,7 +1093,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
@@ -1056,6 +1154,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1081,7 +1185,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
@@ -1124,6 +1233,12 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1149,7 +1264,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
@@ -1208,6 +1328,12 @@
 										</cfif>
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br />
@@ -1233,7 +1359,12 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!--- If alias the remove is different --->
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>

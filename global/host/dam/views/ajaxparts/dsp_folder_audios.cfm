@@ -100,7 +100,11 @@
 											</cfif>
 										</div>
 										<cfif attributes.folderaccess NEQ "R">
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#aud_id#&loaddiv=audios&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</div>
 									<div style="clear:left;"></div>
@@ -122,6 +126,12 @@
 											</cfif>
 											<br />
 										</cfloop>
+									</cfif>
+									<cfif attributes.folder_id NEQ folder_id_r>
+										<div style="float:right">
+											<em>(Alias)</em>
+										</div>
+										<div style="clear:both;"></div>
 									</cfif>
 								<cfelse>
 									The upload of "#aud_name#" is still in progress!
@@ -175,6 +185,12 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#aud_name#" is still in progress!
 								<br /><br>
@@ -199,7 +215,11 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#aud_id#&loaddiv=audios&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>
@@ -274,6 +294,12 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
 								</a>
+								<cfif attributes.folder_id NEQ folder_id_r>
+									<div style="float:right">
+										<em>(Alias)</em>
+									</div>
+									<div style="clear:both;"></div>
+								</cfif>
 							<cfelse>
 								The upload of "#aud_name#" is still in progress!
 								<br />
@@ -299,7 +325,11 @@
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif attributes.folder_id NEQ folder_id_r>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#aud_id#&loaddiv=audios&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfelse>
+											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										</cfif>
 									</cfif>
 								</div>
 							</div>

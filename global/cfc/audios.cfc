@@ -139,6 +139,18 @@
 	<cfelse>
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
+		<!--- For aliases --->
+		<cfset var alias = '0,'>
+		<!--- Query Aliases --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+		FROM ct_aliases
+		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">
+		</cfquery>
+		<cfif qry_aliases.recordcount NEQ 0>
+			<cfset var alias = valueList(qry_aliases.asset_id_r)>
+		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
@@ -164,6 +176,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
+		OR a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
@@ -929,36 +942,44 @@
 			<cfset arguments.thestruct.file_id = arguments.thestruct.aud_id>
 			<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="qrydetails">
 			<cfset arguments.thestruct.qryaud = qrydetails.detail>
-			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.qryaud.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
-				<!--- Update DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#audios
-				SET 
-				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
-				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.aud_id#" />
-					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
-					<!--- Execute workflow --->
-					<cfset arguments.thestruct.fileid = arguments.thestruct.aud_id>
-					<cfset arguments.thestruct.file_name = arguments.thestruct.qryaud.aud_name>
-					<cfset arguments.thestruct.thefiletype = "aud">
-					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
-					<cfset arguments.thestruct.folder_action = false>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfset arguments.thestruct.folder_action = true>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-				<!--- </cfthread> --->
-				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id,folderid='#arguments.thestruct.folder_id#')>
+			<!--- Check if this is an alias --->
+			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.aud_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
+			<!--- If this is an alias --->
+			<cfif qry_alias>
+				<!--- Move alias --->
+				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.aud_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#" />
+			<cfelse>
+				<!--- Ignore if the folder id is the same --->
+				<cfif arguments.thestruct.qryaud.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
+					<!--- Update DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#audios
+					SET 
+					folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+						<!--- Update Dates --->
+						<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.aud_id#" />
+						<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+						<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
+						<!--- Execute workflow --->
+						<cfset arguments.thestruct.fileid = arguments.thestruct.aud_id>
+						<cfset arguments.thestruct.file_name = arguments.thestruct.qryaud.aud_name>
+						<cfset arguments.thestruct.thefiletype = "aud">
+						<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+						<cfset arguments.thestruct.folder_action = false>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfset arguments.thestruct.folder_action = true>
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+					<!--- </cfthread> --->
+					<!--- Log --->
+					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id,folderid='#arguments.thestruct.folder_id#')>
+				</cfif>
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error while moving audio in function audios.move">

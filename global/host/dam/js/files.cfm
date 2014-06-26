@@ -61,6 +61,9 @@ function batchaction(theform, what, kind, folder_id, theaction){
 	// Get to work
 	// alert(theaction);
 	switch (theaction){
+		case "alias":
+			showwindow('index.cfm?fa=c.move_file&type=alias&thetype=' + what + '&folder_id=' + folder_id + '&kind=' + kind, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("alias_create")#</cfoutput>', 550, 1);
+			break;
 		case "move":
 			showwindow('index.cfm?fa=c.move_file&type=movefile&thetype=' + what + '&folder_id=' + folder_id + '&kind=' + kind, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("move_file")#</cfoutput>', 550, 1);
 			break;
