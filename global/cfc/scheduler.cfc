@@ -621,6 +621,10 @@
 			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
 		<!--- FTP --->
 		<cfelseif doit.qry_detail.sched_method EQ "ftp">
+			<!-- Get AWS Bucket -->
+			<cfinvoke component="global.cfc.settings" method="prefs_storage" returnvariable="qry_storage" />
+			<!-- Set bucket -->
+			<cfset x.awsbucket  = qry_storage.set2_aws_bucket />
 			<!-- Params -->
 			<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
 			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
