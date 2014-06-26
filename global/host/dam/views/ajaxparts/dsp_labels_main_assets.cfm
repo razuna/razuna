@@ -25,6 +25,9 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+	<form name="label_form" id="label_form">
+	<input type="hidden" id="searchlistids" value="#valuelist(qry_labels_assets.fileidwithtype)#">
+	
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<th>#myFusebox.getApplicationData().defaults.trans("label")#: #qry_labels_text#</th>
@@ -42,7 +45,7 @@
 					<!--- Images --->
 					<cfif kind EQ "img">
 						<cfif permfolder NEQ "">
-							<div class="assetbox">
+							<div class="assetbox" id="#fileidwithtype#">
 								<cfif is_available>
 									<script type="text/javascript">
 									$(function() {
@@ -83,7 +86,7 @@
 										</div>
 									</a>
 									<div style="float:left;padding:3px 0px 3px 0px;">
-										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
+										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('label_form');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 									</div>	
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_#id#" style="display:inline">
@@ -98,7 +101,7 @@
 												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											<cfif permfolder NEQ "R">
-												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="storeone('#id#-img');showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 											</cfif>
 										</div>
 									</div>
@@ -309,6 +312,7 @@
 		</tr>
 	</table>
 
+	</form>
 
 	<script type="text/javascript">
 		function goToFolder(folderid) {
