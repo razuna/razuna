@@ -72,7 +72,7 @@
 						<!--- Download Folder --->
 						<cfif cs.icon_download_folder>
 							<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=labels&label_id=#attributes.label_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
-								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">Download assets with this label</div>
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">Download all assets with this label</div>
 							</a>
 						</cfif>
 					</div>
@@ -203,7 +203,7 @@
 		</cfif>
 		<!--- Export Metadata --->
 		<cfif cs.icon_metadata_export>
-			<a href="##" onclick="batchaction('label_form','all','#kind#','#attributes.folder_id#','exportmeta');return false;">
+			<a href="##" onclick="batchaction('label_form','labels','#kind#','#attributes.label_id#','exportmeta');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
 				</div>

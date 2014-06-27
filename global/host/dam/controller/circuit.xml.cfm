@@ -9532,11 +9532,16 @@
 		<!-- If label we do not need to query everything -->
 		<if condition="attributes.folder_id EQ 'labels'">
 			<true>
+				<!-- CFC: get label text -->
+				<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="attributes.qry_labels_text" />
 				<!-- Get the assets -->
 				<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="attributes.qry_files">
 					<argument name="label_id" value="#attributes.label_id#" />
 					<argument name="label_kind" value="assets" />
+					<argument name="thestruct" value="#attributes#" />
 				</invoke>
+				<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
 				<!-- Invoke export -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure_flat(attributes)" />
 			</true>
@@ -9563,7 +9568,7 @@
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
 					</true>
 					<false>
-					<!-- Action: Export Metadata -->
+						<!-- Action: Export Metadata -->
 						<do action="meta_export_do" />
 						<!-- RAZ-2901 CFC: Show the progress download -->
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />

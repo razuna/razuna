@@ -719,9 +719,9 @@
 			 i.img_id id, i.img_filename filename, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as fileidwithtype,
 			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url, 'R' as permfolder, i.expiry_date, f.folder_name
+			i.path_to_asset, i.cloud_url, i.cloud_url_org, 'R' as permfolder, i.expiry_date, f.folder_name
 			<!--- custom metadata fields to show --->
-			<cfif  arguments.thestruct.cs.images_metadata NEQ "">
+			<cfif arguments.thestruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
 					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">i
@@ -784,7 +784,7 @@
 				f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url, 'R' as permfolder, f.expiry_date, fo.folder_name
+			f.path_to_asset, f.cloud_url, f.cloud_url_org, 'R' as permfolder, f.expiry_date, fo.folder_name
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -849,7 +849,7 @@
 			v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url, 'R' as permfolder, v.expiry_date, f.folder_name
+			v.path_to_asset, v.cloud_url, v.cloud_url_org, 'R' as permfolder, v.expiry_date, f.folder_name
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -913,7 +913,7 @@
 			a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url, 'R' as permfolder, a.expiry_date, f.folder_name
+			a.path_to_asset, a.cloud_url, a.cloud_url_org, 'R' as permfolder, a.expiry_date, f.folder_name
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
