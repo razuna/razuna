@@ -120,7 +120,7 @@
 			// Load existing fields
 			$('##thefields').load('#myself#c.custom_fields_existing');
 			// Activate Chosen
-			$(".chzn-select").chosen();
+			$(".chzn-select").chosen({search_contains: true});
 		</script>	
 	</cfif>
 </cfoutput>

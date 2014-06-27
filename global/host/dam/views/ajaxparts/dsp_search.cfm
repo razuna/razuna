@@ -258,7 +258,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		// Activate Chosen
-		$(".chzn-select").chosen();
+		$(".chzn-select").chosen({search_contains: true});
 		// Load tabs
 		jqtabs("search_tab");
 		// Search submit

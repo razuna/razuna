@@ -404,7 +404,7 @@
 			}
 			<cfif session.view EQ "combined">
 				// Activate Chosen
-				$(".chzn-select").chosen();
+				$(".chzn-select").chosen({search_contains: true});
 			</cfif>
 			$(document).ready(function() {
 				$("###kind#form ##selectme").selectable({

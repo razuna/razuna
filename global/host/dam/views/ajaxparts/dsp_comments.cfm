@@ -39,6 +39,6 @@
 <script language="JavaScript" type="text/javascript">
 	loadcontent('comlist','#myself##xfa.comlist#&file_id=#attributes.file_id#&type=#attributes.type#&folder_id=#attributes.folder_id#');
 	// Activate Chosen
-	/* $(".chzn-select").chosen(); */
+	/* $(".chzn-select").chosen({search_contains: true}); */
 </script>
 </cfoutput>

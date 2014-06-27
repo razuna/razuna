@@ -66,7 +66,7 @@
 	<!--- JS --->
 	<script type="text/javascript">
 		// Activate Chosen
-		// $(".chzn-select").chosen();
+		// $(".chzn-select").chosen({search_contains: true});
 		// Submit Form
 		$("##formcopy#attributes.col_id#").submit(function(e){
 			// Get data
