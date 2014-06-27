@@ -58,7 +58,26 @@
 	
 	<table border="0" width="100%" cellspacing="0" cellpadding="0" class="gridno">
 		<tr>
-		
+			<!--- Icons and drop down menu --->
+			<td align="left" width="1%" nowrap="true">
+				<div>
+					<!--- Icons --->
+					<div id="tooltip" style="float:left;width:490px;">
+						<!--- Select --->
+						<cfif cs.icon_select>
+							<a href="##" onClick="CheckAll('label_form','x','x','all');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
+							</a>
+						</cfif>
+						<!--- Download Folder --->
+						<cfif cs.icon_download_folder>
+							<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=labels&label_id=#attributes.label_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">Download all assets with this label</div>
+							</a>
+						</cfif>
+					</div>
+				</div>
+			</td>
 			<div id="feedback_delete_#kind#" style="white-space:no-wrap;"></div><div id="dummy_#kind#" style="display:none;"></div>
 			<!--- Next and Back --->
 			<td align="right" width="100%" nowrap="true">
@@ -167,6 +186,53 @@
 			</cfif>
 		</tr>
 	</table>
+	<!--- If all is selected show the description --->
+	<div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>label_form" style="display:none;width:100%;text-align:center;">
+		<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('label_form');return false;">Deselect all</a>
+	</div>
+
+	<!--- Put in basket button / Action Menu --->
+	<div id="folderselectionlabel_form" class="actiondropdown">
+		<cfif cs.show_bottom_part>
+			<a href="##" onclick="sendtobasket('label_form');return false;">
+				<div style="float:left;">
+					<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</div>
+			</a> 
+		</cfif>
+		<!--- Export Metadata --->
+		<cfif cs.icon_metadata_export>
+			<a href="##" onclick="batchaction('label_form','labels','#kind#','#attributes.label_id#','exportmeta');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
+			</a>
+		</cfif>
+		<!--- Trash --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<a href="##" onclick="batchaction('label_form','all','labels','0','delete');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
+				</div>
+				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash")#</div>
+			</a>
+		</cfif>
+		<!--- Plugin being shows with add_folderview_select_wx  --->
+		<cfif structKeyExists(plwx,"pview")>
+			<cfloop list="#plwx.pview#" delimiters="," index="i">
+				#evaluate(i)#
+			</cfloop>
+		</cfif>
+		<!--- Plugin being shows with add_folderview_select_r  --->
+		<cfif structKeyExists(plr,"pview")>
+			<cfloop list="#plr.pview#" delimiters="," index="i">
+				#evaluate(i)#
+			</cfloop>
+		</cfif>
+	</div>
+
 	<script language="javascript">
 		// Change the sortby
 		function changesortby(theselect){

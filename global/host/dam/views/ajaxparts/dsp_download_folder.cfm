@@ -23,11 +23,13 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfparam name="attributes.label_id" default="" />
 <cfoutput>	
 <div>
 	<form name="form_download_folder" id="form_download_folder" method="post" action="#self#" target="_blank">
 	<input type="hidden" name="#theaction#" value="c.download_folder_do">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+	<input type="hidden" name="label_id" value="#attributes.label_id#">
 	<!--- Desc --->
 	<p>#myFusebox.getApplicationData().defaults.trans("header_download_folder_desc")#</p>
 	<p><hr /></p>

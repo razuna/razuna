@@ -7269,6 +7269,76 @@
 	<cfreturn />
 </cffunction>
 
+<cffunction name="download_folder_structure_flat" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to download the files. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset var thisstruct = structnew()>
+	<cfparam name="arguments.thestruct.awsbucket" default="" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- Create directory --->
+	<cfset var basketname = createuuid("")>
+	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#/#arguments.thestruct.qry_labels_text#">
+	<cfif !directoryexists("#arguments.thestruct.newpath#")>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	</cfif>
+	<!--- Create folders according to selection and download --->
+	<!--- Thumbnails --->
+	<cfif arguments.thestruct.download_thumbnails>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/thumbnails" mode="775">
+		<!--- Download thumbnails --->
+		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Originals --->
+	<cfif arguments.thestruct.download_originals>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the originals<br /></cfoutput>
+		<cfflush>
+		<cfif !directoryexists("#arguments.thestruct.newpath#/originals")>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		</cfif>
+		<!--- Download originals --->
+		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+	</cfif>
+	<!--- Renditions --->
+	<cfif arguments.thestruct.download_renditions>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the renditions<br /></cfoutput>
+		<cfflush>
+		<cfif !directoryexists("#arguments.thestruct.newpath#/renditions")>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		</cfif>
+		<!--- Download renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
+		<!--- Download additional renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" rend_av="t" />
+	</cfif>
+	<!--- RAZ-2831 : Move metadata export into folder --->
+	<!--- <cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0> --->
+		<!--- <cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv"> --->
+	<!--- </cfif> --->
+	<!--- Feedback --->
+	<cfoutput>Ok. All files are here. Now creating a nice ZIP file for you.<br /></cfoutput>
+	<cfflush>
+	<!--- Set downloadname --->
+	<cfset var dl_name = "label_" & arguments.thestruct.qry_labels_text>
+	<!--- All done. ZIP and finish --->
+	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#dl_name#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<!--- Zip path for download --->
+	<cfoutput><p><a href="outgoing/#dl_name#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Remove the temp folder --->
+	<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#basketname#" recurse="yes" />
+</cffunction>
+
+
+
 <!--- RAZ-2901 : Download Folder as per folder structure Razuna --->
 <cffunction name="download_folder_structure" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
@@ -7302,7 +7372,9 @@
 	<!--- Create directory --->
 	<cfset var basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
-	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<cfif !directoryexists("#arguments.thestruct.newpath#")>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	</cfif>
 	<!--- Get Parent folder names --->
 	<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.folder_id#" returnvariable="crumbs" />
 	<cfset parentfoldersname = ''>
@@ -7310,7 +7382,9 @@
 		<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 	</cfloop>
 	<!--- Create Directory as per folder structure in Razuna --->
-	<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	<cfif !directoryexists("#arguments.thestruct.newpath##parentfoldersname#")>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath##parentfoldersname#" mode="775">
+	</cfif>
 	<!--- Create folders according to selection and download --->
 	<!--- Thumbnails --->
 	<cfif arguments.thestruct.download_thumbnails>
@@ -7326,7 +7400,9 @@
 		<!--- Feedback --->
 		<cfoutput>Grabbing all the originals<br /></cfoutput>
 		<cfflush>
-		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		<cfif !directoryexists("#arguments.thestruct.newpath#/originals")>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		</cfif>
 		<!--- Download originals --->
 		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
@@ -7335,18 +7411,22 @@
 		<!--- Feedback --->
 		<cfoutput>Grabbing all the renditions<br /></cfoutput>
 		<cfflush>
-		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		<cfif !directoryexists("#arguments.thestruct.newpath#/renditions")>
+			<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		</cfif>
 		<!--- Download renditions --->
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 		<!--- Download additional renditions --->
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" rend_av="t" />
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
-	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
-	</cfif>
+	<!--- <cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0> --->
+		<!--- Feedback --->
+		<cfflush>
+		<cffile action="move" destination="#arguments.thestruct.newpath#/#parentfoldersname#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
+	<!--- </cfif> --->
 	<!--- Feedback --->
-	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
+	<cfoutput>Ok. All files are here. Now creating a nice ZIP file for you.<br /></cfoutput>
 	<cfflush>
 	<!--- All done. ZIP and finish --->
 	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/folder_#arguments.thestruct.folder_id#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />

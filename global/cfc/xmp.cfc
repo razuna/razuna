@@ -1697,6 +1697,11 @@
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
+	<!--- For LABELS --->
+	<!--- <cfelseif arguments.thestruct.what EQ "labels">
+		<cfoutput><strong>Labels!</strong><br /></cfoutput>
+		<cfdump var="#arguments.thestruct#"><cfabort>
+		<cfflush> --->
 	<!--- If we export all assets from folder --->
 	<cfelseif arguments.thestruct.what EQ "folder">
 		<!--- Get the cachetoken for here --->

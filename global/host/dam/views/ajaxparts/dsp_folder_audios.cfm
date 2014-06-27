@@ -35,9 +35,7 @@
 				<th width="100%" colspan="6">
 					<!--- Show notification of folder is being shared --->
 					<cfinclude template="inc_folder_header.cfm">
-					<cfif attributes.folderaccess EQ "x">
-						<cfinclude template="dsp_folder_navigation.cfm">
-					</cfif>
+					<cfinclude template="dsp_folder_navigation.cfm">
 				</th>
 			</tr>
 			<tr>
