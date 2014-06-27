@@ -7,10 +7,10 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 --->
 
 <!--- SET API KEY --->
-<cfset apikey_admin = "05D8992CD25D492ABE53607C91481429"> <!--- Admin --->
+<cfset apikey_admin = "71AEC50390E74E47A6F97FFD794DED06"> <!--- Admin --->
 <cfset apikey_sysadmin = "8AF56E0FD4164F91B0F0964043164651"> <!--- SYS Admin --->
-<cfset apikey_user_perm = "22A68EEBC95B4CE581CA97E9E1762AC8"> <!--- User with permission --->
-<cfset apikey_user_noperm = "970CC574ADD942C6B4ACB818226D4F4B"> <!--- User without permission --->
+<cfset apikey_user_perm = "05D8992CD25D492ABE53607C91481429"> <!--- User with permission --->
+<cfset apikey_user_noperm = "E2EA638E51B64629AB4C331CF0BBE4FC"> <!--- User without permission --->
 
 <!--- SET URL OF API --->
 <cfset apiurl = "http://razunabd.local:8080/razuna/global/api2/">
@@ -24,8 +24,8 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 
 <!--- FOLDERID --->
 <cfset destination_folderid  = "1ABCB8E675754DE8A3866ADF7072C0BA">
-<cfset original_folderid = "C1F848F5E9974346A32B87FCF6F0B735">
-<cfset foldername  = "Test_Folder">
+<cfset original_folderid = "A981E4AD1FD4498B9FDFE0A1D701A9BF">
+<cfset foldername  = "my">
 
 <!--- COLLECTIONID --->
 <cfset collection_folderid = "427BB557EBC14A02BE7009591AB5E440">
@@ -430,7 +430,6 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush> 
 
-
 <!--- ************* GET METADATA************** --->
 <strong>getMetadata(as System Admin)</strong>
 <cfhttp url="#apiurl#asset.cfc?method=getmetadata&api_key=#apikey_sysadmin#&assetid=#assetid#&assettype=#assettype#&assetmetadata=creator"></cfhttp>
@@ -770,6 +769,7 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfflush>
 
 <!--- ************* GET FOLDER ************** --->
+<!--- WITH FOLDERID PARAMETER --->
 <strong>getFolder(as System Admin)</strong>
 <cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_sysadmin#&folderid=#original_folderid#"></cfhttp>
 <br>#cfhttp.filecontent#<br>
@@ -798,6 +798,34 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
+<!--- WITH FOLDERNAME PARAMETER --->
+<strong>getFolder(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_sysadmin#&foldername=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolder(as Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_admin#&foldername=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolder(as User with Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_user_perm#&foldername=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+<strong>getFolder(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=getfolder&api_key=#apikey_user_noperm#&foldername=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
 
 
 <!--- ************* SET AND REMOVE FOLDER ************** --->
