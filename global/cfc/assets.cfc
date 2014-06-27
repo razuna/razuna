@@ -4930,11 +4930,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<cfset var setqry = "">
+		<cfinvoke component="global.cfc.settings" method="getsettingsfromdam" returnvariable="setqry">
 		<!--- Rename image on HD --->
 		<cfif arguments.thestruct.type EQ "vid">
 			<cfset arguments.thestruct.newname = arguments.thestruct.qry_existing.vid_name_image>
 		<cfelseif arguments.thestruct.type EQ "img">
-			<cfset arguments.thestruct.newname = "thumb_#qry.file_id#.jpg">
+			<cfset arguments.thestruct.newname = "thumb_#qry.file_id#.#setqry.set2_img_format#">
 		</cfif>
 		<cfset var newpath = replacenocase(qry.path, qry.filename, "", "all")>
 		<cfset arguments.thestruct.thedest = newpath & "/" & arguments.thestruct.newname>
@@ -4942,7 +4944,6 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Get width and height for thumbnail--->
 		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #arguments.thestruct.thedest#" timeout="60" variable="thethumbheight" />
 		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #arguments.thestruct.thedest#" timeout="60" variable="thethumbwidth" />
-
 		<cfif isnumeric(thethumbheight) AND isnumeric(thethumbwidth)>
 			<!--- Update database --->
 			<cfif arguments.thestruct.type EQ "vid">
@@ -4957,7 +4958,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#images
 				SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">,
+				thumb_extension = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#setqry.set2_img_format#">
 				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
