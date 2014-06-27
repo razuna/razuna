@@ -471,12 +471,12 @@
 							<cfif c_thekeywords NEQ "">
 								<cfset tkeywords = evaluate(c_thekeywords)>
 							<cfelse>
-								<cfset tkeywords = "">
+								<cfset tkeywords = khere.img_keywords>
 							</cfif>
 							<cfif c_thedescription NEQ "">
 								<cfset tdescription = evaluate(c_thedescription)>
 							<cfelse>
-								<cfset tdescription = "">
+								<cfset tdescription = khere.img_description>
 							</cfif>
 						</cfif>
 						<cfquery dataSource="#application.razuna.datasource#">
