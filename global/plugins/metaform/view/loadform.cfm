@@ -166,7 +166,7 @@
 					    });
 				}
 				// Activate Chosen
-				$(".chzn-select").chosen();
+				$(".chzn-select").chosen({search_contains: true});
 				// Submit
 				$("##saveform_metaform").submit(function(e){
 					// Check for required fields

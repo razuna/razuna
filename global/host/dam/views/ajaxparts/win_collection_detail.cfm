@@ -531,7 +531,7 @@
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
 		// Activate Chosen
-		$(".chzn-select").chosen();
+		$(".chzn-select").chosen({search_contains: true});
 	</script>	
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs

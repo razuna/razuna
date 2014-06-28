@@ -423,6 +423,6 @@
         return false; 
 	};
 	// Activate Chosen
-	$(".chzn-select").chosen();
+	$(".chzn-select").chosen({search_contains: true});
 	</script>
 </cfoutput>

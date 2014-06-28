@@ -117,7 +117,7 @@
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
 		// Activate Chosen
-		$(".chzn-select").chosen();
+		$(".chzn-select").chosen({search_contains: true});
 		//set width
 		$('##thumb_folder_chosen').width(400);
 		// Show image

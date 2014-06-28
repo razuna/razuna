@@ -125,5 +125,5 @@
 </cfoutput>
 <script type="text/javascript">
 	// Activate Chosen
-	$(".chzn-select").chosen();
+	$(".chzn-select").chosen({search_contains: true});
 </script>
