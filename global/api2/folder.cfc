@@ -563,7 +563,8 @@
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description
+			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description, 
+			CASE WHEN lower(f.folder_shared) = 't' then 'true' else 'false' end folder_shared
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE 
@@ -587,14 +588,32 @@
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			</cfquery>
-			<cfset var q = querynew("totalassets,totalimg,totalvid,totaldoc,totalaud,folder_id")>
+			<cfset var q = querynew("group_permission,totalassets,totalimg,totalvid,totaldoc,totalaud,folder_id")>
+			
 			<cfloop query="qry">
 				<!--- Query total count --->
 				<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#qry.folder_id#" returnvariable="totalassets">
 				<!--- Query total count for individual files --->
 				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#qry.folder_id#" returnvariable="totaltypes">
+				
+				<!--- Get groups for folder --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="thegroups" cachedwithin="1" region="razcache">
+					SELECT /* #cachetoken#getfolder */ grp_id_r, grp_permission
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups
+					WHERE folder_id_r = <cfqueryparam value="#qry.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add groups and related permissions to array --->
+				<cfset var grparr = arrayNew(2)>
+				<cfloop query = "thegroups">
+					<cfset grparr[thegroups.currentrow][1] = thegroups.grp_id_r>
+					<cfset grparr[thegroups.currentrow][2] = thegroups.grp_permission>
+				</cfloop>
+				<cfset grparr = SerializeJSON(grparr)>
+
 				<!--- Create additional query fields --->
-				<cfset queryaddrow(q,currentrow)>
+				<cfset queryaddrow(q,qry.currentrow)>
+				<cfset querysetcell(q,"group_permission",grparr)>
 				<cfset querysetcell(q,"totalassets",totalassets.thetotal)>
 				<cfset querysetcell(q,"totalimg",totaltypes.img)>
 				<cfset querysetcell(q,"totalvid",totaltypes.vid)>
@@ -604,9 +623,9 @@
 			</cfloop>
 			<!--- Put the 2 queries together --->
 			<cfquery dbtype="query" name="thexml">
-			SELECT qry.folder_id, qry.folder_related_to, qry.folder_name, qry.folder_description, q.totalassets, q.totalimg, q.totalvid, q.totaldoc, q.totalaud
-			FROM qry, q
-			WHERE qry.folder_id=q.folder_id
+				SELECT qry.folder_id, qry.folder_related_to, qry.folder_name, qry.folder_description, qry.folder_shared, q.group_permission, q.totalassets, q.totalimg, q.totalvid, q.totaldoc, q.totalaud
+				FROM qry, q
+				WHERE qry.folder_id=q.folder_id
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
