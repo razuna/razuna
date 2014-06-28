@@ -86,6 +86,7 @@
 			GRP_TRANSLATION_KEY VARCHAR2(50 CHAR), 
 			UPC_SIZE 			VARCHAR2(2 CHAR) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR2(5 CHAR) DEFAULT 'false',
+			FOLDER_SUBSCRIBE	VARCHAR2(5 CHAR) DEFAULT 'false',
 		CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID), 
 		CONSTRAINT GROUPS_UK1 UNIQUE (GRP_NAME, GRP_HOST_ID, GRP_MOD_ID), 
 		CONSTRAINT GROUPS_FK_MODULES FOREIGN KEY (GRP_MOD_ID)
@@ -2368,6 +2369,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			last_mail_notification_time timestamp DEFAULT NULL,
 			asset_keywords				varchar2(3 char) DEFAULT 'F',
 			asset_description			varchar2(3 char) DEFAULT 'F',
+			auto_entry	varchar2(5 CHAR) DEFAULT 'false',
 			PRIMARY KEY (fs_id)
 		)
 		</cfquery>

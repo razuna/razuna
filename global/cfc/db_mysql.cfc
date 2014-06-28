@@ -123,6 +123,7 @@
 			GRP_TRANSLATION_KEY VARCHAR(50), 
 			UPC_SIZE			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
+			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
 			PRIMARY KEY (GRP_ID),
 			KEY GRP_MOD_ID (GRP_MOD_ID),
   			KEY grp_hostid (GRP_HOST_ID),
@@ -2580,7 +2581,10 @@
 			last_mail_notification_time timestamp DEFAULT '0000-00-00 00:00:00',
 			asset_keywords				varchar(3) DEFAULT 'F',
 			asset_description			varchar(3) DEFAULT 'F',
-			PRIMARY KEY (fs_id)
+			auto_entry	varchar(5) DEFAULT 'false',
+			PRIMARY KEY (fs_id),
+			KEY folder_id (folder_id),
+  			KEY user_id (user_id)
 		)
 		#this.tableoptions#
 		</cfquery>

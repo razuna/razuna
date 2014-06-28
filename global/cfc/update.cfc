@@ -173,8 +173,8 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 28 (1.6.6) --->
-		<cfif updatenumber.opt_value LT 28>
+		<!--- If less then 29 (1.6.6) --->
+		<cfif updatenumber.opt_value LT 29>
 			<!--- Alias db --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -190,6 +190,46 @@
 					#tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FOLDER_SUBSCRIBE #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_folder_subscribe add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> auto_entry #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+					UPDATE raz1_folder_subscribe set auto_entry = 'false' WHERE (auto_entry IS  NULL OR auto_entry ='')
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+			<!--- Create indexes on raz1_folder_subscribe --->
+			<cfif application.razuna.thedatabase EQ "h2">
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id);
+				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(user_id);
+				</cfquery>
+			<cfelseif application.razuna.thedatabase EQ "mssql">
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(user_id)
+				</cfquery>
+			<cfelseif application.razuna.thedatabase EQ "mysql">
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_folder_subscribe ADD INDEX  folder_id (folder_id)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_folder_subscribe ADD INDEX  user_id (user_id)
+				</cfquery>
+			</cfif>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 		</cfif>
 

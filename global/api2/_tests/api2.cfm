@@ -24,8 +24,8 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 
 <!--- FOLDERID --->
 <cfset destination_folderid  = "1ABCB8E675754DE8A3866ADF7072C0BA">
-<cfset original_folderid = "A981E4AD1FD4498B9FDFE0A1D701A9BF">
-<cfset foldername  = "my">
+<cfset original_folderid = "C1F848F5E9974346A32B87FCF6F0B735">
+<cfset foldername  = "Test_Folder">
 
 <!--- COLLECTIONID --->
 <cfset collection_folderid = "427BB557EBC14A02BE7009591AB5E440">
@@ -44,7 +44,16 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 
 <!--- HOSTS --->
 
-<cfoutput><h1>Hosts</h1></cfoutput>
+<cfoutput><h1>Hosts</h1>
+
+<strong>setFolderPermissions(as System Admin)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolderpermissions&api_key=#apikey_sysadmin#&permissions=[[%22#destination_folderid#%22,%2273CCC1DB-C9A2-445A-B0F3CE28F8780B02%22,%22X%22]]"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
+</cfoutput><cfabort>
 
 <!--- Get Hosts --->
 <cfhttp url="#apiurl#hosts.cfc?method=gethosts&api_key=#apikey_sysadmin#"></cfhttp>

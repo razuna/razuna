@@ -113,6 +113,7 @@
 			GRP_TRANSLATION_KEY VARCHAR(50),
 			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
+			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
 			CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID), 
 			CONSTRAINT GROUPS_FK_MODULES FOREIGN KEY (GRP_MOD_ID)
 			REFERENCES modules (MOD_ID)
@@ -2025,6 +2026,7 @@
 			last_mail_notification_time timestamp DEFAULT NULL,
 			asset_keywords				varchar(3) DEFAULT 'F',
 			asset_description			varchar(3) DEFAULT 'F',
+			auto_entry	varchar(5) DEFAULT 'false',
 			 PRIMARY KEY (fs_id)
 		)
 		</cfquery>
@@ -2282,6 +2284,10 @@
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.host_db_prefix#custom(custom_id)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.host_db_prefix#folder_subscribe(folder_id);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.host_db_prefix#folder_subscribe(user_id);
 		</cfquery>
 		<cfreturn />
 	</cffunction>
