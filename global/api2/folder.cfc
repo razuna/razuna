@@ -544,50 +544,70 @@
 	<!--- GetFolder --->
 	<cffunction name="getfolder" output="false" access="remote" returnType="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
-		<cfargument name="folderid" type="string" required="true">
+		<cfargument name="folderid" type="string" required="false">
+		<cfargument name="foldername" type="string" required="false">
+		<cfif not isdefined("arguments.folderid") AND not isdefined("arguments.foldername")>
+			<cfset var thexml = querynew("responsecode,message")>
+			<cfset queryaddrow(thexml,1)>
+			<cfset querysetcell(thexml,"responsecode","1")>
+			<cfset querysetcell(thexml,"message","Either folderid or foldername parameter must be specified")>
+			<cfreturn thexml>
+		</cfif> 
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Get permission for folder --->
-			<cfset var folderaccess = checkFolderAccess(arguments.api_key, arguments.folderid)>
-			<!--- If user has access --->
-			<cfif folderaccess EQ "R"  OR folderaccess EQ "W" OR folderaccess EQ "X">
-				<!--- Get Cachetoken --->
-				<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
-				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description
-				FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
-				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-				WHERE f.folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-				</cfquery>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
+			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+			WHERE 
+			f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif isDefined("arguments.folderid")>
+				AND f.folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#">
+			</cfif>
+			<cfif isDefined("arguments.foldername")>
+				AND lower(f.folder_name)  like  <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.foldername)#%">
+			</cfif>
+			<!--- Check to ensure user has permissions for folder --->
+			AND 
+			(
+				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
+				OR
+				EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r = '0')
+				OR
+				EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">))
+				OR 
+				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+			)
+			</cfquery>
+			<cfset var q = querynew("totalassets,totalimg,totalvid,totaldoc,totalaud,folder_id")>
+			<cfloop query="qry">
 				<!--- Query total count --->
-				<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#arguments.folderid#" returnvariable="totalassets">
+				<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#qry.folder_id#" returnvariable="totalassets">
 				<!--- Query total count for individual files --->
-				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#arguments.folderid#" returnvariable="totaltypes">
+				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#qry.folder_id#" returnvariable="totaltypes">
 				<!--- Create additional query fields --->
-				<cfset q = querynew("totalassets,totalimg,totalvid,totaldoc,totalaud")>
-				<cfset queryaddrow(q,1)>
+				<cfset queryaddrow(q,currentrow)>
 				<cfset querysetcell(q,"totalassets",totalassets.thetotal)>
 				<cfset querysetcell(q,"totalimg",totaltypes.img)>
 				<cfset querysetcell(q,"totalvid",totaltypes.vid)>
 				<cfset querysetcell(q,"totaldoc",totaltypes.doc)>
 				<cfset querysetcell(q,"totalaud",totaltypes.aud)>
-				<!--- Put the 2 queries together --->
-				<cfquery dbtype="query" name="thexml">
-				SELECT *
-				FROM qry, q
-				</cfquery>
-			<!--- No access --->
-			<cfelse>
-				<!--- Return --->
-				<cfset var thexml = noaccess()>
-			</cfif>
+				<cfset querysetcell(q,"folder_id",qry.folder_id)>
+			</cfloop>
+			<!--- Put the 2 queries together --->
+			<cfquery dbtype="query" name="thexml">
+			SELECT qry.folder_id, qry.folder_related_to, qry.folder_name, qry.folder_description, q.totalassets, q.totalimg, q.totalvid, q.totaldoc, q.totalaud
+			FROM qry, q
+			WHERE qry.folder_id=q.folder_id
+			</cfquery>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
