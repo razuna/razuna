@@ -453,23 +453,27 @@ function storeids(theform){
 	var filetypes = '';
 	var del_fileids = '';
 	var del_filetypes = '';
+	// $('input[name=checkbox][name="file_id"]:checked').each(function() {
+	// console.log($(this).val());
+	// });
 	for (var i = 0; i<document.forms[theform].elements.length; i++) {
        if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
-           if (document.forms[theform].elements[i].checked) {
-           		fileids += document.forms[theform].elements[i].value + ',';
-           		// filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
-           	}
-           	else {
-           	 	del_fileids += document.forms[theform].elements[i].value + ',';
-           	// 	// del_filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
-           	 }
-      	}
-   	}
-   	// Only continue if there is something selected
-   	// if (fileids != ''){
-   		// Store values in sessions
-		$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids});
-	// };
+			if (document.forms[theform].elements[i].checked) {
+				fileids += document.forms[theform].elements[i].value + ',';
+			}
+			else {
+				del_fileids += document.forms[theform].elements[i].value + ',';
+			}
+		}
+	}
+	// Store in session
+	$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids});
+}
+function storeone(theid) {
+	// Remove all first
+	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
+	// Add this one id
+	$('#div_forall').load('index.cfm?fa=c.store_file_values',{ file_id: theid });
 }
 // Check all checkboxes
 function CheckAll(myform,folderid,thediv,thekind) {
@@ -490,7 +494,7 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	else{
 		// Get the ids from the hidden field
 		var theids = $('#searchlistids').val();
-		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids })
+		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids });
 	}
 }
 
@@ -504,7 +508,7 @@ function CheckAllNot(myform){
 	$("#selectstore" + myform).css("display","none");
 	$("#selectstoreb" + myform).css("display","none");
 	// Get the ids from the hidden field
-	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 })
+	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
 }
 
 // Site conversion
@@ -949,9 +953,17 @@ function addgrp(){
 	//Check to ensure group name is entered
 	var checkgrp= $('#grpnew').val();
 	var upcsize= $('#sizeofupc').val();
+	//Folder subscribe radio
+	if ($('input:radio[name=folder_subscribe]:checked').length == 0) {
+		var folder_subscribe = 'false';
+	}
+	else {
+		var folder_subscribe= $('input:radio[name=folder_subscribe]:checked').val();
+	}
+
 	// RAZ-2824 :: Check the UPC folder structure is checked or not
 	if ($('input:radio[name=upc_folder_structure]:checked').length == 0) {
-		var upc_folder = $('[name=upc_folder_structure]').val();
+		var upc_folder = 'false';
 	}
 	else {
 		var upc_folder = $('input:radio[name=upc_folder_structure]:checked').val();
@@ -962,7 +974,7 @@ function addgrp(){
 		return false;
 	}
 	// Add the new group and show the updated list
-	loadcontent('admin_groups', 'index.cfm?fa=c.groups_add&kind=ecp&loaddiv=admin_groups&newgrp=' + encodeURIComponent($("#grpnew").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder);
+	loadcontent('admin_groups', 'index.cfm?fa=c.groups_add&kind=ecp&loaddiv=admin_groups&newgrp=' + encodeURIComponent($("#grpnew").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder + '&folder_subscribe=' + folder_subscribe);
 }
 function updategrp(grpid){
 	// Hide Window
@@ -970,9 +982,16 @@ function updategrp(grpid){
 	//Check to ensure group name is entered
 	var checkgrp= $('#grpname').val();
 	var upcsize= $('#editupcsize').val();
+	//Folder subscribe radio
+	if ($('input:radio[name=edit_folder_subscribe]:checked').length == 0) {
+		var folder_subscribe = 'false';
+	}
+	else {
+		var folder_subscribe= $('input:radio[name=edit_folder_subscribe]:checked').val();
+	}
 	// RAZ-2824 :: Check the UPC folder structure is checked or not
 	if ($('input:radio[name=edit_upc_folder_structure]:checked').length == 0) {
-		var upc_folder = $('[name=edit_upc_folder_structure]').val();
+		var upc_folder = 'false';
 	}
 	else {
 		var upc_folder = $('input:radio[name=edit_upc_folder_structure]:checked').val(); 
@@ -983,7 +1002,7 @@ function updategrp(grpid){
 		return false;
 	}
 	// Add the new group and show the updated list
-	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder);
+	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder + '&folder_subscribe=' + folder_subscribe);
 }
 
 // SCHEDULER

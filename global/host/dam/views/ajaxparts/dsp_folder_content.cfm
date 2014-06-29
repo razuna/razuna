@@ -33,9 +33,7 @@
 		<div style="float:left;">
 			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 		</div>
-		<cfif attributes.folderaccess EQ "x">
-			<cfinclude template="dsp_folder_navigation.cfm">
-		</cfif>
+		<cfinclude template="dsp_folder_navigation.cfm">
 		<br />
 		<div class="panelsnew">
 			<cfif qry_subfolders.recordcount EQ 0>
@@ -97,9 +95,7 @@
 				<!--- Show notification of folder is being shared --->
 				<cfinclude template="inc_folder_header.cfm">
 				<!--- If user or admin has folderaccess x --->
-				<cfif attributes.folderaccess EQ "x">
-					<cfinclude template="dsp_folder_navigation.cfm">
-				</cfif>
+				<cfinclude template="dsp_folder_navigation.cfm">
 			</td>
 		</tr>
 		<!--- Icon Bar --->
@@ -171,7 +167,9 @@
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=img&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.show_bottom_part>
+											<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										</cfif>
 										<cfif cs.button_send_email>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
@@ -1419,7 +1417,7 @@
 		};
 		<cfif session.view EQ "combined">
 			// Activate Chosen
-			$(".chzn-select").chosen();
+			$(".chzn-select").chosen({search_contains: true});
 		</cfif>
 		$(document).ready(function() {
 			$("###kind#form ##selectme").selectable({

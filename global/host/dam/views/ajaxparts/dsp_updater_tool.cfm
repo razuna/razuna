@@ -141,7 +141,7 @@
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
 		// Activate Chosen
-		$(".chzn-select").chosen();
+		$(".chzn-select").chosen({search_contains: true});
 		jqtabs("updatertabs");
 	</script>	
 </cfoutput>

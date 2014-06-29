@@ -67,7 +67,7 @@
 		</cfloop>
 	</table>
 <script type="text/javascript">
-	$(".chzn-select").chosen();
+	$(".chzn-select").chosen({search_contains: true});
 // Update Comment
 function addlabeladmin(){
 	//check label for first char and letters

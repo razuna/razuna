@@ -179,6 +179,8 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
 		)
 		</cfquery>
+		<!--- Check group 'folder_subscribe' setting and add this user to receive folder notifications if set to true --->
+		<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#i#' user_id='#arguments.thestruct.newid#'>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("users")>

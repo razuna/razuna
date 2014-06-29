@@ -709,6 +709,32 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
+	<!--- Only run this code between 1am - 2am. This will give people time to correct any mistakes they migth have made before we delete the entries.  --->
+	<cfif hour(now()) EQ '1'>
+		<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
+		<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
+			SELECT  f.folder_id,u.user_id
+			FROM #session.hostdbprefix#folders f 
+			INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
+			INNER JOIN users u ON u.user_id = fs.user_id
+			WHERE
+			<!--- User is not folder_owner --->
+			f.folder_owner <>  fs.user_id 
+			 <!--- Folder is not shared with everybody --->
+			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0') 
+			<!--- User is not part of group that has access to folder --->
+			AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r) 
+		</cfquery>
+		<cfloop query="getusers_wo_access">
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE
+			FROM #session.hostdbprefix#folder_subscribe
+			WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
+			AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+		</cfloop>
+	</cfif>
+
 	<!--- Get User subscribed folders --->
 	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
 		SELECT fs.*, fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
@@ -951,6 +977,58 @@
 	UNION
 	SELECT file_id id, host_id, 'doc' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')label_id FROM raz1_files f WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=f.host_id AND label_id_r = '0'))
 	</cfquery>
+	<!--- Get users that are in groups which have access to the expired assets and notify them about the expiry --->
+	<cfquery datasource="#application.razuna.datasource#" name="getusers2notify" result="myqry">
+	SELECT i.img_id id, i.img_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id
+	FROM raz1_images i, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
+	WHERE i.folder_id_r = f.folder_id
+	AND f.folder_id = fg.folder_id_r
+	AND cu.ct_g_u_grp_id = fg.grp_id_r
+	AND cu.ct_g_u_user_id = u.user_id 
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
+	UNION
+	SELECT a.aud_id id, a.aud_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id
+	FROM raz1_audios a, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
+	WHERE a.folder_id_r = f.folder_id
+	AND f.folder_id = fg.folder_id_r
+	AND cu.ct_g_u_grp_id = fg.grp_id_r
+	AND cu.ct_g_u_user_id = u.user_id 
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
+	UNION
+	SELECT v.vid_id id, v.vid_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id
+	FROM raz1_videos v, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
+	WHERE v.folder_id_r = f.folder_id
+	AND f.folder_id = fg.folder_id_r
+	AND cu.ct_g_u_grp_id = fg.grp_id_r
+	AND cu.ct_g_u_user_id = u.user_id
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
+	UNION
+	SELECT fi.file_id id, fi.file_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id
+	FROM raz1_files fi, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
+	WHERE fi.folder_id_r = f.folder_id
+	AND f.folder_id = fg.folder_id_r
+	AND cu.ct_g_u_grp_id = fg.grp_id_r
+	AND cu.ct_g_u_user_id = u.user_id 
+	AND fg.grp_id_r <>'0'
+	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=fi.host_id AND label_id_r = '0'))
+	</cfquery>
+	<!--- Extract user information from query --->
+	<cfquery dbtype="query" name="getuserinfo">
+		SELECT user_email, user_id FROM getusers2notify GROUP BY user_id,user_email
+	</cfquery>
+	
+	<!--- Before we send out notification emails lets expire the assets first --->
 	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
 	<cfloop query="getexpired_assets">
 		<cfif getexpired_assets.label_id NEQ ''>
@@ -978,7 +1056,7 @@
 				<cfset var col = 'file_id'>
 			</cfif>
 			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_#tbl# SET is_indexed = 0
+			UPDATE raz1_#tbl# SET is_indexed = '0'
 			WHERE #col# =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
 			</cfquery>
 		</cfif>
@@ -1006,22 +1084,57 @@
 		</cfquery>
 		<!--- Update indexing statuses --->
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_images SET is_indexed = 0 WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_images SET is_indexed = '0' WHERE img_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_audios SET is_indexed = 0 WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_audios SET is_indexed = '0' WHERE aud_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_videos SET is_indexed = 0 WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_videos SET is_indexed = '0' WHERE vid_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE raz1_files SET is_indexed = 0 WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
+			UPDATE raz1_files SET is_indexed = '0' WHERE file_id IN ( <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#assetlist#" list="true">)
 		</cfquery>
 	</cfif>
 	<!--- Reset labels cache if labels have been modified--->
 	<cfif getexpired_assets.recordcount NEQ 0 OR getreset_assets.recordcount NEQ 0>
 		<cfset resetcachetoken("labels","true")>
 	</cfif>
+
+	<!--- Send out notification email about expiry to users in groups that have access to the expired assets--->
+	<!--- Email subject --->
+	<cfinvoke component="defaults" method="trans" transid="expiry_email_subject" returnvariable="email_subject">
+	<!--- Email content --->
+	<cfinvoke component="defaults" method="trans" transid="expiry_email_content" returnvariable="email_content">
+	<cfset var msgbody = "">
+	<cfloop query ="getuserinfo">
+		<cfquery dbtype="query" name="getusers2email">
+		SELECT * FROM getusers2notify WHERE user_email = '#getuserinfo.user_email#'
+		</cfquery>
+		<cfoutput>
+		<cfsavecontent variable="msgbody">
+				#email_content#
+				<table border="1" cellpadding="4" cellspacing="0">
+				<tr>
+					<th nowrap="true">ASSET_ID</th>
+					<th nowrap="true">ASSET_NAME</th>
+					<th nowrap="true">FOLDER_ID</th>
+					<th nowrap="true">FOLDER_NAME</th>
+				</tr>
+			<cfloop query = "getusers2email">
+				<tr>
+					<td nowrap="true">#getusers2email.id#</td>
+					<td nowrap="true">#getusers2email.name#</td>
+					<td nowrap="true">#getusers2email.folder_id#</td>
+					<td nowrap="true">#getusers2email.folder_name#</td>
+				</tr>
+			</cfloop>
+			</table>
+		</cfsavecontent>
+		</cfoutput>
+		<!--- Send the email --->
+		<cfinvoke component="email" method="send_email" to="#getuserinfo.user_email#" subject="#email_subject#" themessage="#msgbody#" userid="#getuserinfo.user_id#"/>
+	</cfloop>
 </cffunction>
 
 </cfcomponent>

@@ -41,7 +41,7 @@
 						</cfif>
 						<br/>
 						<cfif prefs.set2_upc_enabled>
-							<strong>UPC Size</strong>
+							<strong>#myFusebox.getApplicationData().defaults.trans("group_upc_size_text")#</strong>
 							<select name="editupcsize" id="editupcsize" style="margin-left:10px;width:90px;">
 								<option value="">None</option>
 								<option value="10" <cfif qry_detail.upc_size EQ 10 >selected=selected</cfif>>10</option>
@@ -55,11 +55,19 @@
 						</cfif>
 					</td>
 					<td width="1%" nowrap="true"><cfif attributes.grp_id NEQ 2 OR prefs.set2_upc_enabled><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></cfif></td>
+					<td nowrap="true">
+					<tr>	
+					<td >
+						<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong>
+						<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
+						<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
+					</td>
+					</tr>
 				</tr>
 				<!--- RAZ-2824 :: UPC folder structure download option enabled. ---> 
 				<cfif prefs.set2_upc_enabled>
 				<tr>
-					<td><strong>Create UPC folder structure while downloading</strong>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_folder_text")#</strong>
 						<input type="radio" name="edit_upc_folder_structure" value="true" <cfif qry_detail.upc_folder_format EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
 						<input type="radio" name="edit_upc_folder_structure" value="false" <cfif qry_detail.upc_folder_format EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
 					</td>
@@ -87,7 +95,7 @@
 	<!--- JS --->
 	<script type="text/javascript">
 		// Activate Chosen
-		$(".chzn-select").chosen();
+		$(".chzn-select").chosen({search_contains: true});
 		// Load existing users
 		loadcontent('listusers','#myself#c.groups_list_users&grp_id=#attributes.grp_id#');
 		// When user is selected

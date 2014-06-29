@@ -97,6 +97,8 @@
 							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">
 							)
 							</cfquery>
+							<!--- Check group folder_subscribe setting and add this user to receive folder notifications if set to true --->
+							<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#arguments.groupid#' user_id='#newuserid#'>
 						</cfif>
 						<!--- If the groupid is 2 --->
 						<cfif arguments.groupid EQ 2>
@@ -227,6 +229,8 @@
 									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
 								)
 								</cfquery>
+								<!--- Check group 'folder_subscribe' setting and add this user to receive folder notifications if set to true --->
+								<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#thejson[x][2]#' user_id='#qry.user_id#'>
 							</cfif>
 						</cfloop>
 					</cfif>

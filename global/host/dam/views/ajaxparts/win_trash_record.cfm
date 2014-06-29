@@ -45,8 +45,8 @@
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search">
-						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');replacewin();" class="button">
+					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search" OR attributes.loaddiv EQ "labels">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');<cfif attributes.loaddiv EQ "search">replacewin();<cfelse>replacewinlabels();</cfif>" class="button">
 					<cfelse>
 						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
 					</cfif>
@@ -55,8 +55,48 @@
 		</table>
 	</div>
 	<script type="text/javascript">
+		// This is for search results
 		function replacewin(){
-			$('##div_win_trash_record').html('<div style="padding:10px;">The asset(s) have been successfully trashed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+			// Loop over file_ids and remove div
+			<cfloop list="#session.file_id#" index="i">
+				// Remove the div
+				$('###i#').remove();
+				// Get the value in hidden field and convert to array
+				var theval = $('##searchlistids').val().split(',');
+				// Remove the id from hidden input field
+				var theids = $.grep(theval, function (theid){
+					return theid !== '#i#';
+				});
+				// Save back to hidden filed as string
+				$('##searchlistids').val(theids);
+			</cfloop>
+			// Deselect all
+			CheckAllNot('searchformall');
+			// Close Windows
+			destroywindow(2);
+			destroywindow(1);
+			// $('##div_win_trash_record').html('<div style="padding:10px;">The asset(s) have been successfully trashed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+		}
+		// This is when coming from labels
+		function replacewinlabels(){
+			// Loop over file_ids and remove div
+			<cfloop list="#session.file_id#" index="i">
+				// Remove the div
+				$('###i#').remove();
+				// Get the value in hidden field and convert to array
+				var theval = $('##searchlistids').val().split(',');
+				// Remove the id from hidden input field
+				var theids = $.grep(theval, function (theid){
+					return theid !== '#i#';
+				});
+				// Save back to hidden filed as string
+				$('##searchlistids').val(theids);
+			</cfloop>
+			// Deselect all
+			CheckAllNot('label_form');
+			// Close Windows
+			destroywindow(2);
+			destroywindow(1);
 		}
 	</script>
 </cfoutput>

@@ -382,6 +382,11 @@
 	DELETE FROM #session.hostdbprefix#users_accounts
 	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
+	<!--- Delete from folder_subscribe --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#folder_subscribe
+	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>
 	<cfreturn />

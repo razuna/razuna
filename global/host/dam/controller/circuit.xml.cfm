@@ -9348,6 +9348,7 @@
 		<xfa name="detailimg" value="c.images_detail" />
 		<xfa name="detailvid" value="c.videos_detail" />
 		<xfa name="detailaud" value="c.audios_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Param -->
 		<set name="kind" value="all" />
 		<set name="url.kind" value="all" />
@@ -9368,14 +9369,26 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="qry_labels_text" />
 		<!-- CFC: count how many label types there are -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Get the assets -->
 		<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="qry_labels_assets">
+			<argument name="thestruct" value="#attributes#" />
 			<argument name="label_id" value="#attributes.label_id#" />
 			<argument name="label_kind" value="#attributes.label_kind#" />
 			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
 			<argument name="offset" value="#attributes.offset#" />
 			<argument name="labels_count" value="#qry_labels_count#" />
 		</invoke>
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plwx" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_wx',attributes)" returnvariable="plwx" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plr" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
 		<!-- Show -->
 		<do action="ajax.labels_main_assets" />
 	</fuseaction>
@@ -9516,32 +9529,51 @@
 		<do action="storage" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
-		<!-- CFC: Get all assets -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
-		<!-- Get user groups  -->
-		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
-			<argument name="user_id" value="#session.theuserid#" />
-			<argument name="host_id" value="#session.hostid#" />
-			<argument name="check_upc_size" value="true" />
-		</invoke>
-		<!-- Check the current folder having label text as upc -->
-		<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
-			<argument name="theid" value="#attributes.folder_id#" />
-			<argument name="thetype" value="folder" />
-			<argument name="checkUPC" value="true" />
-		</invoke>
-		<!-- Check the UPC folder download -->
-		<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
+		<!-- If label we do not need to query everything -->
+		<if condition="attributes.folder_id EQ 'labels'">
 			<true>
+				<!-- CFC: get label text -->
+				<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="attributes.qry_labels_text" />
+				<!-- Get the assets -->
+				<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="attributes.qry_files">
+					<argument name="label_id" value="#attributes.label_id#" />
+					<argument name="label_kind" value="assets" />
+					<argument name="thestruct" value="#attributes#" />
+				</invoke>
+				<!-- Action: Export Metadata -->
 				<do action="meta_export_do" />
-				<!-- CFC: Show the progress UPC download -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
+				<!-- Invoke export -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure_flat(attributes)" />
 			</true>
 			<false>
-			<!-- Action: Export Metadata -->
-				<do action="meta_export_do" />
-				<!-- RAZ-2901 CFC: Show the progress download -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
+				<!-- CFC: Get all assets -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
+				<!-- Get user groups  -->
+				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
+					<argument name="user_id" value="#session.theuserid#" />
+					<argument name="host_id" value="#session.hostid#" />
+					<argument name="check_upc_size" value="true" />
+				</invoke>
+				<!-- Check the current folder having label text as upc -->
+				<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
+					<argument name="theid" value="#attributes.folder_id#" />
+					<argument name="thetype" value="folder" />
+					<argument name="checkUPC" value="true" />
+				</invoke>
+				<!-- Check the UPC folder download -->
+				<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
+					<true>
+						<do action="meta_export_do" />
+						<!-- CFC: Show the progress UPC download -->
+						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
+					</true>
+					<false>
+						<!-- Action: Export Metadata -->
+						<do action="meta_export_do" />
+						<!-- RAZ-2901 CFC: Show the progress download -->
+						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
+					</false>
+				</if>
 			</false>
 		</if>
 	</fuseaction>

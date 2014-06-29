@@ -39,7 +39,7 @@
 		<cfset thetype = listlast(thenr,"-")>
 		<cfset thenr = listfirst(thenr,"-")>
 		<!--- First check if the product is not already in this basket --->
-		<cfquery datasource="#variables.dsn#" name="here">
+		<cfquery datasource="#application.razuna.datasource#" name="here">
 		SELECT user_id
 		FROM #session.hostdbprefix#cart
 		WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
@@ -59,7 +59,7 @@
 --->
 					<!--- <cfset newtype = replace(i, "#thenr#-", "", "ALL")> --->
 					<!--- insert the prodcut to the cart --->
-					<cfquery datasource="#variables.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#cart
 					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
 					VALUES(
@@ -81,7 +81,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Remove expired assets from cart --->
-	<cfquery datasource="#variables.dsn#" name="removeexpired">
+	<cfquery datasource="#application.razuna.datasource#" name="removeexpired">
 		<cfif application.razuna.thedatabase NEQ "h2">
 		DELETE c FROM #session.hostdbprefix#cart c 
 		LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'

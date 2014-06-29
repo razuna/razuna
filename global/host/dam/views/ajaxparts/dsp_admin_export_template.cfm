@@ -78,6 +78,7 @@
 					<br />
 					<select name="videos_metadata" multiple="multiple" style="width:400px;height:130px;">
 						<!--- Default values --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 						<option value="vid_id"<cfif listFind(qry_export.videos_metadata,"vid_id")> selected="selected"</cfif>>ID</option>
 						<option value="vid_filename"<cfif listFind(qry_export.videos_metadata,"vid_filename")> selected="selected"</cfif>>Filename</option>
 						<option value="vid_folder_id"<cfif listFind(qry_export.videos_metadata,"vid_folder_id")> selected="selected"</cfif>>FolderID</option>
@@ -146,6 +147,7 @@
 					<br />
 					<select name="audios_metadata" multiple="multiple" style="width:400px;height:130px;">
 						<!--- Default values --->
+						<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 						<option value="aud_id"<cfif listFind(qry_export.audios_metadata,"aud_id")> selected="selected"</cfif>>ID</option>
 						<option value="aud_name"<cfif listFind(qry_export.audios_metadata,"aud_name")> selected="selected"</cfif>>Filename</option>
 						<option value="aud_folder_id"<cfif listFind(qry_export.audios_metadata,"aud_folder_id")> selected="selected"</cfif>>FolderID</option>
