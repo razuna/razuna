@@ -521,6 +521,10 @@
 	<fuseaction name="admin_customization">
   		<include template="dsp_admin_customization" />
 	</fuseaction>
+	<!-- ADMIN: Notification -->
+	<fuseaction name="admin_notification">
+  		<include template="dsp_admin_notification" />
+	</fuseaction>
 	<!-- ADMIN: Maintenance -->
 	<fuseaction name="admin_maintenance">
   		<include template="dsp_admin_maintenance" />

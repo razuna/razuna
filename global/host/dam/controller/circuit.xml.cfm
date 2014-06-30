@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2014.11.25.1" />
+		<set name="attributes.cachetag" value="2014.06.27.1" />
 	</fuseaction> 
 	
 	<!--
@@ -7361,12 +7361,12 @@
 	<!--  -->
 	
 	<!--  -->
-	<!-- ADMIN: MAINTENANCE START -->
+	<!-- ADMIN: CUSTOMIZATION START -->
 	<!--  -->
 	
 	<!-- For loading customization -->
 	<fuseaction name="admin_customization">
-		!-- Param -->
+		<!-- Param -->
 		<set name="attributes.meta_keys" value="id,filename" />
 		<set name="attributes.meta_default" value="labels,keywords,description,type" />
 		<set name="attributes.meta_img" value="subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,colorspace,xres,yres,resunit" />
@@ -7398,7 +7398,38 @@
 	</fuseaction>
 	
 	<!--  -->
-	<!-- ADMIN: MAINTENANCE STOP -->
+	<!-- ADMIN: CUSTOMIZATION STOP -->
+	<!--  -->
+
+<!--  -->
+	<!-- ADMIN: NOTIFICATION START -->
+	<!--  -->
+	
+	<!-- For loading notification -->
+	<fuseaction name="admin_notification">
+		<!-- Param -->
+		<do action="getimgmeta_map" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- Get Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(true)" returnvariable="attributes.meta_cf" />
+		<!-- Get Notification data -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_notifications()" returnvariable="attributes.notifications" />
+		<!-- Show -->
+		<do action="ajax.admin_notification" />
+	</fuseaction>
+	<!-- For saving notification -->
+	<fuseaction name="admin_notification_save">
+		<!-- Save form data -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_notifications(attributes)" />
+	</fuseaction>
+	
+	<fuseaction name="getimgmeta_map">
+		<!-- Save form data -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getimgmeta_map()" returnvariable="attributes.meta_img" />
+	</fuseaction>
+
+	<!--  -->
+	<!-- ADMIN: NOTIFICATION STOP -->
 	<!--  -->
 
 	<!--  -->
@@ -10302,6 +10333,10 @@
 	
 	<!-- Run Folder subscribe schedule tasks -->
 	<fuseaction name="folder_subscribe_task">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" /> 
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
 	</fuseaction>

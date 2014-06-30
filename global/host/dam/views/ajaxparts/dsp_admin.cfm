@@ -40,6 +40,7 @@
 			<li><a href="##admin_settings" onclick="loadcontent('admin_settings','#myself#c.isp_settings');">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
 			<li><a href="##admin_maintenance" onclick="loadcontent('admin_maintenance','#myself#c.admin_maintenance');">#myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
 			<li><a href="##admin_customization" onclick="loadcontent('admin_customization','#myself#c.admin_customization');">#myFusebox.getApplicationData().defaults.trans("header_customization")#</a></li>
+			<li><a href="##admin_notification" onclick="loadcontent('admin_notification','#myself#c.admin_notification');">#myFusebox.getApplicationData().defaults.trans("header_notification")#</a></li>
 			<li><a href="##admin_integration" onclick="loadcontent('admin_integration','#myself#c.admin_integration');">#myFusebox.getApplicationData().defaults.trans("header_integration")#</a></li>
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				<li><a href="##admin_maintenance_cloud" onclick="loadcontent('admin_maintenance_cloud','#myself#c.admin_maintenance_cloud');">Cloud #myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
@@ -87,6 +88,8 @@
 		<div id="admin_maintenance">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		<!--- Customization --->
 		<div id="admin_customization">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<!--- Notification --->
+		<div id="admin_notification">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		<!--- Integration --->
 		<div id="admin_integration">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		<!--- Maintenance Cloud --->

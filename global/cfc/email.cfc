@@ -109,10 +109,20 @@
 		</cfif>
 		<!--- Query email settings --->
 		<cfquery datasource="#thedsn#" name="emaildata">
-		SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_email_use_ssl, set2_email_use_tls, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
+		SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_email_use_ssl, set2_email_use_tls, set2_intranet_reg_emails, set2_intranet_reg_emails_sub,
+		set2_duplicates_email_sub, set2_duplicates_email_body, set2_duplicates_meta 
 		FROM #thehostdbprefix#settings_2
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thehostid#">
 		</cfquery>
+		<cfif isdefined("isdup")>
+			<cfif emaildata.set2_duplicates_email_sub NEQ "">
+				<cfset arguments.subject = replacenocase (emaildata.set2_duplicates_email_sub,"$filename$",arguments.filename,"ALL")>
+			</cfif>
+			<cfif len(emaildata.set2_duplicates_email_body) GT 10>
+				<cfset arguments.themessage = replacenocase (emaildata.set2_duplicates_email_body,"$filename$",arguments.filename,"ALL")>
+			</cfif>
+		</cfif>
+
 		<!--- If the to is empty --->
 		<cfif arguments.to EQ "">
 			<cfquery datasource="#thedsn#" name="qryuser">

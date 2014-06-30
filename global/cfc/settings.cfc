@@ -97,16 +97,11 @@
 	set2_img_thumb_heigth = <cfif isnumeric(arguments.thestruct.set2_img_thumb_heigth)><cfqueryparam value="#arguments.thestruct.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric"><cfelse>null</cfif>,
 	set2_date_format = <cfqueryparam value="#arguments.thestruct.set2_date_format#" cfsqltype="cf_sql_varchar">,
 	set2_date_format_del = <cfqueryparam value="#arguments.thestruct.set2_date_format_del#" cfsqltype="cf_sql_varchar">,
-	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
-	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">,
 	set2_md5check = <cfqueryparam value="#arguments.thestruct.set2_md5check#" cfsqltype="cf_sql_varchar">,
 	set2_custom_file_ext = <cfqueryparam value="#arguments.thestruct.set2_custom_file_ext#" cfsqltype="cf_sql_varchar">,
-	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">,
 	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">,
 	set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">,
-	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">,
-	set2_new_user_email_sub = <cfqueryparam value="#arguments.thestruct.set2_new_user_email_sub#" cfsqltype="cf_sql_varchar">,
-	set2_new_user_email_body = <cfqueryparam value="#arguments.thestruct.set2_new_user_email_body#" cfsqltype="cf_sql_varchar">
+	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -2711,5 +2706,169 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Return --->
 		<cfreturn qry_details />
 	</cffunction>
+
+<!--- Save notification settings --->
+<cffunction name="set_notifications" returntype="void" hint="Save notificaiton settings">
+	<cfargument name="thestruct" type="struct">
+	<cfparam name="thestruct.folder_subscribe_meta" default="">
+	<cfparam name="thestruct.asset_expiry_meta" default="">
+	<cfparam name="thestruct.duplicates_meta" default="">
+	<!--- Update db --->
+	<cfquery dataSource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#settings_2 
+	SET 
+	set2_folder_subscribe_email_sub = <cfqueryparam value="#thestruct.folder_subscribe_subject#" cfsqltype="cf_sql_varchar">,
+	set2_folder_subscribe_email_body = <cfqueryparam value="#thestruct.folder_subscribe_body#" cfsqltype="cf_sql_varchar">,
+	set2_folder_subscribe_meta = <cfqueryparam value="#thestruct.folder_subscribe_meta#" cfsqltype="cf_sql_varchar">,
+	set2_asset_expiry_email_sub  = <cfqueryparam value="#thestruct.asset_expiry_subject#" cfsqltype="cf_sql_varchar">,
+	set2_asset_expiry_email_body = <cfqueryparam value="#thestruct.asset_expiry_body#" cfsqltype="cf_sql_varchar">,
+	set2_asset_expiry_meta = <cfqueryparam value="#thestruct.asset_expiry_meta#" cfsqltype="cf_sql_varchar">,
+	set2_duplicates_email_sub = <cfqueryparam value="#thestruct.duplicates_subject#" cfsqltype="cf_sql_varchar">,
+	set2_duplicates_email_body = <cfqueryparam value="#thestruct.duplicates_body#" cfsqltype="cf_sql_varchar">,
+	set2_duplicates_meta = <cfqueryparam value="#thestruct.duplicates_meta#" cfsqltype="cf_sql_varchar">,
+	set2_new_user_email_sub = <cfqueryparam value="#arguments.thestruct.set2_new_user_email_sub#" cfsqltype="cf_sql_varchar">,
+	set2_new_user_email_body = <cfqueryparam value="#arguments.thestruct.set2_new_user_email_body#" cfsqltype="cf_sql_varchar">,
+	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">,
+	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
+	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+</cffunction>
+
+<cffunction name="get_notifications" returntype="query" hint="Get notificaiton settings">
+	<!--- Update db --->
+	<cfquery dataSource="#application.razuna.datasource#" name="notification_qry">
+	SELECT set2_folder_subscribe_email_sub, 
+		set2_folder_subscribe_email_body,
+		set2_folder_subscribe_meta,
+		set2_asset_expiry_email_sub,
+		set2_asset_expiry_email_body ,
+		set2_asset_expiry_meta,
+		set2_duplicates_email_sub,
+		set2_duplicates_email_body,
+		set2_duplicates_meta,
+		set2_intranet_reg_emails,
+		set2_intranet_reg_emails_sub,
+		set2_new_user_email_sub, 
+		set2_new_user_email_body,
+		set2_email_from
+	FROM #session.hostdbprefix#settings_2 
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn notification_qry>
+</cffunction>
+
+
+<cffunction name="getmeta_asset"  hint="Retrieves relevant meta information from a given asset from the specified meta fields in raz1_settings_2" returntype="query">
+	<cfargument name="assetid" type="string" required="true">
+	<cfargument name="metafields" type="string" required="true" hint="fields to extract">
+	<cfset var data = queryNew(1)>
+	<!--- Extract fields --->
+	<cfset var cf_fields = "">
+	<cfset var img_fields = "'dummy' dummy1"> <!--- Include dummy columns to prevent query throwing errors when no columns are selected --->
+	<cfset var doc_fields = "' dummy' dummy2">
+	<cfinvoke component="global.cfc.settings" method="getimgmeta_map" returnvariable="meta_img">
+	<cfloop list ="#arguments.metafields#" index="i">
+		<cfif i contains 'cf_'>
+			<cfset cf_fields = cf_fields & "," & gettoken(i,2,'_')>
+		<cfelseif i contains 'img_'>
+			<cfset img_fields = img_fields & "," & gettoken(i,2,'_') & " " & structfind(meta_img,gettoken(i,2,'_'))>
+		<cfelseif i contains 'doc_'>
+			<cfset doc_fields = doc_fields & "," & gettoken(i,2,'_')>
+		</cfif>
+	</cfloop>
+	<cfset cf_fields = listsort(cf_fields,'text','asc')>
+	<cfset img_fields = listsort(img_fields,'text','asc')>
+	<cfset doc_fields = listsort(doc_fields,'text','asc')>
+	<!--- Extract data for asset for specified fields --->
+	<cfset var img_data = querynew(#img_fields#)>
+	<cfquery dataSource="#application.razuna.datasource#" name="img_data">
+		SELECT #preservesinglequotes(img_fields)# FROM #session.hostdbprefix#xmp
+		WHERE id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfif img_data.recordcount EQ 0>
+		<cfset var tmp = queryAddRow(img_data,1)>
+	</cfif>
+
+	<cfset var doc_data = querynew(#doc_fields#)>
+	<cfquery dataSource="#application.razuna.datasource#" name="doc_data">
+		SELECT #preservesinglequotes(doc_fields)# FROM #session.hostdbprefix#files_xmp
+		WHERE asset_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfif doc_data.recordcount EQ 0>
+		<cfset var tmp = queryAddRow(doc_data,1)>
+	</cfif>
+	<!--- Join the data together --->
+	<cfquery dbtype="query" name="data">SELECT * FROM img_data, doc_data</cfquery>
+	<!--- Add custom fields to data set --->
+	<cfloop list="#cf_fields#" index="cf">
+		<cfquery dataSource="#application.razuna.datasource#" name="cf_col">
+			SELECT  ct.cf_text FROM  #session.hostdbprefix#custom_fields_text ct
+			WHERE ct.cf_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf#" >
+			AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#" name="cf_data">
+			SELECT  cv.cf_value FROM #session.hostdbprefix#custom_fields_values cv
+			WHERE cv.cf_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf#" >
+			AND cv.asset_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+			AND cv.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfset var tmp = queryAddColumn(data,'#cf_col.cf_text#','varchar',[])>
+		<cfif cf_data.RecordCount NEQ 0>
+			<cfset tmp = querySetCell(data,'#cf_col.cf_text#',cf_data.cf_value,1) >
+		</cfif>
+	</cfloop>
+	<!--- Remove dummy columns --->
+	<cfset var tmp = querydeletecolumn(data,'dummy1')>
+	<cfset var tmp = querydeletecolumn(data,'dummy2')>
+	<cfreturn data>
+</cffunction>
+
+<cffunction name="getimgmeta_map" returntype="struct" hint="Retrieves xmp mapping for image metadata fields">
+	<cfset img_meta_map = structnew()>
+	<cfset img_meta_map['authorsposition']='authorstitle'>
+	<cfset img_meta_map['captionwriter']='descwriter'>
+	<cfset img_meta_map['category']='category'>
+	<cfset img_meta_map['ciadrcity']='iptccity'>
+	<cfset img_meta_map['ciadrctry']='iptccountry'>
+	<cfset img_meta_map['ciadrextadr']='iptcaddress'>
+	<cfset img_meta_map['ciadrpcode']='iptczip'>
+	<cfset img_meta_map['ciadrregion']='iptcimagestate'>
+	<cfset img_meta_map['ciemailwork']='iptcemail'>
+	<cfset img_meta_map['citelwork']='iptcphone'>
+	<cfset img_meta_map['city']='iptcimagecity'>
+	<cfset img_meta_map['ciurlwork']='iptcwebsite'>
+	<cfset img_meta_map['colorspace']='colorspace'>
+	<cfset img_meta_map['copyrightstatus']='copystatus'>
+	<cfset img_meta_map['country']='iptcimagecountry'>
+	<cfset img_meta_map['countrycode']='iptcimagecountrycode'>
+	<cfset img_meta_map['creator']='creator'>
+	<cfset img_meta_map['credit']='iptccredit'>
+	<cfset img_meta_map['datecreated']='iptcdatecreated'>
+	<cfset img_meta_map['description']='description'>
+	<cfset img_meta_map['headline']='iptcheadline'>
+	<cfset img_meta_map['instructions']='iptcinstructions'>
+	<cfset img_meta_map['intellectualgenre']='iptcintelgenre'>
+	<cfset img_meta_map['location']='iptclocation'>
+	<cfset img_meta_map['resunit']='resunit'>
+	<cfset img_meta_map['rights']='copynotice'>
+	<cfset img_meta_map['scene']='iptcscene'>
+	<cfset img_meta_map['source']='iptcsource'>
+	<cfset img_meta_map['state']='iptcstate'>
+	<cfset img_meta_map['subjectcode']='iptcsubjectcode'>
+	<cfset img_meta_map['supplementalcategories']='categorysub'>
+	<cfset img_meta_map['title']='title'>
+	<cfset img_meta_map['transmissionreference']='iptcjobidentifier'>
+	<cfset img_meta_map['urgency']='urgency'>
+	<cfset img_meta_map['usageterms']='iptcusageterms'>
+	<cfset img_meta_map['webstatement']='copyurl'>
+	<cfset img_meta_map['xres']='xres'>
+	<cfset img_meta_map['yres']='yres'>
+	<cfreturn img_meta_map>
+</cffunction>
 
 </cfcomponent>
