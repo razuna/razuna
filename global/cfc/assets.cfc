@@ -701,6 +701,22 @@
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfparam name="arguments.thestruct.folderpath" default="">
+	<cfset var ts = dateformat(now(),"mm.dd.yyyy")>
+	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
+	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
+	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
+	<cfif listlen(arguments.thestruct.thefile) GT 0>
+		<cfset conn = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=false,timeout=3000)>
+		<cftry>
+			<cfset ftpcreatedir(ftpdata=conn, directory="#arguments.thestruct.donedir#")>
+			<cfcatch/>
+		</cftry>
+		<cftry>
+			<cfset ftpcreatedir(ftpdata=conn, directory='#arguments.thestruct.errordir#')>
+			<cfcatch/>
+		</cftry>
+		<cfset ftpclose(conn)>
+	</cfif>
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
@@ -741,7 +757,12 @@
 				<!--- Open connection --->
 				<cfset o = ftpopen(server=attributes.intstruct.ftp_server,username=attributes.intstruct.ftp_user,password=attributes.intstruct.ftp_pass,passive=attributes.intstruct.ftp_passive, stoponerror=true,timeout=3000)>
 				<!--- Get the file --->
-				<cfset Ftpgetfile(ftpdata=o,remotefile="#attributes.intstruct.remote_file#",localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#",failifexists=false,passive=attributes.intstruct.ftp_passive,stoponerror=true)>
+				<cfset Ftpgetfile(ftpdata=o,remotefile="#attributes.intstruct.remote_file#",localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#",failifexists=false,passive=attributes.intstruct.ftp_passive,stoponerror=false)>
+				<cfif fileexists("#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#")>
+					<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.donedir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+				<cfelse>
+					<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.errordir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+				</cfif>
 				<!--- Close connection --->
 				<cfset ftpclose(o)>
 			</cfthread>

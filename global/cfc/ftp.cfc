@@ -32,7 +32,7 @@
     <cfset qry.backpath = "">
     <cfset qry.dirname = "">
     <!--- Open Connection to FTP Server --->
-    <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=true, timeout=3000)>
+    <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=false, timeout=3000)>
     <!--- Set the response form the connection into scope --->
     <cfset qry.ftp = o>
     <!--- Try to connect to the FTP server --->
