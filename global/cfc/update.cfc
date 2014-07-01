@@ -231,6 +231,79 @@
 			</cfif>
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
+				<!--- Add columns for notification email settings--->
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_FOLDER_SUBSCRIBE_EMAIL_SUB #thevarchar#(50)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_FOLDER_SUBSCRIBE_EMAIL_BODY  #thevarchar#(1000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				   <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_FOLDER_SUBSCRIBE_META  #thevarchar#(2000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_ASSET_EXPIRY_EMAIL_SUB #thevarchar#(50)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_ASSET_EXPIRY_EMAIL_BODY  #thevarchar#(1000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_ASSET_EXPIRY_META  #thevarchar#(2000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				  <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_DUPLICATES_EMAIL_SUB #thevarchar#(50)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				 <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_DUPLICATES_EMAIL_BODY  #thevarchar#(2000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
+			<cftry>
+				  <cfquery datasource="#application.razuna.datasource#">
+				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_DUPLICATES_META  #thevarchar#(2000)
+				 </cfquery>
+				 <cfcatch type="any">
+				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
+				 </cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If update number is lower then 26 (v. 1.6.5) --->
@@ -289,7 +362,7 @@
 				 </cfcatch>
 			</cftry>
 
-			<!--- Add columns for new uew email settings--->
+			<!--- Add columns for new user email settings--->
 			<cftry>
 				 <cfquery datasource="#application.razuna.datasource#">
 				 ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_NEW_USER_EMAIL_SUB #thevarchar#(500)
