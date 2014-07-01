@@ -545,6 +545,18 @@
 			PRIMARY KEY (news_id)
 		)
 		</cfquery>
+
+		<!--- ct_aliases --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.ct_aliases
+		(
+			asset_id_r 		varchar(100) DEFAULT NULL,
+			folder_id_r 	varchar(100) DEFAULT NULL,
+			type 			varchar(10) DEFAULT NULL,
+			rec_uuid 		varchar(100) DEFAULT NULL
+		)
+		#this.tableoptions#
+		</cfquery>
 		
 		<!---  --->
 		<!--- END: CREATE TABLES --->
@@ -2418,6 +2430,12 @@
 	<cffunction name="create_indexes" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
 		<!--- Start creating indexes --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_aliases_asset_id_r ON #arguments.thestruct.theschema#.ct_aliases(asset_id_r)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_aliases_folder_id_r ON #arguments.thestruct.theschema#.ct_aliases(folder_id_r)
+		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX idx_cache_token ON #arguments.thestruct.theschema#.cache(cache_token)
 		</cfquery>

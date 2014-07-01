@@ -409,6 +409,16 @@
 		)
 		</cfquery>
 		
+		<!--- ct_aliases --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE ct_aliases
+		(
+			ct_pl_id_r		varchar(100),
+		  	ct_host_id_r	BIGINT,
+		  	rec_uuid		varchar(100)
+		)
+		</cfquery>
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->

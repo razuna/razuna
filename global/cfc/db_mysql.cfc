@@ -445,6 +445,20 @@
 		#this.tableoptions#
 		</cfquery>
 
+		<!--- ct_aliases --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.ct_aliases
+		(
+			asset_id_r 		varchar(100) DEFAULT NULL,
+			folder_id_r 	varchar(100) DEFAULT NULL,
+			type 			varchar(10) DEFAULT NULL,
+			rec_uuid 		varchar(100) DEFAULT NULL,
+			KEY asset_id_r (asset_id_r),
+			KEY folder_id_r (folder_id_r)
+		)
+		#this.tableoptions#
+		</cfquery>
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->
