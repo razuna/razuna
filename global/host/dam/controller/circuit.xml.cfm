@@ -7361,12 +7361,12 @@
 	<!--  -->
 	
 	<!--  -->
-	<!-- ADMIN: MAINTENANCE START -->
+	<!-- ADMIN: CUSTOMIZATION START -->
 	<!--  -->
 	
 	<!-- For loading customization -->
 	<fuseaction name="admin_customization">
-		!-- Param -->
+		<!-- Param -->
 		<set name="attributes.meta_keys" value="id,filename" />
 		<set name="attributes.meta_default" value="labels,keywords,description,type" />
 		<set name="attributes.meta_img" value="subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,colorspace,xres,yres,resunit" />
@@ -7398,7 +7398,38 @@
 	</fuseaction>
 	
 	<!--  -->
-	<!-- ADMIN: MAINTENANCE STOP -->
+	<!-- ADMIN: CUSTOMIZATION STOP -->
+	<!--  -->
+
+<!--  -->
+	<!-- ADMIN: NOTIFICATION START -->
+	<!--  -->
+	
+	<!-- For loading notification -->
+	<fuseaction name="admin_notification">
+		<!-- Param -->
+		<do action="getimgmeta_map" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- Get Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(true)" returnvariable="attributes.meta_cf" />
+		<!-- Get Notification data -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_notifications()" returnvariable="attributes.notifications" />
+		<!-- Show -->
+		<do action="ajax.admin_notification" />
+	</fuseaction>
+	<!-- For saving notification -->
+	<fuseaction name="admin_notification_save">
+		<!-- Save form data -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_notifications(attributes)" />
+	</fuseaction>
+	
+	<fuseaction name="getimgmeta_map">
+		<!-- Save form data -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getimgmeta_map()" returnvariable="attributes.meta_img" />
+	</fuseaction>
+
+	<!--  -->
+	<!-- ADMIN: NOTIFICATION STOP -->
 	<!--  -->
 
 	<!--  -->
@@ -9546,34 +9577,34 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure_flat(attributes)" />
 			</true>
 			<false>
-				<!-- CFC: Get all assets -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
-				<!-- Get user groups  -->
-				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
-					<argument name="user_id" value="#session.theuserid#" />
-					<argument name="host_id" value="#session.hostid#" />
-					<argument name="check_upc_size" value="true" />
-				</invoke>
-				<!-- Check the current folder having label text as upc -->
-				<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
-					<argument name="theid" value="#attributes.folder_id#" />
-					<argument name="thetype" value="folder" />
-					<argument name="checkUPC" value="true" />
-				</invoke>
-				<!-- Check the UPC folder download -->
-				<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
-					<true>
-						<do action="meta_export_do" />
-						<!-- CFC: Show the progress UPC download -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
-					</true>
-					<false>
-						<!-- Action: Export Metadata -->
-						<do action="meta_export_do" />
-						<!-- RAZ-2901 CFC: Show the progress download -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
-					</false>
-				</if>
+		<!-- CFC: Get all assets -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
+		<!-- Get user groups  -->
+		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
+			<argument name="user_id" value="#session.theuserid#" />
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="check_upc_size" value="true" />
+		</invoke>
+		<!-- Check the current folder having label text as upc -->
+		<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
+			<argument name="theid" value="#attributes.folder_id#" />
+			<argument name="thetype" value="folder" />
+			<argument name="checkUPC" value="true" />
+		</invoke>
+		<!-- Check the UPC folder download -->
+		<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
+			<true>
+				<do action="meta_export_do" />
+				<!-- CFC: Show the progress UPC download -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
+			</true>
+			<false>
+			<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
+				<!-- RAZ-2901 CFC: Show the progress download -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
+			</false>
+		</if>
 			</false>
 		</if>
 	</fuseaction>
@@ -10334,6 +10365,10 @@
 	
 	<!-- Run Folder subscribe schedule tasks -->
 	<fuseaction name="folder_subscribe_task">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" /> 
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
 	</fuseaction>

@@ -35,4 +35,6 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Simplify the dialog windows.
 	config.removeDialogTabs = 'image:advanced;link:advanced';
+	//Use single line break on enter
+	config.enterMode = CKEDITOR.ENTER_BR;
 };

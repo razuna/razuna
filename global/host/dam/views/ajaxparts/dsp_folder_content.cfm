@@ -214,6 +214,20 @@
 										<br />
 									</cfloop>
 								</cfif>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<br />
+									<!--- Get label --->
+									<cfset cflabel = listFirst(i,"|")>
+									<!--- Get value --->
+									<cfset cfvalue = listlast(i,"|")>
+									<!--- Output --->
+									#cflabel#:
+									<cfif cflabel NEQ cfvalue>
+										<br />
+										#cfvalue#
+									</cfif>
+								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
 									<div style="float:right">
 										<em>(Alias)</em>
@@ -328,6 +342,20 @@
 										<br />
 									</cfloop>
 								</cfif>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<br />
+									<!--- Get label --->
+									<cfset cflabel = listFirst(i,"|")>
+									<!--- Get value --->
+									<cfset cfvalue = listlast(i,"|")>
+									<!--- Output --->
+									#cflabel#:
+									<cfif cflabel NEQ cfvalue>
+										<br />
+										#cfvalue#
+									</cfif>
+								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
 									<div style="float:right">
 										<em>(Alias)</em>
@@ -425,6 +453,20 @@
 										<br />
 									</cfloop>
 								</cfif>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<br />
+									<!--- Get label --->
+									<cfset cflabel = listFirst(i,"|")>
+									<!--- Get value --->
+									<cfset cfvalue = listlast(i,"|")>
+									<!--- Output --->
+									#cflabel#:
+									<cfif cflabel NEQ cfvalue>
+										<br />
+										#cfvalue#
+									</cfif>
+								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
 									<div style="float:right">
 										<em>(Alias)</em>
@@ -542,6 +584,20 @@
 										<br />
 									</cfloop>
 								</cfif>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<br />
+									<!--- Get label --->
+									<cfset cflabel = listFirst(i,"|")>
+									<!--- Get value --->
+									<cfset cfvalue = listlast(i,"|")>
+									<!--- Output --->
+									#cflabel#:
+									<cfif cflabel NEQ cfvalue>
+										<br />
+										#cfvalue#
+									</cfif>
+								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
 									<div style="float:right">
 										<em>(Alias)</em>

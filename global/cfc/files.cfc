@@ -222,7 +222,7 @@
 			</cfif>
 			
 			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
-			file_create_time date_create, file_change_date date_change, f.expiry_date
+			file_create_time date_create, file_change_date date_change, f.expiry_date, 'null' as customfields, f.file_id as id, 'doc' as kind
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
@@ -300,6 +300,8 @@
 				</cfif>
 			</cfloop>
 		</cfif>
+		<!--- Add the custom fields to query --->
+		<cfinvoke component="folders" method="addCustomFieldsToQuery" theqry="#qLocal#" returnvariable="qLocal" />
 		<!--- Return --->
 		<cfreturn qLocal />
 	</cffunction>

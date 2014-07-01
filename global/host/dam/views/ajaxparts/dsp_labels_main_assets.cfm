@@ -137,6 +137,20 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<!--- Show custom fields here (its a list) --->
+									<cfloop list="#customfields#" index="i" delimiters=",">
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										#cflabel#:
+										<cfif cflabel NEQ cfvalue>
+											<br />
+											#cfvalue#
+										</cfif>
+									</cfloop>
 								</cfif>
 							</div>
 						</cfif>
@@ -226,13 +240,27 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<!--- Show custom fields here (its a list) --->
+									<cfloop list="#customfields#" index="i" delimiters=",">
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										#cflabel#:
+										<cfif cflabel NEQ cfvalue>
+											<br />
+											#cfvalue#
+										</cfif>
+									</cfloop>
 								<cfelse>					
 									The upload of "#filename#" is still in progress!
 									<br /><br>
 									#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 									#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 									<br><br>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>							
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 								</cfif>
 							</div>
 						</cfif>
@@ -322,6 +350,20 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<!--- Show custom fields here (its a list) --->
+									<cfloop list="#customfields#" index="i" delimiters=",">
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										#cflabel#:
+										<cfif cflabel NEQ cfvalue>
+											<br />
+											#cfvalue#
+										</cfif>
+									</cfloop>
 								<cfelse>
 									The upload of "#filename#" is still in progress!
 									<br /><br />
@@ -435,6 +477,20 @@
 											<br />
 										</cfloop>
 									</cfif>
+									<!--- Show custom fields here (its a list) --->
+									<cfloop list="#customfields#" index="i" delimiters=",">
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										#cflabel#:
+										<cfif cflabel NEQ cfvalue>
+											<br />
+											#cfvalue#
+										</cfif>
+									</cfloop>
 								<cfelse>
 									The upload of "#filename#" is still in progress!
 									<br /><br />
