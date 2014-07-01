@@ -694,6 +694,7 @@
 	</cfthread> --->
 </cffunction>
 
+
 <!--- INSERT FROM FTP --->
 <cffunction name="addassetftp" output="true">
 	<cfargument name="thestruct" type="struct">
@@ -755,9 +756,16 @@
 			<cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run">
 				<!--- Open connection --->
-				<cfset o = ftpopen(server=attributes.intstruct.ftp_server,username=attributes.intstruct.ftp_user,password=attributes.intstruct.ftp_pass,passive=attributes.intstruct.ftp_passive, stoponerror=false,timeout=3000)>
+				<cfset o = ftpopen(server=attributes.intstruct.ftp_server,username=attributes.intstruct.ftp_user,password=attributes.intstruct.ftp_pass,passive=attributes.intstruct.ftp_passive, stoponerror=true,timeout=3000)>
 				<!--- Get the file --->
-				<cfset Ftpgetfile(ftpdata=o,remotefile="#attributes.intstruct.remote_file#",localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#",failifexists=false,passive=attributes.intstruct.ftp_passive,stoponerror=false)>
+				<cfset Ftpgetfile(ftpdata=o,remotefile="#attributes.intstruct.remote_file#",localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#",failifexists=false,passive=attributes.intstruct.ftp_passive,stoponerror=true)>
+				<cfif isdefined("attributes.intstruct.sched_id")>
+					<cfif fileexists("#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#")>
+						<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.donedir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+					<cfelse>
+						<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.errordir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+					</cfif>
+				</cfif>
 				<!--- Close connection --->
 				<cfset ftpclose(o)>
 			</cfthread>
@@ -809,15 +817,6 @@
 				<!--- Call the addasset function --->
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-				 <cfif isdefined("arguments.thestruct.sched_id") >
-				 	<cfset success_conn = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=false,timeout=3000)>
-					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-						<cfset ftprename(ftpdata=success_conn, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=false)>
-					<cfelse>
-						<cfset ftprename(ftpdata=success_conn, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=false)>
-					</cfif>
-					<cfset ftpclose(success_conn)>
-				</cfif>
 				<!--- </cfthread> --->
 			<cfelse>
 				<!--- RAZ-2810 Customise email message --->
@@ -826,21 +825,26 @@
 				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
 				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
 				<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#" isdup = "yes" filename="#arguments.thestruct.thefilename#">
+				<cfif isdefined("arguments.thestruct.sched_id")>
+					<cftry>
+					<cfset o = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=true,timeout=3000)>
+					<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=false)>
+					<cfset ftpclose(o)>
+					<cfcatch type="any">
+						<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+					</cfcatch>
+					</cftry>
+				</cfif>
 			</cfif>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
-				<cfif isdefined("arguments.thestruct.sched_id") AND isdefined("arguments.thestruct.remote_file")>
-					<cfset errconn = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=false,timeout=3000)>
-					<cfif ftpexistsfile(ftpdata=errconn,file="#arguments.thestruct.remote_file#",stoponerror=false)>
-						<cfset ftprename(ftpdata=errconn, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=false)>
-					</cfif>
-					<cfset ftpclose(errconn)>
-				</cfif>
 			</cfcatch>
 		</cftry>
 	</cfloop>
 </cffunction>
+
 
 <!--- INSERT FROM API --->
 <cffunction name="addassetapi" output="false" access="public" returntype="string">
