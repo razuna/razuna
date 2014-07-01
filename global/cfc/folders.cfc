@@ -3501,7 +3501,7 @@
 		lower(i.img_filename) as filename_forsort,
 		i.img_size as size,
 		i.hashtag,
-		'' as labels, i.img_upc_number as upc_number, i.img_extension as extension, i.expiry_date
+		'' as labels, i.img_upc_number as upc_number, i.img_extension as extension, i.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
 		<cfif  arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -3554,7 +3554,7 @@
 		lower(v.vid_filename) as filename_forsort,
 		v.vid_size as size,
 		v.hashtag,
-		'' as labels, v.vid_upc_number as upc_number, v.vid_extension as extension, v.expiry_date
+		'' as labels, v.vid_upc_number as upc_number, v.vid_extension as extension, v.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -3609,7 +3609,7 @@
 		lower(a.aud_name) as filename_forsort,
 		a.aud_size as size,
 		a.hashtag,
-		'' as labels, a.aud_upc_number as upc_number, a.aud_extension as extension, a.expiry_date
+		'' as labels, a.aud_upc_number as upc_number, a.aud_extension as extension, a.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -3652,7 +3652,7 @@
 		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
-		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels, f.file_upc_number as upc_number, f.file_extension as extension, f.expiry_date
+		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels, f.file_upc_number as upc_number, f.file_extension as extension, f.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -3741,9 +3741,87 @@
 			</cfif>
 		</cfloop>
 	</cfif>
+	<!--- Add the custom fields to query --->
+	<cfset qry = addCustomFieldsToQuery(qry)>
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
+
+<!--- Sub function to put custom fields to query. Called from here, labels and from all cfcs that show thumbnails --->
+<cffunction name="addCustomFieldsToQuery" output="false" returntype="query">
+	<cfargument name="theqry" type="query" required="true">
+	<!--- Get cachetokens --->
+	<cfset variables.cachetokensetting = getcachetoken("settings")>
+	<cfset variables.cachetokengeneral = getcachetoken("general")>
+	<!--- Set var --->
+	<cfset var cf_list = "">
+	<cfset var qrycfimg = "0">
+	<cfset var qrycfvid = "0">
+	<cfset var qrycfaud = "0">
+	<cfset var qrycfdoc = "0">
+	<!--- Get which custom field ids the user wants to show --->
+	<cfquery name="qry_cf_img" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetokensetting#qry_cf_img */ custom_value
+	FROM #session.hostdbprefix#custom
+	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_images_metadata">
+	</cfquery>
+	<cfquery name="qry_cf_vid" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetokensetting#qry_cf_vid */ custom_value
+	FROM #session.hostdbprefix#custom
+	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_videos_metadata">
+	</cfquery>
+	<cfquery name="qry_cf_aud" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetokensetting#qry_cf_aud */ custom_value
+	FROM #session.hostdbprefix#custom
+	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_audios_metadata">
+	</cfquery>
+	<cfquery name="qry_cf_doc" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetokensetting#qry_cf_doc */ custom_value
+	FROM #session.hostdbprefix#custom
+	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_files_metadata">
+	</cfquery>
+	<cfif qry_cf_img.recordcount NEQ 0>
+		<cfset qrycfimg = qry_cf_img.custom_value>
+	</cfif>
+	<cfif qry_cf_vid.recordcount NEQ 0>
+		<cfset qrycfvid = qry_cf_vid.custom_value>
+	</cfif>
+	<cfif qry_cf_aud.recordcount NEQ 0>
+		<cfset qrycfaud = qry_cf_aud.custom_value>
+	</cfif>
+	<cfif qry_cf_doc.recordcount NEQ 0>
+		<cfset qrycfdoc = qry_cf_doc.custom_value>
+	</cfif>
+	<cfloop query="arguments.theqry">
+		<cfquery name="qry_cf" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetokengeneral#folder_cf_fields */ cfv.cf_value, cft.cf_text
+		FROM raz1_custom_fields_values cfv, raz1_custom_fields_text cft 
+		WHERE cfv.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+		AND cft.cf_id_r = cfv.cf_id_r 
+		AND cft.lang_id_r = 1
+		<cfif kind EQ "img">
+			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfimg#" list="true">)
+		<cfelseif kind EQ "vid">
+			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfvid#" list="true">)
+		<cfelseif kind EQ "aud">
+			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfaud#" list="true">)
+		<cfelseif kind EQ "doc">
+			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfdoc#" list="true">)
+		</cfif>
+		</cfquery>
+		<cfloop query="qry_cf">
+			<!--- Put list together --->
+			<cfset cf_list = cf_list & cf_text & "|" & cf_value & ",">
+		</cfloop>
+		<!--- Now add to query --->
+		<cfset QuerySetCell(query=arguments.theqry, column="customfields", value=cf_list, row=currentrow)>
+		<!--- Reset cf_list --->
+		<cfset cf_list = "">
+	</cfloop>
+	<!--- Return --->
+	<cfreturn arguments.theqry>
+</cffunction>
+
 
 <!--- Trash all selected records. Mixed data types thus get them here --->
 <cffunction name="trashall" output="true">

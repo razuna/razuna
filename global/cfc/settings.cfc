@@ -1940,6 +1940,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.customfield_files_metadata = "">
 	<cfset v.customfield_audios_metadata = "">
 	<cfset v.customfield_all_metadata = "">
+	<!--- For folder custom fields --->
+	<cfset v.cf_images_metadata = "">
+	<cfset v.cf_videos_metadata = "">
+	<cfset v.cf_files_metadata = "">
+	<cfset v.cf_audios_metadata = "">
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2185,6 +2190,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfif custom_id EQ "customfield_all_metadata">
 				<cfset v.customfield_all_metadata = custom_value>
 			</cfif>
+			<!--- For folder custom fields --->
+			<cfif custom_id EQ "cf_images_metadata">
+				<cfset v.cf_images_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "cf_videos_metadata">
+				<cfset v.cf_videos_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "cf_files_metadata">
+				<cfset v.cf_files_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "cf_audios_metadata">
+				<cfset v.cf_audios_metadata = custom_value>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -2240,6 +2258,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
 	</cfquery>
 	<!--- Now loop over the fieldnames and do an insert for each record found --->
+	
 	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 		<cfif i NEQ "apply_global">
 			<cfquery dataSource="#application.razuna.datasource#">

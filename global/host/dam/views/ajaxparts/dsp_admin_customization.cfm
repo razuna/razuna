@@ -486,10 +486,10 @@
 				<!--- Select fields for folder view --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
-						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_desc")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_desc")#</th>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_assetbox")#
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("heigth")#: <input type="text" name="assetbox_height" value="#qry_customization.assetbox_height#" size="3" />px<br />
@@ -497,9 +497,16 @@
 							<br /><br />
 							<em>(#myFusebox.getApplicationData().defaults.trans("multiselect")#)</em>
 							<br /><br />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
 							<!--- IMAGES --->
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_images")#
-							<br />
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<select name="images_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
@@ -522,11 +529,28 @@
 									<option value="#i# AS cs_img_#i#"<cfif listFind(qry_customization.images_metadata,"#i# AS cs_img_#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
 								</cfloop>
 							</select>
-							<br /><br />
+						</td>
+						<td>
+							<select name="cf_images_metadata" multiple="multiple" style="width:400px;height:130px;">
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_images")# ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "img" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_images_metadata,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<!--- VIDEOS --->
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_videos")#
-							<br />
+						<td>
+					</tr>
+					<tr>
+						<td>
 							<select name="videos_metadata" multiple="multiple" style="width:400px;height:130px;">
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<!--- Default values --->
 								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata,"vid_id AS cs_vid_id")> selected="selected"</cfif>>ID</option>
 								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>Filename</option>
@@ -541,10 +565,27 @@
 								<option value="vid_upc_number AS cs_vid_upc_number"<cfif listFind(qry_customization.videos_metadata,"vid_upc_number AS cs_vid_upc_number")> selected="selected"</cfif>>UPC Number</option>
 								</cfif>
 							</select>
-							<br /><br />
+						</td>
+						<td>
+							<select name="cf_videos_metadata" multiple="multiple" style="width:400px;height:130px;">
+								<!--- customfield values of videos--->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_videos")#  ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "vid" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_videos_metadata,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<!--- FILES --->
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_files")#
-							<br />
+						<td>
+					</tr>
+					<tr>
+						<td>
 							<select name="files_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
@@ -565,11 +606,29 @@
 									<option value="#i# AS cs_file_#i#"<cfif listFind(qry_customization.files_metadata,"#i# AS cs_file_#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
 								</cfloop>
 							</select>
-							<br /><br />
+						</td>
+						<td>
+							<select name="cf_files_metadata" multiple="multiple" style="width:400px;height:130px;">
+								<!--- customfield values for files--->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_files")#  ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "doc" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_files_metadata,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<!--- AUDIOS --->
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_audios")#
-							<br />
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<select name="audios_metadata" multiple="multiple" style="width:400px;height:130px;">
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<!--- Default values --->
 								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata,"aud_id AS cs_aud_id")> selected="selected"</cfif>>ID</option>
 								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>Filename</option>
@@ -581,6 +640,17 @@
 								<cfif prefs.set2_upc_enabled>
 								<option value="aud_upc_number AS cs_aud_upc_number"<cfif listFind(qry_customization.audios_metadata,"aud_upc_number AS cs_aud_upc_number")> selected="selected"</cfif>>UPC Number</option>
 								</cfif>
+							</select>
+						</td>
+						<td>
+							<select name="cf_audios_metadata" multiple="multiple" style="width:400px;height:130px;">
+								<!--- customfield values for audios--->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_audios")#  ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "aud" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_audios_metadata,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
 							</select>
 						</td>
 					</tr>
@@ -765,7 +835,7 @@
 						</td>
 					</tr>
 				</table>
-				<!--- Select fields to show in infor tab of detail view --->
+				<!--- Select fields to show in info tab of detail view --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
 						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_customfield_desc")#</th>
@@ -805,7 +875,7 @@
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_videos")#
 							<br />
 							<select name="customfield_videos_metadata" multiple="multiple" style="width:400px;height:130px;">
-								<!--- customfield values of  videos--->
+								<!--- customfield values of videos--->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_videos")#  ---</option>
 								<cfloop query="qry_fields">
 									<cfif cf_show EQ "vid">
