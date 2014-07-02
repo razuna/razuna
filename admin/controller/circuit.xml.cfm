@@ -1039,6 +1039,17 @@
 		<!-- Show  -->
 		<do action="users" />
 	</fuseaction>
+
+	<!-- Remove users coming from the select -->
+	<fuseaction name="users_remove_select">
+		<invoke object="myFusebox.getApplicationData().users" methodcall="delete_selects(attributes)" />
+	</fuseaction>
+
+	<!-- Send email to selected users -->
+	<fuseaction name="send_useremails">
+		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
+	</fuseaction>	
+
 	<!-- Check for the email -->
 	<fuseaction name="checkemail">
 		<!-- CFC: Check -->

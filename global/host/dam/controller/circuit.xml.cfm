@@ -6777,7 +6777,14 @@
 		<!-- Show -->
 		<!-- <do action="users" /> -->
 	</fuseaction>
-	
+
+	<!-- Send email to selected users -->
+	<fuseaction name="send_useremails">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
+		<!-- Show -->
+		<!-- <do action="users" /> -->
+	</fuseaction>	
 	<!--  -->
 	<!-- ADMIN: USERS END -->
 	<!--  -->

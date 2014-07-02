@@ -177,14 +177,16 @@
 								You are an Administrator. Full access granted!
 							<!--- There are more admin accounts thus show checkbox for admin --->
 							<cfelse>
-								<input type="checkbox" name="admin_group_2" value="2"<cfif listfind(grpnrlist,"2",",")> checked</cfif>> Administrator
+								<input type="checkbox" name="admin_group_2" id ="admin_group_2" value="2" onchange="togglegrps();"<cfif listfind(grpnrlist,"2",",") > checked</cfif>> Administrator
 							</cfif>
 							<br /><br />
 							<!--- Show the rest of the groups  --->
-							<cfloop query="qry_groups">
-								<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
-								<br />
-							</cfloop>
+							<div id="nonadmingrps">
+								<cfloop query="qry_groups">
+									<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
+									<br />
+								</cfloop>
+							</div>
 						</cfif>
 					<!--- simply show the names of the groups for non admin users --->
 					<cfelse>
@@ -315,6 +317,24 @@
  			onkeyup: function(element) { this.element(element); }
 		});
 	});
+
+	function togglegrps()
+	{
+		if ($("##admin_group_2").prop("checked"))
+		{	// Uncheck all group checkboxes if admin selected and disable them
+			$("##nonadmingrps input[type=checkbox]").each(function() {
+				$(this).prop("checked",false);
+				$(this).prop("disabled",true);
+			});
+		}
+		else
+		{
+			$("##nonadmingrps input[type=checkbox]").each(function() {
+				$(this).prop("disabled",false);
+			});
+		}	
+	}
+	
 	// Feedback when saving form
 	function adminuserfeedback() {
 		<cfif attributes.user_id EQ "0">
