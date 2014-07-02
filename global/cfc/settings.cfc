@@ -2758,11 +2758,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="get_notifications" returntype="query" hint="Get notificaiton settings">
 	<!--- Update db --->
 	<cfquery dataSource="#application.razuna.datasource#" name="notification_qry">
-	SELECT set2_folder_subscribe_email_sub, 
+	SELECT 
+		set2_folder_subscribe_email_sub,
 		set2_folder_subscribe_email_body,
 		set2_folder_subscribe_meta,
 		set2_asset_expiry_email_sub,
-		set2_asset_expiry_email_body ,
+		set2_asset_expiry_email_body,
 		set2_asset_expiry_meta,
 		set2_duplicates_email_sub,
 		set2_duplicates_email_body,
