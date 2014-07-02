@@ -2612,90 +2612,96 @@
 	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#filetotalcount */
 		(
-		SELECT count(fi.file_id)
-		FROM #session.hostdbprefix#files fi, #session.hostdbprefix#folders f
-		WHERE fi.folder_id_r = f.folder_id 
-		AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
-		AND fi.folder_id_r IS NOT NULL
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND fi.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND fi.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.theoverall EQ "f" AND arguments.folder_id NEQ "">
-			AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-		</cfif>
-		<!--- If coming from custom view and the session.customfileid is not empty --->
-		<cfif session.customfileid NEQ "">
-			AND fi.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
-		</cfif>
-		<cfif arguments.folderaccess EQ 'R'>
-			AND (fi.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR fi.expiry_date is null)
-		</cfif>
+			SELECT count(asset_id_r)
+			FROM ct_aliases
+			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		)
 		+
 		(
-		SELECT count(i.img_id)
-		FROM #session.hostdbprefix#images i, #session.hostdbprefix#folders f
-		WHERE i.folder_id_r = f.folder_id 
-		AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
-		AND (i.img_group IS NULL OR i.img_group = '')
-		AND i.folder_id_r IS NOT NULL
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
-			AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-		</cfif>
-		<!--- If coming from custom view and the session.customfileid is not empty --->
-		<cfif session.customfileid NEQ "">
-			AND i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
-		</cfif>
-		<cfif arguments.folderaccess EQ 'R'>
-			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
-		</cfif>
+			SELECT count(fi.file_id)
+			FROM #session.hostdbprefix#files fi, #session.hostdbprefix#folders f
+			WHERE fi.folder_id_r = f.folder_id 
+			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
+			AND fi.folder_id_r IS NOT NULL
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fi.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fi.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif arguments.theoverall EQ "f" AND arguments.folder_id NEQ "">
+				AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+			</cfif>
+			<!--- If coming from custom view and the session.customfileid is not empty --->
+			<cfif session.customfileid NEQ "">
+				AND fi.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
+			<cfif arguments.folderaccess EQ 'R'>
+				AND (fi.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR fi.expiry_date is null)
+			</cfif>
 		)
 		+
 		(
-		SELECT count(v.vid_id)
-		FROM #session.hostdbprefix#videos v, #session.hostdbprefix#folders f
-		WHERE v.folder_id_r = f.folder_id 
-		AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
-		AND (v.vid_group IS NULL OR v.vid_group = '')
-		AND v.folder_id_r IS NOT NULL
-		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
-			AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-		</cfif>
-		<!--- If coming from custom view and the session.customfileid is not empty --->
-		<cfif session.customfileid NEQ "">
-			AND v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
-		</cfif>
-		<cfif arguments.folderaccess EQ 'R'>
-			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
-		</cfif>
+			SELECT count(i.img_id)
+			FROM #session.hostdbprefix#images i, #session.hostdbprefix#folders f
+			WHERE i.folder_id_r = f.folder_id 
+			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
+			AND (i.img_group IS NULL OR i.img_group = '')
+			AND i.folder_id_r IS NOT NULL
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
+				AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+			</cfif>
+			<!--- If coming from custom view and the session.customfileid is not empty --->
+			<cfif session.customfileid NEQ "">
+				AND i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
+			<cfif arguments.folderaccess EQ 'R'>
+				AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
+			</cfif>
+		)
+		+
+		(
+			SELECT count(v.vid_id)
+			FROM #session.hostdbprefix#videos v, #session.hostdbprefix#folders f
+			WHERE v.folder_id_r = f.folder_id 
+			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
+			AND (v.vid_group IS NULL OR v.vid_group = '')
+			AND v.folder_id_r IS NOT NULL
+			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
+				AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+			</cfif>
+			<!--- If coming from custom view and the session.customfileid is not empty --->
+			<cfif session.customfileid NEQ "">
+				AND v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
+			<cfif arguments.folderaccess EQ 'R'>
+				AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
+			</cfif>
 		) 
 		+
 		(
-		SELECT count(a.aud_id)
-		FROM #session.hostdbprefix#audios a, #session.hostdbprefix#folders f
-		WHERE a.folder_id_r = f.folder_id 
-		AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
-		AND (a.aud_group IS NULL OR a.aud_group = '')
-		AND a.folder_id_r IS NOT NULL
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
-			AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-		</cfif>
-		<!--- If coming from custom view and the session.customfileid is not empty --->
-		<cfif session.customfileid NEQ "">
-			AND a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
-		</cfif>
-		<cfif arguments.folderaccess EQ 'R'>
-			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
-		</cfif>
+			SELECT count(a.aud_id)
+			FROM #session.hostdbprefix#audios a, #session.hostdbprefix#folders f
+			WHERE a.folder_id_r = f.folder_id 
+			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
+			AND (a.aud_group IS NULL OR a.aud_group = '')
+			AND a.folder_id_r IS NOT NULL
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
+				AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+			</cfif>
+			<!--- If coming from custom view and the session.customfileid is not empty --->
+			<cfif session.customfileid NEQ "">
+				AND a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
+			<cfif arguments.folderaccess EQ 'R'>
+				AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
+			</cfif>
 		) as
 		thetotal
 		<cfif application.razuna.thedatabase EQ "db2">
@@ -2724,6 +2730,28 @@
 			<cfset var thefolderlist = arguments.thestruct.folder_id & ",">
 		</cfif>
 	</cfif>
+	<!--- For aliases --->
+	<cfset var alias_img = '0,'>
+	<cfset var alias_vid = '0,'>
+	<cfset var alias_aud = '0,'>
+	<cfset var alias_doc = '0,'>
+	<!--- Query Aliases --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+	FROM ct_aliases
+	WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+	</cfquery>
+	<cfloop query="qry_aliases">
+		<cfif type EQ "img">
+			<cfset var alias_img = alias_img & asset_id_r & ','>
+		<cfelseif type EQ "vid">
+			<cfset var alias_vid = alias_vid & asset_id_r & ','>
+		<cfelseif type EQ "aud">
+			<cfset var alias_aud = alias_aud & asset_id_r & ','>
+		<cfelseif type EQ "doc">
+			<cfset var alias_doc = alias_doc & asset_id_r & ','>
+		</cfif>
+	</cfloop>
 	<!--- Images --->
 	<cfif arguments.thestruct.kind EQ "img">
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
@@ -2741,6 +2769,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_img#" list="true">)
 		</cfquery>
 	<!--- Videos --->
 	<cfelseif arguments.thestruct.kind EQ "vid">
@@ -2759,6 +2788,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_vid#" list="true">)
 		</cfquery>
 	<!--- Audios --->
 	<cfelseif arguments.thestruct.kind EQ "aud">
@@ -2777,6 +2807,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_aud#" list="true">)
 		</cfquery>
 	<!--- All Docs in this folder --->
 	<cfelseif arguments.thestruct.kind EQ "doc">
@@ -2796,6 +2827,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_doc#" list="true">)
 		</cfquery>
 	<!--- Files --->
 	<cfelseif arguments.thestruct.kind EQ "allfiles">
@@ -2813,6 +2845,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_doc#" list="true">)
 		</cfquery>
 	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
@@ -2838,6 +2871,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_doc#" list="true">)
 		</cfquery>
 	</cfif>
 	<!--- Return --->
@@ -2908,6 +2942,29 @@
 	<cfparam name="session.customfileid" default="">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
+	<!--- For aliases --->
+	<cfset var alias_img = '0,'>
+	<cfset var alias_vid = '0,'>
+	<cfset var alias_aud = '0,'>
+	<cfset var alias_doc = '0,'>
+	<!--- Query Aliases --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
+	FROM ct_aliases
+	WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+	</cfquery>
+	<cfloop query="qry_aliases">
+		<cfif type EQ "img">
+			<cfset var alias_img = alias_img & asset_id_r & ','>
+		<cfelseif type EQ "vid">
+			<cfset var alias_vid = alias_vid & asset_id_r & ','>
+		<cfelseif type EQ "aud">
+			<cfset var alias_aud = alias_aud & asset_id_r & ','>
+		<cfelseif type EQ "doc">
+			<cfset var alias_doc = alias_doc & asset_id_r & ','>
+		</cfif>
+	</cfloop>
+	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qTab" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#fileTotalAllTypes */ 'doc' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_word' as scr
 		FROM #session.hostdbprefix#files
@@ -2921,6 +2978,7 @@
 		<cfif arguments.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 		</cfif>
+		OR file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_doc#" list="true">)
 		UNION ALL
 			SELECT 'xls' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_excel' as scr
 			FROM #session.hostdbprefix#files
@@ -2977,6 +3035,7 @@
 			<cfif arguments.folderaccess EQ 'R'>
 				AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 			</cfif>
+			OR img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_img#" list="true">)
 		UNION ALL
 			SELECT 'vid' as ext, count(vid_id) as cnt, 'vid' as typ, 'tab_videos' as scr
 			FROM #session.hostdbprefix#videos
@@ -2990,6 +3049,7 @@
 			<cfif arguments.folderaccess EQ 'R'>
 				AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 			</cfif>
+			OR vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_vid#" list="true">)
 		UNION ALL
 			SELECT 'aud' as ext, count(aud_id) as cnt, 'aud' as typ, 'tab_audios' as scr
 			FROM #session.hostdbprefix#audios
@@ -3003,6 +3063,7 @@
 			<cfif arguments.folderaccess EQ 'R'>
 				AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 			</cfif>
+			OR aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_aud#" list="true">)
 		ORDER BY cnt DESC, scr
 	</cfquery>
 
@@ -3536,6 +3597,11 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
+		OR i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_img#" list="true">)
 
 		UNION ALL
 		SELECT v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
