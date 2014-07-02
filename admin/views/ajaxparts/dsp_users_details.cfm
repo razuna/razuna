@@ -145,19 +145,21 @@
 			<tr>
 				<td valign="top">#defaultsObj.trans("groups")#</td>
 				<td valign="top">
-					<table width="100%" cellpadding="0" cellspacing="0" border="0" class="gridno">
-					<cfloop query="qry_groups">
-						<tr>
-							<td width="1%" nowrap="nowrap"><input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>></td>
-							<td nowrap="nowrap">#qry_groups.grp_name#</td>
-							<td width="100%">
-								<cfif Len(qry_groups.grp_translation_key)>
-									#defaultsObj.trans(qry_groups.grp_translation_key)#
-								</cfif>
-							</td>
-						</tr>
-					</cfloop>
-					</table>
+					<div id="nonadmingrps">
+						<table width="100%" cellpadding="0" cellspacing="0" border="0" class="gridno">	
+						<cfloop query="qry_groups">
+							<tr>
+								<td width="1%" nowrap="nowrap"><input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>></td>
+								<td nowrap="nowrap">#qry_groups.grp_name#</td>
+								<td width="100%">
+									<cfif Len(qry_groups.grp_translation_key)>
+										#defaultsObj.trans(qry_groups.grp_translation_key)#
+									</cfif>
+								</td>
+							</tr>
+						</cfloop>
+						</table>
+					</div>
 				</td>
 			</tr>
 		</cfif>
@@ -171,7 +173,7 @@
 				<table width="100%" cellpadding="0" cellspacing="0" border="0" class="gridno">
 				<cfloop query="qry_groups_admin">					
 					<tr>
-						<td width="1%" nowrap="nowrap"><input type="checkbox" id="admin_group_#grp_id#" name="admin_group_#grp_id#" value="#grp_id#"<cfif listfind(grpnrlist, #grp_id#, ",") AND qry_detail.recordcount NEQ 0> checked</cfif><cfif grp_id EQ 1> onclick="chksysadmin();"</cfif>></td>
+						<td width="1%" nowrap="nowrap"><input type="checkbox" id="admin_group_#grp_id#" name="admin_group_#grp_id#"  onchange="togglegrps();" value="#grp_id#"<cfif listfind(grpnrlist, #grp_id#, ",") AND qry_detail.recordcount NEQ 0> checked</cfif><cfif grp_id EQ 1> onclick="chksysadmin();"</cfif>></td>
 						<td nowrap="nowrap">#grp_name#</td>
 						<td width="100%"><cfif Len(qry_groups_admin.grp_translation_key)>#defaultsObj.trans(qry_groups_admin.grp_translation_key)#</cfif>
 						</td>
@@ -221,6 +223,7 @@
 	$('##user_email').focus();
 	// Fire the form submit for new or update user
 	$(document).ready(function(){
+		togglegrps();
 		$("##userdetailadd").validate({
 			submitHandler: function(form) {
 				// Check that some hosts are selected
@@ -306,5 +309,23 @@
 			});
 		}
 	}
+
+	function togglegrps()
+	{
+		if ($("##admin_group_1").prop("checked") || $("##admin_group_2").prop("checked"))
+		{	// Uncheck all group checkboxes if admin selected and disable them
+			$("##nonadmingrps input[type=checkbox]").each(function() {
+				$(this).prop("checked",false);
+				$(this).prop("disabled",true);
+			});
+		}
+		else
+		{
+			$("##nonadmingrps input[type=checkbox]").each(function() {
+				$(this).prop("disabled",false);
+			});
+		}	
+	}
+	
 </script>
 </cfoutput>

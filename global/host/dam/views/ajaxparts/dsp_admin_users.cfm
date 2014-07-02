@@ -55,7 +55,7 @@
 	<!--- The results --->
 	<div id="uresults">
 		<form id="form_users_list" name="form_users_list" action="#self#" method="post">
-		<input type="hidden" name="fa" value="c.users_remove_select">
+		<input type="hidden" name="fa" id="fa" value="c.users_remove_select">
 		<input type="hidden" name="allusers" id="allusers" value="false">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 				<tr>
@@ -64,6 +64,7 @@
 						<div style="float:left;">
 							<a href="##" onclick="selectusers();return false;" id="selectalluserslink">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
 							<a href="##" id="selectdelete" style="display:none;padding-left:15px;" onclick="$('##form_users_list').submit();">Delete</a>
+							<a href="##" id="selectwelcome" style="display:none;padding-left:15px;" onclick="sendemails();">Send welcome email</a>
 						</div>
 						<!--- Next and back --->
 						<div style="float:right;">
@@ -117,8 +118,11 @@
 	</div>
 	<!--- Div for hidden window for deleting --->
 	<div id="dialog-confirm-delete" style="display:none;">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span><strong>Are you sure you want to delete these users?</strong><br />
-		All the user information will be permanently erased. There is no undo.</p>
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("user_delete_warning")#</p>
+	</div>
+	<!--- Div for hidden window for sending email --->
+	<div id="dialog-confirm-send" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("user_send_email_warning")#</p>
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -130,27 +134,32 @@
 		// Select users
 		function selectusers(){
 			// Select current page
-			$('input[type=checkbox]').each( function(){ 
-				if (this.checked){
+			if ($('##selectalluserslink').text() == 'Select all')
+			{
+				$('input[type=checkbox]').each( function(){ 
+					
+						// select all
+						$(this).prop('checked','checked');
+						// Change link
+						$('##selectalluserslink').text('Select none');
+				});
+			}
+			else
+			{
+				$('input[type=checkbox]').each( function(){ 
 					// select none
 					$(this).prop('checked',false);
 					// Change link
 					$('##selectalluserslink').text('Select all');
-				}
-				else {
-					// select all
-					$(this).prop('checked','checked');
-					// Change link
-					$('##selectalluserslink').text('Select none');
-				}
-				
-			});
+				});
+			}
 			// Set the div correct
 			$('##showuserselect').html('<strong>All users on this page are selected</strong><br /><a href="##" onclick="selectallusers();return false;">Select all of your #qry_users.recordcount# users</a> (Note: Users in group "Administrator" are never selected!)');
 			// Show select all div
 			$('##showuserselect').toggle('slow');
 			// Hide / show delete
 			$('##selectdelete').toggle();
+			$('##selectwelcome').toggle();
 			// Set selectall input field to false
 			$('##allusers').val('false');
 		}
@@ -163,9 +172,11 @@
 			// Show or hide link
 			if (isselected){
 				$('##selectdelete').css('display','');
+				$('##selectwelcome').css('display','');
 			}
 			else{
 				$('##selectdelete').css('display','none');
+				$('##selectwelcome').css('display','none');
 			}
 
 		}
@@ -178,6 +189,7 @@
 		}
 		// Delete the selected records
 		$('##form_users_list').submit(function(){
+
 			$( "##dialog-confirm-delete" ).dialog({
 				resizable: false,
 				height:250,
@@ -208,6 +220,41 @@
 			});
 			return false;
 		});
+
+		function sendemails(){
+			$("##fa").val('c.send_useremails');
+			$( "##dialog-confirm-send" ).dialog({
+				resizable: false,
+				height:250,
+				modal: true,
+				buttons: {
+					"Send Emails": function() {
+						// Show loading bar
+						$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+						// Get values
+						var url = '#myself#c.users';
+						var items = formserialize("form_users_list");
+						// Submit Form
+						$.ajax({
+							type: "POST",
+							url: url,
+						   	data: items,
+						   	success: function(){
+						   		$("##bodyoverlay").remove();
+						   		$('##admin_users').load('#myself#c.users');
+						   	}
+						});
+						$( this ).dialog( "close" );	
+					},
+					Cancel: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+			return false;
+		}
+
+
 		// Select all users
 		function selectallusers(){
 			$('##allusers').val('true');

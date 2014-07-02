@@ -188,7 +188,8 @@
 		</table>
 		<br/>
 		<div id="form_admin_notification_status" style="float:left;font-weight:bold;color:green;"></div>
-		<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+		<div style="float:right;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+		<br/><br/>
 	</cfform>
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">

@@ -189,6 +189,7 @@
 <!--- Get hosts of this user --->
 <cffunction name="userhosts">
 	<cfargument name="thestruct" type="Struct">
+	<cfset console(arguments)>
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#userhosts */ h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
 		FROM ct_users_hosts ct, hosts h
@@ -962,6 +963,7 @@
 <!--- Delete selected users --->
 <cffunction name="delete_selects" returntype="void">
 	<cfargument name="thestruct" type="Struct">
+	<cfparam name="arguments.thestruct.theuserid" default="">
 	<!--- If this is for ALL users --->
 	<cfif arguments.thestruct.allusers>
 		<!--- Query all users --->
@@ -1003,6 +1005,29 @@
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
+</cffunction>
+
+<cffunction name="send_emails" returntype="void" hint="Send welcome email to selected users">
+	<cfargument name="thestruct" type="Struct">
+	<cfparam name="arguments.thestruct.theuserid" default="">
+	<!--- If this is for ALL users --->
+	<cfif arguments.thestruct.allusers>
+		<!--- Query all users --->
+		<cfinvoke method="getall" thestruct="#arguments.thestruct#" returnvariable="qry_users" />
+		<!--- Now filter out all users in admin group --->
+		<cfquery dbtype="query" name="qry_users">
+		SELECT *
+		FROM qry_users
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
+		</cfquery>
+		<!--- Put all the userids into a list --->
+		<cfset arguments.thestruct.theuserid = valueList(qry_users.user_id,",")>
+	</cfif>
+	<!--- Loop over the userid --->
+	<cfloop list="#arguments.thestruct.theuserid#" delimiters="," index="i">
+		<!--- Send email to user --->
+		<cfinvoke method="emailinfo" user_id="#i#" userpass="" >
+	</cfloop>
 </cffunction>
 
 </cfcomponent>

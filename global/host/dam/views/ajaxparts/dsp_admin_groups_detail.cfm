@@ -85,7 +85,10 @@
 			<select data-placeholder="Choose a User" class="chzn-select" style="width:350px;" tabindex="2" id="selectuser" onchange="userselected();">
           		<option value=""></option>
           		<cfoutput query="qry_users" group="user_id">
-          			<option value="#user_id#">#user_first_name# #user_last_name# (#user_email#)</option>
+          			<!--- Exclude admins from being selected as admins have all access and can not be part of any groups. Exception is when this is the 'Administrators' group then admin users can be show. --->
+          			<cfif listfind('1,2', attributes.grp_id) OR !listfind('1,2', qry_users.ct_g_u_grp_id)>
+          				<option value="#user_id#">#user_first_name# #user_last_name# (#user_email#)</option>
+          			</cfif>
           		</cfoutput>
           	</select>
 		</div>
