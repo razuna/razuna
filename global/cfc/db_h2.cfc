@@ -413,9 +413,10 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE ct_aliases
 		(
-			ct_pl_id_r		varchar(100),
-		  	ct_host_id_r	BIGINT,
-		  	rec_uuid		varchar(100)
+			asset_id_r 		varchar(100) DEFAULT NULL,
+			folder_id_r 	varchar(100) DEFAULT NULL,
+			type 			varchar(10) DEFAULT NULL,
+			rec_uuid 		varchar(100) DEFAULT NULL
 		)
 		</cfquery>
 
@@ -2311,6 +2312,10 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.host_db_prefix#folder_subscribe(folder_id);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.host_db_prefix#folder_subscribe(user_id);
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#asset_id_r  ON ct_aliases(asset_id_r)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id_r  ON ct_aliases(folder_id_r);
 		</cfquery>
 		<cfreturn />
 	</cffunction>

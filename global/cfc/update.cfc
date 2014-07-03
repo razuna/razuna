@@ -218,9 +218,11 @@
 						asset_id_r		#thevarchar#(100) DEFAULT NULL,
 						folder_id_r		#thevarchar#(100) DEFAULT NULL,
 						type			#thevarchar#(10) DEFAULT NULL,
-						rec_uuid		#thevarchar#(100) DEFAULT NULL,
+						rec_uuid		#thevarchar#(100) DEFAULT NULL
+						<cfif application.razuna.thedatabase EQ "mysql">,
 						KEY asset_id_r (asset_id_r),
 						KEY folder_id_r (folder_id_r)
+						</cfif>
 					)
 					#tableoptions#
 				</cfquery>
@@ -244,32 +246,7 @@
 			</cftry>
 			<cftry>
 			<!--- Create indexes on raz1_folder_subscribe --->
-			<cfif application.razuna.thedatabase EQ "h2">
-				<cftry>
-				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id);
-				</cfquery>
-					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
-				</cftry>
-				<cftry>
-				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(user_id);
-				</cfquery>
-					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
-				</cftry>
-				<cftry>
-				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_sched_logtime ON raz1_schedules_log(SCHED_LOG_TIME);
-				</cfquery>
-					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
-				</cftry>
-				<cftry>
-				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_notified ON raz1_schedules_log(sched_id_r, notified);
-				</cfquery>
-					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
-				</cftry>
-			<cfelseif application.razuna.thedatabase EQ "mssql">
+			<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id)
@@ -291,6 +268,18 @@
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE INDEX raz1_notified ON raz1_schedules_log(sched_id_r, notified)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX raz1_asset_id_r  ON ct_aliases(asset_id_r)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX raz1_folder_id_r  ON ct_aliases(folder_id_r)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
