@@ -249,37 +249,37 @@
 			<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id)
+				CREATE INDEX folder_id ON raz1_folder_subscribe(folder_id)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(user_id)
+				CREATE INDEX user_id ON raz1_folder_subscribe(user_id)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_sched_logtime ON raz1_schedules_log(SCHED_LOG_TIME)
+				CREATE INDEX sched_logtime ON raz1_schedules_log(SCHED_LOG_TIME)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_notified ON raz1_schedules_log(sched_id_r, notified)
+				CREATE INDEX notified ON raz1_schedules_log(sched_id_r, notified)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_asset_id_r  ON ct_aliases(asset_id_r)
+				CREATE INDEX asset_id_r  ON ct_aliases(asset_id_r)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_id_r  ON ct_aliases(folder_id_r)
+				CREATE INDEX ct_folder_id_r  ON ct_aliases(folder_id_r)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
@@ -298,13 +298,13 @@
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE raz1_schedules_log ADD INDEX raz1_sched_logtime(SCHED_LOG_TIME)
+				ALTER TABLE raz1_schedules_log ADD INDEX sched_logtime(SCHED_LOG_TIME)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE raz1_schedules_log ADD INDEX raz1_notified(sched_id_r, notified)
+				ALTER TABLE raz1_schedules_log ADD INDEX notified(sched_id_r, notified)
 				</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>

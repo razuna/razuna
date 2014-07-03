@@ -2310,8 +2310,8 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.host_db_prefix#custom(custom_id)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.host_db_prefix#folder_subscribe(folder_id);
-		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.host_db_prefix#folder_subscribe(user_id);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id ON #arguments.thestruct.host_db_prefix#folder_subscribe(folder_id);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#user_id ON #arguments.thestruct.host_db_prefix#folder_subscribe(user_id);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#asset_id_r  ON ct_aliases(asset_id_r)
