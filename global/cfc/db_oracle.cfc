@@ -1919,6 +1919,7 @@
 			SCHED_END_DATE       DATE,
 			SCHED_END_TIME       TIMESTAMP,
 			HOST_ID				 NUMBER,
+			SCHED_FTP_EMAIL       VARCHAR2(500 CHAR),
 			sched_upl_template	 VARCHAR2(100 CHAR),
 			sched_ad_user_groups VARCHAR2(4000 CHAR),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_PK PRIMARY KEY (SCHED_ID),
@@ -1942,6 +1943,7 @@
 			SCHED_LOG_TIME      TIMESTAMP,
 			SCHED_LOG_DESC      VARCHAR2(4000 CHAR),
 			HOST_ID		 NUMBER,
+			NOTIFIED    VARCHAR2(5 CHAR),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_PK PRIMARY KEY (SCHED_LOG_ID),
 CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SCHED_ID_R)
 	REFERENCES #arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE ENABLE

@@ -762,7 +762,29 @@
 				<cfif isdefined("attributes.intstruct.sched_id")>
 					<cfif fileexists("#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#")>
 						<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.donedir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+						<!--- Delete from issue log if successfully transferred --->
+						<cfquery datasource="#application.razuna.datasource#">
+						DELETE FROM #session.hostdbprefix#schedules_log WHERE sched_id_r = '#attributes.intstruct.sched_id#' AND sched_log_desc LIKE '%#attributes.intstruct.thefilename#%'
+						AND notified = 'false'
+						</cfquery>
 					<cfelse>
+						<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#schedules_log
+							(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
+							sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id, notified)
+							VALUES 
+							(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#attributes.intstruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="Error" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+							<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+							<cfqueryparam value="File '#attributes.intstruct.thefilename#' in folder '#attributes.intstruct.folderpath#' could not be imported successfully" cfsqltype="cf_sql_varchar">
+							<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
+							)
+						</cfquery>
 						<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.errordir#/#attributes.intstruct.thefilename#", stoponerror=false)>
 					</cfif>
 				</cfif>
@@ -820,14 +842,37 @@
 				<!--- </cfthread> --->
 			<cfelse>
 				<!--- RAZ-2810 Customise email message --->
-				<cfset transvalues = arraynew()>
+				<!--- <cfset transvalues = arraynew()>
 				<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
 				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
 				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
 				<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#" isdup = "yes" filename="#arguments.thestruct.thefilename#">
-				<cfif isdefined("arguments.thestruct.sched_id")>
+				 --->
+				 <cfif isdefined("arguments.thestruct.sched_id")>
+					 <!--- Delete from issue log if loggd as error --->
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM #session.hostdbprefix#schedules_log WHERE sched_id_r = '#arguments.thestruct.sched_id#' AND sched_log_desc LIKE '%#arguments.thestruct.thefilename#%'
+					AND notified = 'false'
+					</cfquery>
+					<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#schedules_log
+						(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
+						sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id, notified)
+						VALUES 
+						(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="Duplicate" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+						<cfqueryparam value="Duplicate file '#arguments.thestruct.thefilename#' found in folder '#arguments.thestruct.folderpath#'. File already exists in system. " cfsqltype="cf_sql_varchar">
+						<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
+						)
+					</cfquery>
 					<cftry>
-					<cfset o = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=true,timeout=3000)>
+					<cfset o = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=false,timeout=3000)>
 					<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=false)>
 					<cfset ftpclose(o)>
 					<cfcatch type="any">
@@ -837,6 +882,14 @@
 					</cftry>
 				</cfif>
 			</cfif>
+			<cftry>
+				<cfinvoke component="ftp" method="getdirectory" thestruct="#thestruct#" returnvariable="leftovers" />
+
+				<cfcatch type="any">
+					<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				</cfcatch>
+			</cftry>
 			<cfcatch type="any">
 				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>

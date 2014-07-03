@@ -278,6 +278,16 @@
 				endTime="23:59 PM"
 				interval="300"
 			>
+			<!--- Save FTP Task in CFML scheduling engine --->
+			<cfschedule action="update"
+				task="RazFTPNotifications" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.w_ftp_notifications_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="3600"
+			>
 			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
 			<cfif application.razuna.isp>
 				<cfschedule action="update"

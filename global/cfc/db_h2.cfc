@@ -1593,6 +1593,7 @@
 			sched_end_date       date,
 			sched_end_time       timestamp,
 			host_id				 bigint,
+			sched_ftp_email       varchar(500),
 			sched_upl_template	 varchar(100),
 			sched_ad_user_groups varchar(4000),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_PK PRIMARY KEY (SCHED_ID),
@@ -1615,6 +1616,7 @@
 			sched_log_time      timestamp,
 			sched_log_desc      varchar(4000),
 			host_id				bigint,
+			notified    VARCHAR(5),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_PK PRIMARY KEY (SCHED_LOG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SCHED_ID_R)
 		REFERENCES #arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
@@ -2231,6 +2233,8 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#sched_idr ON #arguments.thestruct.host_db_prefix#schedules_log(sched_id_r);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#schedl_hostid ON #arguments.thestruct.host_db_prefix#schedules_log(HOST_ID);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#sched_logtime ON #arguments.thestruct.host_db_prefix#schedules_log(SCHED_LOG_TIME);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#notified ON #arguments.thestruct.host_db_prefix#schedules_log(sched_id_r, notified);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#cf_enabled ON #arguments.thestruct.host_db_prefix#custom_fields(cf_enabled);

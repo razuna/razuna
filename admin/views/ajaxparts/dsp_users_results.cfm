@@ -43,7 +43,7 @@
 		<cfinvoke component="global.cfc.users" method="userhosts"  thestruct="#thestruct#" returnvariable="hosts">
 		<cfset host_list = valuelist(hosts.host_name)>
 		<tr>
-			<td valign="top" nowrap width="1%"><cfif listfind(ct_g_u_grp_id,"2") EQ 0 AND qry_users.recordcount NEQ 1><input type="checkbox" name="theuserid" value="#user_id#" onclick="showhidedelete();" /></cfif></td>
+			<td valign="top" nowrap width="1%"><cfif qry_users.recordcount NEQ 1><input type="checkbox" name="theuserid" value="#user_id#" onclick="showhidedelete();" /></cfif></td>
 			<td valign="top" nowrap width="25%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_login_name#</a></td>
 			<td valign="top" nowrap width="15%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
 			<td valign="top" nowrap width="15%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>

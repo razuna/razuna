@@ -162,6 +162,10 @@
 									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp_folder")#</td>
 									<td><input type="text" name="ftpFolder" size="25" value="#qry_detail.sched_ftp_folder#" /></td>
 								</tr>
+								<tr>
+									<td>Notification Email(s)</td>
+									<td><input type="text" name="ftpemails" size="25" value="#qry_detail.sched_ftp_email#" maxlength="500" placeholder="separate emails by comma"/></td>
+								</tr>
 							</table>
 						</td>
 					</tr>
