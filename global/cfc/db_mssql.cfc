@@ -1955,6 +1955,7 @@
 			SCHED_END_DATE       DATETIME,
 			SCHED_END_TIME       DATETIME,
 			HOST_ID				 INT,
+			SCHED_FTP_EMAIL       VARCHAR(500),
 			sched_upl_template	 VARCHAR(100),
 			sched_ad_user_groups nvarchar(max),
 		PRIMARY KEY (SCHED_ID),
@@ -1975,6 +1976,7 @@
 			SCHED_LOG_DATE      DATETIME,
 			SCHED_LOG_TIME      DATETIME,
 			SCHED_LOG_DESC      nvarchar(max),
+			NOTIFIED    VARCHAR(5),
 			HOST_ID				INT,
 		PRIMARY KEY (SCHED_LOG_ID),
 		FOREIGN KEY (SCHED_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
@@ -2764,6 +2766,12 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#schedl_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules_log(HOST_ID)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#schedl_logtime ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules_log(SCHED_LOG_TIME )
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#notified ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules_log(sched_id_r, notified)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#cf_enabled ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields(cf_enabled)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -2890,10 +2898,10 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom(custom_id)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe(folder_id)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe(folder_id)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_subscribe ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe(user_id)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#user_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe(user_id)
 		</cfquery>
 		<cfreturn />
 	</cffunction>

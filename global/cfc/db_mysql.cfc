@@ -2081,11 +2081,13 @@
 			SCHED_END_DATE       DATE,
 			SCHED_END_TIME       TIMESTAMP DEFAULT '0000-00-00 00:00:00',
 			HOST_ID				 INT,
+			SCHED_FTP_EMAIL       VARCHAR(500),
 			sched_upl_template	 VARCHAR(100),
 			sched_ad_user_groups text,
 			PRIMARY KEY (SCHED_ID),
 			KEY #arguments.thestruct.host_db_prefix#sched_user (SCHED_USER),
 	  		KEY #arguments.thestruct.host_db_prefix#sched_hostid (HOST_ID),
+	  		KEY #arguments.thestruct.host_db_prefix#notified(sched_id_r, notified),
 			FOREIGN KEY (SCHED_USER) REFERENCES users (USER_ID) ON DELETE SET NULL,
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2104,9 +2106,11 @@
 			SCHED_LOG_TIME      TIMESTAMP DEFAULT '0000-00-00 00:00:00',
 			SCHED_LOG_DESC      text,
 			HOST_ID				INT,
+			NOTIFIED    VARCHAR(5),
 		PRIMARY KEY (SCHED_LOG_ID),
 		KEY #arguments.thestruct.host_db_prefix#sched_idr (sched_id_r),
   		KEY #arguments.thestruct.host_db_prefix#schedl_hostid (HOST_ID),
+  		KEY #arguments.thestruct.host_db_prefix#sched_logtime(SCHED_LOG_TIME),
 		FOREIGN KEY (SCHED_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#

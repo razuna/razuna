@@ -117,6 +117,14 @@
 			<cfset var theint = "number">
 			<cfset var thevarchar = "varchar2">
 		</cfif>
+
+		<!--- Get the correct paths for hosted vs non-hosted --->
+		<cfif !application.razuna.isp>
+			<cfset var taskpath =  "#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam">
+		<cfelse>
+			<cfset var taskpath =  "#session.thehttp##cgi.http_host#/admin">
+		</cfif>
+
 		<!--- Check in database for the latest update value --->
 		<cfquery datasource="#application.razuna.datasource#" name="updatenumber">
 		SELECT opt_value
@@ -173,8 +181,35 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 29 (1.6.6) --->
-		<cfif updatenumber.opt_value LT 29>
+		<!--- If less then 31(1.7) --->
+		<cfif updatenumber.opt_value LT 31>
+
+			<!--- Save FTP Task in CFML scheduling engine --->
+			<cfschedule action="update"
+				task="RazFTPNotifications" 
+				operation="HTTPRequest"
+				url="#taskpath#/index.cfm?fa=c.w_ftp_notifications_task"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
+				interval="3600"
+			>
+			<!--- Alter tables --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_schedules_log add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> NOTIFIED #thevarchar#(5)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SCHED_FTP_EMAIL #thevarchar#(500)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+
 			<!--- Alias db --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -183,9 +218,11 @@
 						asset_id_r		#thevarchar#(100) DEFAULT NULL,
 						folder_id_r		#thevarchar#(100) DEFAULT NULL,
 						type			#thevarchar#(10) DEFAULT NULL,
-						rec_uuid		#thevarchar#(100) DEFAULT NULL,
+						rec_uuid		#thevarchar#(100) DEFAULT NULL
+						<cfif application.razuna.thedatabase EQ "mysql">,
 						KEY asset_id_r (asset_id_r),
 						KEY folder_id_r (folder_id_r)
+						</cfif>
 					)
 					#tableoptions#
 				</cfquery>
@@ -209,25 +246,68 @@
 			</cftry>
 			<cftry>
 			<!--- Create indexes on raz1_folder_subscribe --->
-			<cfif application.razuna.thedatabase EQ "h2">
+			<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
+				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id);
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(user_id);
+				CREATE INDEX folder_id ON raz1_folder_subscribe(folder_id)
 				</cfquery>
-			<cfelseif application.razuna.thedatabase EQ "mssql">
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(folder_id)
+				CREATE INDEX user_id ON raz1_folder_subscribe(user_id)
 				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE INDEX raz1_folder_subscribe ON raz1_folder_subscribe(user_id)
+				CREATE INDEX sched_logtime ON raz1_schedules_log(SCHED_LOG_TIME)
 				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX notified ON raz1_schedules_log(sched_id_r, notified)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX asset_id_r  ON ct_aliases(asset_id_r)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX ct_folder_id_r  ON ct_aliases(folder_id_r)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
 			<cfelseif application.razuna.thedatabase EQ "mysql">
+				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_folder_subscribe ADD INDEX  folder_id (folder_id)
 				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_folder_subscribe ADD INDEX  user_id (user_id)
 				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_schedules_log ADD INDEX sched_logtime(SCHED_LOG_TIME)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_schedules_log ADD INDEX notified(sched_id_r, notified)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
 			</cfif>
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
@@ -308,7 +388,6 @@
 
 		<!--- If update number is lower then 26 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 26>
-			
 			<cftry>
 				<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
 				<cfif application.razuna.thedatabase EQ "mssql">
@@ -590,12 +669,6 @@
 				</cfcatch>
 			</cftry>
 
-			<!--- Get the correct paths for hosted vs non-hosted --->
-			<cfif !application.razuna.isp>
-				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam">
-			<cfelse>
-				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/admin">
-			</cfif>
 			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
 				task="RazFolderSubscribe" 

@@ -1956,6 +1956,7 @@
 			SCHED_END_DATE       DATE,
 			SCHED_END_TIME       TIMESTAMP,
 			HOST_ID				 INT,
+			SCHED_FTP_EMAIL       VARCHAR(500),
 			sched_upl_template	 VARCHAR(100),
 			sched_ad_user_groups VARCHAR(4000),
 		PRIMARY KEY (SCHED_ID),
@@ -1977,6 +1978,7 @@
 			SCHED_LOG_TIME      TIMESTAMP,
 			SCHED_LOG_DESC      VARCHAR(4000),
 			HOST_ID				INT,
+			NOTIFIED    VARCHAR(5),
 		PRIMARY KEY (SCHED_LOG_ID),
 		FOREIGN KEY (SCHED_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
 		)

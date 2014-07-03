@@ -125,6 +125,7 @@
 		 sched_ftp_user, 
 		 sched_ftp_pass, 
 		 sched_ftp_folder,
+		 sched_ftp_email,
 		 host_id,
 		 sched_upl_template,
 		 sched_ad_user_groups
@@ -154,6 +155,7 @@
 		 <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.ftpemails#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		 <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="cf_sql_varchar">
@@ -334,7 +336,7 @@
 	s.sched_mail_pass, s.sched_mail_subject, s.sched_ftp_server, s.sched_ftp_user, s.sched_ftp_pass,
 	s.sched_ftp_folder, s.sched_interval, s.sched_start_date, s.sched_start_time, s.sched_end_date,
 	s.sched_end_time, s.sched_ftp_passive, s.sched_server_recurse, s.sched_server_files, s.sched_upl_template,
-	s.sched_ad_user_groups, s.host_id,
+	s.sched_ad_user_groups, s.host_id,s.sched_ftp_email,
 	f.folder_name as folder_name
 	FROM #session.hostdbprefix#schedules s LEFT JOIN #session.hostdbprefix#folders f ON s.sched_folder_id_r = f.folder_id AND f.host_id = s.host_id
 	WHERE s.sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -384,6 +386,7 @@
 		sched_ftp_user = <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">, 
 		sched_ftp_pass = <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">, 
 		sched_ftp_folder = <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
+		sched_ftp_email = <cfqueryparam value="#schedData.ftpemails#" cfsqltype="cf_sql_varchar">,
 		sched_upl_template = <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">,
 		sched_ad_user_groups = <cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="cf_sql_varchar">,
 		sched_ftp_passive = 
@@ -634,9 +637,11 @@
 			<cfset x.folderpath   = doit.qry_detail.sched_ftp_folder> <!--- Set path to folder --->
 			<!-- CFC: Get FTP directory for adding to the system -->
 			<cfinvoke component="ftp" method="getdirectory" thestruct="#x#" returnvariable="thefiles" />
-			<cfset x.thefile = valuelist(thefiles.ftplist.name) />
-			<!-- CFC: Add to system -->
-			<cfinvoke component="assets" method="addassetftpthread" thestruct="#x#" />
+			<cfif isdefined("thefiles.ftplist.name")>
+				<cfset x.thefile = valuelist(thefiles.ftplist.name) />
+				<!-- CFC: Add to system -->
+				<cfinvoke component="assets" method="addassetftpthread" thestruct="#x#" />
+			</cfif>
 		<!--- MAIL --->
 		<cfelseif doit.qry_detail.sched_method EQ "mail">
 			<!-- Params -->
@@ -1177,7 +1182,7 @@
 	<cfset var msgbody = "">
 	<cfloop query ="getuserinfo">
 		<cfquery dbtype="query" name="getusers2email">
-		SELECT * FROM getusers2notify WHERE user_email = '#getuserinfo.user_email#'
+		SELECT * FROM getusers2notify WHERE user_email =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#getuserinfo.user_email#">
 		</cfquery>
 		<cfoutput>
 		 <cfsavecontent variable="msgbody">
@@ -1231,6 +1236,55 @@
 		</cfoutput>
 		<!--- Send the email --->
 		<cfinvoke component="email" method="send_email" to="#getuserinfo.user_email#" subject="#email_subject#" themessage="#msgbody#" userid="#getuserinfo.user_id#"/>
+	</cfloop>
+</cffunction>
+
+<cffunction name="ftp_notifications_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
+	<!--- Check if expiry label is not present for a host --->
+	<cfquery datasource="#application.razuna.datasource#" name="getlogs">
+	SELECT l.sched_log_id, s.sched_id, s.sched_ftp_email, l.sched_log_action, l.sched_log_desc, l.sched_log_time
+	FROM raz1_schedules_log l, raz1_schedules s
+	WHERE s.sched_id = l.sched_id_r
+	AND l.notified=<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
+	AND s.sched_ftp_email <>'' 
+	AND s.sched_ftp_email IS NOT NULL
+	</cfquery>
+	<cfquery name="getusers" dbtype="query">
+		SELECT sched_ftp_email FROM getlogs
+		GROUP BY sched_ftp_email
+	</cfquery>
+	<cfloop query = "getusers">
+		<cfquery name="getdata" dbtype="query">
+			SELECT * FROM getlogs
+			WHERE sched_ftp_email ='#getusers.sched_ftp_email#'
+		</cfquery>
+		<cfoutput>
+		 <cfsavecontent variable="msgbody">
+		 	The following issues were encountered by the FTP scheduled task(s) while importing files:
+		 	<table border="1" cellpadding="4" cellspacing="0">
+				<tr>
+					<th nowrap="true">Sched_ID</th>
+					<th nowrap="true">Action</th>
+					<th nowrap="true">Description</th>
+					<th nowrap="true">Logtime</th>
+				</tr>
+				<cfloop query="getdata">
+					<tr>
+						<td nowrap="true">#getdata.sched_ID#</td>
+						<td nowrap="true">#getdata.sched_log_action#</td>
+						<td>#getdata.sched_log_desc#</td>
+						<td>#dateformat(getdata.sched_log_time,"mm/dd/yyyy")#  #timeformat(getdata.sched_log_time,"hh:mm tt")#</td>
+					</tr>
+					<cfquery datasource="#application.razuna.datasource#" name="getlogs">
+					UPDATE raz1_schedules_log SET notified=<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="true"> 
+					WHERE sched_log_id =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#getdata.sched_log_id#">
+					</cfquery>
+				</cfloop>
+			</table>
+		 </cfsavecontent>
+		</cfoutput>
+		 <!--- Send the email --->
+		<cfinvoke component="email" method="send_email" to="#getusers.sched_ftp_email#" subject="FTP Task Notifications" themessage="#msgbody#"/>
 	</cfloop>
 </cffunction>
 

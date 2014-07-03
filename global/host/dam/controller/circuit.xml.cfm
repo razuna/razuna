@@ -6777,7 +6777,14 @@
 		<!-- Show -->
 		<!-- <do action="users" /> -->
 	</fuseaction>
-	
+
+	<!-- Send email to selected users -->
+	<fuseaction name="send_useremails">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
+		<!-- Show -->
+		<!-- <do action="users" /> -->
+	</fuseaction>	
 	<!--  -->
 	<!-- ADMIN: USERS END -->
 	<!--  -->
@@ -10437,6 +10444,12 @@
 		<set name="attributes.host_id" value="#url.host_id#" />
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_firsttime(attributes.host_id)"/>
+	</fuseaction>
+
+	<!-- Schedule FTP task -->
+	<fuseaction name="w_ftp_notifications_task">
+		<!-- CFC: Run task -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task()"/>
 	</fuseaction>
 
 </circuit>
