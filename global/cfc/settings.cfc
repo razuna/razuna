@@ -2256,15 +2256,17 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	
 	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
 		<cfif i NEQ "apply_global">
-			<cfquery dataSource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#custom
-			(custom_id, custom_value, host_id)
-			VALUES(
-				<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
-			)
-			</cfquery>
+			<cfif evaluate(trim(i)) NEQ "">
+				<cfquery dataSource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#custom
+				(custom_id, custom_value, host_id)
+				VALUES(
+					<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
+				)
+				</cfquery>
+			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Turn off redirection --->

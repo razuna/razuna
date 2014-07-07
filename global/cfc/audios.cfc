@@ -474,6 +474,7 @@
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("search")> 
+	<cfset resetcachetoken("labels")>
 </cffunction>
 
 <!--- REMOVE THE AUDIO --->

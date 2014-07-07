@@ -724,7 +724,7 @@
 			<cfif arguments.thestruct.cs.images_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
 					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
-					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">i
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number"  OR m CONTAINS "expiry_date">i
 					<cfelse>x
 					</cfif>.#m#
 				</cfloop>
@@ -744,7 +744,9 @@
 					,null AS #listlast(m," ")#
 				</cfloop>
 			</cfif>
-			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#images i 
+			LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -799,7 +801,7 @@
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">
 				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 					,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
-					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number"  OR m CONTAINS "expiry_date">f
 					<cfelse>x
 					</cfif>.#m#
 				</cfloop>
@@ -809,7 +811,9 @@
 					,null AS #listlast(m," ")#
 				</cfloop>
 			</cfif>
-			FROM ct_labels ct, #session.hostdbprefix#folders fo, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
+			FROM ct_labels ct, #session.hostdbprefix#folders fo, #session.hostdbprefix#files f 
+			LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 
+			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
