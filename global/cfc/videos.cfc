@@ -1313,6 +1313,7 @@
 	<cfset variables.cachetoken = resetcachetoken("videos")>
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("search")> 
+	<cfset resetcachetoken("labels")>
 </cffunction>
 
 <!--- CONVERT VIDEO IN A THREAD --->

@@ -100,7 +100,7 @@
 									</div>
 									</a>
 									<div style="float:left;padding:3px 0px 3px 0px;">
-										<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
+										<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#attributes.kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_file_#file_id#" style="display:inline">
@@ -135,6 +135,8 @@
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											<cfelseif m CONTAINS "_time">
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelseif m CONTAINS "expiry_date">
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												#evaluate(listlast(m," "))#
 											</cfif>
@@ -245,7 +247,7 @@
 							<!--- Icons --->
 							<div style="padding-top:5px;width:130px;white-space:nowrap;">
 								<div style="float:left;">
-									<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
+									<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#attributes.kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_file_#file_id#" style="display:inline">
@@ -371,7 +373,7 @@
 							<!--- Icons --->
 							<div style="float:left;padding-top:5px;">
 								<div style="float:left;padding-top:2px;">
-									<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
+									<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#attributes.kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_file_#file_id#" style="display:inline">
@@ -409,7 +411,7 @@
 		<!--- JS for the combined view --->
 		<script language="JavaScript" type="text/javascript">
 			<cfif session.file_id NEQ "">
-				enablesub('#kind#form');
+				enablesub('#attributes.kind#form');
 			</cfif>
 			// Submit form
 			function combinedsavedoc(){
