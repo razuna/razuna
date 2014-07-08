@@ -202,6 +202,9 @@
 										<cfelseif m CONTAINS "_time">
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "expiry_date">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelseif m CONTAINS "_number"> 
 										    <cfif prefs.set2_upc_enabled>
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
@@ -330,6 +333,9 @@
 										<cfelseif m CONTAINS "_time">
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "expiry_date">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelseif m CONTAINS "_number">
 											<cfif prefs.set2_upc_enabled>
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
@@ -441,6 +447,9 @@
 										<cfelseif m CONTAINS "_time">
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "expiry_date">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelseif m CONTAINS "_number">
 											<cfif prefs.set2_upc_enabled > 
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
@@ -572,6 +581,9 @@
 										<cfelseif m CONTAINS "_time">
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "expiry_date">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelseif m CONTAINS "_number">
 											<cfif prefs.set2_upc_enabled >
 											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
