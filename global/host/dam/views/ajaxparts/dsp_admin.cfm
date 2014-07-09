@@ -30,7 +30,7 @@
 </cfif>
 <cfoutput>
 	<div id="tab_admin">
-		<ul onclick="$('##msg').hide();">
+		<ul>
 			<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
 				<li><a href="##admin_users" onclick="loadcontent('admin_users','#myself#c.users');">#myFusebox.getApplicationData().defaults.trans("users")#</a></li>
 			</cfif>
@@ -211,12 +211,10 @@
 				</div>
 			</cfif>
 		</cfif>
-		<div id="msg" style="text-align:center">
+		<div id="msg" style="text-align:center;display:none;">
 			<h4>
 				<cfif NOT isadmin AND structisempty(tabaccess_struct)>
 					No administrative features available for user
-				<cfelse>
-					Please select a tab to begin
 				</cfif>
 			</h4>
 		</div>
@@ -224,8 +222,50 @@
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
-		$("##tab_admin").tabs({active: true});
-		$("##tab_admin li").removeClass('ui-state-active');
+		$("##tab_admin").tabs();
+		
+		<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
+			loadcontent('admin_users','#myself#c.users'); 
+		<cfelseif structisempty(tabaccess_struct)>
+			 $('##msg').css('display','');
+		<cfelseif structkeyexists(tabaccess_struct,"groups_access") AND tabaccess_struct.groups_access>
+			loadcontent('admin_groups','#myself#c.groups_list&kind=ecp&loaddiv=admin_groups');
+		<cfelseif structkeyexists(tabaccess_struct,"customfields_access") AND tabaccess_struct.customfields_access>
+			loadcontent('custom_fields','#myself#c.custom_fields');
+		<cfelseif structkeyexists(tabaccess_struct,"labels_access") AND tabaccess_struct.labels_access>
+			loadcontent('admin_labels','#myself#c.admin_labels');
+		<cfelseif structkeyexists(tabaccess_struct,"schedules_access") AND tabaccess_struct.schedules_access>
+			loadcontent('admin_schedules','#myself#c.scheduler_list&offset_sched=0');
+		<cfelseif structkeyexists(tabaccess_struct,"renditiontemplates_access") AND tabaccess_struct.renditiontemplates_access>
+			loadcontent('admin_upl_templates','#myself#c.upl_templates');
+		<cfelseif structkeyexists(tabaccess_struct,"importtemplates_access") AND tabaccess_struct.importtemplates_access>
+			loadcontent('admin_imp_templates','#myself#c.imp_templates');
+		<cfelseif structkeyexists(tabaccess_struct,"exporttemplate_access") AND tabaccess_struct.exporttemplate_access>
+			loadcontent('admin_export_template','#myself#c.admin_export_template');
+		<cfelseif structkeyexists(tabaccess_struct,"watermarktemplates_access") AND tabaccess_struct.watermarktemplates_access>
+			loadcontent('admin_watermark_templates','#myself#c.admin_watermark_templates');
+		<cfelseif structkeyexists(tabaccess_struct,"logs_access") AND tabaccess_struct.logs_access>
+			loadcontent('log_show','#myself#c.log_assets&offset_log=0');
+		<cfelseif structkeyexists(tabaccess_struct,"settings_access") AND tabaccess_struct.settings_access>
+			loadcontent('admin_settings','#myself#c.isp_settings');
+		<cfelseif structkeyexists(tabaccess_struct,"maintenance_access") AND tabaccess_struct.maintenance_access>
+			loadcontent('admin_maintenance','#myself#c.admin_maintenance');
+		<cfelseif structkeyexists(tabaccess_struct,"customization_access") AND tabaccess_struct.customization_access>
+			loadcontent('admin_customization','#myself#c.admin_customization');
+		<cfelseif structkeyexists(tabaccess_struct,"emailsetup_access") AND tabaccess_struct.emailsetup_access>
+			loadcontent('admin_notification','#myself#c.admin_notification');
+		<cfelseif structkeyexists(tabaccess_struct,"serviceaccounts_access") AND tabaccess_struct.serviceaccounts_access>
+			loadcontent('admin_integration','#myself#c.admin_integration');
+		<cfelseif structkeyexists(tabaccess_struct,"cloud_access") AND tabaccess_struct.cloud_access>
+			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+				loadcontent('admin_maintenance_cloud','#myself#c.admin_maintenance_cloud');
+			</cfif>
+		<cfelseif structkeyexists(tabaccess_struct,"systeminformation_access") AND tabaccess_struct.systeminformation_access>
+			loadcontent('admin_system','#myself#c.admin_system');
+		<cfelseif structkeyexists(tabaccess_struct,"adservices_access") AND tabaccess_struct.adservices_access>
+			loadcontent('ad_Services','#myself#c.ad_Services');
+		</cfif>
+		
 	</script>	
 </cfoutput>
 

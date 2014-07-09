@@ -2924,7 +2924,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn access_struct>
 </cffunction>
 
-<cffunction name="getuseraccesscontrols" returntype="struct" hint="Get access control settings for the given user">
+<cffunction name="getuseraccesscontrols" returntype="struct" hint="Get access control settings for the given user. Only returns tabs that user has access to.">
 	<cfargument name="thestruct" type="Struct">
 	<cfset access_struct = structnew()>
 	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
@@ -2937,7 +2937,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfif grpperm NEQ "">
 			<cfset structupdate (thestruct,field,true)>
 		<cfelse>
-			<cfset structupdate (thestruct,field,false)>
+			<cfset structdelete (thestruct,field)>
 		</cfif>
 	</cfloop>
 	<cfreturn thestruct>
