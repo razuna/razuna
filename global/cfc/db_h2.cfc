@@ -2291,7 +2291,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#w_folderid ON #arguments.thestruct.host_db_prefix#widgets(folder_id_r);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#w_hostid ON #arguments.thestruct.host_db_prefix#widgets(host_id);
-		CREATE INDEX #arguments.thestruct.host_db_prefix#w_colid ON #arguments.thestruct.host_db_prefix#widgets(col_id_r);		
+		CREATE INDEX #arguments.thestruct.host_db_prefix#w_colid ON #arguments.thestruct.host_db_prefix#widgets(col_id_r);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#av_id_r ON #arguments.thestruct.host_db_prefix#additional_versions(asset_id_r);
@@ -2307,15 +2307,20 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#labels_text ON #arguments.thestruct.host_db_prefix#labels(label_text);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.host_db_prefix#custom(custom_id)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.host_db_prefix#custom(custom_id);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id ON #arguments.thestruct.host_db_prefix#folder_subscribe(folder_id);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#user_id ON #arguments.thestruct.host_db_prefix#folder_subscribe(user_id);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#asset_id_r  ON ct_aliases(asset_id_r)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#asset_id_r  ON ct_aliases(asset_id_r);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id_r  ON ct_aliases(folder_id_r);
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#img_hashtag  ON #arguments.thestruct.host_db_prefix#_images(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag  ON #arguments.thestruct.host_db_prefix#_audios(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag  ON #arguments.thestruct.host_db_prefix#_files(hashtag);
 		</cfquery>
 		<cfreturn />
 	</cffunction>

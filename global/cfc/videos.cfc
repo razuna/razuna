@@ -2229,7 +2229,7 @@
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#checkmd5 */ vid_id
+	SELECT /* #variables.cachetoken#checkmd5 */ vid_id, vid_filename as name, folder_id_r
 	FROM #session.hostdbprefix#videos
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

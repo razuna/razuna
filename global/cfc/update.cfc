@@ -181,8 +181,8 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 31(1.7) --->
-		<cfif updatenumber.opt_value LT 31>
+		<!--- If less then 32(1.7) --->
+		<cfif updatenumber.opt_value LT 32>
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"
@@ -245,8 +245,26 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
-			<!--- Create indexes on raz1_folder_subscribe --->
+			<!--- Create indexes  --->
 			<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX hashtag ON raz1_images(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				 <cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX hashtag ON raz1_audios(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX hashtag ON raz1_files(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE INDEX folder_id ON raz1_folder_subscribe(folder_id)
@@ -284,6 +302,24 @@
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 			<cfelseif application.razuna.thedatabase EQ "mysql">
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_images ADD INDEX  hashtag(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_audios ADD INDEX  hashtag(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_files ADD INDEX  hashtag(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_folder_subscribe ADD INDEX  folder_id (folder_id)

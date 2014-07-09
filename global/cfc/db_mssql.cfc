@@ -2903,6 +2903,15 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#user_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe(user_id)
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#img_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images(hashtag)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios(hashtag)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files(hashtag)
+		</cfquery>
 		<cfreturn />
 	</cffunction>
 	
