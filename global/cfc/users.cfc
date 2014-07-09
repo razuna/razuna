@@ -399,6 +399,7 @@
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<cfparam default="false" name="arguments.thestruct.emailinfo">
+	<cfparam default="" name="arguments.thestruct.user_pass">
 	<!--- Var --->
 	<cfset var is_sysadmin = false>
 	
