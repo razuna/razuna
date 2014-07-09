@@ -883,5 +883,10 @@
 	<fuseaction name="trash_alias">
 		<include template="win_trash_alias" />
 	</fuseaction>
+	
+	<!-- Admin Access -->
+	<fuseaction name="admin_access">
+		<include template="dsp_admin_access" />
+	</fuseaction>
 
 </circuit>

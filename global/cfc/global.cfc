@@ -1891,4 +1891,26 @@ Comment:<br>
 		<cfset resetcachetoken("audios")>
 	</cffunction>
 
+	<cffunction name="compareLists" access="public" returnType="string" output="false" hint="Compares two lists and returns the intersection of the two. Returns empty string if none found.">
+	    <cfargument name="strList1" type="string" required="true" />
+	    <cfargument name="strList2" type="string" required="true" />
+
+	    <cfscript>
+	        var stuCompare        = {};
+	        var intCount        = 0;
+	        var strTempElement    = "";
+	        
+	        //loop through second list
+	        for(intCount=1; intCount LTE listLen(arguments.strList2); intCount++){
+	            strTempElement    = listGetAt(arguments.strList2,intCount);
+	            if(listContainsNoCase(arguments.strList1,strTempElement)){
+	                //Add key to struct
+	                stuCompare[strTempElement]    = "";
+	            }
+	        }
+	    
+	        return structKeyList(stuCompare);
+	    </cfscript>
+	</cffunction>
+
 </cfcomponent>

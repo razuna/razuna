@@ -117,11 +117,11 @@
 				</p>
 				<p><hr></p>
 				<!--- Administration --->
-				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+				<!--- <cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()> --->
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
 					<p><hr></p>
-				</cfif>
+				<!--- </cfif> --->
 				<!--- Help --->
 				<p>
 					<cfif application.razuna.whitelabel>

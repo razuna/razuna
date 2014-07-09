@@ -6477,6 +6477,10 @@
 	
 	<!-- Calling the main admin -->
 	<fuseaction name="admin">
+		<!-- CFC: Get Access Control Settings -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getaccesscontrol()" returnvariable="access_struct" />
+		<!-- CFC: Get Access Control Settings -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getuseraccesscontrols(access_struct)" returnvariable="tabaccess_struct" />
 		<!-- Check on activated plugins here -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb(dam='true')" returnvariable="qry_plugins" />
 		<!-- Do -->
@@ -10450,6 +10454,26 @@
 	<fuseaction name="w_ftp_notifications_task">
 		<!-- CFC: Run task -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task()"/>
+	</fuseaction>
+
+	<!-- Admin Access Control -->
+	<fuseaction name="admin_access">
+		<!-- CFC: Get groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="mod_id" value="1" />
+		</invoke>
+		<!-- CFC: Get users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
+		<!-- CFC: Get Access Control Settings -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getaccesscontrol()" returnvariable="access_struct" />
+		<!-- Show -->
+		<do action="ajax.admin_access" />
+	</fuseaction>
+
+	<fuseaction name="admin_access_save">
+		<!-- CFC: Get users -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="setaccesscontrol(attributes)" />
+		<do action="ajax.admin_access" />
 	</fuseaction>
 
 </circuit>

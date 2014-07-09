@@ -2893,4 +2893,54 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn img_meta_map>
 </cffunction>
 
+<cffunction name="setaccesscontrol" returntype="void" hint="Sets access control for the different tabs in administrator">
+	<cfargument name="thestruct" type="Struct">
+	<cfquery dataSource="#application.razuna.datasource#">
+		DELETE FROM options WHERE lower(opt_id) LIKE '%access'
+	</cfquery>
+	<cfloop delimiters="," index="field" list="#arguments.thestruct.fieldnames#">
+		<cfif field NEQ 'FA'>
+			<cfif evaluate(field) NEQ ''>
+				<!--- Insert fields into database --->
+				<cfquery dataSource="#application.razuna.datasource#">
+					INSERT INTO options (opt_id,opt_value,rec_uuid)
+					VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#field#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(field)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">)
+				</cfquery>
+			</cfif>
+		</cfif>
+	</cfloop>
+</cffunction>
+
+<cffunction name="getaccesscontrol" returntype="struct" hint="Get access control settings for the different tabs in administrator">
+	<cfquery dataSource="#application.razuna.datasource#" name="accessdata">
+		SELECT opt_id, opt_value FROM options WHERE lower(opt_id) LIKE '%access'
+	</cfquery>
+	<cfset access_struct = structnew()>
+	<cfloop query="accessdata">
+		<cfset access_struct["#opt_id#"] = opt_value>
+	</cfloop>
+	<cfreturn access_struct>
+</cffunction>
+
+<cffunction name="getuseraccesscontrols" returntype="struct" hint="Get access control settings for the given user">
+	<cfargument name="thestruct" type="Struct">
+	<cfset access_struct = structnew()>
+	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
+	<cfloop collection="#arguments.thestruct#" item="field">
+		<cfif listfind (structfind(thestruct,field),session.theuserid)>
+			<cfset structupdate (thestruct,field,true)>
+			<cfcontinue>
+		</cfif>
+		<cfinvoke component="global.cfc.global" method="comparelists" strlist1 = "#structfind(thestruct,field)#" strlist2 = "#session.thegroupofuser#" returnvariable="grpperm">
+		<cfif grpperm NEQ "">
+			<cfset structupdate (thestruct,field,true)>
+		<cfelse>
+			<cfset structupdate (thestruct,field,false)>
+		</cfif>
+	</cfloop>
+	<cfreturn thestruct>
+</cffunction>
+
 </cfcomponent>

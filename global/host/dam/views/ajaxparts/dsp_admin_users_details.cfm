@@ -359,6 +359,7 @@
 	}
 	
 	$(document).ready(function() {
+		 togglegrps();
 		<cfif qry_social.recordcount EQ 0>
 			$('##btnDel').css('display','none');
 		</cfif>
