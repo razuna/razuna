@@ -56,9 +56,9 @@
 				<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
 			</cfif>
 		</div>
-		<div style="float:right;padding-top:10px;">
+		<!--- <div style="float:right;padding-top:10px;">
 			<a href="http://razuna.com/signup" target="_blank">Create an account</a>
-		</div>
+		</div> --->
 		<div style="clear:both;"></div>
 		<br />
 		<br />
