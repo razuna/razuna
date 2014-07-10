@@ -854,6 +854,43 @@
 					DELETE FROM #session.hostdbprefix#schedules_log WHERE sched_id_r = '#arguments.thestruct.sched_id#' AND sched_log_desc LIKE '%#arguments.thestruct.thefilename#%'
 					AND notified = 'false'
 					</cfquery>
+
+					<!--- FInd duplicate records found in the Razuna system and record it in the log --->
+					<!--- Images --->
+					<cfinvoke component="images" method="checkmd5" md5hash="#md5hash#" returnvariable="qryimg" />
+					<!--- videos --->
+					<cfinvoke component="videos" method="checkmd5" md5hash="#md5hash#" returnvariable="qryvid" />
+					<!--- Files --->
+					<cfinvoke component="files" method="checkmd5" md5hash="#md5hash#" returnvariable="qrydoc" />
+					<!--- Audios --->
+					<cfinvoke component="audios" method="checkmd5" md5hash="#md5hash#" returnvariable="qryaud" />
+
+					<cfif qryimg.recordcount NEQ 0>
+						<cfset var dataqry = "qryimg">
+					<cfelseif qryvid.recordcount NEQ 0>
+						<cfset var dataqry = "qryvid">
+					<cfelseif qryaud.recordcount NEQ 0>
+						<cfset var dataqry = "qryaud">
+					<cfelseif qrydoc.recordcount NEQ 0>
+						<cfset var dataqry = "qrydoc">
+					<cfelse>
+						<cfset var dataqry = "qryimg">
+					</cfif>
+					<cfquery dbtype="query" name="getdups">
+						SELECT * FROM #dataqry#
+					</cfquery>
+					<!--- Get duplicate file names and path --->
+					<cfset var duplist = "">
+					<cfloop query="getdups">
+						<cfset var folders = "">
+						<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#getdups.folder_id_r#" returnvariable="crumbs" />
+						<cfloop list="#crumbs#" delimiters=";" index="i">
+							<cfset folders = folders & "/#ListGetAt(i,1,"|")#">
+						</cfloop>
+						<cfset folders = folders & "/#getdups.name#<br/>">
+						<cfset duplist = duplist & folders>
+					</cfloop>
+
 					<cfquery datasource="#application.razuna.datasource#">
 						INSERT INTO #session.hostdbprefix#schedules_log
 						(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
@@ -865,7 +902,7 @@
 						<cfqueryparam value="Duplicate" cfsqltype="cf_sql_varchar">, 
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-						<cfqueryparam value="Duplicate file '#arguments.thestruct.thefilename#' found in folder '#arguments.thestruct.folderpath#'. File already exists in system. " cfsqltype="cf_sql_varchar">
+						<cfqueryparam value="File '#arguments.thestruct.folderpath#/#arguments.thestruct.thefilename#' on FTP server could not be imported as the file already exists in Razuna at the following locations: <br/>#duplist#" cfsqltype="cf_sql_varchar">
 						<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
@@ -884,7 +921,6 @@
 			</cfif>
 			<cftry>
 				<cfinvoke component="ftp" method="getdirectory" thestruct="#thestruct#" returnvariable="leftovers" />
-
 				<cfcatch type="any">
 					<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>

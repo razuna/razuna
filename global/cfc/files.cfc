@@ -1536,7 +1536,7 @@
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#checkmd5 */ file_id
+		SELECT /* #variables.cachetoken#checkmd5 */ file_id, file_name as name, folder_id_r
 		FROM #session.hostdbprefix#files
 		WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

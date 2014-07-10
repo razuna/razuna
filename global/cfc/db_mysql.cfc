@@ -1515,6 +1515,7 @@
 	    KEY #arguments.thestruct.host_db_prefix#files_type (FILE_TYPE),
 	    KEY #arguments.thestruct.host_db_prefix#files_owner (file_owner),
 	    KEY #arguments.thestruct.host_db_prefix#files_createdate (FILE_CREATE_DATE),
+	    KEY #arguments.thestruct.host_db_prefix#files_hashtag (HASHTAG),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1606,6 +1607,7 @@
 	  	KEY #arguments.thestruct.host_db_prefix#img_group (img_group),
 	  	KEY #arguments.thestruct.host_db_prefix#img_pathtoasset (PATH_TO_ASSET),
 	  	KEY #arguments.thestruct.host_db_prefix#img_hostid (HOST_ID),
+	  	KEY #arguments.thestruct.host_db_prefix#img_hashtag (HASHTAG),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2279,9 +2281,10 @@
 		  	EXPIRY_DATE DATE,
 			PRIMARY KEY (aud_ID),
 			KEY #arguments.thestruct.host_db_prefix#aud_hostid (HOST_ID),
-	     	KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
-		    KEY #arguments.thestruct.host_db_prefix#aud_group (aud_group),
-		    KEY #arguments.thestruct.host_db_prefix#aud_pathtoasset (PATH_TO_ASSET),
+	     		KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
+			KEY #arguments.thestruct.host_db_prefix#aud_group (aud_group),
+			KEY #arguments.thestruct.host_db_prefix#aud_pathtoasset (PATH_TO_ASSET),
+			KEY #arguments.thestruct.host_db_prefix#aud_hashtag (HASHTAG),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
