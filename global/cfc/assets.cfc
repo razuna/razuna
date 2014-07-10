@@ -770,12 +770,13 @@
 					<cfelse>
 						<cfquery datasource="#application.razuna.datasource#">
 							INSERT INTO #session.hostdbprefix#schedules_log
-							(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
+							(sched_log_id, sched_id_r, sched_log_user, sched_log_action, sched_log_date, 
 							sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id, notified)
 							VALUES 
 							(
 							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
 							<cfqueryparam value="#attributes.intstruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 							<cfqueryparam value="Error" cfsqltype="cf_sql_varchar">, 
 							<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 							<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
@@ -856,12 +857,13 @@
 					</cfquery>
 					<cfquery datasource="#application.razuna.datasource#">
 						INSERT INTO #session.hostdbprefix#schedules_log
-						(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
+						(sched_log_id, sched_id_r, sched_log_user, sched_log_action, sched_log_date, 
 						sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id, notified)
 						VALUES 
 						(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
 						<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 						<cfqueryparam value="Duplicate" cfsqltype="cf_sql_varchar">, 
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
