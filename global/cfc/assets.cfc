@@ -771,7 +771,7 @@
 						<cfquery datasource="#application.razuna.datasource#">
 							INSERT INTO #session.hostdbprefix#schedules_log
 							(sched_log_id, sched_id_r, sched_log_user, sched_log_action, sched_log_date, 
-							sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id, notified)
+							sched_log_time, sched_log_desc, host_id, notified)
 							VALUES 
 							(
 							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
@@ -780,8 +780,7 @@
 							<cfqueryparam value="Error" cfsqltype="cf_sql_varchar">, 
 							<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 							<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-							<cfqueryparam value="File '#attributes.intstruct.thefilename#' in folder '#attributes.intstruct.folderpath#' could not be imported successfully" cfsqltype="cf_sql_varchar">
-							<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+							<cfqueryparam value="File '#attributes.intstruct.thefilename#' in folder '#attributes.intstruct.folderpath#' could not be imported successfully" cfsqltype="cf_sql_varchar">,
 							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 							)
@@ -895,7 +894,7 @@
 					<cfquery datasource="#application.razuna.datasource#">
 						INSERT INTO #session.hostdbprefix#schedules_log
 						(sched_log_id, sched_id_r, sched_log_user, sched_log_action, sched_log_date, 
-						sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id, notified)
+						sched_log_time, sched_log_desc, host_id, notified)
 						VALUES 
 						(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
@@ -904,8 +903,7 @@
 						<cfqueryparam value="Duplicate" cfsqltype="cf_sql_varchar">, 
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-						<cfqueryparam value="File '#arguments.thestruct.folderpath#/#arguments.thestruct.thefilename#' on FTP server could not be imported as the file already exists in Razuna at the following locations: <br/>#duplist#" cfsqltype="cf_sql_varchar">
-						<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+						<cfqueryparam value="File '#arguments.thestruct.folderpath#/#arguments.thestruct.thefilename#' on FTP server could not be imported as the file already exists in Razuna at the following locations: <br/>#duplist#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 						)
