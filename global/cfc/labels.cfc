@@ -1262,7 +1262,7 @@
 			FROM #session.hostdbprefix#labels
 			WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif structKeyExists(arguments.thestruct,'strLetter')>
-				AND lower(label_text) LIKE <cfqueryparam value="#lcase(arguments.thestruct.strLetter)#%" cfsqltype="cf_sql_varchar" />
+				AND lower(label_text) LIKE <cfqueryparam value="%#lcase(arguments.thestruct.strLetter)#%" cfsqltype="cf_sql_varchar" />
 			</cfif>
 			ORDER BY 
 			<cfif structKeyExists(arguments.thestruct,'show') AND arguments.thestruct.show EQ 'default'>

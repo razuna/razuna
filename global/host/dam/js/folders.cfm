@@ -133,7 +133,11 @@
 		var extension = document.forms[theform].extension.value;
 		var rawmetadata = document.forms[theform].rawmetadata.value;
 		var labels = $('#' + theform + ' [name="labels"]').val();
-		if(labels != null) var labels = labels.toString().replace(/,/g, " ");
+		if(labels != null) 
+		{
+			labels = labels.toString().replace(/,/g, " ");
+			labels = labels.toString().replace(/\//g, " ");
+		}
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		//search type 
 		var thetype = document.forms[theform].thetype.value;
