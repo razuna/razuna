@@ -10471,9 +10471,8 @@
 	</fuseaction>
 
 	<fuseaction name="admin_access_save">
-		<!-- CFC: Get users -->
+		<!-- CFC: Save data -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="setaccesscontrol(attributes)" />
-		<do action="ajax.admin_access" />
 	</fuseaction>
 
 </circuit>
