@@ -109,7 +109,7 @@
 	<cfparam name="arguments.thestruct.cf_show" default="">
 	<!--- Param --->
 	<cfset var list="">
-	<cfif StructKeyExists(session,"thefileid") AND session.thefileid NEQ "">
+	<cfif StructKeyExists(session,"thefileid") AND session.thefileid NEQ "" AND session.thefileid NEQ "0" >
 		<cfset list="all">
 		<cfloop list="#session.thefileid#" index="assets">
 			<cfif not listFindNoCase(list,listLast(assets,"-"))>
@@ -121,7 +121,7 @@
 	<cfset variables.cachetoken = getcachetoken("general")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form
+	SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form, c.cf_show
 	FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 	LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 	WHERE c.cf_id = ct.cf_id_r
