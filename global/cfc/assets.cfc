@@ -533,7 +533,7 @@
 						</cfquery>
 						<!--- We don't need to send an email --->
 						<cfset arguments.thestruct.sendemail = false>
-						<cfset arguments.thestruct.importpath = "">
+						<cfset arguments.thestruct.importpath = true>
 						<!--- Call the on_pre_process workflow --->
 						<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 						<!--- Create inserts --->
@@ -706,17 +706,16 @@
 	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
 	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
 	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
+	<cfset o = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=true)>
 	<cfif isdefined("arguments.thestruct.sched_id") AND listlen(arguments.thestruct.thefile) GT 0>
-		<cfset conn = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=false,timeout=3000)>
 		<cftry>
-			<cfset ftpcreatedir(ftpdata=conn, directory="#arguments.thestruct.donedir#")>
+			<cfset ftpcreatedir(ftpdata=o, directory="#arguments.thestruct.donedir#")>
 			<cfcatch/>
 		</cftry>
 		<cftry>
-			<cfset ftpcreatedir(ftpdata=conn, directory='#arguments.thestruct.errordir#')>
+			<cfset ftpcreatedir(ftpdata=o, directory='#arguments.thestruct.errordir#')>
 			<cfcatch/>
 		</cftry>
-		<cfset ftpclose(conn)>
 	</cfif>
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
@@ -753,18 +752,17 @@
 			<!--- Get file from FTP --->
 			<cfset arguments.thestruct.remote_file = remote_file>
 			<!--- Create uuid --->
-			<cfset var tt = createUUID("")>
-			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run">
+			<!--- <cfset var tt = createUUID("")>
+			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run"> --->
 				<!--- Open connection --->
-				<cfset o = ftpopen(server=attributes.intstruct.ftp_server,username=attributes.intstruct.ftp_user,password=attributes.intstruct.ftp_pass,passive=attributes.intstruct.ftp_passive, stoponerror=true,timeout=3000)>
 				<!--- Get the file --->
-				<cfset Ftpgetfile(ftpdata=o,remotefile="#attributes.intstruct.remote_file#",localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#",failifexists=false,passive=attributes.intstruct.ftp_passive,stoponerror=true)>
-				<cfif isdefined("attributes.intstruct.sched_id")>
-					<cfif fileexists("#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#")>
-						<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.donedir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+				<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
+				<cfif isdefined("arguments.thestruct.sched_id")>
+					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+						<cfset var done = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=true)>
 						<!--- Delete from issue log if successfully transferred --->
 						<cfquery datasource="#application.razuna.datasource#">
-						DELETE FROM #session.hostdbprefix#schedules_log WHERE sched_id_r = '#attributes.intstruct.sched_id#' AND sched_log_desc LIKE '%#attributes.intstruct.thefilename#%'
+						DELETE FROM #session.hostdbprefix#schedules_log WHERE sched_id_r = '#arguments.thestruct.sched_id#' AND sched_log_desc LIKE '%#arguments.thestruct.thefilename#%'
 						AND notified = 'false'
 						</cfquery>
 					<cfelse>
@@ -775,24 +773,22 @@
 							VALUES 
 							(
 							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
-							<cfqueryparam value="#attributes.intstruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
 							<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 							<cfqueryparam value="Error" cfsqltype="cf_sql_varchar">, 
 							<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 							<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-							<cfqueryparam value="File '#attributes.intstruct.thefilename#' in folder '#attributes.intstruct.folderpath#' could not be imported successfully" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam value="File '#arguments.thestruct.thefilename#' in folder '#arguments.thestruct.folderpath#' could not be imported successfully" cfsqltype="cf_sql_varchar">,
 							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 							)
 						</cfquery>
-						<cfset ftprename(ftpdata=o, oldfile="#attributes.intstruct.remote_file#", newfile="#attributes.intstruct.errordir#/#attributes.intstruct.thefilename#", stoponerror=false)>
+						<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
 					</cfif>
 				</cfif>
-				<!--- Close connection --->
-				<cfset ftpclose(o)>
-			</cfthread>
+			<!--- </cfthread> --->
 			<!--- Wait for the download above to finish --->
-			<cfthread action="join" name="#tt#" />
+			<!--- <cfthread action="join" name="#tt#" /> --->
 			<!--- Get the filesize --->
 			<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 			<!--- MD5 Hash --->
@@ -909,9 +905,7 @@
 						)
 					</cfquery>
 					<cftry>
-					<cfset o = ftpopen(server=arguments.thestruct.ftp_server,username=arguments.thestruct.ftp_user,password=arguments.thestruct.ftp_pass,passive=arguments.thestruct.ftp_passive, stoponerror=false,timeout=3000)>
-					<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=false)>
-					<cfset ftpclose(o)>
+					<cfset var dup= ftprename(ftpdata=o, oldfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
@@ -920,18 +914,21 @@
 				</cfif>
 			</cfif>
 			<cftry>
-				<cfinvoke component="ftp" method="getdirectory" thestruct="#thestruct#" returnvariable="leftovers" />
 				<cfcatch type="any">
+					<cfset ftpclose(o)>
 					<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				</cfcatch>
 			</cftry>
 			<cfcatch type="any">
+				<cfset ftpclose(o)>
 				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 			</cfcatch>
 		</cftry>
 	</cfloop>
+	<!--- Close connection --->
+	<cfset ftpclose(o)>
 </cffunction>
 
 
@@ -3503,6 +3500,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.thisvid.finalpath = "#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">
 				<cfif arguments.thestruct.importpath NEQ "">
 					<cfset arguments.thestruct.thetempdirectory = arguments.thestruct.thisvid.finalpath>
+				<cfelse>
+					<cfset arguments.thestruct.thetempdirectory = "#arguments.thestruct.qryfile.path#">
 				</cfif>
 				<!--- Create the directory --->
 				<cfdirectory action="create" directory="#arguments.thestruct.thisvid.finalpath#" mode="775">
