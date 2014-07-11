@@ -914,28 +914,30 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cftry>
-					<!--- Insert error log --->
-					<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO #session.hostdbprefix#schedules_log
-						(sched_log_id, sched_id_r, sched_log_user, sched_log_action, sched_log_date, 
-						sched_log_time, sched_log_desc, host_id, notified)
-						VALUES 
-						(
-						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="Error" cfsqltype="cf_sql_varchar">, 
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-						<cfqueryparam value="#cfcatch.message#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
-						)
-					</cfquery>
-					<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
-				<cfcatch></cfcatch>
-				</cftry>
+				<cfif isdefined("arguments.thestruct.sched_id")>
+					<cftry>
+						<!--- Insert error log --->
+						<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO #session.hostdbprefix#schedules_log
+							(sched_log_id, sched_id_r, sched_log_user, sched_log_action, sched_log_date, 
+							sched_log_time, sched_log_desc, host_id, notified)
+							VALUES 
+							(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="Error" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+							<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+							<cfqueryparam value="#cfcatch.message#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
+							)
+						</cfquery>
+						<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+					<cfcatch></cfcatch>
+					</cftry>
+				</cfif>
 				<cfset ftpclose(o)>
 				<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
