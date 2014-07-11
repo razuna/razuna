@@ -858,19 +858,23 @@
 							<cfif application.razuna.storage EQ "local">
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50">
+										<cfif img_asset_path NEQ "">
+											<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50" onerror = "this.src=''">
+										</cfif>
 									</cfcase>
 									<cfcase value="vid">
-										<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_thumb#"  height="50">
+										<cfif vid_asset_path NEQ "">
+											<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_thumb#"  height="50" onerror = "this.src=''">
+										</cfif>
 									</cfcase>
 								</cfswitch>
 							<cfelse>
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										<img src="#img_cloud_thumb#"  height="50">
+										<img src="#img_cloud_thumb#"  height="50" onerror = "this.src=''">
 									</cfcase>
 									<cfcase value="vid">
-										<img src="#vid_cloud_thumb#"  height="50">
+										<img src="#vid_cloud_thumb#"  height="50" onerror = "this.src=''">
 									</cfcase>
 								</cfswitch>
 								
@@ -942,31 +946,47 @@
 							<cfif application.razuna.storage EQ "local">
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+										<cfif img_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+										</cfif>
 									</cfcase>
 									<cfcase value="doc">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+										<cfif file_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+										</cfif>
 									</cfcase>
 									<cfcase value="vid">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+										<cfif vid_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+										</cfif>
 									</cfcase>
 									<cfcase value="aud">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+										<cfif aud_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+										</cfif>
 									</cfcase>
 								</cfswitch>
 							<cfelse>
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										#img_cloud_url#
+										<cfif img_cloud_url NEQ "">
+											#img_cloud_url#
+										</cfif>
 									</cfcase>
 									<cfcase value="doc">
-										#file_cloud_url#
+										<cfif file_cloud_url NEQ "">
+											#file_cloud_url#
+										</cfif>
 									</cfcase>
 									<cfcase value="vid">
-										#vid_cloud_url#
+										<cfif vid_cloud_url NEQ "">
+											#vid_cloud_url#
+										</cfif>
 									</cfcase>
 									<cfcase value="aud">
-										#aud_cloud_url#
+										<cfif aud_cloud_url NEQ "">
+											#aud_cloud_url#
+										</cfif>
 									</cfcase>
 								</cfswitch>
 								
@@ -1084,7 +1104,6 @@
 	<cfquery dbtype="query" name="getuserinfo">
 		SELECT user_email, user_id FROM getusers2notify GROUP BY user_id,user_email
 	</cfquery>
-	
 	<!--- Before we send out notification emails lets expire the assets first --->
 	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
 	<cfloop query="getexpired_assets">
@@ -1205,23 +1224,27 @@
 					<td nowrap="true">#getusers2email.name#</td>
 					<td>
 					<cfif application.razuna.storage EQ "local">
-						<cfswitch expression="#getusers2email.type#">
-							<cfcase value="img">
-								<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#getusers2email.id#.#thumb#" height="50">
-							</cfcase>
-							<cfcase value="vid">
-								<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thumb#"  height="50">
-							</cfcase>
-						</cfswitch>
+						<cfif path_to_asset NEQ "">
+							<cfswitch expression="#getusers2email.type#">
+								<cfcase value="img">
+									<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#getusers2email.id#.#thumb#" height="50" onerror = "this.src=''">
+								</cfcase>
+								<cfcase value="vid">
+									<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thumb#"  height="50" onerror = "this.src=''">
+								</cfcase>
+							</cfswitch>
+						</cfif>
 					<cfelse>
-						<cfswitch expression="#getusers2email.type#">
-							<cfcase value="img">
-								<img src="#cloud_thumb#"  height="50">
-							</cfcase>
-							<cfcase value="vid">
-								<img src="#cloud_thumb#"  height="50">
-							</cfcase>
-						</cfswitch>
+						<cfif cloud_thumb NEQ "">
+							<cfswitch expression="#getusers2email.type#">
+								<cfcase value="img">
+									<img src="#cloud_thumb#"  height="50" onerror = "this.src=''">
+								</cfcase>
+								<cfcase value="vid">
+									<img src="#cloud_thumb#"  height="50" onerror = "this.src=''">
+								</cfcase>
+							</cfswitch>
+						</cfif>
 					</cfif>
 					</td>
 					<td nowrap="true">#getusers2email.folder_id#</td>
