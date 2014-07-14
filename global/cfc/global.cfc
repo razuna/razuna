@@ -1892,24 +1892,45 @@ Comment:<br>
 	</cffunction>
 
 	<cffunction name="compareLists" access="public" returnType="string" output="false" hint="Compares two lists and returns the intersection of the two. Returns empty string if none found.">
-	    <cfargument name="strList1" type="string" required="true" />
-	    <cfargument name="strList2" type="string" required="true" />
-
+	    <cfargument name="List1" type="string" required="true" />
+	    <cfargument name="List2" type="string" required="true" />
 	    <cfscript>
-	        var stuCompare        = {};
-	        var intCount        = 0;
-	        var strTempElement    = "";
-	        
-	        //loop through second list
-	        for(intCount=1; intCount LTE listLen(arguments.strList2); intCount++){
-	            strTempElement    = listGetAt(arguments.strList2,intCount);
-	            if(listContainsNoCase(arguments.strList1,strTempElement)){
-	                //Add key to struct
-	                stuCompare[strTempElement]    = "";
-	            }
-	        }
-	    
-	        return structKeyList(stuCompare);
+		  var TempList = "";
+		  var Delim1 = ",";
+		  var Delim2 = ",";
+		  var Delim3 = ",";
+		  var i = 0;
+		  // Handle optional arguments
+		  switch(ArrayLen(arguments)) {
+		    case 3:
+		      {
+		        Delim1 = Arguments[3];
+		        break;
+		      }
+		    case 4:
+		      {
+		        Delim1 = Arguments[3];
+		        Delim2 = Arguments[4];
+		        break;
+		      }
+		    case 5:
+		      {
+		        Delim1 = Arguments[3];
+		        Delim2 = Arguments[4];          
+		        Delim3 = Arguments[5];
+		        break;
+		      }        
+		  } 
+		   /* Loop through the second list, checking for the values from the first list.
+		    * Add any elements from the second list that are found in the first list to the
+		    * temporary list
+		    */  
+		  for (i=1; i LTE ListLen(List2, "#Delim2#"); i=i+1) {
+		    if (ListFindNoCase(List1, ListGetAt(List2, i, "#Delim2#"), "#Delim1#")){
+		     TempList = ListAppend(TempList, ListGetAt(List2, i, "#Delim2#"), "#Delim3#");
+		    }
+		  }
+		  Return TempList;
 	    </cfscript>
 	</cffunction>
 

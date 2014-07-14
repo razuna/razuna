@@ -116,12 +116,12 @@
 					</cfif>
 				</p>
 				<p><hr></p>
-				<!--- Administration --->
-				<!--- <cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()> --->
+				<!--- Administration. Show if user is admin or if user has access to some admin features --->
+				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
 					<p><hr></p>
-				<!--- </cfif> --->
+				</cfif>
 				<!--- Help --->
 				<p>
 					<cfif application.razuna.whitelabel>

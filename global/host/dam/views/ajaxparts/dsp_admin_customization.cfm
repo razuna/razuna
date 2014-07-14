@@ -918,7 +918,69 @@
 				</table>
 			</div>
 			<div stlye="clear:both;"><br /></div>
-			
+			<!--- Basket View --->
+			<a href="##" onclick="$('##basketview').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; Basket</div></a>
+			<div id="basketview" style="display:none;padding-top:10px;">
+				#myFusebox.getApplicationData().defaults.trans("basket_customize_desc")#
+				<table border="0">
+					<tr>
+						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_publish")#</td>
+						<td>
+							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="publish_btn_basket" id="publish_btn_basket" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.publish_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.publish_btn_basket,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_email")#</td>
+						<td>
+							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="email_btn_basket" id="email_btn_basket" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.email_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.email_btn_basket,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_ftp")#</td>
+						<td>
+							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="ftp_btn_basket" id="ftp_btn_basket" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.ftp_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.ftp_btn_basket,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_export")#</td>
+						<td>
+							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="metadata_btn_basket" id="metadata_btn_basket" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.metadata_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.metadata_btn_basket,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 
 		<div id="status_custom_2" style="float:left;padding-top:5px;"></div><div style="float:right;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">Apply to all tenants</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
@@ -929,6 +991,7 @@
 		<script type="text/javascript">
 			//RAZ-2267 Option to define the default explorer section.
 			$(document).ready(function(){
+
 				//set check if Collection tab is enabled or disabled
 				 if($('input[name="tab_collections"]:checked' ).val()=='true'){
 					$('.collection_tab').attr('disabled', false);
