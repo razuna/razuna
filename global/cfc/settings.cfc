@@ -1927,6 +1927,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.audios_metadata = "">
 	<cfset v.assetbox_height = "">
 	<cfset v.assetbox_width = "">
+	<!--- File detail button fields --->
+	<cfset v.btn_email_slct = "">
+	<cfset v.btn_ftp_slct = "">
+	<cfset v.btn_basket_slct = "">
+	<cfset v.btn_print_slct = "">
+	<cfset v.btn_collection_slct = "">
 	<!--- RAZ-2267 Set the default value --->
 	<cfset v.tab_explorer_default = 1>
 	<!--- RAZ-2834 Set the default value --->
@@ -2096,6 +2102,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.assetbox_height = custom_value>
 			<cfelseif custom_id EQ "assetbox_width">
 				<cfset v.assetbox_width = custom_value>
+			<cfelseif custom_id EQ "btn_email_slct">
+				<cfset v.btn_email_slct = custom_value>
+			<cfelseif custom_id EQ "btn_ftp_slct">
+				<cfset v.btn_ftp_slct = custom_value>
+			<cfelseif custom_id EQ "btn_basket_slct">
+				<cfset v.btn_basket_slct = custom_value>
+			<cfelseif custom_id EQ "btn_print_slct">
+				<cfset v.btn_print_slct = custom_value>
+			<cfelseif custom_id EQ "btn_collection_slct">
+				<cfset v.btn_collection_slct = custom_value>
 			</cfif>
 			<!--- RAZ-2267 get the default value--->
 			<cfif custom_id EQ "tab_explorer_default">

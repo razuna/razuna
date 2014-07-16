@@ -663,7 +663,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Detail View --->
-			<a href="##" onclick="$('##detailview').slideToggle('slow');return false;"><div class="headers">&gt; File Detail</div></a>
+			<a href="##" onclick="$('##detailview').slideToggle('slow');$('.chzn2-select').chosen({search_contains: true});return false;"><div class="headers">&gt; File Detail</div></a>
 			<div id="detailview" style="display:none;padding-top:10px;">
 				<!--- Asset View --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -780,31 +780,102 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_email_desc")#
 							<br />
-							<div><input type="radio" name="button_send_email" value="true"<cfif qry_customization.button_send_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_send_email" value="false"<cfif !qry_customization.button_send_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div>
+								<input type="radio" name="button_send_email" value="true"<cfif qry_customization.button_send_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_send_email" value="false"<cfif !qry_customization.button_send_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+								<br/><br/>
+								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
+								<br/>
+
+								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_email_slct" id="btn_email_slct" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.btn_email_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.btn_email_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+								</select>
+							</div>
+
 							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_ftp")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_ftp_desc")#
 							<br />
-							<div><input type="radio" name="button_send_ftp" value="true"<cfif qry_customization.button_send_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_send_ftp" value="false"<cfif !qry_customization.button_send_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div><input type="radio" name="button_send_ftp" value="true"<cfif qry_customization.button_send_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_send_ftp" value="false"<cfif !qry_customization.button_send_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+								<br/><br/>
+								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
+								<br/>
+
+								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_ftp_slct" id="btn_ftp_slct" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.btn_ftp_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.btn_ftp_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+								</select>
+							</div>
 							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_basket")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_basket_desc")#
 							<br />
-							<div><input type="radio" name="button_basket" value="true"<cfif qry_customization.button_basket> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_basket" value="false"<cfif !qry_customization.button_basket> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div><input type="radio" name="button_basket" value="true"<cfif qry_customization.button_basket> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_basket" value="false"<cfif !qry_customization.button_basket> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+								<br/><br/>
+								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
+								<br/>
+								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_basket_slct" id="btn_basket_slct" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.btn_basket_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.btn_basket_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+								</select>
+							</div>
 							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_add_to_collection")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_add_to_collection_desc")#
 							<br />
-							<div><input type="radio" name="button_add_to_collection" value="true"<cfif qry_customization.button_add_to_collection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_add_to_collection" value="false"<cfif !qry_customization.button_add_to_collection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div><input type="radio" name="button_add_to_collection" value="true"<cfif qry_customization.button_add_to_collection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_add_to_collection" value="false"<cfif !qry_customization.button_add_to_collection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+								<br/><br/>
+								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
+								<br/>
+
+								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_collection_slct" id="btn_collection_slct" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.btn_collection_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.btn_collection_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+								</select>
+							</div>
 							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_print")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_print_desc")#
 							<br />
-							<div><input type="radio" name="button_print" value="true"<cfif qry_customization.button_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_print" value="false"<cfif !qry_customization.button_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div><input type="radio" name="button_print" value="true"<cfif qry_customization.button_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_print" value="false"<cfif !qry_customization.button_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+								<br/><br/>
+								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
+								<br/>
+
+								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_print_slct" id="btn_print_slct" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="qry_groups">
+									<option value="#grp_id#"<cfif listfind(qry_customization.btn_print_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+								</cfloop>
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif listfind(qry_customization.btn_print_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+								</cfloop>
+								</select>
+							</div>
 							<br />
 							<!---
 		<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_move")#</strong>
