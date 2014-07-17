@@ -88,119 +88,126 @@
 								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
 							</a>
 						</cfif>
-						<!--- More actions --->
-						<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
-						<div style="float:left;padding-right:15px;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
+						<!--- RAZ-3192 Hide more actions for read-only groups --->
+						<cfif attributes.folderaccess NEQ "R">
+							<!--- More actions --->
+							<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
+							<div style="float:left;padding-right:15px;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
+						</cfif>
+
 						<!--- Views --->
 						<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">Views</a></div>
 						<div style="float:left;;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##dropviews#thediv#').toggle();"></div>
 					</cfif>
 				</div>
-				<!--- More actions menu --->	
-				<div>
-					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">358<cfelse>251</cfif>px;">
-						<!--- Add Subfolder --->
-						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
-							<p>
-								<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/folder-new-7.png" width="16" height="16" border="0" />
-									</div>
-									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("folder_new")#</div>
-								</a>
-							</p>
-						</cfif>
-						<!--- Favorite Folder --->
-						<cfif cs.icon_favorite_folder AND cs.show_favorites_part>
-							<p>
-								<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer();$('##drop#thediv#').toggle();return false;">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/folder-favorites.png" width="16" height="16" border="0" />
-									</div>
-									<div style="padding-top:2px;">Add folder to favorites</div>
-								</a>
-							</p>
-						</cfif>
-						<!--- Show sub assets --->
-						<cfif cs.icon_show_subfolder>
-							<p>
-								<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&showsubfolders=<cfif session.showsubfolders EQ "F">T<cfelse>F</cfif>&iscol=#attributes.iscol#');$('##drop#thediv#').toggle();return false;">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
-									</div>
-									<div style="padding-top:2px;">Show assets from Sub-Folders</div>
-								</a>
-							</p>
+				<!--- RAZ-3192 Hide more actions for read-only groups --->
+				<cfif attributes.folderaccess NEQ "R">
+					<!--- More actions menu --->	
+					<div>
+						<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">358<cfelse>251</cfif>px;">
+							<!--- Add Subfolder --->
+							<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
+								<p>
+									<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/folder-new-7.png" width="16" height="16" border="0" />
+										</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("folder_new")#</div>
+									</a>
+								</p>
+							</cfif>
+							<!--- Favorite Folder --->
+							<cfif cs.icon_favorite_folder AND cs.show_favorites_part>
+								<p>
+									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer();$('##drop#thediv#').toggle();return false;">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/folder-favorites.png" width="16" height="16" border="0" />
+										</div>
+										<div style="padding-top:2px;">Add folder to favorites</div>
+									</a>
+								</p>
+							</cfif>
+							<!--- Show sub assets --->
+							<cfif cs.icon_show_subfolder>
+								<p>
+									<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&showsubfolders=<cfif session.showsubfolders EQ "F">T<cfelse>F</cfif>&iscol=#attributes.iscol#');$('##drop#thediv#').toggle();return false;">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
+										</div>
+										<div style="padding-top:2px;">Show assets from Sub-Folders</div>
+									</a>
+								</p>
+								<p><hr></p>
+							</cfif>
+							<!--- Exporting icons --->
+							<cfif cs.icon_print>
+								<p>
+									<a href="##" target="_blank" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#url.folder_id#&kind=#url.kind#','#myFusebox.getApplicationData().defaults.trans("pdf_window_title")#',500,1);$('##drop#thediv#').toggle();return false;">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/preferences-desktop-printer-2.png" border="0" width="16" height="16" />
+										</div>
+										<div style="padding-top:2px;">Print</div>
+									</a>
+								</p>
+							</cfif>
+							<cfif cs.icon_rss>
+								<p>
+									<a href="#myself#c.view_rss&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" />
+										</div>
+										<div style="padding-top:2px;">RSS-Feed of this folder</div>
+									</a>
+								</p>
+							</cfif>
+							<cfif cs.icon_word>
+								<p>
+									<a href="#myself#c.view_doc&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/page-word.png" border="0" width="16" height="16" />
+										</div>
+										<div style="padding-top:2px;">Create a Word-Document</div>
+									</a>
+								</p>
+							</cfif>
 							<p><hr></p>
-						</cfif>
-						<!--- Exporting icons --->
-						<cfif cs.icon_print>
-							<p>
-								<a href="##" target="_blank" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#url.folder_id#&kind=#url.kind#','#myFusebox.getApplicationData().defaults.trans("pdf_window_title")#',500,1);$('##drop#thediv#').toggle();return false;">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/preferences-desktop-printer-2.png" border="0" width="16" height="16" />
-									</div>
-									<div style="padding-top:2px;">Print</div>
-								</a>
-							</p>
-						</cfif>
-						<cfif cs.icon_rss>
-							<p>
-								<a href="#myself#c.view_rss&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" />
-									</div>
-									<div style="padding-top:2px;">RSS-Feed of this folder</div>
-								</a>
-							</p>
-						</cfif>
-						<cfif cs.icon_word>
-							<p>
-								<a href="#myself#c.view_doc&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/page-word.png" border="0" width="16" height="16" />
-									</div>
-									<div style="padding-top:2px;">Create a Word-Document</div>
-								</a>
-							</p>
-						</cfif>
-						<p><hr></p>
-						<!--- Export Metadata --->
-						<cfif cs.icon_metadata_export>
-							<p>
-								<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/document-export-4.png" border="0" width="16" height="16" />
-									</div>
-									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
-								</a>
-							</p>
-						</cfif>
-						<!--- Import Metadata --->
-						<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
-							<p>
-								<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("header_import_metadata_desc")#">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
-									</div>
-									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#</div>
-								</a>
-							</p>
-						</cfif>
-						<!--- Download Folder --->
-						<cfif attributes.folderaccess NEQ "R" AND cs.icon_download_folder>
-							<p><hr></p>
-							<p>
-								<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
-									</div>
-									<div style="padding-top:2px;">Download assets in this folder</div>
-								</a>
-							</p>
-						</cfif>
+							<!--- Export Metadata --->
+							<cfif cs.icon_metadata_export>
+								<p>
+									<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/document-export-4.png" border="0" width="16" height="16" />
+										</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
+									</a>
+								</p>
+							</cfif>
+							<!--- Import Metadata --->
+							<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
+								<p>
+									<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("header_import_metadata_desc")#">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
+										</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#</div>
+									</a>
+								</p>
+							</cfif>
+							<!--- Download Folder --->
+							<cfif attributes.folderaccess NEQ "R" AND cs.icon_download_folder>
+								<p><hr></p>
+								<p>
+									<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
+										<div style="float:left;padding-right:5px;">
+											<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
+										</div>
+										<div style="padding-top:2px;">Download assets in this folder</div>
+									</a>
+								</p>
+							</cfif>
+						</div>
 					</div>
-				</div>
+				</cfif>
 				<!--- View menu --->	
 				<div>
 					<div id="dropviews#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">458<cfelse>351</cfif>px;">
@@ -424,7 +431,7 @@
 		</cfloop>
 	</cfif>
 	<cfif !actions>
-		No actions found
+		No actions found for user
 	</cfif> 
 </div>
 		
