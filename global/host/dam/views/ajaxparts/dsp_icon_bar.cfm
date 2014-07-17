@@ -111,7 +111,7 @@
 							</p>
 						</cfif>
 						<!--- Favorite Folder --->
-						<cfif cs.icon_favorite_folder>
+						<cfif cs.icon_favorite_folder AND cs.show_favorites_part>
 							<p>
 								<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer();$('##drop#thediv#').toggle();return false;">
 									<div style="float:left;padding-right:5px;">
