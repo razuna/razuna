@@ -285,6 +285,10 @@
 	<fuseaction name="log_history">
   		<include template="dsp_asset_log" />
 	</fuseaction>
+	<!-- Assets: Show alias usage -->
+	<fuseaction name="usage_alias">
+  		<include template="dsp_usage_alias" />
+	</fuseaction>
 	
 	
 	<!-- Files: Detail -->

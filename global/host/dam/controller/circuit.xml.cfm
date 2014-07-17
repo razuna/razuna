@@ -3124,6 +3124,14 @@
 		<do action="log_history" />
 	</fuseaction>
 	
+	<!-- Show Alias usage -->
+	<fuseaction name="usage_alias">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getUsageAlias(attributes.id)" returnvariable="qry_alias" />
+		<!-- Show -->
+		<do action="ajax.usage_alias" />
+	</fuseaction>
+
 	<!--
 		END: WORKING WITH ASSETS
 	 -->
@@ -3775,6 +3783,8 @@
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
+		<!-- Check if there are any aliases -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getUsageAlias(attributes.file_id)" returnvariable="qry_aliases" />
 		<!-- Show the folder listing -->
 		<do action="ajax.files_detail" />
 	</fuseaction>
@@ -3888,6 +3898,8 @@
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
+		<!-- Check if there are any aliases -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getUsageAlias(attributes.file_id)" returnvariable="qry_aliases" />
 		<!-- Show the folder listing -->
 		<do action="ajax.videos_detail" />
 	</fuseaction>
@@ -4096,6 +4108,8 @@
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
+		<!-- Check if there are any aliases -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getUsageAlias(attributes.file_id)" returnvariable="qry_aliases" />
 		<!-- Show the image detail window -->
 		<do action="ajax.images_detail" />
 	</fuseaction>
@@ -4301,6 +4315,8 @@
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
+		<!-- Check if there are any aliases -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getUsageAlias(attributes.file_id)" returnvariable="qry_aliases" />
 		<!-- Show the folder listing -->
 		<do action="ajax.audios_detail" />
 	</fuseaction>

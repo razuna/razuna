@@ -1891,6 +1891,28 @@ Comment:<br>
 		<cfset resetcachetoken("audios")>
 	</cffunction>
 
+	<!--- List alias usage --->
+	<cffunction name="getUsageAlias" output="false" returntype="query">
+		<cfargument name="asset_id_r" type="string" required="true">
+		<!--- Var --->
+		<cfset var qry = ''>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,30)#" region="razcache">
+		SELECT folder_id_r, '' as folder_name
+		FROM ct_aliases
+		WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.asset_id_r#">
+		</cfquery>
+		<!--- Get the folder names --->
+		<cfloop query="qry">
+			<!--- Get the foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#folder_id_r#" returnvariable="_foldername" />
+			<!--- Add to query --->
+			<cfset querySetCell(qry, "folder_name", _foldername)>
+		</cfloop>
+		<!--- Return query --->
+		<cfreturn qry />
+	</cffunction>
+
 	<cffunction name="compareLists" access="public" returnType="string" output="false" hint="Compares two lists and returns the intersection of the two. Returns empty string if none found.">
 	    <cfargument name="List1" type="string" required="true" />
 	    <cfargument name="List2" type="string" required="true" />
