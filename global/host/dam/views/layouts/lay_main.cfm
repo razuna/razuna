@@ -184,7 +184,9 @@
 		<div id="apDiv4">#trim( maincontent )#</div>
 		<!--- <div id="apDiv5">#trim( showcontent )#</div> --->
 	</div>
-	<cfif cs.show_bottom_part><div id="footer_drop">#trim( footerdrop )#</div></cfif>
+	<!--- <cfif cs.show_basket_part OR cs.show_favorites_part> --->
+		<div id="footer_drop">#trim( footerdrop )#</div>
+	<!--- </cfif> --->
 </cfif>
 <!--- <div id="footer">#trim( footercontent )#</div> --->
 <!--- Window Div --->
