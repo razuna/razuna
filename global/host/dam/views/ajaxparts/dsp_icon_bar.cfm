@@ -336,11 +336,12 @@
 	<strong>All files in this <cfif kind EQ "all">folder<cfelse>section</cfif> have been selected</strong> <a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>
 </div>
 <!--- Put in basket button / Action Menu --->
-<div id="folderselection#kind#form" class="actiondropdown">
+<div id="folderselection#kind#form" class="actiondropdown"> 
 	<!--- Select all link --->
 	<!--- <div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form">
 	 	<a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>
 	</div> --->
+	<cfset actions = false>
 	<!--- Actions with selection icons --->
 	<!--- <div style="float:left;padding-right:5px;"><strong>#myFusebox.getApplicationData().defaults.trans("action_with_selection")#: </strong></div> --->
 	<cfif cs.show_basket_part AND  cs.button_basket AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
@@ -350,6 +351,7 @@
 			</div>
 			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</div>
 		</a> 
+		<cfset actions = true>
 	</cfif>
 	<cfif attributes.folderaccess IS NOT "R">
 		<!--- Aliases --->
@@ -413,6 +415,7 @@
 				#evaluate(i)#
 			</cfloop>
 		</cfif>
+		<cfset actions = true>
 	</cfif>
 	<!--- Plugin being shows with add_folderview_select_r  --->
 	<cfif structKeyExists(plr,"pview")>
@@ -420,6 +423,9 @@
 			#evaluate(i)#
 		</cfloop>
 	</cfif>
+	<cfif !actions>
+		No actions found
+	</cfif> 
 </div>
 		
 
