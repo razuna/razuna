@@ -448,7 +448,7 @@
 		<!--- RAZ-2810 Customise email message --->
 		<cfinvoke component="defaults" method="trans" transid="basket_download_available_subject" returnvariable="basket_download_available_sub" />
 		<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
-		<cfinvoke component="email" method="send_email" subject="#basket_download_available_sub#" themessage="#basket_download_available_msg# <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
+		<cfinvoke component="email" method="send_email" subject="#basket_download_available_sub#" themessage="#basket_download_available_msg# <br/> <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
@@ -1322,10 +1322,10 @@
 	<!--- Send out eMail to the one who is responsible for Orders --->
 	<cfset var thesubject = "Basket Order: #session.thecart#">
 	<cfset var mailmessage = "Hello,
-		The below order just came in:
+		The below order just came in:<br/><br/>
 		
-		Basket Order: #session.thecart#
-		Date: #dateformat(now(), "#thedateformat#")#
+		Basket Order: #session.thecart#<br/>
+		Date: #dateformat(now(), "#thedateformat#")#<br/><br/>
 		
 		Log in to Razuna to process this order.">
 	<cftry>

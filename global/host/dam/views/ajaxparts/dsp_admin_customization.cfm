@@ -170,11 +170,19 @@
 							<br />
 							<div><input type="radio" name="show_top_part" value="true"<cfif qry_customization.show_top_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_top_part" value="false"<cfif !qry_customization.show_top_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
-							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_design_bottom_part")#</strong>
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_design_basket_part")#</strong>
 							<br />
-							#myFusebox.getApplicationData().defaults.trans("header_customization_design_bottom_part_desc")#
+							#myFusebox.getApplicationData().defaults.trans("header_customization_design_basket_part_desc")#
 							<br />
-							<div><input type="radio" name="show_bottom_part" value="true"<cfif qry_customization.show_bottom_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_bottom_part" value="false"<cfif !qry_customization.show_bottom_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<div><input type="radio" name="show_basket_part" value="true"<cfif qry_customization.show_basket_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_basket_part" value="false"<cfif !qry_customization.show_basket_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+
+							<br />
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_design_favorites_part")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_design_favorites_part_desc")#
+							<br />
+							<div><input type="radio" name="show_favorites_part" value="true"<cfif qry_customization.show_favorites_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_favorites_part" value="false"<cfif !qry_customization.show_favorites_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
 						</td>
 					</tr>

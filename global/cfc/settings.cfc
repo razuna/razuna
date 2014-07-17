@@ -1857,7 +1857,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.myfolder_create = true>
 	<cfset v.myfolder_upload = true>
 	<cfset v.show_top_part = true>
-	<cfset v.show_bottom_part = true>
+	<cfset v.show_basket_part = true>
+	<cfset v.show_favorites_part = true>
 	<cfset v.show_twitter = true>
 	<cfset v.tab_twitter = true>
 	<cfset v.show_facebook = true>
@@ -1962,8 +1963,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.myfolder_upload = false>
 			<cfelseif custom_id EQ "show_top_part" AND !custom_value>
 				<cfset v.show_top_part = false>
-			<cfelseif custom_id EQ "show_bottom_part" AND !custom_value>
-				<cfset v.show_bottom_part = false>
+			<cfelseif custom_id EQ "show_basket_part" AND !custom_value>
+				<cfset v.show_basket_part = false>
+			<cfelseif custom_id EQ "show_favorites_part" AND !custom_value>
+				<cfset v.show_favorites_part = false>
 			<cfelseif custom_id EQ "show_twitter" AND !custom_value>
 				<cfset v.show_twitter = false>
 			<cfelseif custom_id EQ "tab_twitter" AND !custom_value>
