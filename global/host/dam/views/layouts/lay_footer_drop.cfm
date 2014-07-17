@@ -26,7 +26,7 @@
 <cfoutput>
 <div id="tabs_footer">
 	<ul>
-		<li><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">Show #myFusebox.getApplicationData().defaults.trans("header_basket")#</a></li>
+		<li><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></li>
 		<li><a href="##thedropfav" id="div_link_fav" onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">Show #myFusebox.getApplicationData().defaults.trans("header_favorites")#</a></li>
 		<cfif qry_orders.recordcount NEQ 0>
 			<li><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">Show Orders</a></li>

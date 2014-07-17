@@ -156,7 +156,7 @@
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
 						<cfelse>
-							<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a>
+							<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
 						</cfif>
 					</p>
 					<p><hr></p>
@@ -172,12 +172,14 @@
 					<a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a>
 				</div>
 			</cfif>
+			<!--- Show basket link --->
+			<div style="float:left;padding-right:20px;"><a href="##" onClick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></div>
 			<!--- Feedback --->
 			<cfif w EQ 300>
 				<cfif application.razuna.whitelabel>
-					#wl_feedback#
+					<div style="float:left;">#wl_feedback#</div>
 				<cfelse>
-					<div style="float:left;"><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a></div>
+					<div style="float:left;"><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a></div>
 				</cfif>
 			</cfif>
 		</div>
