@@ -173,7 +173,9 @@
 				</div>
 			</cfif>
 			<!--- Show basket link --->
-			<div style="float:left;padding-right:20px;"><a href="##" onClick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></div>
+			<cfif cs.show_basket_part>
+				<div style="float:left;padding-right:20px;"><a href="##" onClick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></div>
+			</cfif>
 			<!--- Feedback --->
 			<cfif w EQ 300>
 				<cfif application.razuna.whitelabel>
