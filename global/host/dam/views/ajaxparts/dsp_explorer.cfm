@@ -26,28 +26,30 @@
 <cfoutput>
 	<!--- Folders --->
 	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Folders</div> --->
-	<!--- Drop down menu --->
-	<div style="width:60px;float:right;position:absolute;left:190px;top:3px;">
-		<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
-		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
-		<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
-				<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F');$('##explorertools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">#myFusebox.getApplicationData().defaults.trans("folder_new")# (#myFusebox.getApplicationData().defaults.trans("on_root_level")#)</a></p>
-				<p><hr></p>
-			</cfif>
-			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
-				<p><hr></p>
-				<cfif session.showmyfolder EQ "F">
-					<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_all_folders")#</a></p>
-				<cfelse>
-					<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_my_folders")#</a></p>
+	<cfif cs.show_manage_part AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.show_manage_part_slct EQ "" OR listfind(cs.show_manage_part_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_manage_part_slct,session.thegroupofuser) NEQ "")>
+		<!--- Drop down menu --->
+		<div style="width:60px;float:right;position:absolute;left:190px;top:3px;">
+			<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
+			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
+			<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
+				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+					<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F');$('##explorertools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">#myFusebox.getApplicationData().defaults.trans("folder_new")# (#myFusebox.getApplicationData().defaults.trans("on_root_level")#)</a></p>
+					<p><hr></p>
 				</cfif>
-				<!--- <p><hr></p> --->
-			</cfif>
-			<!--- <p><a href="##" onclick="javascript:PicLensLite.start({feedUrl:'#myself#c.cooliris_folder&folder_id=0'});$('##explorertools').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("tooltip_cooliris")#</a></p> --->
+				<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
+				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+					<p><hr></p>
+					<cfif session.showmyfolder EQ "F">
+						<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_all_folders")#</a></p>
+					<cfelse>
+						<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_my_folders")#</a></p>
+					</cfif>
+					<!--- <p><hr></p> --->
+				</cfif>
+				<!--- <p><a href="##" onclick="javascript:PicLensLite.start({feedUrl:'#myself#c.cooliris_folder&folder_id=0'});$('##explorertools').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("tooltip_cooliris")#</a></p> --->
+			</div>
 		</div>
-	</div>
+	</cfif>
 	<div style="clear:both;"></div>
 	<!--- Load folders --->
 	<div id="treeBox" style="width:200;height:200;float:left;"></div>
