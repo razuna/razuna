@@ -172,7 +172,7 @@
 							</cfif>
 							<p><hr></p>
 							<!--- Export Metadata --->
-							<cfif cs.icon_metadata_export>
+							<cfif cs.icon_metadata_export  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
 								<p>
 									<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
 										<div style="float:left;padding-right:5px;">
@@ -183,7 +183,7 @@
 								</p>
 							</cfif>
 							<!--- Import Metadata --->
-							<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
+							<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_metadata_import_slct EQ "" OR listfind(cs.icon_metadata_import_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_import_slct,session.thegroupofuser) NEQ "")>
 								<p>
 									<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("header_import_metadata_desc")#">
 										<div style="float:left;padding-right:5px;">
@@ -361,27 +361,34 @@
 		<cfset actions = true>
 	</cfif>
 	<cfif attributes.folderaccess IS NOT "R">
+		
 		<!--- Aliases --->
-		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','alias');return false;">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/alias.png" width="18" height="18" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("alias_create")#</div>
-		</a>
+		<cfif cs.icon_alias  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_alias_slct EQ "" OR listfind(cs.icon_alias_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_alias_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','alias');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/alias.png" width="18" height="18" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("alias_create")#</div>
+			</a>
+		</cfif>
 		<!--- Move --->
-		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','move');return false;">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
-		</a>
+		<cfif cs.icon_move  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_move_slct EQ "" OR listfind(cs.icon_move_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_move_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','move');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
+			</a>
+		</cfif>
 		<!--- Batch --->
-		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','batch');return false;">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
-		</a>
+		<cfif cs.icon_batch  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_batch_slct EQ "" OR listfind(cs.icon_batch_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_batch_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','batch');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
+			</a>
+		</cfif>
 		<!--- Collection --->
 		<cfif cs.tab_collections AND cs.button_add_to_collection  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.btn_collection_slct EQ "" OR listfind(cs.btn_collection_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_collection_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','chcoll');return false;">
@@ -391,13 +398,15 @@
 				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("add_to_collection")#</div>
 			</a>
 		</cfif>
-		<!--- Export Metadata --->
-		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','exportmeta');return false;">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
-		</a>
+		<cfif cs.icon_metadata_export  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
+			<!--- Export Metadata --->
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','exportmeta');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
+			</a>
+		</cfif>
 		<!--- Recreate Previews --->
 		<cfif kind EQ "img" OR kind EQ "vid">
 			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','prev');return false;">

@@ -359,7 +359,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Folder View --->
-			<a href="##" onclick="$('##folderview').slideToggle('slow');return false;"><div class="headers">&gt; Folderview</div></a>
+			<a href="##" onclick="$('##folderview').slideToggle('slow');$('.chzn3-select').chosen({search_contains: true});return false;"><div class="headers">&gt; Folderview</div></a>
 			<div id="folderview" style="display:none;padding-top:10px;">
 				<!--- Folder View --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -416,6 +416,107 @@
 							<br /><br />
 							<strong>Icons</strong>
 							<br /><br />
+							<!--- Create Alias Icon --->
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_alias")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_alias_desc")#
+							<br />
+							<div><input type="radio" name="icon_alias" value="true"<cfif qry_customization.icon_alias> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_alias" value="false"<cfif !qry_customization.icon_alias> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
+							<br/>
+							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_alias_slct" id="icon_alias_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.icon_alias_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.icon_alias_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
+							<br/><br/>
+
+							<!--- Move Icon --->
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_move")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_move_desc")#
+							<br />
+							<div><input type="radio" name="icon_move" value="true"<cfif qry_customization.icon_move> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_move" value="false"<cfif !qry_customization.icon_move> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
+							<br/>
+							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_move_slct" id="icon_move_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.icon_move_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.icon_move_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
+							<br/><br/>
+
+							<!--- Batch Icon --->
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_batch")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_batch_desc")#
+							<br />
+							<div><input type="radio" name="icon_batch" value="true"<cfif qry_customization.icon_batch> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_batch" value="false"<cfif !qry_customization.icon_batch> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
+							<br/>
+							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_batch_slct" id="icon_batch_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.icon_batch_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.icon_batch_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
+							<br/><br/>
+
+							<!--- Export Metadata Icon --->
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_export")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_export_desc")#
+							<br />
+
+							<div><input type="radio" name="icon_metadata_export" value="true"<cfif qry_customization.icon_metadata_export> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_metadata_export" value="false"<cfif !qry_customization.icon_metadata_export> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+
+							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
+							<br/>
+							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_metadata_export_slct" id="icon_metadata_export_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.icon_metadata_export_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.icon_metadata_export_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
+							<br/><br/>
+
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_import")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_import_desc")#
+							<br />
+							<div><input type="radio" name="icon_metadata_import" value="true"<cfif qry_customization.icon_metadata_import> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_metadata_import" value="false"<cfif !qry_customization.icon_metadata_import> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
+							<br/>
+							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_metadata_import_slct" id="icon_metadata_import_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.icon_metadata_import_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.icon_metadata_import_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
+							<br/><br/>
+
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_select")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_select_desc")#
@@ -469,18 +570,6 @@
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_word_desc")#
 							<br />
 							<div><input type="radio" name="icon_word" value="true"<cfif qry_customization.icon_word> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_word" value="false"<cfif !qry_customization.icon_word> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
-							<br />
-							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_import")#</strong>
-							<br />
-							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_import_desc")#
-							<br />
-							<div><input type="radio" name="icon_metadata_import" value="true"<cfif qry_customization.icon_metadata_import> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_metadata_import" value="false"<cfif !qry_customization.icon_metadata_import> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
-							<br />
-							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_export")#</strong>
-							<br />
-							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_export_desc")#
-							<br />
-							<div><input type="radio" name="icon_metadata_export" value="true"<cfif qry_customization.icon_metadata_export> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_metadata_export" value="false"<cfif !qry_customization.icon_metadata_export> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_download_folder")#</strong>
 							<br />

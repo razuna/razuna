@@ -202,7 +202,7 @@
 			</a> 
 		</cfif>
 		<!--- Export Metadata --->
-		<cfif cs.icon_metadata_export>
+		<cfif cs.icon_metadata_export  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('label_form','labels','#kind#','#attributes.label_id#','exportmeta');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />

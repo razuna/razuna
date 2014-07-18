@@ -1878,6 +1878,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.tab_pdf = true>
 	<cfset v.tab_doc = true>
 	<cfset v.tab_xls = true>
+	<cfset v.icon_alias = true>
+	<cfset v.icon_alias_slct = "">
+	<cfset v.icon_move = true>
+	<cfset v.icon_move_slct = "">
+	<cfset v.icon_batch = true>
+	<cfset v.icon_batch_slct = "">
+	<cfset v.icon_metadata_export = true>
+	<cfset v.icon_metadata_export_slct = "">
+	<cfset v.icon_metadata_import = true>
+	<cfset v.icon_metadata_import_slct = "">
 	<cfset v.icon_select = true>
 	<cfset v.icon_refresh = true>
 	<cfset v.icon_show_subfolder = true>
@@ -1887,8 +1897,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.icon_print = true>
 	<cfset v.icon_rss = true>
 	<cfset v.icon_word = true>
-	<cfset v.icon_metadata_import = true>
-	<cfset v.icon_metadata_export = true>
 	<cfset v.icon_download_folder = true>
 	<cfset v.tab_description_keywords = true>
 	<cfset v.tab_custom_fields = true>
@@ -2005,6 +2013,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.tab_doc = false>
 			<cfelseif custom_id EQ "tab_xls" AND !custom_value>
 				<cfset v.tab_xls = false>
+			<cfelseif custom_id EQ "icon_alias" AND !custom_value>
+				<cfset v.icon_alias = false>
+			<cfelseif custom_id EQ "icon_move" AND !custom_value>
+				<cfset v.icon_move = false>
+			<cfelseif custom_id EQ "icon_batch" AND !custom_value>
+				<cfset v.icon_batch = false>
 			<cfelseif custom_id EQ "icon_select" AND !custom_value>
 				<cfset v.icon_select = false>
 			<cfelseif custom_id EQ "icon_refresh" AND !custom_value>
@@ -2115,6 +2129,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.btn_print_slct = custom_value>
 			<cfelseif custom_id EQ "btn_collection_slct">
 				<cfset v.btn_collection_slct = custom_value>
+			<cfelseif custom_id EQ "icon_alias_slct">
+				<cfset v.icon_alias_slct = custom_value>
+			<cfelseif custom_id EQ "icon_move_slct">
+				<cfset v.icon_move_slct = custom_value>
+			<cfelseif custom_id EQ "icon_batch_slct">
+				<cfset v.icon_batch_slct = custom_value>
+			<cfelseif custom_id EQ "icon_metadata_export_slct">
+				<cfset v.icon_metadata_export_slct = custom_value>
+			<cfelseif custom_id EQ "icon_metadata_import_slct">
+				<cfset v.icon_metadata_import_slct = custom_value>
 			</cfif>
 			<!--- RAZ-2267 get the default value--->
 			<cfif custom_id EQ "tab_explorer_default">

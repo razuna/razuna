@@ -127,18 +127,23 @@
 		</a> 
 	</cfif>
 	<cfif (attributes.folder_id NEQ 0 AND attributes.folderaccess IS NOT "R") OR (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
-		<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','move');">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
-		</a>
-		<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','batch');">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
-		</a>
+		<cfif cs.icon_move  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_move_slct EQ "" OR listfind(cs.icon_move_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_move_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','move');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
+			</a>
+		</cfif>
+
+		<cfif cs.icon_batch  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_batch_slct EQ "" OR listfind(cs.icon_batch_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_batch_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','batch');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
+			</a>
+		</cfif>
 		<cfif cs.tab_collections AND cs.button_add_to_collection  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.btn_collection_slct EQ "" OR listfind(cs.btn_collection_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_collection_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','chcoll');">
 				<div style="float:left;padding-left:5px;">
@@ -147,12 +152,14 @@
 				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("add_to_collection")#</div>
 			</a>
 		</cfif>
-		<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','exportmeta');">
-			<div style="float:left;padding-left:5px;">
-				<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
-			</div>
-			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
-		</a>
+		<cfif cs.icon_metadata_export  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','exportmeta');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
+			</a>
+		</cfif>
 		<cfif attributes.folderaccess EQ "X">
 			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','delete');">
 				<div style="float:left;padding-left:5px;">
