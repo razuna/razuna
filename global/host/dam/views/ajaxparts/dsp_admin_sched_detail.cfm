@@ -24,6 +24,13 @@
 *
 --->
 <cfoutput>
+<!--- Turn date inputs into jQuery datepicker --->
+  <script>
+	  $(function() {
+	    $( "##endDate" ).datepicker();
+	    $( "##startDate" ).datepicker();
+	  });
+  </script>
 <form action="#self#" method="post" name="schedulerform" id="schedulerform" onSubmit="validateMethodInput(this,'Add');return false;">
 <input type="hidden" name="#theaction#" value="c.scheduler_save">
 <input type="hidden" name="sched_id" value="#attributes.sched_id#">
@@ -178,9 +185,9 @@
 				<table border="0" cellspacing="0" cellpadding="0" class="gridno">
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_start_date")#</td>
-						<td><input type="datefield" name="startDate" size="10" value="<cfif qry_detail.sched_start_date EQ "">#LSDateFormat(Now(), 'mm/dd/yyyy')#<cfelse>#LSDateFormat(qry_detail.sched_start_date, 'mm/dd/yyyy')#</cfif>" /></td>
+						<td><input type="datefield" name="startDate" id="startDate" size="10" value="<cfif qry_detail.sched_start_date EQ "">#LSDateFormat(Now(), 'mm/dd/yyyy')#<cfelse>#LSDateFormat(qry_detail.sched_start_date, 'mm/dd/yyyy')#</cfif>" /></td>
 						<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_end_date")#</td>
-						<td><input type="datefield" name="endDate" size="10" value="<cfif qry_detail.sched_end_date EQ ""><!--- #LSDateFormat(Now(), 'mm/dd/yyyy')# ---><cfelse>#LSDateFormat(qry_detail.sched_end_date, 'mm/dd/yyyy')#</cfif>" /></td>
+						<td><input type="datefield" name="endDate" id="endDate" size="10" value="<cfif qry_detail.sched_end_date EQ ""><!--- #LSDateFormat(Now(), 'mm/dd/yyyy')# ---><cfelse>#LSDateFormat(qry_detail.sched_end_date, 'mm/dd/yyyy')#</cfif>" /></td>
 					</tr>
 				</table>
 			</td>
