@@ -153,7 +153,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Designs --->
-			<a href="##" onclick="$('##designs').slideToggle('slow');return false;"><div class="headers">&gt; Design</div></a>
+			<a href="##" onclick="$('##designs').slideToggle('slow');$('.chzn4-select').chosen({search_contains: true});return false;"><div class="headers">&gt; Design</div></a>
 			<div id="designs" style="display:none;padding-top:10px;">
 				<!--- Design --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -177,13 +177,30 @@
 							<div><input type="radio" name="show_basket_part" value="true"<cfif qry_customization.show_basket_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_basket_part" value="false"<cfif !qry_customization.show_basket_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
 
-							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_design_favorites_part")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_design_favorites_part_desc")#
 							<br />
 							<div><input type="radio" name="show_favorites_part" value="true"<cfif qry_customization.show_favorites_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_favorites_part" value="false"<cfif !qry_customization.show_favorites_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
+	
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_manage_part")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_manage_part_desc")#
+							<br />
+							<div><input type="radio" name="show_manage_part" value="true"<cfif qry_customization.show_manage_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_manage_part" value="false"<cfif !qry_customization.show_manage_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_manage_part_desc2")#
+							<br />
+							<select data-placeholder="Choose a group or user" class="chzn4-select" style="width:500px;" name="show_manage_part_slct" id="show_manage_part_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.show_manage_part_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.show_manage_part_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
 						</td>
 					</tr>
 				</table>
