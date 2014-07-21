@@ -27,15 +27,23 @@ function reloadfilelisting(theid){
 // Batch Actions
 
 // Selected to Basket
-function sendtobasket(theform){
-   	// Send it to the basket
+function sendtobasket(theform, from){
+	// Define empty theids var
+	var theids = '';
+	var thekind = '';
+   	// If we come from search we need to get the searchids again since we overwrite it with editids
+   	if (typeof from !== 'undefined' && from === 'search') {
+   		theids = $('#searchlistids').val(); 
+   		thekind = 'search';
+   	};
    	// Get values
 	var url = 'index.cfm?fa=c.basket_put_include';
-	// var items = '&file_id=' + fileids + '&thetype=' + filetypes;
+	var items = '&thekind=' + thekind + '&edit_ids=' + theids;
 	// Submit Form
 	$.ajax({
 		type: "POST",
 		url: url,
+		data: items,
 	   	success: sendtobasket_feedback
 	});
 }
@@ -56,10 +64,11 @@ function batchaction(theform, what, kind, folder_id, theaction){
 	if(what == 'videos')what = 'vid';
 	if(what == 'audios')what = 'aud';
 	if(what == 'all')what = 'all';
-   	// Check what we have to do
-   	//var theaction = $('#' + theid).val();
+   	// If this comes from the search or labels we need to swap the session with the file ids since edit function is in session.editids
+   	if (kind === 'search' || kind === 'labels') {
+   		$('#div_forall').load('index.cfm?fa=c.swap_store_file_ids');
+   	}
 	// Get to work
-	// alert(theaction);
 	switch (theaction){
 		case "alias":
 			showwindow('index.cfm?fa=c.move_file&type=alias&thetype=' + what + '&folder_id=' + folder_id + '&kind=' + kind, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("alias_create")#</cfoutput>', 550, 1);

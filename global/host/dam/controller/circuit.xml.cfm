@@ -4499,6 +4499,12 @@
 				<set name="attributes.file_id" value="#session.file_id#" />
 			</true>
 		</if>
+		<!-- IF we come from search we need to set the ids from the passed form submit -->
+		<if condition="attributes.thekind EQ 'search'">
+			<true>
+				<set name="attributes.file_id" value="#attributes.edit_ids#" />
+			</true>
+		</if>
 		<!-- CFC: Put file into basket -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="tobasket(attributes)" />
 	</fuseaction>
@@ -9616,34 +9622,34 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure_flat(attributes)" />
 			</true>
 			<false>
-		<!-- CFC: Get all assets -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
-		<!-- Get user groups  -->
-		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
-			<argument name="user_id" value="#session.theuserid#" />
-			<argument name="host_id" value="#session.hostid#" />
-			<argument name="check_upc_size" value="true" />
-		</invoke>
-		<!-- Check the current folder having label text as upc -->
-		<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
-			<argument name="theid" value="#attributes.folder_id#" />
-			<argument name="thetype" value="folder" />
-			<argument name="checkUPC" value="true" />
-		</invoke>
-		<!-- Check the UPC folder download -->
-		<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
-			<true>
-				<do action="meta_export_do" />
-				<!-- CFC: Show the progress UPC download -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
-			</true>
-			<false>
-			<!-- Action: Export Metadata -->
-				<do action="meta_export_do" />
-				<!-- RAZ-2901 CFC: Show the progress download -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
-			</false>
-		</if>
+				<!-- CFC: Get all assets -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
+				<!-- Get user groups  -->
+				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
+					<argument name="user_id" value="#session.theuserid#" />
+					<argument name="host_id" value="#session.hostid#" />
+					<argument name="check_upc_size" value="true" />
+				</invoke>
+				<!-- Check the current folder having label text as upc -->
+				<invoke object="myFusebox.getApplicationData().labels" method="getlabels" returnvariable="attributes.qry_labels" >
+					<argument name="theid" value="#attributes.folder_id#" />
+					<argument name="thetype" value="folder" />
+					<argument name="checkUPC" value="true" />
+				</invoke>
+				<!-- Check the UPC folder download -->
+				<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
+					<true>
+						<do action="meta_export_do" />
+						<!-- CFC: Show the progress UPC download -->
+						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
+					</true>
+					<false>
+					<!-- Action: Export Metadata -->
+						<do action="meta_export_do" />
+						<!-- RAZ-2901 CFC: Show the progress download -->
+						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
+					</false>
+				</if>
 			</false>
 		</if>
 	</fuseaction>
@@ -9718,6 +9724,14 @@
 	<fuseaction name="store_file_search">
 		<!-- Simply set sessions -->
 		<set name="session.file_id" value="#attributes.fileids#" />
+		<set name="session.thefileid" value="#session.file_id#" />
+		<set name="session.editids" value="#attributes.editids#" />
+	</fuseaction>
+
+	<!-- Swap session for editids -->
+	<fuseaction name="swap_store_file_ids">
+		<!-- Simply set sessions -->
+		<set name="session.file_id" value="#session.editids#" />
 		<set name="session.thefileid" value="#session.file_id#" />
 	</fuseaction>
 

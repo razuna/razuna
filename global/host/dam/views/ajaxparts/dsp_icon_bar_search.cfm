@@ -39,11 +39,11 @@
 						<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 					</a>
 					<!--- Download Folder --->
-					<cfif cs.icon_download_folder>
+					<!--- <cfif cs.icon_download_folder>
 						<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=labels&label_id=','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop').toggle();return false;">
 							<div style="float:left;padding-right:15px;text-decoration:underline;">Download all assets in this search</div>
 						</a>
-					</cfif>
+					</cfif> --->
 					<!--- Search --->
 					<cfif attributes.folder_id NEQ 0 AND structkeyexists(attributes,"share") AND attributes.share NEQ "T">
 						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
@@ -121,6 +121,8 @@
 <div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
 	<strong>All #qry_filecount.thetotal# files have been selected</strong> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Deselect all</a>
 	<br>
+</div>
+<div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
 	<em>Please note that you cannot edit files with the <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> icon, because you have "read-only" permission for those files!</em>
 </div>
 <!--- action with selection --->
@@ -139,7 +141,7 @@
 		</a> 
 	</cfif>
 	<!--- <cfif attributes.folder_id NEQ 0 AND attributes.folderaccess IS NOT "R"> --->
-		<cfif cs.icon_move  AND (cs.icon_move_slct EQ "" OR listfind(cs.icon_move_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_move_slct,session.thegroupofuser) NEQ "")>
+		<cfif cs.icon_move AND (cs.icon_move_slct EQ "" OR listfind(cs.icon_move_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_move_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','move');">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />

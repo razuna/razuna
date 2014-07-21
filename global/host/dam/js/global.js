@@ -212,31 +212,35 @@ function enablesub(myform,nostore) {
 	// Remove ui-selected class
 	$('.assetbox').removeClass('ui-selected');
 	// Set nostore to false
-	if (nostore == ''){
-		var nostore = false;
+	if (nostore === ''){
+		nostore = false;
 	}
 	// Check if there are any files selected. If so ignore below
-	var anyselect = $('div').hasClass('ui-selected'); 
+	var anyselect = $('div').hasClass('ui-selected');
 	if (!anyselect) {
 		// Check state of selection box
-	    // var isclosed = $("#folderselection" + myform).is(':hidden');
-	    // get how many are selected
-	    var n = $('#' + myform + ' input:checked').length;
-	    // Open or close selection
-	    if (n > 0) {
+		// var isclosed = $("#folderselection" + myform).is(':hidden');
+		// get how many are selected
+		var n = $('#' + myform + ' input:checked').length;
+		// Open or close selection
+		if (n > 0) {
 			$("#folderselection" + myform).slideDown('slow');
 			$("#folderselectionb" + myform).slideDown('slow');
+			$("#selectalert" + myform).slideDown('slow');
+			$("#selectalertb" + myform).slideDown('slow');
 		}
-		if (n == 0) {
+		if (n === 0) {
 			$("#folderselection" + myform).slideUp('slow');
 			$("#folderselectionb" + myform).slideUp('slow');
+			$("#selectalert" + myform).slideUp('slow');
+			$("#selectalertb" + myform).slideUp('slow');
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
 			}
 		}
 		// if selection is here
-		if (n != 0) {
+		if (n !== 0) {
 			// Hide the selectall desc
 			$("#selectstore" + myform).css("display","none");
 			$("#selectstoreb" + myform).css("display","none");
@@ -260,7 +264,7 @@ function enablefromselectable(myform) {
 		$("#folderselectionb" + myform).slideToggle('slow');
 		
 	}
-	if (n == 0 && !isclosed) {
+	if (n === 0 && !isclosed) {
 		$("#folderselection" + myform).slideToggle('slow');
 		$("#folderselectionb" + myform).slideToggle('slow');
 	}
@@ -480,6 +484,8 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	// Enable select all text again. cloud be set hidden from single selection
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
+	$("#selectalert" + myform).css("display","");
+	$("#selectalertb" + myform).css("display","");
 	// Loop over checkboxes and check all
 	$('#' + myform + ' :checkbox').prop('checked', true);
 	// Show drop down
@@ -494,7 +500,8 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	else{
 		// Get the ids from the hidden field
 		var theids = $('#searchlistids').val();
-		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids });
+		var theeditids = $('#editids').val();
+		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids, editids : theeditids });
 	}
 }
 
@@ -507,6 +514,8 @@ function CheckAllNot(myform){
 	// Hide the selectall desc
 	$("#selectstore" + myform).css("display","none");
 	$("#selectstoreb" + myform).css("display","none");
+	$("#selectalert" + myform).css("display","none");
+	$("#selectalertb" + myform).css("display","none");
 	// Get the ids from the hidden field
 	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
 }
