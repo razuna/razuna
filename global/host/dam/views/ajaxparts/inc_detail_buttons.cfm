@@ -1,5 +1,5 @@
 <cfoutput>
-<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif  Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>
@@ -49,7 +49,7 @@
 				</a>
 			</cfif>
 			<!--- Move --->
-			<cfif cs.icon_move  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_move_slct EQ "" OR listfind(cs.icon_move_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_move_slct,session.thegroupofuser) NEQ "")>
+			<cfif cs.icon_move  AND (isadmin OR  cs.icon_move_slct EQ "" OR listfind(cs.icon_move_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_move_slct,session.thegroupofuser) NEQ "")>
 				<a href="##" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#','#myFusebox.getApplicationData().defaults.trans("move_file")#',600,2);">
 					<div style="float:left;">
 						<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
@@ -59,12 +59,14 @@
 			</cfif>
 			<!--- Trash --->
 			<cfif not isdefined("labelview")>
-				<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#attributes.file_id#&what=#what#&loaddiv=#loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&showsubfolders=#session.showsubfolders#','#myFusebox.getApplicationData().defaults.trans("trash")#',400,2);return false;">
-					<div style="float:left;">
-						<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:3px;" />
-					</div>
-					<div style="float:left;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("trash_asset")#</div>
-				</a>
+				<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+					<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#attributes.file_id#&what=#what#&loaddiv=#loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&showsubfolders=#session.showsubfolders#','#myFusebox.getApplicationData().defaults.trans("trash")#',400,2);return false;">
+						<div style="float:left;">
+							<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:3px;" />
+						</div>
+						<div style="float:left;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("trash_asset")#</div>
+					</a>
+				</cfif>
 			</cfif>
 			<!--- Plugin being shows with show_in_detail_link_wx  --->
 			<cfif structKeyExists(pllink,"pview")>

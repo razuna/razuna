@@ -1861,6 +1861,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.show_favorites_part = true>
 	<cfset v.show_manage_part = true>
 	<cfset v.show_manage_part_slct = "">
+	<cfset v.show_trash_icon = true>
+	<cfset v.show_trash_icon_slct = "">
 	<cfset v.show_twitter = true>
 	<cfset v.tab_twitter = true>
 	<cfset v.show_facebook = true>
@@ -1979,6 +1981,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.show_favorites_part = false>
 			<cfelseif custom_id EQ "show_manage_part" AND !custom_value>
 				<cfset v.show_manage_part = false>
+			<cfelseif custom_id EQ "show_trash_icon" AND !custom_value>
+				<cfset v.show_trash_icon = false>
 			<cfelseif custom_id EQ "show_twitter" AND !custom_value>
 				<cfset v.show_twitter = false>
 			<cfelseif custom_id EQ "tab_twitter" AND !custom_value>
@@ -2145,6 +2149,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.icon_metadata_import_slct = custom_value>
 			<cfelseif custom_id EQ "show_manage_part_slct">
 				<cfset v.show_manage_part_slct = custom_value>
+			<cfelseif custom_id EQ "show_trash_icon_slct">
+				<cfset v.show_trash_icon_slct = custom_value>
 			</cfif>
 			<!--- RAZ-2267 get the default value--->
 			<cfif custom_id EQ "tab_explorer_default">

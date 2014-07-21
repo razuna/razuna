@@ -29,7 +29,12 @@
 	<cfset thestorage = "#application.razuna.nvxurlservices#/#attributes.nvxsession#/razuna/#session.hostid#/">
 <cfelse>
 --->
-	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+	<cfset isadmin = true>
+<cfelse>
+	<cfset isadmin = false>
+</cfif>
 <!--- </cfif> --->
 <cfoutput>
 	<form name="form#col_id#" id="form#col_id#" method="post" action="#self#">
@@ -58,7 +63,7 @@
 					<cfif qry_assets.recordcount NEQ 0>
 						<!--- If released --->
 						<cfif qry_detail.col_released>
-							<strong style="color:green;">This is a released collection!</strong><cfif request.securityobj.CheckSystemAdminUser() OR request.securityobj.CheckAdministratorUser()><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+							<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
 						<!--- Not released --->
 						<cfelse>
 							<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
@@ -130,7 +135,13 @@
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&what=col_asset_move&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&what=col_asset_move&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -191,7 +202,13 @@
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -236,7 +253,13 @@
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -280,7 +303,13 @@
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -296,7 +325,7 @@
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<!--- If released --->
 					<cfif qry_detail.col_released>
-						<strong style="color:green;">This is a released collection!</strong><cfif request.securityobj.CheckSystemAdminUser() OR request.securityobj.CheckAdministratorUser()><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+						<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
 					<!--- Not released --->
 					<cfelse>
 						<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
@@ -349,7 +378,7 @@
 											<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 										</cfloop>
 									</select>
-									<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+									<cfif qry_label_set.set2_labels_users EQ "t" OR (isadmin)>
 										<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 									</cfif>
 								<cfelse>
@@ -365,7 +394,7 @@
 											</cfif>
 										</cfloop>
 									</div>
-									<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+									<cfif qry_label_set.set2_labels_users EQ "t" OR (isadmin)>
 										<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 									</cfif>
 									<!--- Select label button --->

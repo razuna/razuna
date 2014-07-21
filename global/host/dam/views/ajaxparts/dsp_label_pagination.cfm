@@ -23,7 +23,11 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-
+<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+	<cfset isadmin = true>
+<cfelse>
+	<cfset isadmin = false>
+</cfif>
 <cfoutput>
 	<cfparam name="attributes.bot" default="false" />
 	<cfparam name="attributes.sortby" default="name" />
@@ -193,7 +197,7 @@
 
 	<!--- Put in basket button / Action Menu --->
 	<div id="folderselectionlabel_form" class="actiondropdown">
-		<cfif cs.show_basket_part AND  cs.button_basket AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+		<cfif cs.show_basket_part AND  cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="sendtobasket('label_form');return false;">
 				<div style="float:left;">
 					<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
@@ -202,7 +206,7 @@
 			</a> 
 		</cfif>
 		<!--- Export Metadata --->
-		<cfif cs.icon_metadata_export  AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
+		<cfif cs.icon_metadata_export  AND (isadmin OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('label_form','labels','#kind#','#attributes.label_id#','exportmeta');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
@@ -211,13 +215,15 @@
 			</a>
 		</cfif>
 		<!--- Trash --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-			<a href="##" onclick="batchaction('label_form','all','labels','0','delete');return false;">
-				<div style="float:left;padding-left:5px;">
-					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
-				</div>
-				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash")#</div>
-			</a>
+		<cfif isadmin>
+			<cfif cs.show_trash_icon>
+				<a href="##" onclick="batchaction('label_form','all','labels','0','delete');return false;">
+					<div style="float:left;padding-left:5px;">
+						<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
+					</div>
+					<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash")#</div>
+				</a>
+			</cfif>
 		</cfif>
 		<!--- Plugin being shows with add_folderview_select_wx  --->
 		<cfif structKeyExists(plwx,"pview")>

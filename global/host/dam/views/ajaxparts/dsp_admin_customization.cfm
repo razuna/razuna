@@ -296,6 +296,28 @@
 							<br />
 						</td>
 					</tr>
+
+					<tr>
+						<td>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_trash_icon")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_trash_icon_desc")#
+							<br />
+							<div><input type="radio" name="show_trash_icon" value="true"<cfif qry_customization.show_trash_icon> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_trash_icon" value="false"<cfif !qry_customization.show_trash_icon> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_trash_icon_desc2")#
+							<br />
+							<select data-placeholder="Choose a group or user" class="chzn4-select" style="width:500px;" name="show_trash_icon_slct" id="show_trash_icon_slct" multiple="multiple">
+							<option value=""></option>
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif listfind(qry_customization.show_trash_icon_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+							<cfloop query="qry_users">
+								<option value="#user_id#"<cfif listfind(qry_customization.show_trash_icon_slct,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfloop>
+							</select>
+						</td>
+					</tr>
 				</table>
 			</div>
 			<div stlye="clear:both;"><br /></div>
