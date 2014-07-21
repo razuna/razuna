@@ -77,7 +77,7 @@
 				<cfset myvar.thetype = "doc">
 				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<tr>
-					<td nowrap="true" width="1%">#myFusebox.getApplicationData().defaults.trans("search_for_type")#</td>
+					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("search_for_type")#</td>
 					<td>
 						<select name="doctype">
 							<option value="all" selected="selected">#myFusebox.getApplicationData().defaults.trans("all_documents")#</option>
