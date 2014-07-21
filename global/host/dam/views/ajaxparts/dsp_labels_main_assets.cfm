@@ -32,6 +32,7 @@
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<form name="label_form" id="label_form">
 	<input type="hidden" id="searchlistids" value="#valuelist(qry_labels_assets.fileidwithtype)#">
+	<input type="hidden" name="editids" id="editids" value="#session.search.edit_ids#">
 	
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
@@ -91,11 +92,14 @@
 										</div>
 									</a>
 									<!--- Icons --->
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('label_form');"<cfif structKeyExists(session,"file_id") AND listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 									</div>	
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
@@ -195,11 +199,14 @@
 									</script>
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
 									<!--- Icons --->
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('label_form');"<cfif structKeyExists(session,"file_id") AND listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
 									</div>	
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
@@ -310,11 +317,14 @@
 									</script>
 									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 									<!--- Icons --->
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('label_form');"<cfif structKeyExists(session,"file_id") AND listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 									</div>	
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
@@ -442,11 +452,14 @@
 										</div>
 									</a>
 									<!--- Icons --->
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('label_form');"<cfif structKeyExists(session,"file_id") AND listfindnocase(session.file_id,"#id#-doc") NEQ 0> checked="checked"</cfif>>
 									</div>	
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=doc&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>

@@ -52,32 +52,25 @@
 		</cfquery>
 		<!--- If no record has been found continue --->
 		<cfif here.recordcount EQ 0>
-			<!--- Is this file a doc or a img --->
-			<!---
-<cfloop delimiters="," index="i" list="#arguments.thestruct.thetype#">
-				<cfif (i EQ "#thenr#-img") OR (i EQ "#thenr#-doc") OR (i EQ "#thenr#-vid") OR (i EQ "#thenr#-aud")>
---->
-					<!--- <cfset newtype = replace(i, "#thenr#-", "", "ALL")> --->
-					<!--- insert the prodcut to the cart --->
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#cart
-					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
-					VALUES(
-					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">, 
-					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-					<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">, 
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					)
-					</cfquery>
-				<!---
-</cfif>
-			</cfloop>
---->
+			<!--- Sometimes we have a 0 in the list, filter this out --->
+			<cfif thenr NEQ 0>
+				<!--- insert the prodcut to the cart --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#cart
+				(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
+				VALUES(
+				<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">, 
+				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Remove expired assets from cart --->

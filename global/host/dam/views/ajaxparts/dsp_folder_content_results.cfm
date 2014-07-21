@@ -59,6 +59,7 @@
 		<input type="hidden" name="thetype" value="all">
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
 		<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.qall.listid)#">
+		<input type="hidden" name="editids" id="editids" value="#session.search.edit_ids#">
 		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<!--- Header --->
@@ -166,11 +167,14 @@
 									</a>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-img") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-img&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -292,11 +296,14 @@
 									</a>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-vid") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-vid&thetype=#theid#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -409,11 +416,14 @@
 									</a>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-aud") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-aud&thetype=#theid#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -540,11 +550,14 @@
 								</div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									</a>
-									<div style="float:left;padding:3px 0px 3px 0px;">
+									<div style="float:left;padding:6px 0px 3px 0px;">
 										<input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-doc") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+											<cfif permfolder EQ "R" OR permfolder EQ "n">
+												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=doc&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-doc&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -623,7 +636,7 @@
 			</td>
 		</tr>
 		<!--- Combined View --->
-		<cfelseif session.view EQ "combined">
+		<!--- <cfelseif session.view EQ "combined">
 			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
@@ -689,6 +702,9 @@
 								</div>
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+										<cfif permfolder EQ "R" OR permfolder EQ "n">
+											<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
+										</cfif>
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -981,9 +997,9 @@
 				<tr>
 					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
 				</tr>
-			</cfif>
+			</cfif> --->
 		<!--- List view --->
-		<cfelseif session.view EQ "list">
+		<!--- <cfelseif session.view EQ "list">
 			<tr>
 				<td></td>
 				<td width="100%"><b>#myFusebox.getApplicationData().defaults.trans("file_name")#</b></td>
@@ -1072,7 +1088,7 @@
 						</cfif>
 					</tr>
 				</cfif>
-			</cfoutput>
+			</cfoutput> --->
 		</cfif>
 		<!--- Icon Bar --->
 		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">

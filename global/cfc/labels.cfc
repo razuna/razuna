@@ -987,14 +987,22 @@
 				WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 			</cfif>
 			</cfquery>
+			<!--- Init var for new fileid --->
+			<cfset var editids = "0,">
 			<!--- Get proper folderaccess --->
 			<cfloop query="qry">
 				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 				<!--- Add labels query --->
 				<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+				<!--- Store only file_ids where folder access is not read-only --->
+				<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+					<cfset editids = editids & fileidwithtype & ",">
+				</cfif>
 			</cfloop>
 			<!--- Add the custom fields to query --->
 			<cfinvoke component="folders" method="addCustomFieldsToQuery" theqry="#qry#" returnvariable="qry" />
+			<!--- Save the editable ids in a session --->
+			<cfset session.search.edit_ids = editids>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">

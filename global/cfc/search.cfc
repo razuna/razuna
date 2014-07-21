@@ -918,17 +918,28 @@
 						</cfif>
 					</cfloop>
 				</cfif>
+				<!--- Init var for new fileid --->
+				<cfset var editids = "0,">
 				<!--- Get proper folderaccess --->
 				<cfloop query="qry">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 					<!--- Add labels query --->
 					<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+					<!--- Store only file_ids where folder access is not read-only --->
+					<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+						<cfset editids = editids & listid & ",">
+					</cfif>
 				</cfloop>
+				<!--- Save the editable ids in a session --->
+				<cfset session.search.edit_ids = editids>
 				<!--- Log Result --->
 				<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
 			</cfif>
 		<!--- Since no records have been found we create a empty query --->
 		<cfelse>
+			<!--- Save the editable ids in a session --->
+			<cfset session.search.edit_ids = "0">
+			<!--- Var --->
 			<cfset var customlist = "">
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.images_metadata NEQ "">
