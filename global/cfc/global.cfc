@@ -1956,4 +1956,20 @@ Comment:<br>
 	    </cfscript>
 	</cffunction>
 
+	<cffunction name="subtractlists" access="public" output="false" hint="returns all elements of list one minus the elements of list two">
+	   <cfargument name="list1"  required="true" default="" />
+	   <cfargument name="list2"  required="false" default="" />
+	 
+	   <cfset var result = "">
+	   <cfset var kk = "">
+	    
+	   <cfloop index="kk" list="#list1#">
+	     <cfif listFindNoCase(arguments.list2,kk) eq 0>
+	       <cfset result = listAppend(result,kk)>
+	     </cfif>
+	   </cfloop>
+	    
+	   <cfreturn result>
+	</cffunction>
+
 </cfcomponent>

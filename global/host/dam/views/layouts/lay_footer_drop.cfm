@@ -117,6 +117,8 @@
 			//activeClass: 'assetbaskethover',
 			drop: function(event, ui) {
 				var thisid = $(ui.draggable).attr("id");
+				if(thisid==undefined)
+					var thisid = $(ui.draggable).attr("role");
 				var thistype = $(ui.draggable).attr("type");
 				var thisid = thisid.replace('draggable','');
 				var thisid = thisid.replace('draggable-s','');

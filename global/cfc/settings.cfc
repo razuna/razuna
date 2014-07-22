@@ -1938,6 +1938,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.videos_metadata = "">
 	<cfset v.files_metadata = "">
 	<cfset v.audios_metadata = "">
+	<cfset v.images_metadata_top = "">
+	<cfset v.videos_metadata_top = "">
+	<cfset v.files_metadata_top = "">
+	<cfset v.audios_metadata_top = "">
+	<cfset v.cf_images_metadata_top = "">
+	<cfset v.cf_videos_metadata_top = "">
+	<cfset v.cf_files_metadata_top = "">
+	<cfset v.cf_audios_metadata_top = "">
 	<cfset v.assetbox_height = "">
 	<cfset v.assetbox_width = "">
 	<!--- File detail button fields --->
@@ -2030,7 +2038,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfelseif custom_id EQ "icon_select" AND !custom_value>
 				<cfset v.icon_select = false>
 			<cfelseif custom_id EQ "icon_refresh" AND !custom_value>
-				<cfset v.icon_refresh = false>
+				<cfset v.icon_refresFh = false>
 			<cfelseif custom_id EQ "icon_show_subfolder" AND !custom_value>
 				<cfset v.icon_show_subfolder = false>
 			<cfelseif custom_id EQ "icon_create_subfolder" AND !custom_value>
@@ -2123,6 +2131,22 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.files_metadata = custom_value>
 			<cfelseif custom_id EQ "audios_metadata">
 				<cfset v.audios_metadata = custom_value>
+			<cfelseif custom_id EQ "images_metadata_top">
+				<cfset v.images_metadata_top = custom_value>
+			<cfelseif custom_id EQ "videos_metadata_top">
+				<cfset v.videos_metadata_top = custom_value>
+			<cfelseif custom_id EQ "files_metadata_top">
+				<cfset v.files_metadata_top = custom_value>
+			<cfelseif custom_id EQ "audios_metadata_top">
+				<cfset v.audios_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_images_metadata_top">
+				<cfset v.cf_images_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_videos_metadata_top">
+				<cfset v.cf_videos_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_files_metadata_top">
+				<cfset v.cf_files_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_audios_metadata_top">
+				<cfset v.cf_audios_metadata_top = custom_value>
 			<cfelseif custom_id EQ "assetbox_height">
 				<cfset v.assetbox_height = custom_value>
 			<cfelseif custom_id EQ "assetbox_width">
@@ -2955,6 +2979,54 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 	</cfloop>
 	<cfreturn thestruct>
+</cffunction>
+
+
+<cffunction name="get_customization_placement" returntype="Struct" hint="Returns top or bottom placement of fields in regards to asset thumbnail" >
+	<cfargument name="thestruct" required="true" hint="Fields to get placement for">  
+	<cfset var cs_place_struct = structnew()>
+		<cfset var images_top="">
+		<cfset var images_bottom="">
+		<cfset var cf_images_top="">
+		<cfset var cf_images_bottom="">
+		<cfset var audios_top="">
+		<cfset var audios_bottom="">
+		<cfset var cf_audios_top="">
+		<cfset var cf_audios_bottom="">
+		<cfset var videos_top="">
+		<cfset var videos_bottom="">
+		<cfset var cf_videos_top="">
+		<cfset var cf_videos_bottom="">
+		<cfset var files_top="">
+		<cfset var files_bottom="">
+		<cfset var cf_files_top="">
+		<cfset var cf_files_bottom="">
+
+		<!--- Images --->
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.top.image">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.bottom.image">
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_top.image">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.image">
+
+	 	<!--- Audios --->
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.top.audio">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.bottom.audio">
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_top.audio">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.audio">
+
+	 	<!--- Videos --->
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.top.video">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.bottom.video">
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_top.video">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.video">
+
+	 	<!--- Files --->
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.top.file">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.bottom.file">
+	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_top.file">
+	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.file">
+	 	
+	  	 <cfreturn cs_place_struct>
 </cffunction>
 
 </cfcomponent>

@@ -2160,6 +2160,9 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Folder access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get folder info -->
@@ -2219,6 +2222,9 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Get folder info -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
@@ -2278,6 +2284,9 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Get folder info -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
@@ -2355,6 +2364,9 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Get folder info -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get folder name -->
@@ -2434,6 +2446,9 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" /> 
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" /> 
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Only if it NOT from search -->
@@ -5271,6 +5286,9 @@
 					<!-- CFC: Customization -->
 					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 					<set name="attributes.cs" value="#cs#" />
+					<!-- CFC: Get placement for fields-->
+					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+					<set name="attributes.cs_place" value="#cs_place#" />
 					<!-- CFC: Get settings -->
 					<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 					<!-- Check the DataBase  -->
@@ -5313,6 +5331,9 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get placement for fields-->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
@@ -5360,6 +5381,9 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get placement for fields-->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
@@ -5407,6 +5431,9 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get placement for fields-->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
@@ -5454,6 +5481,9 @@
 						<!-- CFC: Customization -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 						<set name="attributes.cs" value="#cs#" />
+						<!-- CFC: Get placement for fields-->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 						<!-- set search count call -->
@@ -9450,6 +9480,9 @@
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Get the assets -->

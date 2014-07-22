@@ -794,6 +794,172 @@
 							</select>
 						</td>
 					</tr>
+
+
+					<tr>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("field_placement_header")#</strong></td>
+					</tr>
+
+					<tr>
+						<td colspan="2">
+							<!--- IMAGES --->
+							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_images")#
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<select name="images_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<!--- Default values --->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+								<option value="img_id AS cs_img_id"<cfif listFind(qry_customization.images_metadata_top,"img_id AS cs_img_id")> selected="selected"</cfif>>ID</option>
+								<option value="img_filename AS cs_img_filename"<cfif listFind(qry_customization.images_metadata_top,"img_filename AS cs_img_filename")> selected="selected"</cfif>>Filename</option>
+								<option value="img_description AS cs_img_description"<cfif listFind(qry_customization.images_metadata_top,"img_description AS cs_img_description")> selected="selected"</cfif>>Description</option>
+								<option value="img_keywords AS cs_img_keywords"<cfif listFind(qry_customization.images_metadata_top,"img_keywords AS cs_img_keywords")> selected="selected"</cfif>>Keywords</option>
+								<option value="img_create_time AS cs_img_create_time"<cfif listFind(qry_customization.images_metadata_top,"img_create_time AS cs_img_create_time")> selected="selected"</cfif>>Create Date</option>
+								<option value="img_change_time AS cs_img_change_time"<cfif listFind(qry_customization.images_metadata_top,"img_change_time AS cs_img_change_time")> selected="selected"</cfif>>Change Date</option>
+								<option value="img_width AS cs_img_width"<cfif listFind(qry_customization.images_metadata_top,"img_width AS cs_img_width")> selected="selected"</cfif>>Width</option>
+								<option value="img_height AS cs_img_height"<cfif listFind(qry_customization.images_metadata_top,"img_height AS cs_img_height")> selected="selected"</cfif>>Height</option>
+								<option value="img_size AS cs_img_size"<cfif listFind(qry_customization.images_metadata_top,"img_size AS cs_img_size")> selected="selected"</cfif>>Size</option>
+								<option value="expiry_date AS cs_img_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_img_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<cfif prefs.set2_upc_enabled>
+								<option value="img_upc_number AS cs_img_upc_number"<cfif listFind(qry_customization.images_metadata_top,"img_upc_number AS cs_img_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								</cfif>
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
+								<cfloop list="#attributes.meta_img#" index="i">
+									<!--- Upper case the first char --->
+									<cfset l = len(i) - 1>
+									<option value="#i# AS cs_img_#i#"<cfif listFind(qry_customization.images_metadata_top,"#i# AS cs_img_#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
+								</cfloop>
+							</select>
+						</td>
+						<td>
+							<select name="cf_images_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_images")# ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "img" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_images_metadata_top,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<!--- VIDEOS --->
+							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_videos")#
+						<td>
+					</tr>
+					<tr>
+						<td>
+							<select name="videos_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+								<!--- Default values --->
+								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata_top,"vid_id AS cs_vid_id")> selected="selected"</cfif>>ID</option>
+								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata_top,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>Filename</option>
+								<option value="vid_description AS cs_vid_description"<cfif listFind(qry_customization.videos_metadata_top,"vid_description AS cs_vid_description")> selected="selected"</cfif>>Description</option>
+								<option value="vid_keywords AS cs_vid_keywords"<cfif listFind(qry_customization.videos_metadata_top,"vid_keywords AS cs_vid_keywords")> selected="selected"</cfif>>Keywords</option>
+								<option value="vid_create_time AS cs_vid_create_time"<cfif listFind(qry_customization.videos_metadata_top,"vid_create_time AS cs_vid_create_time")> selected="selected"</cfif>>Create Date</option>
+								<option value="vid_change_time AS cs_vid_change_time"<cfif listFind(qry_customization.videos_metadata_top,"vid_change_time AS cs_vid_change_time")> selected="selected"</cfif>>Change Date</option>
+								<option value="vid_width AS cs_vid_width"<cfif listFind(qry_customization.videos_metadata_top,"vid_width AS cs_vid_width")> selected="selected"</cfif>>Width</option>
+								<option value="vid_height AS cs_vid_height"<cfif listFind(qry_customization.videos_metadata_top,"vid_height AS cs_vid_height")> selected="selected"</cfif>>Height</option>
+								<option value="vid_size AS cs_vid_size"<cfif listFind(qry_customization.videos_metadata_top,"vid_size AS cs_vid_size")> selected="selected"</cfif>>Size</option>
+								<option value="expiry_date AS cs_vid_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_vid_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<cfif prefs.set2_upc_enabled>
+								<option value="vid_upc_number AS cs_vid_upc_number"<cfif listFind(qry_customization.videos_metadata_top,"vid_upc_number AS cs_vid_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								</cfif>
+							</select>
+						</td>
+						<td>
+							<select name="cf_videos_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<!--- customfield values of videos--->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_videos")#  ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "vid" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_videos_metadata_top,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<!--- FILES --->
+							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_files")#
+						<td>
+					</tr>
+					<tr>
+						<td>
+							<select name="files_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<!--- Default values --->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+								<option value="file_id AS cs_file_id"<cfif listFind(qry_customization.files_metadata_top,"file_id AS cs_file_id")> selected="selected"</cfif>>ID</option>
+								<option value="file_name AS cs_file_filename"<cfif listFind(qry_customization.files_metadata_top,"file_name AS cs_file_filename")> selected="selected"</cfif>>Filename</option>
+								<option value="file_desc AS cs_file_description"<cfif listFind(qry_customization.files_metadata_top,"file_desc AS cs_file_description")> selected="selected"</cfif>>Description</option>
+								<option value="file_keywords AS cs_file_keywords"<cfif listFind(qry_customization.files_metadata_top,"file_keywords AS cs_file_keywords")> selected="selected"</cfif>>Keywords</option>
+								<option value="file_create_time AS cs_file_create_time"<cfif listFind(qry_customization.files_metadata_top,"file_create_time AS cs_file_create_time")> selected="selected"</cfif>>Create Date</option>
+								<option value="file_change_time AS cs_file_change_time"<cfif listFind(qry_customization.files_metadata_top,"file_change_time AS cs_file_change_time")> selected="selected"</cfif>>Change Date</option>
+								<option value="file_size AS cs_file_size"<cfif listFind(qry_customization.files_metadata_top,"file_size AS cs_file_size")> selected="selected"</cfif>>Size</option>
+								<option value="expiry_date AS cs_file_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_file_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<cfif prefs.set2_upc_enabled>
+								<option value="file_upc_number AS cs_file_upc_number"<cfif listFind(qry_customization.files_metadata_top,"file_upc_number AS cs_file_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								</cfif>
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
+								<cfloop list="#attributes.meta_doc#" index="i">
+									<!--- Upper case the first char --->
+									<cfset l = len(i) - 1>
+									<option value="#i# AS cs_file_#i#"<cfif listFind(qry_customization.files_metadata_top,"#i# AS cs_file_#i#")> selected="selected"</cfif>>#ucase(left(i,1))##mid(i,2,l)#</option>
+								</cfloop>
+							</select>
+						</td>
+						<td>
+							<select name="cf_files_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<!--- customfield values for files--->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_files")#  ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "doc" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_files_metadata_top,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<!--- AUDIOS --->
+							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_audios")#
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<select name="audios_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
+								<!--- Default values --->
+								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata_top,"aud_id AS cs_aud_id")> selected="selected"</cfif>>ID</option>
+								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata_top,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>Filename</option>
+								<option value="aud_description AS cs_aud_description"<cfif listFind(qry_customization.audios_metadata_top,"aud_description AS cs_aud_description")> selected="selected"</cfif>>Description</option>
+								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata_top,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>Keywords</option>
+								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata_top,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>Create Date</option>
+								<option value="aud_change_time AS cs_aud_change_time"<cfif listFind(qry_customization.audios_metadata_top,"aud_change_time AS cs_aud_change_time")> selected="selected"</cfif>>Change Date</option>
+								<option value="aud_size AS cs_aud_size"<cfif listFind(qry_customization.audios_metadata_top,"aud_size AS cs_aud_size")> selected="selected"</cfif>>Size</option>
+								<option value="expiry_date AS cs_aud_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_aud_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<cfif prefs.set2_upc_enabled>
+								<option value="aud_upc_number AS cs_aud_upc_number"<cfif listFind(qry_customization.audios_metadata_top,"aud_upc_number AS cs_aud_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								</cfif>
+							</select>
+						</td>
+						<td>
+							<select name="cf_audios_metadata_top" multiple="multiple" style="width:400px;height:130px;">
+								<!--- customfield values for audios--->
+								<option value="">--- #myFusebox.getApplicationData().defaults.trans("custom_fields_audios")#  ---</option>
+								<cfloop query="qry_fields">
+									<cfif cf_show EQ "aud" OR cf_show EQ "all">
+										<option value="#cf_id#" <cfif listFindNoCase(qry_customization.cf_audios_metadata_top,"#cf_id#")> selected="selected"</cfif>>#cf_text#</option>
+									</cfif>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					
 				</table>
 
 			</div>

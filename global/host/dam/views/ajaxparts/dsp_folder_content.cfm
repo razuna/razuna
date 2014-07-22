@@ -148,6 +148,43 @@
 									</cfif>
 								});
 								</script>
+
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.image#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.image,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop>
+								<br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg">
 									<!--- Show assets --->
@@ -199,26 +236,21 @@
 									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.image#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number"> 
-										    <cfif prefs.set2_upc_enabled>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -226,16 +258,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.image,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -281,6 +314,42 @@
 									</cfif>
 								});
 								</script>
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.video#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.video,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop>
+								<br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg">
 										<cfif link_kind NEQ "url">
@@ -326,32 +395,25 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number")>
+								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND ttributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.video#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											<cfif evaluate(listlast(m," ")) NEQ "">
-												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-											</cfif>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number">
-											<cfif prefs.set2_upc_enabled>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -359,16 +421,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.video,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -414,6 +477,41 @@
 									</cfif>
 								});
 								</script>
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.audio#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.audio,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop><br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>>
@@ -442,32 +540,25 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.audios_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.audios_metadata EQ "aud_upc_number AS cs_aud_upc_number")>
+								<cfif attributes.cs.audios_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.audios_metadata EQ "aud_upc_number AS cs_aud_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.audios_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.audio#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											<cfif evaluate(listlast(m," ")) NEQ "">
-												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-											</cfif>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number">
-											<cfif prefs.set2_upc_enabled > 
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -475,16 +566,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.audio,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -530,6 +622,42 @@
 									</cfif>
 								});
 								</script>
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.file#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.file,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop>
+								<br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 								<div id="draggable#id#-doc" type="#id#-doc" class="theimg">
 									<!--- If it is a PDF we show the thumbnail --->
@@ -578,32 +706,25 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.files_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.files_metadata EQ "file_upc_number AS cs_file_upc_number")>
+								<cfif attributes.cs.files_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.files_metadata EQ "doc_upc_number AS cs_doc_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.file#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											<cfif evaluate(listlast(m," ")) NEQ "">
-												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-											</cfif>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number">
-											<cfif prefs.set2_upc_enabled >
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -611,16 +732,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.file,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>

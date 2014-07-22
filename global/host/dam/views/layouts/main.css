@@ -531,7 +531,7 @@ height: expression(this.height > 110 ? "110px" : true);
 .assetbox {
 margin: 5px;
 padding: 5px;
-background: #FFFFFF;
+background: #fffffc;
 border: #D8D5D2 1px solid;
 float: left;
 min-height: 230px;
@@ -540,6 +540,11 @@ min-height: 230px;
 border-radius: 5px;
 word-wrap: break-word;
 width: 120px;
+color: #717171;
+}
+
+.assetbox_title {
+color: #9f9f9f;
 }
 .assetbox img {
 max-width: 110px;

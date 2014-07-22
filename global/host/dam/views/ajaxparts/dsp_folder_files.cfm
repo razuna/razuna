@@ -83,6 +83,39 @@
 										</cfif>
 									});
 									</script>
+									<!--- custom metadata fields to show --->
+									<cfloop list="#attributes.cs_place.top.file#" index="m" delimiters=",">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<cfif m CONTAINS "_filename">
+											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+										<cfelseif m CONTAINS "_size">
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+										<cfelseif m CONTAINS "_time">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelseif m CONTAINS "expiry_date">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+										<cfelse>
+											#evaluate(listlast(m," "))#
+										</cfif>
+										<br />
+									</cfloop>
+									<!--- Show custom fields here (its a list) --->
+									<cfloop list="#customfields#" index="i" delimiters=",">
+										<cfif listfind (attributes.cs_place.cf_top.file,gettoken(i,2,"|"))>
+											<br />
+											<!--- Get label --->
+											<cfset cflabel = listFirst(i,"|")>
+											<!--- Get value --->
+											<cfset cfvalue = listlast(i,"|")>
+											<!--- Output --->
+											<span class="assetbox_title">#cflabel#:</span>
+											<cfif cflabel NEQ cfvalue>
+												<br />
+												#cfvalue#
+											</cfif>
+										</cfif>
+									</cfloop>
+									<br/><br/>
 									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#file_id#" type="#file_id#-doc" class="theimg">
 									<!--- If it is a PDF we show the thumbnail --->
@@ -134,8 +167,8 @@
 										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(file_name,50)#</strong></a>
 									<cfelse>
 										<br />
-										<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+										<cfloop list="#attributes.cs_place.bottom.file#" index="m" delimiters=",">
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											<cfif m CONTAINS "_filename">
 												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 											<cfelseif m CONTAINS "_size">
@@ -152,16 +185,18 @@
 									</cfif>
 									<!--- Show custom fields here (its a list) --->
 									<cfloop list="#customfields#" index="i" delimiters=",">
-										<br />
-										<!--- Get label --->
-										<cfset cflabel = listFirst(i,"|")>
-										<!--- Get value --->
-										<cfset cfvalue = listlast(i,"|")>
-										<!--- Output --->
-										#cflabel#:
-										<cfif cflabel NEQ cfvalue>
+										<cfif listfind (attributes.cs_place.cf_bottom.file,gettoken(i,2,"|"))>
 											<br />
-											#cfvalue#
+											<!--- Get label --->
+											<cfset cflabel = listFirst(i,"|")>
+											<!--- Get value --->
+											<cfset cfvalue = listlast(i,"|")>
+											<!--- Output --->
+											<span class="assetbox_title">#cflabel#:</span>
+											<cfif cflabel NEQ cfvalue>
+												<br />
+												#cfvalue#
+											</cfif>
 										</cfif>
 									</cfloop>
 									<cfif attributes.folder_id NEQ folder_id_r>

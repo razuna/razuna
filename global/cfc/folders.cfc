@@ -3865,6 +3865,7 @@
 	</cfif>
 	<!--- Add the custom fields to query --->
 	<cfset qry = addCustomFieldsToQuery(qry)>
+	<cfset console(qry.customfields)>
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
@@ -3886,21 +3887,25 @@
 	SELECT /* #variables.cachetokensetting#qry_cf_img */ custom_value
 	FROM #session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_images_metadata">
+	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
 	</cfquery>
 	<cfquery name="qry_cf_vid" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetokensetting#qry_cf_vid */ custom_value
 	FROM #session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_videos_metadata">
+	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
 	</cfquery>
 	<cfquery name="qry_cf_aud" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetokensetting#qry_cf_aud */ custom_value
 	FROM #session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_audios_metadata">
+	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
 	</cfquery>
 	<cfquery name="qry_cf_doc" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetokensetting#qry_cf_doc */ custom_value
 	FROM #session.hostdbprefix#custom
 	WHERE custom_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="cf_files_metadata">
+	AND host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
 	</cfquery>
 	<cfif qry_cf_img.recordcount NEQ 0>
 		<cfset qrycfimg = qry_cf_img.custom_value>
@@ -3914,13 +3919,15 @@
 	<cfif qry_cf_doc.recordcount NEQ 0>
 		<cfset qrycfdoc = qry_cf_doc.custom_value>
 	</cfif>
+
 	<cfloop query="arguments.theqry">
 		<cfquery name="qry_cf" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetokengeneral#folder_cf_fields */ cfv.cf_value, cft.cf_text
+		SELECT /* #variables.cachetokengeneral#folder_cf_fields */ cfv.cf_value, cft.cf_text, cft.cf_id_r as cf_id
 		FROM raz1_custom_fields_values cfv, raz1_custom_fields_text cft 
 		WHERE cfv.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 		AND cft.cf_id_r = cfv.cf_id_r 
 		AND cft.lang_id_r = 1
+		AND cft.host_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.hostid#">
 		<cfif kind EQ "img">
 			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfimg#" list="true">)
 		<cfelseif kind EQ "vid">
@@ -3933,7 +3940,7 @@
 		</cfquery>
 		<cfloop query="qry_cf">
 			<!--- Put list together --->
-			<cfset cf_list = cf_list & cf_text & "|" & cf_value & ",">
+			<cfset cf_list = cf_list & cf_text & "|" & cf_id & "|" & cf_value & ",">
 		</cfloop>
 		<!--- Now add to query --->
 		<cfset QuerySetCell(query=arguments.theqry, column="customfields", value=cf_list, row=currentrow)>
