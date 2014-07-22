@@ -1013,7 +1013,8 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				BIGINT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTID_FK1 FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE

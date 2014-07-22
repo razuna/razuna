@@ -1104,7 +1104,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Basket View --->
-			<a href="##" onclick="$('##basketview').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; Basket</div></a>
+			<a href="##" onclick="$('##basketview').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_basket")#</div></a>
 			<div id="basketview" style="display:none;padding-top:10px;">
 				#myFusebox.getApplicationData().defaults.trans("basket_customize_desc")#
 				<table border="0">
@@ -1166,9 +1166,24 @@
 					</tr>
 				</table>
 			</div>
+			<div stlye="clear:both;"><br /></div>
+			<!--- Search --->
+			<a href="##" onclick="$('##search').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_search")# </div></a>
+			<div id="search" style="display:none;padding-top:10px;">
+				#myFusebox.getApplicationData().defaults.trans("search_customize_desc")#
+				<br />
+				<br />
+				<!--- Choose folder selection --->
+				<strong>#myFusebox.getApplicationData().defaults.trans("enable_search_selection")#</strong>
+				<br />
+				<div><input type="radio" name="search_selection" value="true"<cfif qry_customization.search_selection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="search_selection" value="false"<cfif !qry_customization.search_selection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+				<br />
+			</div>
 		</div>
 
-		<div id="status_custom_2" style="float:left;padding-top:5px;"></div><div style="float:right;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">Apply to all tenants</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
+		<div style="clear:both;"></div>
+		<div id="status_custom_2" style="float:left;padding-top:15px;"></div>
+		<div style="float:right;padding-top:15px;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">Apply to all tenants</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		</form>
 		<div style="clear:both;"></div>
 		<div id="dummy_maintenance"></div>

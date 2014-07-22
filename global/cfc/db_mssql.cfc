@@ -1366,9 +1366,10 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
-		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
+		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
 		</cfquery>

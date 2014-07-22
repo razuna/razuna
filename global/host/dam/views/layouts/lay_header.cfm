@@ -54,25 +54,47 @@
 			<div style="width:auto;float:right;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
+				<input type="hidden" name="folder_id" id="simplesearchfolderid" value="" >
 				<div style="float:left;background-color:##ddd;padding:4px;">
 					<div style="float:left;">
 						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search"  title="Uses AND for multiple keywords except if you use OR/AND or double quotes. See search help for more information.">
 					</div>
-					<div style="float:left;padding:5px 5px 0px 5px;">
-						<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></div>
-						<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
-					</div>
-					<div id="searchselection" class="ddselection_header" style="left:610px;">
-						<p><a href="##" onclick="selectsearchtype('all','#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('img','#myFusebox.getApplicationData().defaults.trans("search_for_images")#');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('doc','#myFusebox.getApplicationData().defaults.trans("search_for_documents")#');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
-						<p><hr></p>
-		<!--- 				<p><a href="##" onclick="showwindow('#myself#ajax.search_advanced','#myFusebox.getApplicationData().defaults.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a></p>
-						<p><hr></p> --->
-						<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">Help with Search</a></cfif></p>
-					</div>
+					<!--- If the search selection is on we search with folder ids --->
+					<cfif cs.search_selection>
+						<!--- This is the selected value (should come from the defined selection of the user) --->
+						<div style="float:left;padding:5px 5px 0px 5px;">
+							<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">Folders</a></div>
+							<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
+						</div>
+						<div id="searchselection" class="ddselection_header" style="left:610px;">
+							<cfloop query="qry_searchselection">
+								<p>
+									<a href="##" onclick="selectsearchselection('#folder_id#','#folder_name#');">
+										<div id="mark_#folder_id#" class="markfolder" style="float:left;padding-right:2px;">
+											<img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">
+										</div>
+										#folder_name#
+									</a>
+								</p>
+							</cfloop>
+						</div>
+					<!--- This is the normal search --->
+					<cfelse>
+						<div style="float:left;padding:5px 5px 0px 5px;">
+							<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></div>
+							<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
+						</div>
+						<div id="searchselection" class="ddselection_header" style="left:610px;">
+							<p><a href="##" onclick="selectsearchtype('all','#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#');"><div id="markall" class="markfolder" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('img','#myFusebox.getApplicationData().defaults.trans("search_for_images")#');"><div id="markimg" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('doc','#myFusebox.getApplicationData().defaults.trans("search_for_documents")#');"><div id="markdoc" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
+							<p><hr></p>
+							<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">Help with Search</a></cfif></p>
+						</div>
+					</cfif>
+					<!--- Search button --->
 					<div style="float:left;padding-left:2px;padding-top:1px;">
 						<button class="awesome big green">Search</button>
 						<!--- <img src="#dynpath#/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon"> --->
@@ -83,10 +105,10 @@
 					<!--- <a href="##" style="padding-left:15px;" onclick="loadcontent('rightside','#myself#c.updater_tool');return false;"><strong style="color:red;">FILE RE-UPLOAD!</strong></a> --->
 				</div>
 				<!--- Enabled UPC search --->
-				<cfif prefs.set2_upc_enabled >
-				<div style="float:right;padding-left:20px;padding-top:8px;">
-					<a href="##" onclick="upcsearch();return false;">#myFusebox.getApplicationData().defaults.trans("link_upc_search")#</a>
-				</div>
+				<cfif prefs.set2_upc_enabled>
+					<div style="float:right;padding-left:20px;padding-top:8px;">
+						<a href="##" onclick="upcsearch();return false;">#myFusebox.getApplicationData().defaults.trans("link_upc_search")#</a>
+					</div>
 				</cfif>
 				</form>
 				<!--- UPC Search Popup window --->

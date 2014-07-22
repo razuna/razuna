@@ -1417,6 +1417,7 @@
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
 		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_hostid (HOST_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_id (folder_id),

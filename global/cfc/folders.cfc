@@ -160,7 +160,7 @@
 	<cfquery name="qLocal" datasource="#Variables.dsn#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolder */ f.folder_id, f.folder_id_r, f.folder_name, f.folder_level, f.folder_of_user,
 	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared, f.link_path,
-	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, share_dl_thumb
+	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, share_dl_thumb, in_search_selection
 	FROM #session.hostdbprefix#folders f
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2296,8 +2296,11 @@
 <!--- SAVE FOLDER PROPERTIES --->
 <cffunction name="update" output="true" returntype="string">
 	<cfargument name="thestruct" type="struct">
+	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct.in_search_selection)>
 	<!--- Param --->
 	<cfset arguments.thestruct.grpno = "T">
+	<cfparam name="arguments.thestruct.in_search_selection" default="false" />
 	<!--- Check for the same name --->
 	<cfquery datasource="#variables.dsn#" name="samefolder">
 	SELECT folder_name
@@ -2319,7 +2322,9 @@
 		<!--- Update Folders DB --->
 		<cfquery datasource="#variables.dsn#">
 		UPDATE #session.hostdbprefix#folders
-		SET folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="cf_sql_varchar">
+		SET 
+		folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="cf_sql_varchar">,
+		in_search_selection = <cfqueryparam value="#arguments.thestruct.in_search_selection#" cfsqltype="cf_sql_varchar">
 		WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -7418,6 +7423,7 @@
 	<cfoutput><br /></cfoutput>
 	<cfflush>
 </cffunction>
+
 <!--- Subscribe E-mail notification --->
 <cffunction name="subscribe" access="public" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
@@ -7478,10 +7484,10 @@
 	<cfargument name="folder_id" required="yes" type="string">
 	<!--- Subscribe folder details --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_folder">
-		SELECT * 
-		FROM #session.hostdbprefix#folder_subscribe
-		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
-		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	SELECT * 
+	FROM #session.hostdbprefix#folder_subscribe
+	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
+	AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 	</cfquery>
 	<cfreturn qry_folder />
 </cffunction>
@@ -7490,7 +7496,7 @@
 <cffunction name="removesubscribefolder" output="false" access="public">
 	<cfargument name="folderid" required="yes" type="string">
 	<cfloop list="#arguments.folderid#" index="ids">
-	<!--- Delete folder subscribe --->
+		<!--- Delete folder subscribe --->
 		<cfquery datasource="#application.razuna.datasource#" >
 		DELETE FROM #session.hostdbprefix#folder_subscribe 
 		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ids#"> 
@@ -7679,32 +7685,48 @@
     <cfset var objnav = ""><!--- used to hold temporary subqueries --->
    
     <!--- On our initial call to this function, we will purge the subfolderlist  --->
-        <cfif arguments.level eq 0>
-            <cfset variables.subfolderlist = "">
-        </cfif>
-        <!--- retrieve children of our current parent folder --->
-        <cfquery name="objnav" datasource="#application.razuna.datasource#">
-            SELECT folder_id, folder_name FROM #session.hostdbprefix#folders WHERE folder_id_r = <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
-            AND folder_id <> <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
-        </cfquery>
-        <!--- loop through this parent's children... --->
-        <cfloop query="objnav">
-            <!--- check for children. if there are any, call this function recursively --->
-                <cfquery name="checkforkids" datasource="#application.razuna.datasource#">
-                    SELECT folder_id, folder_name FROM  #session.hostdbprefix#folders where folder_id_r  = <cfqueryparam value="#objnav.folder_id#" cfsqltype="cf_sql_varchar">
-                    and folder_id <> <cfqueryparam value="#objnav.folder_id#" cfsqltype="cf_sql_varchar">
-                </cfquery>
-                <cfif checkforkids.recordcount gt 0><!--- this child has kids too! add it to the subfolderlist, then make the recursive call... --->
-                    <cfset variables.subfolderlist = listappend(variables.subfolderlist, objnav.folder_id) >
-                        <cfset getchildfolders(parentid = objnav.folder_id, level = arguments.level + 1) >
-                <cfelse><!--- this child is childless...just add it to the subfolderlist... --->
-                    <cfset variables.subfolderlist = listappend(variables.subfolderlist, objnav.folder_id)  >
-                </cfif>
-        </cfloop>
-        <!--- return final variable to the caller... --->
-        <cfif arguments.level eq 0>
-            <cfreturn variables.subfolderlist>
-        </cfif>
+    <cfif arguments.level eq 0>
+        <cfset variables.subfolderlist = "">
+    </cfif>
+    <!--- retrieve children of our current parent folder --->
+    <cfquery name="objnav" datasource="#application.razuna.datasource#">
+        SELECT folder_id, folder_name FROM #session.hostdbprefix#folders WHERE folder_id_r = <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
+        AND folder_id <> <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
+    </cfquery>
+    <!--- loop through this parent's children... --->
+    <cfloop query="objnav">
+        <!--- check for children. if there are any, call this function recursively --->
+            <cfquery name="checkforkids" datasource="#application.razuna.datasource#">
+                SELECT folder_id, folder_name FROM  #session.hostdbprefix#folders where folder_id_r  = <cfqueryparam value="#objnav.folder_id#" cfsqltype="cf_sql_varchar">
+                and folder_id <> <cfqueryparam value="#objnav.folder_id#" cfsqltype="cf_sql_varchar">
+            </cfquery>
+            <cfif checkforkids.recordcount gt 0><!--- this child has kids too! add it to the subfolderlist, then make the recursive call... --->
+                <cfset variables.subfolderlist = listappend(variables.subfolderlist, objnav.folder_id) >
+                    <cfset getchildfolders(parentid = objnav.folder_id, level = arguments.level + 1) >
+            <cfelse><!--- this child is childless...just add it to the subfolderlist... --->
+                <cfset variables.subfolderlist = listappend(variables.subfolderlist, objnav.folder_id)  >
+            </cfif>
+    </cfloop>
+    <!--- return final variable to the caller... --->
+    <cfif arguments.level eq 0>
+        <cfreturn variables.subfolderlist>
+    </cfif>
+</cffunction>
+
+<!--- Get folders which are in search selection --->
+<cffunction name="getInSearchSelection" output="false" returntype="query">
+	<!--- Var --->
+	<cfset var qry = ''>
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
+	<!--- Subscribe folder details --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getInSearchSelection */ folder_id, folder_name
+	FROM #session.hostdbprefix#folders
+	WHERE in_search_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
 </cffunction>
 
 </cfcomponent>

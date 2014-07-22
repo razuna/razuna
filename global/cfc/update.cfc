@@ -182,7 +182,7 @@
 		</cftry>
 
 		<!--- If less then 32(1.7) --->
-		<cfif updatenumber.opt_value LT 32>
+		<cfif updatenumber.opt_value LT 33>
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"
@@ -194,7 +194,23 @@
 				endTime="23:59 PM"
 				interval="3600"
 			>
-			<!--- Alter tables --->
+
+			<!--- Alter folders --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> in_search_selection #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Since MS SQL does not honor the default for existing records update all --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_folders
+				SET in_search_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="false">
+				</cfquery>
+			</cfif>
+
+			<!--- Alter schedules --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_schedules_log add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> NOTIFIED #thevarchar#(5)

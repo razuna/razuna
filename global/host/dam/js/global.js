@@ -430,23 +430,27 @@ function checkentry(){
 }
 // When a search selection is clicked
 function selectsearchtype(thetype,thelinktext){
+	// Set the type in hidden input field
 	$('#simplesearchthetype').val(thetype);
 	$('#searchselection').toggle();
 	// Remove the image in all marks
-	$('#markall').html('&nbsp;');
-	$('#markimg').html('&nbsp;');
-	$('#markvid').html('&nbsp;');
-	$('#markaud').html('&nbsp;');
-	$('#markdoc').html('&nbsp;');
-	// Now set the correct CSS
-	$('#markall').css({'float':'left','padding-right':'14px'});
-	$('#markimg').css({'float':'left','padding-right':'14px'});
-	$('#markvid').css({'float':'left','padding-right':'14px'});
-	$('#markaud').css({'float':'left','padding-right':'14px'});
-	$('#markdoc').css({'float':'left','padding-right':'14px'});
+	$('.markfolder').html('&nbsp;').css({'float':'left','padding-right':'14px'});
 	// Now mark the div
 	$('#mark' + thetype).css({'float':'left','padding-right':'3px'});
 	$('#mark' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
+	// Change the link text itself
+	$('#searchselectionlink').text(thelinktext);
+}
+// When a search selection is clicked for search selection
+function selectsearchselection(folderid,thelinktext){
+	// Set the folder id in hidden input field
+	$('#simplesearchfolderid').val(folderid);
+	$('#searchselection').toggle();
+	// Remove the image in all marks
+	$('.markfolder').html('&nbsp;').css({'float':'left','padding-right':'14px'});
+	// Now mark the div
+	$('#mark_' + folderid).css({'float':'left','padding-right':'3px'});
+	$('#mark_' + folderid).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
 	// Change the link text itself
 	$('#searchselectionlink').text(thelinktext);
 }

@@ -58,6 +58,11 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one('wl_link_doc')" returnvariable="wl_link_doc" />
   			</true>
   		</if>
+  		<if condition="cs.search_selection">
+  			<true>
+  				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection()" returnvariable="qry_searchselection" />
+  			</true>
+  		</if>
 		<include template="lay_header" contentvariable="headercontent" />
   		<!-- <include template="lay_menu_top" contentvariable="menucontent" /> -->
 		<include template="lay_left" contentvariable="leftcontent" />
