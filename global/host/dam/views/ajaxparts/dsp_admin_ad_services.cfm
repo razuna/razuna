@@ -42,7 +42,7 @@
 		<!--- Ad User Name --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_user_name")#</td>
-			<td width="100%"><input type="text" name="ad_user_name" id="ad_user_name" style="width:300px;" value="#ad_server_username#"></td>
+			<td width="100%"><input type="text" name="ad_user_name" id="ad_user_name" style="width:300px;" value="#ad_server_username#" placeholder="Must be in format domain\username"></td>
 		</tr>
 		<!--- Ad password --->
 		<tr>
@@ -57,12 +57,12 @@
 		<!--- Filter --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_filter")#</td>
-			<td width="100%"><input type="text" name="ad_filter" id="ad_filter" style="width:300px;" value="#ad_server_filter#" ></td>
+			<td width="100%"><input type="text" name="ad_filter" id="ad_filter" style="width:300px;" value="#ad_server_filter#" placeholder="e.g. (&(objectClass=user))"></td>
 		</tr>
 		<!--- Start --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_start")#</td>
-			<td width="100%"><input type="text" name="ad_start" id="ad_start" style="width:300px;" value="#ad_server_start#" ></td>
+			<td width="100%"><input type="text" name="ad_start" id="ad_start" style="width:300px;" value="#ad_server_start#" placeholder="e.g. CN=users,DC=razuna,DC=local"></td>
 		</tr>
 	</table>
 	<div style="float:left;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_save_ad_server")#" class="button" onclick="save_ad_server();" /></div>
