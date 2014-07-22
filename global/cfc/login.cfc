@@ -83,19 +83,14 @@
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
 				<cftry>
-				<!--- Get LDAP User list --->
-				<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments.thestruct#">
-				<cfquery dbtype="query" name="qryAdUser" >
-					SELECT * from results where (SamAccountname='#arguments.thestruct.name#' OR mail='#arguments.thestruct.name#')
-				</cfquery> 
-				<cfif qryAdUser.RecordCount NEQ 0>
+					<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> <!--- Strip out domain from username if present for AD users--->
 					<!--- Check for the user --->
 					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
-						lower(u.user_login_name) = <cfqueryparam value="#lcase(qryAdUser.SamAccountname)#" cfsqltype="cf_sql_varchar"> 
-						OR lower(u.user_email) = <cfqueryparam value="#lcase(qryAdUser.mail)#" cfsqltype="cf_sql_varchar">
+						lower(u.user_login_name) = <cfqueryparam value="#lcase(adusername)#" cfsqltype="cf_sql_varchar"> 
+						OR lower(u.user_email) = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
 						)
 					AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
 					<cfif arguments.thestruct.loginto EQ "admin">
@@ -111,16 +106,17 @@
 					</cfif>
 					AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 					</cfquery>
-					<!--- AD user name --->
-					<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
+				<cfif qryuser.recordcount NEQ 0>
+					<!--- Authenticate LDAP user --->
+					<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#">
 				</cfif>
-				<cfcatch></cfcatch>
+				<cfcatch><cfset console(cfcatch)></cfcatch>
 				</cftry>
 			</cfif>
 		</cfif>
 		
 		<!--- check to see if a record has been found --->
-		<cfif qryuser.recordcount EQ 0 >
+		<cfif qryuser.recordcount EQ 0 OR (isdefined("adauth") AND !adauth)>
 			<cfset theuser.notfound = "T">
 		<cfelse>
 			<cfset theuser.notfound = "F">

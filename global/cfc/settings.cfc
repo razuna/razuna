@@ -2599,8 +2599,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<cfset var results = querynew('')>
-		<cfif structKeyExists(arguments.thestruct,'searchtext') AND trim(arguments.thestruct.searchtext) NEQ ''>
-			<cfset ldapfilter = "(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
+		<cfif structKeyExists(arguments.thestruct,'ad_server_filter') AND trim(arguments.thestruct.ad_server_filter) NEQ ''>
+			<cfset ldapfilter = "#arguments.thestruct.ad_server_filter#" >
 		<cfelse>
 			<cfset ldapfilter="(&(objectClass=user))" >
 		</cfif>
@@ -2614,7 +2614,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 					port = "#arguments.thestruct.ad_server_port#"
 				scope="subtree" 
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-				filter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" 
+				filter="#ldapfilter#" 
 					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
 			<cfelse>
@@ -2622,13 +2622,37 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 					port = "#arguments.thestruct.ad_server_port#"
 				scope="subtree" 
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
-				filter="(&(objectClass=user))" 
+				filter="#ldapfilter#" 
 					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
 			</cfif>
 		<cfcatch></cfcatch>
 		</cftry>
 		<cfreturn results/>
+	</cffunction>
+
+	<cffunction name="authenticate_AD_User" returntype="boolean" hint="Authenticates an AD user. Username must contain the domain name in format domain\username" >
+		<cfargument name="username" required="true">  
+		<cfargument name="password" required="true">   
+		<cfargument name="dcstart" required="true">
+		<cfargument name="ldapserver" required="true">
+		<cfset isAuthenticated = false> 
+		   <cftry>          
+		         <cfldap action="QUERY"          
+		               name="auth"          
+		               attributes="samAccountName"          
+		               start="#dcStart#"          
+		               scope="SUBTREE"          
+		               maxrows="1"          
+		               server="#ldapServer#"          
+		               username="#username#"          
+		               password="#password#">          
+		         <cfset isAuthenticated=true>             
+		      <cfcatch type="ANY">              
+		         <cfset isAuthenticated=false>          
+		      </cfcatch>      
+		   </cftry>  
+		<cfreturn isAuthenticated>
 	</cffunction>
 		
 	<!--- RAZ-2831 : Get Metadata export template --->
