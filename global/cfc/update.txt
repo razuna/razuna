@@ -12,3 +12,5 @@ CREATE TABLE ct_aliases (
 
 ALTER TABLE raz1_folders add in_search_selection varchar(5) DEFAULT 'false';
 
+ALTER TABLE users add user_search_selection varchar(100);
+

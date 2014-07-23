@@ -126,9 +126,25 @@
 					<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
 				</tr>
 				<tr>
-					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>
+					<td></td>
+					<td>#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>
 				</tr>
 			</cfif>
+			<!--- If there is search selection --->
+			<cfif cs.search_selection>
+				<tr>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("default_search_selection")#</strong></td>
+					<td>
+						<select data-placeholder="" class="chzn-select" name="user_search_selection" id="user_search_selection" style="min-width:300px;">
+							<option value=""></option>
+							<cfloop query="qry_search_selection">
+								<option value="#folder_id#"<cfif qry_detail.user_search_selection EQ "#folder_id#"> selected="selected"</cfif>>#folder_name#</option>
+							</cfloop>
+						</select>
+					</td>
+				</tr>
+			</cfif>
+			<!--- Show User id --->
 			<cfif attributes.add EQ "f">
 				<tr>
 					<td><strong>ID</strong></td>
@@ -399,6 +415,9 @@
 	            $('##btnDel').css('display','none');
 	    });
 	
+	    // Activate Chosen
+		$(".chzn-select").chosen({search_contains: true});
+
 	});
 </script>
 

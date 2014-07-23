@@ -195,6 +195,14 @@
 				interval="3600"
 			>
 
+			<!--- Alter users --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> user_search_selection #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
 			<!--- Alter folders --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

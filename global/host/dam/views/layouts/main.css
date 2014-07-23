@@ -1018,3 +1018,15 @@ font-weight: bold;
 	white-space: pre-wrap !important;       /* css-3 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+/* Fix 100% width */
+.chzn-container, .chzn-drop, .chzn-drop .chzn-search, .chzn-drop .chzn-search input {
+	width: 100% !important;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* Override width */
+.chzn-container { 
+	width: 250px !important;
+}

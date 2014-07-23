@@ -58,7 +58,7 @@
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Check for the user --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
 			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
@@ -130,6 +130,8 @@
 			<cfset session.login = "T">
 			<!--- Set the Web Login into a session --->
 			<cfset session.weblogin = "F">
+			<!--- Set search selection --->
+			<cfset session.user_search_selection = qryuser.user_search_selection>
 			<!--- Set the user ID into a session --->
 			<cfset session.theuserid = qryuser.user_id>
 			<!--- Set User First and last name --->

@@ -169,7 +169,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, 
 	user_first_name, user_last_name, user_in_admin, user_create_date, user_active, user_company, user_phone, 
-	user_mobile, user_fax, user_in_dam, user_salutation, user_expiry_date
+	user_mobile, user_fax, user_in_dam, user_salutation, user_expiry_date, user_search_selection
 	from users
 	where user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	</cfquery>
@@ -252,6 +252,7 @@
 	<cfparam default="" name="arguments.thestruct.user_fax">
 	<cfparam default="" name="arguments.thestruct.user_salutation">
 	<cfparam default="false" name="arguments.thestruct.emailinfo">
+	<cfparam default="" name="arguments.thestruct.user_search_selection">
 	<!--- Check that there is no user already with the same email address --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_login_name
@@ -276,7 +277,7 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO users
 		(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
-		user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp
+		user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp, user_search_selection
 		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND isdate(arguments.thestruct.user_expirydate)>
 			, user_expiry_date
 		</cfif>
@@ -301,7 +302,8 @@
 		<cfqueryparam value="#arguments.thestruct.user_fax#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#arguments.thestruct.vpuser#" cfsqltype="cf_sql_varchar">
+		<cfqueryparam value="#arguments.thestruct.vpuser#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.user_search_selection#" cfsqltype="cf_sql_varchar">
 		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND isdate(arguments.thestruct.user_expirydate)>,<cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
 		)
 		</cfquery>
@@ -400,6 +402,7 @@
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<cfparam default="false" name="arguments.thestruct.emailinfo">
 	<cfparam default="" name="arguments.thestruct.user_pass">
+	<cfparam default="" name="arguments.thestruct.user_search_selection">
 	<!--- Var --->
 	<cfset var is_sysadmin = false>
 	
@@ -458,7 +461,8 @@
 		USER_MOBILE = <cfqueryparam value="#arguments.thestruct.USER_MOBILE#" cfsqltype="cf_sql_varchar">,
 		USER_FAX = <cfqueryparam value="#arguments.thestruct.USER_FAX#" cfsqltype="cf_sql_varchar">,
 		user_in_dam = <cfqueryparam value="#arguments.thestruct.intrauser#" cfsqltype="cf_sql_varchar">,
-		user_salutation = <cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">
+		user_salutation = <cfqueryparam value="#arguments.thestruct.user_salutation#" cfsqltype="cf_sql_varchar">,
+		user_search_selection = <cfqueryparam value="#arguments.thestruct.user_search_selection#" cfsqltype="cf_sql_varchar">
 		<cfif StructKeyExists(arguments.thestruct,"user_expirydate") AND (isdate(arguments.thestruct.user_expirydate) or len(arguments.thestruct.user_expirydate) eq 0)>
 			,user_expiry_date = <cfif len(arguments.thestruct.user_expirydate) eq 0>null<cfelse><cfqueryparam value="#arguments.thestruct.user_expirydate#" cfsqltype="cf_sql_date"></cfif>
 		</cfif>

@@ -54,7 +54,6 @@
 			<div style="width:auto;float:right;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
-				<input type="hidden" name="folder_id" id="simplesearchfolderid" value="" >
 				<div style="float:left;background-color:##ddd;padding:4px;">
 					<div style="float:left;">
 						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search"  title="Uses AND for multiple keywords except if you use OR/AND or double quotes. See search help for more information.">
@@ -62,21 +61,13 @@
 					<!--- If the search selection is on we search with folder ids --->
 					<cfif cs.search_selection>
 						<!--- This is the selected value (should come from the defined selection of the user) --->
-						<div style="float:left;padding:5px 5px 0px 5px;">
-							<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">Folders</a></div>
-							<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
-						</div>
-						<div id="searchselection" class="ddselection_header" style="left:610px;">
-							<cfloop query="qry_searchselection">
-								<p>
-									<a href="##" onclick="selectsearchselection('#folder_id#','#folder_name#');">
-										<div id="mark_#folder_id#" class="markfolder" style="float:left;padding-right:2px;">
-											<img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">
-										</div>
-										#folder_name#
-									</a>
-								</p>
-							</cfloop>
+						<div style="float:left;padding:3px 5px 0px 5px;">
+							<select data-placeholder="" class="chzn-select" name="qs_folder_id" id="qs_folder_id" style="min-width:100px;">
+								<option value="0">Search in all</option>
+								<cfloop query="qry_searchselection">
+									<option value="#folder_id#"<cfif session.user_search_selection EQ "#folder_id#"> selected="selected"</cfif>>#folder_name#</option>
+								</cfloop>
+							</select>
 						</div>
 					<!--- This is the normal search --->
 					<cfelse>
@@ -210,6 +201,9 @@
 	</div>
 	<!--- JS --->
 	<script language="javascript">
+		// Activate Chosen
+		$(".chzn-select").chosen({search_contains: true});
+
 		function showaccount(){
 			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
 			document.form_account.target='myWin';

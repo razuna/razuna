@@ -5216,7 +5216,7 @@
 			<true>
 				<if condition="!structkeyexists(attributes,'iscopymetadata')">
 					<true>
-						<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+						<if condition="!attributes.fcall">
 							<true>
 								<do action="ajax.search" />
 							</true>
@@ -5495,7 +5495,7 @@
 			<true>
 				<if condition="!structkeyexists(attributes,'iscopymetadata')">
 					<true>
-						<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+						<if condition="!attributes.fcall">
 							<true>
 								<do action="ajax.search" />
 							</true>
@@ -6681,6 +6681,12 @@
 		<set name="attributes.cf_show" value="users" />
 		<set name="attributes.file_id" value="#attributes.user_id#" />
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<!-- Get the folder selection but only if we need to -->
+		<if condition="cs.search_selection">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection()" returnvariable="qry_search_selection" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.users_detail" />
 	</fuseaction>
@@ -10068,12 +10074,11 @@
 		<!-- Set the total -->
 		<set name="qry_filecount.thetotal" value="#session.thetotal#" />
 		<!-- Show -->
-		<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+		<if condition="!attributes.fcall">
 			<true>
 				<do action="ajax.search" />
 			</true>
 			<false>
-				<!-- Do -->
 				<do action="folder_content_results" />
 			</false>
 		</if>
