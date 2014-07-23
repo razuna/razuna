@@ -30,14 +30,16 @@
 			<p><a href="#cgi.http_referer#">#myFusebox.getApplicationData().defaults.trans("back_to_share")#</a></p>
 		<cfelse>
 			<!--- Breadcrumb --->
-			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
-			<br />
+			<cfif IsDefined("qry_breadcrumb") AND (structkeyexists(attributes,"issearch") AND !attributes.issearch)>
+				<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+				<br />
+			</cfif>
 		</cfif>
 		<!--- If search --->
-		<cfif attributes.issearch>
+		<!--- <cfif structkeyexists(attributes,"issearch") AND attributes.issearch>
 			<cfset transvalues[1] = qry_filecount.thetotal>#myFusebox.getApplicationData().defaults.trans(transid="search_returned",values=transvalues)#
 			<br />
-		</cfif>
+		</cfif> --->
 		<!--- <cfif session.theuserid NEQ qry_user.folder_owner AND (!structkeyexists(attributes,"share") OR attributes.share EQ "F")><cfset transvalues[1] = qry_user.user>#myFusebox.getApplicationData().defaults.trans(transid="shared_folder_with_you",values=transvalues)#</cfif> --->
 	</div>
 </cfoutput>

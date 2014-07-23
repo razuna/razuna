@@ -167,7 +167,8 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
-		  USER_EXPIRY_DATE DATE,
+		  USER_EXPIRY_DATE	   DATE,
+		  user_search_selection VARCHAR(100),
 		CONSTRAINT USERS_PK PRIMARY KEY (USER_ID)
 		)
 		</cfquery>
@@ -1013,7 +1014,8 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				BIGINT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTID_FK1 FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE

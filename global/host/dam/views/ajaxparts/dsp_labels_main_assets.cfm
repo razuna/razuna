@@ -680,15 +680,4 @@
 	</table>
 
 	</form>
-
-	<script type="text/javascript">
-		function goToFolder(folderid) {
-			// Load folder on the right side
-			$('##rightside').load('#myself#c.folder&col=F&folder_id=' + folderid);
-			// Refresh folder tree (as we could be in labels, etc.)
-			switchmainselection('folders','Folders');
-			// $('##explorer').load('index.cfm?fa=c.explorer');
-		}
-	</script>
-
 </cfoutput>

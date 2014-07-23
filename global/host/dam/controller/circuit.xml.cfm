@@ -5233,7 +5233,7 @@
 			<true>
 				<if condition="!structkeyexists(attributes,'iscopymetadata')">
 					<true>
-						<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+						<if condition="!attributes.fcall">
 							<true>
 								<do action="ajax.search" />
 							</true>
@@ -5286,40 +5286,42 @@
 					<!-- CFC: Customization -->
 					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 					<set name="attributes.cs" value="#cs#" />
+<!-- CFC: Get settings -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 					<!-- CFC: Get placement for fields-->
 					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
 					<set name="attributes.cs_place" value="#cs_place#" />
 					<!-- CFC: Get settings -->
-					<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
-					<!-- Check the DataBase  -->
-					<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
-						<true>
-							<!-- set search count call -->
-							<set name="attributes.isCountOnly" value="1" />
-							<!-- CFC: Combine search total count call -->
-							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
-							<!-- Set the total -->
-							<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
-							<!-- Set the session offset -->
-							<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
-								<true>
-									<set name="session.offset" value="0" />
-								</true>
-							</if>
-							<!-- set search count call -->
-							<set name="attributes.isCountOnly" value="0" />
-							<!-- CFC: Combine searches -->
-							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
-						</true>
-						<false>
-							<!-- CFC: Combine searches -->
-							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
-							<!-- Set results into different variable name -->
-							<set name="qry_files_count.qall" value="#qry_files.qall#" />
-							<!-- Set the total -->
-							<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
-						</false>
-					</if>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />	
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
+					<true>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- CFC: Combine searches -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
+					</true>
+					<false>
+						<!-- CFC: Combine searches -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files_count.qall" value="#qry_files.qall#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- ACTION: Search Files -->
@@ -5527,7 +5529,7 @@
 			<true>
 				<if condition="!structkeyexists(attributes,'iscopymetadata')">
 					<true>
-						<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+						<if condition="!attributes.fcall">
 							<true>
 								<do action="ajax.search" />
 							</true>
@@ -6713,6 +6715,12 @@
 		<set name="attributes.cf_show" value="users" />
 		<set name="attributes.file_id" value="#attributes.user_id#" />
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<!-- Get the folder selection but only if we need to -->
+		<if condition="cs.search_selection">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection()" returnvariable="qry_search_selection" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.users_detail" />
 	</fuseaction>
@@ -10103,12 +10111,11 @@
 		<!-- Set the total -->
 		<set name="qry_filecount.thetotal" value="#session.thetotal#" />
 		<!-- Show -->
-		<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+		<if condition="!attributes.fcall">
 			<true>
 				<do action="ajax.search" />
 			</true>
 			<false>
-				<!-- Do -->
 				<do action="folder_content_results" />
 			</false>
 		</if>

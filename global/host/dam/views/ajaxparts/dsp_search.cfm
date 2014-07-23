@@ -26,184 +26,204 @@
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- Save search --->
-		<cfif structKeyExists(attributes,'search_upc')>
-			<cfset attributes.searchtext = #attributes.search_upc# >
-		</cfif>
+	<cfif structKeyExists(attributes,'search_upc')>
+		<cfset attributes.searchtext = #attributes.search_upc# >
+	</cfif>
 	<cfif !structKeyExists(attributes,'search_upc')>
-	<div id="save_search" style="padding-bottom:10px;">
-		<cfif attributes.sf_id EQ 0>
-			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#</a>
-		<cfelseif attributes.folderaccess NEQ "R">
-			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#</a> | <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
-		</cfif>
-	</div>
+		<div id="save_search" style="padding-bottom:10px;">
+			<a href="##" style="padding-right:20px;" onclick="showRefineSearchPanel();return false;">#myFusebox.getApplicationData().defaults.trans("refine_search")#</a>
+			<cfif attributes.sf_id EQ 0>
+				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');" style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#</a>
+			<cfelseif attributes.folderaccess NEQ "R">
+				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#</a> | <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
+			</cfif>
+
+		</div>
 	</cfif>
 	<div style="clear:both;"></div>
 	<!--- Search Results --->
 	<div id="loading_searchagain"></div>
+	<cfdump var="#session.search.search_file_ids#">
 	<div>
 		<cfif !structKeyExists(attributes,'search_upc')> 
-		<!--- Top Search Bar --->
-		<div style="margin:0;padding:0;">
-			<form action="#self#" method="post" id="form_searchsearch" name="form_searchsearch">
-			<input type="hidden" name="#theaction#" value="c.search_simple">
-			<input type="hidden" name="folder_id" value="#attributes.folder_id#">
-			<input type="hidden" name="searchtext" id="s_searchtext" value="">
-			<input type="hidden" name="listdocid" id="s_listdocid" value="#attributes.listdocid#">
-			<input type="hidden" name="listimgid" id="s_listimgid" value="#attributes.listimgid#">
-			<input type="hidden" name="listvidid" id="s_listvidid" value="#attributes.listvidid#">
-			<input type="hidden" name="listaudid" id="s_listaudid" value="#attributes.listaudid#">
-			<input type="hidden" name="cv" id="cv" value="#attributes.cv#">
-			<input type="hidden" name="from_sf" id="from_sf" value="#attributes.from_sf#">
-			<input type="hidden" name="sf_id" id="sf_id" value="#attributes.sf_id#">
-			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
-				<tr>
-					<th colspan="5">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
-				</tr>
-				<tr>
-					<td valign="top" width="1%" nowrap="nowrap">
-						<div style="padding-top:13px;">
-							<input type="radio" id="s_newsearch" name="newsearch" value="t"<cfif attributes.newsearch EQ "t"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("new_search")#</a> <input type="radio" name="newsearch" id="s_newsearch" value="f"<cfif attributes.newsearch EQ "f"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_within")#</a>
-						</div>
-						<div style="padding-top:12px;">
+			<!--- Refine Search --->
+			<div style="margin:0;padding:0;" id="refine_search_panel">
+				<form action="#self#" method="post" id="form_searchsearch" name="form_searchsearch">
+				<input type="hidden" name="#theaction#" value="c.search_simple">
+				<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+				<input type="hidden" name="searchtext" id="s_searchtext" value="">
+				<input type="hidden" name="listdocid" id="s_listdocid" value="#attributes.listdocid#">
+				<input type="hidden" name="listimgid" id="s_listimgid" value="#attributes.listimgid#">
+				<input type="hidden" name="listvidid" id="s_listvidid" value="#attributes.listvidid#">
+				<input type="hidden" name="listaudid" id="s_listaudid" value="#attributes.listaudid#">
+				<input type="hidden" name="cv" id="cv" value="#attributes.cv#">
+				<input type="hidden" name="from_sf" id="from_sf" value="#attributes.from_sf#">
+				<input type="hidden" name="sf_id" id="sf_id" value="#attributes.sf_id#">
+				<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
+				<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
+					<tr>
+						<th colspan="5">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
+					</tr>
+					<tr>
+						<td valign="top" width="1%" nowrap="nowrap">
+							<div style="padding-top:13px;">
+								<input type="radio" id="s_newsearch" name="newsearch" value="t"<cfif attributes.newsearch EQ "t"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("new_search")#</a> <input type="radio" name="newsearch" id="s_newsearch" value="f"<cfif attributes.newsearch EQ "f"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_within")#</a>
+							</div>
+						</td>
+						<td valign="top" width="1%" nowrap="nowrap">
+							Filename
+							<br />
+							<input type="text" name="filename" id="s_filename" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.filename))#">
+						</td>
+						<td valign="top" width="1%" >
+							Description
+							<br />
+							<input type="text" name="description" id="s_description" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.description))#">
+						</td>
+						<td valign="top" width="1%" nowrap="nowrap">
+							Extension
+							<br />
+							<input type="text" name="extension" id="s_extension" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.extension))#">
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">Help</a>)
 							<br />
 							<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:180px;" placeholder="Enter search term">
-						</div>
-						<div style="padding-top:15px;">
-							<button class="awesome big green">Search</button>
-						</div>
-					</td>
-					<td valign="top" width="1%" nowrap="nowrap">
-						Filename
-						<br />
-						<input type="text" name="filename" id="s_filename" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.filename))#">
-						<br />
-						Keywords
-						<br />
-						<input type="text" name="keywords" id="s_keywords" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.keywords))#">
-					</td>
-					<td valign="top" width="1%" >
-						Description
-						<br />
-						<input type="text" name="description" id="s_description" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.description))#">
-						<br>
-						#myFusebox.getApplicationData().defaults.trans("labels")#
-						<br />
-						<!--- RAZ-2708 Check the labels record count is less than 200 --->
-						<cfif attributes.thelabelsqry.recordcount LTE 200>
-						<select data-placeholder="Choose a label" class="chzn-select" style="width:201px;" name="labels" id="search_labels" multiple="multiple">
-							<option value=""></option>
-							<cfloop query="attributes.thelabelsqry">
-								<cfset l = replace(label_path," "," ","all")>
-								<cfset l = replace(l,"/"," ","all")>
-								<option value="#l#"<cfif attributes.flabel EQ "+#l#"> selected="true"</cfif>>#label_path#</option>
-							</cfloop>
-						</select>
-						<cfelse>
-							<!--- Label text area --->
-							<div style="width:192px;">
-								<div id="lables_#attributes.thetype#" class="labelContainer" style="float:left;width:192px;" >
+						</td>
+						<td valign="top" width="1%" nowrap="nowrap">
+							Keywords
+							<br />
+							<input type="text" name="keywords" id="s_keywords" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.keywords))#">
+							<br>
+						</td>
+						<td valign="top" width="1%">
+							#myFusebox.getApplicationData().defaults.trans("labels")#
+							<br />
+							<!--- RAZ-2708 Check the labels record count is less than 200 --->
+							<cfif attributes.thelabelsqry.recordcount LTE 200>
+								<select data-placeholder="Choose a label" class="chzn-select" style="min-width:150px;" name="labels" id="search_labels" multiple="multiple">
+									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
-										<cfif ListFind(evaluate("session.search.labels_#attributes.thetype#"),'#label_id#') NEQ 0>
-										<div class='singleLabel' id="#label_id#">
-											<span>#label_path#</span>
-											<a class='labelRemove'  onclick="removeLabel('0','#attributes.thetype#', '#label_id#',this)" >X</a>
-										</div>
-										</cfif>
+										<cfset l = replace(label_path," "," ","all")>
+										<cfset l = replace(l,"/"," ","all")>
+										<option value="#l#"<cfif attributes.flabel EQ "+#l#"> selected="true"</cfif>>#label_path#</option>
 									</cfloop>
+								</select>
+							<cfelse>
+								<!--- Label text area --->
+								<div style="min-width:150px;">
+									<div id="lables_#attributes.thetype#" class="labelContainer" style="float:left;width:192px;" >
+										<cfloop query="attributes.thelabelsqry">
+											<cfif ListFind(evaluate("session.search.labels_#attributes.thetype#"),'#label_id#') NEQ 0>
+											<div class='singleLabel' id="#label_id#">
+												<span>#label_path#</span>
+												<a class='labelRemove'  onclick="removeLabel('0','#attributes.thetype#', '#label_id#',this)" >X</a>
+											</div>
+											</cfif>
+										</cfloop>
+									</div>
+									<!--- Select label button --->
+									<a style="float:left;clear:both;" onclick="showwindow('#myself#c.select_label_popup&file_id=0&file_type=#attributes.thetype#&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
 								</div>
-								<!--- Select label button --->
-								<a style="float:left;clear:both;" onclick="showwindow('#myself#c.select_label_popup&file_id=0&file_type=#attributes.thetype#&closewin=2','Choose Labels',600,2);return false;" href="##"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_labels")#</button></a>
-							</div>
-							<!--- To pass the label text values --->
-							<input type="hidden" name="labels" id="search_labels_#attributes.thetype#" value="">
-						</cfif>
-					</td>
-					<td valign="top" width="1%" nowrap="nowrap">
-						Extension
-						<br /><input type="text" name="extension" id="s_extension" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.extension))#">
-						<br />
-						All Metadata
-						<br /><input type="text" name="rawmetadata" id="s_metadata" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.metadata))#">
-					</td>
-					<td valign="top" width="100%" nowrap="nowrap">
-						Match: 
-						<br /> 
-						<select name="andor" id="andor">
-							<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>Match ALL terms</option>
-							<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>Match ANY term</option>
-						</select>
-						<br />
-						#myFusebox.getApplicationData().defaults.trans("search_for_type")#
-						<br />
-						<select name="thetype" id="s_type">
-							<option value="all"<cfif attributes.thetype EQ "all"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</option>
-							<option value="img"<cfif attributes.thetype EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</option>
-							<option value="doc"<cfif attributes.thetype EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</option>
-							<option value="vid"<cfif attributes.thetype EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</option>
-							<option value="aud"<cfif attributes.thetype EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</option>
-						</select>
-						<br />
-						#myFusebox.getApplicationData().defaults.trans("date_created")#
-						<br />
-						<cfset lastyear = #year(now())# - 10>
-						<cfset newyear = #year(now())# + 3>
-						<select name="on_day" id="s_on_day" class="text" style="width:55px;">
-							<option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option>
-							<cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.on_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop>
-						</select> 
-						<select name="on_month" id="s_on_month" class="text" style="width:65px;">
-							<option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option>
-							<cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.on_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop>
-						</select> 
-						<select name="on_year" id="s_on_year" class="text" style="width:55px;">
-							<option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.on_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop>
-						</select> <a href="##" onclick="settoday('form_searchsearch','on');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a>
-						<br />
-						#myFusebox.getApplicationData().defaults.trans("date_changed")#
-						<br />
-						<cfset lastyear = #year(now())# - 10>
-						<cfset newyear = #year(now())# + 3>
-						<select name="change_day" id="s_change_day" class="text" style="width:55px;">
-							<option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.change_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop>
-						</select> 
-						<select name="change_month" id="s_change_month" class="text" style="width:65px;">
-							<option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.change_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop>
-						</select> 
-						<select name="change_year" id="s_change_year" class="text" style="width:55px;">
-							<option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.change_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop>
-						</select> <a href="##" onclick="settoday('form_searchsearch','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a>
-					</td>
-				</tr>
-				<!--- Has to be here or else search mocks up --->
-				<div style="display:none;">
-					<cfloop query="qry_cf_fields">
-						<cfset cfid = replace(cf_id,"-","","all")>
-						#cf_text#
-						<br />
-						<!--- For text --->
-						<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-							<input type="text" name="cf#cfid#">
-						<!--- Radio --->
-						<cfelseif cf_type EQ "radio">
-							<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
-						<!--- Select --->
-						<cfelseif cf_type EQ "select">
-							<select name="cf#cfid#">
-								<option value="" selected="selected"></option>
-								<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
-									<option value="#i#">#i#</option>
-								</cfloop>
+								<!--- To pass the label text values --->
+								<input type="hidden" name="labels" id="search_labels_#attributes.thetype#" value="">
+							</cfif>
+						</td>
+						<td valign="top" width="1%" nowrap="nowrap">
+							All Metadata
+							<br />
+							<input type="text" name="rawmetadata" id="s_metadata" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.metadata))#">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Match: 
+							<br /> 
+							<select name="andor" id="andor">
+								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>Match ALL terms</option>
+								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>Match ANY term</option>
 							</select>
-						</cfif>
-						<br />
-					</cfloop>
-				</div>
-			</table>
-			</form>
-		</div>
+						</td>
+						<td>
+							#myFusebox.getApplicationData().defaults.trans("search_for_type")#
+							<br />
+							<select name="thetype" id="s_type">
+								<option value="all"<cfif attributes.thetype EQ "all"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</option>
+								<option value="img"<cfif attributes.thetype EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</option>
+								<option value="doc"<cfif attributes.thetype EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</option>
+								<option value="vid"<cfif attributes.thetype EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</option>
+								<option value="aud"<cfif attributes.thetype EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</option>
+							</select>
+						</td>
+						<td nowrap="nowrap">
+							#myFusebox.getApplicationData().defaults.trans("date_created")#
+							<br />
+							<cfset lastyear = #year(now())# - 10>
+							<cfset newyear = #year(now())# + 3>
+							<select name="on_day" id="s_on_day" class="text" style="width:55px;">
+								<option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option>
+								<cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.on_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop>
+							</select> 
+							<select name="on_month" id="s_on_month" class="text" style="width:65px;">
+								<option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option>
+								<cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.on_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop>
+							</select> 
+							<select name="on_year" id="s_on_year" class="text" style="width:55px;">
+								<option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.on_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop>
+							</select> <a href="##" onclick="settoday('form_searchsearch','on');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a>
+						</td>
+						<td nowrap="nowrap">
+							#myFusebox.getApplicationData().defaults.trans("date_changed")#
+							<br />
+							<cfset lastyear = #year(now())# - 10>
+							<cfset newyear = #year(now())# + 3>
+							<select name="change_day" id="s_change_day" class="text" style="width:55px;">
+								<option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.change_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop>
+							</select> 
+							<select name="change_month" id="s_change_month" class="text" style="width:65px;">
+								<option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.change_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop>
+							</select> 
+							<select name="change_year" id="s_change_year" class="text" style="width:55px;">
+								<option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.change_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop>
+							</select> <a href="##" onclick="settoday('form_searchsearch','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button class="awesome big green">Search</button>
+						</td>
+					</tr>
+					<!--- Has to be here or else search mocks up --->
+					<div style="display:none;">
+						<cfloop query="qry_cf_fields">
+							<cfset cfid = replace(cf_id,"-","","all")>
+							#cf_text#
+							<br />
+							<!--- For text --->
+							<cfif cf_type EQ "text" OR cf_type EQ "textarea">
+								<input type="text" name="cf#cfid#">
+							<!--- Radio --->
+							<cfelseif cf_type EQ "radio">
+								<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
+							<!--- Select --->
+							<cfelseif cf_type EQ "select">
+								<select name="cf#cfid#">
+									<option value="" selected="selected"></option>
+									<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
+										<option value="#i#">#i#</option>
+									</cfloop>
+								</select>
+							</cfif>
+							<br />
+						</cfloop>
+					</div>
+				</table>
+				</form>
+			</div>
 		</cfif>
+
 		<!--- Clear --->
 		<div style="clear:both;padding-top:15px;"></div>
 		<!--- Search Results --->
@@ -226,6 +246,7 @@
 						</cfif>
 					</cfif>
 				</ul>
+
 				<cfif structKeyExists(attributes, "thetype") AND attributes.thetype NEQ 'all'>
 					<div id="content_search_#attributes.thetype#">
 						<cfinclude template="dsp_folder_content_results.cfm" />
@@ -259,6 +280,8 @@
 	$(document).ready(function() {
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
+		// Hide Refine
+		$('#refine_search_panel').css('display', 'none');
 		// Load tabs
 		jqtabs("search_tab");
 		// Search submit
@@ -306,10 +329,12 @@
 				var cv = $('#cv').val();
 				var from_sf = $('#from_sf').val();
 				var sf_id = $('#sf_id').val();
+				var folder_id = $('#folder_id').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
+				$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: searchtext, newsearch: newsearch, folder_id: folder_id, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id }, function(){
 						$("#bodyoverlay").remove();
-					});
+					}
+				);
 			}
 			return false;
 		});
@@ -323,4 +348,8 @@
 			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: 'keywords:' + searchtext, thetype: thetype, folder_id: folderid });
 		}
 	});
+	// Show refine search
+	function showRefineSearchPanel() {
+		$('#refine_search_panel').slideToggle('slow');
+	}
 </script>

@@ -1972,6 +1972,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.publish_btn_basket = "">
 	<cfset v.metadata_btn_basket = "">
 	<cfset v.email_btn_basket = "">
+	<!--- For search --->
+	<cfset v.search_selection = false>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2211,6 +2213,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.publish_btn_basket = custom_value>
 			<cfelseif custom_id EQ "metadata_btn_basket">
 				<cfset v.metadata_btn_basket = custom_value>
+			</cfif>
+			<!--- For search --->
+			<cfif custom_id EQ "search_selection" AND custom_value>
+				<cfset v.search_selection = true>
 			</cfif>
 		</cfloop>
 	</cfif>

@@ -46,7 +46,7 @@
 		<cfparam default="t" name="arguments.thestruct.newsearch">
 		<cfparam default="0" name="session.thegroupofuser">
 		<cfparam default="0" name="session.customaccess">
-		<cfparam default="0" name=" session.search.file_id">
+		<cfparam default="0" name="session.search.search_file_ids">
 		
 		<!--- Only applicable for files --->
 		<cfparam default="" name="arguments.thestruct.doctype">
@@ -82,22 +82,26 @@
 					<cfquery dbtype="query" name="qrylucene">
 						select * from qryluceneAll where category = '#assetType#' 
 					</cfquery>
-					<cfset var catTreeArg = { qrylucene = qrylucene, 
-										iscol = arguments.thestruct.iscol,
-										newsearch = arguments.thestruct.newsearch
-									}>
+					<cfset var catTreeArg = { 
+						qrylucene = qrylucene, 
+						iscol = arguments.thestruct.iscol,
+						newsearch = arguments.thestruct.newsearch
+					}>
 					<cfif arguments.thestruct.iscol EQ "T">
 						<cfset catTreeArg.listAsset = arguments.thestruct.qry['list#assetType#']>	
 					</cfif>
 					
-					<cfif arguments.thestruct.newsearch EQ "F">	
-						<!--- Do 'search within search' from previous saved search results --->
+					<!--- <cfif arguments.thestruct.newsearch EQ "F">	
+						Do 'search within search' from previous saved search results
 						<cfset catTreeArg.listAssetID = session.search.file_id>
-					</cfif>
+					</cfif> --->
+					<!--- <cfdump var="#catTreeArg.qrylucene#"><cfabort> --->
 					<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#assetType#']">
 				</cfloop>
 				<!--- Save these search results in a session variable to be used for 'search within search' if needed next time--->
-				<cfset session.search.file_id = valuelist(qryluceneAll.categorytree) >
+				<!--- <cfset session.search.file_id = valuelist(qryluceneAll.categorytree) > --->
+
+				<!--- <cfdump var="#cattreeStruct#"><cfabort> --->
 
 				<cfif cattreeStruct['img'].recordcount GT 0 or cattreeStruct['aud'].recordcount GT 0 or cattreeStruct['vid'].recordcount GT 0 or cattreeStruct['doc'].recordcount GT 0>
 					<cfset proceedToSQL = 1>
@@ -105,7 +109,7 @@
 					<cfset proceedToSQL = 0>
 				</cfif>
 			<cfelse>
-				<cfset session.search.file_id = "0">
+				<!--- <cfset session.search.file_id = "0"> --->
 				<cfset proceedToSQL = 0>
 			</cfif>	
 		<cfelse>
@@ -119,14 +123,14 @@
 				<cfset catTreeArg.listAsset = arguments.thestruct.qry['list#arguments.thestruct.thetype#']>	
 			</cfif>
 			
-			<cfif arguments.thestruct.newsearch EQ "F">					
+			<!--- <cfif arguments.thestruct.newsearch EQ "F">					
 				<cfset catTreeArg.listAssetID = session.search.file_id>
 			</cfif>
 			<cfif qrylucene.recordcount NEQ "0">
 				<cfset session.search.file_id = valuelist(qrylucene.categorytree) >
 			<cfelse>
 				<cfset session.search.file_id = "0">
-			</cfif>
+			</cfif> --->
 			<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#arguments.thestruct.thetype#']">
 			
 			<cfset proceedToSQL = cattreeStruct['#arguments.thestruct.thetype#'].recordcount>
@@ -262,28 +266,28 @@
 					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 					WHERE i.img_id IN (<cfif cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 					<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-					AND i.img_id in (
-						select img_id from #session.hostdbprefix#images where 1=1 
-							<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, i.img_create_time) = #session.search.on_year#
-									AND DATEPART(mm, i.img_create_time) = #session.search.on_month#
-									AND DATEPART(dd, i.img_create_time) = #session.search.on_day#)
-								<cfelse>
-									AND i.img_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+						AND i.img_id in (
+							select img_id from #session.hostdbprefix#images where 1=1 
+								<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
+									<cfif application.razuna.thedatabase EQ "mssql">
+										AND (DATEPART(yy, i.img_create_time) = #session.search.on_year#
+										AND DATEPART(mm, i.img_create_time) = #session.search.on_month#
+										AND DATEPART(dd, i.img_create_time) = #session.search.on_day#)
+									<cfelse>
+										AND i.img_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+									</cfif>
 								</cfif>
-							</cfif>
-							<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, i.img_change_time) = #session.search.change_year#
-									AND DATEPART(mm, i.img_change_time) = #session.search.change_month#
-									AND DATEPART(dd, i.img_change_time) = #session.search.change_day#)
-								<cfelse>
-									AND i.img_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+								<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
+									<cfif application.razuna.thedatabase EQ "mssql">
+										AND (DATEPART(yy, i.img_change_time) = #session.search.change_year#
+										AND DATEPART(mm, i.img_change_time) = #session.search.change_month#
+										AND DATEPART(dd, i.img_change_time) = #session.search.change_day#)
+									<cfelse>
+										AND i.img_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+									</cfif>
 								</cfif>
-							</cfif>
-						
-					) 
+							
+						) 
 					</cfif>
 					<!--- Only if we have dates --->
 					<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
@@ -423,28 +427,28 @@
 						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 						WHERE f.file_id IN (<cfif cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 						<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-						AND f.file_id in (
-							select file_id from #session.hostdbprefix#files where 1=1 
-								<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-									<cfif application.razuna.thedatabase EQ "mssql">
-										AND (DATEPART(yy, f.file_create_time) = #session.search.on_year#
-										AND DATEPART(mm, f.file_create_time) = #session.search.on_month#
-										AND DATEPART(dd, f.file_create_time) = #session.search.on_day#)
-									<cfelse>
-										AND f.file_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+							AND f.file_id in (
+								select file_id from #session.hostdbprefix#files where 1=1 
+									<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
+										<cfif application.razuna.thedatabase EQ "mssql">
+											AND (DATEPART(yy, f.file_create_time) = #session.search.on_year#
+											AND DATEPART(mm, f.file_create_time) = #session.search.on_month#
+											AND DATEPART(dd, f.file_create_time) = #session.search.on_day#)
+										<cfelse>
+											AND f.file_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+										</cfif>
 									</cfif>
-								</cfif>
-								<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-									<cfif application.razuna.thedatabase EQ "mssql">
-										AND (DATEPART(yy, f.file_change_time) = #session.search.change_year#
-										AND DATEPART(mm, f.file_change_time) = #session.search.change_month#
-										AND DATEPART(dd, f.file_change_time) = #session.search.change_day#)
-									<cfelse>
-										AND f.file_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+									<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
+										<cfif application.razuna.thedatabase EQ "mssql">
+											AND (DATEPART(yy, f.file_change_time) = #session.search.change_year#
+											AND DATEPART(mm, f.file_change_time) = #session.search.change_month#
+											AND DATEPART(dd, f.file_change_time) = #session.search.change_day#)
+										<cfelse>
+											AND f.file_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+										</cfif>
 									</cfif>
-								</cfif>
-							
-						) 
+								
+							) 
 						</cfif>
 						<!--- Only if we have dates --->
 						<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
@@ -588,28 +592,27 @@
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 						WHERE v.vid_id IN (<cfif  cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 						<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-						AND v.vid_id in (
-							select vid_id from #session.hostdbprefix#videos where 1=1 
-								<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-									<cfif application.razuna.thedatabase EQ "mssql">
-										AND (DATEPART(yy, v.vid_create_time) = #session.search.on_year#
-										AND DATEPART(mm, v.vid_create_time) = #session.search.on_month#
-										AND DATEPART(dd, v.vid_create_time) = #session.search.on_day#)
-									<cfelse>
-										AND v.vid_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+							AND v.vid_id in (
+								select vid_id from #session.hostdbprefix#videos where 1=1 
+									<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
+										<cfif application.razuna.thedatabase EQ "mssql">
+											AND (DATEPART(yy, v.vid_create_time) = #session.search.on_year#
+											AND DATEPART(mm, v.vid_create_time) = #session.search.on_month#
+											AND DATEPART(dd, v.vid_create_time) = #session.search.on_day#)
+										<cfelse>
+											AND v.vid_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+										</cfif>
 									</cfif>
-								</cfif>
-								<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-									<cfif application.razuna.thedatabase EQ "mssql">
-										AND (DATEPART(yy, v.vid_change_time) = #session.search.change_year#
-										AND DATEPART(mm, v.vid_change_time) = #session.search.change_month#
-										AND DATEPART(dd, v.vid_change_time) = #session.search.change_day#)
-									<cfelse>
-										AND v.vid_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+									<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
+										<cfif application.razuna.thedatabase EQ "mssql">
+											AND (DATEPART(yy, v.vid_change_time) = #session.search.change_year#
+											AND DATEPART(mm, v.vid_change_time) = #session.search.change_month#
+											AND DATEPART(dd, v.vid_change_time) = #session.search.change_day#)
+										<cfelse>
+											AND v.vid_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+										</cfif>
 									</cfif>
-								</cfif>
-							
-						) 
+							) 
 						</cfif>
 						<!--- Only if we have dates --->
 						<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
@@ -757,27 +760,27 @@
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
 						WHERE a.aud_id IN (<cfif cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 						<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-						AND a.aud_id in (
-							select aud_id from #session.hostdbprefix#audios where 1=1 
-								<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-									<cfif application.razuna.thedatabase EQ "mssql">
-										AND (DATEPART(yy, a.aud_create_time) = #session.search.on_year#
-										AND DATEPART(mm, a.aud_create_time) = #session.search.on_month#
-										AND DATEPART(dd, a.aud_create_time) = #session.search.on_day#)
-									<cfelse>
-										AND a.aud_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+							AND a.aud_id in (
+								select aud_id from #session.hostdbprefix#audios where 1=1 
+									<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
+										<cfif application.razuna.thedatabase EQ "mssql">
+											AND (DATEPART(yy, a.aud_create_time) = #session.search.on_year#
+											AND DATEPART(mm, a.aud_create_time) = #session.search.on_month#
+											AND DATEPART(dd, a.aud_create_time) = #session.search.on_day#)
+										<cfelse>
+											AND a.aud_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+										</cfif>
 									</cfif>
-								</cfif>
-								<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-									<cfif application.razuna.thedatabase EQ "mssql">
-										AND (DATEPART(yy, a.aud_change_time) = #session.search.change_year#
-										AND DATEPART(mm, a.aud_change_time) = #session.search.change_month#
-										AND DATEPART(dd, a.aud_change_time) = #session.search.change_day#)
-									<cfelse>
-										AND a.aud_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+									<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
+										<cfif application.razuna.thedatabase EQ "mssql">
+											AND (DATEPART(yy, a.aud_change_time) = #session.search.change_year#
+											AND DATEPART(mm, a.aud_change_time) = #session.search.change_month#
+											AND DATEPART(dd, a.aud_change_time) = #session.search.change_day#)
+										<cfelse>
+											AND a.aud_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
+										</cfif>
 									</cfif>
-								</cfif>
-						) 
+							) 
 						</cfif>
 						<!--- Only if we have dates --->
 						<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
@@ -894,7 +897,7 @@
 					<cfoutput  query="qry" >
 						<cfset querySetCell(newQuery, qry.kind&"_cnt", val(individualCount))>
 					</cfoutput>
-					<cfset qry =newQuery/>
+					<cfset qry = newQuery />
 				</cfif>
 			</cfif>
 		<!---</cftransaction>--->
@@ -920,6 +923,7 @@
 				</cfif>
 				<!--- Init var for new fileid --->
 				<cfset var editids = "0,">
+				<cfset var fileids = "">
 				<!--- Get proper folderaccess --->
 				<cfloop query="qry">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
@@ -929,9 +933,12 @@
 					<cfif theaccess NEQ "R" AND theaccess NEQ "n">
 						<cfset editids = editids & listid & ",">
 					</cfif>
+					<cfset fileids = fileids & id & ",">
 				</cfloop>
 				<!--- Save the editable ids in a session --->
 				<cfset session.search.edit_ids = editids>
+				<!--- Save fileids into session --->
+				<cfset session.search.search_file_ids = fileids>
 				<!--- Log Result --->
 				<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
 			</cfif>
@@ -939,6 +946,8 @@
 		<cfelse>
 			<!--- Save the editable ids in a session --->
 			<cfset session.search.edit_ids = "0">
+			<!--- Save fileids into session --->
+			<cfset session.search.search_file_ids = "0">
 			<!--- Var --->
 			<cfset var customlist = "">
 			<!--- custom metadata fields to show --->
@@ -1002,12 +1011,15 @@
 				SELECT categorytree
 				FROM cattree
 				WHERE categorytree 
-				<cfif arguments.thestruct.listAssetID EQ "">
+				<cfif session.search.search_file_ids EQ 0>
 					= <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 				<cfelse>
-					IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.listAssetID#" list="true">)
+					IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.search.search_file_ids#" list="true">)
 				</cfif>
 				</cfquery>
+				<cfset consoleoutput(true)>
+				<cfset console(cattree)>
+				<cfset console(session.search.search_file_ids)>
 			</cfif>
 		<cfelse>
 			<cfset cattree = querynew("categorytree")>

@@ -83,9 +83,9 @@
 								// Show loading bar
 								$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 								<cfif !structKeyExists(attributes,'search_upc')>
-								$('###attributes.thediv#').load('#myself#c.search_simple', { view: theview, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "view">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
-									$("##bodyoverlay").remove();
-								});
+									$('###attributes.thediv#').load('#myself#c.search_simple', { view: theview, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "view">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+										$("##bodyoverlay").remove();
+									});
 								</cfif>
 							}
 						</script>
@@ -161,27 +161,27 @@
 									</cfloop>
 									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
-									<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
-										<!--- Show assets --->
-										<cfif link_kind NEQ "url">
-											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-												<cfif cloud_url NEQ "">
-													<img src="#cloud_url#" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-												</cfif>
+								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
+									<!--- Show assets --->
+									<cfif link_kind NEQ "url">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelse>
-												<!--- Check is filename format follows UPC rendiitons naming and if  thumb exists for it --->
-												<cfif refind('\.[0-9]',filename) AND !fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
-													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0" img-tt="img-tt">
-												</cfif>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
+											<!--- Check is filename format follows UPC rendiitons naming and if  thumb exists for it --->
+											<cfif refind('\.[0-9]',filename) AND !fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
+												<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+											<cfelse>
+												<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+											</cfif>
 										</cfif>
-									</div>
+									<cfelse>
+										<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
+									</cfif>
+								</div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									</a>
 								</cfif>
@@ -247,10 +247,9 @@
 								<cfelse>
 									<strong>#left(filename,50)#</strong>
 								</cfif>
-								<cfif attributes.folder_id EQ 0>
-									<br>
-									Folder: <a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#left(folder_name,10)#</a>
-								</cfif>
+								<br>
+								<br>
+								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -395,10 +394,9 @@
 								<cfelse>
 									<strong>#left(filename,50)#</strong>
 								</cfif>
-								<cfif attributes.folder_id EQ 0>
-									<br>
-									Folder: <a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a>
-								</cfif>
+								<br>
+								<br>
+								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
 							<cfelse>					
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -531,10 +529,9 @@
 								<cfelse>
 									<strong>#left(filename,50)#</strong>
 								</cfif>
-								<cfif attributes.folder_id EQ 0>
-									<br>
-									Folder: <a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a>
-								</cfif>
+								<br>
+								<br>
+								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -680,10 +677,9 @@
 								<cfelse>
 									<strong>#left(filename,50)#</strong>
 								</cfif>
-								<cfif attributes.folder_id EQ 0>
-									<br>
-									Folder: <a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a>
-								</cfif>
+								<br>
+								<br>
+								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>

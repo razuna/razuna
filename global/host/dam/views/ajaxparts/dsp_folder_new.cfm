@@ -125,6 +125,13 @@
 						<td>ID</td>
 						<td>#attributes.folder_id#</td>
 					</tr>
+					<!--- Show search selection --->
+					<cfif cs.search_selection>
+						<tr>
+							<td>#myFusebox.getApplicationData().defaults.trans("folder_search_selection")#</td>
+							<td><input type="checkbox" name="in_search_selection" value="true"<cfif qry_folder.in_search_selection> checked="checked"</cfif> /></td>
+						</tr>
+					</cfif>
 				</cfif>
 				<tr>
 					<td colspan="2" class="list"></td>
