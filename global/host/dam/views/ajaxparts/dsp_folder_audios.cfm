@@ -110,7 +110,6 @@
 											<!--- Output --->
 											<span class="assetbox_title">#cflabel#:</span>
 											<cfif cflabel NEQ cfvalue>
-												<br />
 												#cfvalue#
 											</cfif>
 										</cfif>
@@ -178,7 +177,6 @@
 											<!--- Output --->
 											<span class="assetbox_title">#cflabel#:</span>
 											<cfif cflabel NEQ cfvalue>
-												<br />
 												#cfvalue#
 											</cfif>
 										</cfif>
