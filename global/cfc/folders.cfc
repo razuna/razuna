@@ -3865,7 +3865,7 @@
 	</cfif>
 	<!--- Add the custom fields to query --->
 	<cfset qry = addCustomFieldsToQuery(qry)>
-	<cfset console(qry.customfields)>
+	<!--- <cfset console(qry.customfields)> --->
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
