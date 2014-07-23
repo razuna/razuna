@@ -5104,8 +5104,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#images
-				SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">,
+				SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbwidth)#">,
+				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbheight)#">,
 				thumb_extension = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#setqry.set2_img_format#">
 				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
