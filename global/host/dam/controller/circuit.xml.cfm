@@ -4517,7 +4517,7 @@
 			</true>
 		</if>
 		<!-- IF we come from search we need to set the ids from the passed form submit -->
-		<if condition="attributes.thekind EQ 'search'">
+		<if condition=" isdefined('attributes.thekind') AND attributes.thekind EQ 'search'">
 			<true>
 				<set name="attributes.file_id" value="#attributes.edit_ids#" />
 			</true>
