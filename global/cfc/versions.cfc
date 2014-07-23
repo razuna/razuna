@@ -833,9 +833,9 @@
 			<cfif arguments.thestruct.type EQ "img">
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 			<cfelseif arguments.thestruct.type EQ "vid">
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
-			<cfelseif arguments.thestruct.type EQ 'doc' AND arguments.thestruct.qryfilelocal.orgext EQ 'PDF'>
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfelseif arguments.thestruct.type EQ 'doc' AND (arguments.thestruct.qryfilelocal.orgext EQ 'PDF' OR arguments.thestruct.qryfilelocal.orgext EQ 'INDD')>
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version_thumb" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#listFirst(arguments.thestruct.qryfilelocal.file_name_org,".")#.jpg" awsbucket="#arguments.thestruct.awsbucket#">
 			</cfif>
 		</cfif>
 		<!--- Update the record in versions DB --->

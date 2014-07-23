@@ -3950,7 +3950,6 @@
 			<!--- Put list together --->
 			<cfset cf_list = cf_list & cf_text & "|" & cf_id & "|" & cf_value & ",">
 		</cfloop>
-		<cfset console(cf_list)>
 		<!--- Now add to query --->
 		<cfset QuerySetCell(query=arguments.theqry, column="customfields", value=cf_list, row=currentrow)>
 		<!--- Reset cf_list --->

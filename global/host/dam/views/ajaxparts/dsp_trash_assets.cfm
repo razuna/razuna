@@ -24,6 +24,7 @@
 *
 --->
 <cfoutput>
+	<cfset uniqueid = createuuid()>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<cfif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
 		<!--- set session file id --->
@@ -142,7 +143,7 @@
 									<!--- Images --->
 									<cfif kind EQ "img">
 										<cfif application.razuna.storage EQ 'local' OR application.razuna.storage EQ 'akamai'> 
-											<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#">
+											<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#?#uniqueid#">
 										<cfelse>
 											<img src="#cloud_url#">
 										</cfif>
@@ -151,22 +152,14 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ 'mp3' OR ext EQ 'wav'>#ext#<cfelse>aud</cfif>.png" border="0">
 									<!--- Files --->
 									<cfelseif kind EQ "doc">
-										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
-				                           <cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0">
-				                           <cfelse>
-				                                <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-				                           </cfif>
-				                       	<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
-				                           <cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-				                           <cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-				                                   <img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
-				                           <cfelse>
-				                                   <img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
-				                           </cfif>
-				                       	<cfelse>
-				                            <cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
-				                       </cfif>
+										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
+											<img src="#cloud_url#" border="0" img-tt="img-tt">
+										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
+										</cfif>
 				                    <!--- Videos --->
 									<cfelseif kind EQ "vid">
 										<cfif link_kind NEQ "url">
@@ -177,7 +170,7 @@
 										           <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										   </cfif>
 											 <cfelse>
-										  	 <img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+										  	 <img src="#thestorage##path_to_asset#/#filename_org#?#uniqueid#" border="0">
 											 </cfif>
 										<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

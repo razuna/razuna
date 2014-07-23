@@ -30,6 +30,7 @@
 	  });
   </script>
 <cfoutput>
+	<cfset uniqueid = createuuid()>
 	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif attributes.folderaccess NEQ "R"> onsubmit="filesubmit();return false;"</cfif>>
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
@@ -111,21 +112,16 @@
 							<tr>
 								<!--- show image according to extension --->
 								<td align="center" style="padding-top:20px;width:400px;" valign="top">
-									<!--- If it is a PDF we show the thumbnail --->
-									<cfif application.razuna.storage EQ "nirvanix" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
-										<img src="#qry_detail.detail.cloud_url#" border="0">
-									<cfelseif application.razuna.storage EQ "local" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
-										<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".#qry_detail.detail.file_extension#", ".jpg", "all")>
-										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") IS "no">
-											<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0">
-										<cfelse>
-											<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#" border="0">
-										</cfif>
-									<cfelseif application.razuna.storage EQ "amazon" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
-										<img src="#qry_detail.detail.cloud_url#" border="0">
+									<!--- Show the thumbnail --->
+									<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".#qry_detail.detail.file_extension#", ".jpg", "all")>
+									<cfif application.razuna.storage EQ "amazon" AND qry_detail.detail.cloud_url NEQ "">
+										<img src="#qry_detail.detail.cloud_url#" border="0" img-tt="img-tt">
+									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") >
+										<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#?#uniqueid#" border="0">
 									<cfelse>
-										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" width="128" height="128" border="0"></cfif>
+										<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" width="128" height="128" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 									</cfif>
+
 									<cfif qry_detail.detail.link_kind EQ "url">
 										<br /><a href="#qry_detail.detail.link_path_url#" target="_blank">#qry_detail.detail.link_path_url#</a>
 									<cfelseif qry_detail.detail.link_kind EQ "lan">
@@ -305,6 +301,11 @@
 						</table>
 					</td>
 				</tr>
+				<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+					<tr>
+						<td><a href="##" onclick="showwindow('#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("header_preview_image")#',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_title")#</a></td>
+					</tr>
+				</cfif>
 				<!--- Submit Button --->
 				<tr>
 					<td colspan="2">
