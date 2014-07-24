@@ -631,12 +631,26 @@
 							#myFusebox.getApplicationData().defaults.trans("heigth")#: <input type="text" name="assetbox_height" value="#qry_customization.assetbox_height#" size="3" />px<br />
 							#myFusebox.getApplicationData().defaults.trans("width")#: <input type="text" name="assetbox_width" value="#qry_customization.assetbox_width#" size="3" />px
 							<br /><br />
-							<em>(#myFusebox.getApplicationData().defaults.trans("multiselect")#)</em>
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="2">
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_show_metadata_labels")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("header_customization_show_metadata_labels_desc")#
+							<br/>
+							<input type="radio" name="show_metadata_labels" value="true"<cfif qry_customization.show_metadata_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_metadata_labels" value="false"<cfif !qry_customization.show_metadata_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
 							<br /><br />
 						</td>
 					</tr>
+
 					<tr>
 						<td colspan="2">
+							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_metadata_header")#</strong>
+							<br/><br/>
+							<em>(#myFusebox.getApplicationData().defaults.trans("multiselect")#)</em>
+							<br /><br />
 							<!--- IMAGES --->
 							#myFusebox.getApplicationData().defaults.trans("header_customization_fileview_images")#
 						</td>

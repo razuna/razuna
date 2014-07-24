@@ -1934,6 +1934,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.req_filename = true>
 	<cfset v.req_description = false>
 	<cfset v.req_keywords = false>
+	<cfset v.show_metadata_labels = true>
 	<cfset v.images_metadata = "">
 	<cfset v.videos_metadata = "">
 	<cfset v.files_metadata = "">
@@ -2194,6 +2195,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.customfield_audios_metadata = custom_value>
 			<cfelseif custom_id EQ "customfield_all_metadata">
 				<cfset v.customfield_all_metadata = custom_value>
+			<cfelseif custom_id EQ "show_metadata_labels" AND !custom_value>
+				<cfset v.show_metadata_labels = false>
 			</cfif>
 			<!--- For folder custom fields --->
 			<cfif custom_id EQ "cf_images_metadata">
