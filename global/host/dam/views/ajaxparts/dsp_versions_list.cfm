@@ -41,7 +41,8 @@
 		</cfif>	
 	</tr>
 	<cfloop query="qry_versions">
-		<tr class="list">
+<!--- 		<cfdump var="#qry_versions#">
+ --->		<tr class="list">
 			<!--- RAZ-2904::Thumbnail Preview --->
 			<cfset thumb_img_jpg = replacenocase(ver_filename_org, ".#ver_extension#", ".jpg", "all")>
 			<cfif application.razuna.storage EQ "local">
@@ -76,7 +77,7 @@
 				</cfif>
 			</cfif>
 			<td>
-				<a href="#thumb_img#" target="_blank"><img src="#thumb_img#" height="50" <!--- onerror = "this.src='#dynpath#/global/host/dam/images/icons/image_missing.png' " --->></a> 
+				<a href="#thumb_img#" target="_blank"><img src="#thumb_img#" height="50" onerror = "this.src='#dynpath#/global/host/dam/images/icons/image_missing.png' "></a> 
 			</td>
 			<td><b>#ver_version#</b></td>
 			<td width="100%">#dateformat(ver_date_add,"mmmm dd yyyy")# #timeformat(ver_date_add,"hh:mm:ss")#</td>
