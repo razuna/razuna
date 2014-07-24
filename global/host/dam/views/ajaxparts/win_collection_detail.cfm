@@ -37,6 +37,7 @@
 </cfif>
 <!--- </cfif> --->
 <cfoutput>
+	<cfset uniqueid = createuuid()>
 	<form name="form#col_id#" id="form#col_id#" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
@@ -273,19 +274,14 @@
 									<cfloop query="qry_thefile">
 										<cfif myid EQ file_id>
 											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#file_id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
-											<!--- If it is a PDF we show the thumbnail --->
-											<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+											<!--- Show the thumbnail --->
+											<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
+											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
-											<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
-												<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-												<cfset thethumb = replacenocase(thethumb, ".indd", ".jpg", "all")>
-												<cfif  FileExists("#attributes.prefs.set2_path_to_assets#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
-												</cfif>
+											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
 											<cfelse>
-												<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
+												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>
 											</a>
 										</cfif>

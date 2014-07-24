@@ -29,7 +29,7 @@
 	<cfset isadmin = false>
 </cfif>
 <cfoutput>
-	<cfset randvar = createuuid()>
+	<cfset uniqueid = createuuid()>
 	<cfif qry_filecount.thetotal LTE session.rowmaxpage>
 		<cfset session.offset = 0>
 	</cfif>
@@ -135,7 +135,7 @@
 										}
 									});
 									<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-										$('##iconbar_search_#randvar#_#id#').css('display','none');
+										$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 									</cfif>
 								});
 								</script>
@@ -169,6 +169,11 @@
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+												<cfif refind('\.[0-9]',filename) AND !fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
+													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
+												<cfelse>
+													<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
+												</cfif>
 											</cfif>
 										<cfelse>
 											<!--- Check is filename format follows UPC rendiitons naming and if  thumb exists for it --->
@@ -190,7 +195,7 @@
 										<input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-img") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+										<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 											<cfif permfolder EQ "R" OR permfolder EQ "n">
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
@@ -283,7 +288,7 @@
 										}
 									});
 									<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-										$('##iconbar_search_#randvar#_#id#').css('display','none');
+										$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 									</cfif>
 								});
 								</script>
@@ -320,7 +325,7 @@
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+											<img src="#thestorage##path_to_asset#/#filename_org#?#uniqueid#" border="0">
 										</cfif>
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -334,7 +339,7 @@
 										<input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-vid") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+										<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 											<cfif permfolder EQ "R" OR permfolder EQ "n">
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
@@ -430,7 +435,7 @@
 										}
 									});
 									<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-										$('##iconbar_search_#randvar#_#id#').css('display','none');
+										$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 									</cfif>
 								});
 								</script>
@@ -469,7 +474,7 @@
 										<input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-aud") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+										<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 											<cfif permfolder EQ "R" OR permfolder EQ "n">
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
@@ -565,7 +570,7 @@
 										}
 									});
 									<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-										$('##iconbar_search_#randvar#_#id#').css('display','none');
+										$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 									</cfif>
 								});
 								</script>
@@ -595,21 +600,13 @@
 								</cfif>
 								<div id="draggable-s#theid#-doc" type="#theid#-doc" class="theimg">
 									<!--- If it is a PDF we show the thumbnail --->
-									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
-										<cfif cloud_url NEQ "">
-											<img src="#cloud_url#" border="0" img-tt="img-tt">
-										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-										</cfif>
-									<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
-										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
-										<cfelse>
-											<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
-										</cfif>
+									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+									<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
+										<img src="#cloud_url#" border="0" img-tt="img-tt">
+									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
 									<cfelse>
-										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
+										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 									</cfif>
 								</div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
@@ -618,7 +615,7 @@
 										<input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-doc") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+										<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 											<cfif permfolder EQ "R" OR permfolder EQ "n">
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
@@ -729,7 +726,7 @@
 							}
 						});
 						<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-							$('##iconbar_search_#randvar#_#id#').css('display','none');
+							$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 						</cfif>
 					});
 					</script>
@@ -746,7 +743,7 @@
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#thestorage#/#path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+											<img src="#thestorage#/#path_to_asset#/thumb_#theid#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -759,7 +756,7 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<cfif permfolder EQ "R" OR permfolder EQ "n">
 											<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 										</cfif>
@@ -821,7 +818,7 @@
 							}
 						});
 						<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-							$('##iconbar_search_#randvar#_#id#').css('display','none');
+							$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 						</cfif>
 					});
 					</script>
@@ -830,7 +827,7 @@
 							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#">
 									<cfif link_kind NEQ "url">
-										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+										<img src="#thestorage##path_to_asset#/#filename_org#?#uniqueid#" border="0">
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128">
 									</cfif>
@@ -842,7 +839,7 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -901,7 +898,7 @@
 							}
 						});
 						<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-							$('##iconbar_search_#randvar#_#id#').css('display','none');
+							$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 						</cfif>
 					});
 					</script>
@@ -918,7 +915,7 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
@@ -978,7 +975,7 @@
 							}
 						});
 						<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-							$('##iconbar_search_#randvar#_#id#').css('display','none');
+							$('##iconbar_search_#uniqueid#_#id#').css('display','none');
 						</cfif>
 					});
 					</script>
@@ -1011,7 +1008,7 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<div id="iconbar_search_#randvar#_#id#" style="display:inline">
+									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>

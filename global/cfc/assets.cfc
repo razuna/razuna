@@ -5068,6 +5068,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif arguments.thestruct.type EQ "img">
 			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry.file_id#">
+		<cfelseif arguments.thestruct.type EQ "doc">
+			, file_name_noext
+			FROM #session.hostdbprefix#files
+			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry.file_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -5078,6 +5082,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.newname = arguments.thestruct.qry_existing.vid_name_image>
 		<cfelseif arguments.thestruct.type EQ "img">
 			<cfset arguments.thestruct.newname = "thumb_#qry.file_id#.#setqry.set2_img_format#">
+		<cfelseif arguments.thestruct.type EQ "doc">
+			<cfset arguments.thestruct.newname = arguments.thestruct.qry_existing.file_name_noext & ".jpg">
 		</cfif>
 		<cfset var newpath = replacenocase(qry.path, qry.filename, "", "all")>
 		<cfset arguments.thestruct.thedest = newpath & "/" & arguments.thestruct.newname>
@@ -5098,8 +5104,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#images
-				SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">,
+				SET thumb_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbwidth)#">,
+				thumb_height = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbheight)#">,
 				thumb_extension = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#setqry.set2_img_format#">
 				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -5137,6 +5143,13 @@ This is the main function called directly by a single upload else from addassets
 				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+			<cfelseif arguments.thestruct.type EQ "doc">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files
+				SET cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
+				WHERE file_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 			</cfif>
 		</cfif>
 		<!--- Remove record in DB --->
@@ -5149,6 +5162,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("files")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	</cfif>
 </cffunction>
