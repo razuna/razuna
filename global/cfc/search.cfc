@@ -1011,15 +1011,13 @@
 				SELECT categorytree
 				FROM cattree
 				WHERE categorytree 
-				<cfif session.search.search_file_ids EQ 0>
+				<cfif session.search.search_file_ids EQ 0 OR session.search.search_file_ids EQ ''>
 					= <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 				<cfelse>
 					IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.search.search_file_ids#" list="true">)
 				</cfif>
 				</cfquery>
 				<cfset consoleoutput(true)>
-				<cfset console(cattree)>
-				<cfset console(session.search.search_file_ids)>
 			</cfif>
 		<cfelse>
 			<cfset cattree = querynew("categorytree")>
