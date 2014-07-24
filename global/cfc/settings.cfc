@@ -1974,6 +1974,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.email_btn_basket = "">
 	<!--- For search --->
 	<cfset v.search_selection = false>
+	<cfset v.hide_search_tabs = false>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2217,6 +2218,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<!--- For search --->
 			<cfif custom_id EQ "search_selection" AND custom_value>
 				<cfset v.search_selection = true>
+			<cfelseif custom_id EQ "hide_search_tabs" AND custom_value>
+				<cfset v.hide_search_tabs = true>
 			</cfif>
 		</cfloop>
 	</cfif>

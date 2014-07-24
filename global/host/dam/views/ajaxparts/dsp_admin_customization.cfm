@@ -1366,6 +1366,11 @@
 				<br />
 				<div><input type="radio" name="search_selection" value="true"<cfif qry_customization.search_selection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="search_selection" value="false"<cfif !qry_customization.search_selection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
 				<br />
+				<!--- Hide advanced search tabs --->
+				<strong>#myFusebox.getApplicationData().defaults.trans("hide_search_tabs")#</strong>
+				<br />
+				<div><input type="radio" name="hide_search_tabs" value="true"<cfif qry_customization.hide_search_tabs> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="hide_search_tabs" value="false"<cfif !qry_customization.hide_search_tabs> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+				<br />
 			</div>
 		</div>
 
