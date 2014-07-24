@@ -383,7 +383,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
+		<cfset variables.cachetoken = resetcachetoken("images")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
 		<cfset resetcachetoken("labels")>
