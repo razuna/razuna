@@ -528,10 +528,12 @@ height: expression(this.height > 110 ? "110px" : true);
 #div_feedback input, #div_feedback textarea { outline: none; background-color: #f1f1f1; border: 3px solid #b2b2b2; padding: 2px; }
 #div_feedback input:focus, #div_feedback textarea:focus { border: 3px solid #972324; }
 #div_feedback input, #div_feedback textarea { -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
+
 .assetbox {
 margin: 5px;
 padding: 5px;
-background: #fffffc;
+/*background: #fffffc;*/
+background: #ffffff;
 border: #D8D5D2 1px solid;
 float: left;
 min-height: 230px;
