@@ -23,6 +23,13 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Hide assetbox labels from dispalying if setting is turned on --->
+<cfif !cs.show_metadata_labels>
+	<style>
+		.assetbox_title {display: none;}
+	</style>
+</cfif>
+
 <cfif !cgi.http_user_agent CONTAINS "iphone" AND !cgi.http_user_agent CONTAINS "ipad">
 	<cfset w = 300>
 <cfelse>
