@@ -43,7 +43,6 @@
 	<div style="clear:both;"></div>
 	<!--- Search Results --->
 	<div id="loading_searchagain"></div>
-	<cfdump var="#session.search.search_file_ids#">
 	<div>
 		<cfif !structKeyExists(attributes,'search_upc')> 
 			<!--- Refine Search --->
