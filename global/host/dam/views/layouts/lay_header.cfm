@@ -63,7 +63,7 @@
 						<!--- This is the selected value (should come from the defined selection of the user) --->
 						<div style="float:left;padding:3px 5px 0px 5px;">
 							<select data-placeholder="" class="chzn-select" name="qs_folder_id" id="qs_folder_id" style="min-width:100px;">
-								<option value="0">Search in all</option>
+								<!--- <option value="0">Search in all</option> --->
 								<cfloop query="qry_searchselection">
 									<option value="#folder_id#"<cfif session.user_search_selection EQ "#folder_id#"> selected="selected"</cfif>>#folder_name#</option>
 								</cfloop>
