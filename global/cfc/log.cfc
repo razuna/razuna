@@ -684,4 +684,36 @@
 	<cfreturn qry>
 </cffunction>
 
+<!--- FOLDER SUMMARY --->
+<cffunction name="log_folder_summary" output="false" access="public">
+	<cfargument name="folder_id" required="true" type="string">
+	<cfargument name="allfolders" default="false" required="false" type="string" hint="Get all folders for host">
+	<cfargument name="sortby" default="" required="false" type="string" hint="Sort order for query">
+	<!--- Qry --->
+	<cfset var qry ="">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#log_summary */ f.folder_id, f.folder_name, u.user_login_name as user,
+	(SELECT COUNT(1) FROM #session.hostdbprefix#folders WHERE folder_id_r = f.folder_id AND folder_id_r <> folder_id) sf_cnt
+	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON f.folder_owner = u.user_id
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND (folder_is_collection IS NULL OR folder_is_collection ='' OR folder_is_collection ='F')
+	AND in_trash = 'F'
+	AND EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id = f.folder_id_r)/*Make sure folder parent exists in system to avoid orphans*/
+	<cfif arguments.folder_id NEQ 0>
+		AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+		AND f.folder_id_r <> f.folder_id
+	<cfelseif !arguments.allfolders>
+		AND f.folder_level = '1'
+	</cfif>
+	ORDER BY
+	<cfif arguments.sortby NEQ ''>
+		#arguments.sortby#
+	<cfelse>
+		f.folder_name ASC
+	</cfif>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
+
 </cfcomponent>

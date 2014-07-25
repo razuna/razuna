@@ -2967,6 +2967,7 @@
 <cffunction name="fileTotalAllTypes" output="false" hint="CREATE QUERY TABLE WITH AMOUNT OF DIFFERENT FILE TYPES FOR TAB DISPLAY">
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="folderaccess" default="" required="no" type="string">
+	<cfargument name="sortby" default="" required="no" type="string">
 	<!--- Params --->
 	<cfparam name="session.customfileid" default="">
 	<!--- Get the cachetoken for here --->
@@ -3109,7 +3110,12 @@
 				AND 
 				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			)
-		ORDER BY cnt DESC, scr
+		ORDER BY 
+		<cfif arguments.sortby NEQ "">
+			#arguments.sortby#
+		<cfelse>
+			cnt DESC, scr
+		</cfif>
 	</cfquery>
 
 	<cfreturn qTab>
