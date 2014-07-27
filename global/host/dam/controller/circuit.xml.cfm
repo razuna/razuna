@@ -7230,6 +7230,23 @@
 	<!-- ADMIN: LOG FOLDERS START -->
 	<!--  -->
 	
+
+	<!-- Get folder Summary -->
+	<fuseaction name="log_folder_summary">
+		<!-- CFC: Count all files -->
+		<invoke object="myFusebox.getApplicationData().log" methodcall="log_folder_summary(#attributes.folder_id#)" returnvariable="folders" />
+		<!-- Show -->
+		<do action="ajax.log_folder_summary" />
+	</fuseaction>
+
+	<!-- Get Folder Summary Report -->
+	<fuseaction name="log_folder_summary_report">
+		<!-- CFC: Count all files -->
+		<invoke object="myFusebox.getApplicationData().log" methodcall="log_folder_summary(#attributes.folder_id#,'true','f.folder_main_id_r,f.folder_level asc')" returnvariable="folders" />
+		<!-- Show -->
+		<do action="ajax.log_folder_summary_report" />
+	</fuseaction>
+
 	<!-- Get Log files -->
 	<fuseaction name="log_folders">
 		<!-- Set offset for logs -->

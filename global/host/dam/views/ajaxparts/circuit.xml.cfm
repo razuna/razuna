@@ -449,6 +449,17 @@
 	<fuseaction name="log_assets">
   		<include template="dsp_admin_log_assets" />
 	</fuseaction>
+	
+	<!-- ADMIN: Log Folder Summary -->
+	<fuseaction name="log_folder_summary">
+  		<include template="dsp_admin_log_folder_summary" />
+	</fuseaction>
+
+	<!-- ADMIN: Log Folder Summary Report -->
+	<fuseaction name="log_folder_summary_report">
+  		<include template="dsp_admin_log_folder_summary_report" />
+	</fuseaction>
+
 	<!-- ADMIN: Log Folders -->
 	<fuseaction name="log_folders">
   		<include template="dsp_admin_log_folders" />
