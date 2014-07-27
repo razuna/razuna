@@ -36,9 +36,9 @@
 		<cfset folderpath = "">
 		<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id)>
 		<cfloop list="#crumbs#" delimiters=";" index="i">
-			<cfset folderpath = folderpath & "/<a href='##' onclick=loadcontent('log_show','#myself#c.log_folder_summary&folder_id=#ListGetAt(i,2,'|')#&showcrumbs=yes');>#ListGetAt(i,1,'|')#</a>">
+			<cfset folderpath = folderpath & " / <a href='##' onclick=loadcontent('log_show','#myself#c.log_folder_summary&folder_id=#ListGetAt(i,2,'|')#&showcrumbs=yes');>#ListGetAt(i,1,'|')#</a>">
 		</cfloop>
-		#folderpath#
+		<a href="##" onclick="loadcontent('log_show','/raz1/dam/index.cfm?fa=c.log_folder_summary&folder_id=0');">Home</a> #folderpath#
 	</cfif>
 
 	<table border="1" cellpadding="0" cellspacing="0" width="100%" class="grid">
