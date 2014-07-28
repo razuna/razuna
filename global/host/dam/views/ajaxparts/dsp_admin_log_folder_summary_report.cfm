@@ -32,7 +32,11 @@
 		<th>Folder</th><th>Audios</th><th>Excel</th><th>Images</th><th>Other</th><th>PDF</th><th>Videos</th><th>Word</th>
 		<cfloop query ="folders">
 			<!--- Get asset totals for folder that is sorted so we can display it properly --->
-			<cfset totals = myFusebox.getApplicationData().folders.filetotalalltypes(folder_id,'','scr')>
+			<cfif session.getallassets>
+				<cfset totals = myFusebox.getApplicationData().folders.GetTotalAllAssets(folder_id)>
+			<cfelse>
+				<cfset totals = myFusebox.getApplicationData().folders.filetotalalltypes(folder_id,'','scr')>
+			</cfif>
 			<tr>
 				<td>
 					 <!--- Get entire folder path --->
