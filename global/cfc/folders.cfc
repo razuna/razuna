@@ -2968,8 +2968,14 @@
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="folderaccess" default="" required="no" type="string">
 	<cfargument name="sortby" default="" required="no" type="string">
+	<cfargument name="nocache" default="false" required="no" type="string">
 	<!--- Params --->
 	<cfparam name="session.customfileid" default="">
+
+	<!--- Do not cache query. Seems to return funky results if cached when called in a loop --->
+	<cfif arguments.nocache>
+		<cfset resetcachetoken("folders")>
+	</cfif>
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- For aliases --->
@@ -2977,6 +2983,7 @@
 	<cfset var alias_vid = '0,'>
 	<cfset var alias_aud = '0,'>
 	<cfset var alias_doc = '0,'>
+	<cfset var qTab = ''>
 	<!--- Query Aliases --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
@@ -2995,7 +3002,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qTab" cachedwithin="1" region="razcache">
+	<cfquery datasource="#variables.dsn#" name="qTab" cachedwithin="1" region="razcache" result="myqry">
 		SELECT /* #variables.cachetoken#fileTotalAllTypes */ 'doc' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_word' as scr
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -3117,7 +3124,6 @@
 			cnt DESC, scr
 		</cfif>
 	</cfquery>
-
 	<cfreturn qTab>
 
 </cffunction>
@@ -7789,6 +7795,27 @@
 	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	ORDER BY lower(folder_name)
 	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
+
+<cffunction name="GetTotalAllAssets" output="false" returntype="query" hint="Totals of asset counts in folder including subfolders">
+	<cfargument name ="folder_id" required="true" type="string">
+	<cfset var qry = ''>
+	<cfset var qry_sf = ''>
+	<!--- Get list of all subfolders --->
+	<cfset var subfolderslist = getchildfolders(arguments.folder_id)>
+	<!--- Get file totals for main folder --->
+	<cfset qry  = filetotalalltypes(arguments.folder_id,'','scr',true)>
+
+	<!--- Loop over all subfolders, get totals and add to main folder total --->
+	<cfloop list="#subfolderslist#" index="i">
+		<cfset qry_sf  = filetotalalltypes(i,'','scr',true)>
+		<cfloop query = "qry_sf">
+			<cfset var tmp = querySetCell(qry,"cnt",qry["cnt"][currentrow] + qry_sf["cnt"][currentrow],currentrow)>
+		</cfloop>
+	</cfloop>
 	<!--- Return --->
 	<cfreturn qry />
 </cffunction>
