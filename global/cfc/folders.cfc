@@ -2296,8 +2296,6 @@
 <!--- SAVE FOLDER PROPERTIES --->
 <cffunction name="update" output="true" returntype="string">
 	<cfargument name="thestruct" type="struct">
-	<cfset consoleoutput(true)>
-	<cfset console(arguments.thestruct.in_search_selection)>
 	<!--- Param --->
 	<cfset arguments.thestruct.grpno = "T">
 	<cfparam name="arguments.thestruct.in_search_selection" default="false" />
