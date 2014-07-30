@@ -1957,11 +1957,12 @@ $(document).tooltip({
 	content: function() {
 		 var element = $( this );
 		 var theimg = element.attr("src");
-		 return "<img src='" + theimg + "' border='0'>";
+		 return "<img src='" + theimg + "' border='0' style='max-width:400px;max-height:400px;'>";
 	},
 	position: {
 		my: "center bottom",
-		at: "center top"
+		at: "center top",
+		collision: "flipfit"
 	}
 });
 // Remove label while click on X
