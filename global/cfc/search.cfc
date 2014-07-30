@@ -140,7 +140,6 @@
 		<!--- If the cattree is not empty --->
 		<cfif proceedToSQL NEQ 0>
 			
-			
 			<!--- MySQL Offset --->
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			
@@ -882,6 +881,7 @@
 							</cfif>		 
 				</cfif>
 			</cfquery>
+			
 			<!--- Select only records that are unlocked --->
 			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
@@ -1017,7 +1017,6 @@
 					IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.search.search_file_ids#" list="true">)
 				</cfif>
 				</cfquery>
-				<cfset consoleoutput(true)>
 			</cfif>
 		<cfelse>
 			<cfset cattree = querynew("categorytree")>
