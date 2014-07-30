@@ -3981,14 +3981,6 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
-		<if condition="attributes.customfields NEQ 0">
-			<true>
-				<do action="custom_fields_save" />
-			</true>
-		</if>
-		<!-- CFC: Save file detail -->
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="vid" />
 		<!-- Action: Get asset path -->
@@ -4345,14 +4337,6 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
-		<if condition="attributes.customfields NEQ 0">
-			<true>
-				<do action="custom_fields_save" />
-			</true>
-		</if>
-		<!-- CFC: Save file detail -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="aud" />
 		<!-- Action: Get asset path -->
