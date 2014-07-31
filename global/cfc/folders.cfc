@@ -7270,7 +7270,17 @@
 		<!--- Feedback --->
 		<cfoutput>. </cfoutput>
 		<cfflush>
-			
+		<!--- Check if last char of filename is an alphabet. If so then it will be appeneded to resulting UPC filename --->
+		<cfset var fn_last_char = "">
+		<cfif find('.', filename)>
+			 <cfset fn_last_char = right(listfirst(filename,'.'),1)> 
+			<cfif not isnumeric(fn_last_char)>
+				<cfset var fn_ischar = true>
+			<cfelse>
+				<cfset fn_ischar = false>
+				<cfset fn_last_char = "">
+			</cfif>
+		</cfif>
 		<!--- If we have to get thumbnails then the name is different --->
 		<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
 			<cfif arguments.dl_thumbnails AND kind EQ "img">
@@ -7295,7 +7305,7 @@
 					</cfif>
 				</cfif>
 				<cfset var theorgext = listlast(theorgname,".")>
-				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#theorgext#">
+				<cfset var thefinalname = "#arguments.thestruct.upc_name##fn_last_char##rendition_version#.#theorgext#">
 				<cfset var thiscloudurl = cloud_url_org>
 			</cfif>
 		<cfelse>
@@ -7339,7 +7349,7 @@
 						<cfset rendition_version ="." & rendition_version>
 					</cfif>
 				</cfif>
-				<cfset var thefinalname = "#arguments.thestruct.upc_name##rendition_version#.#extension#">
+				<cfset var thefinalname = "#arguments.thestruct.upc_name##fn_last_char##rendition_version#.#extension#">
 			<cfelse>
 				<cfset var thefinalname = filename_av>
 			</cfif>

@@ -693,7 +693,7 @@
 	<cfset var qry ="">
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#log_summary */ f.folder_id, f.folder_name, u.user_login_name as user,
-	(SELECT COUNT(1) FROM #session.hostdbprefix#folders WHERE folder_id_r = f.folder_id AND folder_id_r <> folder_id) sf_cnt
+	(SELECT COUNT(1) FROM #session.hostdbprefix#folders WHERE folder_id_r = f.folder_id AND folder_id_r <> folder_id AND in_trash = 'F') sf_cnt
 	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON f.folder_owner = u.user_id
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND (folder_is_collection IS NULL OR folder_is_collection ='' OR folder_is_collection ='F')

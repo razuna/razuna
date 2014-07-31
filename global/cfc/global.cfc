@@ -814,8 +814,9 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
+		
 		<cfif not isdefined("arguments.thestruct.prefs")>
-			<cfset arguments.thestruct.prefs - structnew()>
+			<cfset arguments.thestruct.prefs = structnew()>
 		</cfif>
 
 		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
@@ -841,11 +842,22 @@ Comment:<br>
 			</cfinvoke>
 			<!--- Only if product string is numeric then change filename --->
 			<cfif isNumeric(upcinfo.upcprodstr)>
+				<!--- Check if last char of filename is an alphabet. If so then it will be appeneded to resulting UPC filename --->
+				<cfset var fn_last_char = "">
+				<cfif find('.', arguments.thestruct.av_link_title)>
+					 <cfset fn_last_char = right(listfirst(arguments.thestruct.av_link_title,'.'),1)> 
+					<cfif not isnumeric(fn_last_char)>
+						<cfset var fn_ischar = true>
+					<cfelse>
+						<cfset fn_ischar = false>
+						<cfset fn_last_char = "">
+					</cfif>
+				</cfif>
 				<cfset var filenum = getToken(arguments.thestruct.av_link_title,2,'.') >
 				<cfif isnumeric(filenum)>
-					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '.#filenum#'>
+					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '#fn_last_char#.#filenum#'>
 				<cfelse>
-					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr>
+					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & fn_last_char>
 				</cfif>
 			</cfif>
 		</cfif>

@@ -706,7 +706,7 @@
 				<cfset rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & theext>
-				<cfset thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") & "." & theext>
+				<cfset thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") &  "." & theext>
 				<cfset theart = theext & "_" & theimgid>
 				<cfset upcnum = qrysub.upcnum>
 			<cfelseif theart EQ "versions">
@@ -742,6 +742,7 @@
 			</cfinvoke>
 			<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 			 <cfif upcstruct.upcenabled>
+			 	<cfset var fn_last_char = "">
 			 	<cfquery name="qry_upcgrp" dbtype="query">
 					SELECT * FROM arguments.thestruct.qry_GroupsOfUser WHERE upc_size <>'' AND upc_size is not null
 				</cfquery>
@@ -769,9 +770,17 @@
 							<cfelse>
 								<cfset rendition_version ="." & rendition_version>
 							</cfif>
+							<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
+							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)> 
+							<cfif not isnumeric(fn_last_char)>
+								<cfset var fn_ischar = true>
+							<cfelse>
+								<cfset fn_ischar = false>
+								<cfset fn_last_char = "">
+							</cfif>
 					</cfif>
 
-					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##rendition_version#">
+					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##fn_last_char##rendition_version#">
 					<!--- Remove extension from filenames for UPC --->
 					<cfset arguments.thestruct.thefinalname = replacenocase(replacenocase(arguments.thestruct.thefinalname,".#theext#","","ALL"),".jpg","ALL")>
 				</cfif>

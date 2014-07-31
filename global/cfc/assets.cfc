@@ -2562,7 +2562,7 @@ This is the main function called directly by a single upload else from addassets
 			img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">,
 			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1)>
+			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar))>
 			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
 			</cfif>
 			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
@@ -2597,7 +2597,7 @@ This is the main function called directly by a single upload else from addassets
 					WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Check the UPC rendition upload --->
-				<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND attributes.intstruct.upcRenditionNum NEQ 1>
+				<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND (attributes.intstruct.upcRenditionNum NEQ 1 OR attributes.intstruct.fn_ischar)>
 					 <!--- Add to shared options --->
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#share_options
@@ -2828,7 +2828,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
 					img_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
 				</cfif>
-				<cfif arguments.thestruct.upcRenditionNum NEQ 1>
+				<cfif arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar>
 					img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
 				<cfelse>
 					img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">,
@@ -3746,7 +3746,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.thisvid.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
-		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1>
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar)>
 			<cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfelse>
@@ -4930,7 +4930,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
-		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1>
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar)>
 			<cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
 		<cfelse>
@@ -6957,10 +6957,9 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			<!--- Check for the same MD5 hash in the existing records --->
 			<!--- Put a lock around it as this in a thread and without it duplicate files are sometimes possible as the checks run simultaenously--->
-			<cflock  scope="session" type="exclusive" timeout="10">
+ 			<cflock  scope="session" type="exclusive" timeout="10">
 				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" checkinfolder="#checkinfolder#"/>
 			</cflock>
-
 			<!--- If file does not exist then add --->
 			<cfif md5here EQ 0>
 				<!--- Add to temp db --->
@@ -7469,18 +7468,38 @@ This is the main function called directly by a single upload else from addassets
 	</cfinvoke>
 	<!--- Check the current folder having label text as upc --->
 	<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.folder_id#" thetype="folder" checkUPC="true" returnvariable="arguments.thestruct.qry_labels">
+	<!--- Check if last char is alphabet --->
+	<cfset var fn_first = listfirst(arguments.thestruct.theoriginalfilename,".")>
+	<cfset var fn_last_char = right(fn_first,1)> 
+	<cfif not isnumeric(fn_last_char)>
+		<cfset var fn_ischar = true>
+	<cfelse>
+		<cfset fn_ischar = false>
+	</cfif>
+	<!--- Put in arguments scope so it can be passed to parent methods --->
+	<cfset arguments.thestruct.fn_ischar = fn_ischar>
+	<cfif fn_ischar>
+		<cfset var fn_first_1 = left(fn_first,len(fn_first)-1) > <!--- remove last char from filename --->
+	<cfelse>
+		<cfset var fn_first_1 = fn_first >
+	</cfif>
 	<!--- Check the UPC option is enabled --->
-	<cfif prefs.set2_upc_enabled AND listLen(arguments.thestruct.theoriginalfilename,".") EQ 3 AND isNumeric(listfirst(arguments.thestruct.theoriginalfilename,".")) AND isNumeric(listgetat(arguments.thestruct.theoriginalfilename,2,'.')) AND arguments.thestruct.qry_GroupsOfUser.recordcount AND arguments.thestruct.qry_labels NEQ ''>
+	<cfif prefs.set2_upc_enabled AND listLen(arguments.thestruct.theoriginalfilename,".") EQ 3 AND isNumeric(fn_first_1) AND isNumeric(listgetat(arguments.thestruct.theoriginalfilename,2,'.')) AND arguments.thestruct.qry_GroupsOfUser.recordcount AND arguments.thestruct.qry_labels NEQ ''>
 		<cfset arguments.thestruct.checkUFName=listDeleteAt(arguments.thestruct.theoriginalfilename,listLen(arguments.thestruct.theoriginalfilename,"."),".")>
 		<cfif Find(".", '#arguments.thestruct.checkUFName#') NEQ 0 >
 			<cfset arguments.thestruct.checkURNum = listlast('#arguments.thestruct.checkUFName#','.')>
 			<cfif isNumeric(arguments.thestruct.checkURNum)>
 				<cfset arguments.thestruct.upcFileName = arguments.thestruct.checkUFName >
-				<cfset arguments.thestruct.dl_query.upc_number = listfirst('#arguments.thestruct.upcFileName#','.') >
+				<!--- Remove character if present before grabbing UPC --->
+				<cfif fn_ischar>
+					<cfset arguments.thestruct.dl_query.upc_number = listfirst('#replace(arguments.thestruct.upcFileName,fn_last_char,"","ONE")#','.') >
+				<cfelse>
+					<cfset arguments.thestruct.dl_query.upc_number = listfirst('#arguments.thestruct.upcFileName#','.') >
+				</cfif>
 				<cfset arguments.thestruct.upcRenditionNum = arguments.thestruct.checkURNum >
 			</cfif>
 		</cfif> 
-		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ 1>
+		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR fn_ischar)>
 			<cfif arguments.assetfrom EQ 'img'>
 				<cfset field_name = 'img_id'>
 				<cfset table_name = '#session.hostdbprefix#images'>
@@ -7494,7 +7513,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset table_name = '#session.hostdbprefix#videos'>
 				<cfset check_field_name = 'vid_upc_number'>
 			</cfif>
-			<!--- GroupID assigned for the easy way upload --->
+			<!--- Get original asset to which this rendition will be associated --->
 			<cfquery name="arguments.thestruct.qryGroupDetails" datasource="#application.razuna.datasource#">
 				SELECT #field_name# as id
 				FROM #table_name# 
@@ -7514,10 +7533,14 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke component="folders" method="Find_Prod_String" returnvariable="arguments.thestruct.upc_name">
 				<cfinvokeargument name="strManuf_UPC" value="#extract_upcnumber#">
 			</cfinvoke>
-			<cfset arguments.thestruct.upc_name = '#arguments.thestruct.upc_name#.#arguments.thestruct.upcRenditionNum#' >
+			<cfif fn_ischar>
+				<cfset arguments.thestruct.upc_name = '#arguments.thestruct.upc_name##fn_last_char#.#arguments.thestruct.upcRenditionNum#'>
+			<cfelse>
+				<cfset arguments.thestruct.upc_name = '#arguments.thestruct.upc_name#.#arguments.thestruct.upcRenditionNum#'>
+			</cfif>
 		<cfelse>
 			<cfset arguments.thestruct.qryGroupDetails = queryNew('id')>
-			<cfset arguments.thestruct.upc_name = arguments.thestruct.upcFileName >
+			<cfset arguments.thestruct.upc_name = arguments.thestruct.upcFileName>
 		</cfif>
 	</cfif>
 	<!--- return --->
