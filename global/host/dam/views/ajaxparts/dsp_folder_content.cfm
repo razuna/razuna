@@ -396,7 +396,7 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND ttributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number" )>
+								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
