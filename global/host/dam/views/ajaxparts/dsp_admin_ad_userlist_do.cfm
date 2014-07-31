@@ -36,9 +36,9 @@
 						<td valign="top" nowrap width="20%">#SamAccountname#</td>
 						<td valign="top" nowrap width="20%" >#givenName#</td>
 						<td valign="top" nowrap width="20%" >#sn#</td>
-						<td valign="top" nowrap width="30%">#company#</td>
+						<td valign="top" nowrap width="20%">#company#</td>
 						<td valign="top" nowrap width="5%">#mail#</td>
-						<td valign="top" nowrap><cfif qCheckUser.recordcount NEQ 0>Imported<cfelse>Not Imported</cfif></td>
+						<td valign="top"><cfif qCheckUser.recordcount NEQ 0>Imported<cfelse>Not Imported</cfif></td>
 					</tr>
 				</cfoutput>
 			</cfif>
