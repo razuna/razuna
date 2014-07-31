@@ -24,11 +24,26 @@
 *
 --->
 <cfoutput>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+	<!--- Tabs --->
+	<div id="tab_wl">
+		<ul>
+			<!--- Options --->
+			<li><a href="##wl_options">Options</a></li>
+			<!--- CSS --->
+			<li><a href="##wl_css">CSS</a></li>
+			<!--- News --->
+			<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">News</a></li>
+			<!--- Most recently updates --->
+			<li><a href="##wl_show_recent_updates">This goes into options</a></li>
+		</ul>
+		<!--- Content --->
+		<div id="one"></div>
+		<div id="two"></div>
+	</div>
+	
 </cfoutput>
-Recreating parsed directory
-<script>
-$('#loader').load('index.cfm?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true');
-</script>
-<div id="loader">Loading</div>
 
+<!--- Activate the Tabs --->
+<script language="JavaScript" type="text/javascript">
+	$("#tab_wl").tabs();
+</script>

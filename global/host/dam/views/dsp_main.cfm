@@ -58,7 +58,7 @@
 			</cfif>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="50%" valign="top">
+					<td width="100%" valign="top">
 						<div class="panelsnew">
 							<h1>#myFusebox.getApplicationData().defaults.trans("upload_now")#</h1>
 							<a href="##" onclick="showwindow('#myself#c.choose_folder&folder_id=x','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
@@ -66,7 +66,7 @@
 							</a>
 						</div>
 					</td>
-					<td width="50%" valign="top">
+					<td width="1%" valign="top" nowrap="nowrap">
 						<!--- If the top part is hidden then admin functions are here and the search also --->
 						<cfif !cs.show_top_part>						
 							<!--- Search here --->

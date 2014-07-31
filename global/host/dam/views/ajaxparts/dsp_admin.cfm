@@ -86,18 +86,22 @@
 			<cfif isadmin>
 				<li><a href="##admin_access" onclick="loadcontent('admin_access','#myself#c.admin_access');">#myFusebox.getApplicationData().defaults.trans("header_access")#</a></li>
 			</cfif>
-			<!--- <li><a href="##admin_api" onclick="loadcontent('admin_api','#myself#c.admin_api');">API</a></li> --->
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"systeminformation_access") AND tabaccess_struct.systeminformation_access)>
-				<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">#myFusebox.getApplicationData().defaults.trans("system_information")#</a></li>
-			</cfif>
-			<cfif isadmin OR (structkeyexists(tabaccess_struct,"adservices_access") AND tabaccess_struct.adservices_access)>
-				<li><a href="##ad_Services" onclick="loadcontent('ad_Services','#myself#c.ad_Services');">#myFusebox.getApplicationData().defaults.trans("ad_services")#</a></li>
-			</cfif>
 			<cfif isadmin OR (structkeyexists(tabaccess_struct,"plugins_access") AND tabaccess_struct.plugins_access)>
 				<!--- Plugins --->
 				<cfif qry_plugins.recordcount NEQ 0>
 					<li><a href="##admin_plugins">#myFusebox.getApplicationData().defaults.trans("plugins")#</a></li>
 				</cfif>
+			</cfif>
+			<cfif isadmin OR (structkeyexists(tabaccess_struct,"systeminformation_access") AND tabaccess_struct.systeminformation_access)>
+				<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">#myFusebox.getApplicationData().defaults.trans("system_information")#</a></li>
+			</cfif>
+			<!--- AD --->
+			<cfif isadmin OR (structkeyexists(tabaccess_struct,"adservices_access") AND tabaccess_struct.adservices_access)>
+				<li><a href="##ad_Services" onclick="loadcontent('ad_Services','#myself#c.ad_Services');">#myFusebox.getApplicationData().defaults.trans("ad_services")#</a></li>
+			</cfif>
+			<!--- While Label News --->
+			<cfif application.razuna.whitelabel>
+				<li><a href="##wl" onclick="loadcontent('wl','#myself#c.wl_host');">White-Labelling</a></li>
 			</cfif>
 		</ul>
 		
@@ -187,9 +191,14 @@
 		<cfif isadmin OR (structkeyexists(tabaccess_struct,"systeminformation_access") AND tabaccess_struct.systeminformation_access)>
 			<div id="admin_system"></div>
 		</cfif>
+		<!--- AD --->
 		<cfif isadmin OR (structkeyexists(tabaccess_struct,"adservices_access") AND tabaccess_struct.adservices_access)>
 			<div id="ad_Services"></div>
 			<!---<div id="admin_system"></div>--->
+		</cfif>
+		<!--- WL News --->
+		<cfif application.razuna.whitelabel>
+			<div id="wl"></div>
 		</cfif>
 		<cfif isadmin OR (structkeyexists(tabaccess_struct,"plugins_access") AND tabaccess_struct.plugins_access)>
 			<!--- Plugins --->

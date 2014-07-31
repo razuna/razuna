@@ -107,8 +107,9 @@ height: auto;
 }
 /* ----- RIGHT SIDE ----- */
 #apDiv4 {
-position: absolute;
-left:280px;
+/*position: absolute;*/
+
+margin-left:280px;
 top:60px;
 height: auto;
 width: auto;

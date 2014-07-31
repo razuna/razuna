@@ -10562,4 +10562,11 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="setaccesscontrol(attributes)" />
 	</fuseaction>
 
+	<!-- White-Labelling of hosts -->
+	<fuseaction name="wl_host">
+		
+		<!-- Show -->
+		<do action="ajax.wl_host" />
+	</fuseaction>
+
 </circuit>
