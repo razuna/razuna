@@ -556,7 +556,6 @@
 			type 			varchar(10) DEFAULT NULL,
 			rec_uuid 		varchar(100) DEFAULT NULL
 		)
-		#this.tableoptions#
 		</cfquery>
 		
 		<!---  --->
