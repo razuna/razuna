@@ -543,6 +543,7 @@
 			news_active		varchar(6),
 			news_text		NVARCHAR(max),
 			news_date		varchar(20),
+			host_id 		int default 0,
 			PRIMARY KEY (news_id)
 		)
 		</cfquery>

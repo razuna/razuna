@@ -2398,6 +2398,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 <!--- Get options --->
 <cffunction name="get_options" output="false" returntype="struct">
+	<!--- Cache --->
+	<cfset variables.cachetoken = getcachetoken("settings")>
 	<!--- Param --->
 	<cfset var q = "">
 	<cfset var s = structNew()>
@@ -2411,9 +2413,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_link_doc = "">
 	<cfset s.wl_news_rss = "">
 	<cfset s.wl_main_static = "">
+	<cfset s.wl_thecss = "">
+	<cfset s.wl_show_updates = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#options */ opt_id, opt_value
+	SELECT /* #variables.cachetoken#get_options */ opt_id, opt_value
 	FROM options
 	</cfquery>
 	<!--- Put query into struct --->
@@ -2421,7 +2425,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfset s["#opt_id#"] = opt_value>
 		<!--- RAZ-2812 Most recently updated assest --->
 		<cfif q.opt_id EQ 'SHOW_UPDATES'>
-			<cfset application.razuna.show_recent_updates =  q.opt_value >
+			<cfset application.razuna.show_recent_updates = q.opt_value>
 		</cfif>
 	</cfloop>
 	<!--- Additionally store the full query into the struct --->
@@ -2431,16 +2435,138 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <!--- Get options --->
+<cffunction name="get_options_hosts" output="false" returntype="struct">
+	<!--- Get normal options --->
+	<cfset var wl_sys = get_options()>
+	<!--- Var --->
+	<cfset var qry = ''>
+	<!--- Set variables to default values from wl system --->
+	<cfset var s = structNew()>
+	<cfset s.wl_login_links = wl_sys.wl_login_links>
+	<cfset s.wl_razuna_tab_text = wl_sys.wl_razuna_tab_text>
+	<cfset s.wl_razuna_tab_content = wl_sys.wl_razuna_tab_content>
+	<cfset s.wl_html_title = wl_sys.wl_html_title>
+	<cfset s.wl_feedback = wl_sys.wl_feedback>
+	<cfset s.wl_link_search = wl_sys.wl_link_search>
+	<cfset s.wl_link_support = wl_sys.wl_link_support>
+	<cfset s.wl_link_doc = wl_sys.wl_link_doc>
+	<cfset s.wl_news_rss = wl_sys.wl_news_rss>
+	<cfset s.wl_main_static = wl_sys.wl_main_static>
+	<cfset s.wl_thecss = wl_sys.wl_thecss>
+	<cfset s.wl_show_updates = wl_sys.wl_show_updates>
+	<!--- Get host options --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_options_hosts */ opt_id, opt_value
+	FROM options
+	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="wl_%_#session.hostid#">
+	</cfquery>
+	<!--- Loop over query --->
+	<cfloop query="qry">
+		<cfif opt_id EQ "wl_login_links_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_login_links = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_razuna_tab_text_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_razuna_tab_text = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_razuna_tab_content_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_razuna_tab_content = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_html_title_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_html_title = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_feedback_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_feedback = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_link_search_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_link_search = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_link_support_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_link_support = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_link_doc_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_link_doc = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_news_rss_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_news_rss = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_main_static_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_main_static = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_thecss_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_thecss = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_show_updates_#session.hostid#">
+			<cfset s.wl_show_updates = opt_value>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn s />
+</cffunction>
+
+<!--- Save options --->
+<cffunction name="set_options_host" output="false" returntype="void">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop over fieldnames --->
+	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
+		<!--- First remove all entries --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM options
+		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(i)#">
+		</cfquery>
+		<!--- Save to DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO options
+		(opt_id, opt_value, rec_uuid)
+		VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(i)#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">
+		)
+		</cfquery>
+	</cfloop>
+	<!--- Flush --->
+	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Get options --->
 <cffunction name="get_options_one" output="false" returntype="string">
+	<cfargument name="id" type="string" required="true">
+	<!--- Cache --->
+	<cfset variables.cachetoken = getcachetoken("settings")>
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_options_one */ opt_id, opt_value
+	FROM options
+	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.id)#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn q.opt_value />
+</cffunction>
+
+<!--- Get options --->
+<cffunction name="get_options_one_host" output="false" returntype="string">
 	<cfargument name="id" type="string" required="true">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#options */ opt_id, opt_value
+	SELECT /* #variables.cachetoken#get_options_one_host */ opt_id, opt_value
 	FROM options
 	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.id)#">
 	</cfquery>
+	<!--- If query is empty or no value returned query the default value --->
+	<cfif q.recordcount EQ 0 OR q.opt_value EQ "">
+		<!--- Get the value with hostid --->
+		<cfset var theid = replacenocase(arguments.id,"_#session.hostid#","","one")>
+		<!--- Get value --->
+		<cfset var thevalue = get_options_one(theid)>
+		<!--- Add to query --->
+		<cfset queryAddRow(query=q, data=[{ opt_id='#theid#', opt_value='#thevalue#' }])>
+	</cfif>
 	<!--- Return --->
 	<cfreturn q.opt_value />
 </cffunction>
@@ -2470,16 +2596,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get news edit --->
 <cffunction name="get_news_edit" output="false" returntype="query">
 	<cfargument name="thestruct" type="struct">
+	<cfargument name="hostid" type="numeric" required="false" default="0">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- If we are from add then we need to insert record --->
 	<cfif arguments.thestruct.add>
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO news
-		(news_id, news_active)
+		(news_id, news_active, host_id)
 		VALUES (
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 		)
 		</cfquery>
 	</cfif>
@@ -2493,7 +2621,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q />
 </cffunction>
 
-<!--- Get news edit --->
+<!--- Save news --->
 <cffunction name="set_news_edit" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Save --->
@@ -2510,17 +2638,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn />
 </cffunction>
 
-<!--- Get news edit --->
+<!--- Get news --->
 <cffunction name="get_news" output="false" returntype="query">
 	<cfargument name="news_main" type="string" required="false" default="false">
+	<cfargument name="hostid" type="numeric" required="false" default="0">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q">
 	SELECT <cfif arguments.news_main AND application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title<cfif arguments.news_main>, news_text</cfif>
 	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 	<cfif arguments.news_main>
-		WHERE news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+		AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	</cfif>
 	ORDER BY news_date DESC
 	<cfif arguments.news_main AND application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
@@ -2529,7 +2659,34 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q />
 </cffunction>
 
-<!--- Get news edit --->
+<!--- Get news --->
+<cffunction name="get_news_host" output="false" returntype="struct">
+	<!--- Param --->
+	<cfset var qry = structnew()>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.news_host">
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title, news_text
+	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	ORDER BY news_date DESC
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	</cfquery>
+	<!--- Query system news --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.news">
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title, news_text
+	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
+	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	ORDER BY news_date DESC
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
+
+<!--- Delete news --->
 <cffunction name="del_news" output="false" returntype="void">
 	<cfargument name="news_id" type="string" required="true">
 	<!--- Query --->

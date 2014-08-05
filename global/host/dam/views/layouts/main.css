@@ -107,8 +107,9 @@ height: auto;
 }
 /* ----- RIGHT SIDE ----- */
 #apDiv4 {
-position: absolute;
-left:280px;
+/*position: absolute;*/
+
+margin-left:280px;
 top:60px;
 height: auto;
 width: auto;
@@ -815,7 +816,7 @@ border-radius: 10px;
 -moz-border-radius: 10px;
 */
 padding: 10px;
-width: 400px;
+min-width: 400px;
 }
 .panelsnew h1 {
 font-size: 24px;

@@ -29,7 +29,7 @@
 		<div id="tabs_wl">
 			<ul>
 				<!--- Options --->
-				<li><a href="##wl_options">#defaultsObj.trans("wl_text_options")#</a></li>
+				<li><a href="##wl_options">Settings</a></li>
 				<!--- CSS --->
 				<li><a href="##wl_css">CSS</a></li>
 				<!--- News --->
@@ -37,7 +37,7 @@
 				<!--- ISP setup --->
 				<li><a href="##wl_isp">#defaultsObj.trans("wl_hosting_setting")#</a></li>
 				<!--- Most recently updates --->
-				<li><a href="##wl_show_recent_updates">#defaultsObj.trans("wl_show_recent_updates")#</a></li>
+				<!--- <li><a href="##wl_show_recent_updates">#defaultsObj.trans("wl_show_recent_updates")#</a></li> --->
 			</ul>
 			<!--- Options --->
 			<div id="wl_options">
@@ -53,12 +53,16 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_login_desc")#<br />
 				<div style="float:left;"><textarea name="wl_login_links" id="wl_login_links" style="width:500px;height:70px;">#qry_options.wl_login_links#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_login_links');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
+				<br>
+				<hr>
 				<br />
 				<!--- Main page Videos --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_video")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_video_desc")#<br />
 				<div style="float:left;"><textarea name="wl_main_static" id="wl_main_static" style="width:500px;height:70px;">#qry_options.wl_main_static#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_main_static');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
+				<br>
+				<hr>
 				<br />
 				<!--- Main Razuna tab Bottom --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab")#</strong><br />
@@ -68,6 +72,8 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab_content")#<br />
 				<div style="float:left;"><textarea name="wl_razuna_tab_content" id="wl_razuna_tab_content" style="width:500px;height:70px;">#qry_options.wl_razuna_tab_content#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_razuna_tab_content');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
+				<br>
+				<hr>
 				<br />
 				<!--- Feedback link --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_feedback")#</strong><br />
@@ -107,6 +113,14 @@
 					</cfif>
 				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_doc');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
+				<br>
+				<hr>
+				<br>
+				#defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
+				<strong>Show list of most recently updated assets</strong><br />
+				<input type="radio" value="true" name="wl_show_updates" <cfif qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
+				<input type="radio" value="false" name="wl_show_updates" <cfif !qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
+				<div style="clear:both;"></div>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />
@@ -116,7 +130,7 @@
 			<div id="wl_css">
 				#myFusebox.getApplicationData().defaults.trans("wl_css_desc")# <a href="#dynpath#/global/host/dam/views/layouts/main.css" target="_blank">Razuna CSS</a>.
 				<br /><br />
-				<textarea name="thecss" style="width:700px;height:500px;"><cfinclude template="../../../global/host/dam/views/layouts/custom/custom.css"></textarea>
+				<textarea name="wl_thecss" style="width:700px;height:500px;">#qry_options.wl_thecss#</textarea>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />
@@ -137,8 +151,8 @@
 				<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
 			</div>
 			<!--- show recent updates options --->
-			<div id="wl_show_recent_updates">
-				 #defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
+			<!--- <div id="wl_show_recent_updates">
+				#defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
 				<strong>Show list of most recently updated assets</strong><br />
 				<input type="radio" value="true" name="show_updates" <cfif application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
 				<input type="radio" value="false" name="show_updates" <cfif !application.razuna.show_recent_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
@@ -146,7 +160,7 @@
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />
 				<div id="wlfeedback4" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
-			</div>
+			</div> --->
 		</div>
 	</form>
 
@@ -169,11 +183,11 @@
 			$("##wlfeedback").css("display","");
 			$("##wlfeedback2").css("display","");
 			$("##wlfeedback3").css("display","");
-			$("##wlfeedback4").css("display","");
+			// $("##wlfeedback4").css("display","");
 			$("##wlfeedback").html('#defaultsObj.trans("saved_changes")#');
 			$("##wlfeedback2").html('#defaultsObj.trans("saved_changes")#');
 			$("##wlfeedback3").html('#defaultsObj.trans("saved_changes")#');
-			$("##wlfeedback4").html('#defaultsObj.trans("saved_changes")#');
+			// $("##wlfeedback4").html('#defaultsObj.trans("saved_changes")#');
 			return false;
 		});
 		// Defaults
@@ -201,7 +215,7 @@
 					$('##wl_link_doc').val('<a href="http://wiki.razuna.com" target="_blank" onclick="$(\'##userselection\').toggle();">Documentation (Wiki)</a>');
 					break;
 				case 'wl_main_static':
-					$('##wl_main_static').val('<h1>How to get the most out of Razuna</h1><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'How to add files to Razuna\');return false;">&gt; How to add files to Razuna</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'How to share files with Razuna\');return false;">&gt; How to share files with Razuna</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Make good use of widgets\');return false;">&gt; Make good use of widgets</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Manage users and groups\');return false;">&gt; Manage users and groups</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Real world custom case\');return false;">&gt; Real world customer case</a>');
+					$('##wl_main_static').val('<div class="panelsnew"><h1>Upload Now</h1><a href="##" onclick="showwindow(\'index.cfm?fa=c.choose_folder&folder_id=x\',\'Upload Now\',650,1);return false;" title="Upload Now"><button class="awesome super green">Add Files</button></a></div><br><div class="panelsnew"><h1>How to get the most out of Razuna</h1><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'How to add files to Razuna\');return false;">&gt; How to add files to Razuna</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'How to share files with Razuna\');return false;">&gt; How to share files with Razuna</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Make good use of widgets\');return false;">&gt; Make good use of widgets</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Manage users and groups\');return false;">&gt; Manage users and groups</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Real world custom case\');return false;">&gt; Real world customer case</a></div>');
 					break;
 			}
 		}

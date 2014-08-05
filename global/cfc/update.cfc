@@ -195,6 +195,21 @@
 				interval="3600"
 			>
 
+			<!--- Alter news --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> host_id #theint# default 0
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Since MS SQL does not honor the default for existing records update all --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE news
+				SET host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
+				</cfquery>
+			</cfif>
+
 			<!--- Alter users --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

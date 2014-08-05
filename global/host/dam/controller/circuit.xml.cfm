@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2014.06.29.1" />
+		<set name="attributes.cachetag" value="2014.08.05.1" />
 	</fuseaction> 
 	
 	<!--
@@ -313,28 +313,30 @@
 				<if condition="application.razuna.whitelabel">
 					<true>
 						<!-- Get main static text -->
-						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one('wl_main_static')" returnvariable="attributes.wl_main_static" />
-						<!-- Get news -->
-						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one('wl_news_rss')" returnvariable="attributes.wl_news_rss" />
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_main_static_#session.hostid#')" returnvariable="attributes.wl_main_static" />
+						<!-- Show updates -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_show_updates_#session.hostid#')" returnvariable="attributes.wl_show_updates" />
+						<!-- Get rss -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one_host('wl_news_rss_#session.hostid#')" returnvariable="attributes.wl_news_rss" />
 						<!-- If rss is empty -->
 						<if condition="attributes.wl_news_rss EQ ''">
 							<true>
-								<invoke object="myFusebox.getApplicationData().settings" methodcall="get_news('true')" returnvariable="attributes.qry_news" />
+								<invoke object="myFusebox.getApplicationData().settings" methodcall="get_news_host()" returnvariable="attributes.qry_news" />
 							</true>
 							<false>
 								<invoke object="myFusebox.getApplicationData().rssparser" methodcall="rssparse(attributes.wl_news_rss,7)" returnvariable="attributes.qry_news" />
 							</false>
 						</if>
-		  			</true>
-		  		</if>
-				<!-- Most Recently added assets -->
-				<if condition="application.razuna.show_recent_updates">
-					<true>
-						<!-- Params -->
-						<set name="attributes.logswhat" value="log_assets" />
-						<set name="attributes.is_dashboard_update" value="yes" />
-						<!-- CFC: Get log -->
-						<invoke object="myFusebox.getApplicationData().log" methodcall="get_log_assets(attributes)" returnvariable="attributes.qry_log" />
+						<!-- Most Recently added assets -->
+						<if condition="attributes.wl_show_updates">
+							<true>
+								<!-- Params -->
+								<set name="attributes.logswhat" value="log_assets" />
+								<set name="attributes.is_dashboard_update" value="yes" />
+								<!-- CFC: Get log -->
+								<invoke object="myFusebox.getApplicationData().log" methodcall="get_log_assets(attributes)" returnvariable="attributes.qry_log" />
+				  			</true>
+				  		</if>
 		  			</true>
 		  		</if>
 				<!-- CFC: Get languages -->
@@ -354,9 +356,9 @@
 				<!-- CFC: Get plugin actions -->
 				<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_main_page',attributes)" returnvariable="pl" />
 				<!-- CFC: Get Access Control Settings -->
-				<invoke object="myFusebox.getApplicationData().Settings" methodcall="getaccesscontrol()" returnvariable="access_struct" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getaccesscontrol()" returnvariable="access_struct" />
 				<!-- CFC: Get Access Control Settings -->
-				<invoke object="myFusebox.getApplicationData().Settings" methodcall="getuseraccesscontrols(access_struct)" returnvariable="tabaccess_struct" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getuseraccesscontrols(access_struct)" returnvariable="tabaccess_struct" />
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Show main page -->
@@ -10561,5 +10563,60 @@
 		<!-- CFC: Save data -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="setaccesscontrol(attributes)" />
 	</fuseaction>
+
+	<!--  -->
+	<!-- START: White-Labelling of hosts -->
+	<!--  -->
+
+	<!-- Get wl values -->
+	<fuseaction name="wl_host">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options_hosts()" returnvariable="qry_wl" />
+		<!-- Show -->
+		<do action="ajax.wl_host" />
+	</fuseaction>
+	<!-- Save wl values -->
+	<fuseaction name="wl_host_save">
+		<!-- Save WL -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_options_host(attributes)" />
+	</fuseaction>
+	<!-- News -->
+	<fuseaction name="wl_news">
+		<!-- Get options for rss -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options_one_host('wl_news_rss_#session.hostid#')" returnvariable="attributes.rss" />
+		<!-- Get news -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news(hostid=session.hostid)" returnvariable="qry_news" />
+		<!-- Show -->
+		<do action="ajax.wl_news" />
+	</fuseaction>
+	<!-- News add/edit -->
+	<fuseaction name="wl_news_edit">
+		<!-- Param -->
+		<set name="attributes.add" value="false" overwrite="false" />
+		<!-- If add is true we create a news_id -->
+		<if condition="attributes.add">
+			<true>
+				<set name="attributes.news_id" value="#createuuid()#" />
+			</true>
+		</if>
+		<!-- Get record -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news_edit(thestruct=attributes,hostid=session.hostid)" returnvariable="qry_news_edit" />
+		<!-- Show -->
+		<do action="ajax.wl_news_edit" />
+	</fuseaction>
+	<!-- Save news -->
+	<fuseaction name="wl_news_save">
+		<!-- save record -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_news_edit(attributes)" />
+	</fuseaction>
+	<!-- Remove news -->
+	<fuseaction name="wl_news_remove">
+		<!-- save record -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="del_news(attributes.news_id)" />
+	</fuseaction>
+
+	<!--  -->
+	<!-- END: White-Labelling of hosts -->
+	<!--  -->
 
 </circuit>
