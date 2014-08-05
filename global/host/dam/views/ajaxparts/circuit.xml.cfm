@@ -904,9 +904,15 @@
 		<include template="dsp_admin_access" />
 	</fuseaction>
 
-	<!-- Admin Access -->
+	<!-- WL section -->
 	<fuseaction name="wl_host">
 		<include template="dsp_wl_host" />
+	</fuseaction>
+	<fuseaction name="wl_news">
+		<include template="dsp_wl_news" />
+	</fuseaction>
+	<fuseaction name="wl_news_edit">
+		<include template="dsp_wl_news_edit" />
 	</fuseaction>
 
 </circuit>

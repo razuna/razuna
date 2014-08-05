@@ -213,7 +213,7 @@
 				</select>
 			</td>
 		</tr>
-		<tr>
+		<!--- <tr>
 			<td>#myFusebox.getApplicationData().defaults.trans("system_information")# #myFusebox.getApplicationData().defaults.trans("tab")#</td>
 			<td>
 				<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="systeminformation_access" id="systeminformation_access" multiple="multiple">
@@ -226,7 +226,7 @@
 					</cfloop>
 				</select>
 			</td>
-		</tr>
+		</tr> --->
 		<tr>
 			<td>#myFusebox.getApplicationData().defaults.trans("ad_services")# #myFusebox.getApplicationData().defaults.trans("tab")#</td>
 			<td>
@@ -269,6 +269,23 @@
 				</select>
 			</td>
 		</tr>
+		<!--- For WhiteLabelling --->
+		<cfif application.razuna.whitelabel>
+			<tr>
+				<td>White-Labelling #myFusebox.getApplicationData().defaults.trans("tab")#</td>
+				<td>
+					<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="whitelabelling_access" id="whitelabelling_access" multiple="multiple">
+						<option value=""></option>
+						<cfloop query="qry_groups">
+							<option value="#grp_id#"<cfif structkeyexists(access_struct,"whitelabelling_access") AND  listfind(access_struct.whitelabelling_access,grp_id)> selected="selected"</cfif>>#grp_name#</option>
+						</cfloop>
+						<cfloop query="qry_users">
+							<option value="#user_id#"<cfif structkeyexists(access_struct,"whitelabelling_access") AND listfind(access_struct.whitelabelling_access,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+						</cfloop>
+					</select>
+				</td>
+			</tr>
+		</cfif>
 	</table>
 	<div id="form_access_control_status" style="float:left;font-weight:bold;color:green;"></div>
 	<div style="float:right;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
