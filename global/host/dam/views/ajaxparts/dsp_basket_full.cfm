@@ -31,11 +31,32 @@
 	<cfset isadmin = false>
 </cfif>
 <cfset uniqueid = createuuid()>
-<!--- </cfif> --->
+<!--- Show network path var if present --->
+<cfif evaluate("qry_customization.#session.user_os#_netpath2asset") NEQ "" AND attributes.fromshare EQ "F" AND session.user_os NEQ "unknown">
+	<cfset show_netpath = true>
+<cfelse>
+	<cfset show_netpath = false>
+</cfif>
+<cfif session.user_os EQ 'mac'>
+	<cfset slash = "/">
+<cfelse>
+	<cfset slash = "\">
+</cfif>
+
+<script type="text/javascript">
+      function copyToClipboard(text) {
+	  window.prompt("Copy to clipboard: Ctrl+C (CMD+C on Macs), Enter", text);
+	}
+</script>
+
 <cfoutput>
+	<!--- Get network path --->
+	<cfsavecontent variable="netpath">
+		#evaluate("qry_customization.#session.user_os#_netpath2asset")#
+	</cfsavecontent>
 	<div id="basketstatus" style="display:none;padding:10px;font-weight:bold;"></div>
 	<form name="thebasket" id="thebasket" method="post" action="#self#" target="_blank">
-	<input type="hidden" name="#theaction#" value="c.basket_download">
+	<input type="hidden" name="#theaction#" id="#theaction#" value="c.basket_download">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid thumbview">
 
 		<tr>
@@ -157,7 +178,7 @@
 												<img src="#link_path_url#" border="0">
 											</cfif>
 										</cfif>
-									<cfif attributes.fromshare EQ "F"></a></cfif>	
+									<cfif attributes.fromshare EQ "F"></a></cfif>
 								</cfloop>
 							</td>
 							<td width="100%" colspan="2" valign="top" class="gridno">
@@ -176,14 +197,25 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
-														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+													</td>
 													</tr>
 												</cfif>
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
-														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+														</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -199,7 +231,17 @@
 												<cfelse>
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
-														<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\thumb_#img_id#.#thumb_extension#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+														</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -219,7 +261,17 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-#img_id#-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" /></td>
-														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel) [#filename#]</td>
+														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel) [#filename#]
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+													</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -232,7 +284,17 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel) [#listlast(av_link_url,'/')#]
+													<cfif show_netpath>
+														<!--- Format the netwrk path variable --->
+														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<!--- Remove line breaks --->
+														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<a href="##" onclick="copyToClipboard ('#thepath#')";>
+														Get Local Path
+														</a>
+													</cfif>
+													</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -283,7 +345,17 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+													</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -303,7 +375,17 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-#vid_id#-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" /></td>
-														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel) [#filename#]</td>
+														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel) [#filename#]
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+														</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -316,7 +398,17 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)[#listlast(av_link_url,'/')#]
+													<cfif show_netpath>
+														<!--- Format the netwrk path variable --->
+														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<!--- Remove line breaks --->
+														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<a href="##" onclick="copyToClipboard ('#thepath#')";>
+														Get Local Path
+														</a>
+													</cfif>
+													</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -359,7 +451,17 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+														</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -379,7 +481,17 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-#aud_id#-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" checked="checked" /></td>
-														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB [#filename#]</td>
+														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB [#filename#]
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+														</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -392,7 +504,17 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)[#listlast(av_link_url,'/')#]
+													<cfif show_netpath>
+														<!--- Format the netwrk path variable --->
+														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<!--- Remove line breaks --->
+														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<a href="##" onclick="copyToClipboard ('#thepath#')";>
+														Get Local Path
+														</a>
+													</cfif>
+												</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -443,7 +565,17 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<cfif show_netpath>
+															<!--- Format the netwrk path variable --->
+															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<!--- Remove line breaks --->
+															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<a href="##" onclick="copyToClipboard ('#thepath#')";>
+															Get Local Path
+															</a>
+														</cfif>
+													</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -456,7 +588,17 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artoffile" id="docv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','docv#myid#','doc');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)</td>
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)[#listlast(av_link_url,'/')#]
+													<cfif show_netpath>
+														<!--- Format the netwrk path variable --->
+														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<!--- Remove line breaks --->
+														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<a href="##" onclick="copyToClipboard ('#thepath#')";>
+														Get Local Path
+														</a>
+													</cfif>
+													</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -478,12 +620,62 @@
 			</cfloop>
 		</cfif>
 	</table>
+	<cfif !application.razuna.isp>
+		<!--- Copy basket to local folder --->
+		<strong>#myFusebox.getApplicationData().defaults.trans("basket_upload2local")#</strong><br/>
+		<input type="text" style="width:400px;" name="uploaddir" id="uploaddir" /> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("validate")#" onclick="importfoldercheck();" class="button" /><br /><div id="path_validate"></div>
+		<button name="upload_local" id="upload_local" class="button" type="button" onclick='upload2local();'>Upload to Local Storage</button>
+		<br/><br/>
+		<div id="upload_local_div"></div>
+		<!--- Copy basket to amazon --->
+		<cfif application.razuna.storage NEQ "amazon">
+			<strong>#myFusebox.getApplicationData().defaults.trans("basket_upload2aws")#</strong><br/>
+			<cfif qry_s3_buckets.recordcount NEQ 0>
+				Amazon Bucket: 
+				<select name = "bucket_aws" id = "bucket_aws">
+					<cfloop query="qry_s3_buckets">
+						<option value="#set_id#">#set_pref#</option>
+					</cfloop>
+				</select>
+				<br/>
+				<button name="upload_aws" id="upload_aws" class="button" type="button" onclick='upload2aws();'>Upload to AWS</button>
+			<cfelse>
+				#myFusebox.getApplicationData().defaults.trans("basket_upload2aws_desc")#
+			</cfif>
+		</cfif>
+		<hr/>
+	</cfif>
+</form>
+	
 	<cfif qry_basket.recordcount NEQ 0><div>* <em>#myFusebox.getApplicationData().defaults.trans("link_url_basket")#</em></div></cfif>
-	</form>
 </cfoutput>
 
-<!--- When download is clicked --->
 <script language="JavaScript" type="text/javascript">
+	function upload2local(){
+		if ($('#uploaddir').val().length===0)
+			{alert('Path can not be empty. Please try again.');return false;}
+		// Set proper fuseaction 
+		<cfoutput>$("###theaction#").prop("value", "c.basket_upload2local");</cfoutput>
+		// Get values
+		var items = formserialize("thebasket");
+		// Get values for fields
+		createTarget();
+		// Submit Form
+		$.ajax({
+			type: "POST",
+		   	data: items,
+		   	success: function(data){
+		   		$("#upload_local_div").html(data)
+		   	}
+		});
+		// Set fuseaction back to download
+		<cfoutput>$("###theaction#").prop("value", "c.basket_download");</cfoutput>
+	}
+	// Check folder path
+	function importfoldercheck(){
+		// Check link
+		<cfoutput>loadcontent('path_validate','#myself#c.folder_link_check&link_path=' + escape($('##uploaddir').val()));</cfoutput>
+	}
 	// Submit Form
 	$("#thebasket").submit(function(e){
 		// Get values

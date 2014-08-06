@@ -319,6 +319,7 @@
 	<cfparam default="" name="arguments.thestruct.artoffile">
 	<cfparam default="" name="arguments.thestruct.artofaudio">
 	<cfparam default="false" name="arguments.thestruct.noemail">
+	<cfparam default="false" name="arguments.thestruct.skipduplicates">
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
 		<cfoutput><strong>We are getting your files for your basket ready...</strong><br><br></cfoutput>
@@ -464,8 +465,6 @@
 		<cfloop list="#arguments.thestruct.langs#" index="langindex">
 			<cfset var thedesc = evaluate("arguments.thestruct.file_desc_#langindex#")>
 			<cfset var thekey = evaluate("arguments.thestruct.file_keywords_#langindex#")>
-			<cfset console("langindex")>
-			<cfset console(langindex)>
 			<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#files_desc
 				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
@@ -558,9 +557,18 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
+			<!--- If directory for upload defined then use that --->
+			<cfif isdefined("arguments.thestruct.localupload")>
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			</cfif>
 			<!--- Create subfolder for the kind of image --->
 			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
+			</cfif>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thename#")>
+				<cfcontinue>
 			</cfif>
 
 			<!--- RAZ-2918:: If the file have same name in basket then rename the file --->
@@ -790,7 +798,10 @@
 			<cfelse>
 				<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
 			</cfif>
-			
+			<!--- If directory for upload defined then use that --->
+			<cfif isdefined("arguments.thestruct.localupload")>
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			</cfif>
 			<!--- Create subfolder for the kind of image --->
 			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
@@ -804,6 +815,12 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thefinalname>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
+				<cfcontinue>
+			</cfif>
+
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
 					<cfif find('.',arguments.thestruct.thefinalname)>
@@ -819,7 +836,6 @@
 
 			<!--- convert the filename without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
-
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1002,6 +1018,10 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
+			<!--- If directory for upload defined then use that --->
+			<cfif isdefined("arguments.thestruct.localupload")>
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			</cfif>
 			<!--- Create subfolder for the kind of image --->
 			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
@@ -1018,6 +1038,12 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thenewname>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
+				<cfcontinue>
+			</cfif>
+
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
 					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')> 
@@ -1181,6 +1207,10 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
+			<!--- If directory for upload defined then use that --->
+			<cfif isdefined("arguments.thestruct.localupload")>
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			</cfif>
 			<!--- Create subfolder for the kind of image --->
 			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
@@ -1197,6 +1227,12 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg  = arguments.thestruct.thenewname>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
+				<cfcontinue>
+			</cfif>
+
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
 					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')> 
@@ -1358,6 +1394,79 @@
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfoutput>Done!</cfoutput>
 	<cfreturn />
+</cffunction>
+
+
+<!--- WRITE FILES IN BASKET TO SYSTEM --->
+<cffunction name="writebasket2local" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam default="" name="arguments.thestruct.artofimage">
+	<cfparam default="" name="arguments.thestruct.artofvideo">
+	<cfparam default="" name="arguments.thestruct.artoffile">
+	<cfparam default="" name="arguments.thestruct.artofaudio">
+	<cfparam default="false" name="arguments.thestruct.noemail">
+	<cfparam default="" name="arguments.thestruct.newpath" >
+	<cfparam default="true" name="arguments.thestruct.skipduplicates">
+	<cfparam default="true" name="arguments.thestruct.localupload">
+	<cfif NOT directoryexists("#arguments.thestruct.uploaddir#")>
+		<cfoutput><p><font color="##cd5c5c">Directory not found. Please check path and try again.</font></p></cfoutput>
+		<cfflush>
+		<cfabort>
+	</cfif>
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- Create directory --->
+	<cfset basketname = createuuid("")>
+	<cfoutput><strong>*** Begin Copy to Local Folder ***</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Read Basket --->
+	<cfinvoke method="readbasket" returnvariable="thebasket">
+	<!--- Loop trough the basket --->
+	<cfloop query="thebasket">
+		<!--- Set the asset id into a var --->
+		<cfset arguments.thestruct.theid = cart_product_id>
+		<!--- Get the files according to the extension --->
+		<cfswitch expression="#cart_file_type#">
+			<!--- Images --->
+			<cfcase value="img">
+				<!--- Feedback --->
+				<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
+				<cfflush>
+				<!--- Write Image --->
+				<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
+			</cfcase>
+			<!--- Videos --->
+			<cfcase value="vid">
+				<!--- Feedback --->
+				<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
+				<cfflush>
+				<!--- Write Video --->
+				<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
+			</cfcase>
+			<!--- Audios --->
+			<cfcase value="aud">
+				<!--- Feedback --->
+				<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
+				<cfflush>
+				<!--- Write Video --->
+				<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
+			</cfcase>
+			<!--- All other files --->
+			<cfdefaultcase>
+				<!--- Feedback --->
+				<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
+				<cfflush>
+				<!--- Write file --->
+				<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
+			</cfdefaultcase>
+		</cfswitch>
+	</cfloop>
+	<cfoutput><strong>*** Finished Copy to Local Folder ***</strong><br><br></cfoutput>
+	<cfflush>
+	<cfabort>
 </cffunction>
 
 </cfcomponent>
