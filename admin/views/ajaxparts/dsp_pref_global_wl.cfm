@@ -118,8 +118,8 @@
 				<br>
 				#defaultsObj.trans("wl_show_recent_updates_desc")#<br/><br/>
 				<strong>Show list of most recently updated assets</strong><br />
-				<input type="radio" value="true" name="wl_show_updates" <cfif qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
-				<input type="radio" value="false" name="wl_show_updates" <cfif !qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
+				<input type="radio" value="true" name="wl_show_updates" <cfif qry_options.wl_show_updates NEQ '' AND qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("show")#<br />
+				<input type="radio" value="false" name="wl_show_updates" <cfif qry_options.wl_show_updates NEQ '' AND !qry_options.wl_show_updates> checked="checked"</cfif>> #defaultsObj.trans("hide")#
 				<div style="clear:both;"></div>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">

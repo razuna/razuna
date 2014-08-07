@@ -181,8 +181,8 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 32(1.7) --->
-		<cfif updatenumber.opt_value LT 33>
+		<!--- If less then 34(1.7) --->
+		<cfif updatenumber.opt_value LT 34>
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"
