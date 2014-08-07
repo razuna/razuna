@@ -382,6 +382,15 @@
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<!--- <cfset arguments.thestruct.file_name = thedetail.img_filename> --->
+		<cfset arguments.thestruct.thefiletype = "img">
+		<!--- <cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id> --->
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("images")>
 		<cfset resetcachetoken("folders")>
@@ -395,7 +404,7 @@
 <cffunction name="trashimagemany" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop --->
-	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+	<cfloop list="#session.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -404,6 +413,15 @@
 		WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<!--- <cfset arguments.thestruct.file_name = thedetail.img_filename> --->
+		<cfset arguments.thestruct.thefiletype = listlast(i,"-")>
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("images")>
