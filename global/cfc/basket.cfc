@@ -1783,15 +1783,38 @@
 		<cfflush>
 
 		<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
-			<cfset res.message  = "AWS URL's <br/>" & serializeJSON(arguments.thestruct.theawsurl)>
-			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfoutput>
+				<cfsavecontent variable="res.message">
+					<strong>AWS URL's</strong><br/>Please be sure to copy these as once generated for a file these will not be re-generated.<br/><br/>
+					<font size="1">
+					<cfloop collection="#arguments.thestruct.theawsurl#" item="theurl">
+						#theurl# : <a href="#structfind(arguments.thestruct.theawsurl,theurl)#" target="_blank">#structfind(arguments.thestruct.theawsurl,theurl)#</a><br/>
+					</cfloop>
+					</font>
+				</cfsavecontent>
+				#serializeJSON(res)#
+			</cfoutput>
 			<cfflush>
 		</cfif>
 
 		<cfcatch>
-			<cfset res.message  = '-------------- ERROR --------------<br/>' & cfcatch.message>
+			<cfset res.message  = '<font color="##cd5c5c">-------------- ERROR --------------<br/>' & cfcatch.detail & '</font>'>
 			<cfoutput>#serializeJSON(res)#</cfoutput>
 			<cfflush>
+			<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
+				<cfoutput>
+					<cfsavecontent variable="res.message">
+						<strong>AWS URL's</strong><br/>Please be sure to copy these as once generated for a file these will not be re-generated.<br/><br/>
+						<font size="1">
+						<cfloop collection="#arguments.thestruct.theawsurl#" item="theurl">
+							#theurl# : <a href="#structfind(arguments.thestruct.theawsurl,theurl)#" target="_blank">#structfind(arguments.thestruct.theawsurl,theurl)#</a><br/>
+						</cfloop>
+						</font>
+					</cfsavecontent>
+					#serializeJSON(res)#
+				</cfoutput>
+				<cfflush>
+			</cfif>
 		</cfcatch>
 	</cftry>
 </cffunction>

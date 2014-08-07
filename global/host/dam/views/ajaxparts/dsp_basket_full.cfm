@@ -662,9 +662,9 @@
 		<br /><br />
 		#myFusebox.getApplicationData().defaults.trans("basket_results")#
 		<br />
-		<div style="border:1px solid ##000; width:600px; height:200px; overflow:auto; background:##eee;" id="divProgress"></div>
+		<div style="border:1px solid ##000; width:95%; height:200px; overflow:auto; background:##eee;" id="divProgress"></div>
 		<br />
-		<div style="border:1px solid ##ccc; width:600px; height:20px; overflow:auto; background:##eee;">
+		<div style="border:1px solid ##ccc; width:95%; height:20px; overflow:auto; background:##eee;">
 		    <div id="progressor" style="background:##07c; width:0%; height:100%;"></div>
 		</div>
 		<hr/>
