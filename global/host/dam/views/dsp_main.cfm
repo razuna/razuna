@@ -88,7 +88,7 @@
 							<br />
 						</cfif>
 						<!--- If WL we show the recently updated assets --->
-						<cfif attributes.wl_show_updates AND attributes.qry_log.recordcount NEQ 0>
+						<cfif isdefined("attributes.wl_show_updates") AND attributes.wl_show_updates AND attributes.qry_log.recordcount NEQ 0>
 							<br>
 							<div class="panelsnew" style="width:100%" >
 								<h1>Most recently updated assets</h1>
