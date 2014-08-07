@@ -284,7 +284,7 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel) [#listlast(av_link_url,'/')#]
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel) 
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
@@ -398,7 +398,7 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)[#listlast(av_link_url,'/')#]
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
@@ -504,7 +504,7 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)[#listlast(av_link_url,'/')#]
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
@@ -588,7 +588,7 @@
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
 													<td><input type="checkbox" name="artoffile" id="docv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','docv#myid#','doc');" /></td>
-													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)[#listlast(av_link_url,'/')#]
+													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
@@ -621,28 +621,52 @@
 		</cfif>
 	</table>
 	<cfif !application.razuna.isp>
-		<!--- Copy basket to local folder --->
-		<strong>#myFusebox.getApplicationData().defaults.trans("basket_upload2local")#</strong><br/>
-		<input type="text" style="width:400px;" name="uploaddir" id="uploaddir" /> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("validate")#" onclick="importfoldercheck();" class="button" /><br /><div id="path_validate"></div>
-		<button name="upload_local" id="upload_local" class="button" type="button" onclick='upload2local();'>Upload to Local Storage</button>
-		<br/><br/>
-		<div id="upload_local_div"></div>
+		<table border="0">
+		<tr>
+			<td colspan="3">
+				<!--- Copy basket to local folder --->
+				<strong>#myFusebox.getApplicationData().defaults.trans("basket_upload2local")#</strong>
+			<td>
+		</tr>
+		<tr>
+			<td><input type="text" style="width:400px;" name="uploaddir" id="uploaddir" /> </td>
+			<td><input type="button" value="#myFusebox.getApplicationData().defaults.trans("validate")#" onclick="importfoldercheck();" class="button" /></td>
+			<td><button name="upload_local" id="upload_local" class="button" type="button" onclick="basket_upload('local');">#myFusebox.getApplicationData().defaults.trans("basket_localbutton")#</button></td>
+		</tr>
+		<tr>
+			<td colspan="3"><div id="path_validate"></div></td>
+		</tr>
+
 		<!--- Copy basket to amazon --->
 		<cfif application.razuna.storage NEQ "amazon">
-			<strong>#myFusebox.getApplicationData().defaults.trans("basket_upload2aws")#</strong><br/>
-			<cfif qry_s3_buckets.recordcount NEQ 0>
-				Amazon Bucket: 
-				<select name = "bucket_aws" id = "bucket_aws">
-					<cfloop query="qry_s3_buckets">
-						<option value="#set_id#">#set_pref#</option>
-					</cfloop>
-				</select>
-				<br/>
-				<button name="upload_aws" id="upload_aws" class="button" type="button" onclick='upload2aws();'>Upload to AWS</button>
-			<cfelse>
-				#myFusebox.getApplicationData().defaults.trans("basket_upload2aws_desc")#
-			</cfif>
+			<tr>
+				<td colspan="3"><strong>#myFusebox.getApplicationData().defaults.trans("basket_upload2aws")#</strong></td>
+			</tr>
+			<tr>
+				<cfif qry_s3_buckets.recordcount NEQ 0>
+					<td colspan="3">
+						#myFusebox.getApplicationData().defaults.trans("basket_awsbuckets")#
+						<select name = "bucket_aws" id = "bucket_aws">
+							<cfloop query="qry_s3_buckets">
+								<option value="#set_id#">#set_pref#</option>
+							</cfloop>
+						</select>
+						<button name="upload_aws" id="upload_aws" class="button" type="button" onclick="basket_upload('aws');">#myFusebox.getApplicationData().defaults.trans("basket_awsbutton")#</button>
+					</td>
+				<cfelse>
+					<td colspan="3">#myFusebox.getApplicationData().defaults.trans("basket_upload2aws_desc")#</td>
+				</cfif>
+			</tr>
 		</cfif>
+	</table>
+		<br /><br />
+		#myFusebox.getApplicationData().defaults.trans("basket_results")#
+		<br />
+		<div style="border:1px solid ##000; width:600px; height:200px; overflow:auto; background:##eee;" id="divProgress"></div>
+		<br />
+		<div style="border:1px solid ##ccc; width:600px; height:20px; overflow:auto; background:##eee;">
+		    <div id="progressor" style="background:##07c; width:0%; height:100%;"></div>
+		</div>
 		<hr/>
 	</cfif>
 </form>
@@ -651,26 +675,76 @@
 </cfoutput>
 
 <script language="JavaScript" type="text/javascript">
-	function upload2local(){
-		if ($('#uploaddir').val().length===0)
-			{alert('Path can not be empty. Please try again.');return false;}
-		// Set proper fuseaction 
-		<cfoutput>$("###theaction#").prop("value", "c.basket_upload2local");</cfoutput>
-		// Get values
+
+  function resetLog()
+    {
+         document.getElementById("divProgress").innerHTML = "";
+         document.getElementById('progressor').style.width = 0 + "%";
+    }
+     
+    function log_message(message)
+    {
+        document.getElementById("divProgress").innerHTML += message + '<br />';
+    }
+     
+	    function basket_upload(type)
+	    {
+	        resetLog();
+	        if (!window.XMLHttpRequest)
+	        {
+	            log_message("Your browser does not support the native XMLHttpRequest object.");
+	            return;
+	        }
+	         
+	        try
+	        {
+	            var xhr = new XMLHttpRequest();  
+	            xhr.previous_text = '';
+	            xhr.onerror = function() { log_message("[XHR] Fatal Error."); };
+	            xhr.onreadystatechange = function() 
+	            {
+	                try
+	                {
+	                    if (xhr.readyState > 2)
+	                    {
+	                        var new_response = xhr.responseText.substring(xhr.previous_text.length);
+	                        var result = JSON.parse( new_response );
+	                        log_message(result.message);
+	                        //update the progressbar
+	                       document.getElementById('progressor').style.width = result.progress + "%";
+	                        xhr.previous_text = xhr.responseText;
+	                    }   
+	                }
+	                catch (e)
+	                {
+	                   //log_message("<b>[XHR] Exception: " + e + "</b>");
+	                }
+	                 
+	                 
+	            };
+	            // Set proper fuseaction
+	            <cfoutput> 
+	            if (type=='aws')
+	            	$("###theaction#").prop("value", "c.basket_upload2aws");
+	            else
+			$("###theaction#").prop("value", "c.basket_upload2local");
+		</cfoutput>
+	            // Get values
 		var items = formserialize("thebasket");
 		// Get values for fields
 		createTarget();
-		// Submit Form
-		$.ajax({
-			type: "POST",
-		   	data: items,
-		   	success: function(data){
-		   		$("#upload_local_div").html(data)
-		   	}
-		});
-		// Set fuseaction back to download
+	            xhr.open("POST", "", true);
+	            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded"); // set form encoding for params
+	            xhr.send(items);      
+	            // Set fuseaction back to download
 		<cfoutput>$("###theaction#").prop("value", "c.basket_download");</cfoutput>
-	}
+	        }
+	        catch (e)
+	        {
+	            log_message("<b>[XHR] Exception: " + e + "</b>");
+	        }
+	    }
+	    
 	// Check folder path
 	function importfoldercheck(){
 		// Check link

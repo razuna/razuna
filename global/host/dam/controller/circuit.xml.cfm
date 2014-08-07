@@ -10577,7 +10577,7 @@
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Write basket to AWS -->
-		<!-- <invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket2AWS(attributes)" returnvariable="thebasket" /> -->
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket2aws(attributes)" returnvariable="thebasket" />
 	</fuseaction>
 
 </circuit>

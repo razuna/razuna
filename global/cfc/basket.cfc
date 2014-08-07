@@ -369,7 +369,7 @@
 			<cfcase value="img">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting image "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Image --->
@@ -379,7 +379,7 @@
 			<cfcase value="vid">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting video "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Video --->
@@ -389,7 +389,7 @@
 			<cfcase value="aud">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting audio "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Video --->
@@ -399,7 +399,7 @@
 			<cfdefaultcase>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting file "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write file --->
@@ -557,13 +557,41 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
-			<!--- If directory for upload defined then use that --->
-			<cfif isdefined("arguments.thestruct.localupload")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload")AND NOT isdefined("arguments.thestruct.awsdatasource") >
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			</cfif>
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
+			</cfif>
+
+			<!--- Copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.file_name_org#">
+				</cfif>
+				<cfset var awsfileexists = false>
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thename>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfif !awsfileexists>
+					<cfset AmazonS3write(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						file='#thefilepath#',
+						key='#arguments.thestruct.thename#'
+					)>
+					<cfcontinue>
+				</cfif>
+				<cfcontinue>
 			</cfif>
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
@@ -798,12 +826,10 @@
 			<cfelse>
 				<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
 			</cfif>
-			<!--- If directory for upload defined then use that --->
-			<cfif isdefined("arguments.thestruct.localupload")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			</cfif>
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 			<!--- If extension is missing then put it in  --->
@@ -815,6 +841,35 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thefinalname>
+
+			<!--- Copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#">
+				</cfif>
+				<cfset var awsfileexists = false>
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thefinalname>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfif !awsfileexists>
+					<cfset AmazonS3write(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						file='#thefilepath#',
+						key='#arguments.thestruct.thefinalname#'
+					)>
+					<cfcontinue>
+				</cfif>
+			</cfif>
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
@@ -1018,12 +1073,10 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
-			<!--- If directory for upload defined then use that --->
-			<cfif isdefined("arguments.thestruct.localupload")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource") >
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			</cfif>
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -1038,6 +1091,37 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thenewname>
+
+			<!--- Copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.vid_name_org#">
+				</cfif>
+
+				<cfset var awsfileexists = false>
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thenewname>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfif !awsfileexists>
+					<cfset AmazonS3write(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						file='#thefilepath#',
+						key='#arguments.thestruct.thenewname#'
+					)>
+					<cfcontinue>
+				</cfif>
+				<cfcontinue>
+			</cfif>
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
@@ -1207,12 +1291,10 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
-			<!--- If directory for upload defined then use that --->
-			<cfif isdefined("arguments.thestruct.localupload")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			</cfif>
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -1227,6 +1309,37 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg  = arguments.thestruct.thenewname>
+
+			<!--- If copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.aud_name_org#">
+				</cfif>
+
+				<cfset var awsfileexists = false>
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thenewname>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfif !awsfileexists>
+					<cfset AmazonS3write(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						file='#thefilepath#',
+						key='#arguments.thestruct.thenewname#'
+					)>
+					<cfcontinue>
+				</cfif>
+				<cfcontinue>
+			</cfif>
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
@@ -1397,7 +1510,7 @@
 </cffunction>
 
 
-<!--- WRITE FILES IN BASKET TO SYSTEM --->
+<!--- WRITE FILES IN BASKET TO LOCAL FOLDER --->
 <cffunction name="writebasket2local" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
@@ -1409,64 +1522,188 @@
 	<cfparam default="" name="arguments.thestruct.newpath" >
 	<cfparam default="true" name="arguments.thestruct.skipduplicates">
 	<cfparam default="true" name="arguments.thestruct.localupload">
-	<cfif NOT directoryexists("#arguments.thestruct.uploaddir#")>
-		<cfoutput><p><font color="##cd5c5c">Directory not found. Please check path and try again.</font></p></cfoutput>
+	<cftry>
+
+		<cfset var res = structnew()>
+		<cfset res.progress = 0>
+		<cfif NOT directoryexists("#arguments.thestruct.uploaddir#")>
+			<cfset res.message  = "<p><font color='##cd5c5c'>Directory not found. Please check path and try again.</font></p>">
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+			<cfabort>
+		</cfif>
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+		<!--- Create directory --->
+		<cfset var basketname = createuuid("")>
+		<!--- Read Basket --->
+		<cfinvoke method="readbasket" returnvariable="thebasket">
+		<cfset var filectr = 0>
+		<!--- Loop trough the basket --->
+		<cfloop query="thebasket">
+			<!--- Set the asset id into a var --->
+			<cfset arguments.thestruct.theid = cart_product_id>
+			<!--- Get the files according to the extension --->
+			<cfswitch expression="#cart_file_type#">
+				<!--- Images --->
+				<cfcase value="img">
+					<cfset res.message  = 'Copying image "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Image --->
+					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- Videos --->
+				<cfcase value="vid">
+					<!--- Write Video --->
+					<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
+					<cfset res.message  = 'Copying video "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+				</cfcase>
+				<!--- Audios --->
+				<cfcase value="aud">
+					<cfset res.message  = 'Copying audio "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Audio --->
+					<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- All other files --->
+				<cfdefaultcase>
+					<cfset res.message  = 'Copying file "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write file --->
+					<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
+				</cfdefaultcase>
+			</cfswitch>
+			<cfset filectr = filectr + 1>
+			<cfset res.progress = int((filectr/thebasket.recordcount)*100)>
+		</cfloop>
+		<cfset res.message  = '-------------- DONE -------------- '>
+		<cfoutput>#serializeJSON(res)#</cfoutput>
 		<cfflush>
-		<cfabort>
-	</cfif>
-	<!--- The tool paths --->
-	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
-	<!--- Go grab the platform --->
-	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
-	<!--- Create directory --->
-	<cfset basketname = createuuid("")>
-	<cfoutput><strong>*** Begin Copy to Local Folder ***</strong><br><br></cfoutput>
-	<cfflush>
-	<!--- Read Basket --->
-	<cfinvoke method="readbasket" returnvariable="thebasket">
-	<!--- Loop trough the basket --->
-	<cfloop query="thebasket">
-		<!--- Set the asset id into a var --->
-		<cfset arguments.thestruct.theid = cart_product_id>
-		<!--- Get the files according to the extension --->
-		<cfswitch expression="#cart_file_type#">
-			<!--- Images --->
-			<cfcase value="img">
-				<!--- Feedback --->
-				<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
-				<cfflush>
-				<!--- Write Image --->
-				<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
-			</cfcase>
-			<!--- Videos --->
-			<cfcase value="vid">
-				<!--- Feedback --->
-				<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
-				<cfflush>
-				<!--- Write Video --->
-				<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
-			</cfcase>
-			<!--- Audios --->
-			<cfcase value="aud">
-				<!--- Feedback --->
-				<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
-				<cfflush>
-				<!--- Write Video --->
-				<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
-			</cfcase>
-			<!--- All other files --->
-			<cfdefaultcase>
-				<!--- Feedback --->
-				<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
-				<cfflush>
-				<!--- Write file --->
-				<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
-			</cfdefaultcase>
-		</cfswitch>
-	</cfloop>
-	<cfoutput><strong>*** Finished Copy to Local Folder ***</strong><br><br></cfoutput>
-	<cfflush>
-	<cfabort>
+		<cfcatch>
+		<cfset res.message  = '-------------- ERROR --------------<br/>' & cfcatch.message>
+		<cfoutput>#serializeJSON(res)#</cfoutput>
+		<cfflush>
+	</cfcatch>
+	</cftry>
+</cffunction>
+
+
+<!--- WRITE FILES IN BASKET TO AWS --->
+<cffunction name="writebasket2aws" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam default="" name="arguments.thestruct.artofimage">
+	<cfparam default="" name="arguments.thestruct.artofvideo">
+	<cfparam default="" name="arguments.thestruct.artoffile">
+	<cfparam default="" name="arguments.thestruct.artofaudio">
+	<cfparam default="false" name="arguments.thestruct.noemail">
+	<cfparam default="" name="arguments.thestruct.newpath" >
+	<cfparam default="true" name="arguments.thestruct.skipduplicates">
+	<cfparam default="true" name="arguments.thestruct.localupload">
+	<cftry>
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+		<!--- Create directory --->
+		<cfset var basketname = createuuid("")>
+
+		<cfset var aws_id = listlast(arguments.thestruct.bucket_aws,'_')>
+
+		<cfquery name="aws_bucket" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="#arguments.thestruct.bucket_aws#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
+		<cfquery name="aws_key" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="aws_access_key_id_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
+		<cfquery name="aws_secret_key" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="aws_secret_access_key_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
+		<!--- Register AWS datasource and set vars --->
+		<cfset arguments.thestruct.awsdatasource = AmazonRegisterDataSource('basketaws','#aws_key.set_pref#','#aws_secret_key.set_pref#')>
+		<cfset arguments.thestruct.awsbucket = aws_bucket.set_pref>
+		<cfset arguments.thestruct.awskey= aws_key.set_pref>
+		<cfset arguments.thestruct.awssecretkey= aws_secret_key.set_pref>
+		<!--- Get list of files in AWS bucket --->
+		<cfset arguments.thestruct.s3list = AmazonS3list(
+			datasource='#arguments.thestruct.awsdatasource#',
+			bucket='#arguments.thestruct.awsbucket#',
+			prefix = ''
+		)>
+		<!--- Read Basket --->
+		<cfinvoke method="readbasket" returnvariable="thebasket">
+		<cfset var filectr = 0>
+		<!--- Loop trough the basket --->
+		<cfloop query="thebasket">
+			<!--- Set the asset id into a var --->
+			<cfset arguments.thestruct.theid = cart_product_id>
+			<!--- Get the files according to the extension --->
+			<cfswitch expression="#cart_file_type#">
+				<!--- Images --->
+				<cfcase value="img">
+					<cfset res.message  = 'Copying image "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Image --->
+					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- Videos --->
+				<cfcase value="vid">
+					<!--- Write Video --->
+					<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
+					<cfset res.message  = 'Copying video "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+				</cfcase>
+				<!--- Audios --->
+				<cfcase value="aud">
+					<cfset res.message  = 'Copying audio "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Audio --->
+					<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- All other files --->
+				<cfdefaultcase>
+					<cfset res.message  = 'Copying file "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write file --->
+					<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
+				</cfdefaultcase>
+			</cfswitch>
+			<cfset filectr = filectr + 1>
+			<cfset res.progress = int((filectr/thebasket.recordcount)*100)>
+		</cfloop>
+		<cfset res.message  = '-------------- DONE -------------- '>
+		<cfoutput>#serializeJSON(res)#</cfoutput>
+		<cfflush>
+
+		<cfcatch>
+			<cfset res.message  = '-------------- ERROR --------------<br/>' & cfcatch.message>
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+		</cfcatch>
+	</cftry>
 </cffunction>
 
 </cfcomponent>
