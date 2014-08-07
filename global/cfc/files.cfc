@@ -825,6 +825,7 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
+		<cfset resetcachetoken('general')>
 	</cffunction>
 	
 	<!--- SAVE THE FILES DETAILS --->
@@ -1408,7 +1409,7 @@
 		<!--- Qry. We take the query and do a IN --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailforbasketfile */ f.file_id, f.file_extension, f.file_extension, f.file_size, f.folder_id_r, f.file_name_org, 
-		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename,
+		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename, f.file_name_org filename_org,
 		'' as perm
 		FROM #session.hostdbprefix#files f
 		WHERE f.file_id 

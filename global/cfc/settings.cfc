@@ -1949,6 +1949,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.cf_audios_metadata_top = "">
 	<cfset v.assetbox_height = "">
 	<cfset v.assetbox_width = "">
+	<cfset v.windows_netpath2asset = "">
+	<cfset v.mac_netpath2asset = "">
+	<cfset v.unix_netpath2asset = "">
+	<cfset v.basket_awsurl = "">
 	<!--- File detail button fields --->
 	<cfset v.btn_email_slct = "">
 	<cfset v.btn_ftp_slct = "">
@@ -2155,6 +2159,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.assetbox_height = custom_value>
 			<cfelseif custom_id EQ "assetbox_width">
 				<cfset v.assetbox_width = custom_value>
+			<cfelseif custom_id EQ "windows_netpath2asset">
+				<cfset v.windows_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "mac_netpath2asset">
+				<cfset v.mac_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "unix_netpath2asset">
+				<cfset v.unix_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "basket_awsurl">
+				<cfset v.basket_awsurl= custom_value>
 			<cfelseif custom_id EQ "btn_email_slct">
 				<cfset v.btn_email_slct = custom_value>
 			<cfelseif custom_id EQ "btn_ftp_slct">
@@ -2740,7 +2752,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set_id, set_pref
 		FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_#session.hostid#">
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
 		ORDER BY lower(set_id)
 		</cfquery>
 		<!--- Return --->
@@ -2753,7 +2766,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Remove all aws fields in DB first --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_#session.hostid#">
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
 		<cfif structKeyExists(session,"aws")>

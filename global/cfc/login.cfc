@@ -135,6 +135,16 @@
 			<cfif structKeyExists(arguments.thestruct,"ad_user_name") AND qryuser.user_first_name EQ '' AND qryuser.user_last_name EQ ''>
 				<cfset session.firstlastname = "#arguments.thestruct.ad_user_name#">
 			</cfif>
+			<!--- Set user OS --->
+			<cfif cgi.http_user_agent contains 'windows'>
+				<cfset session.user_os = 'windows'>
+			<cfelseif cgi.http_user_agent contains 'mac os'>
+				<cfset session.user_os = 'mac'>
+			<cfelseif cgi.http_user_agent contains 'linux' OR cgi.http_user_agent contains 'unix'>
+				<cfset session.user_os = 'unix'>
+			<cfelse>
+				<cfset session.user_os = 'unknown'>
+			</cfif>
 			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
 			<cfinvoke component="groups_users" method="getGroupsOfUser">
 				<cfinvokeargument name="user_id" value="#qryuser.user_id#" />

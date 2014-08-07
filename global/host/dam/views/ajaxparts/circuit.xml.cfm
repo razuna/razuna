@@ -904,6 +904,9 @@
 		<include template="dsp_admin_access" />
 	</fuseaction>
 
+	<!-- Upload basket to local storage -->
+	<fuseaction name="basket_upload2local">
+		<include template="dsp_basket_upload2local" />
 	<!-- WL section -->
 	<fuseaction name="wl_host">
 		<include template="dsp_wl_host" />

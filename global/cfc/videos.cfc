@@ -1027,7 +1027,7 @@
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketvid */ v.vid_id, v.vid_filename filename, v.vid_extension, v.vid_mimetype, v.vid_group, v.vid_preview_width, 
 	v.vid_preview_heigth, v.folder_id_r, v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, 
-	v.vid_prev_size vprevlength, v.vid_name_image, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url,
+	v.vid_prev_size vprevlength, v.vid_name_image, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.vid_name_org filename_org,
 	'' as perm
 	FROM #session.hostdbprefix#videos v
 	WHERE 
@@ -1118,6 +1118,7 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
+	<cfset resetcachetoken('general')>
 </cffunction>
 
 <!--- SAVE THE VIDEO DETAILS --->

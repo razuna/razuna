@@ -123,7 +123,9 @@
 							#myFusebox.getApplicationData().defaults.trans("custom_users_redirect_desc")#
 							<br />
 							<div>
-							<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> <a href="##" onclick="showwindow('#myself#c.admin_customization_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</a>
+							<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> 
+							<button class="button" onclick="showwindow('#myself#c.admin_customization_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</button>
+
 							<br />
 							<input type="checkbox" name="folder_redirect_off" value="true"> #myFusebox.getApplicationData().defaults.trans("custom_users_redirect_off")#
 							</div>
@@ -1308,6 +1310,7 @@
 			<!--- Basket View --->
 			<a href="##" onclick="$('##basketview').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_basket")#</div></a>
 			<div id="basketview" style="display:none;padding-top:10px;">
+				<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_header")#</strong><br/>
 				#myFusebox.getApplicationData().defaults.trans("basket_customize_desc")#
 				<table border="0">
 					<tr>
@@ -1367,10 +1370,40 @@
 						</td>
 					</tr>
 				</table>
+				<cfif !application.razuna.isp>
+					<table border="0">
+						<tr>
+							<td colspan="2">
+								<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_networkpaths")#</strong><br/>
+								#myFusebox.getApplicationData().defaults.trans("basket_customize_networkpaths_desc")#<br/>
+							</td>
+						</tr>
+						<tr>
+							<td width="150">Windows Network Path:</td><td><input type="text" name="windows_netpath2asset" value="#qry_customization.windows_netpath2asset#" size="70" placeholder="\\10.0.0.10\razuna\assets"></td>
+						</tr>
+						<tr>
+							<td width="150">Mac Network Path:</td><td><input type="text" name="mac_netpath2asset" value="#qry_customization.mac_netpath2asset#" size="70" placeholder="afp://10.0.0.10/razuna/assets"></td>
+						</tr>
+						<tr>
+							<td width="150">Unix Network Path:</td><td><input type="text" name="unix_netpath2asset" value="#qry_customization.unix_netpath2asset#" size="70" placeholder="\\10.0.0.10\razuna\assets"></td>
+						</tr>
+					</table>
+					<table border="0">
+						<tr>
+							<td colspan="2">
+								<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_awsurl")#</strong><br/>
+								#myFusebox.getApplicationData().defaults.trans("basket_customize_awsurl_desc")#<br/>
+							</td>
+						</tr>
+						<tr>
+							<td width="150">AWS URL:</td><td><input type="text" name="basket_awsurl" value="#qry_customization.basket_awsurl#" size="70" placeholder="https://s3.amazonaws.com"></td>
+						</tr>
+					</table>
+				</cfif>
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Search --->
-			<a href="##" onclick="$('##search').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_search")# </div></a>
+			<a href="##" onclick="$('##search').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_search")# </div></a>
 			<div id="search" style="display:none;padding-top:10px;">
 				#myFusebox.getApplicationData().defaults.trans("search_customize_desc")#
 				<br />

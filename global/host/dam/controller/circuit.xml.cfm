@@ -1127,6 +1127,8 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Get Customization -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_customization()" returnvariable="qry_customization" />
+		<!-- CFC: Get buckets -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_bucket_name')" returnvariable="qry_s3_buckets" />
 		<!-- Load include -->
 		<do action="basket_include" />
 		<!-- Show -->
@@ -10564,7 +10566,26 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="setaccesscontrol(attributes)" />
 	</fuseaction>
 
-	<!--  -->
+	<fuseaction name="basket_upload2local">
+		<set name="attributes.hostid" value="#session.hostid#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC: Write basket to local folder -->
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket2local(attributes)" returnvariable="thebasket" />
+	</fuseaction>
+
+	<fuseaction name="basket_upload2aws">
+		<set name="attributes.hostid" value="#session.hostid#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
+		<!-- CFC: Write basket to AWS -->
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket2aws(attributes)" returnvariable="thebasket" />
+	</fuseaction>
+
+<!--  -->
 	<!-- START: White-Labelling of hosts -->
 	<!--  -->
 
@@ -10575,6 +10596,7 @@
 		<!-- Show -->
 		<do action="ajax.wl_host" />
 	</fuseaction>
+
 	<!-- Save wl values -->
 	<fuseaction name="wl_host_save">
 		<!-- Save WL -->
