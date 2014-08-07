@@ -29,6 +29,19 @@
 		<td><input type="hidden" name="thetype" value="#myvar.thetype#">
 			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
 	</tr>
+	<!--- If the search selection is on we search with folder ids --->
+	<cfif cs.search_selection AND attributes.folder_id EQ 0>
+		<td></td>
+		<td>
+			<!--- This is the selected value (should come from the defined selection of the user) --->
+			<select data-placeholder="" class="chzn-select" name="adv_folder_id" id="adv_folder_id" style="min-width:150px;">
+				<!--- <option value="0">Search in all</option> --->
+				<cfloop query="qry_searchselection">
+					<option value="#folder_id#"<cfif session.user_search_selection EQ "#folder_id#"> selected="selected"</cfif>>#folder_name#</option>
+				</cfloop>
+			</select>
+		</td>
+	</cfif>
 	<tr>
 		<td>Filename</td>
 		<td><input type="text" name="filename" style="width:300px;" class="textbold"></td>

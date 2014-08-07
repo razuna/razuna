@@ -5722,6 +5722,12 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_fields" />
+		<!-- if we need to query the search selection folders -->
+		<if condition="cs.search_selection">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection()" returnvariable="qry_searchselection" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.search_advanced" />
 	</fuseaction>

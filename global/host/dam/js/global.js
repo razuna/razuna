@@ -1409,7 +1409,7 @@ function searchadv_audios(theform, thefa, folderid) {
 	}
 }
 // Fire off search all
-function searchadv_all(theform, thefa, folderid) {
+function searchadv_all(theform, thefa) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
 	// Only allow chars
@@ -1423,7 +1423,12 @@ function searchadv_all(theform, thefa, folderid) {
 	else {
 		// If we come from a folder search we direct into the folder view
 		// if (folderid == '0'){
-			var thediv = '#rightside';
+		
+		var thediv = '#rightside';
+
+		// Get folderid
+		var folderid = $('#adv_folder_id').val();
+
 		// }
 		// else {
 		// 	var thediv = '#content_search_all';

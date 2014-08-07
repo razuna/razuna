@@ -41,7 +41,10 @@
 		<div id="loading_searchadv" style="width:100%;text-align:center;padding-top:5px;"></div>
 		<!--- All --->
 		<div id="all_assets">
-			<form name="advsearch_all" id="advsearch_all" method="post" onsubmit="searchadv_all('advsearch_all','c.search_simple','#attributes.folder_id#','#attributes.fromshare#');return false;">
+			<form name="advsearch_all" id="advsearch_all" method="post" onsubmit="searchadv_all('advsearch_all','c.search_simple','#attributes.fromshare#');return false;">
+				<cfif attributes.folder_id NEQ 0>
+					<input type="hidden" name="adv_folder_id" id="adv_folder_id" value="#attributes.folder_id#">
+				</cfif>
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<!--- Include advanced fields --->
 					<cfset myvar.thetype = "all">
