@@ -3763,12 +3763,12 @@ This is the main function called directly by a single upload else from addassets
 		SET
 		vid_name_image = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">,
 		vid_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ts#">,
+		vid_filename = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
 		<cfif !application.razuna.rfs>
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#tw#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#th#">,
 		</cfif>
 		<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
-			vid_filename = <cfqueryparam value="#arguments.thestruct.vid_name#" cfsqltype="cf_sql_varchar">,
 			vid_name_org = <cfqueryparam value="#arguments.thestruct.vid_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
 				vid_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
