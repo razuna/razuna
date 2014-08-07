@@ -132,37 +132,52 @@
 									<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 										<tr>
 											<td colspan="2">
-												<cfif attributes.folderaccess EQ "R" AND qry_share_options.asset_dl NEQ 1>
-													<strong>Original</strong> (not made available as download)<br />
-													<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
-													</cfif>
-												<cfelse>
-													<cfif qry_detail.detail.link_kind NEQ "url">
-														<strong>Original</strong><br />
-														<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">Download</a> | 
-														<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
-														<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#attributes.file_id#" target="_blank">PDF as image(s)</a>
-														</cfif>
-														<div id="divo#attributes.file_id#" style="display:none;width:450px;">
-															<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" />
-															<!--- Plugin --->
-															<cfset args = structNew()>
-															<cfset args.detail = qry_detail.detail>
-															<cfset args.thefiletype = "doc">
-															<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
-															<!--- Show plugin --->
-															<cfif structKeyExists(pl,"pview")>
-																<cfloop list="#pl.pview#" delimiters="," index="i">
-																	<br />
-																	#evaluate(i)#
-																</cfloop>
+												<table>
+													<tr>
+														<td>
+															<cfif application.razuna.storage EQ "amazon" AND qry_detail.detail.cloud_url NEQ "">
+																<img src="#qry_detail.detail.cloud_url#" border="0" img-tt="img-tt" style="max-height:50px;max-width:100px;">
+															<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") >
+																<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#?#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
+															<cfelse>
+																<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'" style="max-height:50px;max-width:100px;">
 															</cfif>
-														</div>
-													<cfelse>
-														<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
-													</cfif>
-												</cfif>
-												<br />
+														</td>
+														<td>
+															<cfif attributes.folderaccess EQ "R" AND qry_share_options.asset_dl NEQ 1>
+																<strong>Original</strong> (not made available as download)<br />
+																<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
+																</cfif>
+															<cfelse>
+																<cfif qry_detail.detail.link_kind NEQ "url">
+																	<strong>Original</strong><br />
+																	<button class="awesome small green"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank" style="color:white;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("download")#</a></button>
+																	<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank" style="padding-left:20px;"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | 
+																	<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
+																	<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#attributes.file_id#" target="_blank">PDF as image(s)</a>
+																	</cfif>
+																	<div id="divo#attributes.file_id#" style="display:none;width:450px;">
+																		<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" />
+																		<!--- Plugin --->
+																		<cfset args = structNew()>
+																		<cfset args.detail = qry_detail.detail>
+																		<cfset args.thefiletype = "doc">
+																		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+																		<!--- Show plugin --->
+																		<cfif structKeyExists(pl,"pview")>
+																			<cfloop list="#pl.pview#" delimiters="," index="i">
+																				<br />
+																				#evaluate(i)#
+																			</cfloop>
+																		</cfif>
+																	</div>
+																<cfelse>
+																	<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
+																</cfif>
+															</cfif>
+														</td>
+													</tr>
+												</table>
 											</td>
 										</tr>
 										<!--- Show additional version --->

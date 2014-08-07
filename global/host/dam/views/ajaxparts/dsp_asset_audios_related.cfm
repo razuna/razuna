@@ -32,14 +32,15 @@
 		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
+					<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB) [#aud_name#]
+					<br />
+					<button class="awesome small green"><a href="#myself#c.serve_file&file_id=#aud_id#&type=aud" style="color:white;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("download")#</a></button>
 					<cfif attributes.s EQ "F">
-						<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB) [#aud_name#]<br />
-						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank">
+						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank" style="padding-left:20px;">
 					<cfelse>
-						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank">
+						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
-					View</a> 
-					| <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud">#myFusebox.getApplicationData().defaults.trans("download")#</a> 
+					Play</a> 
 					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');return false;">Direct Link</a>
 					| <a href="##" onclick="toggleslide('dive#aud_id#','inpute#aud_id#');return false;">Embed</a>
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">Metadata</a>
