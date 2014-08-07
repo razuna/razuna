@@ -1952,6 +1952,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.windows_netpath2asset = "">
 	<cfset v.mac_netpath2asset = "">
 	<cfset v.unix_netpath2asset = "">
+	<cfset v.basket_awsurl = "">
 	<!--- File detail button fields --->
 	<cfset v.btn_email_slct = "">
 	<cfset v.btn_ftp_slct = "">
@@ -2164,6 +2165,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.mac_netpath2asset = custom_value>
 			<cfelseif custom_id EQ "unix_netpath2asset">
 				<cfset v.unix_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "basket_awsurl">
+				<cfset v.basket_awsurl= custom_value>
 			<cfelseif custom_id EQ "btn_email_slct">
 				<cfset v.btn_email_slct = custom_value>
 			<cfelseif custom_id EQ "btn_ftp_slct">

@@ -10576,6 +10576,9 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Write basket to AWS -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket2aws(attributes)" returnvariable="thebasket" />
 	</fuseaction>

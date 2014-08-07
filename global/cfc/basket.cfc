@@ -582,6 +582,7 @@
 						</cfif>
 					</cfloop>
 				</cfif>
+				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset AmazonS3write(
 						datasource='#arguments.thestruct.awsdatasource#',
@@ -589,6 +590,23 @@
 						file='#thefilepath#',
 						key='#arguments.thestruct.thename#'
 					)>
+					<cfset AmazonS3setacl(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						key='#arguments.thestruct.thename#',
+						acl = 'public-read'
+					)>
+					<cfif art contains "doc">
+						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
+						 datasource='#arguments.thestruct.awsdatasource#',
+						 bucket='#arguments.thestruct.awsbucket#',
+						 key='#arguments.thestruct.thename#',
+						 expiration=epoch
+						)>
+						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						</cfif>
+					</cfif>
 					<cfcontinue>
 				</cfif>
 				<cfcontinue>
@@ -860,6 +878,8 @@
 						</cfif>
 					</cfloop>
 				</cfif>
+				
+				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset AmazonS3write(
 						datasource='#arguments.thestruct.awsdatasource#',
@@ -867,6 +887,23 @@
 						file='#thefilepath#',
 						key='#arguments.thestruct.thefinalname#'
 					)>
+					<cfset AmazonS3setacl(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						key='#arguments.thestruct.thefinalname#',
+						acl = 'public-read'
+					)>
+					<cfif art contains "original">
+						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
+						 datasource='#arguments.thestruct.awsdatasource#',
+						 bucket='#arguments.thestruct.awsbucket#',
+						 key='#arguments.thestruct.thefinalname#',
+						 expiration=epoch
+						)>
+						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						</cfif>
+					</cfif>
 					<cfcontinue>
 				</cfif>
 			</cfif>
@@ -1111,6 +1148,7 @@
 						</cfif>
 					</cfloop>
 				</cfif>
+				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset AmazonS3write(
 						datasource='#arguments.thestruct.awsdatasource#',
@@ -1118,6 +1156,23 @@
 						file='#thefilepath#',
 						key='#arguments.thestruct.thenewname#'
 					)>
+					<cfset AmazonS3setacl(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						key='#arguments.thestruct.thenewname#',
+						acl = 'public-read'
+					)>
+					<cfif art contains "video">
+						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+						 datasource='#arguments.thestruct.awsdatasource#',
+						 bucket='#arguments.thestruct.awsbucket#',
+						 key='#arguments.thestruct.thenewname#',
+						 expiration=epoch
+						)>
+					</cfif>
+					<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+					</cfif>
 					<cfcontinue>
 				</cfif>
 				<cfcontinue>
@@ -1329,6 +1384,7 @@
 						</cfif>
 					</cfloop>
 				</cfif>
+				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset AmazonS3write(
 						datasource='#arguments.thestruct.awsdatasource#',
@@ -1336,6 +1392,23 @@
 						file='#thefilepath#',
 						key='#arguments.thestruct.thenewname#'
 					)>
+					<cfset AmazonS3setacl(
+						datasource='#arguments.thestruct.awsdatasource#',
+						bucket='#arguments.thestruct.awsbucket#',
+						key='#arguments.thestruct.thenewname#',
+						acl = 'public-read'
+					)>
+					<cfif art contains "audio">
+						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+						 datasource='#arguments.thestruct.awsdatasource#',
+						 bucket='#arguments.thestruct.awsbucket#',
+						 key='#arguments.thestruct.thenewname#',
+						 expiration=epoch
+						)>
+						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						</cfif>
+					</cfif>
 					<cfcontinue>
 				</cfif>
 				<cfcontinue>
@@ -1607,6 +1680,7 @@
 	<cfparam default="" name="arguments.thestruct.newpath" >
 	<cfparam default="true" name="arguments.thestruct.skipduplicates">
 	<cfparam default="true" name="arguments.thestruct.localupload">
+	<cfset arguments.thestruct.theawsurl = structnew()>
 	<cftry>
 		<!--- The tool paths --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -1665,6 +1739,7 @@
 					<cfflush>
 					<!--- Write Image --->
 					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
+					
 				</cfcase>
 				<!--- Videos --->
 				<cfcase value="vid">
@@ -1697,6 +1772,12 @@
 		<cfset res.message  = '-------------- DONE -------------- '>
 		<cfoutput>#serializeJSON(res)#</cfoutput>
 		<cfflush>
+
+		<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
+			<cfset res.message  = "AWS URL's <br/>" & serializeJSON(arguments.thestruct.theawsurl)>
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+		</cfif>
 
 		<cfcatch>
 			<cfset res.message  = '-------------- ERROR --------------<br/>' & cfcatch.message>
