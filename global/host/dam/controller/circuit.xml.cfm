@@ -10585,7 +10585,7 @@
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket2aws(attributes)" returnvariable="thebasket" />
 	</fuseaction>
 
-<!--  -->
+	<!--  -->
 	<!-- START: White-Labelling of hosts -->
 	<!--  -->
 
