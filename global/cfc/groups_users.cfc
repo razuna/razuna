@@ -59,17 +59,19 @@
 				WHERE modules.mod_id = groups.grp_mod_id AND modules.mod_short = <cfqueryparam value="#Arguments.mod_short#" cfsqltype="cf_sql_varchar">
 				)
 	</cfif>
-	<cfif StructKeyExists(Arguments, "check_upc_size") AND arguments.check_upc_size EQ 'true'>
+	<cfif StructKeyExists(arguments, "check_upc_size") AND arguments.check_upc_size EQ 'true'>
 		AND upc_size != '' 
 		AND upc_size is not null
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>
-	<!--- Put result into session --->
-	<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
-	<!--- If session is empty then fill it with 0 --->
-	<cfif session.thegroupofuser EQ "">
-		<cfset session.thegroupofuser = 0>
+	<cfif arguments.check_upc_size NEQ 'true'>
+		<!--- Put result into session --->
+		<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
+		<!--- If session is empty then fill it with 0 --->
+		<cfif session.thegroupofuser EQ "">
+			<cfset session.thegroupofuser = 0>
+		</cfif>	
 	</cfif>
 	<!--- Return --->
 	<cfreturn localquery />
