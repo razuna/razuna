@@ -5053,8 +5053,38 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 	</cfif>
 
-	<!--- Query the image --->
-	<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
+	<cfif isdefined("arguments.thestruct.userendforpreview")>
+		<cfset arguments.thestruct.tempid = createuuid()>
+		<!--- Change tempid a bit --->
+		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
+		<!--- Create a unique name for the temp directory to hold the file --->
+		<cfset arguments.thestruct.thetempfolder   = "asset#arguments.thestruct.tempid#">
+		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
+		<!--- Create a temp directory to hold the file --->
+		<cfif !DirectoryExists(arguments.thestruct.theincomingtemppath)>
+			<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+		</cfif>
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT '#arguments.thestruct.tempid#' tempid, av_link_url filename, asset_id_r file_id, '#arguments.thestruct.theincomingtemppath#' path, av_thumb_url,
+			CASE 
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = asset_id_r) THEN 'img'
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = asset_id_r) THEN 'vid'
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = asset_id_r) THEN 'aud'
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = asset_id_r) THEN 'doc'
+			END
+			as type
+			FROM #session.hostdbprefix#additional_versions
+			WHERE av_id = <cfqueryparam value="#arguments.thestruct.av_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfset qry.filename = listlast(qry.filename,'/')>
+		<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#" destination="#qry.path#/#qry.filename#">
+		<cfset arguments.thestruct.type = qry.type>
+	<cfelse>
+		<!--- Query the image --->
+		<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
+	</cfif>
+	
 	<!--- If record return zero records then abort --->
 	<cfif qry.recordcount NEQ 0>
 		<!--- Query existing record --->	

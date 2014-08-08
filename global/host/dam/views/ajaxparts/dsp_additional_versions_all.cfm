@@ -53,6 +53,7 @@
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
 					</cfif>
+					| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as Preview Image</a>
 					<div id="divavo#av_id#" style="display:none;">
 						<cfif application.razuna.storage EQ "local">
 							<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
@@ -64,6 +65,7 @@
 			</tr>
 		</cfloop>
 	</table>
+	<div id="msg"></div>
 	<!--- Js --->
 	<script type="text/javascript">
 	function remavren(id,type){
@@ -85,6 +87,11 @@
 				}
 			}
 		});
+	};
+	function useforpreview(av_id,type){
+			$('##div_forall').load('#myself#c.use_rendition_for_preview&userendforpreview=1&file_id=#attributes.file_id#&av_id=' + av_id + '&type=' + type);
+			$('##msg').html('<font color=steelblue">The preview has been updated. Please reload the page.</font>');
+
 	};
 	</script>
 </cfif>

@@ -10647,4 +10647,12 @@
 	<!-- END: White-Labelling of hosts -->
 	<!--  -->
 
+	<!-- Use rendition image for preview -->
+	<fuseaction name="use_rendition_for_preview">
+		<set name="attributes.thepath" value="#thispath#" />
+		<!--  Activate preview image -->
+		<do action = "previewimage_activate" />
+	</fuseaction>
+
+
 </circuit>
