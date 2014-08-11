@@ -5078,7 +5078,12 @@ This is the main function called directly by a single upload else from addassets
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfset qry.filename = listlast(qry.filename,'/')>
-		<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#" destination="#qry.path#/#qry.filename#">
+		<!--- If file exists then copy else abort process --->
+		<cfif fileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#")>
+			<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#" destination="#qry.path#/#qry.filename#">
+		<cfelse>
+			<cfabort>
+		</cfif>
 		<cfset arguments.thestruct.type = qry.type>
 	<cfelse>
 		<!--- Query the image --->
