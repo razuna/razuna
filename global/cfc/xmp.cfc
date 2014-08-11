@@ -481,7 +481,7 @@
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 				</cfif>
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777" charset="utf-8">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -599,7 +599,7 @@
 			<!--- Set script --->
 			<cfset thesh = gettempdirectory() & "/#thescript#.sh">
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777" charset="utf-8">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -772,7 +772,7 @@
 			<!--- Set script --->
 			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777" charset="utf-8">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -1470,7 +1470,7 @@
 				<cfset thescript = createuuid()>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777" charset="utf-8">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->

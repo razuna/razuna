@@ -2056,7 +2056,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelse>
 			<!--- Check the platform and then decide on the ImageMagick tag --->
 			<cfif arguments.thestruct.iswindows>
-				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" timeout="60" variable="file_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" timeout="60" variable="file_meta" charset="utf-8" />
 				<!--- On LAN Put the path into this variable for the md5 hash --->
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 					<cfset arguments.thestruct.theorgfileraw = arguments.thestruct.qryfile.path>
@@ -2079,7 +2079,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 				</cfif>
 				<!--- Write Script --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.qryfile.path#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.qryfile.path#" mode="777" charset="utf-8">
 				<!--- Execute Script --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="900" variable="file_meta" />
 				<!--- Delete scripts --->
@@ -2146,11 +2146,11 @@ This is the main function called directly by a single upload else from addassets
 				<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -X ""#arguments.thestruct.theorgfile#""" timeout="60" variable="arguments.thestruct.pdf_xmp" />
 			<cfelse>
 				<!--- Script: Exiftool Commands --->
-				<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -fast -fast2 -b -subject ""#arguments.thestruct.theorgfile#""" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -fast -fast2 -XMP-PDF:keywords ""#arguments.thestruct.theorgfile#""" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -fast -fast2 -PDF:keywords ""#arguments.thestruct.theorgfile#""" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename ""#arguments.thestruct.theorgfile#""" mode="777">
-				<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -fast -fast2 -X ""#arguments.thestruct.theorgfile#""" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -fast -fast2 -b -subject ""#arguments.thestruct.theorgfile#""" mode="777" charset="utf-8">
+				<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -fast -fast2 -XMP-PDF:keywords ""#arguments.thestruct.theorgfile#""" mode="777" charset="utf-8">
+				<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -fast -fast2 -PDF:keywords ""#arguments.thestruct.theorgfile#""" mode="777" charset="utf-8">
+				<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename ""#arguments.thestruct.theorgfile#""" mode="777" charset="utf-8">
+				<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -fast -fast2 -X ""#arguments.thestruct.theorgfile#""" mode="777" charset="utf-8">
 				<!--- Execute scripts --->
 				<cfexecute name="#arguments.thestruct.theshexs#" timeout="60" variable="thesubject" />
 				<cfexecute name="#arguments.thestruct.theshexk#" timeout="60" variable="thekeywords" />
@@ -2814,7 +2814,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- <cfthread action="run" intstruct="#arguments.thestruct#" priority="low"> --->
 
 			<!--- Write Script --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.thesource#" mode="777" charset="utf-8">
 			<!--- Execute Script --->
 			<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="img_meta" />
 			<!--- Delete scripts --->
@@ -3357,8 +3357,8 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/image_missing.png" destination="#arguments.thestruct.destinationraw#" mode="775" nameConflict="Skip">
 		</cfif>
 		<!--- Get thumbnail sizes --->
-		<cffile action="write" file="#arguments.thestruct.theshht#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageHeight #arguments.thestruct.destination#" mode="777">
-		<cffile action="write" file="#arguments.thestruct.theshwt#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageWidth #arguments.thestruct.destination#" mode="777">
+		<cffile action="write" file="#arguments.thestruct.theshht#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageHeight #arguments.thestruct.destination#" mode="777" charset="utf-8">
+		<cffile action="write" file="#arguments.thestruct.theshwt#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageWidth #arguments.thestruct.destination#" mode="777" charset="utf-8">
 		<!--- Get height and width --->
 		<cfexecute name="#arguments.thestruct.theshht#" timeout="60" variable="thumbheight" />
 		<cfexecute name="#arguments.thestruct.theshwt#" timeout="60" variable="thumbwidth" />
@@ -3590,7 +3590,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Write files --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageWidth #arguments.thestruct.theorg#" mode="777">
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theexif# -fast -fast2 -S -s -ImageHeight #arguments.thestruct.theorg#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshex#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.theasset#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshex#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g -x ExifToolVersion -x Directory -x filename #arguments.thestruct.theasset#" mode="777" charset="utf-8">
 			<!--- Execute --->
 			<cfif !application.razuna.rfs>
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="orgwidth" />
