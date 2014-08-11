@@ -53,7 +53,7 @@
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
 					</cfif>
-					| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as Preview Image</a>
+					<cfif av_type eq 'img' >| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as Preview Image</a></cfif>
 					<div id="divavo#av_id#" style="display:none;">
 						<cfif application.razuna.storage EQ "local">
 							<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
