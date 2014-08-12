@@ -1388,17 +1388,19 @@
 							<td width="150">Unix Network Path:</td><td><input type="text" name="unix_netpath2asset" value="#qry_customization.unix_netpath2asset#" size="70" placeholder="\\10.0.0.10\razuna\assets"></td>
 						</tr>
 					</table>
-					<table border="0">
-						<tr>
-							<td colspan="2">
-								<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_awsurl")#</strong><br/>
-								#myFusebox.getApplicationData().defaults.trans("basket_customize_awsurl_desc")#<br/>
-							</td>
-						</tr>
-						<tr>
-							<td width="150">AWS URL:</td><td><input type="text" name="basket_awsurl" value="#qry_customization.basket_awsurl#" size="70" placeholder="https://s3.amazonaws.com"></td>
-						</tr>
-					</table>
+					<cfif application.razuna.storage NEQ 'amazon'>
+						<table border="0">
+							<tr>
+								<td colspan="2">
+									<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_awsurl")#</strong><br/>
+									#myFusebox.getApplicationData().defaults.trans("basket_customize_awsurl_desc")#<br/>
+								</td>
+							</tr>
+							<tr>
+								<td width="150">AWS URL:</td><td><input type="text" name="basket_awsurl" value="#qry_customization.basket_awsurl#" size="70" placeholder="https://s3.amazonaws.com"></td>
+							</tr>
+						</table>
+					</cfif>
 				</cfif>
 			</div>
 			<div stlye="clear:both;"><br /></div>
