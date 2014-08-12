@@ -2000,6 +2000,7 @@
 			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			cf_edit			VARCHAR(2000) DEFAULT 'true',
 			HOST_ID			INT,
+			cf_xmp_path		VARCHAR(500),
 			PRIMARY KEY (cf_id),
 		)
 		</cfquery>

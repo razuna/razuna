@@ -28,17 +28,21 @@
 <!--- List fields --->
 <cffunction name="get" output="false" access="public">
 	<cfargument name="fieldsenabled" type="boolean" required="false" default="false">
+	<cfargument name="xmppath" type="boolean" required="false" default="false">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text
+		SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text, c.cf_xmp_path
 		FROM #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_text ct
 		WHERE c.cf_id = ct.cf_id_r
  		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.fieldsenabled>
 			AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+		</cfif>
+		<cfif arguments.xmppath>
+			AND (c.cf_xmp_path IS NOT NULL OR c.cf_xmp_path <cfif application.razuna.thedatabase EQ "h2"><><cfelse>!=</cfif> '')
 		</cfif>
 		ORDER BY c.cf_order
 		</cfquery>
@@ -193,7 +197,7 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, 
-		c.cf_edit, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form
+		c.cf_edit, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form, c.cf_xmp_path
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
 		AND ct.cf_id_r = c.cf_id
@@ -369,7 +373,8 @@
 		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
 		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theselectvalue#">,
 		cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_in_form#">,
-		cf_edit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
+		cf_edit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">,
+		cf_xmp_path = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_xmp_path#">
 		WHERE cf_id = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>

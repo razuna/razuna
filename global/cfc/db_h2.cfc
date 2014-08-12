@@ -1640,7 +1640,9 @@
 			cf_select_list	VARCHAR(4000),
 			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			cf_edit			VARCHAR(2000) DEFAULT 'true',
-			host_id			BIGINT
+			host_id			BIGINT,
+			cf_xmp_path		VARCHAR(500),
+			PRIMARY KEY (cf_id)
 		)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">

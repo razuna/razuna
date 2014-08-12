@@ -2518,6 +2518,94 @@
 	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
-</cffunction>	
+</cffunction>
+
+<!--- Import custom metadata into custom fields --->
+<cffunction name="xmpToCustomFields" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Declare all variables or else you will get errors in the page --->
+	<cfset xmp = structnew()>
+	<cftry>
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+		<!--- Check the platform and then decide on the Exiftool tag --->
+		<cfif isWindows>
+			<cfset theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<cfelse>
+			<cfset theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		</cfif>
+		<cfset theasset = arguments.thestruct.thesource>
+		<!--- On Windows a bat --->
+		<cfif isWindows>
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -X #theasset#" timeout="60" variable="themeta" />
+		<cfelse>
+			<!--- New parsing code --->
+			<cfset var thescript = createuuid()>
+			<!--- Set script --->
+			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
+			<!--- Write files --->
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777" charset="utf-8">
+			<!--- Execute --->
+			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#thesh#">
+		</cfif>
+		<!--- Parse Metadata which is now XML --->
+		<cfset var thexml = xmlparse(themeta)>
+		<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
+		<!--- Get custom fields --->
+		<cfinvoke component="custom_fields" method="get" fieldsenabled="true" xmppath="true" returnvariable="qry_cf" />
+		<!--- Loop over custom fields --->
+		<cfloop query="qry_cf">
+			<!--- Get the custom metadata from XMP --->
+			<cftry>
+				<cfset xmpvalue = trim(#thexml[1]["#cf_xmp_path#"].xmltext#)>
+				<!--- Add value to custom field value --->
+				<!--- Insert or update --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				SELECT cf_id_r
+				FROM #session.hostdbprefix#custom_fields_values
+				WHERE cf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_id#">
+				AND asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">
+				</cfquery>
+				<!--- Insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_id#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#xmpvalue#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam CFSQLType="cf_sql_varchar" value="#createuuid()#">
+					)
+					</cfquery>
+				<!--- Update --->
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#custom_fields_values
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#xmpvalue#">
+						WHERE cf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_if#">
+						AND asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">
+					</cfquery>
+				</cfif>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("general")>
+		<!--- On error --->
+		<cfcatch type="any">
+			<!--- <cfset consoleoutput(true)>
+			<cfset console('Error on import of custom metadata')>
+			<cfset console(cfcatch)> --->
+		</cfcatch>
+	</cftry>
+	
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
 
 </cfcomponent>

@@ -182,7 +182,7 @@
 		</cftry>
 
 		<!--- If less then 34(1.7) --->
-		<cfif updatenumber.opt_value LT 34>
+		<cfif updatenumber.opt_value LT 35>
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"
@@ -194,6 +194,14 @@
 				endTime="23:59 PM"
 				interval="3600"
 			>
+
+			<!--- Custom Fields --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_custom_fields add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cf_xmp_path #thevarchar#(500)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 
 			<!--- Alter news --->
 			<cftry>

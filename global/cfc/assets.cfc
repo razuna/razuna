@@ -2167,6 +2167,9 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Parse PDF XMP and write to DB --->
 			<cfif structKeyExists(arguments.thestruct,"pdf_xmp") AND arguments.thestruct.pdf_xmp NEQ "">
 				<cfinvoke component="xmp" method="getpdfxmp" thestruct="#arguments.thestruct#" />
+				<!--- Put Xmp custom metadata into custom fields --->
+				<cfset arguments.thestruct.thesource = arguments.thestruct.theorgfile>
+				<cfinvoke component="xmp" method="xmpToCustomFields" thestruct="#arguments.thestruct#" />
 			</cfif>
 			<!--- Grab the keywords --->
 			<cfset var thekeywords = trim(listlast(thekeywords,":"))>
@@ -2873,6 +2876,8 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Parse keywords and description from XMP --->
 		<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
+		<!--- Put Xmp custom metadata into custom fields --->
+		<cfinvoke component="xmp" method="xmpToCustomFields" thestruct="#arguments.thestruct#" />
 		<!--- Parse the Metadata from the image --->
 		<cfthread name="xmp#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
 			<cfinvoke component="xmp" method="xmpparse" thestruct="#attributes.intstruct#" returnvariable="thread.thexmp" />
@@ -3600,6 +3605,10 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var orgheight = trim(listlast(orgheight," "))>
 				<cfset sleep(2000)>
 			</cfif>
+			<!--- Put Xmp custom metadata into custom fields --->
+			<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
+			<cfset arguments.thestruct.thesource = arguments.thestruct.theasset>
+			<cfinvoke component="xmp" method="xmpToCustomFields" thestruct="#arguments.thestruct#" />
 			<!--- Get video metadata --->
 			<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
 			<cfset arguments.thestruct.vid_meta = vid_meta>
@@ -4585,6 +4594,9 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.aud_meta = idtags>
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
+			<!--- Put Xmp custom metadata into custom fields --->
+			<cfset arguments.thestruct.thesource = arguments.thestruct.theorgfile>
+			<cfinvoke component="xmp" method="xmpToCustomFields" thestruct="#arguments.thestruct#" />
 			<!--- RFS --->
 			<cfif !application.razuna.rfs>
 				<!--- Create WAV file if file is not already a WAV--->
@@ -5613,6 +5625,8 @@ This is the main function called directly by a single upload else from addassets
 	
 	<!--- Parse keywords and description from XMP --->
 	<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
+	<!--- Put Xmp custom metadata into custom fields --->
+	<cfinvoke component="xmp" method="xmpToCustomFields" thestruct="#arguments.thestruct#" />
 	<!--- Parse the Metadata from the image --->
 	<cfthread name="xmp#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
 		<cfinvoke component="xmp" method="xmpparse" thestruct="#attributes.intstruct#" returnvariable="thread.thexmp" />
