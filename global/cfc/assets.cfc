@@ -7548,36 +7548,26 @@ This is the main function called directly by a single upload else from addassets
 </cffunction>
 
 <!--- Get all asset from folder --->
-<cffunction name="swap_rendition_original" output="false" returntype="void">
+<cffunction name="swap_rendition_original" output="false" returntype="void" hint="swaps an additional rendition for the original">
 	<cfargument name="thestruct" type="struct">
+	<!--- Get information for additional rendition  --->
 	<cfquery name="avinfo" datasource="#application.razuna.datasource#">
 		SELECT av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, av_link, thesize, thewidth, theheight, hashtag, av_thumb_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE av_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- <cfif avinfo.av_type EQ 'img'>
-		<cfset field_id = 'img_id'>
-		<cfset table_name = '#session.hostdbprefix#images'>
-	<cfelseif avinfo.av_type EQ 'aud'>
-		<cfset field_id = 'aud_id'>
-		<cfset table_name = '#session.hostdbprefix#audios'>
-	<cfelseif avinfo.av_type EQ 'vid'>
-		<cfset field_id= 'vid_id'>
-		<cfset table_name = '#session.hostdbprefix#videos'>
-	<cfelse> --->
-		<cfset field_id = 'file_id'>
-		<cfset table_name = '#session.hostdbprefix#files'>
-		<cfset col_names = 'file_id as assetid, folder_id_r,file_type as type, file_name as filename,file_extension as ext, file_name_noext as filename_noext, file_name_org as filename_org, file_size as size, path_to_asset, cloud_url,cloud_url_org, hashtag'>
-	<!--- </cfif> --->
+	<!--- Get information for original asset  --->
+	<cfset field_id = 'file_id'>
+	<cfset table_name = '#session.hostdbprefix#files'>
+	<cfset col_names = 'file_id as assetid, folder_id_r,file_type as type, file_name as filename,file_extension as ext, file_name_noext as filename_noext, file_name_org as filename_org, file_size as size, path_to_asset, cloud_url,cloud_url_org, hashtag'>
 	<cfquery name="assetinfo" datasource="#application.razuna.datasource#">
 		SELECT #col_names#
 		FROM #table_name#
 		WHERE #field_id# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-
-	<!--- Interchange assets in the tables --->
+	<!--- Swap assets in the tables --->
 	<cfquery name="avinfo_del" datasource="#application.razuna.datasource#">
 		DELETE
 		FROM #session.hostdbprefix#additional_versions
@@ -7598,7 +7588,7 @@ This is the main function called directly by a single upload else from addassets
 		INSERT INTO #session.hostdbprefix#additional_versions (av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, thesize, hashtag,host_id, av_link)
 		VALUES('#avinfo.av_id#','#assetinfo.assetid#','#assetinfo.folder_id_r#','#assetinfo.type#','#assetinfo.filename_org#','#link_url#','#assetinfo.size#','#assetinfo.hashtag#','#session.hostid#','0')
 	</cfquery>
-	<!--- Update origianl asset info with av info --->
+	<!--- Update original asset info with av info --->
 	<cfquery name="avinfo_asset_update" datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#files
 		SET 
@@ -7615,7 +7605,7 @@ This is the main function called directly by a single upload else from addassets
 		#field_id# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- Update renditions --->
+	<!--- Update renditions with proper id --->
 	<cfquery name="avinfo_update_rends" datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#additional_versions
 		SET asset_id_r = '#assetinfo.assetid#'
