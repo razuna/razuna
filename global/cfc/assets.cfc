@@ -7598,7 +7598,7 @@ This is the main function called directly by a single upload else from addassets
 		INSERT INTO #session.hostdbprefix#additional_versions (av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, thesize, hashtag,host_id, av_link)
 		VALUES('#avinfo.av_id#','#assetinfo.assetid#','#assetinfo.folder_id_r#','#assetinfo.type#','#assetinfo.filename_org#','#link_url#','#assetinfo.size#','#assetinfo.hashtag#','#session.hostid#','0')
 	</cfquery>
-	<!--- Update origianl asse tinfo with av info --->
+	<!--- Update origianl asset info with av info --->
 	<cfquery name="avinfo_asset_update" datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#files
 		SET 
