@@ -7615,6 +7615,14 @@ This is the main function called directly by a single upload else from addassets
 		#field_id# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Update renditions --->
+	<cfquery name="avinfo_update_rends" datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#additional_versions
+		SET asset_id_r = '#assetinfo.assetid#'
+		WHERE 
+		asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
 
 	<cfset resetcachetoken('folders')>
 	<cfset resetcachetoken('general')>
