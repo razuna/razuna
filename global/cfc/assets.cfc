@@ -5053,8 +5053,56 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 	</cfif>
 
-	<!--- Query the image --->
-	<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
+	<cfif isdefined("arguments.thestruct.userendforpreview")>
+		<cfset arguments.thestruct.tempid = createuuid()>
+		<!--- Change tempid a bit --->
+		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
+		<!--- Create a unique name for the temp directory to hold the file --->
+		<cfset arguments.thestruct.thetempfolder   = "asset#arguments.thestruct.tempid#">
+		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
+		<!--- Create a temp directory to hold the file --->
+		<cfif !DirectoryExists(arguments.thestruct.theincomingtemppath)>
+			<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+		</cfif>
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT '#arguments.thestruct.tempid#' tempid, av_id, folder_id_r, av_type, av_link_url filename, asset_id_r file_id, '#arguments.thestruct.theincomingtemppath#' path, av_thumb_url,
+			CASE 
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = asset_id_r) THEN 'img'
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = asset_id_r) THEN 'vid'
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = asset_id_r) THEN 'aud'
+			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = asset_id_r) THEN 'doc'
+			END
+			as type
+			FROM #session.hostdbprefix#additional_versions
+			WHERE av_id = <cfqueryparam value="#arguments.thestruct.av_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfset qry.filename = listfirst(listlast(qry.filename,'/'),'?')>
+		<!--- Only if additional rendition type image do we replace else quit --->
+		<cfif !qry.av_type EQ "img">
+			<cfabort>
+		</cfif>
+		<!--- If file exists then copy else abort process --->
+		<cfif application.razuna.storage EQ "amazon">
+			<!--- Download file --->
+			<cfinvoke component="amazon" method="Download">
+				<cfinvokeargument name="key" value="/#qry.folder_id_r#/#qry.av_type#/#qry.av_id#/#qry.filename#">
+				<cfinvokeargument name="theasset" value="#qry.path#/#qry.filename#">
+				<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+			</cfinvoke>
+		<cfelse>
+			<cfif fileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#")>
+				<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#" destination="#qry.path#/#qry.filename#">
+			<cfelse>
+				<cfabort>
+			</cfif>
+		</cfif>
+		<cfset arguments.thestruct.type = qry.type>
+	<cfelse>
+		<!--- Query the image --->
+		<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
+	</cfif>
+
 	<!--- If record return zero records then abort --->
 	<cfif qry.recordcount NEQ 0>
 		<!--- Query existing record --->	
@@ -5087,6 +5135,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<cfset var newpath = replacenocase(qry.path, qry.filename, "", "all")>
 		<cfset arguments.thestruct.thedest = newpath & "/" & arguments.thestruct.newname>
+		<cfset console("#qry.path#/#qry.filename#")>
 		<cffile action="rename" source="#qry.path#/#qry.filename#" destination="#arguments.thestruct.thedest#">
 		<!--- Get width and height for thumbnail--->
 		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #arguments.thestruct.thedest#" timeout="60" variable="thethumbheight" />
