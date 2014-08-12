@@ -10646,6 +10646,11 @@
 	<!--  -->
 	<!-- END: White-Labelling of hosts -->
 	<!--  -->
+	<!-- Swap rendition with original -->
+	<fuseaction name="swap_rendition_original">
+		<!-- save record -->
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="swap_rendition_original(attributes)" />
+	</fuseaction>
 
 	<!-- Use rendition image for preview -->
 	<fuseaction name="use_rendition_for_preview">

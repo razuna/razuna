@@ -46,7 +46,7 @@
 	<!--- Show tabs --->
 	<div id="tab_detail#file_id#">
 		<ul>
-			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
+			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<cfif cs.tab_metadata>
 				<li><a href="##meta">Metadata</a></li>
 			</cfif>
@@ -462,7 +462,7 @@
 	<script language="JavaScript" type="text/javascript">
 	// Initialize Tabs
 	jqtabs("tab_detail#file_id#");
-	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
+	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');
 	// Submit form
 	function filesubmit(){
 		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords OR prefs.set2_upc_enabled>

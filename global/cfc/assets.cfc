@@ -5053,43 +5053,8 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 	</cfif>
 
-	<cfif isdefined("arguments.thestruct.userendforpreview")>
-		<cfset arguments.thestruct.tempid = createuuid()>
-		<!--- Change tempid a bit --->
-		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
-		<!--- Create a unique name for the temp directory to hold the file --->
-		<cfset arguments.thestruct.thetempfolder   = "asset#arguments.thestruct.tempid#">
-		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
-		<!--- Create a temp directory to hold the file --->
-		<cfif !DirectoryExists(arguments.thestruct.theincomingtemppath)>
-			<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
-		</cfif>
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT '#arguments.thestruct.tempid#' tempid, av_link_url filename, asset_id_r file_id, '#arguments.thestruct.theincomingtemppath#' path, av_thumb_url,
-			CASE 
-			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = asset_id_r) THEN 'img'
-			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = asset_id_r) THEN 'vid'
-			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = asset_id_r) THEN 'aud'
-			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = asset_id_r) THEN 'doc'
-			END
-			as type
-			FROM #session.hostdbprefix#additional_versions
-			WHERE av_id = <cfqueryparam value="#arguments.thestruct.av_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfset qry.filename = listlast(qry.filename,'/')>
-		<!--- If file exists then copy else abort process --->
-		<cfif fileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#")>
-			<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#" destination="#qry.path#/#qry.filename#">
-		<cfelse>
-			<cfabort>
-		</cfif>
-		<cfset arguments.thestruct.type = qry.type>
-	<cfelse>
-		<!--- Query the image --->
-		<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
-	</cfif>
-	
+	<!--- Query the image --->
+	<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
 	<!--- If record return zero records then abort --->
 	<cfif qry.recordcount NEQ 0>
 		<!--- Query existing record --->	
@@ -7580,6 +7545,78 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- return --->
 	<cfreturn arguments.thestruct.upc_name />
+</cffunction>
+
+<!--- Get all asset from folder --->
+<cffunction name="swap_rendition_original" output="false" returntype="void" hint="swaps an additional rendition for the original">
+	<cfargument name="thestruct" type="struct">
+	<!--- Get information for additional rendition  --->
+	<cfquery name="avinfo" datasource="#application.razuna.datasource#">
+		SELECT av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, av_link, thesize, thewidth, theheight, hashtag, av_thumb_url
+		FROM #session.hostdbprefix#additional_versions
+		WHERE av_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Get information for original asset  --->
+	<cfset field_id = 'file_id'>
+	<cfset table_name = '#session.hostdbprefix#files'>
+	<cfset col_names = 'file_id as assetid, folder_id_r,file_type as type, file_name as filename,file_extension as ext, file_name_noext as filename_noext, file_name_org as filename_org, file_size as size, path_to_asset, cloud_url,cloud_url_org, hashtag'>
+	<cfquery name="assetinfo" datasource="#application.razuna.datasource#">
+		SELECT #col_names#
+		FROM #table_name#
+		WHERE #field_id# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Swap assets in the tables --->
+	<cfquery name="avinfo_del" datasource="#application.razuna.datasource#">
+		DELETE
+		FROM #session.hostdbprefix#additional_versions
+		WHERE av_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Update av info with original asset info --->
+	<cfif application.razuna.storage EQ 'amazon'>
+		<cfset var link_url = '#assetinfo.cloud_url_org#'>
+		<cfset var path2asset =  '#avinfo.folder_id_r & '/doc/'  & avinfo.av_id#'>
+		<cfset var cloud_url_org  = avinfo.av_link_url>
+	<cfelse>
+		<cfset var link_url = '/#assetinfo.path_to_asset#/#assetinfo.filename_org#'>
+		<cfset var path2asset =  '#rereplace(rereplace(replacenocase(avinfo.av_link_url,listlast(avinfo.av_link_url,'/'),''),'^/',''),'/$','')#'>
+		<cfset var cloud_url_org = ''>
+	</cfif>
+	<cfquery name="assetinfo_insert_av" datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#additional_versions (av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, thesize, hashtag,host_id, av_link)
+		VALUES('#avinfo.av_id#','#assetinfo.assetid#','#assetinfo.folder_id_r#','#assetinfo.type#','#assetinfo.filename_org#','#link_url#','#assetinfo.size#','#assetinfo.hashtag#','#session.hostid#','0')
+	</cfquery>
+	<!--- Update original asset info with av info --->
+	<cfquery name="avinfo_asset_update" datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#files
+		SET 
+		file_type = '#avinfo.av_type#',
+		file_name = '#listfirst(listlast(avinfo.av_link_url,'/'),'?')#',
+		file_extension = '#listlast(avinfo.av_link_title,'.')#',
+		file_name_org =   '#listfirst(listlast(avinfo.av_link_url,'/'),'?')#',
+		file_name_noext = '#replacenocase(listfirst(listlast(avinfo.av_link_url,'/'),'?'), '.' & listlast(avinfo.av_link_title,'.'),'')#',
+		file_size = '#avinfo.thesize#',
+		path_to_asset = '#path2asset#',
+		cloud_url_org = '#cloud_url_org#',
+		hashtag = '#avinfo.hashtag#'
+		WHERE 
+		#field_id# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Update renditions with proper id --->
+	<cfquery name="avinfo_update_rends" datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#additional_versions
+		SET asset_id_r = '#assetinfo.assetid#'
+		WHERE 
+		asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+
+	<cfset resetcachetoken('folders')>
+	<cfset resetcachetoken('general')>
+	<cfset resetcachetoken('files')>
 </cffunction>
  
 </cfcomponent>

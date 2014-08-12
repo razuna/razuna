@@ -52,8 +52,9 @@
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#av_id#&thetype=#av_type#&cf_show=#av_type#&av=1','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
+						 <cfif isdefined("attributes.isdoc") AND av_type eq 'doc'>| <a href="##" onclick="swaporiginal('#av_id#','#av_type#');return false;">#myFusebox.getApplicationData().defaults.trans("swap_original")#</a></cfif>
+						<cfif av_type eq 'img'>| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as Preview Image</a></cfif>
 					</cfif>
-					<cfif av_type eq 'img' >| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as Preview Image</a></cfif>
 					<div id="divavo#av_id#" style="display:none;">
 						<cfif application.razuna.storage EQ "local">
 							<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
@@ -66,8 +67,35 @@
 		</cfloop>
 	</table>
 	<div id="msg"></div>
+	<div id="dialog-confirm-swap" title="Swap with Original?" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The Original will be replaced by this rendition and vice versa. Are you sure you wish to continue?</p>
+	</div>
+	<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+	</div>
 	<!--- Js --->
 	<script type="text/javascript">
+	function swaporiginal(id, type){
+		$( "##dialog-confirm-swap" ).dialog({
+			resizable: false,
+			height:160,
+			modal: true,
+			buttons: {
+				"Yes": function() {
+					$( this ).dialog( "close" );
+					$('##div_forall').load('#myself#c.swap_rendition_original&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&id=' + id, function(){ 
+						if (type == 'img')loadren();
+						if (type == 'vid')loadrenvid();
+						if (type == 'aud')loadrenaud();
+						$('##msg').html('<font color=steelblue">The rendition has been swapped. Please reload the page to see changes.</font>');
+					 });
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
 	function remavren(id,type){
 		$( "##dialog-confirm-rendition" ).dialog({
 			resizable: false,
@@ -90,7 +118,7 @@
 	};
 	function useforpreview(av_id,type){
 			$('##div_forall').load('#myself#c.use_rendition_for_preview&userendforpreview=1&file_id=#attributes.file_id#&av_id=' + av_id + '&type=' + type);
-			$('##msg').html('<font color=steelblue">The preview has been updated. Please reload the page.</font>');
+			$('##msg').html('<font color=steelblue">The preview has been updated. Please reload the page to see changes.</font>');
 
 	};
 	</script>
