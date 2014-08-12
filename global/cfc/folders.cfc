@@ -1549,38 +1549,36 @@
 	<cfelse>
 		,
 		CASE
-			WHEN (SELECT DISTINCT fg5.grp_permission
-			FROM #session.hostdbprefix#folders_groups fg5
-			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND fg5.folder_id_r = f.folder_id_r
-			AND fg5.grp_id_r = '0') = 'R' THEN 'R'
-			WHEN (SELECT DISTINCT fg5.grp_permission
-			FROM #session.hostdbprefix#folders_groups fg5
-			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND fg5.folder_id_r = f.folder_id_r
-			AND fg5.grp_id_r = '0') = 'W' THEN 'W'
-			WHEN (SELECT DISTINCT fg5.grp_permission
-			FROM #session.hostdbprefix#folders_groups fg5
-			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND fg5.folder_id_r = f.folder_id_r
-			AND fg5.grp_id_r = '0') = 'X' THEN 'X'
-			<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
-				WHEN (SELECT DISTINCT fg5.grp_permission
+			WHEN (
+				SELECT DISTINCT max(fg5.grp_permission)
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg5.folder_id_r = f.folder_id_r
-				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
-				WHEN (SELECT DISTINCT fg5.grp_permission
+				AND (
+					fg5.grp_id_r = '0'
+					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				)
+			) = 'R' THEN 'R'
+			WHEN (
+				SELECT DISTINCT max(fg5.grp_permission)
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg5.folder_id_r = f.folder_id_r
-				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
-				WHEN (SELECT DISTINCT fg5.grp_permission
+				AND (
+					fg5.grp_id_r = '0'
+					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				)
+			) = 'W' THEN 'W'
+			WHEN (
+				SELECT DISTINCT max(fg5.grp_permission)
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg5.folder_id_r = f.folder_id_r
-				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
-			</cfloop>
+				AND (
+					fg5.grp_id_r = '0'
+					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				)
+			) = 'X' THEN 'X'
 			WHEN (f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">) THEN 'X'
 			ELSE 'R'
 		END as permfolder
@@ -3086,7 +3084,44 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as folder_owner<cfelse>f.folder_owner</cfif>, fg.grp_id_r, fg.grp_permission
+	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as folder_owner<cfelse>f.folder_owner</cfif>,  
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		'X' as permfolder
+	<cfelse>
+		CASE
+			WHEN (
+				SELECT DISTINCT max(fg5.grp_permission)
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND (
+					fg5.grp_id_r = '0'
+					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				)
+			) = 'R' THEN 'R'
+			WHEN (
+				SELECT DISTINCT max(fg5.grp_permission)
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND (
+					fg5.grp_id_r = '0'
+					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				)
+			) = 'W' THEN 'W'
+			WHEN (
+				SELECT DISTINCT max(fg5.grp_permission)
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND (
+					fg5.grp_id_r = '0'
+					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				)
+			) = 'X' THEN 'X'
+			WHEN (f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">) THEN 'X'
+		END as permfolder
+	</cfif>
 	<cfif arguments.sf>
 		FROM #session.hostdbprefix#smart_folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.sf_id = fg.folder_id_r AND f.host_id = fg.host_id
 		WHERE f.sf_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -3095,26 +3130,22 @@
 		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfif>
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	AND (
-		fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
-		OR
-		fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		)
 	</cfquery>
 	<!--- Loop over results --->
 	<cfloop query="fprop">
-		<cfif grp_permission EQ "R" AND folderaccess NEQ "W" AND folderaccess NEQ "X">
-			<cfset var folderaccess = grp_permission>
-		<cfelseif grp_permission EQ "W" AND folderaccess NEQ "X">
-			<cfset var folderaccess = grp_permission>
-		<cfelseif grp_permission EQ "X">
-			<cfset var folderaccess = grp_permission>
+		<cfif permfolder EQ "R" AND folderaccess NEQ "W" AND folderaccess NEQ "X">
+			<cfset var folderaccess = permfolder>
+		<cfelseif permfolder EQ "W" AND folderaccess NEQ "X">
+			<cfset var folderaccess = permfolder>
+		<cfelseif permfolder EQ "X">
+			<cfset var folderaccess = permfolder>
 		</cfif>
 	</cfloop>
+	
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
-	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
+	<!--- <cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
 		<cfset var folderaccess = "x">
-	</cfif>
+	</cfif> --->
 	<!--- If session.customaccess is here and is not empty --->
 	<cfif structKeyExists(session,"customaccess") AND session.customaccess NEQ "">
 		<cfset var folderaccess = session.customaccess>
@@ -4127,38 +4158,36 @@
 		<cfelse>
 			,
 			CASE
-				WHEN (SELECT DISTINCT fg5.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg5
-				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg5.folder_id_r = f.folder_id_r
-				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
-				WHEN (SELECT DISTINCT fg5.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg5
-				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg5.folder_id_r = f.folder_id_r
-				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
-				WHEN (SELECT DISTINCT fg5.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg5
-				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg5.folder_id_r = f.folder_id_r
-				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
-				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
-					WHEN (SELECT DISTINCT fg5.grp_permission
+				WHEN (
+					SELECT DISTINCT max(fg5.grp_permission)
 					FROM #session.hostdbprefix#folders_groups fg5
 					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg5.folder_id_r = f.folder_id_r
-					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
-					WHEN (SELECT DISTINCT fg5.grp_permission
+					AND (
+						fg5.grp_id_r = '0'
+						OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+					)
+				) = 'R' THEN 'R'
+				WHEN (
+					SELECT DISTINCT max(fg5.grp_permission)
 					FROM #session.hostdbprefix#folders_groups fg5
 					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg5.folder_id_r = f.folder_id_r
-					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
-					WHEN (SELECT DISTINCT fg5.grp_permission
+					AND (
+						fg5.grp_id_r = '0'
+						OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+					)
+				) = 'W' THEN 'W'
+				WHEN (
+					SELECT DISTINCT max(fg5.grp_permission)
 					FROM #session.hostdbprefix#folders_groups fg5
 					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg5.folder_id_r = f.folder_id_r
-					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
-				</cfloop>
+					AND (
+						fg5.grp_id_r = '0'
+						OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+					)
+				) = 'X' THEN 'X'
 				WHEN (f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">) THEN 'X'
 			END as permfolder
 		</cfif>
