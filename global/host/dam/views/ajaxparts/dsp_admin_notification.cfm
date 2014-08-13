@@ -109,18 +109,18 @@
 			</table>
 			<hr/>
 
-		<h4>Folder Subscribe Email Settings</h4>
+		<h4>#myFusebox.getApplicationData().defaults.trans("folder_subscribe_email_header")# </h4>
 		<table border"0">
 			<tr>
-				<td width="120"><label for="folder_subscribe_subject">Email Subject</label></td>
+				<td width="120"><label for="folder_subscribe_subject">#myFusebox.getApplicationData().defaults.trans("the_email_subject")#</label></td>
 				<td><cfinput type="text" name="folder_subscribe_subject" id="folder_subscribe_subject" maxlength="50" size="50" value="#attributes.notifications.set2_folder_subscribe_email_sub#"></td>
 			</tr>
 			<tr>
-				<td width="120"><label for="folder_subscribe_body">Email Introduction</label></td>
+				<td width="120"><label for="folder_subscribe_body">#myFusebox.getApplicationData().defaults.trans("the_email_intro")#</label></td>
 				<td><cftextarea name="folder_subscribe_body" id="folder_subscribe_body">#attributes.notifications.set2_folder_subscribe_email_body#</cftextarea></td>
 			</tr>
 			<tr>
-				<td width="120"><label for="folder_subscribe_meta">Asset Metadata</label></td>
+				<td width="120"><label for="folder_subscribe_meta">#myFusebox.getApplicationData().defaults.trans("the_asset_metadata")#</label></td>
 				<td>
 				 <select data-placeholder="Choose metadata to include" class="chzn-select" style="width:410px;" name="folder_subscribe_meta" id="folder_subscribe_meta" multiple="multiple">
 				        	<option value="" disabled>--- Custom Fields ---</option>
@@ -134,18 +134,18 @@
 		        </tr>
 		</table>
 		<hr/>
-		<h4>Asset Expiry Email Settings</h4>
+		<h4>#myFusebox.getApplicationData().defaults.trans("asset_expiry_email_header")#</h4>
 		<table border"0">
 			<tr>
-			<td width="120"><label for="asset_expiry_subject">Email Subject</label></td>
+			<td width="120"><label for="asset_expiry_subject">#myFusebox.getApplicationData().defaults.trans("the_email_subject")#</label></td>
 			<td><cfinput type="text" name="asset_expiry_subject" id="asset_expiry_subject" maxlength="50" size="50" value="#attributes.notifications.set2_asset_expiry_email_sub#"></td>
 			</tr>
 			<tr>
-			<td width="120"><label for="asset_expiry_body">Email Introduction</label></td>
+			<td width="120"><label for="asset_expiry_body">#myFusebox.getApplicationData().defaults.trans("the_email_intro")#</label></td>
 			<td><cftextarea name="asset_expiry_body" id="asset_expiry_body">#attributes.notifications.set2_asset_expiry_email_body#</cftextarea></td>
 			</tr>
 			<tr>
-				<td width="120"><label for="asset_expiry_meta">Asset Metadata</label></td>
+				<td width="120"><label for="asset_expiry_meta">#myFusebox.getApplicationData().defaults.trans("the_asset_metadata")#</label></td>
 				<td>
 				 <select data-placeholder="Choose metadata to include" class="chzn-select" style="width:410px;" name="asset_expiry_meta" id="asset_expiry_meta" multiple="multiple">
 				        	<option value="" disabled>--- Custom Fields ---</option>
@@ -159,21 +159,22 @@
 		        </tr>
 		</table>
 		<hr/>
-		<h4>Duplicate Email Settings</h4>
-		$filename$ will be replaced by the actual name of the file that is duplicated
+		<h4>#myFusebox.getApplicationData().defaults.trans("duplicate_email_header")#</h4>
+		#myFusebox.getApplicationData().defaults.trans("duplicate_email_desc")#
 		<table border"0">
 			<tr>
-				<td width="120"><label for="duplicates_subject">Email Subject</label></td>
+				<td width="120"><label for="duplicates_subject">#myFusebox.getApplicationData().defaults.trans("the_email_subject")#</label></td>
 				<td><cfinput type="text" name="duplicates_subject" id="duplicates_subject" maxlength="50" size="50" value="#attributes.notifications.set2_duplicates_email_sub#"></td>
 			</tr>
 			<tr>
-				<td width="120"><label for="duplicates_body">Email Content</label></td>
+				<td width="120"><label for="duplicates_body">#myFusebox.getApplicationData().defaults.trans("the_email_content")#</label></td>
 				<td><cftextarea name="duplicates_body" id="duplicates_body"><cfif len(attributes.notifications.set2_duplicates_email_body) LT 10>
 					Hi there. The file $filename$ already exists in Razuna and thus was not added to the system!
+					The file exists at the following locations: $location$
 				<cfelse> #attributes.notifications.set2_duplicates_email_body#</cfif></cftextarea></td>
 			</tr>
 			<tr>
-				<td width="120"><label for="duplicates_meta">Asset Metadata</label></td>
+				<td width="120"><label for="duplicates_meta">#myFusebox.getApplicationData().defaults.trans("the_asset_metadata")#</label></td>
 				<td>
 				 <select data-placeholder="Choose metadata to include" class="chzn-select" style="width:410px;" name="duplicates_meta" id="duplicates_meta" multiple="multiple">
 				        	<option value="" disabled>--- Custom Fields ---</option>
