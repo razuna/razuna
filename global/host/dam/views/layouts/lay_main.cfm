@@ -130,7 +130,7 @@
 }
 </cfif>
 <!--- Custom CSS --->
-<cfif application.razuna.whitelabel>
+<cfif application.razuna.whitelabel AND isdefined("wl_thecss")>
 #wl_thecss#
 </cfif>
 </style>
