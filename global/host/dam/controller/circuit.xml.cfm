@@ -328,7 +328,7 @@
 							</false>
 						</if>
 						<!-- Most Recently added assets -->
-						<if condition="attributes.wl_show_updates">
+						<if condition="structkeyexists(attributes,'wl_show_updates') AND attributes.wl_show_updates EQ 'true'">
 							<true>
 								<!-- Params -->
 								<set name="attributes.logswhat" value="log_assets" />
