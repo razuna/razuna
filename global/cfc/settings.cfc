@@ -1406,7 +1406,7 @@
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
 	<!--- RAZ-2812 Most recently updated assets  --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="qry_options">
 		SELECT opt_value FROM options 
 		WHERE opt_id='SHOW_UPDATES' 
 	</cfquery>
@@ -1414,7 +1414,7 @@
 		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
 	<cfelse>
 		<cfset application.razuna.show_recent_updates = 'false'>
-	</cfif>
+	</cfif> --->
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -2426,7 +2426,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_news_rss = "">
 	<cfset s.wl_main_static = "">
 	<cfset s.wl_thecss = "">
-	<cfset s.wl_show_updates = "">
+	<cfset s.wl_show_updates = false>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_options */ opt_id, opt_value
@@ -2436,9 +2436,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfloop query="q">
 		<cfset s["#opt_id#"] = opt_value>
 		<!--- RAZ-2812 Most recently updated assest --->
-		<cfif q.opt_id EQ 'SHOW_UPDATES'>
+		<!--- <cfif q.opt_id EQ 'SHOW_UPDATES'>
 			<cfset application.razuna.show_recent_updates = q.opt_value>
-		</cfif>
+		</cfif> --->
 	</cfloop>
 	<!--- Additionally store the full query into the struct --->
 	<cfset s.query = q>
