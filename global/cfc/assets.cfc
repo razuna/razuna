@@ -1627,7 +1627,7 @@
 			<cfschedule action="update"
 				task="RazLuceneIndexUpdate_#session.hostid#" 
 				operation="HTTPRequest"
-				url="#session.thehttp##cgi.http_host#/admin/index.cfm?fa=c.w_lucene_update_index&host_id=#session.hostid#"
+				url="#session.thehttp##cgi.http_host#/index.cfm?fa=c.w_lucene_update_index&host_id=#session.hostid#"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
 				startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
 				interval="once"
