@@ -2092,7 +2092,6 @@
 			PRIMARY KEY (SCHED_ID),
 			KEY #arguments.thestruct.host_db_prefix#sched_user (SCHED_USER),
 	  		KEY #arguments.thestruct.host_db_prefix#sched_hostid (HOST_ID),
-	  		KEY #arguments.thestruct.host_db_prefix#notified(sched_id_r, notified),
 			FOREIGN KEY (SCHED_USER) REFERENCES users (USER_ID) ON DELETE SET NULL,
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2116,6 +2115,7 @@
 		KEY #arguments.thestruct.host_db_prefix#sched_idr (sched_id_r),
   		KEY #arguments.thestruct.host_db_prefix#schedl_hostid (HOST_ID),
   		KEY #arguments.thestruct.host_db_prefix#sched_logtime(SCHED_LOG_TIME),
+  		KEY #arguments.thestruct.host_db_prefix#notified(sched_id_r, notified),
 		FOREIGN KEY (SCHED_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
