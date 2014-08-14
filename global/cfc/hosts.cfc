@@ -289,7 +289,7 @@
 				interval="3600"
 			>
 			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
-			<cfif application.razuna.isp>
+			<!--- <cfif application.razuna.isp>
 				<cfschedule action="update"
 					task="RazLuceneIndexUpdate_#hostid.id#" 
 					operation="HTTPRequest"
@@ -298,7 +298,7 @@
 					startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
 					interval="once"
 				>
-			</cfif>
+			</cfif> --->
 			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
 			<cftry>
 				<!--- Create collection --->
