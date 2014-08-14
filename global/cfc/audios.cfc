@@ -397,6 +397,25 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+
+		<cfif isdefined("arguments.thestruct.expiry_date")>
+			<cfquery datasource="#variables.dsn#">
+				UPDATE #session.hostdbprefix#audios
+				SET 
+				<cfif expiry_date EQ ''>
+					expiry_date = null
+				<cfelseif isdate(arguments.thestruct.expiry_date)>
+					expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">
+				<cfelse>
+					expiry_date = expiry_date
+				</cfif>
+				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<!--- Filter out renditions --->
+				AND aud_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
+			</cfquery>
+		</cfif>
+
 		<!--- Save to the files table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
@@ -413,11 +432,6 @@
 			SET
 			aud_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			aud_online = <cfqueryparam value="#arguments.thestruct.aud_online#" cfsqltype="cf_sql_varchar">,
-			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
-				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
-			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
-				expiry_date = null,
-			</cfif>
 			<cfif isdefined("arguments.thestruct.aud_upc")>
 				aud_upc_number = <cfqueryparam value="#arguments.thestruct.aud_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>

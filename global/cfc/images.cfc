@@ -942,6 +942,25 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+
+		<cfif isdefined("arguments.thestruct.expiry_date")>
+			<cfquery datasource="#variables.dsn#">
+				UPDATE #session.hostdbprefix#images
+				SET 
+				<cfif expiry_date EQ ''>
+					expiry_date = null
+				<cfelseif isdate(arguments.thestruct.expiry_date)>
+					expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">
+				<cfelse>
+					expiry_date = expiry_date
+				</cfif>
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<!--- Filter out renditions --->
+				 AND img_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
+			</cfquery>
+		</cfif>
+
 		<!--- Save to the images table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
@@ -958,11 +977,6 @@
 			UPDATE #session.hostdbprefix#images
 			SET 
 			img_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
-			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
-				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
-			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
-				expiry_date = null,
-			</cfif>
 			<cfif isdefined("arguments.thestruct.img_upc")>
 				img_upc_number = <cfqueryparam value="#arguments.thestruct.img_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>
