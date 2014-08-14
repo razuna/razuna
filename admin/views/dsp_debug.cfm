@@ -22,16 +22,36 @@
 <!--- Get counts of assets not indexed --->
 <h3>INDEXING STATUS</h3>
 <cfquery name="idxstats_img" datasource="#application.razuna.datasource#">
-	SELECT count(1) cnt FROM raz1_images WHERE is_indexed = 0
+	SELECT count(1) cnt FROM raz1_images i, hosts h 
+	WHERE is_indexed = 0 
+	AND i.host_id = h.host_id
+	<cfif cgi.http_host CONTAINS "razuna.com">
+	AND host_type != 0
+	</cfif>
 </cfquery>
 <cfquery name="idxstats_vid" datasource="#application.razuna.datasource#">
-	SELECT count(1) cnt  FROM raz1_videos WHERE is_indexed = 0
+	SELECT count(1) cnt FROM raz1_videos i, hosts h 
+	WHERE is_indexed = 0 
+	AND i.host_id = h.host_id
+	<cfif cgi.http_host CONTAINS "razuna.com">
+	AND host_type != 0
+	</cfif>
 </cfquery>
 <cfquery name="idxstats_aud" datasource="#application.razuna.datasource#">
-	SELECT count(1) cnt  FROM raz1_audios WHERE is_indexed = 0
+	SELECT count(1) cnt FROM raz1_audios i, hosts h 
+	WHERE is_indexed = 0 
+	AND i.host_id = h.host_id
+	<cfif cgi.http_host CONTAINS "razuna.com">
+	AND host_type != 0
+	</cfif>
 </cfquery>
 <cfquery name="idxstats_fil" datasource="#application.razuna.datasource#">
-	SELECT count(1) cnt  FROM raz1_files WHERE is_indexed = 0
+	SELECT count(1) cnt FROM raz1_files i, hosts h 
+	WHERE is_indexed = 0 
+	AND i.host_id = h.host_id
+	<cfif cgi.http_host CONTAINS "razuna.com">
+	AND host_type != 0
+	</cfif>
 </cfquery>
 
 Images not indexed: #idxstats_img.cnt#<br>
