@@ -572,6 +572,8 @@
 					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.file_name_org#">
 				</cfif>
 				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop query="arguments.thestruct.s3list">
 						<cfif etag NEQ ''> <!--- Ignore folders --->
@@ -587,8 +589,6 @@
 					<cfset var fileext = listlast(thefilepath,'.')>
 					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
 					<cftry>
-						<!--- convert the filename without space and foreign chars --->
-						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
 						<cfset AmazonS3write(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -889,6 +889,8 @@
 					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#">
 				</cfif>
 				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop query="arguments.thestruct.s3list">
 						<cfif etag NEQ ''> <!--- Ignore folders --->
@@ -905,8 +907,6 @@
 					<cfset var fileext = listlast(thefilepath,'.')>
 					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
 					<cftry>
-						<!--- convert the filename without space and foreign chars --->
-						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
 						<cfset AmazonS3write(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -1171,6 +1171,8 @@
 				</cfif>
 
 				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop query="arguments.thestruct.s3list">
 						<cfif etag NEQ ''> <!--- Ignore folders --->
@@ -1186,8 +1188,6 @@
 					<cfset var fileext = listlast(thefilepath,'.')>
 					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
 					<cftry>
-						<!--- convert the filename without space and foreign chars --->
-						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 						<cfset AmazonS3write(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -1419,6 +1419,8 @@
 				</cfif>
 
 				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop query="arguments.thestruct.s3list">
 						<cfif etag NEQ ''> <!--- Ignore folders --->
@@ -1434,8 +1436,6 @@
 					<cfset var fileext = listlast(thefilepath,'.')>
 					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
 					<cftry>
-						<!--- convert the filename without space and foreign chars --->
-						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 						<cfset AmazonS3write(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
