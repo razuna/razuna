@@ -1653,7 +1653,7 @@
 <cffunction name="addasset" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Check if this is the very first upload for host --->
-	<cfif not isdefined("session.firstasset")>
+	<!--- <cfif not isdefined("session.firstasset")>
 		<cfquery datasource="#application.razuna.datasource#" name="checkasset">
 			SELECT hashtag FROM  #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION
@@ -1671,7 +1671,7 @@
 	</cfif>
 	<!--- If very first upload then add a index task to run once --->
 	<cfif session.firstasset>
-		<cfif application.razuna.isp>
+		<cfif application.razuna.isp> --->
 			<cfschedule action="update"
 				task="RazLuceneIndexUpdate_#session.hostid#" 
 				operation="HTTPRequest"
@@ -1680,10 +1680,10 @@
 				startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
 				interval="once"
 			>
-		</cfif>
+		<!--- </cfif>
 		<cfset session.firstasset = false>
 	</cfif>
-
+ --->
 	<!--- Limit threads --->
 	<cfif arraylen(getallthreads()) GT 200>
 		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
