@@ -944,8 +944,6 @@
 		</cfloop>
 
 		<cfif isdefined("arguments.thestruct.expiry_date")>
-						<cfset console(arguments.thestruct.expiry_date)>
-
 			<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
 				SET 
