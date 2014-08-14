@@ -1619,7 +1619,9 @@
 			<cfset session.firstasset = false>
 		</cfif>
 	</cfif>
+	
 	<!--- If very first upload then add a index task to run once --->
+
 	<cfif session.firstasset>
 		<cfif application.razuna.isp>
 			<cfschedule action="update"
