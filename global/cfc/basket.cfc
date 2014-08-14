@@ -584,29 +584,41 @@
 				</cfif>
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
-					<cfset AmazonS3write(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						file='#thefilepath#',
-						key='#arguments.thestruct.thename#'
-					)>
-					<cfset AmazonS3setacl(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						key='#arguments.thestruct.thename#',
-						acl = 'public-read'
-					)>
-					<cfif art contains "doc">
-						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
-						 datasource='#arguments.thestruct.awsdatasource#',
-						 bucket='#arguments.thestruct.awsbucket#',
-						 key='#arguments.thestruct.thename#',
-						 expiration=epoch
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<!--- convert the filename without space and foreign chars --->
+						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thename#'
 						)>
-						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thename#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "doc">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thename#',
+							 expiration=epoch
+							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
 						</cfif>
-					</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
 					<cfcontinue>
 				</cfif>
 				<cfcontinue>
@@ -890,29 +902,41 @@
 				
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
-					<cfset AmazonS3write(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						file='#thefilepath#',
-						key='#arguments.thestruct.thefinalname#'
-					)>
-					<cfset AmazonS3setacl(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						key='#arguments.thestruct.thefinalname#',
-						acl = 'public-read'
-					)>
-					<cfif art contains "original">
-						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
-						 datasource='#arguments.thestruct.awsdatasource#',
-						 bucket='#arguments.thestruct.awsbucket#',
-						 key='#arguments.thestruct.thefinalname#',
-						 expiration=epoch
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<!--- convert the filename without space and foreign chars --->
+						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thefinalname#'
 						)>
-						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thefinalname#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "original">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thefinalname#',
+							 expiration=epoch
+							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
 						</cfif>
-					</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
 					<cfcontinue>
 				</cfif>
 			</cfif>
@@ -1159,29 +1183,41 @@
 				</cfif>
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
-					<cfset AmazonS3write(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						file='#thefilepath#',
-						key='#arguments.thestruct.thenewname#'
-					)>
-					<cfset AmazonS3setacl(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						key='#arguments.thestruct.thenewname#',
-						acl = 'public-read'
-					)>
-					<cfif art contains "video">
-						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
-						 datasource='#arguments.thestruct.awsdatasource#',
-						 bucket='#arguments.thestruct.awsbucket#',
-						 key='#arguments.thestruct.thenewname#',
-						 expiration=epoch
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<!--- convert the filename without space and foreign chars --->
+						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thenewname#'
 						)>
-					</cfif>
-					<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
-					</cfif>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thenewname#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "video">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thenewname#',
+							 expiration=epoch
+							)>
+						</cfif>
+						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
 					<cfcontinue>
 				</cfif>
 				<cfcontinue>
@@ -1395,29 +1431,41 @@
 				</cfif>
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
-					<cfset AmazonS3write(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						file='#thefilepath#',
-						key='#arguments.thestruct.thenewname#'
-					)>
-					<cfset AmazonS3setacl(
-						datasource='#arguments.thestruct.awsdatasource#',
-						bucket='#arguments.thestruct.awsbucket#',
-						key='#arguments.thestruct.thenewname#',
-						acl = 'public-read'
-					)>
-					<cfif art contains "audio">
-						<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
-						 datasource='#arguments.thestruct.awsdatasource#',
-						 bucket='#arguments.thestruct.awsbucket#',
-						 key='#arguments.thestruct.thenewname#',
-						 expiration=epoch
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<!--- convert the filename without space and foreign chars --->
+						<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thenewname#'
 						)>
-						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thenewname#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "audio">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thenewname#',
+							 expiration=epoch
+							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
 						</cfif>
-					</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
 					<cfcontinue>
 				</cfif>
 				<cfcontinue>
@@ -1798,7 +1846,7 @@
 		</cfif>
 
 		<cfcatch>
-			<cfset res.message  = '<font color="##cd5c5c">-------------- ERROR --------------<br/>' & cfcatch.detail & '</font>'>
+			<cfset res.message  = '<font color="##cd5c5c">-------------- ERROR --------------<br/>' & cfcatch.message & '<br/>'  & cfcatch.detail & '</font>'>
 			<cfoutput>#serializeJSON(res)#</cfoutput>
 			<cfflush>
 			<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
