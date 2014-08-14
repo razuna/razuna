@@ -922,6 +922,23 @@
 					</cfloop>
 				</cfif>
 			</cfloop>
+
+			<cfif isdefined("arguments.thestruct.expiry_date")>
+				<cfquery datasource="#variables.dsn#">
+					UPDATE #session.hostdbprefix#files
+					SET 
+					<cfif expiry_date EQ ''>
+					expiry_date = null
+					<cfelseif isdate(arguments.thestruct.expiry_date)>
+						expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">
+					<cfelse>
+						expiry_date = expiry_date
+					</cfif>
+					WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+
 			<!--- Only if not from batch function --->
 			<cfif arguments.thestruct.frombatch NEQ "T">
 				<!--- If PDF save XMP data --->
@@ -970,11 +987,6 @@
 					UPDATE #session.hostdbprefix#files
 					SET 
 					file_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
-					<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
-						expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
-					<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
-						expiry_date = null,
-					</cfif>
 					<cfif isdefined("arguments.thestruct.file_upc")>
 						file_upc_number = <cfqueryparam value="#arguments.thestruct.file_upc#" cfsqltype="cf_sql_varchar">,
 					</cfif>
