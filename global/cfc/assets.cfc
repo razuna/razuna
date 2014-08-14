@@ -1603,7 +1603,7 @@
 <cffunction name="addasset" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Check if this is the very first upload for host --->
-	<cfif not isdefined("session.firstasset")>
+	<cfif not structKeyExists(session, "firstasset")>
 		<cfquery datasource="#application.razuna.datasource#" name="checkasset">
 			SELECT hashtag FROM  #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION
