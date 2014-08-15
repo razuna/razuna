@@ -2806,7 +2806,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<cfset var results = querynew('')>
-		<cfif structKeyExists(arguments.thestruct,'ad_server_filter') AND trim(arguments.thestruct.ad_server_filter) NEQ ''>
+		<cfif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "">
+			<cfset ldapfilter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
+		<cfelseif structKeyExists(arguments.thestruct,'ad_server_filter') AND trim(arguments.thestruct.ad_server_filter) NEQ ''>
 			<cfset ldapfilter = "#arguments.thestruct.ad_server_filter#" >
 		<cfelse>
 			<cfset ldapfilter="(&(objectClass=user))" >
