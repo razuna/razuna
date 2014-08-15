@@ -119,7 +119,7 @@
 
 <!--- If all is selected show the description --->
 <div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
-	<strong>All #qry_filecount.thetotal# files have been selected</strong> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Deselect all</a>
+	<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Deselect all</a>
 	<br>
 </div>
 <div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
