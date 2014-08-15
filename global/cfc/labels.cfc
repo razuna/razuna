@@ -102,6 +102,7 @@
 	<!--- Add labels --->
 	<cffunction name="label_add_all_thread" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var i = "">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
 		<!--- Update Dates --->
@@ -190,11 +191,12 @@
 	<!--- Add label from batch --->
 	<cffunction name="label_add_batch" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var j = "">
 		<!--- Loop over files_ids --->
 		<cfthread intstruct="#arguments.thestruct#">
-			<cfloop list="#attributes.intstruct.file_ids#" index="i">
-				<cfset attributes.intstruct.fileid = listfirst(i,"-")>
-				<cfset attributes.intstruct.thetype = listlast(i,"-")>
+			<cfloop list="#attributes.intstruct.file_ids#" index="j">
+				<cfset attributes.intstruct.fileid = listfirst(j,"-")>
+				<cfset attributes.intstruct.thetype = listlast(j,"-")>
 				<!--- Now pass each asset to the function above to add labels --->
 				<cfinvoke method="label_add_all" thestruct="#attributes.intstruct#" />
 			</cfloop>
