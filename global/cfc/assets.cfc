@@ -1732,6 +1732,35 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
 	</cfif>
+	<!--- If this is zip file then try and read the file to ensure it is not corrupted --->
+	<cfif arguments.thestruct.qryfile.extension EQ "zip">
+		<cftry>
+			<cfset var zipinfo = "">
+			<cfzip action="list" zipfile="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" variable="zipinfo"/>
+			<cfcatch type="any">
+				<cfset cfcatch.custom_message = "Error reading zip file. Please ensure file is a valid zip archive."/>
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<cfset var transvalues = arraynew()>
+				<cfset transvalues[1] = "#arguments.thestruct.qryfile.filename#">
+				<cfinvoke component="defaults" method="trans" transid="zip_not_added_subject" values="#transvalues#" returnvariable="zip_not_added_sub" />
+				<cfinvoke component="defaults" method="trans" transid="zip_not_added_message" values="#transvalues#" returnvariable="zip_not_added_msg" />
+				<cfinvoke component="email" method="send_email" subject="#zip_not_added_sub#" themessage="#zip_not_added_msg#">
+				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+					DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+					DELETE FROM #session.hostdbprefix#audios WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+					DELETE FROM #session.hostdbprefix#videos WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+					DELETE FROM #session.hostdbprefix#files WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+				</cfquery>
+				<cfabort>
+			</cfcatch>
+		</cftry>
+	</cfif>
 	<!--- Query to get the settings --->
 	<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
