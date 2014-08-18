@@ -223,6 +223,23 @@
 	<cfreturn qLocal />
 </cffunction>
 
+
+<!--- GET DETAILS OF ONE RECORD SIMPLE!!! --->
+<cffunction name="filedetail" access="public" output="false" returntype="query">
+	<cfargument name="theid" type="string" required="true">
+	<cfargument name="thecolumn" type="string" required="true">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("audios")>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#filedetailaud */ #arguments.thecolumn#, CASE WHEN NOT(i.aud_group ='' OR i.aud_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id = i.aud_group) ELSE expiry_date END expiry_date_actual
+		FROM #session.hostdbprefix#audios i
+		WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+	<cfreturn qry />
+</cffunction>
+
 <!--- GET THE AUDIO DETAILS --->
 <cffunction name="detail" output="false">
 	<cfargument name="thestruct" type="struct">
@@ -975,8 +992,7 @@
 			<cfset arguments.thestruct.qryaud = "">
 			<!--- Move --->
 			<cfset arguments.thestruct.file_id = arguments.thestruct.aud_id>
-			<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="qrydetails">
-			<cfset arguments.thestruct.qryaud = qrydetails.detail>
+			<cfinvoke method="filedetail" theid="#arguments.thestruct.aud_id#" thecolumn="aud_name, folder_id_r" returnvariable="arguments.thestruct.qryaud">
 			<!--- Check if this is an alias --->
 			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.aud_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
 			<!--- If this is an alias --->
