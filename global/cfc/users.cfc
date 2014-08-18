@@ -90,7 +90,7 @@
 <cffunction name="check" output="true" returntype="void">
 	<cfargument name="thestruct" type="Struct">
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" result="myqry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_id
 	FROM ct_users_hosts ct, users u
 	WHERE ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
