@@ -87,15 +87,15 @@
 </cffunction>
 
 <!--- Check for existing --->
-<cffunction name="check">
+<cffunction name="check" output="true" returntype="void">
 	<cfargument name="thestruct" type="Struct">
 	<!--- function body --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" result="myqry">
 	SELECT u.user_id
 	FROM ct_users_hosts ct, users u
 	WHERE ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND ct.ct_u_h_user_id = u.user_id
-	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	<cfif structkeyexists(arguments.thestruct,"user_login_name")>
 		AND lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.user_login_name)#">
 	<cfelseif structkeyexists(arguments.thestruct,"user_email")>
@@ -103,7 +103,11 @@
 	</cfif>
 	</cfquery>
 	<!--- Return --->
-	<cfreturn qry>
+	<cfif qry.recordcount EQ 0>
+		<cfoutput>#SerializeJSON(true)#</cfoutput>  
+	<cfelse>
+		<cfoutput>#SerializeJSON(false)#</cfoutput>  
+	</cfif>
 </cffunction>
 
 <!--- Get all users --->

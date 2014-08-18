@@ -65,7 +65,7 @@
 				<td width="130" nowrap="true">
 					<strong>#myFusebox.getApplicationData().defaults.trans("email")#*</strong>
 				</td>
-				<td width="300"><input type="text" name="user_email" id="user_email" style="width:300px;" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><div id="checkemaildiv"></div><label for="user_email" class="error">Enter your eMail address!</label><!--- <cfif attributes.add EQ "F"><a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user">email user</a></cfif> ---></td>
+				<td width="300"><input type="text" name="user_email" id="user_email" style="width:300px;" class="text" value="#qry_detail.user_email#"<!--- <cfif attributes.add EQ "F"><a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user">email user</a></cfif> ---></td>
 			</tr>
 			<tr>
 				<td width="180"><strong>#myFusebox.getApplicationData().defaults.trans("user_name")#*</strong></td>
@@ -74,7 +74,7 @@
 					<input type="text" name="user_login_name_show" id="user_login_name_show" style="width:300px;" value="#qry_detail.user_login_name#"  disabled>
 					<input type="hidden" name="user_login_name" id="user_login_name"  value="#qry_detail.user_login_name#"  >
 				<cfelse>
-					<input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#" onkeyup="checkusername();" ><div id="checkusernamediv"></div><label for="user_login_name" class="error">Enter your Loginname!</label>
+					<input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#">
 				</cfif>
 				</td>
 			</tr>
@@ -314,10 +314,12 @@
 				user_last_name: "required",
 			   	user_email: {
 			    	required: true,
-			     	email: true
+			     	email: true,
+			     	remote: <cfoutput>"#myself#c.checkemail&user_id=" + document.userdetailadd.user_id.value,</cfoutput>
 			   	},
 			   	user_login_name: {
-					required: true
+					required: true,
+					remote: <cfoutput>"#myself#c.checkusername&user_id=" + document.userdetailadd.user_id.value,</cfoutput>
 				}
 			   	<cfif attributes.user_id EQ "0">
 			   	,
@@ -329,6 +331,11 @@
 					equalTo: "##user_pass"
 				}
 				</cfif>
+			 },
+			 messages:
+			 {
+			 	user_email: {remote: "This email is already taken."},
+			 	user_login_name: {remote: "This username is already taken."}
 			 },
  			onkeyup: function(element) { this.element(element); }
 		});
