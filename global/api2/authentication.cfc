@@ -33,6 +33,7 @@
 		<cfargument name="api_key" type="string" required="true">
 		<!--- Param --->
 		<cfparam name="thehostid" default="" />
+		<cfparam default="0" name="session.thefolderorg">
 		<!--- If api key is empty --->
 		<cfif arguments.api_key EQ "">
 			<cfset arguments.api_key = 0>
