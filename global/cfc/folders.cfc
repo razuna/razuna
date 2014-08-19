@@ -2606,6 +2606,11 @@
 	<cfelse>
 		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
+	 <!--- If folderlist is empty then set to a dummy value --->
+	<cfif listlen(trim(thefolderlist)) EQ 0>
+ 		<cfset thefolderlist = '-1'>
+ 	</cfif>
+
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#filetotalcount */
