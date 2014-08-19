@@ -185,7 +185,12 @@
 			<cfloop query="qry_share_options">
 				<cfif asset_id_r EQ avid>
 					<!--- Set correct download path --->
-					<cfset thelinkurl = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid##av_link_url#">
+					<cfif application.razuna.storage NEQ 'amazon'>
+						<cfset thelinkurl = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid##av_link_url#">
+					<cfelse>
+						<cfset thelinkurl = "#av_link_url#">
+					</cfif>
+					
 					<tr>
 						<td><strong>#av_link_title#</strong><br />(#myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB)</td>
 						<td valign="top">

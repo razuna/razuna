@@ -851,6 +851,21 @@
 		<cfparam name="arguments.thestruct.what" default="">
 		<cfparam name="arguments.thestruct.frombatch" default="F">
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
+		<cfset var renlist ="-1">
+		<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
+		<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
+			<!--- Get additional renditions --->
+			<cfquery datasource="#variables.dsn#" name="getaddver">
+			SELECT av_id FROM #session.hostdbprefix#additional_versions
+			WHERE asset_id_r in (<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+			</cfquery>
+			<!--- Append additional renditions --->
+			<cfset renlist = listappend(renlist,'#valuelist(getaddver.av_id)#',',')>
+			<!--- Append  renditions --->
+			<cfset renlist = listappend(renlist,'#valuelist(arguments.thestruct.qry_related.aud_id)#',',')>
+			<!--- Append to file_id list --->
+			<cfset arguments.thestruct.file_id = listappend(arguments.thestruct.file_id,renlist,',')>
+		</cfif>
 		<!--- Loop over the file_id (important when working on more then one image) --->
 		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 			<cfset var i = listfirst(i,"-")>
@@ -936,6 +951,8 @@
 					</cfif>
 					WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<!--- Filter out renditions --->
+					AND file_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 				</cfquery>
 			</cfif>
 
@@ -963,6 +980,8 @@
 						rightsmarked = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rightsmarked#">
 						WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						<!--- Filter out renditions --->
+						AND file_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 						</cfquery>
 					<cfelse>
 						<cfquery datasource="#variables.dsn#">
@@ -984,6 +1003,14 @@
 				<!--- Save to the files table --->
 				<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 					<cfquery datasource="#variables.dsn#">
+					UPDATE #session.hostdbprefix#additional_versions
+					SET 
+					av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
+					WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND av_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
+					</cfquery>
+					<cfquery datasource="#variables.dsn#">
 					UPDATE #session.hostdbprefix#files
 					SET 
 					file_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
@@ -994,6 +1021,8 @@
 					<!--- <cfif isdefined("remarks")>, file_remarks = <cfqueryparam value="#remarks#" cfsqltype="cf_sql_varchar"></cfif> --->
 					WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<!--- Filter out renditions --->
+					AND file_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
 					</cfquery>
 				</cfif>
 			</cfif>

@@ -33,13 +33,17 @@
 <!--- This is for additional versions --->
 <cfif attributes.av>
 	<!--- Grab theurl and get filename --->
-	<cfset theext = listlast(qry_binary.theurl, ".")>
+	<cfset theext = listlast(listfirst(listlast(qry_binary.qfile.path_to_asset,'/'),'?'),'.')>
 	<!--- RAZ-2519 users download with their custom filename --->
 	<cfif structKeyExists(attributes,"set2_custom_file_ext") AND attributes.set2_custom_file_ext EQ "false">
 		<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
 	<cfelse>
-	<!--- Default file name when prompted to download --->
-	<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#.#theext#"' />
+		<!--- Default file name when prompted to download --->
+		<cfif qry_binary.thefilename does not contain ".#theext#">
+			<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#.#theext#"' />
+		<cfelse>
+			<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+		</cfif>
 	</cfif> 
 	<!--- Get file --->
 	<cfif application.razuna.storage NEQ "amazon">
