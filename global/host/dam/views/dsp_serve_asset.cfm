@@ -42,7 +42,11 @@
 	<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#.#theext#"' />
 	</cfif> 
 	<!--- Get file --->
-	<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
+	<cfif application.razuna.storage NEQ "amazon">
+		<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
+	<cfelse>
+		<cfhttp url="#qry_binary.qfile.cloud_url#" getasbinary="yes" />
+	</cfif>
 	<!--- Serve the file --->
 	<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
 </cfif>
