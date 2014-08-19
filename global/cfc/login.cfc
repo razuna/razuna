@@ -186,6 +186,50 @@
 				</cfif>
 			</cfif>
 		</cfif>
+
+		<!--------- Check to see if scheduled tasks exists and if not put it back --------->
+
+		<!--- Get the correct paths for hosted vs non-hosted --->
+		<cftry>
+			<cfif !application.razuna.isp>
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam">
+			<cfelse>
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/admin">
+			</cfif>
+			<cfthread action="run" intvar="#taskpath#">
+				<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+				<cfschedule action="update"
+					task="RazFolderSubscribe" 
+					operation="HTTPRequest"
+					url="#attributes.intvar#/index.cfm?fa=c.folder_subscribe_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="500"
+				>
+				<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
+				<cfschedule action="update"
+					task="RazAssetExpiry" 
+					operation="HTTPRequest"
+					url="#attributes.intvar#/index.cfm?fa=c.w_asset_expiry_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="300"
+				>
+				<!--- Save FTP Task in CFML scheduling engine --->
+				<cfschedule action="update"
+					task="RazFTPNotifications" 
+					operation="HTTPRequest"
+					url="#attributes.intvar#/index.cfm?fa=c.w_ftp_notifications_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="3600"
+				>
+			</cfthread>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<cfreturn theuser />
 	</cffunction>
 
