@@ -2147,7 +2147,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery> --->
 	<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
-		SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
+		SELECT img_description,img_keywords, lang_id_r FROM #session.hostdbprefix#images_text
 		WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="cf_sql_varchar" >
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -2160,20 +2160,16 @@
 	</cfquery>
 	<!--- Update the tables --->
 	<cfif arguments.thestruct.insert_type EQ 'replace'>
-		<!--- <cfquery name="updateimages" datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images SET 
-			img_filename = <cfqueryparam value="#select_images.img_filename#" cfsqltype="cf_sql_varchar">,
-			shared = <cfqueryparam value="#select_images.shared#" cfsqltype="cf_sql_varchar">
-			WHERE img_id IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery> --->
-		<cfquery name="updateimges_text" datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images_text SET 
-			img_description = <cfqueryparam value="#select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
-			img_keywords = <cfqueryparam value="#select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
-			WHERE img_id_r IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		<cfloop query = "select_images_text">
+			<cfquery name="updateimges_text" datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images_text SET 
+				img_description = <cfqueryparam value="#select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
+				img_keywords = <cfqueryparam value="#select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
+				WHERE img_id_r IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">
+			</cfquery>
+		</cfloop>
 		<cfquery name="updateimges_text" datasource="#application.razuna.datasource#" >
 			UPDATE #session.hostdbprefix#xmp
 				SET
@@ -2216,28 +2212,29 @@
 		</cfquery>
 	<cfelse>
 		<cfloop list="#arguments.thestruct.idList#" index="theidtoupdate" >
-			<cfquery name="append_images" datasource="#application.razuna.datasource#">
-				SELECT img_filename,shared FROM #session.hostdbprefix#images
-				WHERE img_id = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<cfquery name="append_images_text" datasource="#application.razuna.datasource#">
-				SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
-				WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+			<cfloop query = "select_images_text">
+				<cfquery name="append_images_text" datasource="#application.razuna.datasource#">
+					SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
+					WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">
+				</cfquery>
+				
+				<cfquery name="updateimagestext" datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#images_text SET 
+					img_description = <cfqueryparam value="#append_images_text.img_description# #select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
+					img_keywords = <cfqueryparam value="#append_images_text.img_keywords# #select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
+					WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">
+				</cfquery>
+			</cfloop>
+
 			<cfquery name="append_xmp" datasource="#application.razuna.datasource#">
 				SELECT subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,description,ciadrcity,ciadrctry,location,
 				ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,
 				datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights FROM #session.hostdbprefix#xmp
 				WHERE id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<cfquery name="updateimagestext" datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#images_text SET 
-				img_description = <cfqueryparam value="#append_images_text.img_description# #select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
-				img_keywords = <cfqueryparam value="#append_images_text.img_keywords# #select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
-				WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfquery name="updatexmp" datasource="#application.razuna.datasource#" >
@@ -2282,6 +2279,7 @@
 			</cfquery>
 		</cfloop>
 	</cfif>
+	<cfset resetcachetoken("images")>
 </cffunction>
 <!--- Get all asset from folder --->
 <cffunction name="getAllFolderAsset" output="false">
