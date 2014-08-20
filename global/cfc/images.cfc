@@ -1395,6 +1395,37 @@
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.thesh#" timeout="180" />
 		</cfthread>
+
+		<!--- Before we create thumb apply watermark if any --->
+		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
+			<cfif "convert_wm_#theformat#" NEQ "" >
+				<cfset var err = "">
+				<cfif thewm.wmval.wm_use_image><cfset console("WM")>
+					<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" errorVariable="err"/>
+				</cfif>
+				<cfif thewm.wmval.wm_use_text>
+					<!--- Opacity --->
+					<cfif thewm.wmval.wm_text_opacity EQ 100>
+						<cfset var topa = "1.0">
+					<cfelse>
+						<cfset var topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
+					</cfif>
+					<!--- Put text into var --->
+					<cfif iswindows>
+						<cfset var thetext = """#thewm.wmval.wm_text_content#""">
+					<cfelse>
+						<cfset var thetext = "'#thewm.wmval.wm_text_content#'">
+					</cfif>
+					<!--- Write script --->
+					<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
+					<!--- Execute it --->
+					<cfexecute name="#arguments.thestruct.theshwm#" timeout="180" errorVariable="err"/>
+					<!--- Delete it --->
+					<cffile action="delete" file="#arguments.thestruct.theshwm#">
+				</cfif>
+			</cfif>
+		</cfif>
+
 		<cfthread action="join" name="1#thescript#" />
 		<!--- Since the image can not be read we use img to convert to itself --->
 		<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
@@ -1426,34 +1457,6 @@
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">
 		<cffile action="delete" file="#arguments.thestruct.theshtt#">
-		<!--- If we need to watermark this image then --->
-		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
-		<cfif "convert_wm_#theformat#" NEQ "" >
-			<cfif thewm.wmval.wm_use_image>
-				<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" />
-			</cfif>
-			<cfif thewm.wmval.wm_use_text>
-				<!--- Opacity --->
-				<cfif thewm.wmval.wm_text_opacity EQ 100>
-					<cfset var topa = "1.0">
-				<cfelse>
-					<cfset var topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
-				</cfif>
-				<!--- Put text into var --->
-				<cfif iswindows>
-					<cfset var thetext = """#thewm.wmval.wm_text_content#""">
-				<cfelse>
-					<cfset var thetext = "'#thewm.wmval.wm_text_content#'">
-				</cfif>
-				<!--- Write script --->
-				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
-				<!--- Execute it --->
-				<cfexecute name="#arguments.thestruct.theshwm#" timeout="180" />
-				<!--- Delete it --->
-				<cffile action="delete" file="#arguments.thestruct.theshwm#">
-			</cfif>
-		</cfif>
-		</cfif>
 		<!--- Add the metadata from the source to the converted one. If DPI is there we need to add new DPI information --->
 		<cfif thedpi EQ "">
 			<cfset var thedpitags = "">
