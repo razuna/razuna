@@ -24,6 +24,10 @@
 *
 --->
 <cfoutput>
+<script type="text/javascript"  src='#dynpath#/global/js/ckeditor/ckeditor.js'> </script>
+<script type="text/javascript">
+	CKEDITOR.replace('message',{height:250} );
+</script>
 <form name="sendemailform" id="sendemailform" action="#self#" method="post">
 <input type="hidden" name="#theaction#" value="#xfa.submit#">
 <input type="hidden" name="file_id" value="#attributes.file_id#">
@@ -45,19 +49,19 @@
 	</tr>
 	<tr>
 		<td>#myFusebox.getApplicationData().defaults.trans("to")#</td>
-		<td><input type="text" name="to" id="to" size="60" value="#attributes.email#"></td>
+		<td><input type="text" name="to" id="to" value="#attributes.email#" style="width:95%"></td>
 	</tr>
 	<tr>
 		<td>Cc</td>
-		<td><input type="text" name="cc" size="60"></td>
+		<td><input type="text" name="cc" style="width:95%"></td>
 	</tr>
 	<tr>
 		<td>Bcc</td>
-		<td><input type="text" name="bcc" size="60"></td>
+		<td><input type="text" name="bcc" style="width:95%"></td>
 	</tr>
 	<tr>
 		<td>#myFusebox.getApplicationData().defaults.trans("email_subject")#</td>
-		<td><input type="text" name="subject" id="subject" size="60"></td>
+		<td><input type="text" name="subject" id="subject" style="width:95%"></td>
 	</tr>
 	<cfif attributes.frombasket EQ "F">
 		<!--- Get related videos --->
@@ -216,8 +220,10 @@
 	</cfif>
 	<!--- Message Box --->
 	<tr>
-		<td valign="top">#myFusebox.getApplicationData().defaults.trans("message")#</td>
-		<td><textarea name="message" rows="10" cols="60">
+		<td valign="top" colspan="2">#myFusebox.getApplicationData().defaults.trans("message")#</td>
+	</tr>
+	<tr>
+		<td colspan="2"><textarea name="message">
 			<cfif attributes.frombasket NEQ "T">
 				URLs:
 				<!--- List URLs --->
@@ -225,42 +231,42 @@
 					<!--- Images --->
 					<cfif attributes.thetype EQ "img">
 						<!--- Preview --->
-						#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p
+						#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)<br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p <br/><br/>
 						<!--- Original --->
-						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o</cfif>
+						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)<br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o <br/><br/></cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
-							#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)
-							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o
+							#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)<br/>
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o <br/><br/>
 						</cfloop>
 					<!--- Videos --->
 					<cfelseif attributes.thetype EQ "vid">
 						<!--- Original --->
-						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o</cfif>
+						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)<br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o <br/><br/></cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
-							#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)
-							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o
+							#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)<br/>
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o <br/><br/>
 						</cfloop>
 					<!--- Audios --->
 					<cfelseif attributes.thetype EQ "aud">
 						<!--- Original --->
-						Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#
+						Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)<br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id# <br/><br/>
 						<!--- Related --->
 						<cfloop query="qry_related">
-							#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB
-							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#
+							#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB<br/>
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id# <br/><br/>
 						</cfloop>
 					<!--- Docs --->
 					<cfelse>
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id# <br/><br/>
 					</cfif>
 				<cfelse>
-					#qry_asset.detail.link_path_url#
+					#qry_asset.detail.link_path_url#<br/><br/>
 				</cfif>
 			</cfif>
 		</textarea></td>
@@ -271,38 +277,35 @@
 </table>
 </form>
 <script type="text/javascript">
-	$("##sendemailform").submit(function(e){
+
+$("##sendemailform").validate({
+	submitHandler: function(form) 
+		{
+		CKEDITOR.instances["message"].updateElement();
+		// Show status
+		$("##successemail").css("display","");
+   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
 		// Get values
-		var getto = $('##to').val();
-		var getsubject = $('##subject').val();
-		// Check if to is not empty
-		if (getto == '') {
-			alert('The TO field is empty!');
-			return false;
-		}
-		// Check for subject
-		if (getsubject == '') {
-			alert('The SUBJECT field is empty!');
-			return false;
-		}
-		// Only if to and subject is not empty
-		if (getto != '' && getsubject != ''){
-			// Show status
-			$("##successemail").css("display","");
-	   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
-			// Get values
-			var url = formaction("sendemailform");
-			var items = formserialize("sendemailform");
-			// Submit Form
-			$.ajax({
-				type: "POST",
-				url: url,
-			   	data: items,
-			   	success: function(){
-			   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-			   	}
-			});
-			return false;
+		var url = formaction("sendemailform");
+		var items = formserialize("sendemailform");
+		// Submit Form
+		$.ajax(
+			{
+			type: "POST",
+			url: url,
+		   	data: items,
+		   	success: function(){
+		   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+		   	}
+		});
+		return false;
+		},
+		rules: 
+		{
+			to: {required:true, email:true},
+			cc: {email:true},
+			bcc: {email:true},
+			subject: {required:true},
 		}
 	});
 </script>
