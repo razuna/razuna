@@ -26,7 +26,7 @@
 <cfoutput>
 <script type="text/javascript"  src='#dynpath#/global/js/ckeditor/ckeditor.js'> </script>
 <script type="text/javascript">
-	CKEDITOR.replace('message',{height:250} );
+	CKEDITOR.replace('message',{height:200} );
 </script>
 <form name="sendemailform" id="sendemailform" action="#self#" method="post">
 <input type="hidden" name="#theaction#" value="#xfa.submit#">
@@ -74,7 +74,7 @@
 						<input type="hidden" name="artofimage" value="">
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
-								<td width="1%"><input type="checkbox" name="artofimage" value="video"/></td>
+								<td width="1%"><input type="checkbox" name="artofimage" value="video" onclick="checkzip();"/></td>
 								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original <cfif qry_asset.detail.link_kind NEQ "url">#ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)</cfif></a></td>
 							</tr>
 						</cfif>
@@ -90,7 +90,7 @@
 								<cfif asset_format EQ theid>
 									<cfif qry_asset.detail.perm NEQ "R" OR asset_dl>
 										<tr>
-											<td><input type="checkbox" name="artofimage" value="#theid#"/></td>
+											<td><input type="checkbox" name="artofimage" value="#theid#" onclick="checkzip();"/></td>
 											<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(theext)# #myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB (#theorgwidth#x#theorgheight# pixel)</a></td>
 										</tr>
 										<cfset thecounter = thecounter + 1>
@@ -109,13 +109,13 @@
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- Thumbnail --->
 						<tr>
-							<td width="1%"><input type="checkbox" name="artofimage" value="thumb"/></td>
+							<td width="1%"><input type="checkbox" name="artofimage" value="thumb" onclick="checkzip();"/></td>
 							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)</a></td>
 						</tr>
 						<!--- Original --->
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
-								<td><input type="checkbox" name="artofimage" value="original"/></td>
+								<td><input type="checkbox" name="artofimage" value="original" onclick="checkzip();"/></td>
 								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
 							</tr>
 						</cfif>
@@ -131,7 +131,7 @@
 								<cfif asset_format EQ theid>
 									<cfif qry_asset.detail.perm NEQ "R" OR asset_dl>
 										<tr>
-											<td><input type="checkbox" name="artofimage" value="#theid#"/></td>
+											<td><input type="checkbox" name="artofimage" value="#theid#" onclick="checkzip();"/></td>
 											<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(theext)# #myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB (#theorgwidth#x#theorgheight# pixel)</a></td>
 										</tr>
 										<cfset thecounter = thecounter + 1>
@@ -152,7 +152,7 @@
 						<input type="hidden" name="artofimage" value="">
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
-								<td width="1%"><input type="checkbox" name="artofimage" value="audio"/></td>
+								<td width="1%"><input type="checkbox" name="artofimage" value="audio" onclick="checkzip();"/></td>
 								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
 							</tr>
 						</cfif>
@@ -166,7 +166,7 @@
 								<cfif asset_format EQ theid>
 									<cfif qry_asset.detail.perm NEQ "R" OR asset_dl>
 										<tr>
-											<td><input type="checkbox" name="artofimage" value="#theid#"/></td>
+											<td><input type="checkbox" name="artofimage" value="#theid#" onclick="checkzip();"/></td>
 											<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(theext)# #myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB</a></td>
 										</tr>
 										<cfset thecounter = thecounter + 1>
@@ -187,7 +187,7 @@
 						<input type="hidden" name="artoffile" value="">
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
-								<td width="1%"><input type="checkbox" name="artoffile" value="file"/></td>
+								<td width="1%"><input type="checkbox" name="artoffile" value="file" onclick="checkzip();"/></td>
 								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artoffile',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.file_size#")# MB)</a></td>
 							</tr>
 						</cfif>
@@ -206,10 +206,13 @@
 						</tr>
 						<tr>
 							<td></td>
-							<td><input type="radio" name="sendaszip" value="T"> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="sendaszip" value="F" checked="true"> #myFusebox.getApplicationData().defaults.trans("no")#</td>
+							<td>
+								<input type="radio" name="sendaszip" id="sendaszip" value="T"> #myFusebox.getApplicationData().defaults.trans("yes")# 
+								<input type="radio" name="sendaszip" id="sendaszip" value="F" checked="true"> #myFusebox.getApplicationData().defaults.trans("no")#
+							</td>
 						</tr>
 						<tr>
-							<td colspan="2"><input type="text" size="50" name="zipname" value="#attributes.filename#">.zip</td>
+							<td colspan="2"><input type="text" size="50" name="zipname" id="zipname" value="#attributes.filename#">.zip</td>
 						</tr>
 					</table>
 				</td>
@@ -277,10 +280,23 @@
 </table>
 </form>
 <script type="text/javascript">
-
-$("##sendemailform").validate({
-	submitHandler: function(form) 
+	 function checkzip()
+	 {
+	 	var ischecked = false;
+	 	$('input[type=checkbox]').each(function () 
+	 	{
+			if (this.checked) 
+				{ischecked  = true;}
+		});
+	           if (!ischecked || $("##zipname").val().length == 0)
+	          		{
+	          			$("input[name=sendaszip][value=F]").prop('checked', true);
+	          		}
+	 }
+	$("##sendemailform").validate({
+		submitHandler: function(form) 
 		{
+		checkzip();
 		CKEDITOR.instances["message"].updateElement();
 		// Show status
 		$("##successemail").css("display","");
