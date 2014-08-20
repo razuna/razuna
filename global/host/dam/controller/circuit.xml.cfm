@@ -3181,6 +3181,11 @@
 				</if>
 			</true>
 		</if>
+		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
+			<true>
+				<do action="labels_main" />
+			</true>
+		</if>
 	</fuseaction>
 	<!-- Restore files-->
 	<fuseaction name="files_restore">
@@ -3249,6 +3254,11 @@
 				</if>
 			</true>
 		</if>
+		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
+			<true>
+				<do action="labels_main" />
+			</true>
+		</if>
 	</fuseaction>
 	<!-- Restore images-->
 	<fuseaction name="images_restore">
@@ -3312,6 +3322,11 @@
 						<do action="folder_videos" />
 					</false>
 				</if>
+			</true>
+		</if>
+		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
+			<true>
+				<do action="labels_main" />
 			</true>
 		</if>
 	</fuseaction> 
@@ -3378,6 +3393,11 @@
 						<do action="folder_audios" />
 					</false>
 				</if>
+			</true>
+		</if>
+		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
+			<true>
+				<do action="labels_main" />
 			</true>
 		</if>
 	</fuseaction>
@@ -9781,7 +9801,11 @@
 		<!-- Simply set sessions -->
 		<set name="session.file_id" value="#attributes.fileids#" />
 		<set name="session.thefileid" value="#session.file_id#" />
-		<set name="session.editids" value="#attributes.editids#" />
+		<if condition="isdefined('attributes.editids')">
+			<true>
+				<set name="session.editids" value="#attributes.editids#" />
+			</true>
+		</if>
 	</fuseaction>
 
 	<!-- Swap session for editids -->

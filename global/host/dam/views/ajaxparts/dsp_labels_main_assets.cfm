@@ -149,7 +149,7 @@
 											</cfif>
 											<cfif permfolder NEQ "R">
 												<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
-													<a href="##" onclick="storeone('#id#-img');showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+													<a href="##" onclick="storeone('#id#-img');showwindow('#myself#ajax.trash_record&id=#id#&label_id=#attributes.label_id#&what=images&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 												</cfif>
 											</cfif>
 										</div>
@@ -289,7 +289,7 @@
 											</cfif>
 											<cfif permfolder NEQ "R">
 												<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
-													<a href="##" onclick="storeone('#id#-vid');showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+													<a href="##" onclick="storeone('#id#-vid');showwindow('#myself#ajax.trash_record&id=#id#&label_id=#attributes.label_id#&what=videos&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 												</cfif>
 											</cfif>
 										</div>
@@ -440,7 +440,7 @@
 											</cfif>
 											<cfif permfolder NEQ "R">
 												<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
-													<a href="##" onclick="storeone('#id#-aud');showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+													<a href="##" onclick="storeone('#id#-aud');showwindow('#myself#ajax.trash_record&id=#id#&label_id=#attributes.label_id#&what=audios&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 												</cfif>
 											</cfif>
 										</div>
@@ -603,7 +603,7 @@
 											</cfif>
 											<cfif permfolder NEQ "R">
 												<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
-													<a href="##" onclick="storeone('#id#-doc');showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+													<a href="##" onclick="storeone('#id#-doc');showwindow('#myself#ajax.trash_record&id=#id#&label_id=#attributes.label_id#&what=files&loaddiv=labels&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 												</cfif>
 											</cfif>
 										</div>
