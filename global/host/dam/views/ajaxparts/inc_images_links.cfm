@@ -16,7 +16,7 @@
 						</cfif>
 							<!--- Preview --->
 							<cfif application.razuna.storage EQ "amazon">
-								<img src="#qry_detail.detail.cloud_url#" border="0">
+								<img src="#qry_detail.detail.cloud_url#" border="0" height="50">
 							<cfelse>
 								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?#qry_detail.detail.hashtag#&#uniqueid#" border="0" height="50">
 							</cfif>
@@ -65,7 +65,7 @@
 							</cfif>
 							<!--- Preview --->
 							<cfif application.razuna.storage EQ "amazon">
-								<img src="#qry_detail.detail.cloud_url#" border="0">
+								<img src="#qry_detail.detail.cloud_url#" border="0" height="50">
 							<cfelse>
 								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?#qry_detail.detail.hashtag#&#uniqueid#" border="0" height="50">
 							</cfif>
