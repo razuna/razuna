@@ -59,6 +59,8 @@
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
 	<cfparam name="arguments.thestruct.folderaccess" default="">
+	<!--- Get cachetoken --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
