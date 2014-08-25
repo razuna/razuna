@@ -1677,6 +1677,8 @@
 	<cfset arguments.thestruct.qry = querynew("id")>
 	<!--- Create query object to store results --->
 	<cfset arguments.thestruct.tq = querynew(arguments.thestruct.meta_fields)>
+	<!--- Get all custom fields --->
+	<cfinvoke component="custom_fields" method="get" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cfields" />
 	<!--- If this is from basket --->
 	<cfif arguments.thestruct.what EQ "basket">
 		<!--- Read Basket --->
@@ -1835,8 +1837,6 @@
 <!--- Loop to get files --->
 <cffunction name="loopfiles" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- Get all custom fields --->
-	<cfinvoke component="custom_fields" method="get" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cfields" />
 	<!--- Get the files according to the extension --->
 	<cfswitch expression="#arguments.thestruct.filetype#">
 		<!--- Images --->
