@@ -6839,8 +6839,8 @@
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="#newvidid#">,
 							<cfqueryparam cfsqltype="cf_sql_integer" value="#select_videos_text.LANG_ID_R#"  null="#NOT LEN(select_videos_text.LANG_ID_R)#">,
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.aud_KEYWORDS#"  null="#NOT LEN(select_videos_text.aud_KEYWORDS)#">,
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.aud_DESCRIPTION#"  null="#NOT LEN(select_videos_text.aud_DESCRIPTION)#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.VID_KEYWORDS#"  null="#NOT LEN(select_videos_text.aud_KEYWORDS)#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.VID_DESCRIPTION#"  null="#NOT LEN(select_videos_text.aud_DESCRIPTION)#">,
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="#select_videos_text.VID_DESCRIPTION#"  null="#NOT LEN(select_videos_text.VID_DESCRIPTION)#">,
 							<cfqueryparam cfsqltype="cf_sql_integer" value="#session.HOSTID#">
 						)
