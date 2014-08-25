@@ -2168,7 +2168,8 @@
 	<!--- Add custom fields --->
 	<cfloop query="arguments.thestruct.qry_cfields">
 		<!--- Replace foreign chars in column names --->
-		<cfset cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id#">
+		<cfset var cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id#">
+		<cfset var qcf = "">
 		<!--- Query the query first to see if there is already a column with this custom field there. If not then add column else set cell --->
 		<cfquery name="qcf" dbtype="query">
 		SELECT *
@@ -2176,7 +2177,7 @@
 		WHERE id = '#arguments.thestruct.file_id#'
 		</cfquery>
 		<!--- Check if the above query returns the custom text column in the columnlist --->
-		<cfset qhas = ListFindNoCase(qcf.columnlist, cfcolumn)>
+		<cfset var qhas = ListFindNoCase(qcf.columnlist, cfcolumn)>
 		<cfif qhas EQ 0>
 			<!--- Add new column with value --->
 			<cfset MyArray = ArrayNew(1)>
@@ -2188,7 +2189,7 @@
 	<!--- Add custom fields values --->
 	<cfloop query="arguments.thestruct.qry_cf">
 		<!--- Replace foreign chars in column names --->
-		<cfset cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id_r#">
+		<cfset var cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id_r#">
 		<cfset arguments.thestruct.qry_cf.cf_value =StrEscUtils.unescapeHTML(arguments.thestruct.qry_cf.cf_value)>
 		<!--- Set Cell --->
 		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
