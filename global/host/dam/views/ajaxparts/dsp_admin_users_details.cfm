@@ -175,10 +175,10 @@
 							<!--- If SysAdmin or Admin --->
 							<cfif Request.securityobj.CheckSystemAdminUser()>
 								<input type="hidden" name="admin_group_1" value="1">
-								You are a System-Administrator. Full access granted!
+								#myFusebox.getApplicationData().defaults.trans("sysadmin_access")#
 							<cfelseif Request.securityobj.CheckAdministratorUser()>
 								<input type="hidden" name="admin_group_2" value="2">
-								You are an Administrator. Full access granted!
+								#myFusebox.getApplicationData().defaults.trans("admin_access")#
 							</cfif>
 						<!--- Called within detail page --->
 						<cfelseif !attributes.myinfo>
@@ -190,19 +190,21 @@
 								<cfif listfind(grpnrlist,"2",",")>
 									<input type="hidden" name="admin_group_2" value="2">
 								</cfif>
-								You are an Administrator. Full access granted!
+								#myFusebox.getApplicationData().defaults.trans("admin_access")#
 							<!--- There are more admin accounts thus show checkbox for admin --->
 							<cfelse>
 								<input type="checkbox" name="admin_group_2" id ="admin_group_2" value="2" onchange="togglegrps();"<cfif listfind(grpnrlist,"2",",") > checked</cfif>> Administrator
 							</cfif>
 							<br /><br />
-							<!--- Show the rest of the groups  --->
-							<div id="nonadmingrps">
-								<cfloop query="qry_groups">
-									<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
-									<br />
-								</cfloop>
-							</div>
+							<cfif !(qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id)>
+								<!--- Show the rest of the groups  --->
+								<div id="nonadmingrps">
+									<cfloop query="qry_groups">
+										<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
+										<br />
+									</cfloop>
+								</div>
+							</cfif>
 						</cfif>
 					<!--- simply show the names of the groups for non admin users --->
 					<cfelse>

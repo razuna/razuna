@@ -6693,6 +6693,7 @@
 			<argument name="user_id" value="#attributes.user_id#" />
 			<argument name="mod_short" value="adm" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="nosessionoverwrite" value="true"/>
 		</invoke>
 		<set name="grpnrlist" value="#valuelist(qry_usergroup.grp_id)#" />
 		<!-- Get DAM groups of this user and put into list -->
@@ -6700,6 +6701,7 @@
 			<argument name="user_id" value="#attributes.user_id#" />
 			<argument name="mod_short" value="ecp" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="nosessionoverwrite" value="true"/>
 		</invoke>
 		<set name="webgrpnrlist" value="#valuelist(qry_usergroupdam.grp_id)#" />
 		<!-- Get hosts of this user and put into list -->
@@ -6720,6 +6722,7 @@
 		<!-- CFC: Get users of the admin group -->
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getUsersOfGroup" returnvariable="qry_groups_users">
 			<argument name="grp_id" value="2" />
+			<argument name="nosessionoverwrite" value="true"/>
 		</invoke>
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
@@ -6832,6 +6835,7 @@
 			<argument name="user_id" value="#attributes.user_id#" />
 			<argument name="mod_short" value="adm" />
 			<argument name="host_id" value="#session.hostid#" />
+			<argument name="nosessionoverwrite" value="true"/>
 		</invoke>
 		<set name="grpnrlist" value="#valuelist(qry_usergroup.grp_id)#" />
 		<!-- Show -->

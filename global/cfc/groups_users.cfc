@@ -34,6 +34,7 @@
 	<cfargument name="host_id" type="numeric" required="false" default="0">
 	<cfargument name="check_upc_size" type="string" required="false" default="false">
 	<cfargument name="orderBy" type="string" required="false" default="groups.grp_mod_id, groups.grp_name, groups.grp_id" hint="""ORDER BY #yourtext#""">
+	<cfargument name="nosessionoverwrite" type="string" required="false" default="false" hint="Do not overwrite session.thegroupofuser var">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
@@ -65,7 +66,7 @@
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>
-	<cfif arguments.check_upc_size NEQ 'true'>
+	<cfif arguments.check_upc_size NEQ 'true' AND arguments.nosessionoverwrite EQ 'false'>
 		<!--- Put result into session --->
 		<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
 		<!--- If session is empty then fill it with 0 --->

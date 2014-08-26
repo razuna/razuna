@@ -27,7 +27,7 @@
 	<!--- Set Languages --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<td>Below is your API Key. With it you can use the Razuna Desktop Uploader application and the Razuna API. Please refer to the <a href="http://wiki.razuna.com/" target="_blank">API documentation</a>. Please note, that currently we only support access by API from an account within the administrator group.</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("api_key_header")#</td>
 		</tr>
 		<tr>
 			<td width="100%" style="padding:20px;text-align:center;">
@@ -35,7 +35,12 @@
 			</td>
 		</tr>
 		<tr>
-			<td style="padding-top:20px;">In case your key has been tempered with or has become otherwise insecure <a href="##" onclick="loadcontent('tab_api','#myself#c.users_api&user_id=#attributes.user_id#&reset=true');">you can reset the API key</a>. <strong>NOTE: You will need to use the new API key with your application. The reset takes effect immediately!</strong></td>
+			<td style="padding-top:20px;">
+				<cfset transvalues = arraynew()>
+				<cfset transvalues[1] = "<a href='##' onclick=loadcontent('tab_api','#myself#c.users_api&user_id=#attributes.user_id#&reset=true');>Reset Key</a>">
+	 			<cfinvoke component="global.cfc.defaults" method="trans" transid="api_key_desc" values="#transvalues#" returnvariable="api_key_description" />
+				#api_key_description#
+			</td>
 		</tr>
 	</table>
 </cfoutput>
