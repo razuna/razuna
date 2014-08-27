@@ -64,7 +64,7 @@
 									<option value="server"<cfif qry_detail.sched_method EQ "server"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_server")#</option>
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
-								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
+								<!--- <option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option> --->
 								<cfif structKeyExists(attributes,"ad_server_name") AND attributes.ad_server_name NEQ "" AND structKeyExists(attributes,"ad_server_username") AND attributes.ad_server_username NEQ "" AND structKeyExists(attributes,"ad_server_password") AND attributes.ad_server_password NEQ "" AND structKeyExists(attributes,"ad_server_start") AND attributes.ad_server_start NEQ "">
 								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ADServer")#</option>
 								</cfif>
