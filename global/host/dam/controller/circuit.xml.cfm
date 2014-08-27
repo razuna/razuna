@@ -359,6 +359,8 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getaccesscontrol()" returnvariable="access_struct" />
 				<!-- CFC: Get Access Control Settings -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getuseraccesscontrols(access_struct)" returnvariable="tabaccess_struct" />
+				<!-- Get user groups  -->
+				<invoke object="myFusebox.getApplicationData().groups_users" method="getredirectfolders" returnvariable="redirectfolders" />
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Show main page -->
@@ -5783,7 +5785,7 @@
 			</true>
 		</if>
 		<!-- For customization do... -->
-		<if condition="session.type EQ 'customization'">
+		<if condition="session.type EQ 'customization' OR session.type EQ 'groups_detail'">
 			<true>
 				<set name="session.savehere" value="" />
 			</true>
@@ -6919,6 +6921,9 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+		<!-- Get folder name selected for re-direction -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(qry_detail.folder_redirect)" returnvariable="qry_foldername" />
+
 		<!-- Show -->
 		<do action="ajax.groups_detail" />
 	</fuseaction>
@@ -7515,6 +7520,13 @@
 	<fuseaction name="admin_customization_choose_folder">
 		<!-- Param -->
 		<set name="session.type" value="customization" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	<!-- Choose Folder for folder redirect in groups detail -->
+	<fuseaction name="groups_choose_folder">
+		<!-- Param -->
+		<set name="session.type" value="groups_detail" />
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>

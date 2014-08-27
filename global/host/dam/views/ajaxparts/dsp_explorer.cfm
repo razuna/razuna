@@ -81,7 +81,7 @@
 		</cfif>
 	</cfif> --->
 	<!--- Show link back to main page --->
-	<cfif !cs.show_top_part OR cs.folder_redirect NEQ "0">
+	<cfif !cs.show_top_part OR session.do_folder_redirect>
 		<div style="clear:both;"></div>
 		<p style="padding-left:10px;"><a href="#myself#c.main&redirectmain=true&_v=#createuuid('')#" title="Click here to get to the main page">#myFusebox.getApplicationData().defaults.trans("go_to_main_page")#</a></p>
 	</cfif>

@@ -23,10 +23,29 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Check if folder re-direction needs to happen --->
+
+<!--- Initialize vars --->
+<cfset session.do_folder_redirect = false>
+<cfset session.folder_redirect_id = "0">
+<!--- Check re-direct folders to ensure user has access to it and it's a valid folder. Find the first good match and set that as re-direct folder --->
+<cfloop list="#redirectfolders#" index="redirect_folder_id">
+	<cfif myFusebox.getApplicationData().folders.checkfolder(redirect_folder_id)>
+		<cfset session.folder_redirect_id = redirect_folder_id>
+		<cfset session.do_folder_redirect = true>
+		<cfbreak>
+	</cfif>
+</cfloop>
+
+<!--- If group re-direction is not set but global re-direction is then make re-direct folder as the set global folder --->
+<cfif session.folder_redirect_id EQ "0" AND cs.folder_redirect NEQ "0" AND myFusebox.getApplicationData().folders.checkfolder(cs.folder_redirect)>
+	<cfset session.do_folder_redirect = true>
+	<cfset session.folder_redirect_id = cs.folder_redirect>
+</cfif>
 <!--- The default div. This will be overwritten by any call that calls the id of this div --->
 <div id="rightside">
 	<cfoutput>
-		<cfif cs.folder_redirect EQ "0" OR attributes.redirectmain> 
+		<cfif !session.do_folder_redirect OR attributes.redirectmain> 
 			<!--- Show if Firebug is enabled --->
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
 			
@@ -252,7 +271,7 @@
 			</table>
 		<cfelse>
 			<script language="JavaScript" type="text/javascript">
-				$('##rightside').load('#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');
+				$('##rightside').load('#myself#c.folder&col=F&folder_id=#session.folder_redirect_id#');
 			</script>
 		</cfif>
 		<cfif structKeyExists(pl,"pview")>

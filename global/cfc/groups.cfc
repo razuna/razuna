@@ -77,7 +77,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#variables.dsn#" name="localquery">
-	SELECT grp_name, upc_size, upc_folder_format, folder_subscribe
+	SELECT grp_name, upc_size, upc_folder_format, folder_subscribe, folder_redirect
 	FROM groups
 	WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -156,6 +156,7 @@
 		UPDATE groups
 		SET	grp_name = <cfqueryparam value="#arguments.thestruct.grpname#" cfsqltype="cf_sql_varchar">
 			,folder_subscribe = <cfqueryparam value="#arguments.thestruct.folder_subscribe#" cfsqltype="cf_sql_varchar">
+			,folder_redirect = <cfif trim(arguments.thestruct.folder_redirect) EQ "">null<cfelse><cfqueryparam value="#arguments.thestruct.folder_redirect#" cfsqltype="cf_sql_varchar"></cfif>
 		<cfif structKeyExists(arguments.thestruct,'sizeofupc') AND arguments.thestruct.sizeofupc NEQ 0>
 			,upc_size = <cfqueryparam value="#arguments.thestruct.sizeofupc#" cfsqltype="CF_SQL_VARCHAR">
 			,upc_folder_format = <cfqueryparam value="#arguments.thestruct.upc_folder_structure#" cfsqltype="cf_sql_varchar">

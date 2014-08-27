@@ -24,13 +24,16 @@
 *
 --->
 <cfoutput>
-<div style="padding-left:5px;padding-top:10px;">
+<div>
 	<strong>Existing Users</strong> <br />
 	<div style="clear:both;padding-top:5px;"></div>
 	<cfloop query="qry_groupusers">
 		<div>
 			<div style="float:left;">#user_first_name# #user_last_name# (#user_email#)</div>
-			<div style="float:right;"><a href="##" onclick="loadcontent('listusers','#myself#c.groups_list_users_remove&grp_id=#attributes.grp_id#&user_id=#user_id#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></div>
+			<!--- If this is the admin group and there is only one admin user left then disallow admin from being removed --->
+			<cfif !(listfind('1,2', attributes.grp_id) AND qry_groupusers.recordcount EQ 1)>
+				<div style="float:right;"><a href="##" onclick="loadcontent('listusers','#myself#c.groups_list_users_remove&grp_id=#attributes.grp_id#&user_id=#user_id#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></div>
+			</cfif>
 		</div>
 		<div style="clear:both;padding-top:3px;"></div>
 	</cfloop>

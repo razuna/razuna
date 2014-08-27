@@ -339,4 +339,16 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Get re-direct folders for user --->
+<cffunction name="getredirectfolders" returntype="string">
+	<cfset var redirectfolders = "">
+	<cfset var getfolders = "">
+	<!--- Insert users --->
+	<cfquery datasource="#application.razuna.datasource#" name="getfolders">
+		SELECT folder_redirect FROM groups WHERE grp_id in (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+	</cfquery>
+	<cfset redirectfolders = valuelist(getfolders.folder_redirect)>
+	<cfreturn redirectfolders/>
+</cffunction>
+
 </cfcomponent>
