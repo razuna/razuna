@@ -341,12 +341,12 @@
 							<br />
 							<div><input type="radio" name="tab_add_from_server" value="true"<cfif qry_customization.tab_add_from_server> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_server" value="false"<cfif !qry_customization.tab_add_from_server> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
-							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_email")#</strong>
+							<!--- <strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_email")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_email_desc")#
 							<br />
 							<div><input type="radio" name="tab_add_from_email" value="true"<cfif qry_customization.tab_add_from_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_email" value="false"<cfif !qry_customization.tab_add_from_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
-							<br />
+							<br /> --->
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_ftp")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_ftp_desc")#
