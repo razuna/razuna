@@ -88,7 +88,7 @@
 		<!--- Groups of tenant --->
 			<cfloop query="qry_groups">
 				<tr class="list">
-					<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#grp_name#',500,1);return false;">#grp_name#</a> (#usercount# members) <em>(ID: #grp_id#)</em></td>
+					<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#grp_name#',700,1);return false;">#grp_name#</a> (#usercount# members) <em>(ID: #grp_id#)</em></td>
 					<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=groups&id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 				</tr>
 			</cfloop>

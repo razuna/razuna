@@ -4404,6 +4404,10 @@
 					<!--- customization --->
 					<cfelseif session.type EQ "customization">
 						<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);" style="white-space:normal;">
+					<!--- group detail--->
+					<cfelseif session.type EQ "groups_detail">
+						<!--- <a href="##" onclick="javascript:$('##folder_redirect').val('#folder_id#'); $('##folder_name').val('#folder_name#');destroywindow(1);" style="white-space:normal;"> --->
+						<a href="##" onclick="javascript:document.grpedit.folder_redirect.value = '#folder_id#'; document.grpedit.folder_name.value = '#folder_name#';destroywindow(2);" style="white-space:normal;">
 					<!--- scheduler --->
 					<cfelseif session.type EQ "scheduler">
 						<a href="##" onclick="javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#folder_name#';destroywindow(2);" style="white-space:normal;">
@@ -7854,6 +7858,25 @@
 	</cfloop>
 	<!--- Return --->
 	<cfreturn qry />
+</cffunction>
+
+<cffunction name="checkfolder" output="false" returntype="boolean" hint="Checks that folder exists, user has access and it is not in trash">
+	<cfargument name ="folder_id" required="true" type="string">
+	<cfset var folder_check = "">
+	<cfset var fldr_perm = "">
+	<cfset var folder_check_pass = false>
+	<!--- Check to see if redirect folder exists and is not in trash and that user has access permissions for it --->
+	<cfinvoke component="global.cfc.folders" method="setaccess" folder_id ="#arguments.folder_id#" returnvariable="fldr_perm">
+	<cfquery dataSource="#application.razuna.datasource#" name="folder_check">
+		SELECT 1 FROM #session.hostdbprefix#folders
+		WHERE folder_id = <cfqueryparam value="#arguments.folder_id#" CFSQLType="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		AND lower(in_trash) = <cfqueryparam value="f" CFSQLType="CF_SQL_VARCHAR">
+	</cfquery>
+	<cfif folder_check.recordcount NEQ 0 AND listfindnocase('r,w,x',fldr_perm)>
+		<cfset folder_check_pass = true>
+	</cfif>
+	<cfreturn folder_check_pass/>
 </cffunction>
 
 </cfcomponent>

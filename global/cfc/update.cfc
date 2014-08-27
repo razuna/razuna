@@ -181,8 +181,15 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 34(1.7) --->
-		<cfif updatenumber.opt_value LT 35>
+		<!--- If less then 36 (1.7) --->
+		<cfif updatenumber.opt_value LT 36>
+
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FOLDER_REDIRECT #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"

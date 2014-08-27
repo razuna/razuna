@@ -3140,7 +3140,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery dataSource="#application.razuna.datasource#" name="accessdata">
 		SELECT opt_id, opt_value FROM options WHERE lower(opt_id) LIKE '%access'
 	</cfquery>
-	<cfset access_struct = structnew()>
+	<cfset var access_struct = structnew()>
 	<cfloop query="accessdata">
 		<cfset access_struct["#opt_id#"] = opt_value>
 	</cfloop>
@@ -3149,7 +3149,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 <cffunction name="getuseraccesscontrols" returntype="struct" hint="Get access control settings for the given user. Only returns tabs that user has access to.">
 	<cfargument name="thestruct" type="Struct">
-	<cfset access_struct = structnew()>
+	<cfset var grpperm = "">
 	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
 	<cfloop collection="#arguments.thestruct#" item="field">
 		<cfif listfind (structfind(thestruct,field),session.theuserid)>

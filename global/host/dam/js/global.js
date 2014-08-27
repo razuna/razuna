@@ -1011,6 +1011,7 @@ function updategrp(grpid){
 	//Check to ensure group name is entered
 	var checkgrp= $('#grpname').val();
 	var upcsize= $('#editupcsize').val();
+	var folder_redirect= $('#folder_redirect').val();
 	//Folder subscribe radio
 	if ($('input:radio[name=edit_folder_subscribe]:checked').length == 0) {
 		var folder_subscribe = 'false';
@@ -1031,7 +1032,7 @@ function updategrp(grpid){
 		return false;
 	}
 	// Add the new group and show the updated list
-	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder + '&folder_subscribe=' + folder_subscribe);
+	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder + '&folder_subscribe=' + folder_subscribe + '&folder_redirect=' + folder_redirect);
 }
 
 // SCHEDULER

@@ -26,10 +26,11 @@
 <cfoutput>
 	<div style="padding:10px;min-height:300px;">
 		<!--- Group --->
-		<form name="grpedit" onsubmit="updategrp(#attributes.grp_id#,'#attributes.kind#','#attributes.loaddiv#');return false;">
+		<form name="grpedit" id="grpedit" onsubmit="updategrp(#attributes.grp_id#,'#attributes.kind#','#attributes.loaddiv#');return false;">
+			<input type="hidden" name="folder_redirect" id="folder_redirect" value="#qry_detail.folder_redirect#">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 				<tr>
-					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
+					<th>#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
 				</tr>
 				<tr>
 					<td width="100%">
@@ -54,16 +55,13 @@
 							<input type = "hidden" name="editupcsize" id="editupcsize" value="">
 						</cfif>
 					</td>
-					<td width="1%" nowrap="true"><cfif attributes.grp_id NEQ 2 OR prefs.set2_upc_enabled><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></cfif></td>
-					<td nowrap="true">
 					<tr>	
-					<td >
-						<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong>
-						<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
-						<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
-					</td>
+						<td >
+							<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong>
+							<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
+							<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
+						</td>
 					</tr>
-				</tr>
 				<!--- RAZ-2824 :: UPC folder structure download option enabled. ---> 
 				<cfif prefs.set2_upc_enabled>
 				<tr>
@@ -75,25 +73,53 @@
 				<cfelse>
 					<input type = 'hidden' name="edit_upc_folder_structure" value="false">
 				</cfif>
+				<!--- Select re-direction folder --->
+				<tr>
+					<td>
+						<strong>#myFusebox.getApplicationData().defaults.trans("grp_detail_folder_redirect_header")#</strong><br/>
+						#myFusebox.getApplicationData().defaults.trans("grp_detail_folder_redirect_desc")#<br/>
+						<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> 
+						<button class="button" onclick="showwindow('#myself#c.groups_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,2);return false;">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</button>
+						<button onclick="folder_name.value='';folder_redirect.value='';return false;">#myFusebox.getApplicationData().defaults.trans("grp_detail_folder_redirect_btn")#</button>
+					</td>
+				</tr>
+				<tr><td></td></tr>
+				<tr>
+					<td width="1%" nowrap="true" align="center"><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></td>
+				</tr>
 			</table>
-		</form>
-		<!--- Add User --->
-		<div style="padding-left:5px;">
-			<strong>Add Users</strong>
-			<br />
-			<div style="clear:both;padding-top:5px;"></div>
-			<select data-placeholder="Choose a User" class="chzn-select" style="width:350px;" tabindex="2" id="selectuser" onchange="userselected();">
-          		<option value=""></option>
-          		<cfoutput query="qry_users" group="user_id">
-          			<!--- Exclude admins from being selected as admins have all access and can not be part of any groups. Exception is when this is the 'Administrators' group then admin users can be show. --->
-          			<cfif listfind('1,2', attributes.grp_id) OR !listfind('1,2', qry_users.ct_g_u_grp_id)>
-          				<option value="#user_id#">#user_first_name# #user_last_name# (#user_email#)</option>
-          			</cfif>
-          		</cfoutput>
-          	</select>
-		</div>
-		<!--- List Users --->
-		<div id="listusers"></div>
+	</form>
+	<hr/>
+	<table>
+		<tr style="height:300px;vertical-align:top">
+			<td>
+				<!--- Add User --->
+				<div>
+					<strong>Add Users to Group</strong>
+					<br />
+					<cfif listfind('1,2', attributes.grp_id) >
+						#myFusebox.getApplicationData().defaults.trans("admin_user_assign_warn")#
+						<br/>
+					</cfif>
+					<div style="clear:both;padding-top:5px;"></div>
+					<select data-placeholder="Choose a User" class="chzn-select" style="width:350px;" tabindex="2" id="selectuser" onchange="userselected();">
+		          		<option value=""></option>
+		          		<cfoutput query="qry_users" group="user_id">
+		          			<!--- Exclude admins from being selected as admins have all access and can not be part of any groups. Exception is when this is the 'Administrators' group then admin users can be shown --->
+		          			<cfif listfind('1,2', attributes.grp_id) OR !listfind('1,2', qry_users.ct_g_u_grp_id)>
+		          				<option value="#user_id#">#user_first_name# #user_last_name# (#user_email#)</option>
+		          			</cfif>
+		          		</cfoutput>
+		          	</select>
+				</div>
+			</td>
+			<td style="width:10px"></td>
+			<td>
+				<!--- List Users --->
+				<div id="listusers"></div>
+			</td>
+		</tr>
+	</table>
 	</div>
 	<!--- JS --->
 	<script type="text/javascript">
