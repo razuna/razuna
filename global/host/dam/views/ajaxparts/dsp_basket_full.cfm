@@ -23,6 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfparam name="session.user_os" default="unknown">
+<cfif !isdefined("qry_customization.#session.user_os#_netpath2asset") >
+	<cfparam name= "qry_customization.#session.user_os#_netpath2asset" default="">
+</cfif>
 <!--- Storage Decision --->
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
@@ -620,7 +624,7 @@
 			</cfloop>
 		</cfif>
 	</table>
-	<cfif !application.razuna.isp>
+	<cfif !application.razuna.isp AND attributes.fromshare EQ "F">
 		<table border="0">
 		<tr>
 			<td colspan="3">
