@@ -17,3 +17,6 @@ ALTER TABLE users add user_search_selection varchar(100);
 ALTER TABLE news add host_id int default 0;
 
 ALTER TABLE raz1_custom_fields add cf_xmp_path varchar(500);
+
+ALTER TABLE groups add  FOLDER_REDIRECT varchar(100);
+
