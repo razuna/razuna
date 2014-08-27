@@ -30,9 +30,9 @@
 			<cfif !application.razuna.isp AND cs.tab_add_from_server AND application.razuna.storage eq 'local'>
 				<li><a href="##addserver">#myFusebox.getApplicationData().defaults.trans("header_add_asset_server")#</a></li>
 			</cfif>
-			<cfif cs.tab_add_from_email>
+			<!--- <cfif cs.tab_add_from_email>
 				<li><a href="##addemail" onclick="loadcontent('addemail','#myself##xfa.addemail#&folder_id=#folder_id#');">#myFusebox.getApplicationData().defaults.trans("header_add_asset_email")#</a></li>
-			</cfif>
+			</cfif> --->
 			<cfif cs.tab_add_from_ftp>
 				<li><a href="##addftp" onclick="loadcontent('addftp','#myself##xfa.addftp#&folder_id=#folder_id#');">#myFusebox.getApplicationData().defaults.trans("header_add_asset_ftp")#</a></li>
 			</cfif>
@@ -56,7 +56,7 @@
 				</p>
 			</div>
 		</cfif>
-		<cfif cs.tab_add_from_email><div id="addemail">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
+		<!--- <cfif cs.tab_add_from_email><div id="addemail">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif> --->
 		<cfif cs.tab_add_from_ftp><div id="addftp">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 		<cfif cs.tab_add_from_link><div id="addlink">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 	</div>
