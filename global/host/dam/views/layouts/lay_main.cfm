@@ -214,19 +214,6 @@
 	background:url(#dynpath#/global/js/tooltip_images/black.png);
 }
 </style>
-<!--- Forum Code --->
-<script type="text/javascript" charset="utf-8">
-var hostURL = "//css.zohostatic.com/discussions/v1";//NO OUTPUTENCODING
-document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E")); //No I18N
-</script>
-<script type="text/javascript">
-var zdFBWSettings = {};
-zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
-zdFBWSettings.fbURL = "https://forums.razuna.org/fbw?fbwId=125591000000015005";
-zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
-zdFBWSettings.display = "popout";
-var zdFBW = new ZDiscussions.loadZDFeedbackTab;
-</script>
 <cfif cgi.http_host CONTAINS "razuna.com">
 <script type="text/javascript">
   var _gaq = _gaq || [];

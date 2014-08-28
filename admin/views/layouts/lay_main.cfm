@@ -69,19 +69,6 @@
 <div id="footer">#trim( footercontent )#</div>
 <!--- Window Div --->
 <div id="thewindowcontent1" style="padding:10px;display:none;"></div>
-<!--- Forum Code --->
-<script type="text/javascript" charset="utf-8">
-var hostURL = "//css.zohostatic.com/discussions/v1";//NO OUTPUTENCODING
-document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E")); //No I18N
-</script>
-<script type="text/javascript">
-var zdFBWSettings = {};
-zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
-zdFBWSettings.fbURL = "http://forums.razuna.org/fbw?fbwId=125591000000015005";
-zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
-zdFBWSettings.display = "popout";
-var zdFBW = new ZDiscussions.loadZDFeedbackTab;
-</script>
 <!--- Dummy div --->
 <div id="loaddummy" style="display:none;"></div>
 </body>

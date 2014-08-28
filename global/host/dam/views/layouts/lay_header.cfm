@@ -176,7 +176,7 @@
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
 						<cfelse>
-							<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
+							<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
 						</cfif>
 					</p>
 					<p><hr></p>
@@ -201,7 +201,7 @@
 				<cfif application.razuna.whitelabel>
 					<div style="float:left;">#wl_feedback#</div>
 				<cfelse>
-					<div style="float:left;"><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a></div>
+					<div style="float:left;"><a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a></div>
 				</cfif>
 			</cfif>
 		</div>
