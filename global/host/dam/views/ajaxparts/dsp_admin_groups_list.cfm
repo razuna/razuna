@@ -82,7 +82,7 @@
 			</tr>
 			<!--- Administrator Group --->
 			<tr class="list">
-				<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=2&kind=ecp&loaddiv=#loaddiv#','Administrator',500,1);return false;">Administrators</a> (#qry_admin.usercount# members) <em>(ID: 2)</em></td>
+				<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=2&kind=ecp&loaddiv=#loaddiv#','Administrator',700,1);return false;">Administrators</a> (#qry_admin.usercount# members) <em>(ID: 2)</em></td>
 				<td align="center" valign="top" nowrap width="1%"></td>
 			</tr>
 		<!--- Groups of tenant --->

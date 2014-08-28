@@ -181,8 +181,28 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 36 (1.7) --->
-		<cfif updatenumber.opt_value LT 36>
+		<!--- If less then 37 (1.7) --->
+		<cfif updatenumber.opt_value LT 37>
+			<!--- Increase column length in xmp table --->
+			<cfset var thexmpcol_list = "subjectcode_1000,creator_1000,title_1000,authorsposition_1000,captionwriter_1000,ciadrextadr_1000,category_1000,urgency_500,ciadrcity_1000,ciadrctry_500,location_500,intellectualgenre_500,source_1000,transmissionreference_500,headline_1000,city_1000,ciadrregion_500,country_500,countrycode_500,scene_500,state_500,credit_1000">
+			<cfloop list="#thexmpcol_list#" index="thexmpcol">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						alter table raz1_xmp <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column <cfelse>modify </cfif> #gettoken(thexmpcol,1,'_')# #thevarchar#(#gettoken(thexmpcol,2,'_')#)
+					</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfloop>
+
+			<cfset var thexmpfilescol_list = "author_1000, authorsposition_1000,captionwriter_1000,webstatement_1000">
+			<cfloop list="#thexmpfilescol_list#" index="thexmpfilecol">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						alter table raz1_files_xmp <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column <cfelse>modify </cfif> #gettoken(thexmpfilecol,1,'_')# #thevarchar#(#gettoken(thexmpfilecol,2,'_')#)
+					</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfloop>
 
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

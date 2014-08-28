@@ -53,7 +53,7 @@
 		<!--- If no record has been found continue --->
 		<cfif here.recordcount EQ 0>
 			<!--- Sometimes we have a 0 in the list, filter this out --->
-			<cfif thenr NEQ 0>
+			<cfif thenr NEQ 0 AND len(thetype) LTE 5>
 				<!--- insert the prodcut to the cart --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#cart

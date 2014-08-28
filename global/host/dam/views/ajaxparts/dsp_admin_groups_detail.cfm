@@ -114,7 +114,7 @@
 				</div>
 			</td>
 			<td style="width:10px"></td>
-			<td>
+			<td style="width:400px">
 				<!--- List Users --->
 				<div id="listusers"></div>
 			</td>
