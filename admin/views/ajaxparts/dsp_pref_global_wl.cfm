@@ -97,7 +97,7 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_links_dd_support")#<br />
 				<div style="float:left;"><textarea name="wl_link_support" id="wl_link_support" style="width:500px;height:70px;">
 					<cfif qry_options.wl_link_support EQ "">
-						<a href="http://forums.razuna.org" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
+						<a href="https://help.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
 					<cfelse>
 						#qry_options.wl_link_support#
 					</cfif>
@@ -209,7 +209,7 @@
 					$('##wl_link_search').val('<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$(\'##searchselection\').toggle();">Help with Search</a>');
 					break;
 				case 'wl_link_support':
-					$('##wl_link_support').val('<a href="http://forums.razuna.org" target="_blank" onclick="$(\'##userselection\').toggle();">Help / Support</a>');
+					$('##wl_link_support').val('<a href="https://help.razuna.com" target="_blank" onclick="$(\'##userselection\').toggle();">Help / Support</a>');
 					break;
 				case 'wl_link_doc':
 					$('##wl_link_doc').val('<a href="http://wiki.razuna.com" target="_blank" onclick="$(\'##userselection\').toggle();">Documentation (Wiki)</a>');
