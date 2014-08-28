@@ -429,10 +429,10 @@
 					)
 		END as theextension
 	FROM #session.hostdbprefix#collections_ct_files ct 
-	LEFT JOIN #session.hostdbprefix#images i on ct.file_id_r = i.img_id
-	LEFT JOIN #session.hostdbprefix#audios a on ct.file_id_r = a.aud_id
-	LEFT JOIN #session.hostdbprefix#videos v on ct.file_id_r = v.vid_id
-	LEFT JOIN #session.hostdbprefix#files f on ct.file_id_r = f.file_id
+	LEFT JOIN #session.hostdbprefix#images i ON ct.file_id_r = i.img_id 
+	LEFT JOIN #session.hostdbprefix#audios a ON ct.file_id_r = a.aud_id AND lower(a.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#videos v ON ct.file_id_r = v.vid_id AND lower(v.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#files f ON ct.file_id_r = f.file_id AND lower(f.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
 	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	<cfif arguments.thestruct.colaccess EQ 'R'>
@@ -441,6 +441,10 @@
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 	</cfif>
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 	GROUP BY ct.col_id_r, ct.file_id_r, ct.col_file_type, ct.col_item_order, ct.col_file_format
 	ORDER BY ct.col_item_order
 	</cfquery>
@@ -1374,6 +1378,8 @@
 	WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = i.img_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
+	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	AND (i.img_group IS NULL OR i.img_group = '')
 	<cfif arguments.thestruct.colaccess EQ 'R'>
 		AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
@@ -1400,6 +1406,8 @@
 	WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = v.vid_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="vid">
+	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	AND (v.vid_group IS NULL OR v.vid_group = '')
 	<cfif arguments.thestruct.colaccess EQ 'R'>
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
@@ -1427,6 +1435,8 @@
 	WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = a.aud_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="aud">
+	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	AND (a.aud_group IS NULL OR a.aud_group = '')
 	<cfif arguments.thestruct.colaccess EQ 'R'>
 		AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
@@ -1453,6 +1463,8 @@
 	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
+	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	<cfif arguments.thestruct.colaccess EQ 'R'>
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 	</cfif>
@@ -1480,12 +1492,17 @@
 		LEFT JOIN #session.hostdbprefix#videos v on ct.file_id_r = v.vid_id
 		LEFT JOIN #session.hostdbprefix#files f on ct.file_id_r = f.file_id
 		WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		<cfif arguments.thestruct.colaccess EQ 'R'>
 		AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 	</cfquery>
 	<!--- Put together the lists for a collections search --->
 	<cfquery dbtype="query" name="qry.listimg">
