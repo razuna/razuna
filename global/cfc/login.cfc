@@ -81,12 +81,19 @@
 		
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
+			<cfset console("AD user")>
 			<cfif qryuser.recordcount EQ 0>
 				<cftry>
-					<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> <!--- Strip out domain from username if present for AD users--->
+					<!--- Strip out domain from username if present for AD users--->
+					<cfif arguments.thestruct.name contains "\">
+						<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> 
+					<cfelse>
+						<cfset var adusername = arguments.thestruct.name> 
+					</cfif>
+
 					<!--- Check for the user --->
 					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
 						lower(u.user_login_name) = <cfqueryparam value="#lcase(adusername)#" cfsqltype="cf_sql_varchar"> 
@@ -579,13 +586,20 @@
 		<cfparam name="arguments.thestruct.loginto" default="dam">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
+		<!--- Strip out domain from username if present for AD users--->
+		<cfif arguments.thestruct.theemail contains "\">
+			<cfset var loginname = gettoken(arguments.thestruct.theemail,2,"\")> 
+		<cfelse>
+			<cfset var loginname = arguments.thestruct.theemail>
+		</cfif>
+		
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="theuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
 		FROM users u, ct_users_hosts ct, hosts h
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.theemail)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.theemail)#" cfsqltype="cf_sql_varchar">
+			lower(u.user_login_name) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar"> 
+			OR lower(u.user_email) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar">
 		)
 		AND lower(u.user_active) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		AND u.user_id = ct.ct_u_h_user_id
@@ -597,6 +611,7 @@
 			AND ct.ct_u_h_host_id = h.host_id
 		</cfif>
 		</cfquery>
+		<cfset console(theuser)>
 		<!--- Do we have one domain --->
 		<cfif theuser.recordcount NEQ 0>
 			<!--- Set session hostid --->
