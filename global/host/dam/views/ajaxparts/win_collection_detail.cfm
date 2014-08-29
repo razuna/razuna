@@ -86,7 +86,7 @@
 								<td width="1%" nowrap="true" class="thumbview">
 									<cfloop query="qry_theimage">
 										<cfif myid EQ img_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
+											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
 											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<img src="#cloud_url#" border="0" img-tt="img-tt">
@@ -155,7 +155,7 @@
 								<td width="1%" nowrap="true" class="thumbview">
 									<cfloop query="qry_thevideo">
 										<cfif myid EQ vid_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#vid_id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#vid_id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
 											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<img src="#cloud_url#" border="0">
@@ -222,7 +222,7 @@
 								<td width="1%" nowrap="true" class="thumbview">
 									<cfloop query="qry_theaudio">
 										<cfif myid EQ aud_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#aud_id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" border="0"></a>
+											<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#aud_id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" border="0"></a>
 										</cfif>
 									</cfloop>
 								</td>
@@ -273,7 +273,7 @@
 								<td width="1%" nowrap="true" valign="top" class="thumbview">
 									<cfloop query="qry_thefile">
 										<cfif myid EQ file_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#file_id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
+											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#file_id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
 											<!--- Show the thumbnail --->
 											<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
