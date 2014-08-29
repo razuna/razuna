@@ -171,11 +171,11 @@
 	<cfargument name="thestruct" type="Struct">
 	<cfset variables.cachetoken = getcachetoken("users")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, 
+	SELECT/* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, 
 	user_first_name, user_last_name, user_in_admin, user_create_date, user_active, user_company, user_phone, 
 	user_mobile, user_fax, user_in_dam, user_salutation, user_expiry_date, user_search_selection
-	from users
-	where user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
+	FROM users u
+	WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -477,6 +477,10 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM ct_users_hosts
 		WHERE ct_u_h_user_id = <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
+		<!---If coming from DAM admin then do not delete all tenants but just the one associated with the DAM --->
+		<cfif isDefined("arguments.thestruct.dam") AND arguments.thestruct.dam EQ "t">
+			AND ct_u_h_host_id  IN (<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+		</cfif>
 		</cfquery>
 		<!--- if not sysadmin simply get select hostids --->
 		<cfif !is_sysadmin>

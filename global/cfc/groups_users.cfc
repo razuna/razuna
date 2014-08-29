@@ -157,8 +157,9 @@
 			<!--- OpenBD Fix throws an error when using the struct as type numeric. With a var it works --->
 			<cfset ecp=arguments.thestruct.module_id_struct.ecp>
 			<cfset adm=arguments.thestruct.module_id_struct.adm>
-			AND g.grp_mod_id = <cfqueryparam value="#ecp#" cfsqltype="cf_sql_numeric">
-			OR g.grp_mod_id = <cfqueryparam value="#adm#" cfsqltype="cf_sql_numeric">
+			AND 
+			(g.grp_mod_id = <cfqueryparam value="#ecp#" cfsqltype="cf_sql_numeric">
+			OR g.grp_mod_id = <cfqueryparam value="#adm#" cfsqltype="cf_sql_numeric">)
 		</cfif>
 	)
 	</cfquery>
