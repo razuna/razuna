@@ -238,11 +238,19 @@
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("general")>
+		<cfelse> <!--- If file already in collection the set in_trash to false if set to true --->
+			<cfquery datasource="#Variables.dsn#" name="theorder">
+			UPDATE #session.hostdbprefix#collections_ct_files
+			SET in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			WHERE file_id_r = <cfqueryparam value="#cart_product_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_file_type = <cfqueryparam value="#cart_file_type#" cfsqltype="cf_sql_varchar">
+			AND in_trash = <cfqueryparam value="T" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 		</cfif>
 	</cfloop>
-	
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- ADD SINGLE ASSETS TO COLLECTION --->
@@ -288,6 +296,15 @@
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
+			</cfquery>
+		<cfelse> <!--- If file already in collection the set in_trash to false if set to true --->
+			<cfquery datasource="#Variables.dsn#" name="theorder">
+			UPDATE #session.hostdbprefix#collections_ct_files
+			SET in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_file_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar">
+			AND in_trash = <cfqueryparam value="T" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 		</cfif>
 </cffunction>
