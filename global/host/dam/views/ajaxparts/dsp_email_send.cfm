@@ -282,8 +282,8 @@
 <script type="text/javascript">
 	 function checkzip()
 	 {
-	 	var ischecked = false;
-	 	$('input[type=checkbox]').each(function () 
+		var ischecked = false;
+	 	$('##sendemailform input[type=checkbox]').each(function () 
 	 	{
 			if (this.checked) 
 				{ischecked  = true;}

@@ -193,7 +193,7 @@
 								#myFusebox.getApplicationData().defaults.trans("admin_access")#
 							<!--- There are more admin accounts thus show checkbox for admin --->
 							<cfelse>
-								<input type="checkbox" name="admin_group_2" id ="admin_group_2" value="2" onchange="togglegrps();"<cfif listfind(grpnrlist,"2",",") > checked</cfif>> Administrator
+								<input type="checkbox" name="admin_group_2" id ="admin_group_2" value="2" onchange="togglegrps();checkmultitenant();"<cfif listfind(grpnrlist,"2",",") AND attributes.user_id NEQ 0> checked</cfif>> Administrator
 							</cfif>
 							<br /><br />
 							<cfif !(qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id)>
@@ -294,6 +294,8 @@
 	</cfif>
 </div>
 <div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>
+<div id="dialog-confirm-admin" style="display:none;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 250px 0;"></span>This user has access to the following tenants: #valuelist(qry_userhosts.host_name)#.<br/><br/>If you choose to make this user an administrator it will automatically become an administrator for all tenants it has access to and any groups assignments for the user will be lost.</div>
+<div id="dialog-confirm-admin2" style="display:none;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 250px 0;"></span>This user has access to the following tenants: #valuelist(qry_userhosts.host_name)#.<br/><br/>If you choose to remove this user as an administrator then it will also be removed as administrator from all other tenants.</div>
 <div id="submit" style="float:right;padding:10px;">
 	<cfif !attributes.myinfo><input type="checkbox" value="true" name="emailinfo" /> <span style="padding-right:15px;">Send user welcome email</span></cfif><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 
@@ -342,6 +344,41 @@
  			onkeyup: function(element) { this.element(element); }
 		});
 	});
+
+	// If user ismultitenant and being set as admin then warn user that it will be admin
+	function checkmultitenant()
+	{
+		if (#listlen(hostlist)# > 1 &&  #listfind(grpnrlist,"2",",")# == 0 && $("##admin_group_2").prop("checked"))
+		{
+			$( "##dialog-confirm-admin" ).dialog({
+				resizable: false,
+				height:250,
+				modal: true,
+				title: 'Warning!',
+				buttons: {
+					Ok: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		}
+
+	else if (#listlen(hostlist)# > 1 &&  #listfind(grpnrlist,"2",",")# > 0 && $("##admin_group_2").prop("checked")==false)
+		{
+			$( "##dialog-confirm-admin2" ).dialog({
+				resizable: false,
+				height:250,
+				modal: true,
+				title: 'Warning!',
+				buttons: {
+					Ok: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		}
+
+	}
 
 	function togglegrps()
 	{
