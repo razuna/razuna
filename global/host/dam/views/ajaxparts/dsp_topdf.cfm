@@ -39,6 +39,18 @@
 table {
 	-fs-table-paginate: paginate;
 }
+td{
+	color:##555555;
+	font-size: small;
+}
+.header{
+	color:##333333;
+	font-weight:bold;
+	font-size: medium;
+}
+.line{
+	color:##e6e6e6;
+}
 .breakhere {
 	page-break-before: always
 }
@@ -125,6 +137,7 @@ table {
 <cfelseif attributes.view EQ "list">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_files">
+			<tr><td colspan="2"><br/></td></tr>
 			<tr>
 				<!--- Icon/Image --->
 				<td valign="top" style="padding-bottom:20px;padding-right:20px;">
@@ -154,7 +167,16 @@ table {
 				</td>
 				<!--- Text --->
 				<td valign="top" width="100%" style="padding-bottom:20px;">
-					<strong>#filename#</strong><br />
+					<span class="header"><strong>
+						<cfif len(filename) gt 40>
+						#left(filename,40)#<br/>
+						#mid(filename,41,40)#
+						<cfelse>
+							#filename#
+						</cfif>
+					</strong>
+					</span>
+					<br /><br />
 					<cfif attributes.kind NEQ "all">
 						<cfset theid = id>
 						<cfloop query="qry_files_text">
@@ -164,10 +186,11 @@ table {
 							</cfif>
 						</cfloop>
 					</cfif>
-					#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
-					#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
+					<cfif trim(description) NEQ ''><em>#myFusebox.getApplicationData().defaults.trans("description")#:<em> #trim(description)#<br /><br /></cfif>
+					<cfif trim(keywords) NEQ ''><em>#myFusebox.getApplicationData().defaults.trans("keywords")#:</em> #trim(keywords)#</cfif>
 				</td>
 			</tr>
+			<tr><td colspan="2" class="line">_______________________________________________________________________________________________________________</td></tr>
 		</cfloop>
 	</table>
 <!--- View: Detail --->
