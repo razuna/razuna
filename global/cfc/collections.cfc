@@ -178,7 +178,7 @@
 					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#arguments.thestruct.collectionname#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#trim(arguments.thestruct.collectionname)#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
@@ -1208,7 +1208,7 @@
 				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">, 
 				<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">, 
 				<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">, 
-				<cfqueryparam value="#arguments.thestruct.collectionname#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#trim(arguments.thestruct.collectionname)#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
@@ -1559,10 +1559,10 @@
 	WHERE col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
 	</cfquery>
 	<!--- Change name --->
-	<cfif arguments.thestruct.col_name NEQ "">
+	<cfif trim(arguments.thestruct.col_name) NEQ "">
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#collections_text
-		SET col_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_name#">
+		SET col_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#trim(arguments.thestruct.col_name)#">
 		WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
 		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		</cfquery>
@@ -1604,7 +1604,7 @@
 				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#arguments.thestruct.col_name#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#trim(arguments.thestruct.col_name)#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)

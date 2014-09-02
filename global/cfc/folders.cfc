@@ -1230,7 +1230,7 @@
 	<cfif arguments.thestruct.coll_folder EQ "T">, folder_is_collection</cfif>)
 	VALUES (
 	<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
-	<cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#trim(arguments.thestruct.folder_name)#" cfsqltype="cf_sql_varchar">,
 	<cfqueryparam value="#arguments.thestruct.level#" cfsqltype="cf_sql_numeric">,
 	<cfif arguments.thestruct.level IS NOT 1>
 		<cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
@@ -2319,7 +2319,7 @@
 		<cfquery datasource="#variables.dsn#">
 		UPDATE #session.hostdbprefix#folders
 		SET 
-		folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="cf_sql_varchar">,
+		folder_name = <cfqueryparam value="#trim(arguments.thestruct.folder_name)#" cfsqltype="cf_sql_varchar">,
 		in_search_selection = <cfqueryparam value="#arguments.thestruct.in_search_selection#" cfsqltype="cf_sql_varchar">
 		WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
