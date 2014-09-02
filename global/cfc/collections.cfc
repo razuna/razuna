@@ -1863,4 +1863,26 @@
 	<cfreturn />	
 </cffunction>
 
+<cffunction name="samecollectionnamecheck" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Param --->
+	<cfset var ishere = false>
+	<cfset var qry = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT 1
+	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
+	WHERE lower(ct.col_name) = <cfqueryparam value="#lcase(arguments.thestruct.collection_name)#" cfsqltype="CF_SQL_VARCHAR">
+	AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND ct.col_id_r != <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND c.col_id = ct.col_id_r
+	AND c.folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
+	<!--- Set to true if found --->
+	<cfif qry.recordCount NEQ 0>
+		<cfset var ishere = true>
+	</cfif>
+	<cfreturn ishere>
+</cffunction>
+
 </cfcomponent>

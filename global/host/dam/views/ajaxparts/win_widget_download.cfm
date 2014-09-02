@@ -68,7 +68,7 @@
 				<cfif asset_format EQ "org">
 					<tr>
 						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
-						<td valign="top"><cfif asset_dl><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
+						<td valign="top"><cfif asset_dl OR qry_widget.widget_dl_org eq 't'><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
 					</tr>
 				</Cfif>
 			</cfloop>
@@ -96,7 +96,7 @@
 				<cfif asset_format EQ "org">
 					<tr>
 						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
-						<td valign="top"><cfif asset_dl><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
+						<td valign="top"><cfif asset_dl OR qry_widget.widget_dl_org eq 't'><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
 					</tr>
 				</cfif>
 			</cfloop>			
@@ -122,7 +122,7 @@
 				<cfif asset_format EQ "org">
 					<tr>
 						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.file_extension)#</td>
-						<td valign="top"><cfif asset_dl><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
+						<td valign="top"><cfif asset_dl OR qry_widget.widget_dl_org eq 't'><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse>Not available</cfif></td>
 					</tr>
 				</cfif>
 			</cfloop>

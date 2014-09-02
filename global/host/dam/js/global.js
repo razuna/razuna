@@ -1903,6 +1903,13 @@ function samefoldernamecheck(theid){
 	var folderidr = $("#rid").val();
 	$('#samefoldername').load('index.cfm?fa=c.folder_namecheck', { folder_name:foldername, folder_id_r:folderidr, folder_id:theid } );
 }
+// Check for same collection name
+function samecollectionnamecheck(theid){
+	// Values
+	var colname = $("#collectionname").val();
+	var folder_id = $("#folder_id").val();
+	$('#samecollectionname').load('index.cfm?fa=c.collection_namecheck', { collection_name:colname, col_id:theid, folder_id:folder_id } );
+}
 // Reset DL
 function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	var thevalue = $('#' + divorg + ':checked').val();
@@ -1919,7 +1926,12 @@ function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	else{
 		thevaluethumb = 0;
 	}
-	$('#div_forall').load('index.cfm?fa=c.share_reset_dl&folder_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+	// For collections the collectionid is sent instead of folderid
+	if (thestatusddiv=='colreset')
+		$('#div_forall').load('index.cfm?fa=c.share_reset_dl&collection_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+	else
+		$('#div_forall').load('index.cfm?fa=c.share_reset_dl&folder_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+
 	$('#' + thestatusddiv + '_thumb').html('Reset all individual download setting successfully');
 	$('#' + thestatusddiv + '_org').html('Reset all individual download setting successfully');
 }

@@ -24,13 +24,14 @@
 *
 --->
 <cfoutput>
-	<form name="form_saveascol" id="form_saveascol" method="post" action="#self#">
+	<cfset col_id= 0>
+	<form name="form_#col_id#" id="form_#col_id#" method="post" action="#self#">
 	<cfif NOT structkeyexists(attributes,"coladd")>
 		<input type="hidden" name="#theaction#" value="c.saveascollection_do">
 	<cfelse>
 		<input type="hidden" name="#theaction#" value="c.collection_save">
 	</cfif>
-	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+	<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
@@ -44,7 +45,9 @@
 		</tr>
 		<tr>
 			<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
-			<td><input type="text" name="collectionname" id="collectionname" size="50"></td>
+			<td><input type="text" name="collectionname" id="collectionname" size="50" onkeyup="samecollectionnamecheck('#col_id#');" autocomplete="off">
+			 <div id="samecollectionname"></div>
+			</td>
 		</tr>
 		<cfif NOT structkeyexists(attributes,"coladd")>
 		<tr>
@@ -66,14 +69,14 @@
 			</tr>
 		</cfloop>
 		<tr>
-			<td colspan="2"><div id="collectionupdate" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" /></div></td>
+			<td colspan="2"><div id="collectionupdate" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" id = "collectionsubmitbutton" /></div></td>
 		</tr>
 	</table>
 	</form>
 	<script>
-		$("##form_saveascol").submit(function(e){
+		$("##form_#col_id#").submit(function(e){
 			// If collectionname is empty
-			var cn = $('##form_saveascol ##collectionname').val();
+			var cn = $('##form_#col_id# ##collectionname').val();
 			if (cn == ""){
 				alert('Please enter a name for your collection!')
 				return false;
@@ -82,8 +85,8 @@
 			loadinggif('collectionupdate');
 			// Submit Form
 			// Get values
-			var url = formaction("form_saveascol");
-			var items = formserialize("form_saveascol");
+			var url = formaction("form_#col_id#");
+			var items = formserialize("form_#col_id#");
 			// Submit Form
 			$.ajax({
 				type: "POST",

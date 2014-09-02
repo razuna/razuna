@@ -81,7 +81,6 @@
 		
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
-			<cfset console("AD user")>
 			<cfif qryuser.recordcount EQ 0>
 				<cftry>
 					<!--- Strip out domain from username if present for AD users--->

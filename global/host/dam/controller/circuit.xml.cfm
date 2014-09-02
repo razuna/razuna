@@ -2125,6 +2125,13 @@
 		<!-- Show -->
 		<do action="ajax.folder_namecheck" />
 	</fuseaction>
+	<!-- Check for the same collection name -->
+	<fuseaction name="collection_namecheck">
+		<!-- CFC: check for same name -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="samecollectionnamecheck(attributes)" returnvariable="attributes.samecollectionname" />
+		<!-- Show -->
+		<do action="ajax.collection_namecheck" />
+	</fuseaction>
 	<!-- Load Folder Properties -->
 	<fuseaction name="folder_edit">
 		<!-- Param -->

@@ -196,7 +196,10 @@
 	<fuseaction name="folder_namecheck">
   		<include template="dsp_folder_namecheck" />
 	</fuseaction>
-	
+	<!-- Folder: samecollectionnamecheck -->
+	<fuseaction name="collection_namecheck">
+  		<include template="dsp_collection_namecheck" />
+	</fuseaction>
 	<!-- Collections: List -->
 	<fuseaction name="collections_list">
   		<include template="dsp_collections_list" />

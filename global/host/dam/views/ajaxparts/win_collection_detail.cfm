@@ -41,7 +41,7 @@
 	<form name="form#col_id#" id="form#col_id#" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
-	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+	<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="col_id" value="#attributes.col_id#">
 	<input type="hidden" name="assetids" value="#valuelist(qry_assets.cart_product_id)#">
 	<div id="col_detail#col_id#">
@@ -339,7 +339,7 @@
 					</tr>
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
-						<td><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
+						<td><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#" onkeyup="samecollectionnamecheck('#col_id#');" autocomplete="off"><div id="samecollectionname"></div></td>
 					</tr>
 					<tr>
 						<td>ID</td>
@@ -402,7 +402,7 @@
 						</tr>
 					</cfif>
 					<tr>
-						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div></td>
+						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" id = "collectionsubmitbutton"></div></td>
 					</tr>
 				</table>
 			</div>
@@ -467,7 +467,7 @@
 							<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
 							<td class="td2"><input type="radio" value="T" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_detail.share_dl_thumb EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_detail.share_dl_thumb EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 							<br><br>
-							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.folder_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.col_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 							<div id="colreset_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
 							</td>
 						</tr>
@@ -485,7 +485,7 @@
 							<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 							<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 							<br><br>
-							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.folder_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.col_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 							<div id="colreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 							</td>
 						</tr>

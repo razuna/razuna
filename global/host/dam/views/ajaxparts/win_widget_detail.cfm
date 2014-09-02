@@ -24,6 +24,7 @@
 *
 --->
 <cfparam default="0" name="attributes.widget_id">
+
 <cfoutput>
 	<div id="widget_tab">
 		<ul>
@@ -109,7 +110,11 @@
 					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
 					<td><input type="radio" value="T" name="widget_dl_thumb" id="widget_dl_thumb"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_thumb EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="widget_dl_thumb" id="widget_dl_thumb"<cfif qry_widget.widget_dl_thumb EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 						<br />
-						<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.folder_id#','wreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<cfif attributes.col_id NEQ "">
+							<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.col_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<cfelse>
+							<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.folder_id#','wreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						</cfif>
 					<div id="wreset_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
 				</tr>
@@ -127,7 +132,11 @@
 					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 					<td><input type="radio" value="T" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "T"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "F"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 					<br />
-					<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.folder_id#','wreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+					<cfif attributes.col_id NEQ "">
+						<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.col_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+					<cfelse>
+						<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.folder_id#','wreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+					</cfif>
 					<div id="wreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
 				</tr>
