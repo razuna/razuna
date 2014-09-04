@@ -64,10 +64,45 @@
 		<td><input type="text" name="subject" id="subject" style="width:95%"></td>
 	</tr>
 	<cfif attributes.frombasket EQ "F">
+		<tr>
+			<td colspan="2"> <hr> </td>
+		</tr>
+		<!--- Send as attachment --->
+		<cfif qry_asset.detail.link_kind NEQ "url">
+			<tr>
+				<td valign="top">#myFusebox.getApplicationData().defaults.trans("attachment")#</td>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" class="gridno">
+						<tr>
+							<td></td>
+							<td>
+								<input type="radio" name="sendaszip" id="sendaszip" value="T"> #myFusebox.getApplicationData().defaults.trans("yes")# 
+								<input type="radio" name="sendaszip" id="sendaszip" value="F" checked="true"> #myFusebox.getApplicationData().defaults.trans("no")#
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td>#myFusebox.getApplicationData().defaults.trans("send_as_zip")#</td>
+						</tr>
+						<tr>
+							<td colspan="2">Filename for Attachment
+							<br>
+							<input type="text" size="50" name="zipname" id="zipname" value="#attributes.filename#">.zip</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		<cfelse>
+			<input type="hidden" name="sendaszip" value="F">
+		</cfif>
+		<tr>
+			<td></td>
+			<td>#myFusebox.getApplicationData().defaults.trans("format")#</td>
+		</tr>
 		<!--- Get related videos --->
 		<cfif attributes.thetype EQ "vid">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
+				<td></td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original video --->
@@ -104,7 +139,7 @@
 		<!--- Get related images --->
 		<cfelseif attributes.thetype EQ "img">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
+				<td></td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- Thumbnail --->
@@ -145,7 +180,7 @@
 		<!--- Get related audios --->
 		<cfelseif attributes.thetype EQ "aud">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
+				<td></td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original --->
@@ -180,7 +215,7 @@
 		<!--- Get doc --->
 		<cfelseif attributes.thetype EQ "doc">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
+				<td></td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original --->
@@ -195,31 +230,9 @@
 				</td>
 			</tr>
 		</cfif>
-		<cfif qry_asset.detail.link_kind NEQ "url">
-			<tr>
-				<td valign="top">#myFusebox.getApplicationData().defaults.trans("attachment")#</td>
-				<td>
-					<table border="0" cellpadding="0" cellspacing="0" class="gridno">
-						<tr>
-							<td></td>
-							<td>#myFusebox.getApplicationData().defaults.trans("send_as_zip")#</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td>
-								<input type="radio" name="sendaszip" id="sendaszip" value="T"> #myFusebox.getApplicationData().defaults.trans("yes")# 
-								<input type="radio" name="sendaszip" id="sendaszip" value="F" checked="true"> #myFusebox.getApplicationData().defaults.trans("no")#
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2"><input type="text" size="50" name="zipname" id="zipname" value="#attributes.filename#">.zip</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		<cfelse>
-			<input type="hidden" name="sendaszip" value="F">
-		</cfif>
+		<tr>
+			<td colspan="2"> <hr> </td>
+		</tr>
 	</cfif>
 	<!--- Message Box --->
 	<tr>
@@ -227,6 +240,8 @@
 	</tr>
 	<tr>
 		<td colspan="2"><textarea name="message">
+			<p>EDIT THIS MESSAGE BEFORE SENDING!</p>
+
 			<cfif attributes.frombasket NEQ "T">
 				URLs:
 				<!--- List URLs --->
@@ -235,38 +250,38 @@
 					<cfif attributes.thetype EQ "img">
 						<!--- Preview --->
 						#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)<br/>
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p <br/><br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=img&file_id=#attributes.file_id#&v=p <br/><br/>
 						<!--- Original --->
 						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)<br/>
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o <br/><br/></cfif>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=img&file_id=#attributes.file_id#&v=o <br/><br/></cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
 							#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)<br/>
-							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o <br/><br/>
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=img&file_id=#img_id#&v=o <br/><br/>
 						</cfloop>
 					<!--- Videos --->
 					<cfelseif attributes.thetype EQ "vid">
 						<!--- Original --->
 						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)<br/>
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o <br/><br/></cfif>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=vid&file_id=#attributes.file_id#&v=o <br/><br/></cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
 							#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)<br/>
-							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o <br/><br/>
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=vid&file_id=#vid_id#&v=o <br/><br/>
 						</cfloop>
 					<!--- Audios --->
 					<cfelseif attributes.thetype EQ "aud">
 						<!--- Original --->
 						Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)<br/>
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id# <br/><br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=aud&file_id=#attributes.file_id# <br/><br/>
 						<!--- Related --->
 						<cfloop query="qry_related">
 							#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB<br/>
-							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id# <br/><br/>
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=aud&file_id=#aud_id# <br/><br/>
 						</cfloop>
 					<!--- Docs --->
 					<cfelse>
-						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id# <br/><br/>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=doc&file_id=#attributes.file_id# <br/><br/>
 					</cfif>
 				<cfelse>
 					#qry_asset.detail.link_path_url#<br/><br/>
