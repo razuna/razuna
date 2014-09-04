@@ -2324,9 +2324,9 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id_r  ON ct_aliases(folder_id_r);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#img_hashtag  ON #arguments.thestruct.host_db_prefix#_images(hashtag);
-		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag  ON #arguments.thestruct.host_db_prefix#_audios(hashtag);
-		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag  ON #arguments.thestruct.host_db_prefix#_files(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#img_hashtag  ON #arguments.thestruct.host_db_prefix#images(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag  ON #arguments.thestruct.host_db_prefix#audios(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag  ON #arguments.thestruct.host_db_prefix#files(hashtag);
 		</cfquery>
 		<cfreturn />
 	</cffunction>
