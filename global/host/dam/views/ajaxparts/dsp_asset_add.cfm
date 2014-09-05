@@ -43,11 +43,11 @@
 		<div id="addserver">
 			<cfif !application.razuna.isp AND cs.tab_add_from_server AND application.razuna.storage eq 'local'>
 				<p><a href="##" onclick="showwindow('#myself##xfa.addserver#&folder_id=#folder_id#','#myFusebox.getApplicationData().defaults.trans("header_add_asset_server")#',800,2);">#myFusebox.getApplicationData().defaults.trans("import_from_folder")#</a> #myFusebox.getApplicationData().defaults.trans("import_from_folder_custom")#.</p>
-				<p>
-					<strong>#myFusebox.getApplicationData().defaults.trans("link_folder_path_header")#</strong><br />
-					<input type="text" style="width:400px;" id="folder_path" /> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("validate")#" onclick="importfoldercheck();" class="button" /><br /><span style="color:red;">#myFusebox.getApplicationData().defaults.trans("import_from_folder_foreign")#</span><br /><div id="path_validate"></div>
-				</p>
 			</cfif>
+			<p>
+				<strong>#myFusebox.getApplicationData().defaults.trans("link_folder_path_header")#</strong><br />
+				<input type="text" style="width:400px;" id="folder_path" /> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("validate")#" onclick="importfoldercheck();" class="button" /><br /><span style="color:red;">#myFusebox.getApplicationData().defaults.trans("import_from_folder_foreign")#</span><br /><div id="path_validate"></div>
+			</p>
 			<p>
 				#myFusebox.getApplicationData().defaults.trans("import_from_folder_desc")#
 			</p>
