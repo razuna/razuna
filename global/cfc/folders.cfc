@@ -5013,9 +5013,11 @@
 	<cfargument name="thestruct" type="struct" required="true">
 		<!--- Param --->
 		<cfset var status = structnew()>
-		<!--- Does the dir exists --->
-		<cfset status.dir = directoryexists("#arguments.thestruct.link_path#")>
-		<cfif status.dir>
+		<cfset status.dir = false>
+		<!--- Does the dir contain /home --->
+		<cfif ListContains(arguments.thestruct.link_path, 'home', '/\') AND directoryexists("#arguments.thestruct.link_path#")>
+			<!--- Set to true --->
+			<cfset status.dir = true>
 			<!--- List the content of the Dir --->
 			<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="thedir">
 			<!--- Count the files --->
