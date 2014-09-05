@@ -4930,7 +4930,7 @@
 		<cfset var status = structnew()>
 		<cfset status.dir = false>
 		<!--- Does the dir contain /home --->
-		<cfif ! FindNoCase('/home/', arguments.thestruct.link_path)>
+		<cfif ! ListContains(arguments.thestruct.link_path, 'home', '/\')>
 			<!--- Does the dir exists --->
 			<cfset status.dir = directoryexists("#arguments.thestruct.link_path#")>
 			<cfif status.dir>
