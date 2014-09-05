@@ -4930,27 +4930,25 @@
 		<cfset var status = structnew()>
 		<cfset status.dir = false>
 		<!--- Does the dir contain /home --->
-		<cfif ! ListContains(arguments.thestruct.link_path, 'home', '/\')>
-			<!--- Does the dir exists --->
-			<cfset status.dir = directoryexists("#arguments.thestruct.link_path#")>
-			<cfif status.dir>
-				<!--- List the content of the Dir --->
-				<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="thedir">
-				<!--- Count the files --->
-				<cfquery dbtype="query" name="status.countfiles">
-				SELECT count(name) thecount
-				FROM thedir
-				WHERE type = 'File'
-				AND attributes != 'H'
-				</cfquery>
-				<!--- Count the dirs --->
-				<cfquery dbtype="query" name="status.countdirs">
-				SELECT count(name) thecount
-				FROM thedir
-				WHERE type = 'Dir'
-				AND attributes != 'H'
-				</cfquery>
-			</cfif>
+		<cfif ListContains(arguments.thestruct.link_path, 'home', '/\') AND directoryexists("#arguments.thestruct.link_path#")>
+			<!--- Set to true --->
+			<cfset status.dir = true>
+			<!--- List the content of the Dir --->
+			<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="thedir">
+			<!--- Count the files --->
+			<cfquery dbtype="query" name="status.countfiles">
+			SELECT count(name) thecount
+			FROM thedir
+			WHERE type = 'File'
+			AND attributes != 'H'
+			</cfquery>
+			<!--- Count the dirs --->
+			<cfquery dbtype="query" name="status.countdirs">
+			SELECT count(name) thecount
+			FROM thedir
+			WHERE type = 'Dir'
+			AND attributes != 'H'
+			</cfquery>
 		</cfif>
 	<cfreturn status>
 </cffunction>
