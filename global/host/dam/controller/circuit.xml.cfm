@@ -10538,6 +10538,8 @@
 
 	<!-- Lucene index for hosted -->
 	<fuseaction name="req_index_update_hosted">
+		<!-- Params -->
+		<set name="attributes.thepath" value="#thispath#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
