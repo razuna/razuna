@@ -34,7 +34,7 @@
 				<cfloop query="qry_related">
 					<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB) [#aud_name#]
 					<br />
-					<button class="awesome small green"><a href="#myself#c.serve_file&file_id=#aud_id#&type=aud" style="color:white;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("download")#</a></button>
+					<a href="#myself#c.serve_file&file_id=#aud_id#&type=aud" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 					<cfif attributes.s EQ "F">
 						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank" style="padding-left:20px;">
 					<cfelse>

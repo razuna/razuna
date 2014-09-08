@@ -47,7 +47,7 @@
 				<td valign="top">
 					<strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)
 					<br />
-					<button class="awesome small green"><a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank" style="color:white;text-decoration:none;">Download</a></button>
+					<a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 					<a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;" style="padding-left:20px;">Direct Link</a>
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#av_id#&thetype=#av_type#&cf_show=#av_type#&av=1','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">

@@ -54,12 +54,12 @@
 					<td nowrap="true">
 						<cfif qry_detail.detail.link_kind EQ "lan">
 							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
-							<button class="awesome small green"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-							<br /></button>
+							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+							<br />
 						<cfelse>
 							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)
 							<br />
-							<button class="awesome small green"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("download")#</a></button>
+							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">Direct Link</a>
 							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
 							<!--- Direct link --->
