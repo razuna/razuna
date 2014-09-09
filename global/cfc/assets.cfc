@@ -4097,6 +4097,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfqueryparam value="#folderlevel#" cfsqltype="cf_sql_numeric">
 			)
 			</cfquery>
+			<!--- Apply custom setting to new folder --->
+			<cfinvoke component="global.cfc.folders" method="apply_custom_shared_setting" folder_id="#newfolderidinsert#" />
 			<!--- Add the workflow to the just created folder --->
 			<cftry>
 				<!--- Query for existing workflows --->
