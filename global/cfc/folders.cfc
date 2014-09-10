@@ -2980,10 +2980,13 @@
 	<cfset var alias_vid = '0,'>
 	<cfset var alias_aud = '0,'>
 	<cfset var alias_doc = '0,'>
+	<cfset var alias_pdf = '0,'>
+	<cfset var alias_xls = '0,'>
+	<cfset var alias_other = '0,'>
 	<!--- Query Aliases --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
-	FROM ct_aliases
+	SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type, (select file_extension from raz1_files where file_id=c.asset_id_r)file_ext
+	FROM ct_aliases c
 	WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#">
 	</cfquery>
 	<cfloop query="qry_aliases">
@@ -2993,8 +2996,14 @@
 			<cfset var alias_vid = alias_vid & asset_id_r & ','>
 		<cfelseif type EQ "aud">
 			<cfset var alias_aud = alias_aud & asset_id_r & ','>
-		<cfelseif type EQ "doc">
+		<cfelseif type EQ "doc" AND file_ext contains 'doc'>
 			<cfset var alias_doc = alias_doc & asset_id_r & ','>
+		<cfelseif type EQ "doc" AND file_ext contains 'xls'>
+			<cfset var alias_xls = alias_xls & asset_id_r & ','>
+		<cfelseif type EQ "doc" AND file_ext EQ 'pdf'>
+			<cfset var alias_pdf = alias_pdf & asset_id_r & ','>
+		<cfelseif type EQ "doc">
+			<cfset var alias_other= alias_other & asset_id_r & ','>
 		</cfif>
 	</cfloop>
 	<!--- Query --->
@@ -3028,7 +3037,13 @@
 			</cfif>
 			<cfif arguments.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
-		</cfif>
+			</cfif>
+			OR (
+				file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_xls#" list="true">)
+				AND 
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			)
+		
 		UNION ALL
 			SELECT 'pdf' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_pdf' as scr
 			FROM #session.hostdbprefix#files
@@ -3042,6 +3057,11 @@
 			<cfif arguments.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 			</cfif>
+			OR (
+				file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_pdf#" list="true">)
+				AND 
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			)
 		UNION ALL
 			SELECT 'other' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_others' as scr
 			FROM #session.hostdbprefix#files
@@ -3058,6 +3078,11 @@
 			<cfif arguments.folderaccess EQ 'R'>
 			AND (expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR expiry_date is null)
 			</cfif>
+			OR (
+				file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias_other#" list="true">)
+				AND 
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			)
 		UNION ALL
 			SELECT 'img' as ext, count(img_id) as cnt, 'img' as typ, 'tab_images' as scr
 			FROM #session.hostdbprefix#images

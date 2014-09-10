@@ -208,9 +208,29 @@
 			<!--- Query Aliases --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getallaliases */ asset_id_r, type
-			FROM ct_aliases
-			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-			AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">
+			FROM ct_aliases c, #session.hostdbprefix#files f
+			WHERE c.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+			AND c.type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">
+			AND c.asset_id_r = f.file_id
+			<cfif Len(Arguments.file_extension)>
+				AND
+				<!--- if doc or xls also add office 2007 format to query --->
+				<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
+					(
+					LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+					OR LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+					)
+				<!--- query all formats if not other --->
+				<cfelseif Arguments.file_extension neq "other">
+					LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+				<!--- query all files except the ones in the list --->
+				<cfelse>
+					(
+					LOWER(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+					OR (file_extension IS NULL OR file_extension = '')
+					)
+				</cfif>
+			</cfif>
 			</cfquery>
 			<cfif qry_aliases.recordcount NEQ 0>
 				<cfset var alias = valueList(qry_aliases.asset_id_r)>
