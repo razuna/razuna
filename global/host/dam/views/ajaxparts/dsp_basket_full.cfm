@@ -168,8 +168,11 @@
 					<!--- IMAGES --->
 					<cfcase value="img">
 						<tr class="list">
-							<td width="1%" nowrap="true" valign="top">
-								<cfloop query="qry_theimage">
+							<td width="1%" nowrap="true">
+								<cfquery name="getimg" dbtype="query">
+									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url FROM qry_theimage WHERE img_id= '#myid#'
+								</cfquery>
+								<cfloop query="getimg">
 									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 										<cfif myid EQ img_id>
 											<cfif link_kind NEQ "url">

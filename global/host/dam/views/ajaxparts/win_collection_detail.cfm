@@ -84,7 +84,10 @@
 						<cfcase value="img">
 							<tr class="list">
 								<td width="1%" nowrap="true" class="thumbview">
-									<cfloop query="qry_theimage">
+								<cfquery name="getimg" dbtype="query">
+									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url FROM qry_theimage WHERE img_id= '#myid#'
+								</cfquery>
+								<cfloop query="getimg">
 										<cfif myid EQ img_id>
 											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
 											<cfif link_kind NEQ "url">
