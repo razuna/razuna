@@ -174,16 +174,14 @@
 								</cfquery>
 								<cfloop query="getimg">
 									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
-										<cfif myid EQ img_id>
-											<cfif link_kind NEQ "url">
-												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-													<img src="#cloud_url#" border="0">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
-												</cfif>
+										<cfif link_kind NEQ "url">
+											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+												<img src="#cloud_url#" border="0">
 											<cfelse>
-												<img src="#link_path_url#" border="0">
+												<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
 											</cfif>
+										<cfelse>
+											<img src="#link_path_url#" border="0">
 										</cfif>
 									<cfif attributes.fromshare EQ "F"></a></cfif>
 								</cfloop>

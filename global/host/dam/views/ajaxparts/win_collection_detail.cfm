@@ -88,19 +88,17 @@
 									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url FROM qry_theimage WHERE img_id= '#myid#'
 								</cfquery>
 								<cfloop query="getimg">
-										<cfif myid EQ img_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
-											<cfif link_kind NEQ "url">
-												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-													<img src="#cloud_url#" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0" img-tt="img-tt">
-												</cfif>
-											<cfelseif link_kind EQ "url">
-												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
+										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
+										<cfif link_kind NEQ "url">
+											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+												<img src="#cloud_url#" border="0" img-tt="img-tt">
+											<cfelse>
+												<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0" img-tt="img-tt">
 											</cfif>
-											</a>
+										<cfelseif link_kind EQ "url">
+											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 										</cfif>
+										</a>
 									</cfloop>
 								</td>
 								<td width="100%" colspan="2" valign="top" class="gridno">
