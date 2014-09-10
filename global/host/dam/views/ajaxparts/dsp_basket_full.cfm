@@ -71,22 +71,22 @@
 			                    	<!--- Buttons --->
 			                    	<div style="float:left;">
 			                    		<!--- Show buttons only if user is an admin OR no users/groups access defined OR if access if defined then user must have access or be part of a group that has access --->
-			                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("download")#" onclick="$('##thebasket').submit();return false;" class="button">
+			                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("download")#" onclick="$('##thebasket').submit();return false;" class="awesome large green">
 			                    		<cfif isadmin OR qry_customization.publish_btn_basket EQ "" OR listfindnocase(qry_customization.publish_btn_basket, session.theuserid) OR myFusebox.getApplicationData().global.comparelists(qry_customization.publish_btn_basket, session.thegroupofuser) NEQ "">
-			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_basket")#" onclick="basketsave();return false;" class="button">
+			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_basket")#" onclick="basketsave();return false;" class="awesome large grey">
 			                    		</cfif>
 			                    		
 			                    		<cfif isadmin OR qry_customization.email_btn_basket EQ "" OR listfindnocase(qry_customization.email_btn_basket, session.theuserid) OR myFusebox.getApplicationData().global.comparelists(qry_customization.email_btn_basket, session.thegroupofuser) NEQ "">
-			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("send_basket_email")#" onclick="basketemail('#qry_basket.cart_order_email#');return false;" class="button">
+			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("send_basket_email")#" onclick="basketemail('#qry_basket.cart_order_email#');return false;" class="awesome large grey">
 			                    		</cfif>
 			                    		
 			                    		<cfif isadmin OR qry_customization.ftp_btn_basket EQ "" OR listfindnocase(qry_customization.ftp_btn_basket, session.theuserid) OR myFusebox.getApplicationData().global.comparelists(qry_customization.ftp_btn_basket, session.thegroupofuser) NEQ "">
-			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("send_basket_ftp")#" onclick="basketftp();return false;" class="button">
+			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("send_basket_ftp")#" onclick="basketftp();return false;" class="awesome large grey">
 			                    		</cfif>
 			                    		<cfif isadmin OR qry_customization.metadata_btn_basket EQ "" OR listfindnocase(qry_customization.metadata_btn_basket, session.theuserid) OR myFusebox.getApplicationData().global.comparelists(qry_customization.metadata_btn_basket, session.thegroupofuser) NEQ "">
-			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;" class="button">
+			                    			<input type="button" value="#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;" class="awesome large grey">
 			                    		</cfif>
-			                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("delete_basket")#" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("delete_basket"))#',400,1);return false;" class="button">
+			                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("delete_basket")#" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("delete_basket"))#',400,1);return false;" class="awesome large greylight">
 			                    	</div>
 			                    	<div style="clear:both;"></div>
 			                    	<!--- Select All --->
