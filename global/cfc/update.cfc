@@ -181,8 +181,17 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 37 (1.7) --->
-		<cfif updatenumber.opt_value LT 37>
+		<!--- If less then 38 (1.7) --->
+		<cfif updatenumber.opt_value LT 38>
+
+			<!--- Add column to folders table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> share_inherit #thevarchar#(1) DEFAULT 'f'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
 			<!--- Increase column length in xmp table --->
 			<cfset var thexmpcol_list = "subjectcode_1000,creator_1000,title_1000,authorsposition_1000,captionwriter_1000,ciadrextadr_1000,category_1000,urgency_500,ciadrcity_1000,ciadrctry_500,location_500,intellectualgenre_500,source_1000,transmissionreference_500,headline_1000,city_1000,ciadrregion_500,country_500,countrycode_500,scene_500,state_500,credit_1000">
 			<cfloop list="#thexmpcol_list#" index="thexmpcol">

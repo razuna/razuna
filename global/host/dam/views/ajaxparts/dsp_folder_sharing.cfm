@@ -47,6 +47,11 @@
 						<td class="td2"><input type="radio" value="T" name="folder_shared"<cfif qry_folder.folder_shared EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="folder_shared"<cfif qry_folder.folder_shared EQ "F" OR qry_folder.folder_shared EQ ""> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<tr>
+						<td class="td2" style="white-space:nowrap">#myFusebox.getApplicationData().defaults.trans("share_inherit_boolean")#</td>
+						<td class="td2"><input type="radio" value="t" name="share_inherit"<cfif qry_folder.share_inherit EQ "t"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="share_inherit"<cfif qry_folder.share_inherit EQ "f" OR qry_folder.share_inherit EQ ""> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
+					</tr>
+					<tr><td colspan="2">#myFusebox.getApplicationData().defaults.trans("share_inherit_desc")#</td></tr>
+					<tr>
 						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("folder")# URL</td>
 						<td class="td2"><a href="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#&v=#createuuid()#" target="_blank">#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#</a></td>
 					</tr>

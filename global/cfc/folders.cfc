@@ -160,7 +160,7 @@
 	<cfquery name="qLocal" datasource="#Variables.dsn#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolder */ f.folder_id, f.folder_id_r, f.folder_name, f.folder_level, f.folder_of_user,
 	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared, f.link_path,
-	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, share_dl_thumb, in_search_selection
+	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, share_dl_thumb, in_search_selection, share_inherit
 	FROM #session.hostdbprefix#folders f
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1328,7 +1328,7 @@
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
-<!--- REMOVE THIS FOLDER ALL SUBFOLDER AND FILES WITHIN --->
+<!--- APPLY SHARED SETTINGS --->
 <cffunction name="apply_custom_shared_setting" output="false" returntype="void">
 	<cfargument name="folder_id" type="string">
 	<!--- Param --->
@@ -1339,24 +1339,46 @@
 	<cfset s.share_dl_thumb = "F">
 	<cfset s.share_comments = "F">
 	<cfset s.share_upload = "F">
-	<!--- Get custom settings --->
-	<cfinvoke component="settings" method="get_customization" returnvariable="cs" />
-	<!--- Set settings according to settings --->
-	<cfif cs.share_folder>
-		<cfset s.folder_shared = "T">
+
+	<!--- Check parent folder settings and if share settings is set to inherit then get settings from parent folder else get settings from customization --->
+	<cfquery datasource="#application.razuna.datasource#" name="getparentsharesettings">
+	SELECT parf.folder_shared, parf.share_dl_thumb, parf.share_dl_org, parf.share_inherit, parf.share_comments, parf.share_upload, parf.share_order, parf.share_order_user
+	FROM raz1_folders parf, raz1_folders subf
+	WHERE subf.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND subf.folder_level > '1'
+	AND subf.folder_id_r = parf.folder_id
+	AND subf.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Check if parent folder setting is set to inherit to subfolders --->
+	<cfif getparentsharesettings.recordcount NEQ 0 AND getparentsharesettings.share_inherit EQ 't'>
+		<cfset s.folder_shared = getparentsharesettings.folder_shared>
+		<cfset s.share_dl_org= getparentsharesettings.share_dl_org>
+		<cfset s.share_dl_thumb= getparentsharesettings.share_dl_thumb>
+		<cfset s.share_inherit= getparentsharesettings.share_inherit>
+		<cfset s.share_comments= getparentsharesettings.share_comments>
+		<cfset s.share_upload= getparentsharesettings.share_upload>
+		<cfset s.share_order= getparentsharesettings.share_order>
+		<cfset s.share_order_user= getparentsharesettings.share_order_user>
+	<cfelse><!--- Get custom settings ---> 
+		<cfinvoke component="settings" method="get_customization" returnvariable="cs" />
+		<!--- Set settings according to settings --->
+		<cfif cs.share_folder>
+			<cfset s.folder_shared = "T">
+		</cfif>
+		<cfif cs.share_download_thumb>
+			<cfset s.share_dl_thumb = "T">
+		</cfif>
+		<cfif cs.share_download_original>
+			<cfset s.share_dl_org = "T">
+		</cfif>
+		<cfif cs.share_comments>
+			<cfset s.share_comments = "T">
+		</cfif>
+		<cfif cs.share_uploading>
+			<cfset s.share_upload = "T">
+		</cfif>
 	</cfif>
-	<cfif cs.share_download_thumb>
-		<cfset s.share_dl_thumb = "T">
-	</cfif>
-	<cfif cs.share_download_original>
-		<cfset s.share_dl_org = "T">
-	</cfif>
-	<cfif cs.share_comments>
-		<cfset s.share_comments = "T">
-	</cfif>
-	<cfif cs.share_uploading>
-		<cfset s.share_upload = "T">
-	</cfif>
+
 	<!--- Call internal function to update shared settings --->
 	<cfinvoke method="update_sharing" thestruct="#s#" />
 	<!--- Return --->
@@ -2267,6 +2289,7 @@
 	<cfparam name="arguments.thestruct.folder_name_shared" default="#arguments.thestruct.theid#">
 	<cfparam name="arguments.thestruct.share_order" default="F">
 	<cfparam name="arguments.thestruct.share_order_user" default="0">
+	<cfparam name="arguments.thestruct.share_inherit" default="f">
 	<!--- Update Folders DB --->
 	<cfquery datasource="#application.razuna.datasource#">
 	UPDATE #session.hostdbprefix#folders
@@ -2280,7 +2303,8 @@
 	share_upload = <cfqueryparam value="#arguments.thestruct.share_upload#" cfsqltype="cf_sql_varchar">,
 	share_comments = <cfqueryparam value="#arguments.thestruct.share_comments#" cfsqltype="cf_sql_varchar">,
 	share_order = <cfqueryparam value="#arguments.thestruct.share_order#" cfsqltype="cf_sql_varchar">,
-	share_order_user = <cfqueryparam value="#arguments.thestruct.share_order_user#" cfsqltype="CF_SQL_VARCHAR">
+	share_order_user = <cfqueryparam value="#arguments.thestruct.share_order_user#" cfsqltype="CF_SQL_VARCHAR">,
+	share_inherit = <cfqueryparam value="#arguments.thestruct.share_inherit#" cfsqltype="CF_SQL_VARCHAR">
 	WHERE folder_id = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>

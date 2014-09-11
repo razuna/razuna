@@ -36,6 +36,7 @@ CREATE TABLE ct_aliases (
   KEY folder_id_r (folder_id_r)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE raz1_folders add share_inherit varchar(1) DEFAULT 'f';
 ALTER TABLE raz1_folders add in_search_selection varchar(5) DEFAULT 'false';
 ALTER TABLE users add user_search_selection varchar(100);
 ALTER TABLE news add host_id int default 0;
