@@ -5180,11 +5180,35 @@
 	<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
 	<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
 	<cftry>
+		<!--- Params --->
+		<cfset var qry = "">
+		<cfset var qryshared = "">
+		<cfset var checkperm = false>
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("folders")>
-		<!--- If there is no session for webgroups set --->
+		<!--- For share --->
 		<cfif arguments.fromshare>
+			<!--- If we come from share we need to check perm --->
+			<cfset var checkperm = true>
+			<!--- If there is no session for webgroups set --->
 			<cfparam default="0" name="session.thegroupofuser">
+			<!--- Grab the the stop folderid which is the folder id of the shared one but one above --->
+			<cfquery datasource="#arguments.dsn#" name="qryshared" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#getrootfolderidshared */ folder_id_r
+			FROM #arguments.prefix#folders
+			WHERE folder_id = <cfqueryparam value="#session.fid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Check the permission settings of a widget --->
+			<cfif structKeyExists(session,"wid")>
+				<cfset s = structnew()>
+				<cfset s.widget_id = session.wid>
+				<!--- This return the permission in widget_permission / g = folder permissions --->
+				<cfinvoke component="widgets" method="detail" thestruct="#s#" returnvariable="qry_widget" />
+				<!--- if widget is set to check on folder permission then true else false --->
+				<cfif qry_widget.widget_permission NEQ "g">
+					<cfset var checkperm = false>
+				</cfif>
+			</cfif>
 		</cfif>
 		<!--- Param --->
 		<cfset var qry = "">
@@ -5192,7 +5216,7 @@
 		<!--- Query: Get current folder_id_r --->
 		<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
-		<cfif arguments.fromshare>
+		<cfif checkperm>
 			<cfif session.iscol EQ "F">
 				,
 				CASE
@@ -5237,24 +5261,41 @@
 		FROM #arguments.prefix#folders f
 		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
-		</cfquery>
-		<!--- QoQ --->
 		<cfif arguments.fromshare>
+			AND f.folder_id != <cfqueryparam value="#qryshared.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
+		</cfif>
+		</cfquery>
+		<cfset consoleoutput(true)>
+	<cfset console(qry)>
+	<cfset console(session.fid)>
+		<!--- QoQ --->
+		<cfif checkperm>
 			<cfquery dbtype="query" name="qry">
 			SELECT *
 			FROM qry
 			WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 			</cfquery>
 		</cfif>
+
+
+
+		<cfset console(qry.recordcount)>
+		<!--- No recursivness if no more records --->
 		<cfif qry.recordcount NEQ 0>
 			<!--- Set the current values into the list --->
 			<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
+			<cfset console("RESURSIVE: #flist#")>
 			<!--- If the folder_id_r is not the same the passed one --->
 			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 				<!--- Call this function again (need component otherwise it won't work for internal calls) --->
 				<cfinvoke component="folders" returnvariable="flist" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
 			</cfif>
+		<cfelse>
+			<!--- Set the current values into the list --->
+			<cfset flist = arguments.folderlist>
+			<cfset console("FINAL FLIST when no record found: #flist#")>
 		</cfif>
+		<cfset console("FINAL FLIST: #flist#")>
 		<!--- Return --->	
 		<cfreturn flist>
 		<cfcatch type="any">
