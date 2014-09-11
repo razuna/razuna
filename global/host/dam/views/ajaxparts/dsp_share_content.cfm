@@ -54,7 +54,8 @@
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
 							<cfif listlen(qry_breadcrumb)>
-								| <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&jsessionid=#session.SessionID#');" style="padding-left:10px;">Home</a> <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&jsessionid=#session.SessionID#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+								<cfset counter = 0>
+								<cfloop list="#qry_breadcrumb#" delimiters=";" index="i"><cfif counter EQ 0>/ <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&jsessionid=#session.SessionID#');">Home</a><cfelse> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&jsessionid=#session.SessionID#');">#ListGetAt(i,1,"|")#</a></cfif><cfset counter = 0 + 1> </cfloop>
 							</cfif>
 						</cfif>
 					</div>

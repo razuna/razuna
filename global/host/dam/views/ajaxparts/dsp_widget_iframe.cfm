@@ -69,8 +69,11 @@
 					#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 					<!--- BreadCrumb --->
 					<cfif structkeyexists(url,"folder_id_r")>
+						<!--- <cfdump var="#qry_breadcrumb#"> --->
 						<cfif listlen(qry_breadcrumb)>
-							| <a href="#myself#c.w_content&wid=#attributes.wid#&fid=#attributes.fid#&jsessionid=#session.SessionID#">Home</a> <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#&jsessionid=#session.SessionID#">#ListGetAt(i,1,"|")#</a> </cfloop>
+							<cfset counter = 0>
+							<span style="padding-left:10px;"></span>
+							<!--- | <a href="#myself#c.w_content&wid=#attributes.wid#&fid=#attributes.fid#&jsessionid=#session.SessionID#">Home</a> ---> <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"><cfif counter EQ 0>/ <a href="#myself#c.w_content&wid=#attributes.wid#&fid=#attributes.fid#&jsessionid=#session.SessionID#">Home</a><cfelse> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#&jsessionid=#session.SessionID#">#ListGetAt(i,1,"|")#</a></cfif><cfset counter = 0 + 1> </cfloop>
 						</cfif>
 					</cfif>
 					<!--- Not when a collection since they do not know limits!!! --->

@@ -46,6 +46,8 @@
 	<!--- Detail --->
 	<cffunction name="detail" output="true" access="public" returnType="query">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.external" default="f">
 		<!--- Query --->
