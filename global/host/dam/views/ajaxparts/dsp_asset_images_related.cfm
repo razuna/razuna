@@ -42,7 +42,7 @@
 					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50"></a>
 					 </cfif>
 				</td>
-				<!--- <td width="5"></td> --->
+				<td width="10"></td>
 				<td valign="top">
 					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)  [#img_filename#]<br />
 					<cfif attributes.s EQ "F">
