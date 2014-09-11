@@ -5184,6 +5184,7 @@
 		<cfset var qry = "">
 		<cfset var qryshared = "">
 		<cfset var checkperm = false>
+		<cfparam name="flist" default="">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- For share --->
@@ -5210,9 +5211,6 @@
 				</cfif>
 			</cfif>
 		</cfif>
-		<!--- Param --->
-		<cfset var qry = "">
-		<cfparam name="flist" default="">
 		<!--- Query: Get current folder_id_r --->
 		<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
@@ -5265,26 +5263,18 @@
 			AND f.folder_id != <cfqueryparam value="#qryshared.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
 		</cfif>
 		</cfquery>
-		<cfset consoleoutput(true)>
-	<cfset console(qry)>
-	<cfset console(session.fid)>
-		<!--- QoQ --->
-		<cfif checkperm>
+		<!--- QoQ do not do it if system or admin meaning return all folders --->
+		<cfif checkperm AND (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser())>
 			<cfquery dbtype="query" name="qry">
 			SELECT *
 			FROM qry
 			WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 			</cfquery>
 		</cfif>
-
-
-
-		<cfset console(qry.recordcount)>
 		<!--- No recursivness if no more records --->
 		<cfif qry.recordcount NEQ 0>
 			<!--- Set the current values into the list --->
 			<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
-			<cfset console("RESURSIVE: #flist#")>
 			<!--- If the folder_id_r is not the same the passed one --->
 			<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 				<!--- Call this function again (need component otherwise it won't work for internal calls) --->
@@ -5293,9 +5283,7 @@
 		<cfelse>
 			<!--- Set the current values into the list --->
 			<cfset flist = arguments.folderlist>
-			<cfset console("FINAL FLIST when no record found: #flist#")>
 		</cfif>
-		<cfset console("FINAL FLIST: #flist#")>
 		<!--- Return --->	
 		<cfreturn flist>
 		<cfcatch type="any">
