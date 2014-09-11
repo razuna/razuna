@@ -3089,7 +3089,7 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as folder_owner<cfelse>f.folder_owner</cfif>,  
+	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as f.folder_owner, '0' as f.folder_id_r<cfelse>f.folder_owner</cfif>,  
 	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 		'X' as permfolder
 	<cfelse>
@@ -3148,9 +3148,9 @@
 	</cfloop>
 	
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
-	<!--- <cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
+	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
 		<cfset var folderaccess = "x">
-	</cfif> --->
+	</cfif>
 	<!--- If session.customaccess is here and is not empty --->
 	<cfif structKeyExists(session,"customaccess") AND session.customaccess NEQ "">
 		<cfset var folderaccess = session.customaccess>
