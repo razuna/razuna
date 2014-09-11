@@ -1,4 +1,7 @@
 <cfoutput>
+	<!--- Format sizes --->
+	<cfif isnumeric(qry_detail.theprevsize)><cfset qry_detail.theprevsize = numberformat(qry_detail.theprevsize,'_.__')></cfif>
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
 	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadren();return false;">Refresh</a></div></div>
 	<br />
 	<cfquery name="thumb_share_setting" dbtype="query">
@@ -22,6 +25,7 @@
 							</cfif>
 						</a>
 					</td>
+					<td width="10"></td>
 					<td>
 						<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> (#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.theprevsize# MB, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel)
 						<br /> 
@@ -71,6 +75,7 @@
 							</cfif>
 						</a>
 					</td>
+					<td width="10"></td>
 					<td>
 						<cfif qry_detail.detail.link_kind NEQ "lan">
 							<strong>Original</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)

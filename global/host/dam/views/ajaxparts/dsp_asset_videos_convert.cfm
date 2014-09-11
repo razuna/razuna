@@ -24,6 +24,8 @@
 *
 --->
 <cfoutput>
+	<!--- Format size --->
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
 	<cfquery name="org_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'org'
 	</cfquery>
