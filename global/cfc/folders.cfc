@@ -5296,8 +5296,9 @@
 <!--- Download Folder --->
 <cffunction name="download_folder" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<cfinvoke component="defaults" method="trans" transid="download_folder_output" returnvariable="download_folder_output" />
 	<!--- Feedback --->
-	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfoutput><br/><strong>#download_folder_output#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Params --->
 	<cfset var thisstruct = structnew()>
@@ -5356,8 +5357,15 @@
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
-	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
+	<cfif arguments.thestruct.prefs.set2_meta_export EQ 't'>
+		<cfif isdefined("arguments.thestruct.exportname")>
+			<cfset var suffix = "#arguments.thestruct.exportname#">
+		<cfelse>
+			<cfset var suffix = "#session.hostid#-#session.theuserid#">
+		</cfif>
+		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		</cfif>
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
@@ -7103,8 +7111,9 @@
 <!--- Download Folder --->
 <cffunction name="download_upc_folder" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<cfinvoke component="defaults" method="trans" transid="download_folder_output" returnvariable="download_folder_output" />
 	<!--- Feedback --->
-	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfoutput><br/><strong>#download_folder_output#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Params --->
 	<cfset var thisstruct = structnew()>
@@ -7259,8 +7268,15 @@
 		</cfif>
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
-	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
+	<cfif arguments.thestruct.prefs.set2_meta_export EQ 't'>
+		<cfif isdefined("arguments.thestruct.exportname")>
+			<cfset var suffix = "#arguments.thestruct.exportname#">
+		<cfelse>
+			<cfset var suffix = "#session.hostid#-#session.theuserid#">
+		</cfif>
+		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		</cfif>
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
@@ -7658,8 +7674,9 @@
 
 <cffunction name="download_folder_structure_flat" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<cfinvoke component="defaults" method="trans" transid="download_folder_output" returnvariable="download_folder_output" />
 	<!--- Feedback --->
-	<cfoutput><strong>We are starting to download the files. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfoutput><br/><strong>#download_folder_output#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Params --->
 	<cfset var thisstruct = structnew()>
@@ -7711,14 +7728,18 @@
 		<!--- <cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv"> --->
 	<!--- </cfif> --->
 	<!--- Feedback --->
-	<cfoutput>Ok. All files are here. Now creating a nice ZIP file for you.<br /></cfoutput>
+	<cfinvoke component="defaults" method="trans" transid="download_folder_output2" returnvariable="download_folder_output2" />
+	<!--- Feedback --->
+	<cfoutput><br/><strong>#download_folder_output2#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Set downloadname --->
 	<cfset var dl_name = "label_" & arguments.thestruct.qry_labels_text>
 	<!--- All done. ZIP and finish --->
 	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#dl_name#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+
+	<cfinvoke component="defaults" method="trans" transid="download_folder_output3" returnvariable="download_folder_output3" />	
 	<!--- Zip path for download --->
-	<cfoutput><p><a href="outgoing/#dl_name#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfoutput><p><a href="outgoing/#dl_name#.zip"><strong style="color:green;">#download_folder_output3#</strong></a></p></cfoutput>
 	<cfflush>
 	<!--- Remove the temp folder --->
 	<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#basketname#" recurse="yes" />
@@ -7729,8 +7750,9 @@
 <!--- RAZ-2901 : Download Folder as per folder structure Razuna --->
 <cffunction name="download_folder_structure" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<cfinvoke component="defaults" method="trans" transid="download_folder_output" returnvariable="download_folder_output" />
 	<!--- Feedback --->
-	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfoutput><br/><strong>#download_folder_output#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Params --->
 	<cfset var thisstruct = structnew()>
@@ -7807,11 +7829,18 @@
 		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath##parentfoldersname#" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" rend_av="t" />
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
-	<!--- <cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0> --->
+	<cfif arguments.thestruct.prefs.set2_meta_export EQ 't'>
 		<!--- Feedback --->
 		<cfflush>
-		<cffile action="move" destination="#arguments.thestruct.newpath#/#parentfoldersname#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
-	<!--- </cfif> --->
+		<cfif isdefined("arguments.thestruct.exportname")>
+			<cfset var suffix = "#arguments.thestruct.exportname#">
+		<cfelse>
+			<cfset var suffix = "#session.hostid#-#session.theuserid#">
+		</cfif>
+		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#/#parentfoldersname#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		</cfif>
+	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Now creating a nice ZIP file for you.<br /></cfoutput>
 	<cfflush>

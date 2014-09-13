@@ -47,7 +47,7 @@
 			 <cfelse> 
 			 	<cfset csshide= "">
 			</cfif>
-				<!--- UPC Enabeld --->
+				<!--- UPC Enabled --->
 				<tr #csshide#>
 					<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("upc_enabled")#</th>
 				</tr>
@@ -102,6 +102,21 @@
 					<input type="radio" name="set2_colorspace_RGB" value="false" <cfif prefs.set2_colorspace_rgb eq 'false' or prefs.set2_colorspace_rgb eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_off")#
 					<br />
 					<input type="radio" name="set2_colorspace_RGB" value="true" <cfif prefs.set2_colorspace_rgb eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_on")#
+				</td>
+			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<strong>#myFusebox.getApplicationData().defaults.trans("meta_export_header")#</strong>
+					<br />
+					#myFusebox.getApplicationData().defaults.trans("meta_export_desc")#
+					<br /><br />
+					<input type="radio" name="set2_meta_export" value="t" <cfif prefs.set2_meta_export eq 't'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("yes")#
+					<br/>
+					<input type="radio" name="set2_meta_export" value="f" <cfif prefs.set2_meta_export eq 'f' or prefs.set2_meta_export eq ''> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#
+					
 				</td>
 			</tr>
 			<tr class="list">

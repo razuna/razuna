@@ -1841,6 +1841,7 @@
 		  SET2_DUPLICATES_META  	VARCHAR(2000),
 		  SET2_FOLDER_SUBSCRIBE_META  	VARCHAR(2000),
 		  SET2_ASSET_EXPIRY_META  	VARCHAR(2000),
+		  SET2_META_EXPORT  	VARCHAR(1) DEFAULT 'f',
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),
   		  KEY #arguments.thestruct.host_db_prefix#set2_id (SET2_ID),

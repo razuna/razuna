@@ -322,8 +322,10 @@
 	<cfparam default="false" name="arguments.thestruct.skipduplicates">
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong>We are getting your files for your basket ready...</strong><br><br></cfoutput>
-		<cfflush>
+	<cfinvoke component="defaults" method="trans" transid="download_basket_output" returnvariable="download_basket_output" />
+	<!--- Feedback --->
+	<cfoutput><br/><strong>#download_basket_output#</strong><br /></cfoutput>
+	<cfflush>
 	</cfif>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -350,7 +352,9 @@
 	</cftry>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong>So far, so good. Fetching files...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="download_basket_output2" returnvariable="download_basket_output2" />
+		<!--- Feedback --->
+		<cfoutput><br /><strong>#download_basket_output2#</strong><br /><br /></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- Create directory --->
@@ -409,7 +413,8 @@
 	</cfloop>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong>Putting it into a nice ZIP archive...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="download_basket_output4" returnvariable="download_basket_output4" />
+		<cfoutput><strong>#download_basket_output4#</strong><br><br></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- All done. Now zip up the folder --->
@@ -420,8 +425,15 @@
 		<cfset arguments.thestruct.zipname = arguments.thestruct.zipname & ".zip">
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
-	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
+	<cfif arguments.thestruct.prefs.set2_meta_export EQ 't'>
+		<cfif isdefined("arguments.thestruct.exportname")>
+			<cfset var suffix = "#arguments.thestruct.exportname#">
+		<cfelse>
+			<cfset var suffix = "#session.hostid#-#session.theuserid#">
+		</cfif>
+		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		</cfif>
 	</cfif>
 	<!--- Zip the folder --->
 	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
@@ -446,7 +458,8 @@
 	</cfif>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong style="color:green;">All done. <a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="download_basket_output3" returnvariable="download_basket_output3" />
+		<cfoutput><strong style="color:green;"><a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">#download_basket_output3#</a></strong><br><br></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->

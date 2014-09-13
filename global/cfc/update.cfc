@@ -181,9 +181,16 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 38 (1.7) --->
-		<cfif updatenumber.opt_value LT 38>
+		<!--- If less then 39 (1.7) --->
+		<cfif updatenumber.opt_value LT 39>
 
+			<!--- Add column to settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_META_EXPORT #thevarchar#(1) DEFAULT 'f'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<!--- Add column to folders table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

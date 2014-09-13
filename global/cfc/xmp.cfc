@@ -1625,11 +1625,10 @@
 <!--- Export metadata --->
 <cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.exportname" default="#randRange(1,10000)#">
+	<cfinvoke component="defaults" method="trans" transid="download_metadata_output" returnvariable="download_metadata_output" />
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
-	</cfif>
+	<cfoutput><br/><strong>#download_metadata_output#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Param --->
 	<!--- RAZ-2831 : Set metadata fields as per Export template --->
@@ -1958,10 +1957,7 @@
 		</cfdefaultcase>
 	</cfswitch>
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><strong> .</strong></cfoutput>
-	</cfif>
+	<cfoutput><strong> .</strong></cfoutput>
 	<cfflush>
 	<!--- Return --->
 	<cfreturn />
@@ -1969,17 +1965,22 @@
 
 <!--- Export CSV --->
 <cffunction name="export_csv" output="false">
-	<cfargument name="thestruct" type="struct">
+	<cfargument name="thestruct" type="struct">		
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
+	<cfif isdefined("arguments.thestruct.exportname")>
+		<cfset var suffix = "#arguments.thestruct.exportname#">
+	<cfelse>
+		<cfset var suffix = "#session.hostid#-#session.theuserid#">
+	</cfif>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><p><a href="outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
+	<cfif arguments.thestruct.fa EQ 'c.meta_export_do'>
+		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
@@ -2013,14 +2014,19 @@
 		<cfset SpreadsheetFormatrow(sxls, {alignment="vertical_top"}, 2)>
 	</cfif>
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)>
+	<cfif isdefined("arguments.thestruct.exportname")>
+		<cfset var suffix = "#arguments.thestruct.exportname#">
+	<cfelse>
+		<cfset var suffix = "#session.hostid#-#session.theuserid#">
+	</cfif>
 	<!--- Write file to file system --->
-	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#",true)>
+	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.#arguments.thestruct.format#",true)>
 	<!--- Serve the file --->
     <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><p><a href="outgoing/metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
+	<cfif arguments.thestruct.fa EQ 'meta_export_do'>
+		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->

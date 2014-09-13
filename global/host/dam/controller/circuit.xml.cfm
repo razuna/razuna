@@ -1169,12 +1169,19 @@
 		<set name="attributes.what" value="basket" overwrite="false" />
 		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
+		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Action: Export Metadata -->
-		<do action="meta_export_do" />
+		<!-- Get DAM settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
+		<if condition="attributes.prefs.set2_meta_export EQ 't'">
+			<true>
+				<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
+			</true>
+		</if>
 		<!-- Get user groups  -->
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser" returnvariable="attributes.qry_GroupsOfUser" >
 			<argument name="user_id" value="#session.theuserid#" />
@@ -1211,12 +1218,19 @@
 		<set name="attributes.noemail" value="true" />
 		<set name="attributes.what" value="basket" overwrite="false" />
 		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Action: Export Metadata -->
-		<do action="meta_export_do" />
+		<!-- Get DAM settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
+		<if condition="attributes.prefs.set2_meta_export EQ 't'">
+			<true>
+				<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
+			</true>
+		</if>
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="thebasket" />
 		<!-- CFC: Send eMail -->
@@ -1258,12 +1272,19 @@
 		<set name="attributes.what" value="basket" overwrite="false" />
 		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
+		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Action: Export Metadata -->
-		<do action="meta_export_do" />
+		<!-- Get DAM settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
+		<if condition="attributes.prefs.set2_meta_export EQ 't'">
+			<true>
+				<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
+			</true>
+		</if>
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- CFC: Upload to FTP -->
@@ -1293,12 +1314,19 @@
 		<set name="attributes.artoffile" value="#session.artoffile#" />
 		<!-- Preserve langcount attribute in langs as it is overwritten by asset_upload_server method  and is needed by savedesckey method afterwards -->
 		<set name="attributes.langs" value="#attributes.langcount#" /> 
+		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Action: Export Metadata -->
-		<do action="meta_export_do" />
+		<!-- Get DAM settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
+		<if condition="attributes.prefs.set2_meta_export EQ 't'">
+			<true>
+				<!-- Action: Export Metadata -->
+				<do action="meta_export_do" />
+			</true>
+		</if>
 		<!-- CFC: Get items and download to system -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="writebasket(attributes)" returnvariable="attributes.thefile" />
 		<!-- Do the upload from server which will add the zip file from above -->
@@ -9706,10 +9734,13 @@
 		<set name="attributes.download_originals" value="false" overwrite="false" />
 		<set name="attributes.download_renditions" value="false" overwrite="false" />
 		<set name="attributes.download_subfolders" value="false" overwrite="false" />
+		<set name="attributes.exportname" value="folder_#attributes.folder_id#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Get DAM settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
 		<!-- If label we do not need to query everything -->
@@ -9723,8 +9754,12 @@
 					<argument name="label_kind" value="assets" />
 					<argument name="thestruct" value="#attributes#" />
 				</invoke>
-				<!-- Action: Export Metadata -->
-				<do action="meta_export_do" />
+				<if condition="attributes.prefs.set2_meta_export EQ 't'">
+					<true>
+						<!-- Action: Export Metadata -->
+						<do action="meta_export_do" />
+					</true>
+				</if>
 				<!-- Invoke export -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure_flat(attributes)" />
 			</true>
@@ -9746,13 +9781,22 @@
 				<!-- Check the UPC folder download -->
 				<if condition="attributes.qry_GroupsOfUser.recordcount NEQ '0' AND attributes.qry_GroupsOfUser.upc_size NEQ '' AND attributes.qry_labels NEQ ''">
 					<true>
-						<do action="meta_export_do" />
+						<if condition="attributes.prefs.set2_meta_export EQ 't'">
+							<true>
+								<!-- Action: Export Metadata -->
+								<do action="meta_export_do" />
+							</true>
+						</if>
 						<!-- CFC: Show the progress UPC download -->
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_upc_folder(attributes)" />
 					</true>
 					<false>
-					<!-- Action: Export Metadata -->
-						<do action="meta_export_do" />
+						<if condition="attributes.prefs.set2_meta_export EQ 't'">
+							<true>
+								<!-- Action: Export Metadata -->
+								<do action="meta_export_do" />
+							</true>
+						</if>
 						<!-- RAZ-2901 CFC: Show the progress download -->
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder_structure(attributes)" />
 					</false>
