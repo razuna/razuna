@@ -24,6 +24,16 @@
 *
 --->
 <cfoutput>
+	<!--- Set sorting options used for username and email sorting --->
+	<cfparam name="sortorder" default="desc">
+	<cfif isdefined("qry_users.sorted") AND qry_users.sorted EQ 'yes'>
+		<cfif sortorder EQ 'asc'>
+			<cfset sortorder = 'desc'>
+		<cfelse>
+			<cfset sortorder = 'asc'>
+		</cfif>
+	</cfif>
+
 	<div style="padding-bottom:10px;float:left;">
 		<strong>Total: #qry_users.recordcount# users</strong>
 	</div>
@@ -86,14 +96,16 @@
 				</tr>
 				<!--- The div to show selection --->
 				<div id="showuserselect" style="display:none;"></div>
+				<!--- Set sorting vars --->
+				<cfif sortorder EQ 'asc'><cfset direction  = 'up'><cfset align  = 'top'><cfelse><cfset direction  = 'down'><cfset align  = 'middle'></cfif> 
 				<!--- User list below --->
 		 		<tr>
 					<th></th>
-					<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
+					<th><a href="##" onclick="loadcontent('admin_users','#myself#c.users&sortby=user_login_name&sortorder=#sortorder#');return false;">#myFusebox.getApplicationData().defaults.trans("username")#</a> <cfif qry_users.sortby EQ 'user_login_name' OR qry_users.sortby EQ ''><img src="#dynpath#/global/host/dam/images/arrow_#direction#.gif" width="10" height="10" border="0" valign="#align#"></cfif></th>
 					<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("ad_user")#</th>
 					<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
 					<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
-					<th>eMail</th>
+					<th><a href="##" onclick="loadcontent('admin_users','#myself#c.users&sortby=user_email&sortorder=#sortorder#');return false;">eMail</a> <cfif qry_users.sortby eq 'user_email'><img src="#dynpath#/global/host/dam/images/arrow_#direction#.gif" width="10" height="10" border="0" valign="#align#"></cfif></th>
 					<th colspan="2"></th>
 				</tr>
 				<!--- For paging --->
