@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<cfif session.hosttype EQ 0>
-		This section allows you to customize Razuna to your needs like hiding tabs, or other aspects or it.<br><br>
+		This section allows you to customize Razuna to your needs like hiding tabs, or other aspects of it.<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
 		<div>#myFusebox.getApplicationData().defaults.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">Read the documentation!</a></div>
