@@ -1008,6 +1008,14 @@ font-weight: bold;
 	min-height:30px;
 }
 
+/*@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .tree > .ltr > li {
+    	vertical-align: top;
+    	padding-bottom: 1px;
+    }
+}*/
+
+
 /* This will finally wrap long lines in the tree */
 .tree > .ltr > li > a {
 	/*border: 1px solid red;*/
@@ -1016,6 +1024,9 @@ font-weight: bold;
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	white-space: pre-wrap !important;       /* css-3 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	white-space: pre; /* CSS2 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	_white-space: pre;
 }
 .tree li a, 
 .tree li span {
@@ -1025,6 +1036,9 @@ font-weight: bold;
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	white-space: pre-wrap !important;       /* css-3 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	white-space: pre; /* CSS2 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	_white-space: pre;
 }
 /* Fix 100% width */
 .chzn-container, .chzn-drop, .chzn-drop .chzn-search, .chzn-drop .chzn-search input {
