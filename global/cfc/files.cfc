@@ -1060,7 +1060,7 @@
 			<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.file_id#" />
 			<!--- Query --->
 			<cfquery datasource="#variables.dsn#" name="qryfileupdate">
-			SELECT file_name_org, file_name, path_to_asset
+			SELECT file_name_org, file_name, path_to_asset, folder_id_r
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1088,6 +1088,17 @@
 					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
 				</cfif>
 			</cfif>
+
+			<!--- Execute workflow --->
+			<cfset arguments.thestruct.fileid = arguments.thestruct.file_id>
+			<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
+			<cfset arguments.thestruct.thefiletype = "doc">
+			<cfset arguments.thestruct.folder_id = qryfileupdate.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>

@@ -3868,6 +3868,8 @@
 	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="files_detail_save">
+		<!--- Params --->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3888,17 +3890,6 @@
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="metatofile(attributes)" />
 			</true>
 		</if>
-		<!-- Variables for workflow -->
-		<set name="attributes.thefiletype" value="doc" />
-		<set name="attributes.fileid" value="#attributes.file_id#" />
-		<set name="attributes.folder_id" value="#attributes.folder_id#" />
-		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
-		<set name="attributes.folder_action" value="true" />
-		<!-- CFC: workflow -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
-		<!-- CFC: workflow -->
-		<set name="attributes.folder_action" value="false" />
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Serve File to the browser -->
 	<fuseaction name="serve_file">
@@ -4036,6 +4027,8 @@
 	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="videos_detail_save">
+		<!--- Params --->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -4062,17 +4055,6 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
-		<!-- Variables for API -->
-		
-		<set name="attributes.fileid" value="#attributes.file_id#" />
-		<set name="attributes.folder_id" value="#attributes.folder_id#" />
-		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
-		<set name="attributes.folder_action" value="true" />
-		<!-- CFC: workflow -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
-		<!-- CFC: workflow -->
-		<set name="attributes.folder_action" value="false" />
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
@@ -4248,6 +4230,7 @@
 		<!-- Params -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
 		<set name="attributes.thefiletype" value="img" />
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -4273,16 +4256,6 @@
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="xmpwritethread(attributes)" />
 			</true>
 		</if>
-		<!-- Variables for API -->
-		<set name="attributes.fileid" value="#attributes.file_id#" />
-		<set name="attributes.folder_id" value="#attributes.folder_id#" />
-		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
-		<set name="attributes.folder_action" value="true" />
-		<!-- CFC: workflow -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
-		<!-- CFC: workflow -->
-		<set name="attributes.folder_action" value="false" />
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Image -->
 	<fuseaction name="images_convert">
@@ -4392,6 +4365,8 @@
 	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="audios_detail_save">
+		<!--- Params --->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -4418,16 +4393,6 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
-		<!-- Variables for API -->
-		<set name="attributes.fileid" value="#attributes.file_id#" />
-		<set name="attributes.folder_id" value="#attributes.folder_id#" />
-		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
-		<set name="attributes.folder_action" value="true" />
-		<!-- CFC: workflow -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
-		<!-- CFC: workflow -->
-		<set name="attributes.folder_action" value="false" />
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Audios Renditions -->
 	<fuseaction name="exist_rendition_audios">
@@ -10120,25 +10085,6 @@
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
 			</true>
 		</if>
-		<!-- Lucene -->
-		<!-- <if condition="application.razuna.storage EQ 'local'">
-			<true>
-				<invoke object="myFusebox.getApplicationData().lucene" method="index_delete">
-					<argument name="thestruct" value="#attributes#" />
-					<argument name="assetid" value="#attributes.file_id#" />
-					<argument name="category" value="#attributes.thetype#" />
-					<argument name="notfile" value="T" />
-				</invoke>
-				<invoke object="myFusebox.getApplicationData().lucene" method="index_update">
-					<argument name="thestruct" value="#attributes#" />
-					<argument name="assetid" value="#attributes.file_id#" />
-					<argument name="category" value="#attributes.thetype#" />
-					<argument name="dsn" value="#application.razuna.datasource#" />
-					<argument name="prefix" value="#session.hostdbprefix#" />
-					<argument name="notfile" value="T" />
-				</invoke>
-			</true>
-		</if> -->
 	</fuseaction>
 
 	<!-- Show custom Razuna -->

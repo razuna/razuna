@@ -503,6 +503,17 @@
 				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
 			</cfif>
 		</cfif>
+
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.file_id>
+		<cfset arguments.thestruct.file_name = qryorg.aud_name>
+		<cfset arguments.thestruct.thefiletype = "aud">
+		<cfset arguments.thestruct.folder_id = qryorg.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
