@@ -571,6 +571,10 @@
 	<cfset x.recurse = doit.qry_detail.sched_server_recurse>
 	<cfset x.zip_extract = doit.qry_detail.sched_zip_extract>
 	<cfset session.theuserid = doit.qry_detail.sched_user>
+	<!-- Get AWS Bucket -->
+	<cfinvoke component="global.cfc.settings" method="prefs_storage" returnvariable="qry_storage" />
+	<!-- Set bucket -->
+	<cfset x.awsbucket  = qry_storage.set2_aws_bucket />
 	<!--- If no record found simply abort --->
 	<cfif doit.qry_detail.recordcount EQ 0>
 		<cfabort>
@@ -624,10 +628,6 @@
 			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
 		<!--- FTP --->
 		<cfelseif doit.qry_detail.sched_method EQ "ftp">
-			<!-- Get AWS Bucket -->
-			<cfinvoke component="global.cfc.settings" method="prefs_storage" returnvariable="qry_storage" />
-			<!-- Set bucket -->
-			<cfset x.awsbucket  = qry_storage.set2_aws_bucket />
 			<!-- Params -->
 			<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
 			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
