@@ -46,6 +46,9 @@
 	<input type="hidden" name="link_path_url" id="link_path_url" value="#qry_detail.detail.link_path_url#">
 	<!--- Show next and back within detail view --->
 	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Format size --->
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
+
 	<!--- Show tabs --->
 	<div id="tab_detail#attributes.file_id#">
 		<!--- Tabs --->

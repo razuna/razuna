@@ -3868,7 +3868,7 @@
 	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="files_detail_save">
-		<!--- Params --->
+		<!-- Params -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
@@ -4027,7 +4027,7 @@
 	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="videos_detail_save">
-		<!--- Params --->
+		<!-- Params -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />
@@ -4365,7 +4365,7 @@
 	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="audios_detail_save">
-		<!--- Params --->
+		<!-- Params -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Set the convert_to value to empty -->
 		<set name="attributes.convert_to" value="" overwrite="false" />

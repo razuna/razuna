@@ -33,6 +33,8 @@
 	<br />
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_av.assets">
+			<!--- Format size --->
+			<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 			<tr>
 				<cfif av_type eq 'img' >
 					<td width="55" align="center">

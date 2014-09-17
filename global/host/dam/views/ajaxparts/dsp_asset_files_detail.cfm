@@ -43,6 +43,9 @@
 	<input type="hidden" name="file_extension" value="#qry_detail.detail.file_extension#">
 	<!--- Show next and back within detail view --->
 	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Format size --->
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
+
 	<!--- Show tabs --->
 	<div id="tab_detail#file_id#">
 		<ul>

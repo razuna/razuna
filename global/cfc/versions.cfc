@@ -181,6 +181,12 @@
 			</cfif>
 			<!--- Move the file to the versions directory --->
 			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" destination="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#qryversion.newversion#" move="T">
+			<!--- Delete existing files in directory before copying --->
+			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#" recurse="false" listinfo="name" name="qFile" />
+			<!--- Loop through file query and delete files --->
+			<cfloop query="qFile">
+			    <cffile action="delete" file="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#/#qFile.name#">
+			</cfloop>
 			<!--- Now copy the version to the original directory --->
 			<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.assetpath#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#qry.path_to_asset#">
 			<!--- If document is a PDF then back up PDF images into the new version folder on playback and copy over images from the playback version folder into razuna_pdf_images  folder --->
@@ -772,6 +778,12 @@
 			</cfif>
 			<!--- Grab the new version and move it to the old directory --->
 			<cfif directoryExists(arguments.thestruct.qryfile.path)>
+				<!--- Delete existing files in directory --->
+				<cfdirectory action="list" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" recurse="false" listinfo="name" name="qFile" />
+				<!--- Loop through file query and delete files --->
+				<cfloop query="qFile">
+				    <cffile action="delete" file="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#/#qFile.name#">
+				</cfloop>
 				<cfinvoke component="global" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
 			</cfif>
 
@@ -1242,7 +1254,6 @@
 			</cfthread>
 			<!--- Wait until Thumbnail is done --->
 			<cfthread action="join" name="p#arguments.thestruct.therandom#" timeout="6000" />
-			<cfdump var="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#"><cfdump var="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#">
 			<!--- Move thumbnail to incoming directory --->
 			<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
 			<!--- Check the platform and then decide on the ImageMagick tag --->
