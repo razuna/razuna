@@ -1018,7 +1018,7 @@
 										<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(cl)#">
 									</cfif>
 								<cfelseif trim(listlast(lg,"-")) CONTAINS "clob">
-									<cfif evaluate(cl) EQ "">
+									<cfif evaluate(cl) EQ "" AND cl NEQ 'user_pass'>
 										NULL
 									<cfelse>
 										<cfqueryparam CFSQLType="CF_SQL_CLOB" value="#evaluate(cl)#">
