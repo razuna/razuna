@@ -78,10 +78,10 @@
 					<td width="10"></td>
 					<td>
 						<cfif qry_detail.detail.link_kind NEQ "lan">
-							<strong>Original</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)
+							<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)
 						</cfif>
 						<cfif qry_detail.detail.link_kind EQ "lan">
-							<strong>Original</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)
+							<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)
 							<br />
 						</cfif>
 						<br>

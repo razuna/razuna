@@ -133,7 +133,7 @@
 			<tr>
 				<td colspan="4" style="padding-top:15px;">
 					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
-					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect Originals</a>
+					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect #myFusebox.getApplicationData().defaults.trans("originals")#</a>
 					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
 				</td>
 			</tr>
@@ -173,7 +173,7 @@
 									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url FROM qry_theimage WHERE img_id= '#myid#'
 								</cfquery>
 								<cfloop query="getimg">
-									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<img src="#cloud_url#" border="0">
@@ -192,7 +192,7 @@
 										<cfif myid EQ img_id>
 											<tr>
 												<td colspan="2" style="padding-bottom:7px;">
-													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 												</td>
@@ -202,7 +202,7 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
-														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 													</td>
 													</tr>
 												</cfif>
@@ -210,7 +210,7 @@
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
-														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
 															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
@@ -313,7 +313,7 @@
 							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_thevideo">
 									<cfif myid EQ vid_id>
-										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<img src="#cloud_url#" border="0" width="120">
@@ -333,7 +333,7 @@
 										<cfif myid EQ vid_id>
 											<tr>
 												<td colspan="2" style="padding-bottom:7px;">
-													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 												</td>
@@ -343,14 +343,14 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#vid_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												</cfif>																					
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
 															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
@@ -427,7 +427,7 @@
 							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_theaudio">
 									<cfif myid EQ aud_id>
-										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="120" border="0">
 										<cfif attributes.fromshare EQ "F"></a></cfif>
 									</cfif>
@@ -439,7 +439,7 @@
 										<cfif myid EQ aud_id>
 											<tr>
 												<td colspan="2" style="padding-bottom:7px;">
-													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 												</td>
@@ -449,14 +449,14 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#aud_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>											
 												</cfif>
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
 															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
@@ -533,7 +533,7 @@
 							<td width="1%" nowrap="true" valign="top" align="center">
 								<cfloop query="qry_thefile">
 									<cfif myid EQ file_id>
-										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 											<!---Show the thumbnail --->
 											<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
@@ -553,7 +553,7 @@
 										<cfif myid EQ file_id>
 											<tr>
 												<td width="100%" colspan="2" valign="top">
-													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 												</td>
@@ -563,14 +563,14 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												</cfif>																					
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
 															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>

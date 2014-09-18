@@ -32,7 +32,7 @@
 				<!--- Preview --->
 				<cfif asset_format EQ "thumb">
 					<tr>
-						<td><strong>Preview</strong><br>(#attributes.qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong><br>(#attributes.qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
 						<td valign="top">
 							<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
@@ -45,7 +45,7 @@
 				<!--- Show original if allowed --->
 				<cfif asset_format EQ "org">
 					<tr>
-						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
 						<td valign="top">
 							<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
@@ -85,7 +85,7 @@
 			<cfloop query="qry_share_options">
 				<cfif asset_format EQ "org">
 					<tr>
-						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
 						<td valign="top">
 							<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
@@ -125,7 +125,7 @@
 				<!--- Show original if allowed --->
 				<cfif asset_format EQ "org">
 					<tr>
-						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
 						<td valign="top">
 							<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>
@@ -163,7 +163,7 @@
 				<!--- Show original if allowed --->
 				<cfif asset_format EQ "org">
 					<tr>
-						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.file_extension)#</td>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.file_extension)#</td>
 						<td valign="top">
 							<cfif attributes.folderaccess NEQ "r" OR asset_dl EQ 1>
 								<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")#</a>

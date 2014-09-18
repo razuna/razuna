@@ -111,7 +111,7 @@
 												<!--- Original --->
 												<tr>
 													<td><input type="radio" name="artofimage#myid#" value="#myid#-original"<cfif theart EQ "original" OR qry_theimage_related.recordcount EQ 0> checked="true"</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- Thumbnail --->
 												<cfif link_kind NEQ "url">
@@ -180,7 +180,7 @@
 												<!--- The Original video --->
 												<tr>
 													<td width="1%"><input type="radio" name="artofvideo#myid#" value="#myid#-video"<cfif theart EQ "video" OR qry_thevideo_related.recordcount EQ 0> checked</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- The preview video --->
 												<tr>
@@ -236,7 +236,7 @@
 											<cfif myid EQ aud_id>
 												<tr>
 													<td width="1%"><input type="radio" name="artofaudio#myid#" value="#myid#-audio"<cfif theart EQ "audio" OR qry_theaudio_related.recordcount EQ 0> checked</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 											</cfif>
 										</cfloop>

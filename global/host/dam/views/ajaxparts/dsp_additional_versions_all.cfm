@@ -55,7 +55,7 @@
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
 						 <cfif isdefined("attributes.isdoc") AND av_type eq 'doc'>| <a href="##" onclick="swaporiginal('#av_id#','#av_type#');return false;">#myFusebox.getApplicationData().defaults.trans("swap_original")#</a></cfif>
-						<cfif av_type eq 'img'>| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as Preview Image</a></cfif>
+						<cfif av_type eq 'img'>| <a href="##" onclick="useforpreview('#av_id#','#av_type#');return false;">Use as #myFusebox.getApplicationData().defaults.trans("preview")# Image</a></cfif>
 					</cfif>
 					<div id="divavo#av_id#" style="display:none;">
 						<cfif application.razuna.storage EQ "local">

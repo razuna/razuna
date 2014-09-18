@@ -58,7 +58,7 @@
 				</a>
 			</cfif>
 			<!--- Trash --->
-			<cfif not isdefined("labelview") and not isdefined("collectionview")>
+			<cfif NOT isdefined("labelview") AND NOT isdefined("collectionview") AND NOT isdefined("basketview")>
 				<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
 					<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#attributes.file_id#&what=#what#&loaddiv=#loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&showsubfolders=#session.showsubfolders#','#myFusebox.getApplicationData().defaults.trans("trash")#',400,2);return false;">
 						<div style="float:left;">
