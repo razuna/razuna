@@ -3189,7 +3189,7 @@
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as f.folder_owner, '0' as f.folder_id_r<cfelse>f.folder_owner</cfif>,  
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 		'X' as permfolder
 	<cfelse>
 		CASE
@@ -3245,7 +3245,6 @@
 			<cfset var folderaccess = permfolder>
 		</cfif>
 	</cfloop>
-	
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
 	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
 		<cfset var folderaccess = "x">

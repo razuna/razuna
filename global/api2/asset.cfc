@@ -1074,6 +1074,10 @@
 					<cfset "arguments.#arguments.assettype#_group_id" = grpid>
 				</cfif>  
 
+				<cfif application.razuna.api.storage EQ "amazon">
+					<cfset arguments.awsbucket = application.razuna.awsbucket >
+				</cfif>
+
 				<!--- Check the assettype --->
 				<cfif arguments.assettype EQ "img">
 					<!--- Get the data from array (loop over the passed array) --->
@@ -1112,6 +1116,13 @@
 						</cfloop>
 					</cfloop>
 					<cfset arguments.convert_to = convertToList>
+					<cfloop list="#convertToList#" index="format">
+						<cfif NOT isDefined("arguments.convert_bitrate_#format#")>
+							<cfthrow message="Must specify a bitrate parameter by passing the convert_bitrate_(format) as the second parameter in the JSON string. Leave it empty for FLAC and WAV files.">
+						<cfelseif NOT isnumeric("#evaluate('arguments.convert_bitrate_#format#')#") AND (format EQ 'mp3' OR format EQ 'ogg')>
+							<cfthrow message="Must specify a numeric bitrate for MP3 and OGG file types in the convert_bitrate_(format) parameter">
+						</cfif>
+					</cfloop>
 					<!--- Get audio settings --->
 					<cfinvoke component="global.cfc.settings" method="prefs_video" thestruct="#arguments#" returnvariable="arguments.qry_settings_audio" />
 					<!--- Convert audios --->
