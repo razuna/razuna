@@ -532,7 +532,7 @@
 										</cfif>
 									});
 									</script>
-									<cfloop list="#attributes.cs_place.bottom.file#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.top.file#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
@@ -555,7 +555,7 @@
 									</cfloop>
 									<!--- Show custom fields here (its a list) --->
 									<cfloop list="#customfields#" index="i" delimiters=",">
-										<cfif listfind (attributes.cs_place.cf_bottom.file,gettoken(i,2,"|"))>
+										<cfif listfind (attributes.cs_place.cf_top.file,gettoken(i,2,"|"))>
 											<br />
 											<!--- Get label --->
 											<cfset cflabel = listFirst(i,"|")>
