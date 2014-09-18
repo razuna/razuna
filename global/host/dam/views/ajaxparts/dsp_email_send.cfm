@@ -110,7 +110,7 @@
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
 								<td width="1%"><input type="checkbox" name="artofimage" value="video" onclick="checkzip();"/></td>
-								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original <cfif qry_asset.detail.link_kind NEQ "url">#ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)</cfif></a></td>
+								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# <cfif qry_asset.detail.link_kind NEQ "url">#ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)</cfif></a></td>
 							</tr>
 						</cfif>
 						<!--- List the converted formats --->
@@ -151,7 +151,7 @@
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
 								<td><input type="checkbox" name="artofimage" value="original" onclick="checkzip();"/></td>
-								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
+								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
 							</tr>
 						</cfif>
 						<!--- List the converted formats --->
@@ -188,7 +188,7 @@
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
 								<td width="1%"><input type="checkbox" name="artofimage" value="audio" onclick="checkzip();"/></td>
-								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
+								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
 							</tr>
 						</cfif>
 						<!--- List the converted formats --->
@@ -223,7 +223,7 @@
 						<cfif qry_asset.detail.perm NEQ "R" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
 							<tr>
 								<td width="1%"><input type="checkbox" name="artoffile" value="file" onclick="checkzip();"/></td>
-								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artoffile',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.file_size#")# MB)</a></td>
+								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artoffile',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# #ucase(qry_asset.detail.file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.file_size#")# MB)</a></td>
 							</tr>
 						</cfif>
 					</table>
@@ -252,7 +252,7 @@
 						#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)<br/>
 						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=img&file_id=#attributes.file_id#&v=p <br/><br/>
 						<!--- Original --->
-						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)<br/>
+						<cfif qry_asset.detail.link_kind NEQ "lan">#myFusebox.getApplicationData().defaults.trans("original")##ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)<br/>
 						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=img&file_id=#attributes.file_id#&v=o <br/><br/></cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
@@ -262,7 +262,7 @@
 					<!--- Videos --->
 					<cfelseif attributes.thetype EQ "vid">
 						<!--- Original --->
-						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)<br/>
+						<cfif qry_asset.detail.link_kind NEQ "lan">#myFusebox.getApplicationData().defaults.trans("original")##ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)<br/>
 						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.serve_file&type=vid&file_id=#attributes.file_id#&v=o <br/><br/></cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">

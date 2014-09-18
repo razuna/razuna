@@ -48,11 +48,11 @@
 			</div>
 			<div style="clear:both;"></div>
 			<!--- Show original if allowed --->
-			<strong>Original</strong> <a href="#thestorage#c.si&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#qry_detail.thesize# MB)</a>
+			<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> <a href="#thestorage#c.si&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#qry_detail.thesize# MB)</a>
 			<br />
 			#ucase(qry_detail.detail.img_extension)#, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel<br />
 			<br />
-			<strong>Preview</strong> <a href="#thestorage#c.si&f=#attributes.file_id#&v=p" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#qry_detail.theprevsize# MB)</a>
+			<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> <a href="#thestorage#c.si&f=#attributes.file_id#&v=p" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#qry_detail.theprevsize# MB)</a>
 			<br />
 			#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel
 			<br />
@@ -82,7 +82,7 @@
 				</cfif>
 			</div>
 			<div style="clear:both;"></div>
-			<strong>Original</strong> <a href="#thestorage#c.sv&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#qry_detail.thesize# MB)</a>
+			<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> <a href="#thestorage#c.sv&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#qry_detail.thesize# MB)</a>
 			<br />
 			#ucase(qry_detail.detail.vid_extension)#, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel
 			<br />
@@ -100,7 +100,7 @@
 				<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif qry_detail.detail.aud_extension EQ "mp3" OR qry_detail.detail.aud_extension EQ "wav">#qry_detail.detail.aud_extension#<cfelse>aud</cfif>.png" border="0">
 			</div>
 			<div style="clear:both;"></div> --->
-			<strong>Original</strong> <a href="#thestorage#c.sa&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#myFusebox.getApplicationData().defaults.converttomb("#qry_detail.detail.aud_size#")# MB)</a>
+			<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> <a href="#thestorage#c.sa&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">#myFusebox.getApplicationData().defaults.trans("download")# (#myFusebox.getApplicationData().defaults.converttomb("#qry_detail.detail.aud_size#")# MB)</a>
 			<br />
 			#ucase(qry_detail.detail.aud_extension)#
 			<br />

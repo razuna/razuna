@@ -37,7 +37,7 @@
 		<div style="float:left;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("download_folder_what")#</div>
 		<div style="float:left;">
 			<input type="checkbox" name="download_thumbnails" value="true" checked="checked" /> Thumbnails
-			<input type="checkbox" name="download_originals" value="true" checked="checked" /> Originals
+			<input type="checkbox" name="download_originals" value="true" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("originals")#
 			<input type="checkbox" name="download_renditions" value="true" /> Renditions
 			<!--- <input type="checkbox" name="download_sunfolders" value="true" /> Assets in sub-folders --->
 		</div>
