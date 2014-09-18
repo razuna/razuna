@@ -84,6 +84,23 @@
 			<cfif listlen(valuelist(qry.grpid)) GT 0>
 				<cfset session.thegroupofuser = valuelist(qry.grpid)>
 			</cfif>
+			<!--- Set vars needed for AWS --->
+			<cfif application.razuna.api.storage EQ "amazon">
+				<cfset var qry = "">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT set2_aws_bucket
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				</cfquery>
+				<cfset application.razuna.awsbucket = qry.set2_aws_bucket>
+				<cfset application.razuna.awskey = application.razuna.api.awskey>
+				<cfset application.razuna.awskeysecret = application.razuna.api.awskeysecret>
+				<cfset application.razuna.awslocation = application.razuna.api.awslocation>
+				<cfif NOT isDefined("application.razuna.s3ds")>
+					<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#application.razuna.api.awskey#","#application.razuna.api.awskeysecret#","#application.razuna.api.awslocation#")>
+				</cfif>
+			</cfif>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
