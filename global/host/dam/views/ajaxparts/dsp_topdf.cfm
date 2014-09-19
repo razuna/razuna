@@ -89,7 +89,7 @@ td{
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
 						<tr>
-							<td height="100%" colspan="2" align="center"><img src="#thisurl#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
+							<td height="100%" colspan="2" align="center"><img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 							<br>#myFusebox.getApplicationData().defaults.trans("file_detail")#</td>
 							</tr>
 						<tr>
@@ -103,11 +103,11 @@ td{
 						<tr>
 							<td height="100%" colspan="2" align="center">
 								<!--- If it is a PDF we show the thumbnail --->
-								<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND ext EQ "PDF">
-									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+								<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND (ext EQ "PDF" OR ext EQ 'INDD')>
+									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 									<img src="#cloud_url#" width="128" height="128" border="0">
-								<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
-									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+								<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ 'INDD')>
+									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 									<cfif NOT FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#")>
 										<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 									<cfelse>
@@ -148,13 +148,13 @@ td{
 						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="300px"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="300px"></cfif>
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
-						<img src="#thisurl#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
+						<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 					<!--- All other files --->
 					<cfelse>
-						<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND ext EQ "PDF">
+						<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND (ext EQ "PDF" OR ext EQ 'INDD')>
 							<img src="#cloud_url#" width="128" height="128" border="0">
-						<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
-							<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+						<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ 'INDD')>
+							<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 							<cfif NOT FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#")>
 								<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 							<cfelse>
@@ -258,12 +258,12 @@ td{
 				<cfif attributes.thetype EQ "img" OR attributes.thetype EQ "vid">
 					<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#qry_detail.detail.cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="#thewidth#"></cfif>
 				<cfelseif attributes.thetype EQ "aud">
-					<img src="#thisurl#/global/host/dam/images/icons/icon_<cfif format EQ "mp3" OR format EQ "wav">#format#<cfelse>aud</cfif>.png" border="0">
+					<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_<cfif format EQ "mp3" OR format EQ "wav">#format#<cfelse>aud</cfif>.png" border="0">
 				<cfelse>
-					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND format EQ "PDF">
+					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND (format EQ "PDF" OR format EQ 'INDD')>
 						<img src="#qry_detail.detail.cloud_url#" width="128" height="128" border="0">
-					<cfelseif application.razuna.storage EQ "local" AND format EQ "PDF">
-						<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+					<cfelseif application.razuna.storage EQ "local" AND (format EQ "PDF" OR format EQ 'INDD')>
+						<cfset thethumb = replacenocase(filename_org, ".#format#", ".jpg", "all")>
 						<cfif FileExists("#attributes.assetpath#/#session.hostid#/#folderid#/doc/#attributes.file_id#/#thethumb#") EQ "no">
 							<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#format#.png" width="128" height="128" border="0">
 						<cfelse>
