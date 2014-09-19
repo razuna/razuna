@@ -7734,6 +7734,12 @@ This is the main function called directly by a single upload else from addassets
 		asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+
+	<!--- Flush cache again --->
+	<cfset resetcachetoken('files')>
+	<cfset resetcachetoken('folders')>
+	<cfset resetcachetoken('general')>
+
 </cffunction>
  
 </cfcomponent>
