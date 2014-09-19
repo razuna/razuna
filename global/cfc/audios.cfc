@@ -162,7 +162,7 @@
 		</cfif>
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ 
 		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
-		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change, a.expiry_date, 'null' as customfields
+		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change, a.expiry_date, 'null' as customfields<cfif thecolumns does not contain ' id'>, a.aud_id id</cfif><cfif thecolumns does not contain ' kind'>,'aud' kind</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">att
