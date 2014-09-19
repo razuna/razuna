@@ -7664,6 +7664,12 @@ This is the main function called directly by a single upload else from addassets
 <!--- Get all asset from folder --->
 <cffunction name="swap_rendition_original" output="false" returntype="void" hint="swaps an additional rendition for the original">
 	<cfargument name="thestruct" type="struct">
+
+	<!--- Move reset cache to top. It looks like at times it doesn't trigger properly when at bottom --->
+	<cfset resetcachetoken('files')>
+	<cfset resetcachetoken('folders')>
+	<cfset resetcachetoken('general')>
+
 	<!--- Get information for additional rendition  --->
 	<cfquery name="avinfo" datasource="#application.razuna.datasource#">
 		SELECT av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, av_link, thesize, thewidth, theheight, hashtag, av_thumb_url
@@ -7728,10 +7734,6 @@ This is the main function called directly by a single upload else from addassets
 		asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#avinfo.asset_id_r#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-
-	<cfset resetcachetoken('folders')>
-	<cfset resetcachetoken('general')>
-	<cfset resetcachetoken('files')>
 </cffunction>
  
 </cfcomponent>
