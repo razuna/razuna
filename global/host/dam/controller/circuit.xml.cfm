@@ -6656,6 +6656,7 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="ad_server_secure" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_ad_server()" returnvariable="qry_ad_server" />
 		<!-- CFC: Load groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
