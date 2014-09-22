@@ -218,6 +218,7 @@
 
 <!--- GET ALL ALLOWED FILE TYPES ---------------------------------------------------------------------->
 	<cffunction name="filetypes" output="false">
+		<cfset var qry = "">
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT type_id
 			FROM file_types
@@ -395,6 +396,7 @@ Comment:<br>
 <!--- Get assets shared options ---------------------------------------------------------------------->
 	<cffunction name="get_share_options" output="false">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Check if this is for the basket --->
 		<cfif structkeyexists(arguments.thestruct,"qrybasket")>
 			<cfset var qry = 0>
@@ -670,6 +672,7 @@ Comment:<br>
 <!--- Get ALL Upload Templates ---------------------------------------------------------------------->
 	<cffunction name="upl_templates" output="false">
 		<cfargument name="theactive" type="boolean" required="false" default="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT upl_temp_id, upl_active, upl_name, upl_description
@@ -1029,6 +1032,7 @@ Comment:<br>
 <!--- getav ---------------------------------------------------------------------->
 	<cffunction name="getav" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT av_link_title, av_link_url, av_link
@@ -1065,6 +1069,7 @@ Comment:<br>
 		<!--- Param --->
 		<cfset var foundsome = false>
 		<cfset var theids = "">
+		<cfset var qry = "">
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Clean up process...</strong><br><br></cfoutput>
 		<cfflush>
@@ -1255,6 +1260,7 @@ Comment:<br>
 	<cffunction name="rebuildurl" output="true">
 		<cfargument name="thestruct" type="struct">
 		<cfargument name="assetid" type="string" required="false" default="0">
+		<cfset var qry = "">
 		<!--- Feedback --->
 		<cfoutput><strong>Fetching images...</strong><br /><br /></cfoutput>
 		<cfflush>
@@ -1504,6 +1510,7 @@ Comment:<br>
 	<!--- Watermark Templates --->
 	<cffunction name="getWMTemplates" output="false">
 		<cfargument name="theactive" type="boolean" required="false" default="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT wm_temp_id, wm_active, wm_name
@@ -1717,6 +1724,7 @@ Comment:<br>
 		<cfargument name="thestruct" type="struct" >
 		 <!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getAdditionalImages */ av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, host_id, 

@@ -242,6 +242,7 @@
 <!--- GET THE DESCRIPTION FOR THIS FOLDER (WITH PARAGRAPHS) --->
 <cffunction hint="GET THE DESCRIPTIONS FOR THIS FOLDER" name="getfolderdesc" output="false">
 	<cfargument name="folder_id" required="yes" type="string">
+	<cfset var qry = "">
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolderdesc */ folder_desc, lang_id_r
 	FROM #session.hostdbprefix#folders_desc
@@ -3370,6 +3371,7 @@
 
 <!--- GET FOLDER OF USER --------------------------------------------------->
 <cffunction name="getuserfolder" output="false">
+	<cfset var qry = "">
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getuserfolder */ folder_id
 		FROM #session.hostdbprefix#folders
@@ -3439,6 +3441,7 @@
 	<cfelseif session.sortby EQ "datechanged">
 		<cfset var sortby = "date_change DESC">
 	</cfif>
+	<cfset var qry = "">
 	<!--- Oracle --->
 	<!--- <cfif variables.database EQ "oracle">
 		<!--- Query --->
@@ -3971,6 +3974,7 @@
 	<cfset variables.cachetokengeneral = getcachetoken("general")>
 	<!--- Set var --->
 	<cfset var cf_list = "">
+	<cfset var qry_cf = "">
 	<cfset var qrycfimg = "0">
 	<cfset var qrycfvid = "0">
 	<cfset var qrycfaud = "0">
@@ -4017,7 +4021,7 @@
 		<cfquery name="qry_cf" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetokengeneral#folder_cf_fields */ CASE WHEN cfv.cf_value IS NULL OR  cfv.cf_value ='' THEN ' ' ELSE cfv.cf_value END as cf_value, cft.cf_text, cft.cf_id_r as cf_id
 		FROM raz1_custom_fields_values cfv RIGHT JOIN raz1_custom_fields_text cft INNER JOIN raz1_custom_fields cf ON cf.cf_id = cft.cf_id_r
-		ON cft.cf_id_r = cfv.cf_id_r AND cfv.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+		ON cft.cf_id_r = cfv.cf_id_r AND cfv.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theqry.id#">
 		<cfif kind EQ "img">
 			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfimg#" list="true">)
 		<cfelseif kind EQ "vid">
@@ -4045,7 +4049,7 @@
 			<cfset cf_list = cf_list & cf_text & "|" & cf_id & "|" & cf_value & ",">
 		</cfloop>
 		<!--- Now add to query --->
-		<cfset QuerySetCell(query=arguments.theqry, column="customfields", value=cf_list, row=currentrow)>
+		<cfset QuerySetCell(query=arguments.theqry, column="customfields", value=cf_list, row=arguments.theqry.currentrow)>
 		<!--- Reset cf_list --->
 		<cfset cf_list = "">
 	</cfloop>
@@ -4118,6 +4122,7 @@
 	<cfargument name="folder_id" type="string" required="true">
 	<cfargument name="hostid" type="numeric" required="true">
 	<cfargument name="prefix" default="" type="string" required="false">
+	<cfset var qry = "">
 	<cfif arguments.prefix EQ "">
 		<cfset arguments.prefix = session.hostdbprefix>
 	</cfif>
@@ -4533,6 +4538,7 @@
 	<cfset var shared = structnew()>
 	<cfparam name="session.theuserid" default="">
 	<cfparam name="session.iscol" default="F">
+	<cfset var qry = "">
 	<!--- Check if folder is even shared or not --->
 	<cfif session.iscol EQ "F">
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
@@ -4585,6 +4591,7 @@
 <!--- Share: Check for folder permissions --->
 <cffunction name="sharecheckpermfolder" access="public" output="true">
 	<cfargument name="fid" type="string">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfif session.iscol EQ "F">
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
@@ -4648,6 +4655,7 @@
 <!--- Sharing for selected assets --->
 <cffunction name="batch_sharing" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
+	<cfset var qry = "">
 	<!--- Loop over the file ids --->
 	<cfloop list="#arguments.thestruct.file_ids#" index="i">
 		<!--- Get the ID and the type --->
@@ -4721,6 +4729,7 @@
 <!--- Get foldername --->
 <cffunction name="getfoldername" output="false">
 	<cfargument name="folder_id" required="yes" type="string">
+	<cfset var qry = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
@@ -4736,6 +4745,7 @@
 <!--- Get username of folder --->
 <cffunction name="getusername" output="false">
 	<cfargument name="folder_id" required="yes" type="string">
+	<cfset var qry = "">
 	<!--- Param --->
 	<cfset var x = structnew()>
 	<!--- Query --->
@@ -5093,6 +5103,7 @@
 	<cfargument name="folder_name" type="string" required="false">
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
@@ -5670,6 +5681,7 @@
 <cffunction name="store_values" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
 	<!--- Get ids if this is a folder, folder_id set to 1 represents a collection --->
+	<cfset var qry = "">
 	<cfif arguments.thestruct.folder_id neq 1>
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		<cfif arguments.thestruct.thekind EQ "ALL" OR arguments.thestruct.thekind EQ "img">

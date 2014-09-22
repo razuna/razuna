@@ -44,6 +44,7 @@
 
 <!--- Get md5check value --->
 <cffunction name="getmd5check">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getmd5check */ set2_md5check
 	FROM #session.hostdbprefix#settings_2
@@ -76,6 +77,7 @@
 
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export
 	FROM #session.hostdbprefix#settings_2
@@ -115,6 +117,7 @@
 	<!--- Get host --->
 	<cfset x.host_id = session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER, 
 	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT, SET2_EMAIL_USE_SSL, SET2_EMAIL_USE_TLS
@@ -130,6 +133,7 @@
 	<!--- Get host --->
 	<cfset x.host_id = session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_meta */ set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
 	FROM #qry_host.host_shard_group#settings_2
@@ -144,6 +148,7 @@
 	<!--- Get host --->
 	<cfset x.host_id = session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails, 
 	set2_intranet_reg_emails_sub, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing,
@@ -157,6 +162,7 @@
 
 <!--- Settings for Website --->
 <cffunction name="prefs_web">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_web */ set2_url_website, set2_payment_cc, set2_payment_cc_cards, set2_payment_bill, set2_payment_pod, set2_payment_pre, set2_payment_paypal
 	FROM #session.hostdbprefix#settings_2
@@ -197,6 +203,7 @@
 
 <!--- Settings for Video --->
 <cffunction name="prefs_video">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_video */ set2_create_vidfolders_where, set2_cat_vid_intra, set2_cat_vid_web, <!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> set2_vid_preview_author, set2_vid_preview_copyright, set2_rendition_metadata
 	FROM #session.hostdbprefix#settings_2
@@ -215,6 +222,7 @@
 
 <!--- Settings for Oracle --->
 <cffunction name="prefs_oracle">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_oracle */ set2_url_app_server, set2_ora_path_internal, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw, set2_url_sp_video, set2_url_sp_video_preview, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing
 	FROM #session.hostdbprefix#settings_2
@@ -227,6 +235,7 @@
 <!--- Settings for Storage --->
 <cffunction name="prefs_storage">
 	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_storage */ 
 	set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket, set2_img_format,
@@ -239,6 +248,7 @@
 
 <!--- Settings for File Types --->
 <cffunction name="prefs_types">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT type_id, type_type, type_mimecontent, type_mimesubcontent
 	FROM file_types
@@ -290,6 +300,7 @@
 
 <!--- Languages: Get Languages --->
 <cffunction name="lang_get">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#lang_get */ lang_id, lang_name, lang_active
 	FROM #session.hostdbprefix#languages
@@ -303,6 +314,7 @@
 <!--- Languages: Update Languages --->
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<!--- Get the xml files in the translation dir --->
 	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/global/translations" name="thelangs" />
 	<cfquery dbtype="query" name="thelangs">
@@ -387,6 +399,7 @@
 
 <!--- Labels: get --->
 <cffunction name="get_label_set">
+	<cfset var qry = "">
 	<!--- Set the active field to f on all languages --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_label_set */ set2_labels_users
@@ -419,6 +432,7 @@
 
 <!--- GET GLOBAL Settings --->
 <cffunction name="get_global" access="remote" returnType="query">
+	<cfset var qry = "">
 	<!--- Select --->
 	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_global */ 
@@ -1145,6 +1159,7 @@
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefaultadmin" output="false">
 	<cfargument name="pathoneup" default="" required="yes" type="string">
+	<cfset var qry = "">
 	<!--- Check DB --->
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
@@ -1345,6 +1360,7 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefaultapi" output="false">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, 
@@ -1376,6 +1392,7 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefault" output="false">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_aka_token,
@@ -1421,6 +1438,7 @@
 <!--- SEARCH TRANSLATION --->
 <cffunction name="translationsearch" output="false" returntype="query">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT trans_id, trans_text, lang_id_r
 	FROM #session.hostdbprefix#translations
@@ -1441,6 +1459,7 @@
 <!--- DETAIL TRANSLATION --->
 <cffunction name="translationdetail" output="false" returntype="query">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT trans_id, trans_text, lang_id_r
 	FROM #session.hostdbprefix#translations
@@ -1707,6 +1726,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- PARSE NEWS --->
 <cffunction name="news_get" output="false">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
 	SELECT news_title, news_text, news_text_long, news_date
@@ -1765,6 +1785,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get Backup DB --->
 <cffunction name="get_backup" output="false">
 	<cfargument name="hostid" type="numeric">
+	<cfset var qry = "">
 	<cfquery datasource="razuna_backup" name="qry">
 	SELECT back_id, back_date, host_id
 	FROM backup_status
@@ -2826,7 +2847,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
 					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
+				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15" secure="CFSSL_BASIC">
 			<cfelse>
 				<cfldap server = "#arguments.thestruct.ad_server_name#" 
 					port = "#arguments.thestruct.ad_server_port#"
@@ -3172,48 +3193,52 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="get_customization_placement" returntype="Struct" hint="Returns top or bottom placement of fields in regards to asset thumbnail" >
 	<cfargument name="thestruct" required="true" hint="Fields to get placement for">  
 	<cfset var cs_place_struct = structnew()>
-		<cfset var images_top="">
-		<cfset var images_bottom="">
-		<cfset var cf_images_top="">
-		<cfset var cf_images_bottom="">
-		<cfset var audios_top="">
-		<cfset var audios_bottom="">
-		<cfset var cf_audios_top="">
-		<cfset var cf_audios_bottom="">
-		<cfset var videos_top="">
-		<cfset var videos_bottom="">
-		<cfset var cf_videos_top="">
-		<cfset var cf_videos_bottom="">
-		<cfset var files_top="">
-		<cfset var files_bottom="">
-		<cfset var cf_files_top="">
-		<cfset var cf_files_bottom="">
 
-		<!--- Images --->
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.top.image">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.bottom.image">
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_top.image">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.image">
+	<cfset cs_place_struct.top.image="">
+	<cfset cs_place_struct.bottom.image="">
+	<cfset cs_place_struct.cf_top.image="">
+	<cfset cs_place_struct.cf_bottom.image="">
 
-	 	<!--- Audios --->
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.top.audio">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.bottom.audio">
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_top.audio">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.audio">
+	<cfset cs_place_struct.top.audio="">
+	<cfset cs_place_struct.bottom.audio="">
+	<cfset cs_place_struct.cf_top.audio="">
+	<cfset cs_place_struct.cf_bottom.audio="">
 
-	 	<!--- Videos --->
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.top.video">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.bottom.video">
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_top.video">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.video">
+	<cfset cs_place_struct.top.video="">
+	<cfset cs_place_struct.bottom.video="">
+	<cfset cs_place_struct.cf_top.video="">
+	<cfset cs_place_struct.cf_bottom.video="">
 
-	 	<!--- Files --->
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.top.file">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.bottom.file">
-	 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_top.file">
-	 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.file">
-	 	
-	  	 <cfreturn cs_place_struct>
+	<cfset cs_place_struct.top.file="">
+	<cfset cs_place_struct.bottom.file="">
+	<cfset cs_place_struct.cf_top.file="">
+	<cfset cs_place_struct.cf_bottom.file="">
+
+	<!--- Images --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.top.image">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.bottom.image">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_top.image">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.image">
+
+ 	<!--- Audios --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.top.audio">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.bottom.audio">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_top.audio">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.audio">
+
+ 	<!--- Videos --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.top.video">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.bottom.video">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_top.video">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.video">
+
+ 	<!--- Files --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.top.file">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.bottom.file">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_top.file">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.file">
+ 	
+  	 <cfreturn cs_place_struct>
 </cffunction>
 
 </cfcomponent>
