@@ -2847,7 +2847,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
 					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15" secure="CFSSL_BASIC">
+				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10" secure="CFSSL_BASIC">
 			<cfelse>
 				<cfldap server = "#arguments.thestruct.ad_server_name#" 
 					port = "#arguments.thestruct.ad_server_port#"
@@ -2855,9 +2855,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
 					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
+				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10">
 			</cfif>
-		<cfcatch></cfcatch>
+		<cfcatch>
+			<cfif isdefined("arguments.thestruct.showerr")>
+				<font color="#cd5c5c">Error occurred connecting to LDAP server. Please check server details entered and try again. <br/>Error thrown was: <cfoutput>#cfcatch.detail#</cfoutput><br/><br/></font>
+			</cfif>
+		</cfcatch>
 		</cftry>
 		<cfreturn results/>
 	</cffunction>

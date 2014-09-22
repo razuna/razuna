@@ -42,7 +42,7 @@
 		<!--- Ad User Name --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_user_name")#</td>
-			<td width="100%"><input type="text" name="ad_user_name" id="ad_user_name" style="width:300px;" value="#ad_server_username#" placeholder="Must be in format domain\username"></td>
+			<td width="100%"><input type="text" name="ad_user_name" id="ad_user_name" style="width:300px;" value="#ad_server_username#" placeholder="e.g. domain\username for Windows AD users"></td>
 		</tr>
 		<!--- Ad password --->
 		<tr>

@@ -1,5 +1,6 @@
 ﻿<cfoutput>
 	<!--- Get LDAP User list --->
+	<cfset attributes.showerr = true>
 	<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#attributes#">
 	<!--- Create a new three-column query, specifying the column data types --->
 	<form  name="ad_user_form" id="ad_user_form" action="#self#" method="post" >
