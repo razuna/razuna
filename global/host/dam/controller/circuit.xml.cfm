@@ -6645,6 +6645,14 @@
 	</fuseaction>
 	<!-- Users Search -->
 	<fuseaction name="ad_server_users_list">
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="attributes.ad_server_secure" />
 		<!-- Show  -->
 		<do action="ajax.ad_server_users_list" />
 	</fuseaction>
@@ -6656,7 +6664,7 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="ad_server_secure" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="attributes.ad_server_secure" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_ad_server()" returnvariable="qry_ad_server" />
 		<!-- CFC: Load groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
