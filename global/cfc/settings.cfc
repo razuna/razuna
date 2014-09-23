@@ -2846,7 +2846,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				scope="subtree" 
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
-					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+					attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10" secure="CFSSL_BASIC">
 			<cfelse>
 				<cfldap server = "#arguments.thestruct.ad_server_name#" 
@@ -2854,7 +2854,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				scope="subtree" 
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
-					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+					attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10">
 			</cfif>
 			<!--- For LDAP servers username is in uid field and for windows AD it is in sAMAccountName so combine the two into sAMAccountName field --->
