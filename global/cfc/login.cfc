@@ -84,8 +84,10 @@
 			<cfif qryuser.recordcount EQ 0>
 				<cftry>
 					<!--- Strip out domain from username if present for AD users--->
-					<cfif arguments.thestruct.name contains "\">
+					<cfif arguments.thestruct.name contains "\"> <!--- e.g. razuna\aduser for windows AD users --->
 						<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> 
+					<cfelseif arguments.thestruct.name contains "uid="><!---  e.g. uid=aduser,ou=service,dc=utmb,dc=edu for LDAP users who are non AD --->
+						<cfset var adusername = gettoken(gettoken(arguments.thestruct.name,1,","),2,"=")> 
 					<cfelse>
 						<cfset var adusername = arguments.thestruct.name> 
 					</cfif>
@@ -114,7 +116,11 @@
 					</cfquery>
 				<cfif qryuser.recordcount NEQ 0>
 					<!--- Authenticate LDAP user --->
-					<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#">
+					<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
+						<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" secure="CFSSL_BASIC" timeout="10">
+					<cfelse>
+						<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" timeout="10">
+					</cfif>
 				</cfif>
 				<cfcatch><cfset console(cfcatch)></cfcatch>
 				</cftry>

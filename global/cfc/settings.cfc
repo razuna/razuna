@@ -2857,6 +2857,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
 				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10">
 			</cfif>
+			<!--- For LDAP servers username is in uid field and for windows AD it is in sAMAccountName so combine the two into sAMAccountName field --->
+			<cfquery name="results" dbtype="query">
+				SELECT sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
+				FROM results 
+				WHERE sAMAccountName <>''
+				UNION
+				SELECT uid sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
+				FROM results 
+				WHERE sAMAccountName ='' AND uid<>''
+			</cfquery>
 		<cfcatch>
 			<cfif isdefined("arguments.thestruct.showerr")>
 				<font color="#cd5c5c">Error occurred connecting to LDAP server. Please check server details entered and try again. <br/>Error thrown was: <cfoutput>#cfcatch.detail#</cfoutput><br/><br/></font>
