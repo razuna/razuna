@@ -33,6 +33,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Check if users are allowed to add labels --->
 		<cfinvoke component="settings" method="get_label_set" returnvariable="perm" />
+		<cfset var qry = "">
 		<!--- Check if label exists --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_text, label_id AS labelid
@@ -239,6 +240,7 @@
 	<!--- Remove the label of a record --->
 	<cffunction name="label_remove" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Get label id --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id
@@ -267,6 +269,7 @@
 		<!--- Params --->
 		<cfset var st = structnew()>
 		<cfset var l = "">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getalllabels */ label_text, label_path, label_id
@@ -330,6 +333,7 @@
 		<cfargument name="thetype" type="string">
 		<!--- Param --->
 		<cfset var l = "">
+		<cfset var qry = "">
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabelstextexport */ ct_label_id
@@ -393,6 +397,7 @@
 	<cffunction name="labels_dropdown" output="true" access="public">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("labels")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_dropdown */ label_id, label_id_r, label_path, label_text
@@ -411,6 +416,7 @@
 		<cfargument name="id" type="string" required="true">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("labels")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_query */ l.label_text, l.label_id,
@@ -526,6 +532,7 @@
 	<!--- Get label text with cache --->
 	<cffunction name="getlabeltext" output="false" access="public">
 		<cfargument name="theid" type="string">
+		<cfset var qry = "">
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabeltext */ label_text
@@ -540,6 +547,7 @@
 	<!--- Count items for one label --->
 	<cffunction name="labels_count" output="false" access="public">
 		<cfargument name="label_id" type="string">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT DISTINCT /* #variables.cachetoken#labels_count */
@@ -699,6 +707,7 @@
 		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("labels")>
+		<cfset var qry = "">
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -1068,6 +1077,7 @@
 	
 	<!--- ADMIN: Get all labels --->
 	<cffunction name="admin_get" output="false" access="public">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text
@@ -1082,6 +1092,7 @@
 	<!--- ADMIN: Get one labels --->
 	<cffunction name="admin_get_one" output="false" access="public">
 		<cfargument name="label_id" type="string">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text, label_id_r
@@ -1196,6 +1207,7 @@
 	<cffunction name="label_get_path" output="false" access="public" returnType="string">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="llist" default="" type="string" required="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text, label_id_r
@@ -1217,6 +1229,7 @@
 	<cffunction name="label_get_path_down" output="false" access="public" returnType="string">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="llist" default="" type="string" required="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text, label_id_r
@@ -1245,6 +1258,7 @@
 	<cffunction name="label_get_ids" output="false" access="public" returnType="string">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="llist" default="" type="string" required="false">
+		<cfset var qry = "">
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT label_id,label_id_r
@@ -1266,6 +1280,7 @@
 	<!--- Get the all labels for show --->
 	<cffunction name="get_all_labels_for_show" output="true" access="public" returntype="Query" hint="Get the all labels for show" >
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT  /* #variables.cachetoken#get_all_labels_for_show */ <cfif application.razuna.thedatabase EQ "mssql">Top 20 </cfif> label_id, label_id_r, label_path, label_text
@@ -1357,6 +1372,7 @@
 	<!--- Get the search label index (A,B,..Z) --->
 	<cffunction name="get_search_label_index" output="true" access="public" returntype="Query" hint="Get the search label text" >
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT DISTINCT LEFT(UPPER(RTRIM(LTRIM(label_text))),1) AS label_text_index FROM #session.hostdbprefix#labels ORDER BY label_text_index

@@ -290,6 +290,7 @@
 
 <!--- get all admins or sysadmin of this host --->
 <cffunction name="getadmins">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_email
 	FROM users u, ct_groups_users ctg, ct_users_hosts cth

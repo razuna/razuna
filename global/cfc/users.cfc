@@ -89,6 +89,7 @@
 <!--- Check for existing --->
 <cffunction name="check" output="true" returntype="void">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<!--- function body --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_id
@@ -175,6 +176,7 @@
 <cffunction name="details">
 	<cfargument name="thestruct" type="Struct">
 	<cfset variables.cachetoken = getcachetoken("users")>
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT/* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, 
 	user_first_name, user_last_name, user_in_admin, user_create_date, user_active, user_company, user_phone, 
@@ -187,6 +189,7 @@
 
 <!--- GET EMAIL FROM THIS USER --->
 <cffunction name="user_email">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#user_emailuser */ user_email
 	FROM users
@@ -198,24 +201,26 @@
 <!--- Get hosts of this user --->
 <cffunction name="userhosts">
 	<cfargument name="thestruct" type="Struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#userhosts */ h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
-		FROM ct_users_hosts ct, hosts h
-		WHERE ct.ct_u_h_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
-		AND ct.ct_u_h_host_id = h.host_id
-		</cfquery>
+	<cfset var qry = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#userhosts */ h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
+	FROM ct_users_hosts ct, hosts h
+	WHERE ct.ct_u_h_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
+	AND ct.ct_u_h_host_id = h.host_id
+	</cfquery>
 	<cfreturn qry>
 </cffunction>
 <!--- Check the Email already exist --->
 <cffunction name="check_email">
 	<cfargument name="email" type="string" required="true" >
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT u.user_email, u.user_login_name
-			FROM users u, ct_users_hosts ct
-			WHERE lower(u.user_email) = <cfqueryparam value="#lcase(arguments.email)#" cfsqltype="cf_sql_varchar">
-			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
-			AND ct.ct_u_h_user_id = u.user_id
-		</cfquery>
+	<cfset var qry = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT u.user_email, u.user_login_name
+		FROM users u, ct_users_hosts ct
+		WHERE lower(u.user_email) = <cfqueryparam value="#lcase(arguments.email)#" cfsqltype="cf_sql_varchar">
+		AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+		AND ct.ct_u_h_user_id = u.user_id
+	</cfquery>
 	<cfreturn qry>
 </cffunction>
 <!--- Add AD Server --->
@@ -541,6 +546,7 @@
 <cffunction name="confirm">
 	<cfargument name="thestruct" type="Struct">
 	<cfparam default="0" name="arguments.thestruct.id">
+	<cfset var qry = "">
 	<!--- Check that there is a user with this id --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_id
@@ -601,6 +607,7 @@
 <!--- Get social accounts for this user --->
 <cffunction name="getsocial">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsocial */ identifier, provider
 	FROM #session.hostdbprefix#users_accounts
@@ -665,6 +672,7 @@
 	<!--- Feedback --->
 	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
 	<cfflush>
+	<cfset var qry = "">
 	<!--- Query users --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active, u.user_expiry_date
@@ -825,6 +833,7 @@
 	<!--- Feedback --->
 	<cfoutput>We could read your file. We assume the first row has headers. Continuing...<br><br></cfoutput>
 	<cfflush>
+	<cfset var qry = "">
 	<!--- Do the import. Start loop --->
 	<cfloop query="theimport">
 		<!--- check for same record according to email --->
@@ -919,6 +928,7 @@
 
 <!--- Get all users who are active --->
 <cffunction name="getallactive">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getallactive */ u.user_email, u.user_first_name, u.user_last_name
 	FROM users u, ct_users_hosts uh

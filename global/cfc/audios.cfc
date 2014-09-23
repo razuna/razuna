@@ -230,6 +230,7 @@
 <cffunction name="filedetail" access="public" output="false" returntype="query">
 	<cfargument name="theid" type="string" required="true">
 	<cfargument name="thecolumn" type="string" required="true">
+		<cfset var qry = "">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("audios")>
 		<!--- Query --->
@@ -905,6 +906,7 @@
 <!--- SubFunction called from deletion above --->
 <cffunction name="deletefromfilesystem" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<cftry>
 		<!--- Delete in Lucene --->
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.id#" category="aud">
@@ -1089,6 +1091,7 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<cfparam default="0" name="session.thegroupofuser">
+	<cfset var qry = "">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size, 
@@ -1563,6 +1566,7 @@
 <!--- GET RELATED AUDIOS --->
 <cffunction name="relatedaudios" output="true">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
@@ -1581,8 +1585,9 @@
 <cffunction name="writeaudio" output="true">
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="arguments.thestruct.zipit" default="T">
+	<cfset var qry = "">
 	<!--- Create a temp folder --->
-	<cfset tempfolder = createuuid("")>
+	<cfset var tempfolder = createuuid("")>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- Put the audio id into a variable --->
 	<cfset theaudioid = #arguments.thestruct.file_id#>
@@ -1801,6 +1806,7 @@
 <!--- GET RECORDS WITH EMTPY VALUES --->
 <cffunction name="getempty" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT 
@@ -1820,6 +1826,7 @@
 	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("audios")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#checkmd5 */ aud_id, aud_name as name, folder_id_r

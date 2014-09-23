@@ -776,6 +776,7 @@
 	<cffunction name="filedetail" output="false">
 		<cfargument name="theid" type="string">
 		<cfargument name="thecolumn" type="string">
+		<cfset var qry = "">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -1496,6 +1497,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfparam default="0" name="session.thegroupofuser">
+		<cfset var qry = "">
 		<!--- Qry. We take the query and do a IN --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailforbasketfile */ f.file_id, f.file_extension, f.file_extension, f.file_size, f.folder_id_r, f.file_name_org, 
@@ -1590,6 +1592,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getemptyfile */
@@ -1625,6 +1628,7 @@
 		<cfargument name="md5hash" type="string">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#checkmd5 */ file_id, file_name as name, folder_id_r

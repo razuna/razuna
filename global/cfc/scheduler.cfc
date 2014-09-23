@@ -27,6 +27,7 @@
 
 <!--- GET ALL SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
+	<cfset var qry = "">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT sched_id, sched_name, sched_method, sched_status
@@ -42,6 +43,7 @@
 <cffunction name="getEvents" returntype="query" output="true" access="public">
 	<!--- Query to get records for paging --->
 	<cfinvoke method="getAllEvents" returnvariable="thetotal">
+	<cfset var qry = "">
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif thetotal.recordcount LTE session.rowmaxpage_sched>
 		<cfset session.offset_sched = 0>
@@ -508,6 +510,7 @@
 <!--- GET LOG ENTRIES FOR SCHEDULED EVENT -------------------------------------------------------->
 <cffunction name="getlog" returntype="query" output="true" access="public">
 	<cfargument name="sched_id"   type="string" required="yes" default="">
+	<cfset var qry = "">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT l.sched_log_date, l.sched_log_time, l.sched_log_desc, l.sched_log_action, l.sched_log_user, u.user_login_name
@@ -552,6 +555,7 @@
 	<cfset doit.directoryList = "">
 	<cfset var dorecursive = false>
 	<cfset var dirhere = "">
+	<cfset var qry = "">
 	<!--- Set arguments into new struct --->
 	<cfset x.sched_id = arguments.sched_id>
 	<cfset x.incomingpath = arguments.incomingpath>

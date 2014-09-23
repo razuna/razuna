@@ -31,6 +31,7 @@
 	<cfargument name="xmppath" type="boolean" required="false" default="false">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text, c.cf_xmp_path
@@ -123,6 +124,7 @@
 	</cfif>
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("general")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form, c.cf_show
@@ -155,6 +157,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getfieldssearch */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_select_list, ct.cf_text
@@ -174,6 +177,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getfieldssearch */ cv.cf_value, ct.cf_text, ct.cf_id_r
@@ -194,6 +198,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, 
@@ -209,6 +214,7 @@
 <!--- Save field values --->
 <cffunction name="savevalues" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
 		<cfif i CONTAINS "cf_" AND i DOES NOT CONTAIN "META_" >
@@ -276,6 +282,7 @@
 <!--- Save batch field values --->
 <cffunction name="savebatchvalues" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
 		<cfif i CONTAINS "cf_" AND arguments.thestruct[i] NEQ ''>

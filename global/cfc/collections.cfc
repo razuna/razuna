@@ -340,6 +340,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, 
@@ -396,6 +397,7 @@
 <cffunction name="get_assets" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="arguments.thestruct.colaccess" default="">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_assetscol */ ct.col_id_r, ct.file_id_r as cart_product_id, ct.col_file_type, ct.col_item_order, ct.col_file_format,
@@ -1775,6 +1777,7 @@
 <!--- Remove selectedcollection files --->
 <cffunction name="remove_selected_col_files" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<cfloop list="#arguments.thestruct.file_id#" index="i">
 		<cfif i CONTAINS "-">
 			<cfset file_id = listFirst(i,'-')>

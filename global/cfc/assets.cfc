@@ -34,6 +34,7 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.file_id" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
+	<cfset var qry = "">
 	<!--- RAZ-2907 Create tempid --->
 	<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
 		<cfset arguments.thestruct.tempid = createuuid()>
@@ -964,6 +965,7 @@
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfset var md5hash = "">
+	<cfset var qry = "">
 	<cfset arguments.thestruct.thejsonbody = "">
 	<!--- Put HTTP referer into var --->
 	<cfset arguments.thestruct.comingfrom = cgi.http_referer>
@@ -5120,6 +5122,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset var cloud_url = structnew()>
 	<cfset var thethumbheight = 0>
 	<cfset var thethumbwidth = 0>
+	<cfset var qry = "">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
@@ -5556,6 +5559,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.convert_wm_tif = "">
 	<cfset arguments.thestruct.convert_wm_bmp = "">
 	<cfset arguments.thestruct.qry_settings_image = arguments.thestruct.qrysettings>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT upl_temp_field, upl_temp_value, upl_temp_type, upl_temp_format

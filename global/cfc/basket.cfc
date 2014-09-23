@@ -112,6 +112,7 @@
 
 <!--- READ BASKET --->
 <cffunction name="readbasket" output="false" returnType="query">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, 
 			CASE 
@@ -1627,6 +1628,7 @@
 
 <!--- Read Orders --->
 <cffunction name="get_orders" output="false">
+	<cfset var qry = "">
 	<!--- Read orders --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_orders */ cart_id, cart_order_date, cart_order_done

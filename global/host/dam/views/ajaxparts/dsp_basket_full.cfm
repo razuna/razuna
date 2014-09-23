@@ -625,7 +625,7 @@
 			</cfloop>
 		</cfif>
 	</table>
-	<cfif !application.razuna.isp AND attributes.fromshare EQ "F">
+	<cfif !application.razuna.isp AND attributes.fromshare EQ "F" AND qry_basket.recordcount NEQ 0>
 		<table border="0">
 		<tr>
 			<td colspan="3">

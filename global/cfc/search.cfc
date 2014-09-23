@@ -1088,6 +1088,7 @@
 		<cfset variables.cachetokenlogs = getcachetoken("logs")>
 		<!--- The function must return suggestions as an array. ---> 
 		<cfset var myarray = ArrayNew(1)> 
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedWithin="1" region="razcache">
 		SELECT /* #variables.cachetokenlogs#search */ log_search_for
@@ -1262,7 +1263,8 @@
 		<cfelseif session.sortby EQ "datechanged">
 			<cfset var sortby = "date_change DESC">
 		</cfif>
-				<!--- MySQL Offset --->
+		<cfset var qry = "">
+			<!--- MySQL Offset --->
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 				<cfquery datasource="#application.razuna.datasource#" name="qry" cachedWithin="1" region="razcache">
 					<cfif application.razuna.thedatabase EQ "mssql">

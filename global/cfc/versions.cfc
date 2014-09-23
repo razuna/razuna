@@ -28,6 +28,7 @@
 <!--- Get all versions --->
 <cffunction name="get" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#Variables.dsn#" name="qry">
 	SELECT v.ver_version,v.ver_extension, v.ver_date_add, v.ver_filename_org,v.ver_thumbnail,v.cloud_url_thumb,v.ver_type,v.asset_id_r, v.cloud_url_org,
@@ -44,6 +45,7 @@
 <!--- Remove versions --->
 <cffunction name="remove" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#Variables.dsn#">
 	DELETE FROM #session.hostdbprefix#versions
@@ -95,6 +97,7 @@
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset cloud_url_version_thumb.theurl = "">
 	<cfset arguments.thestruct.therandom = createuuid("")>
+	<cfset var qry = "">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Get windows or not --->

@@ -1627,6 +1627,8 @@
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="arguments.thestruct.exportname" default="#randRange(1,10000)#">
 	<cfinvoke component="defaults" method="trans" transid="download_metadata_output" returnvariable="download_metadata_output" />
+	<!--- Set local var --->
+	<cfset var qry = "">
 	<!--- Feedback --->
 	<cfoutput><br/><strong>#download_metadata_output#</strong><br /></cfoutput>
 	<cfflush>
@@ -1707,8 +1709,6 @@
 	<cfelseif arguments.thestruct.what EQ "folder">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("folders")>
-		<!--- Set local var --->
-		<cfset var qry = "">
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
@@ -2532,6 +2532,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Declare all variables or else you will get errors in the page --->
 	<cfset xmp = structnew()>
+	<cfset var qry = "">
 	<cftry>
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">

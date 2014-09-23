@@ -500,6 +500,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("videos")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, 
@@ -963,6 +964,7 @@
 <!--- SubFunction called from deletion above --->
 <cffunction name="deletefromfilesystem" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<cftry>
 		<!--- Delete in Lucene --->
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.id#" category="vid">
@@ -1042,6 +1044,7 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<cfparam default="0" name="session.thegroupofuser">
+	<cfset var qry = "">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketvid */ v.vid_id, v.vid_filename filename, v.vid_extension, v.vid_mimetype, v.vid_group, v.vid_preview_width, 
@@ -1924,8 +1927,9 @@
 <cffunction name="writevideo" output="true">
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="arguments.thestruct.zipit" default="T">
+	<cfset var qry = "">
 	<!--- Create a temp folder --->
-	<cfset tempfolder = createuuid("")>
+	<cfset var tempfolder = createuuid("")>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -2253,6 +2257,7 @@
 <!--- GET RECORDS WITH EMTPY VALUES --->
 <cffunction name="getempty" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT
@@ -2272,6 +2277,7 @@
 	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("videos")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#checkmd5 */ vid_id, vid_filename as name, folder_id_r
