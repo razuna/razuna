@@ -2925,7 +2925,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			               port="#port#"
 			               secure="#secure#"
 			               timeout="10"
-			               >  
+			               filter="(&(givenname=razunarocks))" 
+			               >  <!--- dummy filter to reduce number of rows returned to zero and avoid size exceeded exception --->
 		     	<cfelse>
 			         <cfldap action="QUERY"          
 			               name="auth"          
@@ -2938,6 +2939,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			               port="#port#"         
 			               password="#password#"
 			               timeout="10"
+			               filter="(&(givenname=razunarocks))" 
 			               >  
     			</cfif>
 		         <cfset isAuthenticated=true>             
