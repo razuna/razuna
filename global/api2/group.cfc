@@ -31,6 +31,7 @@
 		<cfargument name="grp_id" required="true" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -66,6 +67,7 @@
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -101,6 +103,7 @@
 		<cfargument name="grp_id" required="true" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -202,6 +205,7 @@
 		<cfargument name="grp_id" required="true" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -248,6 +252,7 @@
 		<cfargument name="grp_id" required="true" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->

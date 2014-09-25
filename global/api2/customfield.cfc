@@ -30,6 +30,7 @@
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -107,6 +108,7 @@
 		<cfargument name="field_values" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Deserialize the JSON back into a struct --->
@@ -299,6 +301,7 @@
 		<cfargument name="lang_id" required="false" default="1">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query --->

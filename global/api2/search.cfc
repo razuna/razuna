@@ -47,6 +47,7 @@
 		<cfargument name="available" type="string" required="false" default="1">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set sessions --->

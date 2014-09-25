@@ -32,6 +32,8 @@
 		<cfargument name="collectionid" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get collection folder in which collection resides --->
@@ -354,6 +356,7 @@
 		<cfargument name="released" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for folder --->
@@ -430,6 +433,8 @@
 		<cfargument name="released" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<cftry>
@@ -460,7 +465,7 @@
 				<!--- Get getcollections --->
 				<cfif qry.recordcount NEQ 0>
 					<!--- Note: Method getcollections already has permission checks applied to it  --->
-					<cfset var thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r),released=arguments.released)>
+					<cfset thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r),released=arguments.released)>
 				<cfelse>
 					<cfset thexml = querynew("responsecode,message")>
 					<cfset queryaddrow(thexml,1)>

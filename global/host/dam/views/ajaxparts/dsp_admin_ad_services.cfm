@@ -29,25 +29,29 @@
 		<tr>
 			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("ad_server_details")#</th>
 		</tr>
+		<!--- Description --->
+		<tr>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("ad_server_desc")#</td>
+		</tr>
 		<!--- Ad Server Or Domain Name --->
 		<tr>
-			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_server_name")#</td>
-			<td width="100%"><input type="text" name="ad_server_name" id="ad_server_name" style="width:300px;" value="#ad_server_name#" ></td>
+			<td nowrap="nowrap"  style="width:150px;">#myFusebox.getApplicationData().defaults.trans("ad_server_name")#</td>
+			<td width="100%"><input type="text" name="ad_server_name" id="ad_server_name" style="width:450px;" value="#ad_server_name#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_server_placeholder")#"></td>
 		</tr>
 		<!--- Ad Server Port --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_server_port")#</td>
-			<td width="100%"><input type="text" name="ad_server_port" id="ad_server_port" style="width:300px;" value="#ad_server_port#" ></td>
+			<td width="100%"><input type="text" name="ad_server_port" id="ad_server_port" style="width:450px;" value="#ad_server_port#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_port_placeholder")#"></td>
 		</tr>
 		<!--- Ad User Name --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_user_name")#</td>
-			<td width="100%"><input type="text" name="ad_user_name" id="ad_user_name" style="width:300px;" value="#ad_server_username#" placeholder="e.g. domain\username for Windows AD users"></td>
+			<td width="100%"><input type="text" name="ad_user_name" id="ad_user_name" style="width:450px;" value="#ad_server_username#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_username_placeholder")#"></td>
 		</tr>
 		<!--- Ad password --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_user_pass")#</td>
-			<td width="100%"><input type="password" name="ad_user_pass" id="ad_user_pass" style="width:300px;" value="#ad_server_password#" ></td>
+			<td width="100%"><input type="password" name="ad_user_pass" id="ad_user_pass" style="width:450px;" value="#ad_server_password#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_password_placeholder")#"></td>
 		</tr>
 		<!--- Is Secure --->
 		<tr>
@@ -57,12 +61,28 @@
 		<!--- Filter --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_filter")#</td>
-			<td width="100%"><input type="text" name="ad_filter" id="ad_filter" style="width:300px;" value="#ad_server_filter#" placeholder="e.g. (&(objectClass=user))"></td>
+			<td width="100%"><input type="text" name="ad_filter" id="ad_filter" style="width:450px;" value="#ad_server_filter#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_filter_placeholder")#"></td>
 		</tr>
 		<!--- Start --->
 		<tr>
 			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_start")#</td>
-			<td width="100%"><input type="text" name="ad_start" id="ad_start" style="width:300px;" value="#ad_server_start#" placeholder="e.g. CN=users,DC=razuna,DC=local"></td>
+			<td width="100%"><input type="text" name="ad_start" id="ad_start" style="width:450px;" value="#ad_server_start#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_start_placeholder")#"></td>
+		</tr>
+		<!--- LDAP or AD --->
+		<tr>
+			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_ldap_header")#</td>
+			<td width="100%">
+				<input type="radio" name="ad_ldap" value="ldap" onclick="show_ldap();"<cfif #ad_ldap# EQ 'ldap'> checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("ldap_server")#
+				<input type="radio" name="ad_ldap" value="ad"  onclick="show_ad();"<cfif ad_ldap EQ 'ad' OR ad_ldap EQ ''>checked="true" </cfif>>#myFusebox.getApplicationData().defaults.trans("ad_server")#
+			</td>
+		</tr>
+		<tr id="ad_div" style="display:none">
+			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ad_domain_header")#</td>
+			<td width="100%"><input type="text" name="ad_domain" id="ad_domain" style="width:450px;" value="#ad_domain#" placeholder="#myFusebox.getApplicationData().defaults.trans("ad_domain_placeholder")#"></td>
+		</tr>
+		<tr id="ldap_div" style="display:none">
+			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("ldap_dn_header")#<br/><br/><br/><br/></td>
+			<td width="100%"><input type="text" name="ldap_dn" id="ldap_dn" style="width:450px;" value="#ldap_dn#" placeholder="#myFusebox.getApplicationData().defaults.trans("ldap_dn_placeholder")#"><br/>#myFusebox.getApplicationData().defaults.trans("ldap_dn_desc")#</td>
 		</tr>
 	</table>
 	<div style="float:left;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_save_ad_server")#" class="button" onclick="save_ad_server();" /></div>
@@ -70,6 +90,12 @@
 	<div style="clear:both;"></div>
 	<div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>
 	<script type="text/javascript">
+		$(document).ready(function(){
+			if ($('input:radio[name=ad_ldap]:checked').val() == 'ad')
+				show_ad();
+			else
+				show_ldap();
+		});
 		// Save
 		function save_ad_server(){
 			// Values
@@ -80,12 +106,24 @@
 			var secure = $('input:radio[name=ad_is_secure]:checked').val();
 			var filter = $("##ad_filter").val();
 			var start = $("##ad_start").val();
+			var ad_or_ldap = $('input:radio[name=ad_ldap]:checked').val();
+			var domain = $("##ad_domain").val();
+			var ldapdn =  $("##ldap_dn").val();
+
 			// Save
-			$('##div_forall').load('#myself#c.admin_ad_services_save', {ad_server_name: server, ad_server_port: port, ad_server_username: un, ad_server_password: pwd, ad_server_secure: secure, ad_server_filter: filter, ad_server_start: start });
+			$('##div_forall').load('#myself#c.admin_ad_services_save', {ad_server_name: server, ad_server_port: port, ad_server_username: un, ad_server_password: pwd, ad_server_secure: secure, ad_server_filter: filter, ad_server_start: start, ad_ldap: ad_or_ldap, ad_domain: domain, ldap_dn:ldapdn});
 			// Feedback
 			$('##status_integration').fadeTo("fast", 100);
 			$('##status_integration').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change")#!</span>');
 			$('##status_integration').fadeTo(5000, 0);
+		}
+		function show_ad(){
+			$("##ad_div").show();
+			$("##ldap_div").hide();
+		}
+		function show_ldap(){
+			$("##ldap_div").show();
+			$("##ad_div").hide();
 		}
 	</script>
 </cfoutput> 

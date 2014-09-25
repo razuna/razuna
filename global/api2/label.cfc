@@ -30,6 +30,7 @@
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -62,6 +63,7 @@
 		<cfset privileges = 'r,w,x'> <!--- Only users with read, write or full access permissions can call this method --->
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for label --->
@@ -294,6 +296,7 @@
 		<cfargument name="asset_type" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->

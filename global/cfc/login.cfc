@@ -80,24 +80,15 @@
 		</cfquery>
 		
 		<!--- Check the AD user --->
-		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
+		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
 				<cftry>
-					<!--- Strip out domain from username if present for AD users--->
-					<cfif arguments.thestruct.name contains "\"> <!--- e.g. razuna\aduser for windows AD users --->
-						<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> 
-					<cfelseif arguments.thestruct.name contains "uid="><!---  e.g. uid=aduser,ou=service,dc=utmb,dc=edu for LDAP users who are non AD --->
-						<cfset var adusername = gettoken(gettoken(arguments.thestruct.name,1,","),2,"=")> 
-					<cfelse>
-						<cfset var adusername = arguments.thestruct.name> 
-					</cfif>
-
 					<!--- Check for the user --->
 					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
-						lower(u.user_login_name) = <cfqueryparam value="#lcase(adusername)#" cfsqltype="cf_sql_varchar"> 
+						lower(u.user_login_name) = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar"> 
 						OR lower(u.user_email) = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
 						)
 					AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
@@ -115,12 +106,17 @@
 					AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 					</cfquery>
 				<cfif qryuser.recordcount NEQ 0>
+					<cfif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad' AND arguments.thestruct.ad_domain NEQ ''>
+						<cfset arguments.thestruct.name  = arguments.thestruct.ad_domain & '\' & arguments.thestruct.name>
+					<cfelseif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap' AND arguments.thestruct.ldap_dn contains 'uid={username}'>
+						<cfset arguments.thestruct.name  = replacenocase (arguments.thestruct.ldap_dn,'{username}',arguments.thestruct.name)>
+					</cfif>
 					<!--- Authenticate LDAP user --->
 					<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
-						<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" secure="CFSSL_BASIC" timeout="10">
+						<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" secure="CFSSL_BASIC" port="#arguments.thestruct.ad_server_port#">
 					<cfelse>
-						<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" timeout="10">
-					</cfif>
+					<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" port="#arguments.thestruct.ad_server_port#">
+				</cfif>
 				</cfif>
 				<cfcatch><cfset console(cfcatch)></cfcatch>
 				</cftry>

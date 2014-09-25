@@ -32,6 +32,7 @@
 		<cfargument name="assettype" required="true" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
@@ -615,6 +616,7 @@
 		<cfargument name="assetid" required="true">
     	<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->
@@ -1030,6 +1032,7 @@
 		<cfset arguments.thedpi = "">
 		<!--- Check api key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for asset (folder) --->

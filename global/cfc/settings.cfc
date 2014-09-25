@@ -2364,6 +2364,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="ad_server_secure" type="string">
 	<cfargument name="ad_server_filter" type="string">
 	<cfargument name="ad_server_start" type="string">
+	<cfargument name="ad_ldap" type="string">
+	<cfargument name="ad_domain" type="string">
+	<cfargument name="ldap_dn" type="string">
+
 	<!--- Delete & Insert --->
 	<cfinvoke method="savesetting" thefield="ad_server_name" thevalue="#arguments.ad_server_name#" />
 	<cfinvoke method="savesetting" thefield="ad_server_port" thevalue="#arguments.ad_server_port#" />
@@ -2372,6 +2376,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfinvoke method="savesetting" thefield="ad_server_secure" thevalue="#arguments.ad_server_secure#" />
 	<cfinvoke method="savesetting" thefield="ad_server_filter" thevalue="#arguments.ad_server_filter#" />
 	<cfinvoke method="savesetting" thefield="ad_server_start" thevalue="#arguments.ad_server_start#" />
+	<cfinvoke method="savesetting" thefield="ad_ldap" thevalue="#arguments.ad_ldap#" />
+	<cfinvoke method="savesetting" thefield="ad_domain" thevalue="#arguments.ad_domain#" />
+	<cfinvoke method="savesetting" thefield="ldap_dn" thevalue="#arguments.ldap_dn#" />
+
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2835,6 +2843,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfelse>
 			<cfset ldapfilter="(&(objectClass=user))" >
 		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad' AND arguments.thestruct.ad_domain NEQ ''>
+			<cfset arguments.thestruct.ad_server_username  = arguments.thestruct.ad_domain & '\' & arguments.thestruct.ad_server_username>
+		<cfelseif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap' AND arguments.thestruct.ldap_dn contains 'uid={username}'>
+			<cfset arguments.thestruct.ad_server_username  = replacenocase (arguments.thestruct.ldap_dn,'{username}',arguments.thestruct.ad_server_username)>
+		</cfif>
 		<!--- Set AD default port --->
 		<cfif Not structKeyExists(arguments.thestruct,'ad_server_port') OR arguments.thestruct.ad_server_port EQ ''>
 			<cfset arguments.thestruct.ad_server_port = 389>
@@ -2847,7 +2860,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
 					attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10" secure="CFSSL_BASIC">
+				 username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#" timeout="10" secure="CFSSL_BASIC">
 			<cfelse>
 				<cfldap server = "#arguments.thestruct.ad_server_name#" 
 					port = "#arguments.thestruct.ad_server_port#"
@@ -2855,7 +2868,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
 					attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="10">
+				username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#" timeout="10">
 			</cfif>
 			<!--- For LDAP servers username is in uid field and for windows AD it is in sAMAccountName so combine the two into sAMAccountName field --->
 			<cfquery name="results" dbtype="query">
@@ -2866,6 +2879,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				SELECT uid sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
 				FROM results 
 				WHERE sAMAccountName ='' AND uid<>''
+				ORDER BY sAMAccountName ASC
 			</cfquery>
 		<cfcatch>
 			<cfif isdefined("arguments.thestruct.showerr")>
@@ -2881,20 +2895,42 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfargument name="password" required="true">   
 		<cfargument name="dcstart" required="true">
 		<cfargument name="ldapserver" required="true">
+		<cfargument name="port" required="true">
+		<cfargument name="secure" required="false" default="">
 		<cfset isAuthenticated = false> 
 		   <cftry>          
-		         <cfldap action="QUERY"          
-		               name="auth"          
-		               attributes="samAccountName"          
-		               start="#dcStart#"          
-		               scope="SUBTREE"          
-		               maxrows="1"          
-		               server="#ldapServer#"          
-		               username="#username#"          
-		               password="#password#">          
+		         <cfif secure NEQ ''>
+		         		  <cfldap action="QUERY"          
+			               name="auth"          
+			               attributes="samAccountName"          
+			               start="#dcStart#"          
+			               scope="SUBTREE"          
+			               maxrows="1"          
+			               server="#ldapServer#"          
+			               username="#username#"          
+			               password="#password#"
+			               port="#port#"
+			               secure="#secure#"
+			               timeout="10"
+			               >  
+		     	<cfelse>
+			         <cfldap action="QUERY"          
+			               name="auth"          
+			               attributes="samAccountName"          
+			               start="#dcStart#"          
+			               scope="SUBTREE"          
+			               maxrows="1"          
+			               server="#ldapServer#"          
+			               username="#username#" 
+			               port="#port#"         
+			               password="#password#"
+			               timeout="10"
+			               >  
+    			</cfif>
 		         <cfset isAuthenticated=true>             
-		      <cfcatch type="ANY">              
-		         <cfset isAuthenticated=false>          
+		      <cfcatch type="ANY">             
+		         <cfset isAuthenticated=false> 
+		         <cfset console(cfcatch)>          
 		      </cfcatch>      
 		   </cftry>  
 		<cfreturn isAuthenticated>

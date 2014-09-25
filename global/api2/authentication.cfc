@@ -45,6 +45,7 @@
 		<cfelse>
 			<cfset var theapikey = arguments.api_key>
 		</cfif>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT  /* #theapikey##thehostid#checkdb */  u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
@@ -291,6 +292,7 @@
 		<cfelse>
 			<cfset var theapikey = arguments.api_key>
 		</cfif>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #theapikey##thehostid#checkdesktop */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
