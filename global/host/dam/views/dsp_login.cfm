@@ -111,7 +111,7 @@ Page output starts here
 		</table>
 	</cfif>
 	<cfif attributes.loginerror EQ "T">
-		<div id="alertbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
+		<div id="alertbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#<cfif isdefined("session.ldapauthfail") AND session.ldapauthfail NEQ ""><br/><br/>Error was: #session.ldapauthfail#</cfif></div>
 	</cfif>
 </div>
 <div id="login_loading" style="display:none;text-align:center;padding-top:20px;"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" width="128" height="15" border="0" /></div>

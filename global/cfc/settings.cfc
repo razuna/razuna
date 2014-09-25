@@ -2909,7 +2909,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfargument name="ldapserver" required="true">
 		<cfargument name="port" required="true">
 		<cfargument name="secure" required="false" default="">
-		<cfset isAuthenticated = false> 
+		<cfset var isAuthenticated = false> 
+		<cfset session.ldapauthfail = "">
 		   <cftry>          
 		         <cfif secure NEQ ''>
 		         		  <cfldap action="QUERY"          
@@ -2942,7 +2943,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		         <cfset isAuthenticated=true>             
 		      <cfcatch type="ANY">             
 		         <cfset isAuthenticated=false> 
-		         <cfset console(cfcatch)>          
+		         <cfset session.ldapauthfail = cfcatch.detail>
 		      </cfcatch>      
 		   </cftry>  
 		<cfreturn isAuthenticated>

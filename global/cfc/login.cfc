@@ -91,6 +91,7 @@
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
+				<cfset session.ldapauthfail = "">
 				<cftry>
 					<!--- Check for the user --->
 					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
