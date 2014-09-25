@@ -547,7 +547,9 @@
 	<cfargument name="ad_server_password" type="string" required="false" default="">
 	<cfargument name="ad_server_filter" type="string" required="false" default="">
 	<cfargument name="ad_server_start" type="string" required="false" default="">
-	
+	<cfargument name="ad_ldap" type="string" required="false" default="">
+	<cfargument name="ad_domain" type="string" required="false" default="">
+	<cfargument name="ldap_dn" type="string" required="false" default="">
 	<!--- Param --->
 	<cfset var doit = structnew()>
 	<cfset var x = structnew()>

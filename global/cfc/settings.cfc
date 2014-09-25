@@ -2854,21 +2854,32 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 		<cftry>
 			<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
-				<cfldap server = "#arguments.thestruct.ad_server_name#" 
-					port = "#arguments.thestruct.ad_server_port#"
+				<cfldap 
+				server = "#arguments.thestruct.ad_server_name#" 
+				port = "#arguments.thestruct.ad_server_port#"
 				scope="subtree" 
-				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+				action = "query"  
+				name = "results"  
+				start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
-					attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				 username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#" timeout="10" secure="CFSSL_BASIC">
+				attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				username="#arguments.thestruct.ad_server_username#" 
+				password="#arguments.thestruct.ad_server_password#" 
+				timeout="10" 
+				secure="CFSSL_BASIC">
 			<cfelse>
-				<cfldap server = "#arguments.thestruct.ad_server_name#" 
-					port = "#arguments.thestruct.ad_server_port#"
+				<cfldap 
+				server = "#arguments.thestruct.ad_server_name#" 
+				port = "#arguments.thestruct.ad_server_port#"
 				scope="subtree" 
-				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+				action = "query"  
+				name = "results"  
+				start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
-					attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#" timeout="10">
+				attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				username="#arguments.thestruct.ad_server_username#" 
+				password="#arguments.thestruct.ad_server_password#" 
+				timeout="10">
 			</cfif>
 			<!--- For LDAP servers username is in uid field and for windows AD it is in sAMAccountName so combine the two into sAMAccountName field --->
 			<cfquery name="results" dbtype="query">
@@ -2881,6 +2892,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				WHERE sAMAccountName ='' AND uid<>''
 				ORDER BY sAMAccountName ASC
 			</cfquery>
+
 		<cfcatch>
 			<cfif isdefined("arguments.thestruct.showerr")>
 				<font color="#cd5c5c">Error occurred connecting to LDAP server. Please check server details entered and try again. <br/>Error thrown was: <cfoutput>#cfcatch.detail#</cfoutput><br/><br/></font>

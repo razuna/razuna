@@ -7024,16 +7024,16 @@
 			<argument name="orderBy" value="grp_name ASC" />
 		</invoke>
 		<!-- Get AD server Details -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="ad_server_name" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="ad_server_port" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="ad_server_username" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="ad_server_password" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="ad_server_secure" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="ad_server_filter" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="ad_server_start" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_ldap')" returnvariable="ad_ldap" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_domain')" returnvariable="ad_domain" />
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ldap_dn')" returnvariable="ldap_dn" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="attributes.ad_server_secure" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_ldap')" returnvariable="attributes.ad_ldap" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_domain')" returnvariable="attributes.ad_domain" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ldap_dn')" returnvariable="attributes.ldap_dn" />
 
 		<!-- Show -->
 		<do action="ajax.scheduler_detail" />
@@ -7100,8 +7100,12 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="attributes.ad_server_secure" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_ldap')" returnvariable="attributes.ad_ldap" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_domain')" returnvariable="attributes.ad_domain" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ldap_dn')" returnvariable="attributes.ldap_dn" />
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="doit" returnvariable="thetask">
 			<argument name="sched_id" value="#attributes.sched_id#" />
@@ -7118,6 +7122,10 @@
 			<argument name="ad_server_password" value="#attributes.ad_server_password#" />
 			<argument name="ad_server_filter" value="#attributes.ad_server_filter#" />
 			<argument name="ad_server_start" value="#attributes.ad_server_start#" />
+			<argument name="ad_server_secure" value="#attributes.ad_server_secure#" />
+			<argument name="ad_ldap" value="#attributes.ad_ldap#" />
+			<argument name="ad_domain" value="#attributes.ad_domain#" />
+			<argument name="ldap_dn" value="#attributes.ldap_dn#" />
 		</invoke>
 	</fuseaction>
 		
