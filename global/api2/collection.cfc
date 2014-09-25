@@ -476,8 +476,8 @@
 					<cfset consoleoutput(true)>
 					<cfset console(cfcatch)>
 					<cfabort>
-				<cfcatch>
-			<cftry>
+				</cfcatch>
+			</cftry>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
