@@ -2843,9 +2843,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfelse>
 			<cfset ldapfilter="(&(objectClass=user))" >
 		</cfif>
-		<cfif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad' AND arguments.thestruct.ad_domain NEQ ''>
+		<cfif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad' AND arguments.thestruct.ad_domain NEQ '' AND arguments.thestruct.ad_server_username does not contain '\'>
 			<cfset arguments.thestruct.ad_server_username  = arguments.thestruct.ad_domain & '\' & arguments.thestruct.ad_server_username>
-		<cfelseif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap' AND arguments.thestruct.ldap_dn contains 'uid={username}'>
+		<cfelseif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap' AND arguments.thestruct.ldap_dn contains 'uid={username}' AND arguments.thestruct.ad_server_username DOES NOT CONTAIN '='>
 			<cfset arguments.thestruct.ad_server_username  = replacenocase (arguments.thestruct.ldap_dn,'{username}',arguments.thestruct.ad_server_username)>
 		</cfif>
 		<!--- Set AD default port --->
