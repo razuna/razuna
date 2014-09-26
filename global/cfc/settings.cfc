@@ -2836,8 +2836,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<cfset var results = querynew('')>
-		<cfif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "">
+		<cfif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "" AND structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad'>
 			<cfset ldapfilter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
+		<cfelseif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "" AND structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap'>
+			<cfset ldapfilter="(&(objectClass=user)(uid=*#arguments.thestruct.searchtext#*))" >
 		<cfelseif structKeyExists(arguments.thestruct,'ad_server_filter') AND trim(arguments.thestruct.ad_server_filter) NEQ ''>
 			<cfset ldapfilter = "#arguments.thestruct.ad_server_filter#" >
 		<cfelse>
@@ -2915,7 +2917,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		         <cfif secure NEQ ''>
 		         		  <cfldap action="QUERY"          
 			               name="auth"          
-			               attributes="samAccountName"          
+			               attributes="givenName"          
 			               start="#dcStart#"          
 			               scope="SUBTREE"          
 			               maxrows="1"          
@@ -2925,12 +2927,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			               port="#port#"
 			               secure="#secure#"
 			               timeout="10"
-			               filter="(&(givenname=razunarocks))" 
+			               filter="(&(givenName=razunarocks))" 
 			               >  <!--- dummy filter to reduce number of rows returned to zero and avoid size exceeded exception --->
 		     	<cfelse>
 			         <cfldap action="QUERY"          
 			               name="auth"          
-			               attributes="samAccountName"          
+			               attributes="givenName"          
 			               start="#dcStart#"          
 			               scope="SUBTREE"          
 			               maxrows="1"          
@@ -2939,7 +2941,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			               port="#port#"         
 			               password="#password#"
 			               timeout="10"
-			               filter="(&(givenname=razunarocks))" 
+			               filter="(&(givenName=razunarocks))" 
 			               >  
     			</cfif>
 		         <cfset isAuthenticated=true>             
