@@ -3197,7 +3197,7 @@
 				SELECT DISTINCT max(fg5.grp_permission)
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.folder_id_r = f.folder_id
 				AND (
 					fg5.grp_id_r = '0'
 					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
@@ -3207,7 +3207,7 @@
 				SELECT DISTINCT max(fg5.grp_permission)
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.folder_id_r = f.folder_id
 				AND (
 					fg5.grp_id_r = '0'
 					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
@@ -3217,7 +3217,7 @@
 				SELECT DISTINCT max(fg5.grp_permission)
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.folder_id_r = f.folder_id
 				AND (
 					fg5.grp_id_r = '0'
 					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
