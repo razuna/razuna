@@ -3347,6 +3347,10 @@
 	<!--- function internal vars --->
 	<cfset var local_query = 0>
 	<cfset var local_list = "">
+	<!--- If list empty then set to dummy value to prevent SQL from failing --->
+	<cfif arguments.thelist EQ "">
+		<cfset arguments.thelist = "-1">
+	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="local_query">
 	SELECT folder_id, folder_level
