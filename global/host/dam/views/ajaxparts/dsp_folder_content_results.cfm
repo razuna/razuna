@@ -254,7 +254,13 @@
 								</cfif>
 								<br>
 								<br>
-								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
+								<cfset folderpath = "">
+								<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id_r)>
+								<cfloop list="#crumbs#" delimiters=";" index="i">
+									<cfset flid = ListGetAt(i,2,'|')>
+									<cfset folderpath = folderpath & " / <a href='##' onclick=goToFolder('#flid#');>#ListGetAt(i,1,'|')#</a>">
+								</cfloop>
+								Folder: #replace(folderpath,'/','','ONE')#
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -401,7 +407,13 @@
 								</cfif>
 								<br>
 								<br>
-								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
+								<cfset folderpath = "">
+								<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id_r)>
+								<cfloop list="#crumbs#" delimiters=";" index="i">
+									<cfset flid = ListGetAt(i,2,'|')>
+									<cfset folderpath = folderpath & " / <a href='##' onclick=goToFolder('#flid#');>#ListGetAt(i,1,'|')#</a>">
+								</cfloop>
+								Folder: #replace(folderpath,'/','','ONE')#
 							<cfelse>					
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -536,7 +548,13 @@
 								</cfif>
 								<br>
 								<br>
-								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
+								<cfset folderpath = "">
+								<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id_r)>
+								<cfloop list="#crumbs#" delimiters=";" index="i">
+									<cfset flid = ListGetAt(i,2,'|')>
+									<cfset folderpath = folderpath & " / <a href='##' onclick=goToFolder('#flid#');>#ListGetAt(i,1,'|')#</a>">
+								</cfloop>
+								Folder: #replace(folderpath,'/','','ONE')#
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -676,7 +694,13 @@
 								</cfif>
 								<br>
 								<br>
-								Folder: <a href="##" onclick="goToFolder('#folder_id_r#');">#left(folder_name,10)#</a>
+								<cfset folderpath = "">
+								<cfset crumbs = myFusebox.getApplicationData().folders.getbreadcrumb(folder_id_r)>
+								<cfloop list="#crumbs#" delimiters=";" index="i">
+									<cfset flid = ListGetAt(i,2,'|')>
+									<cfset folderpath = folderpath & " / <a href='##' onclick=goToFolder('#flid#');>#ListGetAt(i,1,'|')#</a>">
+								</cfloop>
+								Folder: #replace(folderpath,'/','','ONE')#
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>

@@ -24,6 +24,10 @@
 *
 --->
 <cfoutput>
+	<cfif !listfindnocase('r,w,x',attributes.folderaccess)>
+		You do not have the necessary permissions to access this folder. Please contact your administrator if you feel this is in error.
+		<cfabort>
+	</cfif>
 	<div id="tabsfolder_tab">
 		<ul>
 			<!--- If we are a collection show the list of collections else the content of folder --->
