@@ -116,6 +116,14 @@
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
 			<cfset querysetcell(thexml,"message","Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.")>
+			<cfelseif arguments.type EQ "x">
+			<!--- Create the XML --->
+			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>1</responsecode>
+<message>Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.</message>
+</Response></cfoutput>
+			</cfsavecontent>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
 			<cfset thexml.message = "Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.">

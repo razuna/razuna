@@ -1157,10 +1157,10 @@
 				</cfquery>
 				<cfif checkfolder.recordcount EQ 0>
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
-					<Response>
-					<responsecode>1</responsecode>
-					<message>Specified folder '#arguments.thestruct.destfolderid#' does not exist</message>
-					</Response></cfoutput>
+<Response>
+<responsecode>1</responsecode>
+<message>Specified folder '#arguments.thestruct.destfolderid#' does not exist</message>
+</Response></cfoutput>
 				</cfsavecontent>
 				<cfreturn thexml />
 				</cfif>
@@ -1267,7 +1267,7 @@
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
 				<cflocation url="#arguments.thestruct.redirectto#?responsecode=1&message=nosession" addToken="yes">
 			<cfelse>
-				<cfinvoke component="global.api.authentication" method="timeout" type="s" returnvariable="thexml">
+				<cfinvoke component="global.api2.authentication" method="timeout" type="x" returnvariable="thexml">
 			</cfif>
 		</cfif>
 		<!--- Catch --->
