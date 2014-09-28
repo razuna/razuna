@@ -1150,6 +1150,20 @@
 				<cfelseif !structkeyexists(arguments.thestruct,"folder_id")>
 					<cfset arguments.thestruct.folder_id = arguments.thestruct.destfolderid>
 				</cfif>
+				<cfset var checkfolder = "">
+				<cfquery datasource="#application.razuna.datasource#" name="checkfolder">
+					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">
+					AND lower(in_trash) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="f">
+				</cfquery>
+				<cfif checkfolder.recordcount EQ 0>
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+					<Response>
+					<responsecode>1</responsecode>
+					<message>Specified folder '#arguments.thestruct.destfolderid#' does not exist</message>
+					</Response></cfoutput>
+				</cfsavecontent>
+				<cfreturn thexml />
+				</cfif>
 				<!--- Add to temp db --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#assets_temp
