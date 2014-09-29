@@ -212,6 +212,7 @@
 			WHERE c.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND c.type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">
 			AND c.asset_id_r = f.file_id
+			AND lower(f.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
 			<cfif Len(Arguments.file_extension)>
 				AND
 				<!--- if doc or xls also add office 2007 format to query --->

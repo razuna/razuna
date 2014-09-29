@@ -8,7 +8,7 @@
 		<div style="width:auto;float:right;height:60px;">
 			<div style="float:left;padding:4px;">
 				<div style="float:left;">
-					<input name="searchtext" id="searchtext" type="text" class="textbold" style="width:250px;" value="">
+					<input name="searchtext" id="searchtext" type="text" class="textbold" style="width:250px;" value="" placeholder="#myFusebox.getApplicationData().defaults.trans("ldap_userfilter_placeholder")#">
 				</div>
 				<div style="float:left;padding-left:2px;padding-top:1px;">
 					<button class="awesome big green" onclick="filter_user();return false;">#myFusebox.getApplicationData().defaults.trans("Filter")#</button>
