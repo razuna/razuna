@@ -36,10 +36,11 @@
 
 <!--- FUNCTION: LOGIN --->
 	<cffunction name="login" access="public" output="false" returntype="struct">
-		<cfargument name="thestruct" required="true" type="struct">		
+		<cfargument name="thestruct" required="true" type="struct">
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.rem_login" default="F">
 		<cfparam name="arguments.thestruct.from_share" default="F">
+		<cfparam name="arguments.thestruct.pass_hashed" default="false">
 		<!--- create structure to store results in --->
 		<cfset var theuser = structNew()>
 		<cfif arguments.thestruct.loginto EQ "admin">
@@ -47,12 +48,17 @@
 		<cfelse>
 			<cfset var thecookie = cookie.loginpass>
 		</cfif>
-		<!--- compare argument and cookie, if it is alredy the hased value use us it else take new password passed --->
-		<cfif arguments.thestruct.pass EQ thecookie>
-			<cfset var thepass = thecookie>
+		<!--- If the pass is hashed then simply assign passed in hashed pass --->
+		<cfif arguments.thestruct.pass_hashed>
+			<cfset var thepass = arguments.thestruct.pass>
 		<cfelse>
-			<!--- Hash password --->
-			<cfset var thepass = hash(arguments.thestruct.pass, "MD5", "UTF-8")>
+			<!--- compare argument and cookie, if it is alredy the hased value use us it else take new password passed --->
+			<cfif arguments.thestruct.pass EQ thecookie>
+				<cfset var thepass = thecookie>
+			<cfelse>
+				<!--- Hash password --->
+				<cfset var thepass = hash(arguments.thestruct.pass, "MD5", "UTF-8")>
+			</cfif>
 		</cfif>
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
