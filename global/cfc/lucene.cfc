@@ -949,10 +949,11 @@
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
 		<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
-		<cftry>
+		<!--- Commented this out cause we fixed it and second it slows down the search coniderably!!!!!! --->
+		<!--- <cftry>
 			<cfset CollectionIndexcustom( collection=#arguments.hostid#, key="delete", body="#createuuid()#", title="#createuuid()#")>
 			<cfcatch type="any"></cfcatch>
-		</cftry>
+		</cftry> --->
 		<!--- 
 		 Decode URL encoding that is encoded using the encodeURIComponent javascript method. 
 		 Preserve the '+' sign during decoding as the URLDecode methode will remove it if present.
