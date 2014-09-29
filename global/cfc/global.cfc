@@ -858,13 +858,13 @@ Comment:<br>
 			<cfquery datasource="#application.razuna.datasource#" name="get_upc">
 					SELECT img_upc_number as upcnumber FROM  #session.hostdbprefix#images
 					WHERE img_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION
+					UNION ALL
 					SELECT aud_upc_number as upcnumber FROM  #session.hostdbprefix#audios
 					WHERE aud_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION
+					UNION ALL
 					SELECT vid_upc_number as upcnumber FROM  #session.hostdbprefix#videos
 					WHERE vid_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION
+					UNION ALL
 					SELECT file_upc_number as upcnumber FROM  #session.hostdbprefix#files
 					WHERE file_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>

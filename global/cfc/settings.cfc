@@ -2888,7 +2888,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				SELECT sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
 				FROM results 
 				WHERE sAMAccountName <>''
-				UNION
+				UNION ALL
 				SELECT uid sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
 				FROM results 
 				WHERE sAMAccountName ='' AND uid<>''

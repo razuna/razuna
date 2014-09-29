@@ -1672,11 +1672,11 @@
 	<cfif not structKeyExists(session, "firstasset")>
 		<cfquery datasource="#application.razuna.datasource#" name="checkasset">
 			SELECT hashtag FROM  #session.hostdbprefix#images WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			UNION
+			UNION ALL
 			SELECT hashtag FROM  #session.hostdbprefix#audios WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			UNION
+			UNION ALL
 			SELECT hashtag FROM  #session.hostdbprefix#videos WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			UNION
+			UNION ALL
 			SELECT hashtag FROM  #session.hostdbprefix#files WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfif checkasset.recordcount EQ 0 OR (checkasset.recordcount EQ 1 AND checkasset.hashtag EQ '')>
