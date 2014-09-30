@@ -30,7 +30,7 @@
 			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("alias_remove")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="loadcontent('rightside','#myself#c.alias_remove&id=#attributes.id#&folder_id=#attributes.folder_id#&loaddiv=#attributes.loaddiv#');destroywindow(1);" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="loadcontent('#attributes.loaddiv#','#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&iscol=F&folder_id=#attributes.folder_id#&loaddiv=#attributes.loaddiv#');destroywindow(1);" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

@@ -6010,6 +6010,27 @@
 				<do action="folder" />
 			</true>
 		</if>
+		<if condition="attributes.loaddiv EQ 'img'">
+			<true>
+				<do action="folder_images" />
+			</true>
+		</if>
+		<if condition="attributes.loaddiv EQ 'aud'">
+			<true>
+				<do action="folder_audios" />
+			</true>
+		</if>
+		<if condition="attributes.loaddiv EQ 'vid'">
+			<true>
+				<do action="folder_videos" />
+			</true>
+		</if>
+		<if condition="attributes.loaddiv EQ 'other' OR attributes.loaddiv EQ 'pdf' OR attributes.loaddiv contains 'doc' OR attributes.loaddiv contains 'xls' OR attributes.loaddiv EQ 'file'">
+			<true>
+				<do action="folder_files" />
+			</true>
+		</if>
+
 	</fuseaction>
 
 	<!-- Set params for the choose folder dialog -->
