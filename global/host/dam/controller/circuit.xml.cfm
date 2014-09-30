@@ -4688,10 +4688,10 @@
 				</if>
 				<!-- CFC: Send eMail -->
 				<invoke object="myFusebox.getApplicationData().email" method="send_email">
+					<argument name="from" value="#attributes.from#" />
 					<argument name="to" value="#attributes.to#" />
 					<argument name="cc" value="#attributes.cc#" />
 					<argument name="bcc" value="#attributes.bcc#" />
-					<argument name="to" value="#attributes.to#" />
 					<argument name="subject" value="#attributes.subject#" />
 					<argument name="attach" value="#thefile#" />
 					<argument name="themessage" value="#attributes.message#" />
@@ -4706,7 +4706,7 @@
 			<false>
 				<!-- CFC: Send eMail -->
 				<invoke object="myFusebox.getApplicationData().email" method="send_email">
-					<argument name="to" value="#attributes.to#" />
+					<argument name="from" value="#attributes.from#" />
 					<argument name="cc" value="#attributes.cc#" />
 					<argument name="bcc" value="#attributes.bcc#" />
 					<argument name="to" value="#attributes.to#" />

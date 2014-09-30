@@ -37,6 +37,7 @@
 <input type="hidden" name="artofvideo" id="sendemailform_artofvideo" value="">
 <input type="hidden" name="artofaudio" id="sendemailform_artofaudio" value="">
 <input type="hidden" name="artoffile" id="sendemailform_artoffile" value="">
+<input type="hidden" name="from" id="sendemailform_from" value="#qryuseremail#">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<cfif attributes.frombasket EQ "T">
 		<tr>

@@ -171,8 +171,13 @@
 		</cfif>
 		<!--- The to is empty, so simply skip sending the eMail --->
 		<cfif arguments.to NEQ "">
-			<!--- Always take the email address from the settings --->
-			<cfset var thefrom = emaildata.set2_email_from>			
+			<!--- Always take the email address from the settings if not specified in arguments --->
+			<cfif arguments.from NEQ ''>
+				<cfset var thefrom = arguments.from>
+			<cfelse>
+				<cfset var thefrom = emaildata.set2_email_from>
+			</cfif>
+			
 			<!--- send message if mail server setting is empty thus take the CF admin settings--->
 			<cfif emaildata.set2_email_server EQ "">
 				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" subject="#arguments.subject#" type="text/html"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
