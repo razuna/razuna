@@ -258,7 +258,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE file_types
 		(
-		  TYPE_ID              VARCHAR(5) CONSTRAINT FILE_TYPE_PK PRIMARY KEY,
+		  TYPE_ID              VARCHAR(10) CONSTRAINT FILE_TYPE_PK PRIMARY KEY,
 		  TYPE_TYPE            VARCHAR(3),
 		  TYPE_MIMECONTENT     VARCHAR(50),
 		  TYPE_MIMESUBCONTENT  VARCHAR(50)

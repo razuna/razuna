@@ -393,7 +393,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.file_types
 		(
-		  TYPE_ID              VARCHAR(5),
+		  TYPE_ID              VARCHAR(10),
 		  TYPE_TYPE            VARCHAR(3),
 		  TYPE_MIMECONTENT     VARCHAR(50),
 		  TYPE_MIMESUBCONTENT  VARCHAR(50),
