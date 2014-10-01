@@ -3189,7 +3189,7 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as f.folder_owner, '0' as f.folder_id_r<cfelse>f.folder_owner</cfif>,  
+	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as folder_owner, '0' as folder_id_r<cfelse>f.folder_owner</cfif>,  
 	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 		'X' as permfolder
 	<cfelse>
