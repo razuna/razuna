@@ -181,9 +181,15 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 39 (1.7) --->
-		<cfif updatenumber.opt_value LT 39>
-
+		<!--- If less then 40 (1.7) --->
+		<cfif updatenumber.opt_value LT 40>
+			<!--- Increase type_id column in table file_types --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					alter table file_types <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column <cfelse>modify </cfif> type_id #thevarchar#(10)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<!--- Add column to settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
