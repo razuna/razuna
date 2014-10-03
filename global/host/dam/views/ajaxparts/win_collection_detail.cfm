@@ -63,7 +63,7 @@
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<cfif qry_assets.recordcount NEQ 0>
 						<!--- If released --->
-						<cfif qry_detail.col_released>
+						<cfif qry_detail.col_released EQ 'true'>
 							<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
 						<!--- Not released --->
 						<cfelse>
@@ -133,7 +133,7 @@
 										</cfloop>
 									</table>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
@@ -200,7 +200,7 @@
 										</cfloop>
 									</table>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
@@ -251,7 +251,7 @@
 										</cfloop>
 									</table>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
@@ -296,7 +296,7 @@
 										</cfif>
 									</cfloop>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
@@ -321,7 +321,7 @@
 				<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; Back to Collection list</a></div>
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<!--- If released --->
-					<cfif qry_detail.col_released>
+					<cfif qry_detail.col_released EQ 'true'>
 						<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
 					<!--- Not released --->
 					<cfelse>
@@ -604,8 +604,8 @@
 		}
 		// Back to Collection List
 		function backtocol(){
-			$('##rightside').load('#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=#qry_detail.col_released#', function(){
-				<cfif qry_detail.col_released>
+			$('##rightside').load('#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=#iif(qry_detail.col_released EQ '','false',qry_detail.col_released)#', function(){
+				<cfif qry_detail.col_released EQ 'true'>
 					//$('##tabsfolder_tab').tabs('select','##contentrel');
 					var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
 					$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );

@@ -385,7 +385,7 @@
 		END as colaccess
 	</cfif>
 	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
-	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE ct.col_id_r = c.col_id
 	AND c.col_id = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
