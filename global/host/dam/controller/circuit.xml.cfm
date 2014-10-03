@@ -3260,18 +3260,18 @@
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="removefile(attributes)" />
 		<!-- Show the folder listing -->
-		<!-- <if condition="attributes.loaddiv NEQ ''">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'assets'">
+				<if condition="attributes.loaddiv EQ 'content'">
 					<true>
-						<do action="trash_assets" />
+						<do action="folder_content"/>
 					</true>
 					<false>
 						<do action="folder_files" />
 					</false>
 				</if>
 			</true>
-		</if> -->
+		</if>
 	</fuseaction>
 	<!-- Move images to trash-->
 	<fuseaction name="images_trash">
@@ -3332,6 +3332,19 @@
 		<do action="storage" />
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
+		<!-- Show the folder listing -->
+		<if condition="attributes.loaddiv NEQ ''">
+			<true>
+				<if condition="attributes.loaddiv EQ 'content'">
+					<true>
+						<do action="folder_content"/>
+					</true>
+					<false>
+						<do action="folder_images" />
+					</false>
+				</if>
+			</true>
+		</if>
 	</fuseaction>
 	<!-- Remove videos -->
 	<fuseaction name="images_remove_related">
@@ -3391,18 +3404,18 @@
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideo(attributes)" />
 		<!-- Show the folder listing -->
-		<!-- <if condition="attributes.loaddiv NEQ ''">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'assets'">
+				<if condition="attributes.loaddiv EQ 'content'">
 					<true>
-						<do action="trash_assets" />
+						<do action="folder_content"/>
 					</true>
 					<false>
 						<do action="folder_videos" />
 					</false>
 				</if>
 			</true>
-		</if> -->
+		</if>
 	</fuseaction>
 	<!-- Remove related videos -->
 	<fuseaction name="videos_remove_related">
@@ -3473,24 +3486,24 @@
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.trashkind" value="assets" />
 		<!--Path-->
-        <set name="attributes.thepathup" value="#expandPath('../../')#" />
-        <!--Set trash directory path-->
-        <set name="attributes.thetrash" value="trash" />
+	        <set name="attributes.thepathup" value="#expandPath('../../')#" />
+	        <!--Set trash directory path-->
+	        <set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->
-		<!-- <if condition="attributes.loaddiv NEQ ''">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'assets'">
+				<if condition="attributes.loaddiv EQ 'content'">
 					<true>
-						<do action="trash_assets" />
+						<do action="folder_content"/>
 					</true>
 					<false>
 						<do action="folder_audios" />
 					</false>
 				</if>
 			</true>
-		</if> -->
+		</if>
 	</fuseaction>
 	<!-- Remove related audios -->
 	<fuseaction name="audios_remove_related">
