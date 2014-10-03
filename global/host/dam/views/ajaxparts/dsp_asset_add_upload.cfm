@@ -88,14 +88,14 @@ $(function() {
 		<cfif attributes.nopreview EQ 0>
 			,		
 			preinit : function(up) {
-				up.bind('UploadFile', function() {
+				up.bind('UploadFile', function(up, file) {
 					// RAZ-2907 check the condition for bulk upload versions
 					<cfif structKeyExists(attributes,'file_id') AND attributes.file_id EQ 0>
 						up.settings.url = '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=' + S4();
-						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
+						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val(), file_size:file.size};
 					<cfelse>
 						up.settings.url = '#myself#c.asset_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&nopreview=#attributes.nopreview#&type=#attributes.type#&thefieldname=file&_v=' + S4();
-						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), preview: false };
+						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), preview: false, file_size:file.size};
 					</cfif>
 					
 				});

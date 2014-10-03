@@ -1748,19 +1748,44 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
 	</cfif>
-	<!--- If this is zip file then try and read the file to ensure it is not corrupted --->
-	<cfif arguments.thestruct.qryfile.extension EQ "zip">
+
+	<!--- Catch issues with file not being fully uploaded to server due to interruption in data transfer. Happens if you 'Re-start Upload' or close plupload window during data transfer and then re-open which cancels previous uploads in progress --->
+	<cfif isdefined('arguments.thestruct.file_size')><!---  Check if file size reported by client via plupload is defined --->
+		<cfset var filesize_onserver = getfileinfo("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#").size> <!--- Get file size on server --->
+		<!--- Compare file size on server to actual file size reported by client and if size error > 1% abort --->
+		<cfif (1 - filesize_onserver/arguments.thestruct.file_size)*100 GT 1>
+			<!--- Log to console --->
+			<cfset console('Partial file upload: #arguments.thestruct.qryfile.filename#. Aborting.')>
+			<!--- Delete leftover entries --->
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#audios WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#videos WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#files WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+			</cfquery>
+			<cfabort>
+		</cfif>
+	</cfif>
+	<!--- If this is zip file and extract is set to yes then try and read the file to ensure it is not corrupted --->
+	<cfif arguments.thestruct.qryfile.extension EQ "zip" AND arguments.thestruct.zip_extract>
 		<cftry>
 			<cfset var zipinfo = "">
 			<cfzip action="list" zipfile="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" variable="zipinfo"/>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error reading zip file. Please ensure file is a valid zip archive."/>
+				<cfset cfcatch.custom_message = "Error reading zip file '#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#'. Please ensure file is a valid zip archive."/>
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 				<cfset var transvalues = arraynew()>
 				<cfset transvalues[1] = "#arguments.thestruct.qryfile.filename#">
 				<cfinvoke component="defaults" method="trans" transid="zip_not_added_subject" values="#transvalues#" returnvariable="zip_not_added_sub" />
 				<cfinvoke component="defaults" method="trans" transid="zip_not_added_message" values="#transvalues#" returnvariable="zip_not_added_msg" />
 				<cfinvoke component="email" method="send_email" subject="#zip_not_added_sub#" themessage="#zip_not_added_msg#">
+				<!--- Delete leftover entries --->
 				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 					DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
 				</cfquery>
@@ -1777,6 +1802,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfcatch>
 		</cftry>
 	</cfif>
+
 	<!--- Query to get the settings --->
 	<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
@@ -4000,7 +4026,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Extract ZIP --->
 		<cfset var tzip = "zip" & thetemp>
 		<cfthread name="#tzip#" intstruct="#arguments.thestruct#" action="run">
-			<cfzip action="extract" zipfile="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qryfile.path#" timeout="9000" charset="utf-8">
+			<cfzip action="extract" zipfile="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qryfile.path#" charset="utf-8">
 		</cfthread>
 		<cfthread action="join" name="#tzip#" />
 		<!--- Get folder level of the folder we are in to create new folder --->
@@ -7280,7 +7306,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Extract ZIP --->
 		<cfset var tzip = "zip" & thetemp>
 		<cfthread name="#tzip#" intstruct="#arguments.thestruct#" action="run">
-			<cfzip action="extract" zipfile="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qryfile.path#" timeout="9000" charset="utf-8">
+			<cfzip action="extract" zipfile="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qryfile.path#" charset="utf-8">
 		</cfthread>
 		<cfthread action="join" name="#tzip#" />
 		<!--- Get folder level of the folder we are in to create new folder --->

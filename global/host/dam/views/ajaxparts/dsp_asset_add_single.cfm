@@ -48,16 +48,19 @@
 	<cfelse>
 	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&nopreview=#attributes.nopreview#&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
 	</cfif>
-	<cfif attributes.nopreview EQ 0>		
+	<cfif attributes.nopreview EQ 0>
+		<div  style="text-align:center;">
 		<cfif structkeyexists(attributes,"_w")>
-			<a href="##" onclick="#theaddurl#';" style="float:right;">
+			<input type="button" onclick="#theaddurl#';" class="awesome medium grey" value="#myFusebox.getApplicationData().defaults.trans("uploader_restart")#" itle="#myFusebox.getApplicationData().defaults.trans("uploader_restart_info")#"/>
 		<cfelse>
-			<a href="##" onclick="$('##addsingle').load('#theaddurl#');" style="float:right;">
-		</cfif>Restart uploading again</a>
+			<input type="button" onclick="$('##addsingle').load('#theaddurl#');" class="awesome medium grey" value="#myFusebox.getApplicationData().defaults.trans("uploader_restart")#" title="#myFusebox.getApplicationData().defaults.trans("uploader_restart_info")#"/>
+		</cfif>
+		</div>
 	</cfif>
+
 	<cfif cgi.http_user_agent DOES NOT CONTAIN "chromeframe" AND cgi.http_user_agent DOES NOT CONTAIN "msie">
 		<br />
-		If the uploader does not perform well then maybe switching to another runtime could help?<br />Switch to: 
+		#myFusebox.getApplicationData().defaults.trans("uploader_switch")#
 		<cfif structkeyexists(attributes,"_w")>
 			<a href="##" onclick="#theaddurl#&pluploadruntimes=html5';">Html5</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=flash';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4';">Html4</a>
 		<cfelse>
@@ -65,7 +68,7 @@
 		</cfif>
 	<cfelse>
 		<br />
-		If the uploader does not perform well then maybe switching to another runtime could help?<br />Switch to: 
+		#myFusebox.getApplicationData().defaults.trans("uploader_switch")#
 		<cfif structkeyexists(attributes,"_w")>
 			<a href="##" onclick="#theaddurl#&pluploadruntimes=flash';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4';">Html4</a>
 		<cfelse>
