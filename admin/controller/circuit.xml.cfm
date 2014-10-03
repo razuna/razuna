@@ -1369,7 +1369,7 @@
 		<!-- Save WL -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_options(attributes)" />
 		<!-- Save CSS -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_css(attributes.thecss,pathoneup)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_css(attributes.wl_thecss,pathoneup)" />
 	</fuseaction>
 	<!-- News -->
 	<fuseaction name="wl_news">
