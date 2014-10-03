@@ -62,6 +62,7 @@
 		</cfif>
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
+		<cfset var qryuser = "">
 		<!--- Check for the user --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
@@ -84,21 +85,20 @@
 		</cfif>
 		AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 		</cfquery>
-		
-		<!--- Strip out username from AD and LDAP strings if present --->
-		<cfif arguments.thestruct.name contains "\"> <!--- e.g. razuna\aduser for windows AD users --->
-			<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> 
-		<cfelseif arguments.thestruct.name contains "uid="><!---  e.g. uid=aduser,ou=service,dc=utmb,dc=edu for LDAP users who are non AD --->
-			<cfset var adusername = gettoken(gettoken(arguments.thestruct.name,1,","),2,"=")> 
-		<cfelse>
-			<cfset var adusername = arguments.thestruct.name> 
-		</cfif>
 
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
 				<cfset session.ldapauthfail = "">
 				<cftry>
+					<!--- Strip out username from AD and LDAP strings if present --->
+					<cfif arguments.thestruct.name contains "\"> <!--- e.g. razuna\aduser for windows AD users --->
+						<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> 
+					<cfelseif arguments.thestruct.name contains "uid="><!---  e.g. uid=aduser,ou=service,dc=utmb,dc=edu for LDAP users who are non AD --->
+						<cfset var adusername = gettoken(gettoken(arguments.thestruct.name,1,","),2,"=")> 
+					<cfelse>
+						<cfset var adusername = arguments.thestruct.name> 
+					</cfif>
 					<!--- Check for the user --->
 					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
