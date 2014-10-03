@@ -4168,6 +4168,12 @@
 	<cfparam default="0" name="session.type">
 	<cfparam default="F" name="arguments.thestruct.actionismove">
 	<cfparam default="0" name="session.thegroupofuser">
+	<cfparam default="r,w,x" name="arguments.thestruct.permlist">
+	<!--- If specific permissions defined then use those --->
+	<cfif isdefined("session.permlist")>
+		<cfset arguments.thestruct.permlist = session.permlist>
+		<cfset structDelete(session, "permlist")>
+	</cfif>
 	<cfset var qry = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
@@ -4186,7 +4192,7 @@
 					FROM #session.hostdbprefix#folders_groups fg
 					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg.folder_id_r = f.folder_id
-					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.permlist#" list="true">)
 					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 					) THEN 'unlocked'
 				<!--- When folder is shared for everyone --->
@@ -4196,7 +4202,7 @@
 					WHERE fg2.grp_id_r = '0'
 					AND fg2.folder_id_r = f.folder_id
 					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.permlist#" list="true">)
 					) THEN 'unlocked'
 				<!--- If this is the user folder or he is the owner --->
 				WHEN f.folder_owner = '#Session.theUserID#' THEN 'unlocked'
@@ -4250,7 +4256,7 @@
 				AND fg3.host_id = s2.host_id
 				AND s2.folder_id_r = f.folder_id
 				AND fg3.folder_id_r = s2.folder_id
-				AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.permlist#" list="true">)
 				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				<!--- If this is a move then dont show the folder that we are moving --->
 				<cfif (arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
@@ -4275,7 +4281,7 @@
 				ANd s3.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND fg4.grp_id_r = '0'
 				AND fg4.folder_id_r = s3.folder_id
-				AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.permlist#" list="true">)
 				AND s3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND s3.host_id = fg4.host_id
 				<!--- If this is a move then dont show the folder that we are moving --->
@@ -4372,7 +4378,6 @@
 	</cfif>
 	ORDER BY lower(folder_name)
 	</cfquery>
-	
 	<!--- Create the XML --->
 	<cfif theid EQ 0>
 		<!--- This is the ROOT level  --->
