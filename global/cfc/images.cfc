@@ -1187,9 +1187,11 @@
 	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai" OR arguments.thestruct.qry_detail.img_extension EQ "tif" OR arguments.thestruct.qry_detail.img_extension EQ "tiff">
 		<cfset var theargument = "#arguments.thestruct.thesource#[0]">
 		<cfset var theflatten = "-flatten ">
+		<cfset var densitySettings = " -density 300 ">
 	<cfelse>
 		<cfset var theargument = "#arguments.thestruct.thesource#">
 		<cfset var theflatten = "">
+		<cfset var densitySettings = "">
 	</cfif>
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
@@ -1327,12 +1329,12 @@
 					<cfset arguments.thestruct.xres = "72">
 					<cfset arguments.thestruct.yres = "72">
 				</cfif>
-				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
+				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
 			<cfelse>
-				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
+				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
 			</cfif>
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
+			<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
 		</cfif>
 		<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
 		<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
@@ -1350,12 +1352,12 @@
 
 		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'>
 			<cfif theformat NEQ 'gif' >
-				<cfset var theimargumentsthumb = "#theoriginalasset#[0] #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
+				<cfset var theimargumentsthumb = "#densitySettings# #theoriginalasset#[0] #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
 			<cfelse>
-				<cfset var theimargumentsthumb = "#theoriginalasset# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
+				<cfset var theimargumentsthumb = "#densitySettings# #theoriginalasset# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
 			</cfif>
 		<cfelse>
-			<cfset var theimargumentsthumb = "#theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
+			<cfset var theimargumentsthumb = "#densitySettings# #theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
 		</cfif>
 
 		<!--- Create script files --->
