@@ -45,7 +45,7 @@
 					<cfloop list="#crumbs#" delimiters=";" index="i">
 						<cfset folderpath = folderpath & "/#ListGetAt(i,1,'|')#">
 						<cfif ListGetAt(i,1,'|') EQ 'My Folder'>
-							<cfset folderpath = folderpath & " (#user#)">
+							<cfset folderpath = folderpath & " (#username#)">
 						</cfif>
 					</cfloop>
 					#folderpath#

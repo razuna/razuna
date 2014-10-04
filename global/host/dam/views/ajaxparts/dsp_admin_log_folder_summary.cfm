@@ -68,7 +68,7 @@
 			<tr>
 				<td>
 					<cfif sf_cnt GT 0><a href="##" onclick="loadcontent('log_show','#myself#c.log_folder_summary&folder_id=#folder_id#&showcrumbs=yes');"></cfif>
-						#folder_name#<cfif folder_name EQ 'My Folder'> (#user#)</cfif>
+						#folder_name#<cfif folder_name EQ 'My Folder'> (#username#)</cfif>
 					<cfif sf_cnt GT 0></a></cfif>
 				</td>
 				<cfloop query="totals">
