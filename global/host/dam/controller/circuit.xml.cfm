@@ -5821,12 +5821,14 @@
 		<!-- If we save the basket as zip in this folder do... -->
 		<if condition="session.type EQ 'saveaszip'">
 			<true>
+				<set name="session.permlist" value="w,x" /><!-- Define permission to only display folders with write permissions for user -->
 				<set name="session.savehere" value="c.saveaszip_form" />
 			</true>
 		</if>
 		<!-- If we save the basket as collection in this folder do... -->
 		<if condition="session.type EQ 'saveascollection'">
 			<true>
+				<set name="session.permlist" value="w,x" /><!-- Define permission to only display collections with write permissions for user -->
 				<set name="session.savehere" value="c.saveascollection_form" />
 			</true>
 		</if>
