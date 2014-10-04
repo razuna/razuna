@@ -398,6 +398,11 @@
 			DELETE FROM #session.hostdbprefix#share_options
 			WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
+			<!--- Delete aliases --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_aliases
+			WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 			<!--- Delete labels --->
 			<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
 			<!--- Custom field values --->
@@ -705,6 +710,11 @@
 				<!--- Delete from Share Options --->
 				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM #arguments.thestruct.hostdbprefix#share_options
+				WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+				</cfquery>
+				<!--- Delete aliases --->
+				<cfquery datasource="#application.razuna.datasource#">
+				DELETE FROM ct_aliases
 				WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Delete labels --->

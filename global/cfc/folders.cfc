@@ -1441,6 +1441,11 @@
 			<cfset parentid.folder_id_r = 0>
 		</cfif>
 		<cfif foldername.recordcount NEQ 0>
+			<!--- Delete aliases --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_aliases
+			WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 			<!--- Delete main folder --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM	#session.hostdbprefix#folders
