@@ -1243,6 +1243,7 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="F" name="arguments.thestruct.iscol">
+		<cfparam name="session.search.edit_ids" default = "0">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("search")>
 		<cfset variables.cachetokenlogs = getcachetoken("logs")>
@@ -1322,7 +1323,7 @@
 								AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 								AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 								) THEN 'unlocked'
-							WHEN (lower(fo.folder_of_user) = 't' AND fo.folder_owner = '#session.theuserid#') THEN 'unlocked'
+							WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 							ELSE 'locked'
 						END as perm,
 					</cfif>	
@@ -1425,7 +1426,7 @@
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
-								WHEN (lower(fo.folder_of_user) = 't' AND fo.folder_owner = '#session.theuserid#') THEN 'unlocked'
+								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
 							END as perm,
 					</cfif>	
@@ -1533,7 +1534,7 @@
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
-								WHEN (lower(fo.folder_of_user) = 't' AND fo.folder_owner = '#session.theuserid#') THEN 'unlocked'
+								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
 							END as perm,
 						</cfif> 
@@ -1647,7 +1648,7 @@
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
-								WHEN (lower(fo.folder_of_user) = 't' AND fo.folder_owner = '#session.theuserid#') THEN 'unlocked'
+								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
 							END as perm,
 						</cfif>
