@@ -5027,6 +5027,9 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />
 			</true>
 		</if>
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- ACTION: Search all -->
 		<if condition="attributes.thetype EQ 'all'">
 			<true>
