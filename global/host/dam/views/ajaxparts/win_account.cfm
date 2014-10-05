@@ -24,5 +24,5 @@
 *
 --->
 <cfoutput>
-	<iframe id="accountframe" allowTransparency="true" width="100%" height="600" scrolling="auto" frameborder="0" src="https://secure.razuna.com/account.cfm?userid=#userid#&hostid=#hostid#&v=#createuuid()#"></iframe>
+	<iframe id="accountframe" allowTransparency="true" width="100%" height="600" scrolling="auto" frameborder="0" src="https://razuna.com/account.cfm?userid=#userid#&hostid=#hostid#&v=#createuuid()#"></iframe>
 </cfoutput>
