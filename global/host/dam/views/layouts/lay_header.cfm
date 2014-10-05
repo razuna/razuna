@@ -36,7 +36,7 @@
 	<cfset w = 100>
 </cfif>
 <cfoutput>
-	<form name="form_account" id="form_account" action="https://secure.razuna.com/account.cfm" method="post">
+	<form name="form_account" id="form_account" action="https://razuna.com/account.cfm" method="post">
 		<input type="hidden" name="userid" value="#session.theuserid#">
 		<input type="hidden" name="hostid" value="#session.hostid#">
 		<input type="hidden" name="a" value="">
