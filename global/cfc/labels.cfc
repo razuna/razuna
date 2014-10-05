@@ -33,6 +33,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Check if users are allowed to add labels --->
 		<cfinvoke component="settings" method="get_label_set" returnvariable="perm" />
+		<cfset var qry = "">
 		<!--- Check if label exists --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_text, label_id AS labelid
@@ -102,6 +103,7 @@
 	<!--- Add labels --->
 	<cffunction name="label_add_all_thread" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var i = "">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
 		<!--- Update Dates --->
@@ -190,11 +192,12 @@
 	<!--- Add label from batch --->
 	<cffunction name="label_add_batch" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var j = "">
 		<!--- Loop over files_ids --->
 		<cfthread intstruct="#arguments.thestruct#">
-			<cfloop list="#attributes.intstruct.file_ids#" index="i">
-				<cfset attributes.intstruct.fileid = listfirst(i,"-")>
-				<cfset attributes.intstruct.thetype = listlast(i,"-")>
+			<cfloop list="#attributes.intstruct.file_ids#" index="j">
+				<cfset attributes.intstruct.fileid = listfirst(j,"-")>
+				<cfset attributes.intstruct.thetype = listlast(j,"-")>
 				<!--- Now pass each asset to the function above to add labels --->
 				<cfinvoke method="label_add_all" thestruct="#attributes.intstruct#" />
 			</cfloop>
@@ -237,6 +240,7 @@
 	<!--- Remove the label of a record --->
 	<cffunction name="label_remove" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Get label id --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id
@@ -265,6 +269,7 @@
 		<!--- Params --->
 		<cfset var st = structnew()>
 		<cfset var l = "">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getalllabels */ label_text, label_path, label_id
@@ -328,6 +333,7 @@
 		<cfargument name="thetype" type="string">
 		<!--- Param --->
 		<cfset var l = "">
+		<cfset var qry = "">
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabelstextexport */ ct_label_id
@@ -391,6 +397,7 @@
 	<cffunction name="labels_dropdown" output="true" access="public">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("labels")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_dropdown */ label_id, label_id_r, label_path, label_text
@@ -409,6 +416,7 @@
 		<cfargument name="id" type="string" required="true">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("labels")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_query */ l.label_text, l.label_id,
@@ -437,45 +445,45 @@
 				OR
 				EXISTS (
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  fo.folder_id AND folder_owner = '#session.theuserid#' 
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#collections WHERE col_id =  c.col_id AND col_owner = '#session.theuserid#' 
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#' 
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#' 
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#' 
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  fi.folder_id_r AND folder_owner = '#session.theuserid#' 
 					) 
 				OR
 				<!--- Check if folder privilege is 'Everyone', groupid=0 --->
 				EXISTS (
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  fo.folder_id = f.folder_id_r  AND f.grp_id_r = '0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#collections_groups cg WHERE c.col_id = cg.col_id_r AND cg.grp_id_r = '0' 
-					UNION
+					UNION ALL
 					SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND  f.grp_id_r = '0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE fi.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
 					)
 				OR
 				<!--- Check is user is in group that has access --->
 				EXISTS (
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups cg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND c.col_id = cg.col_id_r AND cg.grp_id_r = cc.ct_g_u_grp_id AND lower(cg.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
 					)
 				)
@@ -485,11 +493,11 @@
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND fi.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					) THEN 0
 				ELSE 1 END  = 1
@@ -524,6 +532,7 @@
 	<!--- Get label text with cache --->
 	<cffunction name="getlabeltext" output="false" access="public">
 		<cfargument name="theid" type="string">
+		<cfset var qry = "">
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabeltext */ label_text
@@ -538,6 +547,7 @@
 	<!--- Count items for one label --->
 	<cffunction name="labels_count" output="false" access="public">
 		<cfargument name="label_id" type="string">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT DISTINCT /* #variables.cachetoken#labels_count */
@@ -562,31 +572,31 @@
 				OR
 				EXISTS (
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  i.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  a.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  v.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id =  f.folder_id_r AND folder_owner = '#session.theuserid#'  AND in_trash = 'F'
 					) 
 				OR
 				EXISTS (
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0'
-					UNION
+					UNION ALL
 					SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0'
 					)
 				OR
 				EXISTS (
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('r','w','x')
 					)
 				)
@@ -596,11 +606,11 @@
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
-					UNION
+					UNION ALL
 					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					) THEN 0
 				ELSE 1 END  = 1
@@ -697,6 +707,7 @@
 		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("labels")>
+		<cfset var qry = "">
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -987,14 +998,22 @@
 				WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 			</cfif>
 			</cfquery>
+			<!--- Init var for new fileid --->
+			<cfset var editids = "0,">
 			<!--- Get proper folderaccess --->
 			<cfloop query="qry">
 				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 				<!--- Add labels query --->
 				<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+				<!--- Store only file_ids where folder access is not read-only --->
+				<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+					<cfset editids = editids & fileidwithtype & ",">
+				</cfif>
 			</cfloop>
 			<!--- Add the custom fields to query --->
 			<cfinvoke component="folders" method="addCustomFieldsToQuery" theqry="#qry#" returnvariable="qry" />
+			<!--- Save the editable ids in a session --->
+			<cfset session.search.edit_ids = editids>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -1058,6 +1077,7 @@
 	
 	<!--- ADMIN: Get all labels --->
 	<cffunction name="admin_get" output="false" access="public">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text
@@ -1072,6 +1092,7 @@
 	<!--- ADMIN: Get one labels --->
 	<cffunction name="admin_get_one" output="false" access="public">
 		<cfargument name="label_id" type="string">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text, label_id_r
@@ -1186,6 +1207,7 @@
 	<cffunction name="label_get_path" output="false" access="public" returnType="string">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="llist" default="" type="string" required="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text, label_id_r
@@ -1207,6 +1229,7 @@
 	<cffunction name="label_get_path_down" output="false" access="public" returnType="string">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="llist" default="" type="string" required="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id, label_text, label_id_r
@@ -1235,6 +1258,7 @@
 	<cffunction name="label_get_ids" output="false" access="public" returnType="string">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="llist" default="" type="string" required="false">
+		<cfset var qry = "">
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT label_id,label_id_r
@@ -1256,6 +1280,7 @@
 	<!--- Get the all labels for show --->
 	<cffunction name="get_all_labels_for_show" output="true" access="public" returntype="Query" hint="Get the all labels for show" >
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT  /* #variables.cachetoken#get_all_labels_for_show */ <cfif application.razuna.thedatabase EQ "mssql">Top 20 </cfif> label_id, label_id_r, label_path, label_text
@@ -1347,6 +1372,7 @@
 	<!--- Get the search label index (A,B,..Z) --->
 	<cffunction name="get_search_label_index" output="true" access="public" returntype="Query" hint="Get the search label text" >
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT DISTINCT LEFT(UPPER(RTRIM(LTRIM(label_text))),1) AS label_text_index FROM #session.hostdbprefix#labels ORDER BY label_text_index

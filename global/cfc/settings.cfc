@@ -44,6 +44,7 @@
 
 <!--- Get md5check value --->
 <cffunction name="getmd5check">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getmd5check */ set2_md5check
 	FROM #session.hostdbprefix#settings_2
@@ -76,8 +77,9 @@
 
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body 
+	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -101,7 +103,8 @@
 	set2_custom_file_ext = <cfqueryparam value="#arguments.thestruct.set2_custom_file_ext#" cfsqltype="cf_sql_varchar">,
 	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">,
 	set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">,
-	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">
+	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">,
+	set2_meta_export = <cfqueryparam value="#arguments.thestruct.set2_meta_export#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -114,6 +117,7 @@
 	<!--- Get host --->
 	<cfset x.host_id = session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_global */ SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER, 
 	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT, SET2_EMAIL_USE_SSL, SET2_EMAIL_USE_TLS
@@ -129,6 +133,7 @@
 	<!--- Get host --->
 	<cfset x.host_id = session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_meta */ set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
 	FROM #qry_host.host_shard_group#settings_2
@@ -143,6 +148,7 @@
 	<!--- Get host --->
 	<cfset x.host_id = session.hostid>
 	<cfinvoke component="hosts" method="getdetail" thestruct="#x#" returnvariable="qry_host" />
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_dam */ set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails, 
 	set2_intranet_reg_emails_sub, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing,
@@ -156,6 +162,7 @@
 
 <!--- Settings for Website --->
 <cffunction name="prefs_web">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_web */ set2_url_website, set2_payment_cc, set2_payment_cc_cards, set2_payment_bill, set2_payment_pod, set2_payment_pre, set2_payment_paypal
 	FROM #session.hostdbprefix#settings_2
@@ -196,6 +203,7 @@
 
 <!--- Settings for Video --->
 <cffunction name="prefs_video">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_video */ set2_create_vidfolders_where, set2_cat_vid_intra, set2_cat_vid_web, <!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> set2_vid_preview_author, set2_vid_preview_copyright, set2_rendition_metadata
 	FROM #session.hostdbprefix#settings_2
@@ -214,6 +222,7 @@
 
 <!--- Settings for Oracle --->
 <cffunction name="prefs_oracle">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_oracle */ set2_url_app_server, set2_ora_path_internal, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw, set2_url_sp_video, set2_url_sp_video_preview, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing
 	FROM #session.hostdbprefix#settings_2
@@ -226,6 +235,7 @@
 <!--- Settings for Storage --->
 <cffunction name="prefs_storage">
 	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_storage */ 
 	set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket, set2_img_format,
@@ -238,6 +248,7 @@
 
 <!--- Settings for File Types --->
 <cffunction name="prefs_types">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT type_id, type_type, type_mimecontent, type_mimesubcontent
 	FROM file_types
@@ -289,6 +300,7 @@
 
 <!--- Languages: Get Languages --->
 <cffunction name="lang_get">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#lang_get */ lang_id, lang_name, lang_active
 	FROM #session.hostdbprefix#languages
@@ -302,6 +314,7 @@
 <!--- Languages: Update Languages --->
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<!--- Get the xml files in the translation dir --->
 	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/global/translations" name="thelangs" />
 	<cfquery dbtype="query" name="thelangs">
@@ -386,6 +399,7 @@
 
 <!--- Labels: get --->
 <cffunction name="get_label_set">
+	<cfset var qry = "">
 	<!--- Set the active field to f on all languages --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_label_set */ set2_labels_users
@@ -418,6 +432,7 @@
 
 <!--- GET GLOBAL Settings --->
 <cffunction name="get_global" access="remote" returnType="query">
+	<cfset var qry = "">
 	<!--- Select --->
 	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_global */ 
@@ -1144,6 +1159,7 @@
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefaultadmin" output="false">
 	<cfargument name="pathoneup" default="" required="yes" type="string">
+	<cfset var qry = "">
 	<!--- Check DB --->
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
@@ -1344,6 +1360,7 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefaultapi" output="false">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, 
@@ -1375,6 +1392,7 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefault" output="false">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_aka_token,
@@ -1406,7 +1424,7 @@
 		<cfset application.razuna.api.thehttp = "http://">
 	</cfif>
 	<!--- RAZ-2812 Most recently updated assets  --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_options">
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="qry_options">
 		SELECT opt_value FROM options 
 		WHERE opt_id='SHOW_UPDATES' 
 	</cfquery>
@@ -1414,12 +1432,13 @@
 		<cfset application.razuna.show_recent_updates = qry_options.opt_value>
 	<cfelse>
 		<cfset application.razuna.show_recent_updates = 'false'>
-	</cfif>
+	</cfif> --->
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
 <cffunction name="translationsearch" output="false" returntype="query">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT trans_id, trans_text, lang_id_r
 	FROM #session.hostdbprefix#translations
@@ -1440,6 +1459,7 @@
 <!--- DETAIL TRANSLATION --->
 <cffunction name="translationdetail" output="false" returntype="query">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT trans_id, trans_text, lang_id_r
 	FROM #session.hostdbprefix#translations
@@ -1706,6 +1726,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- PARSE NEWS --->
 <cffunction name="news_get" output="false">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
 	SELECT news_title, news_text, news_text_long, news_date
@@ -1764,6 +1785,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get Backup DB --->
 <cffunction name="get_backup" output="false">
 	<cfargument name="hostid" type="numeric">
+	<cfset var qry = "">
 	<cfquery datasource="razuna_backup" name="qry">
 	SELECT back_id, back_date, host_id
 	FROM backup_status
@@ -1857,7 +1879,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.myfolder_create = true>
 	<cfset v.myfolder_upload = true>
 	<cfset v.show_top_part = true>
-	<cfset v.show_bottom_part = true>
+	<cfset v.show_basket_part = true>
+	<cfset v.show_favorites_part = true>
+	<cfset v.show_manage_part = true>
+	<cfset v.show_manage_part_slct = "">
+	<cfset v.show_trash_icon = true>
+	<cfset v.show_trash_icon_slct = "">
 	<cfset v.show_twitter = true>
 	<cfset v.tab_twitter = true>
 	<cfset v.show_facebook = true>
@@ -1877,6 +1904,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.tab_pdf = true>
 	<cfset v.tab_doc = true>
 	<cfset v.tab_xls = true>
+	<cfset v.icon_alias = true>
+	<cfset v.icon_alias_slct = "">
+	<cfset v.icon_move = true>
+	<cfset v.icon_move_slct = "">
+	<cfset v.icon_batch = true>
+	<cfset v.icon_batch_slct = "">
+	<cfset v.icon_metadata_export = true>
+	<cfset v.icon_metadata_export_slct = "">
+	<cfset v.icon_metadata_import = true>
+	<cfset v.icon_metadata_import_slct = "">
 	<cfset v.icon_select = true>
 	<cfset v.icon_refresh = true>
 	<cfset v.icon_show_subfolder = true>
@@ -1886,8 +1923,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.icon_print = true>
 	<cfset v.icon_rss = true>
 	<cfset v.icon_word = true>
-	<cfset v.icon_metadata_import = true>
-	<cfset v.icon_metadata_export = true>
 	<cfset v.icon_download_folder = true>
 	<cfset v.tab_description_keywords = true>
 	<cfset v.tab_custom_fields = true>
@@ -1921,12 +1956,31 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.req_filename = true>
 	<cfset v.req_description = false>
 	<cfset v.req_keywords = false>
+	<cfset v.show_metadata_labels = true>
 	<cfset v.images_metadata = "">
 	<cfset v.videos_metadata = "">
 	<cfset v.files_metadata = "">
 	<cfset v.audios_metadata = "">
+	<cfset v.images_metadata_top = "">
+	<cfset v.videos_metadata_top = "">
+	<cfset v.files_metadata_top = "">
+	<cfset v.audios_metadata_top = "">
+	<cfset v.cf_images_metadata_top = "">
+	<cfset v.cf_videos_metadata_top = "">
+	<cfset v.cf_files_metadata_top = "">
+	<cfset v.cf_audios_metadata_top = "">
 	<cfset v.assetbox_height = "">
 	<cfset v.assetbox_width = "">
+	<cfset v.windows_netpath2asset = "">
+	<cfset v.mac_netpath2asset = "">
+	<cfset v.unix_netpath2asset = "">
+	<cfset v.basket_awsurl = "">
+	<!--- File detail button fields --->
+	<cfset v.btn_email_slct = "">
+	<cfset v.btn_ftp_slct = "">
+	<cfset v.btn_basket_slct = "">
+	<cfset v.btn_print_slct = "">
+	<cfset v.btn_collection_slct = "">
 	<!--- RAZ-2267 Set the default value --->
 	<cfset v.tab_explorer_default = 1>
 	<!--- RAZ-2834 Set the default value --->
@@ -1940,230 +1994,225 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.cf_videos_metadata = "">
 	<cfset v.cf_files_metadata = "">
 	<cfset v.cf_audios_metadata = "">
+	<!--- For basket --->
+	<cfset v.ftp_btn_basket = "">
+	<cfset v.publish_btn_basket = "">
+	<cfset v.metadata_btn_basket = "">
+	<cfset v.email_btn_basket = "">
+	<!--- For search --->
+	<cfset v.search_selection = false>
+	<cfset v.hide_search_tabs = false>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
 			<cfif custom_id EQ "folder_redirect">
 				<cfset v.folder_redirect = custom_value>
-			</cfif>
-			<cfif custom_id EQ "myfolder_create" AND !custom_value>
+			<cfelseif custom_id EQ "myfolder_create" AND !custom_value>
 				<cfset v.myfolder_create = false>
-			</cfif>
-			<cfif custom_id EQ "myfolder_upload" AND !custom_value>
+			<cfelseif custom_id EQ "myfolder_upload" AND !custom_value>
 				<cfset v.myfolder_upload = false>
-			</cfif>
-			<cfif custom_id EQ "show_top_part" AND !custom_value>
+			<cfelseif custom_id EQ "show_top_part" AND !custom_value>
 				<cfset v.show_top_part = false>
-			</cfif>
-			<cfif custom_id EQ "show_bottom_part" AND !custom_value>
-				<cfset v.show_bottom_part = false>
-			</cfif>
-			<cfif custom_id EQ "show_twitter" AND !custom_value>
+			<cfelseif custom_id EQ "show_basket_part" AND !custom_value>
+				<cfset v.show_basket_part = false>
+			<cfelseif custom_id EQ "show_favorites_part" AND !custom_value>
+				<cfset v.show_favorites_part = false>
+			<cfelseif custom_id EQ "show_manage_part" AND !custom_value>
+				<cfset v.show_manage_part = false>
+			<cfelseif custom_id EQ "show_trash_icon" AND !custom_value>
+				<cfset v.show_trash_icon = false>
+			<cfelseif custom_id EQ "show_twitter" AND !custom_value>
 				<cfset v.show_twitter = false>
-			</cfif>
-			<cfif custom_id EQ "tab_twitter" AND !custom_value>
+			<cfelseif custom_id EQ "tab_twitter" AND !custom_value>
 				<cfset v.tab_twitter = false>
-			</cfif>
-			<cfif custom_id EQ "show_facebook" AND !custom_value>
+			<cfelseif custom_id EQ "show_facebook" AND !custom_value>
 				<cfset v.show_facebook = false>
-			</cfif>
-			<cfif custom_id EQ "tab_facebook" AND !custom_value>
+			<cfelseif custom_id EQ "tab_facebook" AND !custom_value>
 				<cfset v.tab_facebook = false>
-			</cfif>
-			<cfif custom_id EQ "tab_razuna_blog" AND !custom_value>
+			<cfelseif custom_id EQ "tab_razuna_blog" AND !custom_value>
 				<cfset v.tab_razuna_blog = false>
-			</cfif>
-			<cfif custom_id EQ "tab_razuna_support" AND !custom_value>
+			<cfelseif custom_id EQ "tab_razuna_support" AND !custom_value>
 				<cfset v.tab_razuna_support = false>
-			</cfif>
-			<cfif custom_id EQ "tab_collections" AND !custom_value>
+			<cfelseif custom_id EQ "tab_collections" AND !custom_value>
 				<cfset v.tab_collections = false>
-			</cfif>
-			<cfif custom_id EQ "tab_labels" AND !custom_value>
+			<cfelseif custom_id EQ "tab_labels" AND !custom_value>
 				<cfset v.tab_labels = false>
-			</cfif>
-			<cfif custom_id EQ "tab_add_from_server" AND !custom_value>
+			<cfelseif custom_id EQ "tab_add_from_server" AND !custom_value>
 				<cfset v.tab_add_from_server = false>
-			</cfif>
-			<cfif custom_id EQ "tab_add_from_email" AND !custom_value>
+			<cfelseif custom_id EQ "tab_add_from_email" AND !custom_value>
 				<cfset v.tab_add_from_email = false>
-			</cfif>
-			<cfif custom_id EQ "tab_add_from_ftp" AND !custom_value>
+			<cfelseif custom_id EQ "tab_add_from_ftp" AND !custom_value>
 				<cfset v.tab_add_from_ftp = false>
-			</cfif>
-			<cfif custom_id EQ "tab_add_from_link" AND !custom_value>
+			<cfelseif custom_id EQ "tab_add_from_link" AND !custom_value>
 				<cfset v.tab_add_from_link = false>
-			</cfif>
-			<cfif custom_id EQ "tab_images" AND !custom_value>
+			<cfelseif custom_id EQ "tab_images" AND !custom_value>
 				<cfset v.tab_images = false>
-			</cfif>
-			<cfif custom_id EQ "tab_videos" AND !custom_value>
+			<cfelseif custom_id EQ "tab_videos" AND !custom_value>
 				<cfset v.tab_videos = false>
-			</cfif>
-			<cfif custom_id EQ "tab_audios" AND !custom_value>
+			<cfelseif custom_id EQ "tab_audios" AND !custom_value>
 				<cfset v.tab_audios = false>
-			</cfif>
-			<cfif custom_id EQ "tab_other" AND !custom_value>
+			<cfelseif custom_id EQ "tab_other" AND !custom_value>
 				<cfset v.tab_other = false>
-			</cfif>
-			<cfif custom_id EQ "tab_pdf" AND !custom_value>
+			<cfelseif custom_id EQ "tab_pdf" AND !custom_value>
 				<cfset v.tab_pdf = false>
-			</cfif>
-			<cfif custom_id EQ "tab_doc" AND !custom_value>
+			<cfelseif custom_id EQ "tab_doc" AND !custom_value>
 				<cfset v.tab_doc = false>
-			</cfif>
-			<cfif custom_id EQ "tab_xls" AND !custom_value>
+			<cfelseif custom_id EQ "tab_xls" AND !custom_value>
 				<cfset v.tab_xls = false>
-			</cfif>
-			<cfif custom_id EQ "icon_select" AND !custom_value>
+			<cfelseif custom_id EQ "icon_alias" AND !custom_value>
+				<cfset v.icon_alias = false>
+			<cfelseif custom_id EQ "icon_move" AND !custom_value>
+				<cfset v.icon_move = false>
+			<cfelseif custom_id EQ "icon_batch" AND !custom_value>
+				<cfset v.icon_batch = false>
+			<cfelseif custom_id EQ "icon_select" AND !custom_value>
 				<cfset v.icon_select = false>
-			</cfif>
-			<cfif custom_id EQ "icon_refresh" AND !custom_value>
-				<cfset v.icon_refresh = false>
-			</cfif>
-			<cfif custom_id EQ "icon_show_subfolder" AND !custom_value>
+			<cfelseif custom_id EQ "icon_refresh" AND !custom_value>
+				<cfset v.icon_refresFh = false>
+			<cfelseif custom_id EQ "icon_show_subfolder" AND !custom_value>
 				<cfset v.icon_show_subfolder = false>
-			</cfif>
-			<cfif custom_id EQ "icon_create_subfolder" AND !custom_value>
+			<cfelseif custom_id EQ "icon_create_subfolder" AND !custom_value>
 				<cfset v.icon_create_subfolder = false>
-			</cfif>
-			<cfif custom_id EQ "icon_favorite_folder" AND !custom_value>
+			<cfelseif custom_id EQ "icon_favorite_folder" AND !custom_value>
 				<cfset v.icon_favorite_folder = false>
-			</cfif>
-			<cfif custom_id EQ "icon_search" AND !custom_value>
+			<cfelseif custom_id EQ "icon_search" AND !custom_value>
 				<cfset v.icon_search = false>
-			</cfif>
-			<cfif custom_id EQ "icon_print" AND !custom_value>
+			<cfelseif custom_id EQ "icon_print" AND !custom_value>
 				<cfset v.icon_print = false>
-			</cfif>
-			<cfif custom_id EQ "icon_rss" AND !custom_value>
+			<cfelseif custom_id EQ "icon_rss" AND !custom_value>
 				<cfset v.icon_rss = false>
-			</cfif>
-			<cfif custom_id EQ "icon_word" AND !custom_value>
+			<cfelseif custom_id EQ "icon_word" AND !custom_value>
 				<cfset v.icon_word = false>
-			</cfif>
-			<cfif custom_id EQ "icon_metadata_import" AND !custom_value>
+			<cfelseif custom_id EQ "icon_metadata_import" AND !custom_value>
 				<cfset v.icon_metadata_import = false>
-			</cfif>
-			<cfif custom_id EQ "icon_metadata_export" AND !custom_value>
+			<cfelseif custom_id EQ "icon_metadata_export" AND !custom_value>
 				<cfset v.icon_metadata_export = false>
-			</cfif>
-			<cfif custom_id EQ "icon_download_folder" AND !custom_value>
+			<cfelseif custom_id EQ "icon_download_folder" AND !custom_value>
 				<cfset v.icon_download_folder = false>
-			</cfif>
-			<cfif custom_id EQ "tab_description_keywords" AND !custom_value>
+			<cfelseif custom_id EQ "tab_description_keywords" AND !custom_value>
 				<cfset v.tab_description_keywords = false>
-			</cfif>
-			<cfif custom_id EQ "tab_custom_fields" AND !custom_value>
+			<cfelseif custom_id EQ "tab_custom_fields" AND !custom_value>
 				<cfset v.tab_custom_fields = false>
-			</cfif>
-			<cfif custom_id EQ "tab_convert_files" AND !custom_value>
+			<cfelseif custom_id EQ "tab_convert_files" AND !custom_value>
 				<cfset v.tab_convert_files = false>
-			</cfif>
-			<cfif custom_id EQ "tab_comments" AND !custom_value>
+			<cfelseif custom_id EQ "tab_comments" AND !custom_value>
 				<cfset v.tab_comments = false>
-			</cfif>
-			<cfif custom_id EQ "tab_metadata" AND !custom_value>
+			<cfelseif custom_id EQ "tab_metadata" AND !custom_value>
 				<cfset v.tab_metadata = false>
-			</cfif>
-			<cfif custom_id EQ "tab_xmp_description" AND !custom_value>
+			<cfelseif custom_id EQ "tab_xmp_description" AND !custom_value>
 				<cfset v.tab_xmp_description = false>
-			</cfif>
-			<cfif custom_id EQ "tab_iptc_contact" AND !custom_value>
+			<cfelseif custom_id EQ "tab_iptc_contact" AND !custom_value>
 				<cfset v.tab_iptc_contact = false>
-			</cfif>
-			<cfif custom_id EQ "tab_iptc_image" AND !custom_value>
+			<cfelseif custom_id EQ "tab_iptc_image" AND !custom_value>
 				<cfset v.tab_iptc_image = false>
-			</cfif>
-			<cfif custom_id EQ "tab_iptc_content" AND !custom_value>
+			<cfelseif custom_id EQ "tab_iptc_content" AND !custom_value>
 				<cfset v.tab_iptc_content = false>
-			</cfif>
-			<cfif custom_id EQ "tab_iptc_status" AND !custom_value>
+			<cfelseif custom_id EQ "tab_iptc_status" AND !custom_value>
 				<cfset v.tab_iptc_status = false>
-			</cfif>
-			<cfif custom_id EQ "tab_origin" AND !custom_value>
+			<cfelseif custom_id EQ "tab_origin" AND !custom_value>
 				<cfset v.tab_origin = false>
-			</cfif>
-			<cfif custom_id EQ "tab_versions" AND !custom_value>
+			<cfelseif custom_id EQ "tab_versions" AND !custom_value>
 				<cfset v.tab_versions = false>
-			</cfif>
-			<cfif custom_id EQ "tab_sharing_options" AND !custom_value>
+			<cfelseif custom_id EQ "tab_sharing_options" AND !custom_value>
 				<cfset v.tab_sharing_options = false>
-			</cfif>
-			<cfif custom_id EQ "tab_preview_images" AND !custom_value>
+			<cfelseif custom_id EQ "tab_preview_images" AND !custom_value>
 				<cfset v.tab_preview_images = false>
-			</cfif>
-			<cfif custom_id EQ "tab_additional_renditions" AND !custom_value>
+			<cfelseif custom_id EQ "tab_additional_renditions" AND !custom_value>
 				<cfset v.tab_additional_renditions = false>
-			</cfif>
-			<cfif custom_id EQ "tab_history" AND !custom_value>
+			<cfelseif custom_id EQ "tab_history" AND !custom_value>
 				<cfset v.tab_history = false>
-			</cfif>
-			<cfif custom_id EQ "button_send_email" AND !custom_value>
+			<cfelseif custom_id EQ "button_send_email" AND !custom_value>
 				<cfset v.button_send_email = false>
-			</cfif>
-			<cfif custom_id EQ "button_send_ftp" AND !custom_value>
+			<cfelseif custom_id EQ "button_send_ftp" AND !custom_value>
 				<cfset v.button_send_ftp = false>
-			</cfif>
-			<cfif custom_id EQ "button_basket" AND !custom_value>
+			<cfelseif custom_id EQ "button_basket" AND !custom_value>
 				<cfset v.button_basket = false>
-			</cfif>
-			<cfif custom_id EQ "button_add_to_collection" AND !custom_value>
+			<cfelseif custom_id EQ "button_add_to_collection" AND !custom_value>
 				<cfset v.button_add_to_collection = false>
-			</cfif>
-			<cfif custom_id EQ "button_print" AND !custom_value>
+			<cfelseif custom_id EQ "button_print" AND !custom_value>
 				<cfset v.button_print = false>
-			</cfif>
-			<cfif custom_id EQ "button_move" AND !custom_value>
+			<cfelseif custom_id EQ "button_move" AND !custom_value>
 				<cfset v.button_move = false>
-			</cfif>
-			<cfif custom_id EQ "button_delete" AND !custom_value>
+			<cfelseif custom_id EQ "button_delete" AND !custom_value>
 				<cfset v.button_delete = false>
-			</cfif>
-			<cfif custom_id EQ "share_folder" AND custom_value>
+			<cfelseif custom_id EQ "share_folder" AND custom_value>
 				<cfset v.share_folder = true>
-			</cfif>
-			<cfif custom_id EQ "share_download_thumb" AND !custom_value>
+			<cfelseif custom_id EQ "share_download_thumb" AND !custom_value>
 				<cfset v.share_download_thumb = false>
-			</cfif>
-			<cfif custom_id EQ "share_download_original" AND custom_value>
+			<cfelseif custom_id EQ "share_download_original" AND custom_value>
 				<cfset v.share_download_original = true>
-			</cfif>
-			<cfif custom_id EQ "share_uploading" AND custom_value>
+			<cfelseif custom_id EQ "share_uploading" AND custom_value>
 				<cfset v.share_uploading = true>
-			</cfif>
-			<cfif custom_id EQ "share_comments" AND custom_value>
+			<cfelseif custom_id EQ "share_comments" AND custom_value>
 				<cfset v.share_comments = true>
-			</cfif>
-			<cfif custom_id EQ "request_access" AND !custom_value>
+			<cfelseif custom_id EQ "request_access" AND !custom_value>
 				<cfset v.request_access = false>
-			</cfif>
-			<cfif custom_id EQ "req_filename" AND !custom_value>
+			<cfelseif custom_id EQ "req_filename" AND !custom_value>
 				<cfset v.req_filename = false>
-			</cfif>
-			<cfif custom_id EQ "req_description" AND custom_value>
+			<cfelseif custom_id EQ "req_description" AND custom_value>
 				<cfset v.req_description = true>
-			</cfif>
-			<cfif custom_id EQ "req_keywords" AND custom_value>
+			<cfelseif custom_id EQ "req_keywords" AND custom_value>
 				<cfset v.req_keywords = true>
-			</cfif>
-			<cfif custom_id EQ "images_metadata">
+			<cfelseif custom_id EQ "images_metadata">
 				<cfset v.images_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "videos_metadata">
+			<cfelseif custom_id EQ "videos_metadata">
 				<cfset v.videos_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "files_metadata">
+			<cfelseif custom_id EQ "files_metadata">
 				<cfset v.files_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "audios_metadata">
+			<cfelseif custom_id EQ "audios_metadata">
 				<cfset v.audios_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "assetbox_height">
+			<cfelseif custom_id EQ "images_metadata_top">
+				<cfset v.images_metadata_top = custom_value>
+			<cfelseif custom_id EQ "videos_metadata_top">
+				<cfset v.videos_metadata_top = custom_value>
+			<cfelseif custom_id EQ "files_metadata_top">
+				<cfset v.files_metadata_top = custom_value>
+			<cfelseif custom_id EQ "audios_metadata_top">
+				<cfset v.audios_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_images_metadata_top">
+				<cfset v.cf_images_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_videos_metadata_top">
+				<cfset v.cf_videos_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_files_metadata_top">
+				<cfset v.cf_files_metadata_top = custom_value>
+			<cfelseif custom_id EQ "cf_audios_metadata_top">
+				<cfset v.cf_audios_metadata_top = custom_value>
+			<cfelseif custom_id EQ "assetbox_height">
 				<cfset v.assetbox_height = custom_value>
-			</cfif>
-			<cfif custom_id EQ "assetbox_width">
+			<cfelseif custom_id EQ "assetbox_width">
 				<cfset v.assetbox_width = custom_value>
+			<cfelseif custom_id EQ "windows_netpath2asset">
+				<cfset v.windows_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "mac_netpath2asset">
+				<cfset v.mac_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "unix_netpath2asset">
+				<cfset v.unix_netpath2asset = custom_value>
+			<cfelseif custom_id EQ "basket_awsurl">
+				<cfset v.basket_awsurl= custom_value>
+			<cfelseif custom_id EQ "btn_email_slct">
+				<cfset v.btn_email_slct = custom_value>
+			<cfelseif custom_id EQ "btn_ftp_slct">
+				<cfset v.btn_ftp_slct = custom_value>
+			<cfelseif custom_id EQ "btn_basket_slct">
+				<cfset v.btn_basket_slct = custom_value>
+			<cfelseif custom_id EQ "btn_print_slct">
+				<cfset v.btn_print_slct = custom_value>
+			<cfelseif custom_id EQ "btn_collection_slct">
+				<cfset v.btn_collection_slct = custom_value>
+			<cfelseif custom_id EQ "icon_alias_slct">
+				<cfset v.icon_alias_slct = custom_value>
+			<cfelseif custom_id EQ "icon_move_slct">
+				<cfset v.icon_move_slct = custom_value>
+			<cfelseif custom_id EQ "icon_batch_slct">
+				<cfset v.icon_batch_slct = custom_value>
+			<cfelseif custom_id EQ "icon_metadata_export_slct">
+				<cfset v.icon_metadata_export_slct = custom_value>
+			<cfelseif custom_id EQ "icon_metadata_import_slct">
+				<cfset v.icon_metadata_import_slct = custom_value>
+			<cfelseif custom_id EQ "show_manage_part_slct">
+				<cfset v.show_manage_part_slct = custom_value>
+			<cfelseif custom_id EQ "show_trash_icon_slct">
+				<cfset v.show_trash_icon_slct = custom_value>
 			</cfif>
 			<!--- RAZ-2267 get the default value--->
 			<cfif custom_id EQ "tab_explorer_default">
@@ -2172,31 +2221,42 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<!--- RAZ-2834 get the default value --->
 			<cfif custom_id EQ "customfield_images_metadata">
 				<cfset v.customfield_images_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "customfield_videos_metadata">
+			<cfelseif custom_id EQ "customfield_videos_metadata">
 				<cfset v.customfield_videos_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "customfield_files_metadata">
+			<cfelseif custom_id EQ "customfield_files_metadata">
 				<cfset v.customfield_files_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "customfield_audios_metadata">
+			<cfelseif custom_id EQ "customfield_audios_metadata">
 				<cfset v.customfield_audios_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "customfield_all_metadata">
+			<cfelseif custom_id EQ "customfield_all_metadata">
 				<cfset v.customfield_all_metadata = custom_value>
+			<cfelseif custom_id EQ "show_metadata_labels" AND !custom_value>
+				<cfset v.show_metadata_labels = false>
 			</cfif>
 			<!--- For folder custom fields --->
 			<cfif custom_id EQ "cf_images_metadata">
 				<cfset v.cf_images_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "cf_videos_metadata">
+			<cfelseif custom_id EQ "cf_videos_metadata">
 				<cfset v.cf_videos_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "cf_files_metadata">
+			<cfelseif custom_id EQ "cf_files_metadata">
 				<cfset v.cf_files_metadata = custom_value>
-			</cfif>
-			<cfif custom_id EQ "cf_audios_metadata">
+			<cfelseif custom_id EQ "cf_audios_metadata">
 				<cfset v.cf_audios_metadata = custom_value>
+			</cfif>
+			<!--- For Basket fields --->
+			<cfif custom_id EQ "ftp_btn_basket">
+				<cfset v.ftp_btn_basket = custom_value>
+			<cfelseif custom_id EQ "email_btn_basket">
+				<cfset v.email_btn_basket = custom_value>
+			<cfelseif custom_id EQ "publish_btn_basket">
+				<cfset v.publish_btn_basket = custom_value>
+			<cfelseif custom_id EQ "metadata_btn_basket">
+				<cfset v.metadata_btn_basket = custom_value>
+			</cfif>
+			<!--- For search --->
+			<cfif custom_id EQ "search_selection" AND custom_value>
+				<cfset v.search_selection = true>
+			<cfelseif custom_id EQ "hide_search_tabs" AND custom_value>
+				<cfset v.hide_search_tabs = true>
 			</cfif>
 		</cfloop>
 	</cfif>
@@ -2304,6 +2364,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="ad_server_secure" type="string">
 	<cfargument name="ad_server_filter" type="string">
 	<cfargument name="ad_server_start" type="string">
+	<cfargument name="ad_ldap" type="string">
+	<cfargument name="ad_domain" type="string">
+	<cfargument name="ldap_dn" type="string">
+
 	<!--- Delete & Insert --->
 	<cfinvoke method="savesetting" thefield="ad_server_name" thevalue="#arguments.ad_server_name#" />
 	<cfinvoke method="savesetting" thefield="ad_server_port" thevalue="#arguments.ad_server_port#" />
@@ -2312,6 +2376,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfinvoke method="savesetting" thefield="ad_server_secure" thevalue="#arguments.ad_server_secure#" />
 	<cfinvoke method="savesetting" thefield="ad_server_filter" thevalue="#arguments.ad_server_filter#" />
 	<cfinvoke method="savesetting" thefield="ad_server_start" thevalue="#arguments.ad_server_start#" />
+	<cfinvoke method="savesetting" thefield="ad_ldap" thevalue="#arguments.ad_ldap#" />
+	<cfinvoke method="savesetting" thefield="ad_domain" thevalue="#arguments.ad_domain#" />
+	<cfinvoke method="savesetting" thefield="ldap_dn" thevalue="#arguments.ldap_dn#" />
+
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2372,6 +2440,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 <!--- Get options --->
 <cffunction name="get_options" output="false" returntype="struct">
+	<!--- Cache --->
+	<cfset variables.cachetoken = getcachetoken("settings")>
 	<!--- Param --->
 	<cfset var q = "">
 	<cfset var s = structNew()>
@@ -2385,18 +2455,20 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_link_doc = "">
 	<cfset s.wl_news_rss = "">
 	<cfset s.wl_main_static = "">
+	<cfset s.wl_thecss = "">
+	<cfset s.wl_show_updates = false>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#options */ opt_id, opt_value
+	SELECT /* #variables.cachetoken#get_options */ opt_id, opt_value
 	FROM options
 	</cfquery>
 	<!--- Put query into struct --->
 	<cfloop query="q">
 		<cfset s["#opt_id#"] = opt_value>
 		<!--- RAZ-2812 Most recently updated assest --->
-		<cfif q.opt_id EQ 'SHOW_UPDATES'>
-			<cfset application.razuna.show_recent_updates =  q.opt_value >
-		</cfif>
+		<!--- <cfif q.opt_id EQ 'SHOW_UPDATES'>
+			<cfset application.razuna.show_recent_updates = q.opt_value>
+		</cfif> --->
 	</cfloop>
 	<!--- Additionally store the full query into the struct --->
 	<cfset s.query = q>
@@ -2405,16 +2477,138 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <!--- Get options --->
+<cffunction name="get_options_hosts" output="false" returntype="struct">
+	<!--- Get normal options --->
+	<cfset var wl_sys = get_options()>
+	<!--- Var --->
+	<cfset var qry = ''>
+	<!--- Set variables to default values from wl system --->
+	<cfset var s = structNew()>
+	<cfset s.wl_login_links = wl_sys.wl_login_links>
+	<cfset s.wl_razuna_tab_text = wl_sys.wl_razuna_tab_text>
+	<cfset s.wl_razuna_tab_content = wl_sys.wl_razuna_tab_content>
+	<cfset s.wl_html_title = wl_sys.wl_html_title>
+	<cfset s.wl_feedback = wl_sys.wl_feedback>
+	<cfset s.wl_link_search = wl_sys.wl_link_search>
+	<cfset s.wl_link_support = wl_sys.wl_link_support>
+	<cfset s.wl_link_doc = wl_sys.wl_link_doc>
+	<cfset s.wl_news_rss = wl_sys.wl_news_rss>
+	<cfset s.wl_main_static = wl_sys.wl_main_static>
+	<cfset s.wl_thecss = wl_sys.wl_thecss>
+	<cfset s.wl_show_updates = wl_sys.wl_show_updates>
+	<!--- Get host options --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_options_hosts */ opt_id, opt_value
+	FROM options
+	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="wl_%_#session.hostid#">
+	</cfquery>
+	<!--- Loop over query --->
+	<cfloop query="qry">
+		<cfif opt_id EQ "wl_login_links_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_login_links = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_razuna_tab_text_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_razuna_tab_text = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_razuna_tab_content_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_razuna_tab_content = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_html_title_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_html_title = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_feedback_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_feedback = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_link_search_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_link_search = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_link_support_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_link_support = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_link_doc_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_link_doc = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_news_rss_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_news_rss = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_main_static_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_main_static = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_thecss_#session.hostid#" AND opt_value NEQ "">
+			<cfset s.wl_thecss = opt_value>
+		</cfif>
+		<cfif opt_id EQ "wl_show_updates_#session.hostid#">
+			<cfset s.wl_show_updates = opt_value>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn s />
+</cffunction>
+
+<!--- Save options --->
+<cffunction name="set_options_host" output="false" returntype="void">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop over fieldnames --->
+	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
+		<!--- First remove all entries --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM options
+		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(i)#">
+		</cfquery>
+		<!--- Save to DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO options
+		(opt_id, opt_value, rec_uuid)
+		VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(i)#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">
+		)
+		</cfquery>
+	</cfloop>
+	<!--- Flush --->
+	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Get options --->
 <cffunction name="get_options_one" output="false" returntype="string">
+	<cfargument name="id" type="string" required="true">
+	<!--- Cache --->
+	<cfset variables.cachetoken = getcachetoken("settings")>
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_options_one */ opt_id, opt_value
+	FROM options
+	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.id)#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn q.opt_value />
+</cffunction>
+
+<!--- Get options --->
+<cffunction name="get_options_one_host" output="false" returntype="string">
 	<cfargument name="id" type="string" required="true">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#options */ opt_id, opt_value
+	SELECT /* #variables.cachetoken#get_options_one_host */ opt_id, opt_value
 	FROM options
 	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.id)#">
 	</cfquery>
+	<!--- If query is empty or no value returned query the default value --->
+	<cfif q.recordcount EQ 0 OR q.opt_value EQ "">
+		<!--- Get the value with hostid --->
+		<cfset var theid = replacenocase(arguments.id,"_#session.hostid#","","one")>
+		<!--- Get value --->
+		<cfset var thevalue = get_options_one(theid)>
+		<!--- Add to query --->
+		<cfset queryAddRow(query=q, data=[{ opt_id='#theid#', opt_value='#thevalue#' }])>
+	</cfif>
 	<!--- Return --->
 	<cfreturn q.opt_value />
 </cffunction>
@@ -2444,16 +2638,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get news edit --->
 <cffunction name="get_news_edit" output="false" returntype="query">
 	<cfargument name="thestruct" type="struct">
+	<cfargument name="hostid" type="numeric" required="false" default="0">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- If we are from add then we need to insert record --->
 	<cfif arguments.thestruct.add>
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO news
-		(news_id, news_active)
+		(news_id, news_active, host_id)
 		VALUES (
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 		)
 		</cfquery>
 	</cfif>
@@ -2467,7 +2663,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q />
 </cffunction>
 
-<!--- Get news edit --->
+<!--- Save news --->
 <cffunction name="set_news_edit" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Save --->
@@ -2484,17 +2680,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn />
 </cffunction>
 
-<!--- Get news edit --->
+<!--- Get news --->
 <cffunction name="get_news" output="false" returntype="query">
 	<cfargument name="news_main" type="string" required="false" default="false">
+	<cfargument name="hostid" type="numeric" required="false" default="0">
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q">
 	SELECT <cfif arguments.news_main AND application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title<cfif arguments.news_main>, news_text</cfif>
 	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 	<cfif arguments.news_main>
-		WHERE news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+		AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	</cfif>
 	ORDER BY news_date DESC
 	<cfif arguments.news_main AND application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
@@ -2503,7 +2701,34 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q />
 </cffunction>
 
-<!--- Get news edit --->
+<!--- Get news --->
+<cffunction name="get_news_host" output="false" returntype="struct">
+	<!--- Param --->
+	<cfset var qry = structnew()>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.news_host">
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title, news_text
+	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	ORDER BY news_date DESC
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	</cfquery>
+	<!--- Query system news --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry.news">
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title, news_text
+	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
+	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	ORDER BY news_date DESC
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
+
+<!--- Delete news --->
 <cffunction name="del_news" output="false" returntype="void">
 	<cfargument name="news_id" type="string" required="true">
 	<!--- Query --->
@@ -2557,7 +2782,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set_id, set_pref
 		FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_#session.hostid#">
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
 		ORDER BY lower(set_id)
 		</cfquery>
 		<!--- Return --->
@@ -2570,7 +2796,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Remove all aws fields in DB first --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_#session.hostid#">
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
 		<cfif structKeyExists(session,"aws")>
@@ -2609,10 +2836,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cffunction name="get_ad_server_userlist" returntype="Query">
 		<cfargument name="thestruct" type="struct" required="true" />
 		<cfset var results = querynew('')>
-		<cfif structKeyExists(arguments.thestruct,'ad_server_filter') AND trim(arguments.thestruct.ad_server_filter) NEQ ''>
+		<cfif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "" AND structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad'>
+			<cfset ldapfilter="(&(objectClass=user)(samaccountname=*#arguments.thestruct.searchtext#*))" >
+		<cfelseif structKeyExists(arguments.thestruct,'searchtext')  AND trim(arguments.thestruct.searchtext) NEQ "" AND structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap'>
+			<cfset ldapfilter="(&(objectClass=user)(uid=*#arguments.thestruct.searchtext#*))" >
+		<cfelseif structKeyExists(arguments.thestruct,'ad_server_filter') AND trim(arguments.thestruct.ad_server_filter) NEQ ''>
 			<cfset ldapfilter = "#arguments.thestruct.ad_server_filter#" >
 		<cfelse>
 			<cfset ldapfilter="(&(objectClass=user))" >
+		</cfif>
+		<cfif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad' AND arguments.thestruct.ad_domain NEQ '' AND arguments.thestruct.ad_server_username does not contain '\'>
+			<cfset arguments.thestruct.ad_server_username  = arguments.thestruct.ad_domain & '\' & arguments.thestruct.ad_server_username>
+		<cfelseif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap' AND arguments.thestruct.ldap_dn contains 'uid={username}' AND arguments.thestruct.ad_server_username DOES NOT CONTAIN '='>
+			<cfset arguments.thestruct.ad_server_username  = replacenocase (arguments.thestruct.ldap_dn,'{username}',arguments.thestruct.ad_server_username)>
 		</cfif>
 		<!--- Set AD default port --->
 		<cfif Not structKeyExists(arguments.thestruct,'ad_server_port') OR arguments.thestruct.ad_server_port EQ ''>
@@ -2620,23 +2856,50 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 		<cftry>
 			<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
-				<cfldap server = "#arguments.thestruct.ad_server_name#" 
-					port = "#arguments.thestruct.ad_server_port#"
+				<cfldap 
+				server = "#arguments.thestruct.ad_server_name#" 
+				port = "#arguments.thestruct.ad_server_port#"
 				scope="subtree" 
-				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+				action = "query"  
+				name = "results"  
+				start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
-					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
+				attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				username="#arguments.thestruct.ad_server_username#" 
+				password="#arguments.thestruct.ad_server_password#" 
+				timeout="10" 
+				secure="CFSSL_BASIC">
 			<cfelse>
-				<cfldap server = "#arguments.thestruct.ad_server_name#" 
-					port = "#arguments.thestruct.ad_server_port#"
+				<cfldap 
+				server = "#arguments.thestruct.ad_server_name#" 
+				port = "#arguments.thestruct.ad_server_port#"
 				scope="subtree" 
-				action = "query"  name = "results"  start = "#arguments.thestruct.ad_server_start#"
+				action = "query"  
+				name = "results"  
+				start = "#arguments.thestruct.ad_server_start#"
 				filter="#ldapfilter#" 
-					attributes="sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
-				sort = "sAMAccountName ASC"   username="#arguments.thestruct.ad_server_username#" password="#arguments.thestruct.ad_server_password#"  timeout="15">
+				attributes="uid,sAMAccountName,mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber"
+				username="#arguments.thestruct.ad_server_username#" 
+				password="#arguments.thestruct.ad_server_password#" 
+				timeout="10">
 			</cfif>
-		<cfcatch></cfcatch>
+			<!--- For LDAP servers username is in uid field and for windows AD it is in sAMAccountName so combine the two into sAMAccountName field --->
+			<cfquery name="results" dbtype="query">
+				SELECT sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
+				FROM results 
+				WHERE sAMAccountName <>''
+				UNION ALL
+				SELECT uid sAMAccountName, mail,givenName,sn,company,streetAddress,postalCode,l,co,telephoneNumber,homePhone,mobile,facsimileTelephoneNumber
+				FROM results 
+				WHERE sAMAccountName ='' AND uid<>''
+				ORDER BY sAMAccountName ASC
+			</cfquery>
+
+		<cfcatch>
+			<cfif isdefined("arguments.thestruct.showerr")>
+				<font color="#cd5c5c">Error occurred connecting to LDAP server. Please check server details entered and try again. <br/>Error thrown was: <cfoutput>#cfcatch.detail#</cfoutput><br/><br/></font>
+			</cfif>
+		</cfcatch>
 		</cftry>
 		<cfreturn results/>
 	</cffunction>
@@ -2646,20 +2909,45 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfargument name="password" required="true">   
 		<cfargument name="dcstart" required="true">
 		<cfargument name="ldapserver" required="true">
-		<cfset isAuthenticated = false> 
+		<cfargument name="port" required="true">
+		<cfargument name="secure" required="false" default="">
+		<cfset var isAuthenticated = false> 
+		<cfset session.ldapauthfail = "">
 		   <cftry>          
-		         <cfldap action="QUERY"          
-		               name="auth"          
-		               attributes="samAccountName"          
-		               start="#dcStart#"          
-		               scope="SUBTREE"          
-		               maxrows="1"          
-		               server="#ldapServer#"          
-		               username="#username#"          
-		               password="#password#">          
+		         <cfif secure NEQ ''>
+		         		  <cfldap action="QUERY"          
+			               name="auth"          
+			               attributes="givenName"          
+			               start="#dcStart#"          
+			               scope="SUBTREE"          
+			               maxrows="1"          
+			               server="#ldapServer#"          
+			               username="#username#"          
+			               password="#password#"
+			               port="#port#"
+			               secure="#secure#"
+			               timeout="10"
+			               filter="(&(givenName=razunarocks))" 
+			               >  <!--- dummy filter to reduce number of rows returned to zero and avoid size exceeded exception --->
+		     	<cfelse>
+			         <cfldap action="QUERY"          
+			               name="auth"          
+			               attributes="givenName"          
+			               start="#dcStart#"          
+			               scope="SUBTREE"          
+			               maxrows="1"          
+			               server="#ldapServer#"          
+			               username="#username#" 
+			               port="#port#"         
+			               password="#password#"
+			               timeout="10"
+			               filter="(&(givenName=razunarocks))" 
+			               >  
+    			</cfif>
 		         <cfset isAuthenticated=true>             
-		      <cfcatch type="ANY">              
-		         <cfset isAuthenticated=false>          
+		      <cfcatch type="ANY">             
+		         <cfset isAuthenticated=false> 
+		         <cfset session.ldapauthfail = cfcatch.detail>
 		      </cfcatch>      
 		   </cftry>  
 		<cfreturn isAuthenticated>
@@ -2810,6 +3098,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="getmeta_asset"  hint="Retrieves relevant meta information from a given asset from the specified meta fields in raz1_settings_2" returntype="query">
 	<cfargument name="assetid" type="string" required="true">
 	<cfargument name="metafields" type="string" required="true" hint="fields to extract">
+	<cfparam name="session.thelangid" default="1">
 	<cfset var data = queryNew(1)>
 	<!--- Extract fields --->
 	<cfset var cf_fields = "">
@@ -2915,6 +3204,108 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset img_meta_map['xres']='xres'>
 	<cfset img_meta_map['yres']='yres'>
 	<cfreturn img_meta_map>
+</cffunction>
+
+<cffunction name="setaccesscontrol" returntype="void" hint="Sets access control for the different tabs in administrator">
+	<cfargument name="thestruct" type="Struct">
+	<cfquery dataSource="#application.razuna.datasource#">
+		DELETE FROM options WHERE lower(opt_id) LIKE '%access'
+	</cfquery>
+	<cfloop delimiters="," index="field" list="#arguments.thestruct.fieldnames#">
+		<cfif field NEQ 'FA'>
+			<cfif evaluate(field) NEQ ''>
+				<!--- Insert fields into database --->
+				<cfquery dataSource="#application.razuna.datasource#">
+					INSERT INTO options (opt_id,opt_value,rec_uuid)
+					VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#field#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(field)#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">)
+				</cfquery>
+			</cfif>
+		</cfif>
+	</cfloop>
+</cffunction>
+
+<cffunction name="getaccesscontrol" returntype="struct" hint="Get access control settings for the different tabs in administrator">
+	<cfquery dataSource="#application.razuna.datasource#" name="accessdata">
+		SELECT opt_id, opt_value FROM options WHERE lower(opt_id) LIKE '%access'
+	</cfquery>
+	<cfset var access_struct = structnew()>
+	<cfloop query="accessdata">
+		<cfset access_struct["#opt_id#"] = opt_value>
+	</cfloop>
+	<cfreturn access_struct>
+</cffunction>
+
+<cffunction name="getuseraccesscontrols" returntype="struct" hint="Get access control settings for the given user. Only returns tabs that user has access to.">
+	<cfargument name="thestruct" type="Struct">
+	<cfset var grpperm = "">
+	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
+	<cfloop collection="#arguments.thestruct#" item="field">
+		<cfif listfind (structfind(thestruct,field),session.theuserid)>
+			<cfset structupdate (thestruct,field,true)>
+			<cfcontinue>
+		</cfif>
+		<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,field)#" list2 = "#session.thegroupofuser#" returnvariable="grpperm">
+		<cfif grpperm NEQ "">
+			<cfset structupdate (thestruct,field,true)>
+		<cfelse>
+			<cfset structdelete (thestruct,field)>
+		</cfif>
+	</cfloop>
+	<cfreturn thestruct>
+</cffunction>
+
+
+<cffunction name="get_customization_placement" returntype="Struct" hint="Returns top or bottom placement of fields in regards to asset thumbnail" >
+	<cfargument name="thestruct" required="true" hint="Fields to get placement for">  
+	<cfset var cs_place_struct = structnew()>
+
+	<cfset cs_place_struct.top.image="">
+	<cfset cs_place_struct.bottom.image="">
+	<cfset cs_place_struct.cf_top.image="">
+	<cfset cs_place_struct.cf_bottom.image="">
+
+	<cfset cs_place_struct.top.audio="">
+	<cfset cs_place_struct.bottom.audio="">
+	<cfset cs_place_struct.cf_top.audio="">
+	<cfset cs_place_struct.cf_bottom.audio="">
+
+	<cfset cs_place_struct.top.video="">
+	<cfset cs_place_struct.bottom.video="">
+	<cfset cs_place_struct.cf_top.video="">
+	<cfset cs_place_struct.cf_bottom.video="">
+
+	<cfset cs_place_struct.top.file="">
+	<cfset cs_place_struct.bottom.file="">
+	<cfset cs_place_struct.cf_top.file="">
+	<cfset cs_place_struct.cf_bottom.file="">
+
+	<!--- Images --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.top.image">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.bottom.image">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_top.image">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.image">
+
+ 	<!--- Audios --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.top.audio">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.bottom.audio">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_top.audio">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.audio">
+
+ 	<!--- Videos --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.top.video">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.bottom.video">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_top.video">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.video">
+
+ 	<!--- Files --->
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.top.file">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.bottom.file">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_top.file">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.file">
+ 	
+  	 <cfreturn cs_place_struct>
 </cffunction>
 
 </cfcomponent>

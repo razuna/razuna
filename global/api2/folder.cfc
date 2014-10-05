@@ -34,6 +34,8 @@
 		<cfargument name="show" type="string" required="false" default="all">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for folder --->
@@ -435,6 +437,7 @@
 		<cfargument name="collectionfolder" type="string" required="false" default="false">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			 <!--- Get permission for folder --->
@@ -546,6 +549,7 @@
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="folderid" type="string" required="false">
 		<cfargument name="foldername" type="string" required="false">
+		<cfset var thexml ="">
 		<cfif not isdefined("arguments.folderid") AND not isdefined("arguments.foldername")>
 			<cfset var thexml = querynew("responsecode,message")>
 			<cfset queryaddrow(thexml,1)>
@@ -555,6 +559,7 @@
 		</cfif> 
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get Cachetoken --->
@@ -827,6 +832,7 @@
 		<cfargument name="permissions" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->

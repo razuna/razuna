@@ -65,7 +65,7 @@
 				<td width="130" nowrap="true">
 					<strong>#myFusebox.getApplicationData().defaults.trans("email")#*</strong>
 				</td>
-				<td width="300"><input type="text" name="user_email" id="user_email" style="width:300px;" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><div id="checkemaildiv"></div><label for="user_email" class="error">Enter your eMail address!</label><!--- <cfif attributes.add EQ "F"><a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user">email user</a></cfif> ---></td>
+				<td width="300"><input type="text" name="user_email" id="user_email" style="width:300px;" class="text" value="#qry_detail.user_email#"<!--- <cfif attributes.add EQ "F"><a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user">email user</a></cfif> ---></td>
 			</tr>
 			<tr>
 				<td width="180"><strong>#myFusebox.getApplicationData().defaults.trans("user_name")#*</strong></td>
@@ -74,7 +74,7 @@
 					<input type="text" name="user_login_name_show" id="user_login_name_show" style="width:300px;" value="#qry_detail.user_login_name#"  disabled>
 					<input type="hidden" name="user_login_name" id="user_login_name"  value="#qry_detail.user_login_name#"  >
 				<cfelse>
-					<input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#" onkeyup="checkusername();" ><div id="checkusernamediv"></div><label for="user_login_name" class="error">Enter your Loginname!</label>
+					<input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#">
 				</cfif>
 				</td>
 			</tr>
@@ -126,9 +126,25 @@
 					<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
 				</tr>
 				<tr>
-					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>
+					<td></td>
+					<td>#myFusebox.getApplicationData().defaults.trans("user_expirydate_desc")#</td>
 				</tr>
 			</cfif>
+			<!--- If there is search selection --->
+			<cfif cs.search_selection>
+				<tr>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("default_search_selection")#</strong></td>
+					<td>
+						<select data-placeholder="" class="chzn-select" name="user_search_selection" id="user_search_selection" style="min-width:300px;">
+							<option value=""></option>
+							<cfloop query="qry_search_selection">
+								<option value="#folder_id#"<cfif qry_detail.user_search_selection EQ "#folder_id#"> selected="selected"</cfif>>#folder_name#</option>
+							</cfloop>
+						</select>
+					</td>
+				</tr>
+			</cfif>
+			<!--- Show User id --->
 			<cfif attributes.add EQ "f">
 				<tr>
 					<td><strong>ID</strong></td>
@@ -159,10 +175,10 @@
 							<!--- If SysAdmin or Admin --->
 							<cfif Request.securityobj.CheckSystemAdminUser()>
 								<input type="hidden" name="admin_group_1" value="1">
-								You are a System-Administrator. Full access granted!
+								#myFusebox.getApplicationData().defaults.trans("sysadmin_access")#
 							<cfelseif Request.securityobj.CheckAdministratorUser()>
 								<input type="hidden" name="admin_group_2" value="2">
-								You are an Administrator. Full access granted!
+								#myFusebox.getApplicationData().defaults.trans("admin_access")#
 							</cfif>
 						<!--- Called within detail page --->
 						<cfelseif !attributes.myinfo>
@@ -174,19 +190,21 @@
 								<cfif listfind(grpnrlist,"2",",")>
 									<input type="hidden" name="admin_group_2" value="2">
 								</cfif>
-								You are an Administrator. Full access granted!
+								#myFusebox.getApplicationData().defaults.trans("admin_access")#
 							<!--- There are more admin accounts thus show checkbox for admin --->
 							<cfelse>
-								<input type="checkbox" name="admin_group_2" id ="admin_group_2" value="2" onchange="togglegrps();"<cfif listfind(grpnrlist,"2",",") > checked</cfif>> Administrator
+								<input type="checkbox" name="admin_group_2" id ="admin_group_2" value="2" onchange="togglegrps();checkmultitenant();"<cfif listfind(grpnrlist,"2",",") AND attributes.user_id NEQ 0> checked</cfif>> Administrator
 							</cfif>
 							<br /><br />
-							<!--- Show the rest of the groups  --->
-							<div id="nonadmingrps">
-								<cfloop query="qry_groups">
-									<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
-									<br />
-								</cfloop>
-							</div>
+							<cfif !(qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id)>
+								<!--- Show the rest of the groups  --->
+								<div id="nonadmingrps">
+									<cfloop query="qry_groups">
+										<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
+										<br />
+									</cfloop>
+								</div>
+							</cfif>
 						</cfif>
 					<!--- simply show the names of the groups for non admin users --->
 					<cfelse>
@@ -276,6 +294,8 @@
 	</cfif>
 </div>
 <div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>
+<div id="dialog-confirm-admin" style="display:none;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 250px 0;"></span>This user has access to the following tenants: #valuelist(qry_userhosts.host_name)#.<br/><br/>If you choose to make this user an administrator it will automatically become an administrator for all tenants it has access to and any groups assignments for the user will be lost.</div>
+<div id="dialog-confirm-admin2" style="display:none;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 250px 0;"></span>This user has access to the following tenants: #valuelist(qry_userhosts.host_name)#.<br/><br/>If you choose to remove this user as an administrator then it will also be removed as administrator from all other tenants.</div>
 <div id="submit" style="float:right;padding:10px;">
 	<cfif !attributes.myinfo><input type="checkbox" value="true" name="emailinfo" /> <span style="padding-right:15px;">Send user welcome email</span></cfif><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 
@@ -298,10 +318,12 @@
 				user_last_name: "required",
 			   	user_email: {
 			    	required: true,
-			     	email: true
+			     	email: true,
+			     	remote: <cfoutput>"#myself#c.checkemail&user_id=" + document.userdetailadd.user_id.value,</cfoutput>
 			   	},
 			   	user_login_name: {
-					required: true
+					required: true,
+					remote: <cfoutput>"#myself#c.checkusername&user_id=" + document.userdetailadd.user_id.value,</cfoutput>
 				}
 			   	<cfif attributes.user_id EQ "0">
 			   	,
@@ -314,9 +336,49 @@
 				}
 				</cfif>
 			 },
+			 messages:
+			 {
+			 	user_email: {remote: "This email is already taken."},
+			 	user_login_name: {remote: "This username is already taken."}
+			 },
  			onkeyup: function(element) { this.element(element); }
 		});
 	});
+
+	// If user ismultitenant and being set as admin then warn user that it will be admin
+	function checkmultitenant()
+	{
+		if (#listlen(hostlist)# > 1 &&  #listfind(grpnrlist,"2",",")# == 0 && $("##admin_group_2").prop("checked"))
+		{
+			$( "##dialog-confirm-admin" ).dialog({
+				resizable: false,
+				height:250,
+				modal: true,
+				title: 'Warning!',
+				buttons: {
+					Ok: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		}
+
+	else if (#listlen(hostlist)# > 1 &&  #listfind(grpnrlist,"2",",")# > 0 && $("##admin_group_2").prop("checked")==false)
+		{
+			$( "##dialog-confirm-admin2" ).dialog({
+				resizable: false,
+				height:250,
+				modal: true,
+				title: 'Warning!',
+				buttons: {
+					Ok: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		}
+
+	}
 
 	function togglegrps()
 	{
@@ -359,6 +421,7 @@
 	}
 	
 	$(document).ready(function() {
+		 togglegrps();
 		<cfif qry_social.recordcount EQ 0>
 			$('##btnDel').css('display','none');
 		</cfif>
@@ -398,6 +461,9 @@
 	            $('##btnDel').css('display','none');
 	    });
 	
+	    // Activate Chosen
+		$(".chzn-select").chosen({search_contains: true});
+
 	});
 </script>
 

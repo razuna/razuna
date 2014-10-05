@@ -24,6 +24,8 @@
 *
 --->
 <cfoutput>
+	<!--- Format size --->
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
 	<cfquery name="org_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'org'
 	</cfquery>
@@ -33,17 +35,34 @@
 		<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
 			<cfif qry_detail.detail.link_kind NEQ "url">
 				<tr>
-					<td width="100%" nowrap="true">
+					<td width="65" align="center">
+						<cfif qry_detail.detail.link_kind NEQ "lan">
+							<cfif qry_detail.detail.link_kind EQ "url">
+								<cfif qry_detail.detail.link_path_url contains "http">
+									<a href="#qry_detail.detail.link_path_url#" target="_blank">#qry_detail.detail.link_path_url#</a>
+								<cfelse>
+									#qry_detail.detail.link_path_url#
+								</cfif>
+							<cfelse>
+								<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#<cfelse>#qry_detail.detail.cloud_url#</cfif>" style="max-height:50px;max-width:100px;"></a>
+							</cfif>
+						<cfelse>
+							<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" target="_blank"></cfif>
+								<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#" border="0" style="max-height:50px;max-width:100px;">
+							</a>
+							<br />
+						</cfif>
+					</td>
+					<td nowrap="true">
 						<cfif qry_detail.detail.link_kind EQ "lan">
-							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
-							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">Download</a>
+							<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
+							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 							<br />
 						<cfelse>
-							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
-							<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" target="_blank"></cfif>View</a> | 
-							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">Download</a>
-							
-							| <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
+							<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)
+							<br />
+							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">Direct Link</a>
 							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
 							<!--- Direct link --->
 							<div id="divo#attributes.file_id#" style="display:none;">

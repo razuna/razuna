@@ -139,6 +139,7 @@
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get Cachetoken --->
@@ -173,6 +174,7 @@
 		<cfargument name="userdata" required="true" type="string" hint="JSON with fields to update">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -265,6 +267,7 @@
 		<cfargument name="useremail" required="false" type="string" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user is in admin --->
@@ -315,6 +318,62 @@
 				<cfelse>
 					<cfset thexml.responsecode = 1>
 					<cfset thexml.message = "User with the ID could not be found">
+				</cfif>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess("s")>
+			</cfif>
+			<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
+	<!--- SSO --->
+	<cffunction name="sso" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true" type="string">
+		<cfargument name="user_email" required="true" type="string">		
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
+		<cfset var qry_isp = "">
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- Query the user --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT u.user_email, u.user_login_name, u.user_id, u.user_pass
+				FROM users u, ct_users_hosts ct
+				WHERE (
+					lower(u.user_email) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
+					OR lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
+					)
+				AND ct.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
+				AND ct.ct_u_h_user_id = u.user_id
+				</cfquery>
+				<!--- User found --->
+				<cfif qry.recordcount NEQ 0>
+					<!--- Check if this is for hosted --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qry_isp">
+					SELECT opt_value
+					FROM options
+					WHERE lower(opt_id) = <cfqueryparam value="conf_isp" cfsqltype="cf_sql_varchar">
+					</cfquery>
+					<!--- If for hosted --->
+					<cfif qry_isp.opt_value>
+						<cfset var the_url = "/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & arguments.user_email & "&pass_hashed=true">
+					<cfelse>
+						<cfset var the_url = "/" & cgi.context_path & "/" & application.razuna.api.hostpath["#arguments.api_key#"] & "/dam/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & arguments.user_email & "&pass_hashed=true">
+					</cfif>
+					<!--- For non hosted --->
+					<cflocation url="//#cgi.http_host#/#the_url#" addtoken="yes" />
+				<!--- NOT found --->
+				<cfelse>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "User not found">
 				</cfif>
 			<!--- User not admin --->
 			<cfelse>

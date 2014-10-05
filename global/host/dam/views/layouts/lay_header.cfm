@@ -23,6 +23,13 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Hide assetbox labels from dispalying if setting is turned on --->
+<cfif !cs.show_metadata_labels>
+	<style>
+		.assetbox_title {display: none;}
+	</style>
+</cfif>
+
 <cfif !cgi.http_user_agent CONTAINS "iphone" AND !cgi.http_user_agent CONTAINS "ipad">
 	<cfset w = 300>
 <cfelse>
@@ -58,35 +65,48 @@
 					<div style="float:left;">
 						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search"  title="Uses AND for multiple keywords except if you use OR/AND or double quotes. See search help for more information.">
 					</div>
-					<div style="float:left;padding:5px 5px 0px 5px;">
-						<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></div>
-						<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
-					</div>
-					<div id="searchselection" class="ddselection_header" style="left:610px;">
-						<p><a href="##" onclick="selectsearchtype('all','#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('img','#myFusebox.getApplicationData().defaults.trans("search_for_images")#');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('doc','#myFusebox.getApplicationData().defaults.trans("search_for_documents")#');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
-						<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
-						<p><hr></p>
-		<!--- 				<p><a href="##" onclick="showwindow('#myself#ajax.search_advanced','#myFusebox.getApplicationData().defaults.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a></p>
-						<p><hr></p> --->
-						<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">Help with Search</a></cfif></p>
-					</div>
+					<!--- If the search selection is on we search with folder ids --->
+					<cfif cs.search_selection>
+						<!--- This is the selected value (should come from the defined selection of the user) --->
+						<div style="float:left;padding:3px 5px 0px 5px;">
+							<select data-placeholder="" class="chzn-select" name="qs_folder_id" id="qs_folder_id" style="min-width:150px;">
+								<!--- <option value="0">Search in all</option> --->
+								<cfloop query="qry_searchselection">
+									<option value="#folder_id#"<cfif session.user_search_selection EQ "#folder_id#"> selected="selected"</cfif>>#folder_name#</option>
+								</cfloop>
+							</select>
+						</div>
+					<!--- This is the normal search --->
+					<cfelse>
+						<div style="float:left;padding:5px 5px 0px 5px;">
+							<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></div>
+							<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
+						</div>
+						<div id="searchselection" class="ddselection_header" style="left:610px;">
+							<p><a href="##" onclick="selectsearchtype('all','#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#');"><div id="markall" class="markfolder" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('img','#myFusebox.getApplicationData().defaults.trans("search_for_images")#');"><div id="markimg" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('doc','#myFusebox.getApplicationData().defaults.trans("search_for_documents")#');"><div id="markdoc" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
+							<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
+							<p><hr></p>
+							<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">Help with Search</a></cfif></p>
+						</div>
+					</cfif>
+					<!--- Search button --->
 					<div style="float:left;padding-left:2px;padding-top:1px;">
 						<button class="awesome big green">Search</button>
 						<!--- <img src="#dynpath#/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon"> --->
 					</div>
 				</div>
 				<div style="float:right;padding-left:20px;padding-top:8px;">
-					<a href="##" onclick="loadcontent('rightside','#myself#c.search_advanced');$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a>
+					<a href="##" onclick="loadcontent('rightside','#myself#c.search_advanced&folder_id=0');$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a>
 					<!--- <a href="##" style="padding-left:15px;" onclick="loadcontent('rightside','#myself#c.updater_tool');return false;"><strong style="color:red;">FILE RE-UPLOAD!</strong></a> --->
 				</div>
 				<!--- Enabled UPC search --->
-				<cfif prefs.set2_upc_enabled >
-				<div style="float:right;padding-left:20px;padding-top:8px;">
-					<a href="##" onclick="upcsearch();return false;">#myFusebox.getApplicationData().defaults.trans("link_upc_search")#</a>
-				</div>
+				<cfif prefs.set2_upc_enabled>
+					<div style="float:right;padding-left:20px;padding-top:8px;">
+						<a href="##" onclick="upcsearch();return false;">#myFusebox.getApplicationData().defaults.trans("link_upc_search")#</a>
+					</div>
 				</cfif>
 				</form>
 				<!--- UPC Search Popup window --->
@@ -116,8 +136,8 @@
 					</cfif>
 				</p>
 				<p><hr></p>
-				<!--- Administration --->
-				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+				<!--- Administration. Show if user is admin or if user has access to some admin features --->
+				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
 					<p><hr></p>
@@ -127,7 +147,7 @@
 					<cfif application.razuna.whitelabel>
 						#wl_link_support#
 					<cfelse>
-						<a href="http://forums.razuna.org/" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
+						<a href="https://help.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
 					</cfif>
 				</p>
 				<p>
@@ -156,7 +176,7 @@
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
 						<cfelse>
-							<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a>
+							<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
 						</cfif>
 					</p>
 					<p><hr></p>
@@ -172,18 +192,25 @@
 					<a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a>
 				</div>
 			</cfif>
+			<!--- Show basket link --->
+			<cfif cs.show_basket_part>
+				<div style="float:left;padding-right:20px;"><a href="##" onClick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></div>
+			</cfif>
 			<!--- Feedback --->
 			<cfif w EQ 300>
 				<cfif application.razuna.whitelabel>
-					#wl_feedback#
+					<div style="float:left;">#wl_feedback#</div>
 				<cfelse>
-					<div style="float:left;"><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a></div>
+					<div style="float:left;"><a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a></div>
 				</cfif>
 			</cfif>
 		</div>
 	</div>
 	<!--- JS --->
 	<script language="javascript">
+		// Activate Chosen
+		$(".chzn-select").chosen({search_contains: true});
+
 		function showaccount(){
 			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
 			document.form_account.target='myWin';

@@ -124,6 +124,7 @@
 			UPC_SIZE			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
 			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
+			FOLDER_REDIRECT VARCHAR(100),
 			PRIMARY KEY (GRP_ID),
 			KEY GRP_MOD_ID (GRP_MOD_ID),
   			KEY grp_hostid (GRP_HOST_ID),
@@ -183,7 +184,8 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
-		  USER_EXPIRY_DATE DATE,
+		  USER_EXPIRY_DATE 	   DATE,
+		  user_search_selection VARCHAR(100),
 		  PRIMARY KEY (USER_ID)
 		)
 		#this.tableoptions#
@@ -281,7 +283,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.file_types
 		(
-		  TYPE_ID              VARCHAR(5),
+		  TYPE_ID              VARCHAR(10),
 		  TYPE_TYPE            VARCHAR(3),
 		  TYPE_MIMECONTENT     VARCHAR(50),
 		  TYPE_MIMESUBCONTENT  VARCHAR(50),
@@ -440,6 +442,7 @@
 			news_active		varchar(6),
 			news_text		text,
 			news_date		varchar(20),
+			host_id 		int default 0,
 			PRIMARY KEY (news_id)
 		)
 		#this.tableoptions#
@@ -1312,39 +1315,39 @@
 		(
 			id_r					VARCHAR(100),
 			asset_type				varchar(10),
-			subjectcode				varchar(300),
-			creator					varchar(300),
-			title					varchar(500),
-			authorsposition			varchar(300),
-			captionwriter			varchar(300),
-			ciadrextadr				varchar(300),
-			category				varchar(300),
-			supplementalcategories	text,
-			urgency					varchar(300),
+			subjectcode				varchar(1000),
+			creator					varchar(1000),
+			title					varchar(1000),
+			authorsposition				varchar(1000),
+			captionwriter				varchar(1000),
+			ciadrextadr				varchar(1000),
+			category				varchar(1000),
+			supplementalcategories			text,
+			urgency					varchar(500),
 			description				text,
-			ciadrcity				varchar(300),
-			ciadrctry				varchar(300),
-			location				varchar(300),
+			ciadrcity				varchar(500),
+			ciadrctry				varchar(500),
+			location					varchar(500),
 			ciadrpcode				varchar(300),
 			ciemailwork				varchar(300),
 			ciurlwork				varchar(300),
 			citelwork				varchar(300),
-			intellectualgenre		varchar(300),
-			instructions			text,
-			source					varchar(300),
+			intellectualgenre			varchar(500),
+			instructions				text,
+			source					varchar(1000),
 			usageterms				text,
-			copyrightstatus			text,
-			transmissionreference	varchar(300),
-			webstatement			text,
-			headline				varchar(500),
+			copyrightstatus				text,
+			transmissionreference			varchar(500),
+			webstatement				text,
+			headline				varchar(1000),
 			datecreated				varchar(200),
-			city					varchar(300),
-			ciadrregion				varchar(300),
-			country					varchar(300),
-			countrycode				varchar(300),
-			scene					varchar(300),
-			state					varchar(300),
-			credit					varchar(300),
+			city					varchar(1000),
+			ciadrregion				varchar(500),
+			country					varchar(500),
+			countrycode				varchar(500),
+			scene					varchar(500),
+			state					varchar(500),
+			credit					varchar(1000),
 			rights					text,
 			colorspace				varchar(50),
 			xres					varchar(30),
@@ -1352,7 +1355,7 @@
 			resunit					varchar(20),
 			host_id					int,
 			KEY #arguments.thestruct.host_db_prefix#xmp_idr (id_r),
-   		    KEY #arguments.thestruct.host_db_prefix#xmp_hostid (host_id),
+   		    	KEY #arguments.thestruct.host_db_prefix#xmp_hostid (host_id),
 			KEY #arguments.thestruct.host_db_prefix#xmp_type (asset_type)
 		)  
 		#this.tableoptions#
@@ -1411,12 +1414,14 @@
 		  LINK_PATH				VARCHAR(200),
 		  share_dl_org			varchar(1) DEFAULT 'f',
 		  share_dl_thumb		varchar(1) DEFAULT 't',
-     	  share_comments		varchar(1) DEFAULT 'f',
+     	  	  share_comments		varchar(1) DEFAULT 'f',
 		  share_upload			varchar(1) DEFAULT 'f',
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
+		  share_inherit			VARCHAR(1) DEFAULT 'f',
 		  HOST_ID				INT,
 		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_hostid (HOST_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_id (folder_id),
@@ -1515,6 +1520,7 @@
 	    KEY #arguments.thestruct.host_db_prefix#files_type (FILE_TYPE),
 	    KEY #arguments.thestruct.host_db_prefix#files_owner (file_owner),
 	    KEY #arguments.thestruct.host_db_prefix#files_createdate (FILE_CREATE_DATE),
+	    KEY #arguments.thestruct.host_db_prefix#files_hashtag (HASHTAG),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1606,6 +1612,7 @@
 	  	KEY #arguments.thestruct.host_db_prefix#img_group (img_group),
 	  	KEY #arguments.thestruct.host_db_prefix#img_pathtoasset (PATH_TO_ASSET),
 	  	KEY #arguments.thestruct.host_db_prefix#img_hostid (HOST_ID),
+	  	KEY #arguments.thestruct.host_db_prefix#img_hashtag (HASHTAG),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1834,6 +1841,7 @@
 		  SET2_DUPLICATES_META  	VARCHAR(2000),
 		  SET2_FOLDER_SUBSCRIBE_META  	VARCHAR(2000),
 		  SET2_ASSET_EXPIRY_META  	VARCHAR(2000),
+		  SET2_META_EXPORT  	VARCHAR(1) DEFAULT 'f',
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),
   		  KEY #arguments.thestruct.host_db_prefix#set2_id (SET2_ID),
@@ -2130,6 +2138,7 @@
 			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			cf_edit			VARCHAR(2000) DEFAULT 'true',
 			HOST_ID			INT,
+			cf_xmp_path		VARCHAR(500),
 			PRIMARY KEY (cf_id),
 			KEY #arguments.thestruct.host_db_prefix#cf_enabled (cf_enabled),
    		    KEY #arguments.thestruct.host_db_prefix#cf_show (cf_show),
@@ -2279,9 +2288,10 @@
 		  	EXPIRY_DATE DATE,
 			PRIMARY KEY (aud_ID),
 			KEY #arguments.thestruct.host_db_prefix#aud_hostid (HOST_ID),
-	     	KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
-		    KEY #arguments.thestruct.host_db_prefix#aud_group (aud_group),
-		    KEY #arguments.thestruct.host_db_prefix#aud_pathtoasset (PATH_TO_ASSET),
+	     		KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
+			KEY #arguments.thestruct.host_db_prefix#aud_group (aud_group),
+			KEY #arguments.thestruct.host_db_prefix#aud_pathtoasset (PATH_TO_ASSET),
+			KEY #arguments.thestruct.host_db_prefix#aud_hashtag (HASHTAG),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#

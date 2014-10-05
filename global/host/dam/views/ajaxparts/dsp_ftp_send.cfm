@@ -68,7 +68,7 @@
 						<input type="hidden" name="artofimage" id="artofimage" value="">
 						<tr>
 							<td width="1%"><input type="checkbox" name="artofimage" id="artofimage" value="video" checked="true" /></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.vlength#")# MB) (#qry_asset.vwidth#x#qry_asset.vheight# pixel)</a></td>
+							<td width="100%"><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# #ucase(qry_asset.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.vlength#")# MB) (#qry_asset.vwidth#x#qry_asset.vheight# pixel)</a></td>
 						</tr>
 						<!--- The preview video
 						<tr>
@@ -101,7 +101,7 @@
 						<!--- Original --->
 						<tr>
 							<td><input type="checkbox" name="artofimage" id="artofimage" value="original"/></td>
-							<td><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
+							<td><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
 						</tr>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
@@ -125,7 +125,7 @@
 						<input type="hidden" name="artofimage" value="">
 						<tr>
 							<td width="1%"><input type="checkbox" name="artofimage" value="audio"/></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
+							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("original")# #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
 						</tr>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>

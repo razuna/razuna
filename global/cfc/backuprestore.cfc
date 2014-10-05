@@ -231,6 +231,7 @@
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
+						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_aliases">
 					)
 					AND lower(table_name) NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%_errors">
 				<cfelse>
@@ -1018,7 +1019,7 @@
 										<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(cl)#">
 									</cfif>
 								<cfelseif trim(listlast(lg,"-")) CONTAINS "clob">
-									<cfif evaluate(cl) EQ "">
+									<cfif evaluate(cl) EQ "" AND cl NEQ 'user_pass'>
 										NULL
 									<cfelse>
 										<cfqueryparam CFSQLType="CF_SQL_CLOB" value="#evaluate(cl)#">

@@ -27,6 +27,7 @@
 
 <!--- GET ALL SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
+	<cfset var qry = "">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT sched_id, sched_name, sched_method, sched_status
@@ -42,6 +43,7 @@
 <cffunction name="getEvents" returntype="query" output="true" access="public">
 	<!--- Query to get records for paging --->
 	<cfinvoke method="getAllEvents" returnvariable="thetotal">
+	<cfset var qry = "">
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif thetotal.recordcount LTE session.rowmaxpage_sched>
 		<cfset session.offset_sched = 0>
@@ -508,6 +510,7 @@
 <!--- GET LOG ENTRIES FOR SCHEDULED EVENT -------------------------------------------------------->
 <cffunction name="getlog" returntype="query" output="true" access="public">
 	<cfargument name="sched_id"   type="string" required="yes" default="">
+	<cfset var qry = "">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT l.sched_log_date, l.sched_log_time, l.sched_log_desc, l.sched_log_action, l.sched_log_user, u.user_login_name
@@ -544,7 +547,9 @@
 	<cfargument name="ad_server_password" type="string" required="false" default="">
 	<cfargument name="ad_server_filter" type="string" required="false" default="">
 	<cfargument name="ad_server_start" type="string" required="false" default="">
-	
+	<cfargument name="ad_ldap" type="string" required="false" default="">
+	<cfargument name="ad_domain" type="string" required="false" default="">
+	<cfargument name="ldap_dn" type="string" required="false" default="">
 	<!--- Param --->
 	<cfset var doit = structnew()>
 	<cfset var x = structnew()>
@@ -552,6 +557,7 @@
 	<cfset doit.directoryList = "">
 	<cfset var dorecursive = false>
 	<cfset var dirhere = "">
+	<cfset var qry = "">
 	<!--- Set arguments into new struct --->
 	<cfset x.sched_id = arguments.sched_id>
 	<cfset x.incomingpath = arguments.incomingpath>
@@ -571,6 +577,10 @@
 	<cfset x.recurse = doit.qry_detail.sched_server_recurse>
 	<cfset x.zip_extract = doit.qry_detail.sched_zip_extract>
 	<cfset session.theuserid = doit.qry_detail.sched_user>
+	<!-- Get AWS Bucket -->
+	<cfinvoke component="global.cfc.settings" method="prefs_storage" returnvariable="qry_storage" />
+	<!-- Set bucket -->
+	<cfset x.awsbucket  = qry_storage.set2_aws_bucket />
 	<!--- If no record found simply abort --->
 	<cfif doit.qry_detail.recordcount EQ 0>
 		<cfabort>
@@ -624,10 +634,6 @@
 			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
 		<!--- FTP --->
 		<cfelseif doit.qry_detail.sched_method EQ "ftp">
-			<!-- Get AWS Bucket -->
-			<cfinvoke component="global.cfc.settings" method="prefs_storage" returnvariable="qry_storage" />
-			<!-- Set bucket -->
-			<cfset x.awsbucket  = qry_storage.set2_aws_bucket />
 			<!-- Params -->
 			<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
 			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
@@ -858,19 +864,23 @@
 							<cfif application.razuna.storage EQ "local">
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50">
+										<cfif img_asset_path NEQ "">
+											<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50" onerror = "this.src=''">
+										</cfif>
 									</cfcase>
 									<cfcase value="vid">
-										<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_thumb#"  height="50">
+										<cfif vid_asset_path NEQ "">
+											<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_thumb#"  height="50" onerror = "this.src=''">
+										</cfif>
 									</cfcase>
 								</cfswitch>
 							<cfelse>
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										<img src="#img_cloud_thumb#"  height="50">
+										<img src="#img_cloud_thumb#"  height="50" onerror = "this.src=''">
 									</cfcase>
 									<cfcase value="vid">
-										<img src="#vid_cloud_thumb#"  height="50">
+										<img src="#vid_cloud_thumb#"  height="50" onerror = "this.src=''">
 									</cfcase>
 								</cfswitch>
 								
@@ -942,31 +952,47 @@
 							<cfif application.razuna.storage EQ "local">
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+										<cfif img_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+										</cfif>
 									</cfcase>
 									<cfcase value="doc">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+										<cfif file_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+										</cfif>
 									</cfcase>
 									<cfcase value="vid">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+										<cfif vid_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+										</cfif>
 									</cfcase>
 									<cfcase value="aud">
-										#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+										<cfif aud_asset_path NEQ "">
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+										</cfif>
 									</cfcase>
 								</cfswitch>
 							<cfelse>
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
-										#img_cloud_url#
+										<cfif img_cloud_url NEQ "">
+											#img_cloud_url#
+										</cfif>
 									</cfcase>
 									<cfcase value="doc">
-										#file_cloud_url#
+										<cfif file_cloud_url NEQ "">
+											#file_cloud_url#
+										</cfif>
 									</cfcase>
 									<cfcase value="vid">
-										#vid_cloud_url#
+										<cfif vid_cloud_url NEQ "">
+											#vid_cloud_url#
+										</cfif>
 									</cfcase>
 									<cfcase value="aud">
-										#aud_cloud_url#
+										<cfif aud_cloud_url NEQ "">
+											#aud_cloud_url#
+										</cfif>
 									</cfcase>
 								</cfswitch>
 								
@@ -1025,13 +1051,13 @@
 	<!--- Get assets that  have expired --->
 	<cfquery datasource="#application.razuna.datasource#" name="getexpired_assets">
 	SELECT img_id id, host_id, 'img' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')label_id FROM raz1_images i WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
-	UNION
+	UNION ALL
 	SELECT aud_id id, host_id, 'aud' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')label_id  FROM raz1_audios a WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
 
-	UNION
+	UNION ALL
 	SELECT vid_id id, host_id, 'vid' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0')label_id FROM raz1_videos v WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
 
-	UNION
+	UNION ALL
 	SELECT file_id id, host_id, 'doc' type,(SELECT MAX(label_id)  FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')label_id FROM raz1_files f WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=f.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=f.host_id AND label_id_r = '0'))
 	</cfquery>
 	<!--- Get users that are in groups which have access to the expired assets and notify them about the expiry --->
@@ -1046,7 +1072,7 @@
 	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
-	UNION
+	UNION ALL
 	SELECT a.aud_id id, a.aud_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'aud' type, path_to_asset, '' thumb, '' cloud_thumb
 	FROM raz1_audios a, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE a.folder_id_r = f.folder_id
@@ -1057,7 +1083,7 @@
 	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
-	UNION
+	UNION ALL
 	SELECT v.vid_id id, v.vid_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'vid' type, path_to_asset, vid_name_image thumb, cloud_url cloud_thumb
 	FROM raz1_videos v, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE v.folder_id_r = f.folder_id
@@ -1068,7 +1094,7 @@
 	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
-	UNION
+	UNION ALL
 	SELECT fi.file_id id, fi.file_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'doc' type, path_to_asset, '' thumb, '' cloud_thumb
 	FROM raz1_files fi, raz1_folders f,raz1_folders_groups fg, ct_groups_users cu, users u
 	WHERE fi.folder_id_r = f.folder_id
@@ -1084,7 +1110,6 @@
 	<cfquery dbtype="query" name="getuserinfo">
 		SELECT user_email, user_id FROM getusers2notify GROUP BY user_id,user_email
 	</cfquery>
-	
 	<!--- Before we send out notification emails lets expire the assets first --->
 	<!--- Set expired label for assets that have expired and update indexing status to re-index --->
 	<cfloop query="getexpired_assets">
@@ -1122,13 +1147,13 @@
 	<cfquery datasource="#application.razuna.datasource#" name="getreset_assets">
 	SELECT i.img_id id, rec_uuid FROM ct_labels c, raz1_images i WHERE i.img_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')
 	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
-	UNION
+	UNION ALL
 	SELECT a.aud_id id, rec_uuid FROM ct_labels c, raz1_audios a WHERE a.aud_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0')
 	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
-	UNION
+	UNION ALL
 	SELECT v.vid_id id, rec_uuid FROM ct_labels c, raz1_videos v WHERE v.vid_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0')
 	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
-	UNION
+	UNION ALL
 	SELECT f.file_id id, rec_uuid FROM ct_labels c, raz1_files f WHERE f.file_id=c.ct_id_r AND c.ct_label_id in (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=f.host_id AND label_id_r = '0')
 	AND (expiry_date IS NULL OR expiry_date >= <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">)
 	</cfquery>
@@ -1205,23 +1230,27 @@
 					<td nowrap="true">#getusers2email.name#</td>
 					<td>
 					<cfif application.razuna.storage EQ "local">
-						<cfswitch expression="#getusers2email.type#">
-							<cfcase value="img">
-								<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#getusers2email.id#.#thumb#" height="50">
-							</cfcase>
-							<cfcase value="vid">
-								<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thumb#"  height="50">
-							</cfcase>
-						</cfswitch>
+						<cfif path_to_asset NEQ "">
+							<cfswitch expression="#getusers2email.type#">
+								<cfcase value="img">
+									<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#getusers2email.id#.#thumb#" height="50" onerror = "this.src=''">
+								</cfcase>
+								<cfcase value="vid">
+									<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thumb#"  height="50" onerror = "this.src=''">
+								</cfcase>
+							</cfswitch>
+						</cfif>
 					<cfelse>
-						<cfswitch expression="#getusers2email.type#">
-							<cfcase value="img">
-								<img src="#cloud_thumb#"  height="50">
-							</cfcase>
-							<cfcase value="vid">
-								<img src="#cloud_thumb#"  height="50">
-							</cfcase>
-						</cfswitch>
+						<cfif cloud_thumb NEQ "">
+							<cfswitch expression="#getusers2email.type#">
+								<cfcase value="img">
+									<img src="#cloud_thumb#"  height="50" onerror = "this.src=''">
+								</cfcase>
+								<cfcase value="vid">
+									<img src="#cloud_thumb#"  height="50" onerror = "this.src=''">
+								</cfcase>
+							</cfswitch>
+						</cfif>
 					</cfif>
 					</td>
 					<td nowrap="true">#getusers2email.folder_id#</td>

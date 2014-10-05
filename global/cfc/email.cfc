@@ -115,11 +115,48 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thehostid#">
 		</cfquery>
 		<cfif isdefined("isdup")>
+			<!--- Find duplicate records found in the Razuna system and record it in the log --->
+			<!--- Images --->
+			<cfinvoke component="images" method="checkmd5" md5hash="#md5hash#" returnvariable="qryimg" />
+			<!--- videos --->
+			<cfinvoke component="videos" method="checkmd5" md5hash="#md5hash#" returnvariable="qryvid" />
+			<!--- Files --->
+			<cfinvoke component="files" method="checkmd5" md5hash="#md5hash#" returnvariable="qrydoc" />
+			<!--- Audios --->
+			<cfinvoke component="audios" method="checkmd5" md5hash="#md5hash#" returnvariable="qryaud" />
+
+			<cfif qryimg.recordcount NEQ 0>
+				<cfset var dataqry = "qryimg">
+			<cfelseif qryvid.recordcount NEQ 0>
+				<cfset var dataqry = "qryvid">
+			<cfelseif qryaud.recordcount NEQ 0>
+				<cfset var dataqry = "qryaud">
+			<cfelseif qrydoc.recordcount NEQ 0>
+				<cfset var dataqry = "qrydoc">
+			<cfelse>
+				<cfset var dataqry = "qryimg">
+			</cfif>
+			<cfquery dbtype="query" name="getdups">
+				SELECT * FROM #dataqry#
+			</cfquery>
+			<!--- Get duplicate file names and path --->
+			<cfset var duplist = "">
+			<cfloop query="getdups">
+				<cfset var folders = "">
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#getdups.folder_id_r#" returnvariable="crumbs" />
+				<cfloop list="#crumbs#" delimiters=";" index="i">
+					<cfset folders = folders & "/#ListGetAt(i,1,"|")#">
+				</cfloop>
+				<cfset folders = folders & "/#getdups.name#<br/>">
+				<cfset duplist = duplist & folders>
+			</cfloop>
+
 			<cfif emaildata.set2_duplicates_email_sub NEQ "">
 				<cfset arguments.subject = replacenocase (emaildata.set2_duplicates_email_sub,"$filename$",arguments.filename,"ALL")>
 			</cfif>
 			<cfif len(emaildata.set2_duplicates_email_body) GT 10>
 				<cfset arguments.themessage = replacenocase (emaildata.set2_duplicates_email_body,"$filename$",arguments.filename,"ALL")>
+				<cfset arguments.themessage = replacenocase (arguments.themessage,"$location$",duplist,"ALL")>
 			</cfif>
 		</cfif>
 
@@ -134,8 +171,13 @@
 		</cfif>
 		<!--- The to is empty, so simply skip sending the eMail --->
 		<cfif arguments.to NEQ "">
-			<!--- Always take the email address from the settings --->
-			<cfset var thefrom = emaildata.set2_email_from>			
+			<!--- Always take the email address from the settings if not specified in arguments --->
+			<cfif arguments.from NEQ ''>
+				<cfset var thefrom = arguments.from>
+			<cfelse>
+				<cfset var thefrom = emaildata.set2_email_from>
+			</cfif>
+			
 			<!--- send message if mail server setting is empty thus take the CF admin settings--->
 			<cfif emaildata.set2_email_server EQ "">
 				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" subject="#arguments.subject#" type="text/html"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>

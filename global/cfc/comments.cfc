@@ -28,6 +28,7 @@
 <!--- GET HOW MANY COMMENTS THERE ARE FOR THIS ASSET --->
 <cffunction name="howmany" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT count(com_id) thetotal
@@ -42,6 +43,7 @@
 <!--- GET COMMENTS FOR THIS ASSET --->
 <cffunction name="get" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
@@ -57,6 +59,7 @@
 <!--- GET LATEST COMMENTS FOR THIS ASSET --->
 <cffunction name="getlatest" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
@@ -78,6 +81,7 @@
 <!--- GET COMMENT --->
 <cffunction name="edit" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
@@ -91,6 +95,7 @@
 <!--- ADD NEW COMMENT --->
 <cffunction name="add" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<cfif arguments.thestruct.comment NEQ "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
@@ -114,6 +119,7 @@
 <!--- REMOVE COMMENT --->
 <cffunction name="remove" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	DELETE FROM #session.hostdbprefix#comments
@@ -126,6 +132,7 @@
 <!--- UPDATE COMMENT --->
 <cffunction name="update" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	UPDATE #session.hostdbprefix#comments

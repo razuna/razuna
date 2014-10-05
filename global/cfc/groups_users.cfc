@@ -34,6 +34,7 @@
 	<cfargument name="host_id" type="numeric" required="false" default="0">
 	<cfargument name="check_upc_size" type="string" required="false" default="false">
 	<cfargument name="orderBy" type="string" required="false" default="groups.grp_mod_id, groups.grp_name, groups.grp_id" hint="""ORDER BY #yourtext#""">
+	<cfargument name="nosessionoverwrite" type="string" required="false" default="false" hint="Do not overwrite session.thegroupofuser var">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
@@ -65,7 +66,7 @@
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>
-	<cfif arguments.check_upc_size NEQ 'true'>
+	<cfif arguments.check_upc_size NEQ 'true' AND arguments.nosessionoverwrite EQ 'false'>
 		<!--- Put result into session --->
 		<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
 		<!--- If session is empty then fill it with 0 --->
@@ -156,8 +157,9 @@
 			<!--- OpenBD Fix throws an error when using the struct as type numeric. With a var it works --->
 			<cfset ecp=arguments.thestruct.module_id_struct.ecp>
 			<cfset adm=arguments.thestruct.module_id_struct.adm>
-			AND g.grp_mod_id = <cfqueryparam value="#ecp#" cfsqltype="cf_sql_numeric">
-			OR g.grp_mod_id = <cfqueryparam value="#adm#" cfsqltype="cf_sql_numeric">
+			AND 
+			(g.grp_mod_id = <cfqueryparam value="#ecp#" cfsqltype="cf_sql_numeric">
+			OR g.grp_mod_id = <cfqueryparam value="#adm#" cfsqltype="cf_sql_numeric">)
 		</cfif>
 	)
 	</cfquery>
@@ -288,6 +290,7 @@
 
 <!--- get all admins or sysadmin of this host --->
 <cffunction name="getadmins">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_email
 	FROM users u, ct_groups_users ctg, ct_users_hosts cth
@@ -336,6 +339,18 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("users","true")>
 	<cfreturn />
+</cffunction>
+
+<!--- Get re-direct folders for user --->
+<cffunction name="getredirectfolders" returntype="string">
+	<cfset var redirectfolders = "">
+	<cfset var getfolders = "">
+	<!--- Insert users --->
+	<cfquery datasource="#application.razuna.datasource#" name="getfolders">
+		SELECT folder_redirect FROM groups WHERE grp_id in (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+	</cfquery>
+	<cfset redirectfolders = valuelist(getfolders.folder_redirect)>
+	<cfreturn redirectfolders/>
 </cffunction>
 
 </cfcomponent>

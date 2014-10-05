@@ -44,6 +44,7 @@
 <!--- FUNCTION: CHECK FOR SAME NAME --->
 <cffunction name="checkname" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
+	<cfset var qry = "">
 	<cfquery datasource="#variables.dsn#" name="qry">
 	SELECT host_name
 	FROM hosts
@@ -966,6 +967,7 @@
 <!--- Save cachetoken --->
 <cffunction name="setcachetoken" output="false" returntype="void">
 	<cfargument name="hostid" required="true">
+	<cfset var qry = "">
 	<!--- Query for hostid --->
 	<cfquery dataSource="#application.razuna.datasource#" name="qry">
 	SELECT host_id

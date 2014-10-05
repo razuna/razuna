@@ -106,7 +106,7 @@
 			</tr>
 		</cfif>
 		<tr>
-			<td width="100%">Original<cfif qry_detail.link_kind EQ ""> #ucase(orgext)# (#myFusebox.getApplicationData().defaults.converttomb("#orgsize#")# MB) <cfif attributes.type NEQ "aud" AND attributes.type NEQ "doc">(#orgw#x#orgh# pixel)</cfif></cfif><cfif qry_detail.link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
+			<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif qry_detail.link_kind EQ ""> #ucase(orgext)# (#myFusebox.getApplicationData().defaults.converttomb("#orgsize#")# MB) <cfif attributes.type NEQ "aud" AND attributes.type NEQ "doc">(#orgw#x#orgh# pixel)</cfif></cfif><cfif qry_detail.link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 			<td width="1%" align="center"><input type="checkbox" name="org_dl" id="org_dl" value="1" onclick="save_share('org','#attributes.file_id#','org','#attributes.type#','dl','#attributes.file_id#');" <cfif orgdl>checked</cfif> /></td>
 			<td align="center"><input type="checkbox" name="org_or" id="org_or" value="1" onclick="save_share('org','#attributes.file_id#','org','#attributes.type#','or','#attributes.file_id#');" <cfif orgor>checked</cfif> /></td>
 			<td align="center"><input type="radio" name="#attributes.file_id#_selected" id="#attributes.file_id#_selected" value="1" onclick="save_share('org','#attributes.file_id#','org','#attributes.type#','se','#attributes.file_id#');" <cfif orgsel>checked</cfif> /></td>

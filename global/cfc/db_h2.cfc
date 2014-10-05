@@ -114,6 +114,7 @@
 			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
 			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
+			FOLDER_REDIRECT VARCHAR(100),
 			CONSTRAINT GROUPS_PK PRIMARY KEY (GRP_ID), 
 			CONSTRAINT GROUPS_FK_MODULES FOREIGN KEY (GRP_MOD_ID)
 			REFERENCES modules (MOD_ID)
@@ -167,7 +168,8 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
-		  USER_EXPIRY_DATE DATE,
+		  USER_EXPIRY_DATE	   DATE,
+		  user_search_selection VARCHAR(100),
 		CONSTRAINT USERS_PK PRIMARY KEY (USER_ID)
 		)
 		</cfquery>
@@ -256,7 +258,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE file_types
 		(
-		  TYPE_ID              VARCHAR(5) CONSTRAINT FILE_TYPE_PK PRIMARY KEY,
+		  TYPE_ID              VARCHAR(10) CONSTRAINT FILE_TYPE_PK PRIMARY KEY,
 		  TYPE_TYPE            VARCHAR(3),
 		  TYPE_MIMECONTENT     VARCHAR(50),
 		  TYPE_MIMESUBCONTENT  VARCHAR(50)
@@ -405,6 +407,7 @@
 			news_active		varchar(6),
 			news_text		clob,
 			news_date		varchar(20),
+			host_id 		bigint default 0,
 			PRIMARY KEY (news_id)
 		)
 		</cfquery>
@@ -918,45 +921,45 @@
 		(
 			id_r					VARCHAR(100),
 			asset_type				varchar(10),
-			subjectcode				varchar(300),
-			creator					varchar(300),
-			title					varchar(500),
-			authorsposition			varchar(300),
-			captionwriter			varchar(300),
-			ciadrextadr				varchar(300),
-			category				varchar(300),
-			supplementalcategories	VARCHAR(4000),
-			urgency					varchar(300),
+			subjectcode				varchar(1000),
+			creator					varchar(1000),
+			title					varchar(1000),
+			authorsposition				varchar(1000),
+			captionwriter				varchar(1000),
+			ciadrextadr				varchar(1000),
+			category				varchar(1000),
+			supplementalcategories			VARCHAR(4000),
+			urgency					varchar(500),
 			description				VARCHAR(4000),
-			ciadrcity				varchar(300),
-			ciadrctry				varchar(300),
-			location				varchar(300),
+			ciadrcity				varchar(500),
+			ciadrctry				varchar(500),
+			location					varchar(500),
 			ciadrpcode				varchar(300),
 			ciemailwork				varchar(300),
 			ciurlwork				varchar(300),
 			citelwork				varchar(300),
-			intellectualgenre		varchar(300),
-			instructions			VARCHAR(4000),
-			source					varchar(300),
+			intellectualgenre			varchar(500),
+			instructions				VARCHAR(4000),
+			source					varchar(1000),
 			usageterms				VARCHAR(4000),
-			copyrightstatus			VARCHAR(4000),
-			transmissionreference	varchar(300),
-			webstatement			varchar(500),
-			headline				varchar(500),
+			copyrightstatus				VARCHAR(4000),
+			transmissionreference			varchar(500),
+			webstatement				VARCHAR(4000),
+			headline				varchar(1000),
 			datecreated				varchar(200),
-			city					varchar(300),
-			ciadrregion				varchar(300),
-			country					varchar(300),
-			countrycode				varchar(300),
-			scene					varchar(300),
-			state					varchar(300),
-			credit					varchar(300),
+			city					varchar(1000),
+			ciadrregion				varchar(500),
+			country					varchar(500),
+			countrycode				varchar(500),
+			scene					varchar(500),
+			state					varchar(500),
+			credit					varchar(1000),
 			rights					VARCHAR(4000),
 			colorspace				varchar(50),
 			xres					varchar(30),
 			yres					varchar(30),
 			resunit					varchar(20),
-			HOST_ID					BIGINT
+			HOST_ID				BIGINT
 		)  
 		</cfquery>
 		
@@ -1008,12 +1011,14 @@
 		  LINK_PATH				VARCHAR(200),
 		  share_dl_org			varchar(1) DEFAULT 'f',
 		  share_dl_thumb		varchar(1) DEFAULT 't',
-     	  share_comments		varchar(1) DEFAULT 'f',
+     	 	  share_comments		varchar(1) DEFAULT 'f',
 		  share_upload			varchar(1) DEFAULT 'f',
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
+		  share_inherit			varchar(1) DEFAULT 'f',
 		  HOST_ID				BIGINT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTID_FK1 FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1375,6 +1380,7 @@
 		   SET2_DUPLICATES_META  	VARCHAR(2000),
 		  SET2_FOLDER_SUBSCRIBE_META  	VARCHAR(2000),
 		  SET2_ASSET_EXPIRY_META  	VARCHAR(2000),
+		  SET2_META_EXPORT  	VARCHAR(1) DEFAULT 'f',
 		  PRIMARY KEY (rec_uuid),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_2_FK FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1637,7 +1643,9 @@
 			cf_select_list	VARCHAR(4000),
 			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			cf_edit			VARCHAR(2000) DEFAULT 'true',
-			host_id			BIGINT
+			host_id			BIGINT,
+			cf_xmp_path		VARCHAR(500),
+			PRIMARY KEY (cf_id)
 		)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -2291,7 +2299,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#w_folderid ON #arguments.thestruct.host_db_prefix#widgets(folder_id_r);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#w_hostid ON #arguments.thestruct.host_db_prefix#widgets(host_id);
-		CREATE INDEX #arguments.thestruct.host_db_prefix#w_colid ON #arguments.thestruct.host_db_prefix#widgets(col_id_r);		
+		CREATE INDEX #arguments.thestruct.host_db_prefix#w_colid ON #arguments.thestruct.host_db_prefix#widgets(col_id_r);
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#av_id_r ON #arguments.thestruct.host_db_prefix#additional_versions(asset_id_r);
@@ -2313,8 +2321,14 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id ON #arguments.thestruct.host_db_prefix#folder_subscribe(folder_id);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#user_id ON #arguments.thestruct.host_db_prefix#folder_subscribe(user_id);
 		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">		CREATE INDEX #arguments.thestruct.host_db_prefix#asset_id_r  ON ct_aliases(asset_id_r); 
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#asset_id_r  ON ct_aliases(asset_id_r);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_id_r  ON ct_aliases(folder_id_r);
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#img_hashtag  ON #arguments.thestruct.host_db_prefix#images(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag  ON #arguments.thestruct.host_db_prefix#audios(hashtag);
+		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag  ON #arguments.thestruct.host_db_prefix#files(hashtag);
 		</cfquery>
 		<cfreturn />
 	</cffunction>

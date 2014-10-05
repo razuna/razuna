@@ -28,6 +28,9 @@
 	<cfset custom_fields = "">
 	<cfif !structKeyExists(variables,"cf_inline")><table border="0" cellpadding="0" cellspacing="0" width="450" class="grid"></cfif>
 		<cfloop query="qry_cf">
+			<cfif ! (qry_cf.cf_show EQ attributes.cf_show OR qry_cf.cf_show EQ 'all')>
+				<cfcontinue>
+			</cfif>
 			<cfset custom_fields = listappend(custom_fields,"#cs.customfield_images_metadata#",',')>
 			<cfset custom_fields = listappend(custom_fields,"#cs.customfield_audios_metadata#",',')>
 			<cfset custom_fields = listappend(custom_fields,"#cs.customfield_videos_metadata#",',')>

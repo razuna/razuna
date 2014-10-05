@@ -34,9 +34,10 @@
 			<tr>
 				<td width="100%" nowrap="true">
 					<cfif qry_detail.detail.link_kind NEQ "url">
-						<strong>Original</strong> (#ucase(qry_detail.detail.aud_extension)#)<br /> 
-						<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>View</a>
-						 | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">Download</a>
+						<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (#ucase(qry_detail.detail.aud_extension)#)
+						<br /> 
+						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank" style="padding-left:20px;">Play</a>
 						 <cfif qry_detail.detail.link_kind NEQ "lan">
 						 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 						 | <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>

@@ -29,13 +29,19 @@
 	<cfset thestorage = "#application.razuna.nvxurlservices#/#attributes.nvxsession#/razuna/#session.hostid#/">
 <cfelse>
 --->
-	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+	<cfset isadmin = true>
+<cfelse>
+	<cfset isadmin = false>
+</cfif>
 <!--- </cfif> --->
 <cfoutput>
+	<cfset uniqueid = createuuid()>
 	<form name="form#col_id#" id="form#col_id#" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
-	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+	<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="col_id" value="#attributes.col_id#">
 	<input type="hidden" name="assetids" value="#valuelist(qry_assets.cart_product_id)#">
 	<div id="col_detail#col_id#">
@@ -57,8 +63,8 @@
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<cfif qry_assets.recordcount NEQ 0>
 						<!--- If released --->
-						<cfif qry_detail.col_released>
-							<strong style="color:green;">This is a released collection!</strong><cfif request.securityobj.CheckSystemAdminUser() OR request.securityobj.CheckAdministratorUser()><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+						<cfif qry_detail.col_released EQ 'true'>
+							<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
 						<!--- Not released --->
 						<cfelse>
 							<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
@@ -78,20 +84,21 @@
 						<cfcase value="img">
 							<tr class="list">
 								<td width="1%" nowrap="true" class="thumbview">
-									<cfloop query="qry_theimage">
-										<cfif myid EQ img_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
-											<cfif link_kind NEQ "url">
-												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-													<img src="#cloud_url#" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0" img-tt="img-tt">
-												</cfif>
-											<cfelseif link_kind EQ "url">
-												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
+								<cfquery name="getimg" dbtype="query">
+									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url FROM qry_theimage WHERE img_id= '#myid#'
+								</cfquery>
+								<cfloop query="getimg">
+										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
+										<cfif link_kind NEQ "url">
+											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+												<img src="#cloud_url#" border="0" img-tt="img-tt">
+											<cfelse>
+												<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0" img-tt="img-tt">
 											</cfif>
-											</a>
+										<cfelseif link_kind EQ "url">
+											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 										</cfif>
+										</a>
 									</cfloop>
 								</td>
 								<td width="100%" colspan="2" valign="top" class="gridno">
@@ -104,7 +111,7 @@
 												<!--- Original --->
 												<tr>
 													<td><input type="radio" name="artofimage#myid#" value="#myid#-original"<cfif theart EQ "original" OR qry_theimage_related.recordcount EQ 0> checked="true"</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- Thumbnail --->
 												<cfif link_kind NEQ "url">
@@ -126,11 +133,17 @@
 										</cfloop>
 									</table>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&what=col_asset_move&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&what=col_asset_move&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -143,7 +156,7 @@
 								<td width="1%" nowrap="true" class="thumbview">
 									<cfloop query="qry_thevideo">
 										<cfif myid EQ vid_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#vid_id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#vid_id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
 											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<img src="#cloud_url#" border="0">
@@ -167,7 +180,7 @@
 												<!--- The Original video --->
 												<tr>
 													<td width="1%"><input type="radio" name="artofvideo#myid#" value="#myid#-video"<cfif theart EQ "video" OR qry_thevideo_related.recordcount EQ 0> checked</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- The preview video --->
 												<tr>
@@ -187,11 +200,17 @@
 										</cfloop>
 									</table>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -204,7 +223,7 @@
 								<td width="1%" nowrap="true" class="thumbview">
 									<cfloop query="qry_theaudio">
 										<cfif myid EQ aud_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#aud_id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" border="0"></a>
+											<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#aud_id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" border="0"></a>
 										</cfif>
 									</cfloop>
 								</td>
@@ -217,7 +236,7 @@
 											<cfif myid EQ aud_id>
 												<tr>
 													<td width="1%"><input type="radio" name="artofaudio#myid#" value="#myid#-audio"<cfif theart EQ "audio" OR qry_theaudio_related.recordcount EQ 0> checked</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -232,11 +251,17 @@
 										</cfloop>
 									</table>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -249,20 +274,15 @@
 								<td width="1%" nowrap="true" valign="top" class="thumbview">
 									<cfloop query="qry_thefile">
 										<cfif myid EQ file_id>
-											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#file_id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
-											<!--- If it is a PDF we show the thumbnail --->
-											<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#file_id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&collectionview=yes','#Jsstringformat(filename)#',1000,1);return false;">
+											<!--- Show the thumbnail --->
+											<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
+											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
-											<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
-												<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-												<cfset thethumb = replacenocase(thethumb, ".indd", ".jpg", "all")>
-												<cfif  FileExists("#attributes.prefs.set2_path_to_assets#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
-												</cfif>
+											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
 											<cfelse>
-												<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
+												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>
 											</a>
 										</cfif>
@@ -276,11 +296,17 @@
 										</cfif>
 									</cfloop>
 								</td>
-								<cfif !qry_detail.col_released>
+								<cfif qry_detail.col_released EQ 'false'>
 									<!--- move --->
 									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 									<!--- trash --->
-									<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+									<td width="1%" align="center" nowrap="nowrap" valign="top">
+										<cfif attributes.folderaccess NEQ "R">
+											<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+												<a href="##" onclick="colupdate();showwindow('#myself##xfa.trash#&id=#myid#&col_id=#attributes.col_id#&what=col_asset_move&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
+										</cfif>
+									</td>
 								<cfelse>
 									<td></td>
 									<td></td>
@@ -295,8 +321,8 @@
 				<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; Back to Collection list</a></div>
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<!--- If released --->
-					<cfif qry_detail.col_released>
-						<strong style="color:green;">This is a released collection!</strong><cfif request.securityobj.CheckSystemAdminUser() OR request.securityobj.CheckAdministratorUser()><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+					<cfif qry_detail.col_released EQ 'true'>
+						<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
 					<!--- Not released --->
 					<cfelse>
 						<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
@@ -314,7 +340,7 @@
 					</tr>
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
-						<td><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
+						<td><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#" onkeyup="samecollectionnamecheck('#col_id#');" autocomplete="off"><div id="samecollectionname"></div></td>
 					</tr>
 					<tr>
 						<td>ID</td>
@@ -328,6 +354,7 @@
 					</tr>
 					<cfloop query="qry_langs">
 						<cfset thisid = lang_id>
+
 						<tr>
 							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</td>
 							<td class="td2" width="100%"><textarea name="col_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_desc#</cfif></cfloop></textarea></td>
@@ -349,7 +376,7 @@
 											<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 										</cfloop>
 									</select>
-									<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+									<cfif qry_label_set.set2_labels_users EQ "t" OR (isadmin)>
 										<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 									</cfif>
 								<cfelse>
@@ -365,7 +392,7 @@
 											</cfif>
 										</cfloop>
 									</div>
-									<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+									<cfif qry_label_set.set2_labels_users EQ "t" OR (isadmin)>
 										<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 									</cfif>
 									<!--- Select label button --->
@@ -376,7 +403,7 @@
 						</tr>
 					</cfif>
 					<tr>
-						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div></td>
+						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" id = "collectionsubmitbutton"></div></td>
 					</tr>
 				</table>
 			</div>
@@ -441,7 +468,7 @@
 							<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
 							<td class="td2"><input type="radio" value="T" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_detail.share_dl_thumb EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_detail.share_dl_thumb EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 							<br><br>
-							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.folder_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.col_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 							<div id="colreset_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
 							</td>
 						</tr>
@@ -459,7 +486,7 @@
 							<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 							<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 							<br><br>
-							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.folder_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+							<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.col_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 							<div id="colreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 							</td>
 						</tr>
@@ -577,8 +604,8 @@
 		}
 		// Back to Collection List
 		function backtocol(){
-			$('##rightside').load('#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=#qry_detail.col_released#', function(){
-				<cfif qry_detail.col_released>
+			$('##rightside').load('#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=#iif(qry_detail.col_released EQ '','false',qry_detail.col_released)#', function(){
+				<cfif qry_detail.col_released EQ 'true'>
 					//$('##tabsfolder_tab').tabs('select','##contentrel');
 					var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
 					$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );

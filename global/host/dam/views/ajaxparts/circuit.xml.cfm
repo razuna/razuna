@@ -196,7 +196,10 @@
 	<fuseaction name="folder_namecheck">
   		<include template="dsp_folder_namecheck" />
 	</fuseaction>
-	
+	<!-- Folder: samecollectionnamecheck -->
+	<fuseaction name="collection_namecheck">
+  		<include template="dsp_collection_namecheck" />
+	</fuseaction>
 	<!-- Collections: List -->
 	<fuseaction name="collections_list">
   		<include template="dsp_collections_list" />
@@ -284,6 +287,10 @@
 	<!-- Assets: Show history -->
 	<fuseaction name="log_history">
   		<include template="dsp_asset_log" />
+	</fuseaction>
+	<!-- Assets: Show alias usage -->
+	<fuseaction name="usage_alias">
+  		<include template="dsp_usage_alias" />
 	</fuseaction>
 	
 	
@@ -445,6 +452,17 @@
 	<fuseaction name="log_assets">
   		<include template="dsp_admin_log_assets" />
 	</fuseaction>
+	
+	<!-- ADMIN: Log Folder Summary -->
+	<fuseaction name="log_folder_summary">
+  		<include template="dsp_admin_log_folder_summary" />
+	</fuseaction>
+
+	<!-- ADMIN: Log Folder Summary Report -->
+	<fuseaction name="log_folder_summary_report">
+  		<include template="dsp_admin_log_folder_summary_report" />
+	</fuseaction>
+
 	<!-- ADMIN: Log Folders -->
 	<fuseaction name="log_folders">
   		<include template="dsp_admin_log_folders" />
@@ -882,6 +900,27 @@
 	<!-- Alias -->
 	<fuseaction name="trash_alias">
 		<include template="win_trash_alias" />
+	</fuseaction>
+	
+	<!-- Admin Access -->
+	<fuseaction name="admin_access">
+		<include template="dsp_admin_access" />
+	</fuseaction>
+
+	<!-- Upload basket to local storage -->
+	<fuseaction name="basket_upload2local">
+		<include template="dsp_basket_upload2local" />
+	</fuseaction>
+	
+	<!-- WL section -->
+	<fuseaction name="wl_host">
+		<include template="dsp_wl_host" />
+	</fuseaction>
+	<fuseaction name="wl_news">
+		<include template="dsp_wl_news" />
+	</fuseaction>
+	<fuseaction name="wl_news_edit">
+		<include template="dsp_wl_news_edit" />
 	</fuseaction>
 
 </circuit>

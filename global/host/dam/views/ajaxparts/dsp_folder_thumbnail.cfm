@@ -51,10 +51,10 @@
 		<div id="folder_thumb#attributes.folder_id#-#attributes.isdetail#">
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<th>Choose Folder Thumbnail</th>
+					<th>#myFusebox.getApplicationData().defaults.trans("folder_thumbnail_header")#</th>
 				</tr>
 				<tr>
-					<td>By default Razuna shows a folder image for each folder. If you instead want to show your own thumbnails as the folder image, you can upload one here or choose from any existing image in this folder.</td>
+					<td>#myFusebox.getApplicationData().defaults.trans("folder_thumbnail_desc")#</td>
 				</tr>
 				<tr>
 					<td style="padding-top:15px;">

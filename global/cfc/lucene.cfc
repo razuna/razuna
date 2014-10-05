@@ -108,6 +108,7 @@
 
 	<!--- INDEX: Update --->
 	<cffunction name="index_update_hosted" access="public" output="false" returntype="void">
+		<cfargument name="thestruct" type="struct">
 		<!--- Name of lock file --->
 		<cfset var lockfile = "lucene.lock">
 		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
@@ -145,6 +146,7 @@
 				<cfinvokeargument name="hostid" value="#host_id#" />
 				<cfinvokeargument name="prefix" value="#host_shard_group#" />
 				<cfinvokeargument name="hosted" value="true" />
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
 			</cfinvoke>
 		</cfloop>
 		<!--- Remove lock file --->
@@ -947,10 +949,11 @@
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
 		<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
-		<cftry>
+		<!--- Commented this out cause we fixed it and second it slows down the search coniderably!!!!!! --->
+		<!--- <cftry>
 			<cfset CollectionIndexcustom( collection=#arguments.hostid#, key="delete", body="#createuuid()#", title="#createuuid()#")>
 			<cfcatch type="any"></cfcatch>
-		</cftry>
+		</cftry> --->
 		<!--- 
 		 Decode URL encoding that is encoded using the encodeURIComponent javascript method. 
 		 Preserve the '+' sign during decoding as the URLDecode methode will remove it if present.

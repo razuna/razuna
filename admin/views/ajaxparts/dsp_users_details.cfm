@@ -30,6 +30,12 @@
 	    $( "#user_expirydate").datepicker();
 	  });
   </script>
+  <style>
+  .error {
+	color: #CC0000;
+	font-weight: bold;
+	}
+  </style>
 
 <cfoutput>
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
@@ -62,11 +68,11 @@
 		</tr>
 		<tr>
 			<td valign="top">#defaultsObj.trans("email")#*</td>
-			<td><label for="user_email" class="error">Enter a correct eMail address!</label><input type="text" name="user_email" id="user_email" size="45" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();" tabindex="2"><div id="checkemaildiv"></div></td>
+			<td><input type="text" name="user_email" id="user_email" size="55" class="text" value="#qry_detail.user_email#" tabindex="2"></td>
 		</tr>
 		<tr>
 			<td width="180" valign="top">#defaultsObj.trans("user_name")#*</td>
-			<td width="420"><label for="user_login_name" class="error">Enter a Loginname!</label><input type="text" name="user_login_name" id="user_login_name" size="45" value="#qry_detail.user_login_name#" onkeyup="checkusername();" tabindex="3"><div id="checkusernamediv"></div></td>
+			<td width="420"><input type="text" name="user_login_name" id="user_login_name" size="55" value="#qry_detail.user_login_name#" tabindex="3"></td>
 		</tr>
 		<tr>
 			<th colspan="2">#defaultsObj.trans("password")#</th>
@@ -242,10 +248,12 @@
 				user_last_name: "required",
 			   	user_email: {
 			    	required: true,
-			     	email: true
+			     	email: true,
+			     	remote: <cfoutput>"#myself#c.checkemail&user_id=" + document.userdetailadd.user_id.value,</cfoutput>
 			   	},
 			   	user_login_name: {
-					required: true
+					required: true,
+					remote: <cfoutput>"#myself#c.checkusername&user_id=" + document.userdetailadd.user_id.value,</cfoutput>
 				}
 			   	<cfif attributes.user_id EQ "0">
 			   	,
@@ -257,6 +265,11 @@
 					equalTo: "##user_pass"
 				}
 				</cfif>
+			 },
+			 messages:
+			 {
+			 	user_email: {remote: "This email is already taken."},
+			 	user_login_name: {remote: "This username is already taken."}
 			 },
 			onkeyup: function(element) { this.element(element); }
 		});
@@ -270,14 +283,6 @@
 				destroywindow(1);
 			</cfif>	
 		
-	}
-	// Check eMail
-	function checkemail(){
-		$('##checkemaildiv').load('#myself#c.checkemail&user_id=#attributes.user_id#&user_email=' + $("##user_email").val() );
-	}
-	// Check User
-	function checkusername(){
-		$('##checkusernamediv').load('#myself#c.checkusername&user_id=#attributes.user_id#&user_login_name=' + $("##user_login_name").val() );
 	}
 	// SystemAdmin checkbox clicked
 	function chksysadmin(){

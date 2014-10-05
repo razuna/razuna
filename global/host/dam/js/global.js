@@ -43,7 +43,7 @@ function loadcontent(ele,url){
 	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 	// Load the page
 	$("#" + ele).load(url, function() {
-  		$("#bodyoverlay").remove();
+		$("#bodyoverlay").remove();
 	});
 }
 // Load overlay
@@ -54,12 +54,21 @@ function loadoverlay(){
 function formaction(theid) {
 	var theaction = $('#' + theid).attr("action");
 	return theaction;
-} 
+}
 // Form: Serialize Data
 function formserialize(theid) {
 	var theser = $('#' + theid).serialize();
 	return theser;
-} 
+}
+
+// Jump to a folder and refresh left side
+function goToFolder(folderid) {
+	// Load folder on the right side
+	$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + folderid);
+	// Refresh folder tree (as we could be in labels, etc.)
+	switchmainselection('folders','Folders');
+}
+
 /*
  * Trim a string
  */
@@ -212,31 +221,35 @@ function enablesub(myform,nostore) {
 	// Remove ui-selected class
 	$('.assetbox').removeClass('ui-selected');
 	// Set nostore to false
-	if (nostore == ''){
-		var nostore = false;
+	if (nostore === ''){
+		nostore = false;
 	}
 	// Check if there are any files selected. If so ignore below
-	var anyselect = $('div').hasClass('ui-selected'); 
+	var anyselect = $('div').hasClass('ui-selected');
 	if (!anyselect) {
 		// Check state of selection box
-	    // var isclosed = $("#folderselection" + myform).is(':hidden');
-	    // get how many are selected
-	    var n = $('#' + myform + ' input:checked').length;
-	    // Open or close selection
-	    if (n > 0) {
+		// var isclosed = $("#folderselection" + myform).is(':hidden');
+		// get how many are selected
+		var n = $('#' + myform + ' input:checked').length;
+		// Open or close selection
+		if (n > 0) {
 			$("#folderselection" + myform).slideDown('slow');
 			$("#folderselectionb" + myform).slideDown('slow');
+			$("#selectalert" + myform).slideDown('slow');
+			$("#selectalertb" + myform).slideDown('slow');
 		}
-		if (n == 0) {
+		if (n === 0) {
 			$("#folderselection" + myform).slideUp('slow');
 			$("#folderselectionb" + myform).slideUp('slow');
+			$("#selectalert" + myform).slideUp('slow');
+			$("#selectalertb" + myform).slideUp('slow');
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
 			}
 		}
 		// if selection is here
-		if (n != 0) {
+		if (n !== 0) {
 			// Hide the selectall desc
 			$("#selectstore" + myform).css("display","none");
 			$("#selectstoreb" + myform).css("display","none");
@@ -260,7 +273,7 @@ function enablefromselectable(myform) {
 		$("#folderselectionb" + myform).slideToggle('slow');
 		
 	}
-	if (n == 0 && !isclosed) {
+	if (n === 0 && !isclosed) {
 		$("#folderselection" + myform).slideToggle('slow');
 		$("#folderselectionb" + myform).slideToggle('slow');
 	}
@@ -373,7 +386,7 @@ function razaddlabels(thediv,fileid,thetype){
 		loadcontent('div_forall','index.cfm?fa=c.label_add_all&fileid=' + fileid + '&thetype=' + thetype + '&labels=' + $('#' + thediv).val())
 	);
 	$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
-};
+}
 
 // For the Quick Search
 $(document).ready(function() {
@@ -386,24 +399,31 @@ $(document).ready(function() {
 		if (theentrynow == 'Quick Search'){
 			$('#simplesearchtext').val('');
 		}
-	})
+	});
 	// If the value field is empty restore the value field
 	$('#simplesearchtext').blur(function(){
 		// Get the current value of the field
 		var thevalnow = $('#simplesearchtext').val();
 		// If the current value is empty then restore it with the default value
-		if ( thevalnow == ''){
+		if ( thevalnow === '') {
 			$('#simplesearchtext').val(theval);
 		}
-	})
-})
+	});
+});
 function checkentry(){
+	// Define the folder id
+	var thefolderid = 0;
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// Parse the entry
 	var theentry = $('#simplesearchtext').val();
 	var thetype = $('#simplesearchthetype').val();
-	if (theentry == "" | theentry == "Quick Search"){
+	// Grab the folder id
+	var folder_id = $('#qs_folder_id').val();
+	if (typeof folder_id !== 'undefined' && folder_id !== '') {
+		thefolderid = folder_id;
+	}
+	if (theentry === "" | theentry === "Quick Search") {
 		return false;
 	}
 	else {
@@ -417,7 +437,7 @@ function checkentry(){
 			// Show loading bar
 			$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 			// We are now using POST for the search field (much more compatible then a simple load for foreign chars)
-			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: encodeURIComponent(theentry), folder_id: 0, thetype: thetype }, function(){
+			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: encodeURIComponent(theentry), folder_id: thefolderid, thetype: thetype }, function(){
 				$("#bodyoverlay").remove();
 			});
 		}
@@ -426,23 +446,27 @@ function checkentry(){
 }
 // When a search selection is clicked
 function selectsearchtype(thetype,thelinktext){
+	// Set the type in hidden input field
 	$('#simplesearchthetype').val(thetype);
 	$('#searchselection').toggle();
 	// Remove the image in all marks
-	$('#markall').html('&nbsp;');
-	$('#markimg').html('&nbsp;');
-	$('#markvid').html('&nbsp;');
-	$('#markaud').html('&nbsp;');
-	$('#markdoc').html('&nbsp;');
-	// Now set the correct CSS
-	$('#markall').css({'float':'left','padding-right':'14px'});
-	$('#markimg').css({'float':'left','padding-right':'14px'});
-	$('#markvid').css({'float':'left','padding-right':'14px'});
-	$('#markaud').css({'float':'left','padding-right':'14px'});
-	$('#markdoc').css({'float':'left','padding-right':'14px'});
+	$('.markfolder').html('&nbsp;').css({'float':'left','padding-right':'14px'});
 	// Now mark the div
 	$('#mark' + thetype).css({'float':'left','padding-right':'3px'});
 	$('#mark' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
+	// Change the link text itself
+	$('#searchselectionlink').text(thelinktext);
+}
+// When a search selection is clicked for search selection
+function selectsearchselection(folderid,thelinktext){
+	// Set the folder id in hidden input field
+	$('#simplesearchfolderid').val(folderid);
+	$('#searchselection').toggle();
+	// Remove the image in all marks
+	$('.markfolder').html('&nbsp;').css({'float':'left','padding-right':'14px'});
+	// Now mark the div
+	$('#mark_' + folderid).css({'float':'left','padding-right':'3px'});
+	$('#mark_' + folderid).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
 	// Change the link text itself
 	$('#searchselectionlink').text(thelinktext);
 }
@@ -480,6 +504,8 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	// Enable select all text again. cloud be set hidden from single selection
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
+	$("#selectalert" + myform).css("display","");
+	$("#selectalertb" + myform).css("display","");
 	// Loop over checkboxes and check all
 	$('#' + myform + ' :checkbox').prop('checked', true);
 	// Show drop down
@@ -494,7 +520,8 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	else{
 		// Get the ids from the hidden field
 		var theids = $('#searchlistids').val();
-		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids });
+		var theeditids = $('#editids').val();
+		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids, editids : theeditids });
 	}
 }
 
@@ -507,6 +534,8 @@ function CheckAllNot(myform){
 	// Hide the selectall desc
 	$("#selectstore" + myform).css("display","none");
 	$("#selectstoreb" + myform).css("display","none");
+	$("#selectalert" + myform).css("display","none");
+	$("#selectalertb" + myform).css("display","none");
 	// Get the ids from the hidden field
 	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
 }
@@ -982,6 +1011,7 @@ function updategrp(grpid){
 	//Check to ensure group name is entered
 	var checkgrp= $('#grpname').val();
 	var upcsize= $('#editupcsize').val();
+	var folder_redirect= $('#folder_redirect').val();
 	//Folder subscribe radio
 	if ($('input:radio[name=edit_folder_subscribe]:checked').length == 0) {
 		var folder_subscribe = 'false';
@@ -1002,7 +1032,7 @@ function updategrp(grpid){
 		return false;
 	}
 	// Add the new group and show the updated list
-	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder + '&folder_subscribe=' + folder_subscribe);
+	loadcontent('admin_groups', 'index.cfm?fa=c.groups_update&kind=ecp&loaddiv=admin_groups&grp_id=' + grpid + '&grpname=' + encodeURIComponent($("#grpname").val())+'&sizeofupc=' + upcsize +'&upc_folder_structure=' + upc_folder + '&folder_subscribe=' + folder_subscribe + '&folder_redirect=' + folder_redirect);
 }
 
 // SCHEDULER
@@ -1231,23 +1261,23 @@ function searchadv_files(theform, thefa, folderid) {
 	}
 	else {
 		// If we come from a folder search we direct into the folder view
-		if (folderid == '0'){
+		// if (folderid == '0'){
 			var thediv = '#rightside';
-		}
-		else {
-			var thediv = '#content_search_all';
-			// Enable div
-			$('#content_search_all').css('display','');
-			// Remove tab (in case there is one already)
-			removeTab('tabsfolder_tab','content_search_all');
+		// }
+		// else {
+		// 	var thediv = '#content_search_all';
+		// 	// Enable div
+		// 	$('#content_search_all').css('display','');
+		// 	// Remove tab (in case there is one already)
+		// 	removeTab('tabsfolder_tab','content_search_all');
 			
-			// Create new tab
-			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+		// 	// Create new tab
+		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
 			
-			// Select tab
-			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
-			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-		}
+		// 	// Select tab
+		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+		// }
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1271,23 +1301,23 @@ function searchadv_videos(theform, thefa, folderid) {
 	}
 	else {
 		// If we come from a folder search we direct into the folder view
-		if (folderid == '0'){
+		// if (folderid == '0'){
 			var thediv = '#rightside';
-		}
-		else {
-			var thediv = '#content_search_all';
-			// Enable div
-			$('#content_search_all').css('display','');
-			// Remove tab (in case there is one already)
-			removeTab('tabsfolder_tab','content_search_all');
+		// }
+		// else {
+		// 	var thediv = '#content_search_all';
+		// 	// Enable div
+		// 	$('#content_search_all').css('display','');
+		// 	// Remove tab (in case there is one already)
+		// 	removeTab('tabsfolder_tab','content_search_all');
 			
-			// Create new tab
-			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+		// 	// Create new tab
+		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
 			
-			// Select tab
-			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
-			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-		}
+		// 	// Select tab
+		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+		// }
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1313,23 +1343,23 @@ function searchadv_images(theform, thefa, folderid) {
 	}
 	else {
 		// If we come from a folder search we direct into the folder view
-		if (folderid == '0'){
+		// if (folderid == '0'){
 			var thediv = '#rightside';
-		}
-		else {
-			var thediv = '#content_search_all';
-			// Enable div
-			$('#content_search_all').css('display','');
-			// Remove tab (in case there is one already)
-			removeTab('tabsfolder_tab','content_search_all');
+		// }
+		// else {
+		// 	var thediv = '#content_search_all';
+		// 	// Enable div
+		// 	$('#content_search_all').css('display','');
+		// 	// Remove tab (in case there is one already)
+		// 	removeTab('tabsfolder_tab','content_search_all');
 			
-			// Create new tab
-			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+		// 	// Create new tab
+		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
 			
-			// Select tab
-			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
-			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-		}
+		// 	// Select tab
+		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+		// }
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1353,23 +1383,23 @@ function searchadv_audios(theform, thefa, folderid) {
 	}
 	else {
 		// If we come from a folder search we direct into the folder view
-		if (folderid == '0'){
+		// if (folderid == '0'){
 			var thediv = '#rightside';
-		}
-		else {
-			var thediv = '#content_search_all';
-			// Enable div
-			$('#content_search_all').css('display','');
-			// Remove tab (in case there is one already)
-			removeTab('tabsfolder_tab','content_search_all');
+		// }
+		// else {
+		// 	var thediv = '#content_search_all';
+		// 	// Enable div
+		// 	$('#content_search_all').css('display','');
+		// 	// Remove tab (in case there is one already)
+		// 	removeTab('tabsfolder_tab','content_search_all');
 			
-			// Create new tab
-			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+		// 	// Create new tab
+		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
 			
-			// Select tab
-			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
-			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-		}
+		// 	// Select tab
+		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+		// }
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1380,7 +1410,7 @@ function searchadv_audios(theform, thefa, folderid) {
 	}
 }
 // Fire off search all
-function searchadv_all(theform, thefa, folderid) {
+function searchadv_all(theform, thefa) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
 	// Only allow chars
@@ -1393,24 +1423,29 @@ function searchadv_all(theform, thefa, folderid) {
 	}
 	else {
 		// If we come from a folder search we direct into the folder view
-		if (folderid == '0'){
-			var thediv = '#rightside';
-		}
-		else {
-			var thediv = '#content_search_all';
-			// Enable div
-			$('#content_search_all').css('display','');
-			// Remove tab (in case there is one already)
-			removeTab('tabsfolder_tab','content_search_all');
+		// if (folderid == '0'){
+		
+		var thediv = '#rightside';
+
+		// Get folderid
+		var folderid = $('#adv_folder_id').val();
+
+		// }
+		// else {
+		// 	var thediv = '#content_search_all';
+		// 	// Enable div
+		// 	$('#content_search_all').css('display','');
+		// 	// Remove tab (in case there is one already)
+		// 	removeTab('tabsfolder_tab','content_search_all');
 			
-			// Create new tab
-			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+		// 	// Create new tab
+		// 	addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
 			
-			// Select tab
-			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
-			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+		// 	// Select tab
+		// 	var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+		// 	$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 			
-		}
+		// }
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1868,6 +1903,13 @@ function samefoldernamecheck(theid){
 	var folderidr = $("#rid").val();
 	$('#samefoldername').load('index.cfm?fa=c.folder_namecheck', { folder_name:foldername, folder_id_r:folderidr, folder_id:theid } );
 }
+// Check for same collection name
+function samecollectionnamecheck(theid){
+	// Values
+	var colname = $("#collectionname").val();
+	var folder_id = $("#folder_id").val();
+	$('#samecollectionname').load('index.cfm?fa=c.collection_namecheck', { collection_name:colname, col_id:theid, folder_id:folder_id } );
+}
 // Reset DL
 function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	var thevalue = $('#' + divorg + ':checked').val();
@@ -1884,7 +1926,12 @@ function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	else{
 		thevaluethumb = 0;
 	}
-	$('#div_forall').load('index.cfm?fa=c.share_reset_dl&folder_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+	// For collections the collectionid is sent instead of folderid
+	if (thestatusddiv=='colreset')
+		$('#div_forall').load('index.cfm?fa=c.share_reset_dl&collection_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+	else
+		$('#div_forall').load('index.cfm?fa=c.share_reset_dl&folder_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+
 	$('#' + thestatusddiv + '_thumb').html('Reset all individual download setting successfully');
 	$('#' + thestatusddiv + '_org').html('Reset all individual download setting successfully');
 }
@@ -1928,11 +1975,12 @@ $(document).tooltip({
 	content: function() {
 		 var element = $( this );
 		 var theimg = element.attr("src");
-		 return "<img src='" + theimg + "' border='0'>";
+		 return "<img src='" + theimg + "' border='0' style='max-width:400px;max-height:400px;'>";
 	},
 	position: {
 		my: "center bottom",
-		at: "center top"
+		at: "center top",
+		collision: "flipfit"
 	}
 });
 // Remove label while click on X

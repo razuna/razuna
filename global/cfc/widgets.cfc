@@ -31,6 +31,7 @@
 	<!--- Get existing widgets --->
 	<cffunction name="getwidgets" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getwidgets */ widget_id, widget_name, widget_description
@@ -50,6 +51,7 @@
 		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.external" default="f">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailwidget */ widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, widget_dl_thumb
@@ -119,6 +121,7 @@
 	<!--- Compare password --->
 	<cffunction name="getpassword" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery dataSource="#variables.dsn#" name="qry">
 		SELECT widget_id
@@ -143,6 +146,7 @@
 	<!--- Widget Remove --->
 	<cffunction name="widget_remove" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Remove --->
 		<cfquery dataSource="#variables.dsn#" name="qry">
 		DELETE FROM #session.hostdbprefix#widgets

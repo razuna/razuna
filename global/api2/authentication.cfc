@@ -33,6 +33,7 @@
 		<cfargument name="api_key" type="string" required="true">
 		<!--- Param --->
 		<cfparam name="thehostid" default="" />
+		<cfparam default="0" name="session.thefolderorg">
 		<!--- If api key is empty --->
 		<cfif arguments.api_key EQ "">
 			<cfset arguments.api_key = 0>
@@ -44,6 +45,7 @@
 		<cfelse>
 			<cfset var theapikey = arguments.api_key>
 		</cfif>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT  /* #theapikey##thehostid#checkdb */  u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
@@ -65,13 +67,15 @@
 			<cfset session.thegroupofuser = 0>
 			<!--- Get Host prefix --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
-			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group, host_path
+			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group, host_path, host_name
 			FROM hosts
 			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">
 			</cfquery>
 			<!--- Set Host information --->
 			<cfset application.razuna.api.host_path = pre.host_path>
 			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
+			<cfset application.razuna.api.hostpath[#arguments.api_key#] = pre.host_path>
+			<cfset application.razuna.api.hostname[#arguments.api_key#] = pre.host_name>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
 			<cfset session.hostdbprefix = pre.host_shard_group>
@@ -82,6 +86,23 @@
 			<!--- Put user groups into session if present--->
 			<cfif listlen(valuelist(qry.grpid)) GT 0>
 				<cfset session.thegroupofuser = valuelist(qry.grpid)>
+			</cfif>
+			<!--- Set vars needed for AWS --->
+			<cfif application.razuna.api.storage EQ "amazon">
+				<cfset var qry = "">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT set2_aws_bucket
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				</cfquery>
+				<cfset application.razuna.awsbucket = qry.set2_aws_bucket>
+				<cfset application.razuna.awskey = application.razuna.api.awskey>
+				<cfset application.razuna.awskeysecret = application.razuna.api.awskeysecret>
+				<cfset application.razuna.awslocation = application.razuna.api.awslocation>
+				<cfif NOT isDefined("application.razuna.s3ds")>
+					<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#application.razuna.api.awskey#","#application.razuna.api.awskeysecret#","#application.razuna.api.awslocation#")>
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- Return --->
@@ -97,6 +118,14 @@
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
 			<cfset querysetcell(thexml,"message","Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.")>
+			<cfelseif arguments.type EQ "x">
+			<!--- Create the XML --->
+			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>1</responsecode>
+<message>Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.</message>
+</Response></cfoutput>
+			</cfsavecontent>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
 			<cfset thexml.message = "Login not valid! Check user API Key and ensure with your administrator that the user has appropriate permissions for access.">
@@ -113,10 +142,10 @@
 			<cfset var thexml = querynew("responsecode,message")>
 			<cfset queryaddrow(thexml,1)>
 			<cfset querysetcell(thexml,"responsecode","1")>
-			<cfset querysetcell(thexml,"message","No permissible data or action found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.")>
+			<cfset querysetcell(thexml,"message","No permissible data or action found for user! If you believe this is a mistake then please check with your administrator to ensure that you have appropriate permissions for access.")>
 		<cfelse>
 			<cfset thexml.responsecode = 1>
-			<cfset thexml.message = "No permissible data or action found for user! If you believe this is a mistake then please check  with your administrator to ensure that you have appropriate permissions for access.">
+			<cfset thexml.message = "No permissible data or action found for user! If you believe this is a mistake then please check with your administrator to ensure that you have appropriate permissions for access.">
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -273,6 +302,7 @@
 		<cfelse>
 			<cfset var theapikey = arguments.api_key>
 		</cfif>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #theapikey##thehostid#checkdesktop */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid

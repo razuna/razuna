@@ -26,10 +26,10 @@
 <cfoutput>
 	<!--- Set Languages --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridlist">
-		<tr>
+		<!--- <tr>
 			<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("folder_count_total")#</td>
 			<td width="1%" nowrap style="padding:5px;">#totalcount.thetotal#</td>
-		</tr>
+		</tr> --->
 		<cfif !application.razuna.isp>
 			<cfcachecontent name="damsysteminfo" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 				<tr>

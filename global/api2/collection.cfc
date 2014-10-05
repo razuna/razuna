@@ -32,6 +32,8 @@
 		<cfargument name="collectionid" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get collection folder in which collection resides --->
@@ -354,6 +356,7 @@
 		<cfargument name="released" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get permission for folder --->
@@ -430,42 +433,51 @@
 		<cfargument name="released" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var qry = "">
+		<cfset var thexml ="">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-			SELECT DISTINCT c.folder_id_r
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
-			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r
-			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-			AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-			AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			<cfif arguments.id NEQ "">
-				AND c.col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
-			</cfif>
-			<cfif arguments.name NEQ "">
-				AND lower(ct.col_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.name)#%">
-			</cfif>
-			<cfif arguments.keyword NEQ "">
-				AND lower(ct.col_keywords) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.keyword)#%">
-			</cfif>
-			<cfif arguments.description NEQ "">
-				AND lower(ct.col_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.description)#%">
-			</cfif>
-			<cfif arguments.released NEQ "">
-				AND lower(c.col_released) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#lcase(arguments.released)#">
-			</cfif>
-			</cfquery>
-			<!--- Get getcollections --->
-			<cfif qry.recordcount NEQ 0>
-				<!--- Note: Method getcollections already has permission checks applied to it  --->
-				<cfset var thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r),released=arguments.released)>
-			<cfelse>
-				<cfset thexml = querynew("responsecode,message")>
-				<cfset queryaddrow(thexml,1)>
-				<cfset querysetcell(thexml,"responsecode","1")>
-				<cfset querysetcell(thexml,"message","No records found")>
-			</cfif>
+			<cftry>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT DISTINCT c.folder_id_r
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r
+				WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+				AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				<cfif arguments.id NEQ "">
+					AND c.col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
+				</cfif>
+				<cfif arguments.name NEQ "">
+					AND lower(ct.col_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.name)#%">
+				</cfif>
+				<cfif arguments.keyword NEQ "">
+					AND lower(ct.col_keywords) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.keyword)#%">
+				</cfif>
+				<cfif arguments.description NEQ "">
+					AND lower(ct.col_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.description)#%">
+				</cfif>
+				<cfif arguments.released NEQ "">
+					AND lower(c.col_released) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#lcase(arguments.released)#">
+				</cfif>
+				</cfquery>
+				<!--- Get getcollections --->
+				<cfif qry.recordcount NEQ 0>
+					<!--- Note: Method getcollections already has permission checks applied to it  --->
+					<cfset thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r),released=arguments.released)>
+				<cfelse>
+					<cfset thexml = querynew("responsecode,message")>
+					<cfset queryaddrow(thexml,1)>
+					<cfset querysetcell(thexml,"responsecode","1")>
+					<cfset querysetcell(thexml,"message","No records found")>
+				</cfif>
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
+					<cfabort>
+				</cfcatch>
+			</cftry>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>

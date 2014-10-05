@@ -24,8 +24,13 @@
 *
 --->
 <cfoutput>
+	<cfif application.razuna.storage EQ 'amazon'>
+		<cfset activetabnum = 17>
+	<cfelse>
+		<cfset activetabnum = 16>
+	</cfif>
 	<!--- Link back to the Administration --->
-	<div style="padding-left:10px;"><a href="##" onclick="$('##rightside').load('#myself#c.admin', function(){$('##tab_admin').tabs('option', 'active', 16)});">#myFusebox.getApplicationData().defaults.trans("back_to_admin")#</a></div>
+	<div style="padding-left:10px;"><a href="##" onclick="$('##rightside').load('#myself#c.admin', function(){$('##tab_admin').tabs('option', 'active', #activetabnum#)});">#myFusebox.getApplicationData().defaults.trans("back_to_admin")#</a></div>
 	<div style="clear:both;"></div>
 	<hr />
 	<!--- Do the include of the plugin setting page --->

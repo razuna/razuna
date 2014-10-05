@@ -181,8 +181,57 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 31(1.7) --->
-		<cfif updatenumber.opt_value LT 31>
+		<!--- If less then 40 (1.7) --->
+		<cfif updatenumber.opt_value LT 40>
+			<!--- Increase type_id column in table file_types --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+					alter table file_types <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column <cfelse>modify </cfif> type_id #thevarchar#(10)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Add column to settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_META_EXPORT #thevarchar#(1) DEFAULT 'f'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Add column to folders table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> share_inherit #thevarchar#(1) DEFAULT 'f'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+			<!--- Increase column length in xmp table --->
+			<cfset var thexmpcol_list = "subjectcode_1000,creator_1000,title_1000,authorsposition_1000,captionwriter_1000,ciadrextadr_1000,category_1000,urgency_500,ciadrcity_1000,ciadrctry_500,location_500,intellectualgenre_500,source_1000,transmissionreference_500,headline_1000,city_1000,ciadrregion_500,country_500,countrycode_500,scene_500,state_500,credit_1000">
+			<cfloop list="#thexmpcol_list#" index="thexmpcol">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						alter table raz1_xmp <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column <cfelse>modify </cfif> #gettoken(thexmpcol,1,'_')# #thevarchar#(#gettoken(thexmpcol,2,'_')#)
+					</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfloop>
+
+			<cfset var thexmpfilescol_list = "author_1000, authorsposition_1000,captionwriter_1000,webstatement_1000">
+			<cfloop list="#thexmpfilescol_list#" index="thexmpfilecol">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+						alter table raz1_files_xmp <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column <cfelse>modify </cfif> #gettoken(thexmpfilecol,1,'_')# #thevarchar#(#gettoken(thexmpfilecol,2,'_')#)
+					</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfloop>
+
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE groups add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> FOLDER_REDIRECT #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"
@@ -194,7 +243,54 @@
 				endTime="23:59 PM"
 				interval="3600"
 			>
-			<!--- Alter tables --->
+
+			<!--- Custom Fields --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_custom_fields add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cf_xmp_path #thevarchar#(500)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+			<!--- Alter news --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> host_id #theint# default 0
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Since MS SQL does not honor the default for existing records update all --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE news
+				SET host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
+				</cfquery>
+			</cfif>
+
+			<!--- Alter users --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> user_search_selection #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
+			<!--- Alter folders --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> in_search_selection #thevarchar#(5) DEFAULT 'false'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Since MS SQL does not honor the default for existing records update all --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_folders
+				SET in_search_selection = <cfqueryparam cfsqltype="cf_sql_varchar" value="false">
+				</cfquery>
+			</cfif>
+
+			<!--- Alter schedules --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE raz1_schedules_log add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> NOTIFIED #thevarchar#(5)
@@ -245,8 +341,26 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<cftry>
-			<!--- Create indexes on raz1_folder_subscribe --->
+			<!--- Create indexes  --->
 			<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX hashtag ON raz1_images(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				 <cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX hashtag ON raz1_audios(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE INDEX hashtag ON raz1_files(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE INDEX folder_id ON raz1_folder_subscribe(folder_id)
@@ -284,6 +398,24 @@
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 			<cfelseif application.razuna.thedatabase EQ "mysql">
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_images ADD INDEX  hashtag(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_audios ADD INDEX  hashtag(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_files ADD INDEX  hashtag(hashtag)
+				</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_folder_subscribe ADD INDEX  folder_id (folder_id)

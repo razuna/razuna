@@ -30,7 +30,7 @@
 	  });
   </script>
 <cfoutput>
-	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#" onsubmit="filesubmit();return false;">
+	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#" onsubmit="if (formchecks())filesubmit();return false;">
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="folder_id" value="#qry_detail.detail.folder_id_r#">
@@ -46,6 +46,9 @@
 	<input type="hidden" name="link_kind" id="link_kind" value="#qry_detail.detail.link_kind#">
 	<!--- Show next and back within detail view --->
 	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Format size --->
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
+
 	<!--- Show tabs --->
 	<div id="tab_detail#attributes.file_id#">
 		<ul>
@@ -70,12 +73,20 @@
 			<cfif cs.tab_comments>
 				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
+			<!--- Sharing options should be hidden if asset has expired --->
 			<cfif attributes.folderaccess NEQ "R" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<cfif cs.tab_sharing_options>
 					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				</cfif>
+			</cfif>
+			<!--- Hide these for R-groups --->
+			<cfif attributes.folderaccess NEQ "R">
 				<cfif cs.tab_history>
 					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				</cfif>
+				<!--- Aliases'd --->
+				<cfif qry_aliases.recordcount NEQ 0>
+					<li><a href="##alias" onclick="loadcontent('alias','#myself#c.usage_alias&id=#attributes.file_id#&folder_id=#attributes.folder_id#');">Alias</a></li>
 				</cfif>
 				<!--- Plugin being shows with add_tab_detail_wx  --->
 				<cfif structKeyExists(plwx,"pview")>
@@ -116,7 +127,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.aud_upc.value = document.form#attributes.file_id#.fname.value.split('.')[0];}</cfif>"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.aud_upc.value = document.form#attributes.file_id#.fname.value.split('.')[0];}</cfif>"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<!--- Desc --->
 							<cfloop query="qry_langs">
@@ -225,7 +236,7 @@
 							</tr>
 							<tr>
 								<td width="1%" nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
-								<td width="1%" nowrap="true" valign="top">#qry_detail.detail.folder_name# <cfif cs.show_bottom_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" nowrap="true" valign="top"><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.folder&col=F&folder_id=#qry_detail.detail.folder_id_r#');destroywindow(1);">#qry_detail.detail.folder_name#</a> <cfif cs.show_favorites_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<tr>
 								<td width="1%" nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("created_by")#</td>
@@ -262,7 +273,7 @@
 						<!--- Filename --->
 						<tr>
 							<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-							<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
+							<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
 							</td>
 						</tr>
 						<cfloop query="qry_langs">
@@ -326,6 +337,7 @@
 		<cfif attributes.folderaccess NEQ "R">
 			<div id="shareoptions"></div>
 			<div id="history"></div>
+			<div id="alias"></div>
 			<!--- Plugin being shows with add_tab_detail_wx  --->
 			<cfif structKeyExists(plwx,"pcfc")>
 				<cfloop list="#plwx.pcfc#" delimiters="," index="i">
@@ -351,8 +363,9 @@
 			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
 		</cfif>
 	};
-	// Submit form
-	function filesubmit(){
+
+	function formchecks()
+	{
 		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords OR prefs.set2_upc_enabled>
 			var reqfield = false;
 			var isNumericField = false;
@@ -404,6 +417,11 @@
 			      return false;
 			}
 		}
+		return true;
+	}
+	// Submit form
+	function filesubmit(){
+		
 		$("##updatefile").css("display","");
 		loadinggif('updatefile');
 		$("##updatefile").fadeTo("fast", 100);

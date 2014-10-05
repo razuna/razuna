@@ -28,17 +28,22 @@
 <!--- List fields --->
 <cffunction name="get" output="false" access="public">
 	<cfargument name="fieldsenabled" type="boolean" required="false" default="false">
+	<cfargument name="xmppath" type="boolean" required="false" default="false">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text
+		SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text, c.cf_xmp_path
 		FROM #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_text ct
 		WHERE c.cf_id = ct.cf_id_r
  		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.fieldsenabled>
 			AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+		</cfif>
+		<cfif arguments.xmppath>
+			AND (c.cf_xmp_path IS NOT NULL OR c.cf_xmp_path <cfif application.razuna.thedatabase EQ "h2"><><cfelse>!=</cfif> '')
 		</cfif>
 		ORDER BY c.cf_order
 		</cfquery>
@@ -109,7 +114,7 @@
 	<cfparam name="arguments.thestruct.cf_show" default="">
 	<!--- Param --->
 	<cfset var list="">
-	<cfif StructKeyExists(session,"thefileid") AND session.thefileid NEQ "">
+	<cfif StructKeyExists(session,"thefileid") AND session.thefileid NEQ "" AND session.thefileid NEQ "0" >
 		<cfset list="all">
 		<cfloop list="#session.thefileid#" index="assets">
 			<cfif not listFindNoCase(list,listLast(assets,"-"))>
@@ -119,9 +124,10 @@
 	</cfif>
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("general")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form
+	SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form, c.cf_show
 	FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 	LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 	WHERE c.cf_id = ct.cf_id_r
@@ -151,6 +157,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getfieldssearch */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_select_list, ct.cf_text
@@ -170,6 +177,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getfieldssearch */ cv.cf_value, ct.cf_text, ct.cf_id_r
@@ -190,10 +198,11 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, 
-		c.cf_edit, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form
+		c.cf_edit, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form, c.cf_xmp_path
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
 		AND ct.cf_id_r = c.cf_id
@@ -205,6 +214,7 @@
 <!--- Save field values --->
 <cffunction name="savevalues" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
 		<cfif i CONTAINS "cf_" AND i DOES NOT CONTAIN "META_" >
@@ -272,6 +282,7 @@
 <!--- Save batch field values --->
 <cffunction name="savebatchvalues" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
 		<cfif i CONTAINS "cf_" AND arguments.thestruct[i] NEQ ''>
@@ -369,7 +380,8 @@
 		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
 		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theselectvalue#">,
 		cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_in_form#">,
-		cf_edit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
+		cf_edit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">,
+		cf_xmp_path = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_xmp_path#">
 		WHERE cf_id = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>

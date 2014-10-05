@@ -47,7 +47,7 @@
 		</tr>
 		<tr>
 			<td>
-				<input type="button" value="#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#" class="button" onclick="showwindow('#myself#c.asset_add_single&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&nopreview=0&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#',650,2);return false;";>
+				<input type="button" value="#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#" class="button" onclick="showwindow('#myself#c.asset_add_single&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&nopreview=1&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("versions_old_upload")#',650,2);return false;";>
 			</td>
 		</tr>
 	</table>

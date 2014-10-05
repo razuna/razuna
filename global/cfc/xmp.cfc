@@ -481,7 +481,7 @@
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 				</cfif>
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777" charset="utf-8">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -599,7 +599,7 @@
 			<!--- Set script --->
 			<cfset thesh = gettempdirectory() & "/#thescript#.sh">
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777" charset="utf-8">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -772,7 +772,7 @@
 			<!--- Set script --->
 			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777" charset="utf-8">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -1470,7 +1470,7 @@
 				<cfset thescript = createuuid()>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777" charset="utf-8">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -1625,11 +1625,12 @@
 <!--- Export metadata --->
 <cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.exportname" default="#randRange(1,10000)#">
+	<cfinvoke component="defaults" method="trans" transid="download_metadata_output" returnvariable="download_metadata_output" />
+	<!--- Set local var --->
+	<cfset var qry = "">
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
-	</cfif>
+	<cfoutput><br/><strong>#download_metadata_output#</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Param --->
 	<!--- RAZ-2831 : Set metadata fields as per Export template --->
@@ -1708,8 +1709,6 @@
 	<cfelseif arguments.thestruct.what EQ "folder">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("folders")>
-		<!--- Set local var --->
-		<cfset var qry = "">
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
@@ -1958,10 +1957,7 @@
 		</cfdefaultcase>
 	</cfswitch>
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><strong> .</strong></cfoutput>
-	</cfif>
+	<cfoutput><strong> .</strong></cfoutput>
 	<cfflush>
 	<!--- Return --->
 	<cfreturn />
@@ -1969,17 +1965,22 @@
 
 <!--- Export CSV --->
 <cffunction name="export_csv" output="false">
-	<cfargument name="thestruct" type="struct">
+	<cfargument name="thestruct" type="struct">		
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
+	<cfif isdefined("arguments.thestruct.exportname")>
+		<cfset var suffix = "#arguments.thestruct.exportname#">
+	<cfelse>
+		<cfset var suffix = "#session.hostid#-#session.theuserid#">
+	</cfif>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><p><a href="outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
+	<cfif arguments.thestruct.fa EQ 'c.meta_export_do'>
+		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
@@ -2013,14 +2014,19 @@
 		<cfset SpreadsheetFormatrow(sxls, {alignment="vertical_top"}, 2)>
 	</cfif>
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)>
+	<cfif isdefined("arguments.thestruct.exportname")>
+		<cfset var suffix = "#arguments.thestruct.exportname#">
+	<cfelse>
+		<cfset var suffix = "#session.hostid#-#session.theuserid#">
+	</cfif>
 	<!--- Write file to file system --->
-	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#",true)>
+	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.#arguments.thestruct.format#",true)>
 	<!--- Serve the file --->
     <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
 	<!--- Feedback --->
-	<!--- RAZ-2831 : Don't show feedback if it's Export template --->
-	<cfif !structKeyExists(arguments.thestruct,'meta_export')>
-		<cfoutput><p><a href="outgoing/metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
+	<cfif arguments.thestruct.fa EQ 'meta_export_do'>
+		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
@@ -2519,6 +2525,95 @@
 	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
-</cffunction>	
+</cffunction>
+
+<!--- Import custom metadata into custom fields --->
+<cffunction name="xmpToCustomFields" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Declare all variables or else you will get errors in the page --->
+	<cfset xmp = structnew()>
+	<cfset var qry = "">
+	<cftry>
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+		<!--- Check the platform and then decide on the Exiftool tag --->
+		<cfif isWindows>
+			<cfset theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<cfelse>
+			<cfset theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		</cfif>
+		<cfset theasset = arguments.thestruct.thesource>
+		<!--- On Windows a bat --->
+		<cfif isWindows>
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -X #theasset#" timeout="60" variable="themeta" />
+		<cfelse>
+			<!--- New parsing code --->
+			<cfset var thescript = createuuid()>
+			<!--- Set script --->
+			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
+			<!--- Write files --->
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777" charset="utf-8">
+			<!--- Execute --->
+			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#thesh#">
+		</cfif>
+		<!--- Parse Metadata which is now XML --->
+		<cfset var thexml = xmlparse(themeta)>
+		<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
+		<!--- Get custom fields --->
+		<cfinvoke component="custom_fields" method="get" fieldsenabled="true" xmppath="true" returnvariable="qry_cf" />
+		<!--- Loop over custom fields --->
+		<cfloop query="qry_cf">
+			<!--- Get the custom metadata from XMP --->
+			<cftry>
+				<cfset xmpvalue = trim(#thexml[1]["#cf_xmp_path#"].xmltext#)>
+				<!--- Add value to custom field value --->
+				<!--- Insert or update --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				SELECT cf_id_r
+				FROM #session.hostdbprefix#custom_fields_values
+				WHERE cf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_id#">
+				AND asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">
+				</cfquery>
+				<!--- Insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_id#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#xmpvalue#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam CFSQLType="cf_sql_varchar" value="#createuuid()#">
+					)
+					</cfquery>
+				<!--- Update --->
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#custom_fields_values
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#xmpvalue#">
+						WHERE cf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf_if#">
+						AND asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">
+					</cfquery>
+				</cfif>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("search")>
+		<cfset resetcachetoken("general")>
+		<!--- On error --->
+		<cfcatch type="any">
+			<!--- <cfset consoleoutput(true)>
+			<cfset console('Error on import of custom metadata')>
+			<cfset console(cfcatch)> --->
+		</cfcatch>
+	</cftry>
+	
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
 
 </cfcomponent>

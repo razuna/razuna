@@ -218,6 +218,7 @@
 
 <!--- GET ALL ALLOWED FILE TYPES ---------------------------------------------------------------------->
 	<cffunction name="filetypes" output="false">
+		<cfset var qry = "">
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT type_id
 			FROM file_types
@@ -395,6 +396,7 @@ Comment:<br>
 <!--- Get assets shared options ---------------------------------------------------------------------->
 	<cffunction name="get_share_options" output="false">
 		<cfargument name="thestruct" type="struct">
+		<cfset var qry = "">
 		<!--- Check if this is for the basket --->
 		<cfif structkeyexists(arguments.thestruct,"qrybasket")>
 			<cfset var qry = 0>
@@ -533,6 +535,23 @@ Comment:<br>
 		<cfset var foldershareprops ="">
 		<cfset var asset_dl_org = "">
 		<cfset var asset_dl_thumb = "">
+		<!--- COLLECTIONS SHARE SETTING--->
+		<!--- If this is a collection then only change sharing for the assets in the collection --->
+		<cfif isdefined("arguments.thestruct.collection_id")>
+			<cfset asset_dl_org = arguments.thestruct.setto>
+			<cfset asset_dl_thumb = arguments.thestruct.settothumb>
+			<cfquery datasource="#application.razuna.datasource#" name="qryfiles">
+				SELECT file_id_r id, col_file_type type FROM #session.hostdbprefix#collections_ct_files
+				WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.collection_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+			</cfquery>
+			<!--- Loop over the files and update shared options --->
+			<cfloop query="qryfiles">
+				<cfinvoke component="global.cfc.global" method="update_asset_share" assetid="#qryfiles.id#" type="#qryfiles.type#" asset_dl_org="#asset_dl_org#" asset_dl_thumb="#asset_dl_thumb#">
+			</cfloop>
+			<cfreturn>
+		</cfif>
+		<!--- FOLDERS SHARE SETTING --->
 		<!--- Get this folderid and all subfolders in a list --->
 		<cfinvoke component="folders" method="recfolder" thelist="#arguments.thestruct.folder_id#" returnvariable="folderlist">
 		<!--- Now loop over the folder list and do the reset --->
@@ -556,75 +575,7 @@ Comment:<br>
 			<cfinvoke component="folders" method="getallassetsinfolder" folder_id="#thefolderid#" returnvariable="qryfiles">
 			<!--- Loop over the files and update shared options --->
 			<cfloop query="qryfiles">
-				<cfquery datasource="#application.razuna.datasource#" name="checkorgentry">
-					SELECT 1 FROM #session.hostdbprefix#share_options  
-					WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-					AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
-				</cfquery>
-				<!--- Insert/update original entires in share_options table and apply same appropriate permissions --->
-				<cfif checkorgentry.recordcount eq 0>
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#share_options (host_id,asset_id_r, asset_type,asset_format,group_asset_id, folder_id_r, asset_order,asset_dl, rec_uuid)
-					VALUES(
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#type#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">,
-						<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_org#">,
-						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-						)
-					</cfquery>
-				<cfelse>
-					<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#share_options
-					SET 
-					asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_org#">,
-					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
-					WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-					AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-				</cfif>
-
-				<cfif type eq "img"><!---  Insert/update preview entires for images only --->
-					<cfquery datasource="#application.razuna.datasource#" name="checkthumbentry">
-						SELECT 1 FROM #session.hostdbprefix#share_options  
-						WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-						AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
-					</cfquery>
-
-					<cfif checkthumbentry.recordcount eq 0>
-						<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO #session.hostdbprefix#share_options (host_id,asset_id_r, asset_type, asset_format,group_asset_id, folder_id_r, asset_order,asset_dl, rec_uuid)
-						VALUES(
-							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#type#">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">,
-							<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_thumb#">,
-							<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-							)
-						</cfquery>
-					<cfelse>
-						<cfquery datasource="#application.razuna.datasource#">
-						UPDATE #session.hostdbprefix#share_options
-						SET 
-						asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_thumb#">,
-						folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderid#">
-						WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-						AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						</cfquery>
-					</cfif>	
-				</cfif>
+				<cfinvoke component="global.cfc.global" method="update_asset_share" assetid="#qryfiles.id#" folderid="#thefolderid#" type="#qryfiles.type#" asset_dl_org="#asset_dl_org#" asset_dl_thumb="#asset_dl_thumb#">
 			</cfloop>
 		</cfloop>
 		<!--- Flush Cache --->
@@ -637,9 +588,91 @@ Comment:<br>
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="update_asset_share" returntype="void" hint="updates share value for asset">
+		<cfargument name="assetid" required="true">
+		<cfargument name="type" required="true">
+		<cfargument name="asset_dl_org" required="true">
+		<cfargument name="asset_dl_thumb" required="true">
+		<cfargument name="folderid" default="">
+
+		<cfquery datasource="#application.razuna.datasource#" name="checkorgentry">
+			SELECT 1 FROM #session.hostdbprefix#share_options  
+			WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">
+			AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		</cfquery>
+		<!--- Insert/update original entires in share_options table and apply same appropriate permissions --->
+		<cfif checkorgentry.recordcount eq 0>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#share_options (host_id,asset_id_r, asset_type,asset_format,group_asset_id,<cfif folderid NEQ ""> folder_id_r,</cfif> asset_order,asset_dl, rec_uuid)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#type#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">,
+				<cfif folderid NEQ "">
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folderid#">,
+				</cfif>
+				
+				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_org#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+			</cfquery>
+		<cfelse>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#share_options
+			SET 
+			asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_org#">
+			<cfif folderid NEQ "">,folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folderid#"></cfif>
+			WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">
+			AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfif>
+
+		<cfif type eq "img"><!---  Insert/update preview entires for images only --->
+			<cfquery datasource="#application.razuna.datasource#" name="checkthumbentry">
+				SELECT 1 FROM #session.hostdbprefix#share_options  
+				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">
+				AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+			</cfquery>
+
+			<cfif checkthumbentry.recordcount eq 0>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#share_options (host_id,asset_id_r, asset_type, asset_format,group_asset_id, <cfif folderid NEQ "">folder_id_r, </cfif>asset_order,asset_dl, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#type#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">,
+					<cfif folderid NEQ ""><cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folderid#">,</cfif>
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_thumb#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#share_options
+				SET 
+				asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#asset_dl_thumb#">
+				<cfif folderid NEQ "">,folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folderid#"></cfif>
+				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#assetid#">
+				AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>	
+		</cfif>
+	</cffunction>
+
 <!--- Get ALL Upload Templates ---------------------------------------------------------------------->
 	<cffunction name="upl_templates" output="false">
 		<cfargument name="theactive" type="boolean" required="false" default="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT upl_temp_id, upl_active, upl_name, upl_description
@@ -814,8 +847,9 @@ Comment:<br>
 		<cfparam name="arguments.thestruct.selected" default="0">
 		<cfparam name="arguments.thestruct.newid" default="#createuuid('')#">
 		<cfparam name="arguments.thestruct.av_thumb_url" default="" >
+		
 		<cfif not isdefined("arguments.thestruct.prefs")>
-			<cfset arguments.thestruct.prefs - structnew()>
+			<cfset arguments.thestruct.prefs = structnew()>
 		</cfif>
 
 		<cfset var upcstruct  = isupc(arguments.thestruct.folder_id)>
@@ -824,13 +858,13 @@ Comment:<br>
 			<cfquery datasource="#application.razuna.datasource#" name="get_upc">
 					SELECT img_upc_number as upcnumber FROM  #session.hostdbprefix#images
 					WHERE img_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION
+					UNION ALL
 					SELECT aud_upc_number as upcnumber FROM  #session.hostdbprefix#audios
 					WHERE aud_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION
+					UNION ALL
 					SELECT vid_upc_number as upcnumber FROM  #session.hostdbprefix#videos
 					WHERE vid_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					UNION
+					UNION ALL
 					SELECT file_upc_number as upcnumber FROM  #session.hostdbprefix#files
 					WHERE file_id =<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
@@ -841,11 +875,22 @@ Comment:<br>
 			</cfinvoke>
 			<!--- Only if product string is numeric then change filename --->
 			<cfif isNumeric(upcinfo.upcprodstr)>
+				<!--- Check if last char of filename is an alphabet. If so then it will be appeneded to resulting UPC filename --->
+				<cfset var fn_last_char = "">
+				<cfif find('.', arguments.thestruct.av_link_title)>
+					 <cfset fn_last_char = right(listfirst(arguments.thestruct.av_link_title,'.'),1)> 
+					<cfif not isnumeric(fn_last_char)>
+						<cfset var fn_ischar = true>
+					<cfelse>
+						<cfset fn_ischar = false>
+						<cfset fn_last_char = "">
+					</cfif>
+				</cfif>
 				<cfset var filenum = getToken(arguments.thestruct.av_link_title,2,'.') >
 				<cfif isnumeric(filenum)>
-					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '.#filenum#'>
+					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & '#fn_last_char#.#filenum#'>
 				<cfelse>
-					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr>
+					<cfset arguments.thestruct.av_link_title = upcinfo.upcprodstr & fn_last_char>
 				</cfif>
 			</cfif>
 		</cfif>
@@ -987,6 +1032,7 @@ Comment:<br>
 <!--- getav ---------------------------------------------------------------------->
 	<cffunction name="getav" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT av_link_title, av_link_url, av_link
@@ -1023,6 +1069,7 @@ Comment:<br>
 		<!--- Param --->
 		<cfset var foundsome = false>
 		<cfset var theids = "">
+		<cfset var qry = "">
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Clean up process...</strong><br><br></cfoutput>
 		<cfflush>
@@ -1213,6 +1260,7 @@ Comment:<br>
 	<cffunction name="rebuildurl" output="true">
 		<cfargument name="thestruct" type="struct">
 		<cfargument name="assetid" type="string" required="false" default="0">
+		<cfset var qry = "">
 		<!--- Feedback --->
 		<cfoutput><strong>Fetching images...</strong><br /><br /></cfoutput>
 		<cfflush>
@@ -1462,6 +1510,7 @@ Comment:<br>
 	<!--- Watermark Templates --->
 	<cffunction name="getWMTemplates" output="false">
 		<cfargument name="theactive" type="boolean" required="false" default="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT wm_temp_id, wm_active, wm_name
@@ -1675,6 +1724,7 @@ Comment:<br>
 		<cfargument name="thestruct" type="struct" >
 		 <!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getAdditionalImages */ av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, host_id, 
@@ -1889,6 +1939,87 @@ Comment:<br>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("audios")>
+	</cffunction>
+
+	<!--- List alias usage --->
+	<cffunction name="getUsageAlias" output="false" returntype="query">
+		<cfargument name="asset_id_r" type="string" required="true">
+		<!--- Var --->
+		<cfset var qry = ''>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,30)#" region="razcache">
+		SELECT folder_id_r, '' as folder_name
+		FROM ct_aliases
+		WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.asset_id_r#">
+		</cfquery>
+		<!--- Get the folder names --->
+		<cfloop query="qry">
+			<!--- Get the foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#folder_id_r#" returnvariable="_foldername" />
+			<!--- Add to query --->
+			<cfset querySetCell(qry, "folder_name", _foldername)>
+		</cfloop>
+		<!--- Return query --->
+		<cfreturn qry />
+	</cffunction>
+
+	<cffunction name="compareLists" access="public" returnType="string" output="false" hint="Compares two lists and returns the intersection of the two. Returns empty string if none found.">
+	    <cfargument name="List1" type="string" required="true" />
+	    <cfargument name="List2" type="string" required="true" />
+	    <cfscript>
+		  var TempList = "";
+		  var Delim1 = ",";
+		  var Delim2 = ",";
+		  var Delim3 = ",";
+		  var i = 0;
+		  // Handle optional arguments
+		  switch(ArrayLen(arguments)) {
+		    case 3:
+		      {
+		        Delim1 = Arguments[3];
+		        break;
+		      }
+		    case 4:
+		      {
+		        Delim1 = Arguments[3];
+		        Delim2 = Arguments[4];
+		        break;
+		      }
+		    case 5:
+		      {
+		        Delim1 = Arguments[3];
+		        Delim2 = Arguments[4];          
+		        Delim3 = Arguments[5];
+		        break;
+		      }        
+		  } 
+		   /* Loop through the second list, checking for the values from the first list.
+		    * Add any elements from the second list that are found in the first list to the
+		    * temporary list
+		    */  
+		  for (i=1; i LTE ListLen(List2, "#Delim2#"); i=i+1) {
+		    if (ListFindNoCase(List1, ListGetAt(List2, i, "#Delim2#"), "#Delim1#")){
+		     TempList = ListAppend(TempList, ListGetAt(List2, i, "#Delim2#"), "#Delim3#");
+		    }
+		  }
+		  Return TempList;
+	    </cfscript>
+	</cffunction>
+
+	<cffunction name="subtractlists" access="public" output="false" hint="returns all elements of list one minus the elements of list two">
+	   <cfargument name="list1"  required="true" default="" />
+	   <cfargument name="list2"  required="false" default="" />
+	 
+	   <cfset var result = "">
+	   <cfset var kk = "">
+	    
+	   <cfloop index="kk" list="#list1#">
+	     <cfif listFindNoCase(arguments.list2,kk) eq 0>
+	       <cfset result = listAppend(result,kk)>
+	     </cfif>
+	   </cfloop>
+	    
+	   <cfreturn result>
 	</cffunction>
 
 </cfcomponent>

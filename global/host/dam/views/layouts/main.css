@@ -107,8 +107,9 @@ height: auto;
 }
 /* ----- RIGHT SIDE ----- */
 #apDiv4 {
-position: absolute;
-left:280px;
+/*position: absolute;*/
+
+margin-left:280px;
 top:60px;
 height: auto;
 width: auto;
@@ -528,10 +529,12 @@ height: expression(this.height > 110 ? "110px" : true);
 #div_feedback input, #div_feedback textarea { outline: none; background-color: #f1f1f1; border: 3px solid #b2b2b2; padding: 2px; }
 #div_feedback input:focus, #div_feedback textarea:focus { border: 3px solid #972324; }
 #div_feedback input, #div_feedback textarea { -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
+
 .assetbox {
 margin: 5px;
 padding: 5px;
-background: #FFFFFF;
+/*background: #fffffc;*/
+background: #ffffff;
 border: #D8D5D2 1px solid;
 float: left;
 min-height: 230px;
@@ -540,6 +543,11 @@ min-height: 230px;
 border-radius: 5px;
 word-wrap: break-word;
 width: 120px;
+color: #717171;
+}
+
+.assetbox_title {
+color: #9f9f9f;
 }
 .assetbox img {
 max-width: 110px;
@@ -808,7 +816,7 @@ border-radius: 10px;
 -moz-border-radius: 10px;
 */
 padding: 10px;
-width: 400px;
+min-width: 400px;
 }
 .panelsnew h1 {
 font-size: 24px;
@@ -1000,6 +1008,14 @@ font-weight: bold;
 	min-height:30px;
 }
 
+/*@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .tree > .ltr > li {
+    	vertical-align: top;
+    	padding-bottom: 1px;
+    }
+}*/
+
+
 /* This will finally wrap long lines in the tree */
 .tree > .ltr > li > a {
 	/*border: 1px solid red;*/
@@ -1008,6 +1024,9 @@ font-weight: bold;
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	white-space: pre-wrap !important;       /* css-3 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	white-space: pre; /* CSS2 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	_white-space: pre;
 }
 .tree li a, 
 .tree li span {
@@ -1017,4 +1036,19 @@ font-weight: bold;
 	white-space: -o-pre-wrap;    /* Opera 7 */
 	white-space: pre-wrap !important;       /* css-3 */
 	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	white-space: pre; /* CSS2 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	_white-space: pre;
+}
+/* Fix 100% width */
+.chzn-container, .chzn-drop, .chzn-drop .chzn-search, .chzn-drop .chzn-search input {
+	width: 100% !important;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* Override width */
+.chzn-container { 
+	width: 250px !important;
 }

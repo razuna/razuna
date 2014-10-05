@@ -42,7 +42,7 @@
 					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50"></a>
 					 </cfif>
 				</td>
-				<td width="5"></td>
+				<td width="10"></td>
 				<td valign="top">
 					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)  [#img_filename#]<br />
 					<cfif attributes.s EQ "F">
@@ -50,10 +50,9 @@
 					<cfelse>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename_org#" target="_blank">
 					</cfif>
-					View
 					</a> 
-					 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a> 
-					 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;">Direct Link</a>
+					<a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+					<a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;" style="padding-left:20px;">Direct Link</a>
 					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
 					 <cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_images&file_id=#img_id#&img_group_id=#img_group#&thetype=img&cf_show=img&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>

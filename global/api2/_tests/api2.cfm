@@ -7,34 +7,34 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 --->
 
 <!--- SET API KEY --->
-<cfset apikey_admin = "71AEC50390E74E47A6F97FFD794DED06"> <!--- Admin --->
-<cfset apikey_sysadmin = "8AF56E0FD4164F91B0F0964043164651"> <!--- SYS Admin --->
-<cfset apikey_user_perm = "05D8992CD25D492ABE53607C91481429"> <!--- User with permission --->
-<cfset apikey_user_noperm = "E2EA638E51B64629AB4C331CF0BBE4FC"> <!--- User without permission --->
+<cfset apikey_admin = "9AACE5A4C5C04D87A6E6CB42F54ED912"> <!--- Admin --->
+<cfset apikey_sysadmin = "C18990BD569A4C448ACA3D5CA185E4B2"> <!--- SYS Admin --->
+<cfset apikey_user_perm = "170C2A450D374703A225B26C469CF2CD"> <!--- User with permission --->
+<cfset apikey_user_noperm = "D65706752CFD4D9E91B0926DE58C6616"> <!--- User without permission --->
 
 <!--- SET URL OF API --->
 <cfset apiurl = "http://razunabd.local:8080/razuna/global/api2/">
 
 <!--- Group ID --->
-<cfset grpid = "A6959EB0-E22C-4C76-AAD1640785E5B2CA">
+<cfset grpid = "6F6B0D39-A95F-4904-A9D6E254A9BA4263">
 
 <!--- ASSET ID --->
-<cfset assetid = "C649BCE0824147DBAD42402DA294CB26">
+<cfset assetid = "BDA9E906503D4B88881254101E1E7938">
 <cfset assettype = "img">
 
 <!--- FOLDERID --->
-<cfset destination_folderid  = "1ABCB8E675754DE8A3866ADF7072C0BA">
-<cfset original_folderid = "C1F848F5E9974346A32B87FCF6F0B735">
+<cfset destination_folderid  = "09BEC2A0DCAD43DC9385C3E717E7B736">
+<cfset original_folderid = "E686529185494864B4EDBA3BCFF910D1">
 <cfset foldername  = "Test_Folder">
 
 <!--- COLLECTIONID --->
 <cfset collection_folderid = "427BB557EBC14A02BE7009591AB5E440">
-<cfset collectionid = "627E416703B14F65A22A8BDB2D2E7DB8">
+<cfset collectionid = "D0CAE5C5296340DFACBE946D8D98318E">
 <!--- PDF document --->
-<cfset fileid = "F9C76429463B4A74914C212AA401EACC">
+<cfset fileid = "50AF6049EB7143EA89DB89D8CD8FD19D">
 
 <!--- Label --->
-<cfset labelid = "AE6346805C24492180BB7E9C4912D823">
+<cfset labelid = "18CA6512B5D94F8094B0CABB9013EA0F">
 
 <!--- SEARCH TEXT --->
 <cfset searchfor = "sync*">
@@ -44,17 +44,8 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 
 <!--- HOSTS --->
 
-<cfoutput><h1>Hosts</h1>
-
-<strong>setFolderPermissions(as System Admin)</strong>
-<cfhttp url="#apiurl#folder.cfc?method=setfolderpermissions&api_key=#apikey_sysadmin#&permissions=[[%22#destination_folderid#%22,%2273CCC1DB-C9A2-445A-B0F3CE28F8780B02%22,%22X%22]]"></cfhttp>
-<br>#cfhttp.filecontent#<br>
-<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
-<cfdump var="#jsonstruct#">
-<cfflush>
-
-</cfoutput><cfabort>
-
+<cfoutput><h1>Hosts</h1></cfoutput>
+ 
 <!--- Get Hosts --->
 <cfhttp url="#apiurl#hosts.cfc?method=gethosts&api_key=#apikey_sysadmin#"></cfhttp>
 <cfoutput>
@@ -874,6 +865,13 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
+<strong>setFolder(as User without Permission)</strong>
+<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_noperm#&folder_name=#foldername#"></cfhttp>
+<br>#cfhttp.filecontent#<br>
+<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
+<cfdump var="#jsonstruct#">
+<cfflush>
+
 <!---Users with permissions can create sub folders so this case should pass. --->
 <strong>setFolder(as User with Permission)</strong>
 <cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_perm#&folder_name=#foldername#&folder_related=#original_folderid#"></cfhttp>
@@ -889,12 +887,6 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 <cfdump var="#jsonstruct#">
 <cfflush>
 
-<strong>setFolder(as User without Permission)</strong>
-<cfhttp url="#apiurl#folder.cfc?method=setfolder&api_key=#apikey_user_noperm#&folder_name=#foldername#"></cfhttp>
-<br>#cfhttp.filecontent#<br>
-<cfset jsonstruct = deserializeJSON(cfhttp.filecontent)>
-<cfdump var="#jsonstruct#">
-<cfflush>
 
 
 <!--- ************* SET FOLDER PERMISSION ************** --->

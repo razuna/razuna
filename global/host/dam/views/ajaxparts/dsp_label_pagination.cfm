@@ -70,11 +70,11 @@
 							</a>
 						</cfif>
 						<!--- Download Folder --->
-						<cfif cs.icon_download_folder>
+						<!--- <cfif cs.icon_download_folder>
 							<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=labels&label_id=#attributes.label_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
 								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">Download all assets with this label</div>
 							</a>
-						</cfif>
+						</cfif> --->
 					</div>
 				</div>
 			</td>
@@ -190,10 +190,12 @@
 	<div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>label_form" style="display:none;width:100%;text-align:center;">
 		<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('label_form');return false;">Deselect all</a>
 	</div>
-
+	<div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>label_form" style="display:none;width:100%;text-align:center;">
+		<em>Please note that you cannot edit files with the <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> icon, because you have "read-only" permission for those files!</em>
+	</div>
 	<!--- Put in basket button / Action Menu --->
 	<div id="folderselectionlabel_form" class="actiondropdown">
-		<cfif cs.show_bottom_part>
+		<cfif cs.show_basket_part AND cs.button_basket AND (cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="sendtobasket('label_form');return false;">
 				<div style="float:left;">
 					<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
@@ -201,9 +203,18 @@
 				<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</div>
 			</a> 
 		</cfif>
+		<!--- Batch --->
+		<cfif cs.icon_batch AND (cs.icon_batch_slct EQ "" OR listfind(cs.icon_batch_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_batch_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('label_form','all','labels','#attributes.folder_id#','batch');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
+			</a>
+		</cfif>
 		<!--- Export Metadata --->
-		<cfif cs.icon_metadata_export>
-			<a href="##" onclick="batchaction('label_form','labels','#kind#','#attributes.label_id#','exportmeta');return false;">
+		<cfif cs.icon_metadata_export AND (cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
+			<a href="##" onclick="batchaction('label_form','all','labels','#attributes.label_id#','exportmeta');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
 				</div>
@@ -211,7 +222,8 @@
 			</a>
 		</cfif>
 		<!--- Trash --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<!--- <cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()> --->
+		<cfif cs.show_trash_icon AND (cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('label_form','all','labels','0','delete');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
@@ -219,6 +231,7 @@
 				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash")#</div>
 			</a>
 		</cfif>
+		<!--- </cfif> --->
 		<!--- Plugin being shows with add_folderview_select_wx  --->
 		<cfif structKeyExists(plwx,"pview")>
 			<cfloop list="#plwx.pview#" delimiters="," index="i">

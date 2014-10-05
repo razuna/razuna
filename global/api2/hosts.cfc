@@ -29,6 +29,7 @@
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
 		<!--- If ISP --->
 		<cfif application.razuna.api.isp>
 			<cfset var thesession = false>

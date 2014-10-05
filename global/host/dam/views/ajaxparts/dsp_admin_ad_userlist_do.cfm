@@ -1,5 +1,6 @@
 ﻿<cfoutput>
 	<!--- Get LDAP User list --->
+	<cfset attributes.showerr = true>
 	<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#attributes#">
 	<!--- Create a new three-column query, specifying the column data types --->
 	<form  name="ad_user_form" id="ad_user_form" action="#self#" method="post" >
@@ -36,9 +37,9 @@
 						<td valign="top" nowrap width="20%">#SamAccountname#</td>
 						<td valign="top" nowrap width="20%" >#givenName#</td>
 						<td valign="top" nowrap width="20%" >#sn#</td>
-						<td valign="top" nowrap width="30%">#company#</td>
+						<td valign="top" nowrap width="20%">#company#</td>
 						<td valign="top" nowrap width="5%">#mail#</td>
-						<td valign="top" nowrap><cfif qCheckUser.recordcount NEQ 0>Imported<cfelse>Not Imported</cfif></td>
+						<td valign="top"><cfif qCheckUser.recordcount NEQ 0>Imported<cfelse>Not Imported</cfif></td>
 					</tr>
 				</cfoutput>
 			</cfif>

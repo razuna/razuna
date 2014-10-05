@@ -116,6 +116,12 @@
 					<em>(If left empty users can edit field according to their folder permissions)</em>
 				</td>
 			</tr>
+			<tr>
+				<td colspan="2">
+					XMP path to use for parsing: <br/>
+					<input type="text" name="cf_xmp_path" size="30" value="#qry_field.cf_xmp_path#" style="width:490px;">
+				</td>
+			</tr>
 		</table>
 		<div style="float:right;padding-top:10px;">
 			<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button">

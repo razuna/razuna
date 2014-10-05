@@ -52,32 +52,25 @@
 		</cfquery>
 		<!--- If no record has been found continue --->
 		<cfif here.recordcount EQ 0>
-			<!--- Is this file a doc or a img --->
-			<!---
-<cfloop delimiters="," index="i" list="#arguments.thestruct.thetype#">
-				<cfif (i EQ "#thenr#-img") OR (i EQ "#thenr#-doc") OR (i EQ "#thenr#-vid") OR (i EQ "#thenr#-aud")>
---->
-					<!--- <cfset newtype = replace(i, "#thenr#-", "", "ALL")> --->
-					<!--- insert the prodcut to the cart --->
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#cart
-					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
-					VALUES(
-					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">, 
-					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-					<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">, 
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					)
-					</cfquery>
-				<!---
-</cfif>
-			</cfloop>
---->
+			<!--- Sometimes we have a 0 in the list, filter this out --->
+			<cfif thenr NEQ 0 AND len(thetype) LTE 5>
+				<!--- insert the prodcut to the cart --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#cart
+				(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
+				VALUES(
+				<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">, 
+				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Remove expired assets from cart --->
@@ -119,6 +112,7 @@
 
 <!--- READ BASKET --->
 <cffunction name="readbasket" output="false" returnType="query">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, 
 			CASE 
@@ -326,10 +320,13 @@
 	<cfparam default="" name="arguments.thestruct.artoffile">
 	<cfparam default="" name="arguments.thestruct.artofaudio">
 	<cfparam default="false" name="arguments.thestruct.noemail">
+	<cfparam default="false" name="arguments.thestruct.skipduplicates">
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong>We are getting your files for your basket ready...</strong><br><br></cfoutput>
-		<cfflush>
+	<cfinvoke component="defaults" method="trans" transid="download_basket_output" returnvariable="download_basket_output" />
+	<!--- Feedback --->
+	<cfoutput><br/><strong>#download_basket_output#</strong><br /></cfoutput>
+	<cfflush>
 	</cfif>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -356,7 +353,9 @@
 	</cftry>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong>So far, so good. Fetching files...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="download_basket_output2" returnvariable="download_basket_output2" />
+		<!--- Feedback --->
+		<cfoutput><br /><strong>#download_basket_output2#</strong><br /><br /></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- Create directory --->
@@ -375,7 +374,7 @@
 			<cfcase value="img">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting image "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Image --->
@@ -385,7 +384,7 @@
 			<cfcase value="vid">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting video "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Video --->
@@ -395,7 +394,7 @@
 			<cfcase value="aud">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting audio "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Video --->
@@ -405,7 +404,7 @@
 			<cfdefaultcase>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
+					<cfoutput><strong>Getting file "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write file --->
@@ -415,7 +414,8 @@
 	</cfloop>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong>Putting it into a nice ZIP archive...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="download_basket_output4" returnvariable="download_basket_output4" />
+		<cfoutput><strong>#download_basket_output4#</strong><br><br></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- All done. Now zip up the folder --->
@@ -426,8 +426,15 @@
 		<cfset arguments.thestruct.zipname = arguments.thestruct.zipname & ".zip">
 	</cfif>
 	<!--- RAZ-2831 : Move metadata export into folder --->
-	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
-		<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#session.hostid#-#session.theuserid#.csv">
+	<cfif arguments.thestruct.prefs.set2_meta_export EQ 't'>
+		<cfif isdefined("arguments.thestruct.exportname")>
+			<cfset var suffix = "#arguments.thestruct.exportname#">
+		<cfelse>
+			<cfset var suffix = "#session.hostid#-#session.theuserid#">
+		</cfif>
+		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		</cfif>
 	</cfif>
 	<!--- Zip the folder --->
 	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
@@ -448,11 +455,12 @@
 		<!--- RAZ-2810 Customise email message --->
 		<cfinvoke component="defaults" method="trans" transid="basket_download_available_subject" returnvariable="basket_download_available_sub" />
 		<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
-		<cfinvoke component="email" method="send_email" subject="#basket_download_available_sub#" themessage="#basket_download_available_msg# <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
+		<cfinvoke component="email" method="send_email" subject="#basket_download_available_sub#" themessage="#basket_download_available_msg# <br/> <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong style="color:green;">All done. <a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="download_basket_output3" returnvariable="download_basket_output3" />
+		<cfoutput><strong style="color:green;"><a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">#download_basket_output3#</a></strong><br><br></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
@@ -471,8 +479,6 @@
 		<cfloop list="#arguments.thestruct.langs#" index="langindex">
 			<cfset var thedesc = evaluate("arguments.thestruct.file_desc_#langindex#")>
 			<cfset var thekey = evaluate("arguments.thestruct.file_keywords_#langindex#")>
-			<cfset console("langindex")>
-			<cfset console(langindex)>
 			<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#files_desc
 				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
@@ -565,9 +571,76 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload")AND NOT isdefined("arguments.thestruct.awsdatasource") >
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
+			</cfif>
+
+			<!--- Copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.file_name_org#">
+				</cfif>
+				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thename>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfset var epoch = dateadd("yyyy", 10, now())>
+				<cfif !awsfileexists>
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thename#'
+						)>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thename#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "doc">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thename#',
+							 expiration=epoch
+							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
+						</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
+					<cfcontinue>
+				</cfif>
+				<cfcontinue>
+			</cfif>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thename#")>
+				<cfcontinue>
 			</cfif>
 
 			<!--- RAZ-2918:: If the file have same name in basket then rename the file --->
@@ -713,7 +786,7 @@
 				<cfset rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & theext>
-				<cfset thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") & "." & theext>
+				<cfset thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") &  "." & theext>
 				<cfset theart = theext & "_" & theimgid>
 				<cfset upcnum = qrysub.upcnum>
 			<cfelseif theart EQ "versions">
@@ -749,6 +822,7 @@
 			</cfinvoke>
 			<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
 			 <cfif upcstruct.upcenabled>
+			 	<cfset var fn_last_char = "">
 			 	<cfquery name="qry_upcgrp" dbtype="query">
 					SELECT * FROM arguments.thestruct.qry_GroupsOfUser WHERE upc_size <>'' AND upc_size is not null
 				</cfquery>
@@ -776,9 +850,17 @@
 							<cfelse>
 								<cfset rendition_version ="." & rendition_version>
 							</cfif>
+							<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
+							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)> 
+							<cfif not isnumeric(fn_last_char)>
+								<cfset var fn_ischar = true>
+							<cfelse>
+								<cfset fn_ischar = false>
+								<cfset fn_last_char = "">
+							</cfif>
 					</cfif>
 
-					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##rendition_version#">
+					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##fn_last_char##rendition_version#">
 					<!--- Remove extension from filenames for UPC --->
 					<cfset arguments.thestruct.thefinalname = replacenocase(replacenocase(arguments.thestruct.thefinalname,".#theext#","","ALL"),".jpg","ALL")>
 				</cfif>
@@ -797,9 +879,10 @@
 			<cfelse>
 				<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
 			</cfif>
-			
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource")>
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 			<!--- If extension is missing then put it in  --->
@@ -811,6 +894,72 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thefinalname>
+
+			<!--- Copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#">
+				</cfif>
+				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thefinalname>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				
+				<cfset var epoch = dateadd("yyyy", 10, now())>
+				<cfif !awsfileexists>
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thefinalname#'
+						)>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thefinalname#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "original">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thefinalname#',
+							 expiration=epoch
+							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
+						</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
+					<cfcontinue>
+				</cfif>
+			</cfif>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
+				<cfcontinue>
+			</cfif>
+
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
 					<cfif find('.',arguments.thestruct.thefinalname)>
@@ -826,7 +975,6 @@
 
 			<!--- convert the filename without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
-
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1009,8 +1157,10 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource") >
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -1025,6 +1175,73 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg = arguments.thestruct.thenewname>
+
+			<!--- Copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.vid_name_org#">
+				</cfif>
+
+				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thenewname>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfset var epoch = dateadd("yyyy", 10, now())>
+				<cfif !awsfileexists>
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thenewname#'
+						)>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thenewname#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "video">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thenewname#',
+							 expiration=epoch
+							)>
+						</cfif>
+						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
+					<cfcontinue>
+				</cfif>
+				<cfcontinue>
+			</cfif>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
+				<cfcontinue>
+			</cfif>
+
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
 					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')> 
@@ -1188,8 +1405,10 @@
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#">
-			<!--- Create subfolder for the kind of image --->
-			<cfif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
+			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource")>
+				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -1204,6 +1423,73 @@
 			<cfset var fileNameOK = true>
 			<cfset var uniqueCount = 1>
 			<cfset var thenameorg  = arguments.thestruct.thenewname>
+
+			<!--- If copying to AWS --->
+			<cfif isdefined("arguments.thestruct.awsdatasource") AND isdefined("arguments.thestruct.awsbucket")>
+				<cfif theart EQ "versions">
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#">
+				<cfelse>
+					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.aud_name_org#">
+				</cfif>
+
+				<cfset var awsfileexists = false>
+				<!--- convert the filename without space and foreign chars --->
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
+				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
+					<cfloop query="arguments.thestruct.s3list">
+						<cfif etag NEQ ''> <!--- Ignore folders --->
+							<cfif arguments.thestruct.s3list.key EQ arguments.thestruct.thenewname>
+								<cfset awsfileexists = true>
+								<cfbreak>
+							</cfif>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<cfset var epoch = dateadd("yyyy", 10, now())>
+				<cfif !awsfileexists>
+					<cfset var fileext = listlast(thefilepath,'.')>
+					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cftry>
+						<cfset AmazonS3write(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+							key='#arguments.thestruct.thenewname#'
+						)>
+						<cfset AmazonS3setacl(
+							datasource='#arguments.thestruct.awsdatasource#',
+							bucket='#arguments.thestruct.awsbucket#',
+							key='#arguments.thestruct.thenewname#',
+							acl = 'public-read'
+						)>
+						<cfif art contains "audio">
+							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+							 datasource='#arguments.thestruct.awsdatasource#',
+							 bucket='#arguments.thestruct.awsbucket#',
+							 key='#arguments.thestruct.thenewname#',
+							 expiration=epoch
+							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
+						</cfif>
+						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfcatch>
+							<!--- Rename file back if any error happens --->
+							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
+						</cfcatch>
+					</cftry>
+					<cfcontinue>
+				</cfif>
+				<cfcontinue>
+			</cfif>
+
+			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
+			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
+				<cfcontinue>
+			</cfif>
+
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
 					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')> 
@@ -1322,10 +1608,10 @@
 	<!--- Send out eMail to the one who is responsible for Orders --->
 	<cfset var thesubject = "Basket Order: #session.thecart#">
 	<cfset var mailmessage = "Hello,
-		The below order just came in:
+		The below order just came in:<br/><br/>
 		
-		Basket Order: #session.thecart#
-		Date: #dateformat(now(), "#thedateformat#")#
+		Basket Order: #session.thecart#<br/>
+		Date: #dateformat(now(), "#thedateformat#")#<br/><br/>
 		
 		Log in to Razuna to process this order.">
 	<cftry>
@@ -1342,6 +1628,7 @@
 
 <!--- Read Orders --->
 <cffunction name="get_orders" output="false">
+	<cfset var qry = "">
 	<!--- Read orders --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_orders */ cart_id, cart_order_date, cart_order_done
@@ -1365,6 +1652,234 @@
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfoutput>Done!</cfoutput>
 	<cfreturn />
+</cffunction>
+
+
+<!--- WRITE FILES IN BASKET TO LOCAL FOLDER --->
+<cffunction name="writebasket2local" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam default="" name="arguments.thestruct.artofimage">
+	<cfparam default="" name="arguments.thestruct.artofvideo">
+	<cfparam default="" name="arguments.thestruct.artoffile">
+	<cfparam default="" name="arguments.thestruct.artofaudio">
+	<cfparam default="false" name="arguments.thestruct.noemail">
+	<cfparam default="" name="arguments.thestruct.newpath" >
+	<cfparam default="true" name="arguments.thestruct.skipduplicates">
+	<cfparam default="true" name="arguments.thestruct.localupload">
+	<cftry>
+
+		<cfset var res = structnew()>
+		<cfset res.progress = 0>
+		<cfif NOT directoryexists("#arguments.thestruct.uploaddir#")>
+			<cfset res.message  = "<p><font color='##cd5c5c'>Directory not found. Please check path and try again.</font></p>">
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+			<cfabort>
+		</cfif>
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+		<!--- Create directory --->
+		<cfset var basketname = createuuid("")>
+		<!--- Read Basket --->
+		<cfinvoke method="readbasket" returnvariable="thebasket">
+		<cfset var filectr = 0>
+		<!--- Loop trough the basket --->
+		<cfloop query="thebasket">
+			<!--- Set the asset id into a var --->
+			<cfset arguments.thestruct.theid = cart_product_id>
+			<!--- Get the files according to the extension --->
+			<cfswitch expression="#cart_file_type#">
+				<!--- Images --->
+				<cfcase value="img">
+					<cfset res.message  = 'Copying image "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Image --->
+					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- Videos --->
+				<cfcase value="vid">
+					<!--- Write Video --->
+					<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
+					<cfset res.message  = 'Copying video "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+				</cfcase>
+				<!--- Audios --->
+				<cfcase value="aud">
+					<cfset res.message  = 'Copying audio "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Audio --->
+					<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- All other files --->
+				<cfdefaultcase>
+					<cfset res.message  = 'Copying file "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write file --->
+					<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
+				</cfdefaultcase>
+			</cfswitch>
+			<cfset filectr = filectr + 1>
+			<cfset res.progress = int((filectr/thebasket.recordcount)*100)>
+		</cfloop>
+		<cfset res.message  = '-------------- DONE -------------- '>
+		<cfoutput>#serializeJSON(res)#</cfoutput>
+		<cfflush>
+		<cfcatch>
+		<cfset res.message  = '-------------- ERROR --------------<br/>' & cfcatch.message>
+		<cfoutput>#serializeJSON(res)#</cfoutput>
+		<cfflush>
+	</cfcatch>
+	</cftry>
+</cffunction>
+
+
+<!--- WRITE FILES IN BASKET TO AWS --->
+<cffunction name="writebasket2aws" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam default="" name="arguments.thestruct.artofimage">
+	<cfparam default="" name="arguments.thestruct.artofvideo">
+	<cfparam default="" name="arguments.thestruct.artoffile">
+	<cfparam default="" name="arguments.thestruct.artofaudio">
+	<cfparam default="false" name="arguments.thestruct.noemail">
+	<cfparam default="" name="arguments.thestruct.newpath" >
+	<cfparam default="true" name="arguments.thestruct.skipduplicates">
+	<cfparam default="true" name="arguments.thestruct.localupload">
+	<cfset arguments.thestruct.theawsurl = structnew()>
+	<cftry>
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+		<!--- Create directory --->
+		<cfset var basketname = createuuid("")>
+
+		<cfset var aws_id = listlast(arguments.thestruct.bucket_aws,'_')>
+
+		<cfquery name="aws_bucket" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="#arguments.thestruct.bucket_aws#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
+		<cfquery name="aws_key" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="aws_access_key_id_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
+		<cfquery name="aws_secret_key" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="aws_secret_access_key_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
+		<!--- Register AWS datasource and set vars --->
+		<cfset arguments.thestruct.awsdatasource = AmazonRegisterDataSource('basketaws','#aws_key.set_pref#','#aws_secret_key.set_pref#')>
+		<cfset arguments.thestruct.awsbucket = aws_bucket.set_pref>
+		<cfset arguments.thestruct.awskey= aws_key.set_pref>
+		<cfset arguments.thestruct.awssecretkey= aws_secret_key.set_pref>
+		<!--- Get list of files in AWS bucket --->
+		<cfset arguments.thestruct.s3list = AmazonS3list(
+			datasource='#arguments.thestruct.awsdatasource#',
+			bucket='#arguments.thestruct.awsbucket#',
+			prefix = ''
+		)>
+		<!--- Read Basket --->
+		<cfinvoke method="readbasket" returnvariable="thebasket">
+		<cfset var filectr = 0>
+		<!--- Loop trough the basket --->
+		<cfloop query="thebasket">
+			<!--- Set the asset id into a var --->
+			<cfset arguments.thestruct.theid = cart_product_id>
+			<!--- Get the files according to the extension --->
+			<cfswitch expression="#cart_file_type#">
+				<!--- Images --->
+				<cfcase value="img">
+					<cfset res.message  = 'Copying image "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Image --->
+					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
+					
+				</cfcase>
+				<!--- Videos --->
+				<cfcase value="vid">
+					<!--- Write Video --->
+					<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
+					<cfset res.message  = 'Copying video "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+				</cfcase>
+				<!--- Audios --->
+				<cfcase value="aud">
+					<cfset res.message  = 'Copying audio "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write Audio --->
+					<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
+				</cfcase>
+				<!--- All other files --->
+				<cfdefaultcase>
+					<cfset res.message  = 'Copying file "#filename#"'>
+					<cfoutput>#serializeJSON(res)#</cfoutput>
+					<cfflush>
+					<!--- Write file --->
+					<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
+				</cfdefaultcase>
+			</cfswitch>
+			<cfset filectr = filectr + 1>
+			<cfset res.progress = int((filectr/thebasket.recordcount)*100)>
+		</cfloop>
+		<cfset res.message  = '-------------- DONE -------------- '>
+		<cfoutput>#serializeJSON(res)#</cfoutput>
+		<cfflush>
+
+		<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
+			<cfoutput>
+				<cfsavecontent variable="res.message">
+					<strong>AWS URL's</strong><br/>Please be sure to copy these as once generated for a file these will not be re-generated.<br/><br/>
+					<font size="1">
+					<cfloop collection="#arguments.thestruct.theawsurl#" item="theurl">
+						#theurl# : <a href="#structfind(arguments.thestruct.theawsurl,theurl)#" target="_blank">#structfind(arguments.thestruct.theawsurl,theurl)#</a><br/>
+					</cfloop>
+					</font>
+				</cfsavecontent>
+				#serializeJSON(res)#
+			</cfoutput>
+			<cfflush>
+		</cfif>
+
+		<cfcatch>
+			<cfset res.message  = '<font color="##cd5c5c">-------------- ERROR --------------<br/>' & cfcatch.message & '<br/>'  & cfcatch.detail & '</font>'>
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+			<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
+				<cfoutput>
+					<cfsavecontent variable="res.message">
+						<strong>AWS URL's</strong><br/>Please be sure to copy these as once generated for a file these will not be re-generated.<br/><br/>
+						<font size="1">
+						<cfloop collection="#arguments.thestruct.theawsurl#" item="theurl">
+							#theurl# : <a href="#structfind(arguments.thestruct.theawsurl,theurl)#" target="_blank">#structfind(arguments.thestruct.theawsurl,theurl)#</a><br/>
+						</cfloop>
+						</font>
+					</cfsavecontent>
+					#serializeJSON(res)#
+				</cfoutput>
+				<cfflush>
+			</cfif>
+		</cfcatch>
+	</cftry>
 </cffunction>
 
 </cfcomponent>

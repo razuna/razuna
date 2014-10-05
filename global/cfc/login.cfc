@@ -36,10 +36,11 @@
 
 <!--- FUNCTION: LOGIN --->
 	<cffunction name="login" access="public" output="false" returntype="struct">
-		<cfargument name="thestruct" required="true" type="struct">		
+		<cfargument name="thestruct" required="true" type="struct">
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.rem_login" default="F">
 		<cfparam name="arguments.thestruct.from_share" default="F">
+		<cfparam name="arguments.thestruct.pass_hashed" default="false">
 		<!--- create structure to store results in --->
 		<cfset var theuser = structNew()>
 		<cfif arguments.thestruct.loginto EQ "admin">
@@ -47,18 +48,24 @@
 		<cfelse>
 			<cfset var thecookie = cookie.loginpass>
 		</cfif>
-		<!--- compare argument and cookie, if it is alredy the hased value use us it else take new password passed --->
-		<cfif arguments.thestruct.pass EQ thecookie>
-			<cfset var thepass = thecookie>
+		<!--- If the pass is hashed then simply assign passed in hashed pass --->
+		<cfif arguments.thestruct.pass_hashed>
+			<cfset var thepass = arguments.thestruct.pass>
 		<cfelse>
-			<!--- Hash password --->
-			<cfset var thepass = hash(arguments.thestruct.pass, "MD5", "UTF-8")>
+			<!--- compare argument and cookie, if it is alredy the hased value use us it else take new password passed --->
+			<cfif arguments.thestruct.pass EQ thecookie>
+				<cfset var thepass = thecookie>
+			<cfelse>
+				<!--- Hash password --->
+				<cfset var thepass = hash(arguments.thestruct.pass, "MD5", "UTF-8")>
+			</cfif>
 		</cfif>
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
+		<cfset var qryuser = "">
 		<!--- Check for the user --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
 			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
@@ -78,15 +85,23 @@
 		</cfif>
 		AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 		</cfquery>
-		
+
 		<!--- Check the AD user --->
-		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_username') AND arguments.thestruct.ad_server_username NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_password') AND arguments.thestruct.ad_server_password NEQ '' AND structKeyExists(arguments.thestruct,'ad_server_start') AND arguments.thestruct.ad_server_start NEQ ''>
+		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
+				<cfset session.ldapauthfail = "">
 				<cftry>
-					<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> <!--- Strip out domain from username if present for AD users--->
+					<!--- Strip out username from AD and LDAP strings if present --->
+					<cfif arguments.thestruct.name contains "\"> <!--- e.g. razuna\aduser for windows AD users --->
+						<cfset var adusername = gettoken(arguments.thestruct.name,2,"\")> 
+					<cfelseif arguments.thestruct.name contains "uid="><!---  e.g. uid=aduser,ou=service,dc=utmb,dc=edu for LDAP users who are non AD --->
+						<cfset var adusername = gettoken(gettoken(arguments.thestruct.name,1,","),2,"=")> 
+					<cfelse>
+						<cfset var adusername = arguments.thestruct.name> 
+					</cfif>
 					<!--- Check for the user --->
 					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
 						lower(u.user_login_name) = <cfqueryparam value="#lcase(adusername)#" cfsqltype="cf_sql_varchar"> 
@@ -107,8 +122,17 @@
 					AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 					</cfquery>
 				<cfif qryuser.recordcount NEQ 0>
+					<cfif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ad' AND arguments.thestruct.ad_domain NEQ '' AND arguments.thestruct.name DOES NOT CONTAIN '\'>
+						<cfset arguments.thestruct.name  = arguments.thestruct.ad_domain & '\' & arguments.thestruct.name>
+					<cfelseif structKeyExists(arguments.thestruct,'ad_ldap') AND arguments.thestruct.ad_ldap EQ 'ldap' AND arguments.thestruct.ldap_dn CONTAINS 'uid={username}' AND arguments.thestruct.name DOES NOT CONTAIN '='>
+						<cfset arguments.thestruct.name  = replacenocase (arguments.thestruct.ldap_dn,'{username}',arguments.thestruct.name)>
+					</cfif>
 					<!--- Authenticate LDAP user --->
-					<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#">
+					<cfif structKeyExists(arguments.thestruct,'ad_server_secure') AND arguments.thestruct.ad_server_secure EQ 'T'>
+						<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" secure="CFSSL_BASIC" port="#arguments.thestruct.ad_server_port#">
+					<cfelse>
+					<cfinvoke component="global.cfc.settings" method="authenticate_ad_user"  returnvariable="adauth"  ldapserver="#arguments.thestruct.ad_server_name#" dcstart="#arguments.thestruct.ad_server_start#" username="#arguments.thestruct.name#" password="#arguments.thestruct.pass#" port="#arguments.thestruct.ad_server_port#">
+				</cfif>
 				</cfif>
 				<cfcatch><cfset console(cfcatch)></cfcatch>
 				</cftry>
@@ -126,12 +150,24 @@
 			<cfset session.login = "T">
 			<!--- Set the Web Login into a session --->
 			<cfset session.weblogin = "F">
+			<!--- Set search selection --->
+			<cfset session.user_search_selection = qryuser.user_search_selection>
 			<!--- Set the user ID into a session --->
 			<cfset session.theuserid = qryuser.user_id>
 			<!--- Set User First and last name --->
 			<cfset session.firstlastname = "#qryuser.user_first_name# #qryuser.user_last_name#">
 			<cfif structKeyExists(arguments.thestruct,"ad_user_name") AND qryuser.user_first_name EQ '' AND qryuser.user_last_name EQ ''>
 				<cfset session.firstlastname = "#arguments.thestruct.ad_user_name#">
+			</cfif>
+			<!--- Set user OS --->
+			<cfif cgi.http_user_agent contains 'windows'>
+				<cfset session.user_os = 'windows'>
+			<cfelseif cgi.http_user_agent contains 'mac os'>
+				<cfset session.user_os = 'mac'>
+			<cfelseif cgi.http_user_agent contains 'linux' OR cgi.http_user_agent contains 'unix'>
+				<cfset session.user_os = 'unix'>
+			<cfelse>
+				<cfset session.user_os = 'unknown'>
 			</cfif>
 			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
 			<cfinvoke component="groups_users" method="getGroupsOfUser">
@@ -174,6 +210,50 @@
 				</cfif>
 			</cfif>
 		</cfif>
+
+		<!--------- Check to see if scheduled tasks exists and if not put it back --------->
+
+		<!--- Get the correct paths for hosted vs non-hosted --->
+		<cftry>
+			<cfif !application.razuna.isp>
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam">
+			<cfelse>
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/admin">
+			</cfif>
+			<cfthread action="run" intvar="#taskpath#">
+				<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
+				<cfschedule action="update"
+					task="RazFolderSubscribe" 
+					operation="HTTPRequest"
+					url="#attributes.intvar#/index.cfm?fa=c.folder_subscribe_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="500"
+				>
+				<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
+				<cfschedule action="update"
+					task="RazAssetExpiry" 
+					operation="HTTPRequest"
+					url="#attributes.intvar#/index.cfm?fa=c.w_asset_expiry_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="300"
+				>
+				<!--- Save FTP Task in CFML scheduling engine --->
+				<cfschedule action="update"
+					task="RazFTPNotifications" 
+					operation="HTTPRequest"
+					url="#attributes.intvar#/index.cfm?fa=c.w_ftp_notifications_task"
+					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+					startTime="00:01 AM"
+					endTime="23:59 PM"
+					interval="3600"
+				>
+			</cfthread>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<cfreturn theuser />
 	</cffunction>
 
@@ -523,13 +603,20 @@
 		<cfparam name="arguments.thestruct.loginto" default="dam">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
+		<!--- Strip out domain from username if present for AD users--->
+		<cfif arguments.thestruct.theemail contains "\">
+			<cfset var loginname = gettoken(arguments.thestruct.theemail,2,"\")> 
+		<cfelse>
+			<cfset var loginname = arguments.thestruct.theemail>
+		</cfif>
+		
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="theuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
 		FROM users u, ct_users_hosts ct, hosts h
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.theemail)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.theemail)#" cfsqltype="cf_sql_varchar">
+			lower(u.user_login_name) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar"> 
+			OR lower(u.user_email) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar">
 		)
 		AND lower(u.user_active) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		AND u.user_id = ct.ct_u_h_user_id
@@ -541,6 +628,7 @@
 			AND ct.ct_u_h_host_id = h.host_id
 		</cfif>
 		</cfquery>
+		<cfset console(theuser)>
 		<!--- Do we have one domain --->
 		<cfif theuser.recordcount NEQ 0>
 			<!--- Set session hostid --->

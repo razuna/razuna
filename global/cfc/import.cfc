@@ -28,6 +28,7 @@
 	<!--- Templates: Get all --->
 	<cffunction name="getTemplates" output="true">
 		<cfargument name="theactive" type="boolean" required="false" default="false">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT imp_temp_id, imp_active, imp_name, imp_description

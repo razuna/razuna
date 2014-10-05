@@ -24,7 +24,13 @@
 *
 --->
 <cfparam name="attributes.view" default="">
+<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+	<cfset isadmin = true>
+<cfelse>
+	<cfset isadmin = false>
+</cfif>
 <cfoutput>
+	<cfset uniqueid = createuuid()>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
@@ -42,7 +48,7 @@
 				<h1>#qry_foldername#</h1>
 			</cfif>
 			<cfif attributes.folderaccess NEQ "R">
-				<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+				<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (isadmin)>
 					<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button></a>
 				<cfelseif cs.myfolder_upload>
 					<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button></a>
@@ -143,6 +149,43 @@
 									</cfif>
 								});
 								</script>
+
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.image#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.image,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop>
+								<br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg">
 									<!--- Show assets --->
@@ -154,7 +197,7 @@
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -167,22 +210,24 @@
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=img&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -192,26 +237,21 @@
 									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.image#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number"> 
-										    <cfif prefs.set2_upc_enabled>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -219,16 +259,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.image,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -274,6 +315,42 @@
 									</cfif>
 								});
 								</script>
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.video#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.video,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop>
+								<br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg">
 										<cfif link_kind NEQ "url">
@@ -285,7 +362,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#?#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -298,51 +375,46 @@
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=vid&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number")>
+								<cfif attributes.cs.videos_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.videos_metadata EQ "vid_upc_number AS cs_vid_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.video#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											<cfif evaluate(listlast(m," ")) NEQ "">
-												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-											</cfif>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number">
-											<cfif prefs.set2_upc_enabled>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -350,16 +422,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.video,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -405,6 +478,41 @@
 									</cfif>
 								});
 								</script>
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.audio#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.audio,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop><br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>>
@@ -412,51 +520,46 @@
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=aud&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.audios_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.audios_metadata EQ "aud_upc_number AS cs_aud_upc_number")>
+								<cfif attributes.cs.audios_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.audios_metadata EQ "aud_upc_number AS cs_aud_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.audios_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.audio#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											<cfif evaluate(listlast(m," ")) NEQ "">
-												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-											</cfif>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number">
-											<cfif prefs.set2_upc_enabled > 
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -464,16 +567,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.audio,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -519,24 +623,52 @@
 									</cfif>
 								});
 								</script>
+								<!--- custom metadata fields to show --->
+								<cfloop list="#attributes.cs_place.top.file#" index="m" delimiters=",">
+									<cfif m CONTAINS "_filename">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+									<cfelseif m CONTAINS "_size">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+									<cfelseif m CONTAINS "_time">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+									<cfelseif m CONTAINS "expiry_date">
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
+									<cfelse>
+										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+										#evaluate(listlast(m," "))#
+									</cfif>
+									<br />
+								</cfloop>
+								<!--- Show custom fields here (its a list) --->
+								<cfloop list="#customfields#" index="i" delimiters=",">
+									<cfif listfind (attributes.cs_place.cf_top.file,gettoken(i,2,"|"))>
+										<br />
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
+									</cfif>
+								</cfloop>
+								<br/><br/>
 								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 								<div id="draggable#id#-doc" type="#id#-doc" class="theimg">
-									<!--- If it is a PDF we show the thumbnail --->
-									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
-										<cfif cloud_url NEQ "">
-											<img src="#cloud_url#" border="0" img-tt="img-tt">
-										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-										</cfif>
-									<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
-										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
-										<cfelse>
-											<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#hashtag#" border="0" img-tt="img-tt">
-										</cfif>
+									<!--- Show the thumbnail --->
+									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+									<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
+										<img src="#cloud_url#" border="0" img-tt="img-tt">
+									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
 									<cfelse>
-										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
+										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 									</cfif>
 								</div>
 								</a>
@@ -546,51 +678,46 @@
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=doc','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=doc');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.files_metadata EQ "" OR (NOT prefs.set2_upc_enabled AND attributes.cs.files_metadata EQ "file_upc_number AS cs_file_upc_number")>
+								<cfif attributes.cs.files_metadata EQ "" OR ( NOT prefs.set2_upc_enabled AND attributes.cs.files_metadata EQ "doc_upc_number AS cs_doc_upc_number" )>
 									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs_place.bottom.file#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
-											<cfif evaluate(listlast(m," ")) NEQ "">
-												#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-											</cfif>
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 										<cfelseif m CONTAINS "expiry_date">
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelseif m CONTAINS "_number">
-											<cfif prefs.set2_upc_enabled >
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
-											#evaluate(listlast(m," "))#
-											</cfif>
 										<cfelse>
-											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#
+											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#evaluate(listlast(m," "))#
 										</cfif>
 										<br />
@@ -598,16 +725,17 @@
 								</cfif>
 								<!--- Show custom fields here (its a list) --->
 								<cfloop list="#customfields#" index="i" delimiters=",">
-									<br />
-									<!--- Get label --->
-									<cfset cflabel = listFirst(i,"|")>
-									<!--- Get value --->
-									<cfset cfvalue = listlast(i,"|")>
-									<!--- Output --->
-									#cflabel#:
-									<cfif cflabel NEQ cfvalue>
+									<cfif listfind (attributes.cs_place.cf_bottom.file,gettoken(i,2,"|"))>
 										<br />
-										#cfvalue#
+										<!--- Get label --->
+										<cfset cflabel = listFirst(i,"|")>
+										<!--- Get value --->
+										<cfset cfvalue = listlast(i,"|")>
+										<!--- Output --->
+										<span class="assetbox_title">#cflabel#:</span>
+										<cfif cflabel NEQ cfvalue>
+											#cfvalue#
+										</cfif>
 									</cfif>
 								</cfloop>
 								<cfif attributes.folder_id NEQ folder_id_r>
@@ -677,7 +805,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -699,20 +827,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -786,7 +916,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#?#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -808,20 +938,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -904,20 +1036,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>									
 									</cfif>
 								</div>
@@ -982,22 +1116,13 @@
 							<cfif is_available>
 								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#id#-doc" type="#id#-doc">
-										<!--- If it is a PDF we show the thumbnail --->
-										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
-											<cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0" img-tt="img-tt">
-											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-											</cfif>
-										<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
-											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-											<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-												<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
-											<cfelse>
-												<img src="#thestorage##path_to_asset#/#thethumb#" border="0" style="max-width=400px;" img-tt="img-tt">
-											</cfif>
+										<!--- Show the thumbnail --->										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
+											<img src="#cloud_url#" border="0" img-tt="img-tt">
+										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
 										<cfelse>
-											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0"></cfif>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
 									</div>
 								</a>
@@ -1016,20 +1141,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -1121,7 +1248,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0" img-tt="img-tt">
+												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -1150,20 +1277,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -1213,7 +1342,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#?#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -1242,20 +1371,22 @@
 								<div style="float:right;padding-top:2px;">
 										<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -1321,20 +1452,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>
@@ -1375,22 +1508,14 @@
 							<cfif is_available>
 								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#id#-doc" type="#id#-doc">
-										<!--- If it is a PDF we show the thumbnail --->
-										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
-											<cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0" img-tt="img-tt">
-											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-											</cfif>
-										<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
-											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-											<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-												<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
-											<cfelse>
-												<img src="#thestorage##path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
-											</cfif>
+										<!--- Show the thumbnail --->
+										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
+											<img src="#cloud_url#" border="0" img-tt="img-tt">
+										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
 										<cfelse>
-											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0"></cfif>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
 									</div>
 								</a>
@@ -1416,20 +1541,22 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
-										<cfif cs.button_send_email>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-#kind#&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<cfif cs.show_bottom_part>
+										<cfif cs.show_favorites_part>
 											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
-										<!--- If alias the remove is different --->
-										<cfif attributes.folder_id NEQ folder_id_r>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<cfelse>
-											<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+											<!--- If alias the remove is different --->
+											<cfif attributes.folder_id NEQ folder_id_r>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_alias&id=#id#&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("alias_remove_button"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<cfelse>
+												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											</cfif>
 										</cfif>
 									</cfif>
 								</div>

@@ -30,7 +30,8 @@
 	  });
   </script>
 <cfoutput>
-	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif attributes.folderaccess NEQ "R"> onsubmit="filesubmit();return false;"</cfif>>
+	<cfset uniqueid = createuuid()>
+	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif attributes.folderaccess NEQ "R"> onsubmit="if (formchecks())filesubmit();return false;"</cfif>>
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
@@ -42,10 +43,13 @@
 	<input type="hidden" name="file_extension" value="#qry_detail.detail.file_extension#">
 	<!--- Show next and back within detail view --->
 	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Format size --->
+	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
+
 	<!--- Show tabs --->
 	<div id="tab_detail#file_id#">
 		<ul>
-			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
+			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<cfif cs.tab_metadata>
 				<li><a href="##meta">Metadata</a></li>
 			</cfif>
@@ -61,6 +65,7 @@
 					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("versions_header")#</a></li>
 				</cfif>
 			</cfif>
+			<!--- Sharing options should be hidden if asset has expired --->
 			<cfif attributes.folderaccess NEQ "R" AND iif(isdate(qry_detail.detail.expiry_date) AND qry_detail.detail.expiry_date LT now(), false, true)>
 				<cfif cs.tab_sharing_options>
 					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
@@ -68,8 +73,15 @@
 				<cfif cs.tab_additional_renditions>
 					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("adiver_header")#</a></li>
 				</cfif>
+			</cfif>
+			<!--- Hide these for R-groups --->
+			<cfif attributes.folderaccess NEQ "R">
 				<cfif cs.tab_history>
 					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				</cfif>
+				<!--- Aliases'd --->
+				<cfif qry_aliases.recordcount NEQ 0>
+					<li><a href="##alias" onclick="loadcontent('alias','#myself#c.usage_alias&id=#attributes.file_id#&folder_id=#attributes.folder_id#');">Alias</a></li>
 				</cfif>
 				<!--- Plugin being shows with add_tab_detail_wx  --->
 				<cfif structKeyExists(plwx,"pview")>
@@ -103,21 +115,16 @@
 							<tr>
 								<!--- show image according to extension --->
 								<td align="center" style="padding-top:20px;width:400px;" valign="top">
-									<!--- If it is a PDF we show the thumbnail --->
-									<cfif application.razuna.storage EQ "nirvanix" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
-										<img src="#qry_detail.detail.cloud_url#" border="0">
-									<cfelseif application.razuna.storage EQ "local" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
-										<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".#qry_detail.detail.file_extension#", ".jpg", "all")>
-										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") IS "no">
-											<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0">
-										<cfelse>
-											<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#" border="0">
-										</cfif>
-									<cfelseif application.razuna.storage EQ "amazon" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
-										<img src="#qry_detail.detail.cloud_url#" border="0">
+									<!--- Show the thumbnail --->
+									<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".#qry_detail.detail.file_extension#", ".jpg", "all")>
+									<cfif application.razuna.storage EQ "amazon" AND qry_detail.detail.cloud_url NEQ "">
+										<img src="#qry_detail.detail.cloud_url#" border="0" img-tt="img-tt">
+									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") >
+										<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#?#uniqueid#" border="0">
 									<cfelse>
-										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" width="128" height="128" border="0"></cfif>
+										<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" width="128" height="128" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 									</cfif>
+
 									<cfif qry_detail.detail.link_kind EQ "url">
 										<br /><a href="#qry_detail.detail.link_path_url#" target="_blank">#qry_detail.detail.link_path_url#</a>
 									<cfelseif qry_detail.detail.link_kind EQ "lan">
@@ -128,37 +135,52 @@
 									<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 										<tr>
 											<td colspan="2">
-												<cfif attributes.folderaccess EQ "R" AND qry_share_options.asset_dl NEQ 1>
-													<strong>Original</strong> (not made available as download)<br />
-													<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
-													</cfif>
-												<cfelse>
-													<cfif qry_detail.detail.link_kind NEQ "url">
-														<strong>Original</strong><br />
-														<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">Download</a> | 
-														<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
-														<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#attributes.file_id#" target="_blank">PDF as image(s)</a>
-														</cfif>
-														<div id="divo#attributes.file_id#" style="display:none;width:450px;">
-															<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" />
-															<!--- Plugin --->
-															<cfset args = structNew()>
-															<cfset args.detail = qry_detail.detail>
-															<cfset args.thefiletype = "doc">
-															<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
-															<!--- Show plugin --->
-															<cfif structKeyExists(pl,"pview")>
-																<cfloop list="#pl.pview#" delimiters="," index="i">
-																	<br />
-																	#evaluate(i)#
-																</cfloop>
+												<table>
+													<tr>
+														<td>
+															<cfif application.razuna.storage EQ "amazon" AND qry_detail.detail.cloud_url NEQ "">
+																<img src="#qry_detail.detail.cloud_url#" border="0" img-tt="img-tt" style="max-height:50px;max-width:100px;">
+															<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") >
+																<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#?#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
+															<cfelse>
+																<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'" style="max-height:50px;max-width:100px;">
 															</cfif>
-														</div>
-													<cfelse>
-														<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
-													</cfif>
-												</cfif>
-												<br />
+														</td>
+														<td>
+															<cfif attributes.folderaccess EQ "R" AND qry_share_options.asset_dl NEQ 1>
+																<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (not made available as download)<br />
+																<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
+																</cfif>
+															<cfelse>
+																<cfif qry_detail.detail.link_kind NEQ "url">
+																	<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br />
+																	<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+																	<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank" style="padding-left:20px;"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | 
+																	<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
+																	<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#attributes.file_id#" target="_blank">PDF as image(s)</a>
+																	</cfif>
+																	<div id="divo#attributes.file_id#" style="display:none;width:450px;">
+																		<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" />
+																		<!--- Plugin --->
+																		<cfset args = structNew()>
+																		<cfset args.detail = qry_detail.detail>
+																		<cfset args.thefiletype = "doc">
+																		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+																		<!--- Show plugin --->
+																		<cfif structKeyExists(pl,"pview")>
+																			<cfloop list="#pl.pview#" delimiters="," index="i">
+																				<br />
+																				#evaluate(i)#
+																			</cfloop>
+																		</cfif>
+																	</div>
+																<cfelse>
+																	<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
+																</cfif>
+															</cfif>
+														</td>
+													</tr>
+												</table>
 											</td>
 										</tr>
 										<!--- Show additional version --->
@@ -171,7 +193,7 @@
 										<!--- Filename --->
 										<tr>
 											<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-											<td width="100%"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.file_upc.value = document.form#attributes.file_id#.file_name.value.split('.')[0];}</cfif>"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+											<td width="100%"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.file_upc.value = document.form#attributes.file_id#.file_name.value.split('.')[0];}</cfif>"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 										</tr>
 										<!--- Description & Keywords --->
 										<cfloop query="qry_langs">
@@ -281,7 +303,7 @@
 										</tr>
 										<tr>
 											<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
-											<td valign="top">#qry_detail.detail.folder_name# <cfif cs.show_bottom_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+											<td valign="top"><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.folder&col=F&folder_id=#qry_detail.detail.folder_id_r#');destroywindow(1);">#qry_detail.detail.folder_name#</a> <cfif cs.show_favorites_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 										</tr>
 										<tr>
 											<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("created_by")#</td>
@@ -297,6 +319,11 @@
 						</table>
 					</td>
 				</tr>
+				<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+					<tr>
+						<td><a href="##" onclick="showwindow('#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("header_preview_image")#',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_title")#</a></td>
+					</tr>
+				</cfif>
 				<!--- Submit Button --->
 				<tr>
 					<td colspan="2">
@@ -325,7 +352,7 @@
 											<!--- Filename --->
 											<tr>
 												<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-												<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
+												<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
 												</td>
 											</tr>
 											<cfloop query="qry_langs">
@@ -421,6 +448,7 @@
 			<div id="shareoptions"></div>
 			<div id="moreversions"></div>
 			<div id="history"></div>
+			<div id="alias"></div>
 			<!--- Plugin being shows with add_tab_detail_wx  --->
 			<cfif structKeyExists(plwx,"pcfc")>
 				<cfloop list="#plwx.pcfc#" delimiters="," index="i">
@@ -437,9 +465,10 @@
 	<script language="JavaScript" type="text/javascript">
 	// Initialize Tabs
 	jqtabs("tab_detail#file_id#");
-	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
-	// Submit form
-	function filesubmit(){
+	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');
+	
+	function formchecks()
+	{
 		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords OR prefs.set2_upc_enabled>
 			var reqfield = false;
 			var isNumericField = false;
@@ -491,6 +520,11 @@
 			      return false;
 			}
 		}
+		return true;
+	}
+
+	// Submit form
+	function filesubmit(){
 		$("##updatefile").css("display","");
 		loadinggif('updatefile');
 		$("##updatefile").fadeTo("fast", 100);

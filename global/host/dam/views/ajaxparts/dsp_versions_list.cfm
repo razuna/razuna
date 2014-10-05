@@ -41,27 +41,28 @@
 		</cfif>	
 	</tr>
 	<cfloop query="qry_versions">
-		<tr class="list">
+<!--- 		<cfdump var="#qry_versions#">
+ --->		<tr class="list">
 			<!--- RAZ-2904::Thumbnail Preview --->
+			<cfset thumb_img_jpg = replacenocase(ver_filename_org, ".#ver_extension#", ".jpg", "all")>
 			<cfif application.razuna.storage EQ "local">
 				<cfif (ver_type EQ "img" OR ver_type EQ "vid") OR (ver_type EQ "doc" AND ver_extension EQ "pdf")>
-					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_thumbnail#'>	
+					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#ver_thumbnail#'>
+				<cfelseif fileExists("#attributes.assetpath#/#session.hostid#/versions/#attributes.type#/#asset_id_r#/#ver_version#/#thumb_img_jpg#")>
+					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#thumb_img_jpg#'>	
 				<cfelseif ver_type EQ "aud">
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_aud.png'>	
 				<cfelseif ver_type EQ "doc" AND ver_extension EQ "doc"  >
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_doc.png'>
 				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "txt") OR (ver_type EQ "doc" AND ver_extension EQ "htm") OR (ver_type EQ "doc" AND ver_extension EQ "html")>
-					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_txt.png'>	
+					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_txt.png'>
 				<cfelseif ver_type EQ "doc" AND ver_extension EQ "xlsx"  >
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>	
-				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "indd")>
-					<cfset thumb_img_jpg = replacenocase(ver_filename_org, ".#ver_extension#", ".#attributes.qry_settings_image.set2_img_format#", "all")>
-					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#thumb_img_jpg#'>	
 				<cfelse>
-					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/image_missing.png'>
+					<cfset thumb_img = "#dynpath#/global/host/dam/images/icons/image_missing.png">
 				</cfif>
 			<cfelse>
-				<cfif (ver_type EQ "img" OR ver_type EQ "vid") OR (ver_type EQ "doc" AND ver_extension EQ "pdf")>
+				<cfif cloud_url_thumb NEQ ''>
 					<cfset thumb_img = '#cloud_url_thumb#'>
 				<cfelseif ver_type EQ "aud">
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_aud.png'>	
@@ -71,9 +72,6 @@
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_xlsx.png'>
 				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "txt") OR (ver_type EQ "doc" AND ver_extension EQ "htm") OR (ver_type EQ "doc" AND ver_extension EQ "html")>
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/icon_txt.png'>
-				<cfelseif (ver_type EQ "doc" AND ver_extension EQ "indd")>
-					<cfset thumb_img_jpg = replacenocase(ver_filename_org, ".#ver_extension#", ".#attributes.qry_settings_image.set2_img_format#", "all")>
-					<cfset thumb_img = '#thestorage#versions/#attributes.type#/#asset_id_r#/#ver_version#/#thumb_img_jpg#'>		
 				<cfelse>
 					<cfset thumb_img = '#dynpath#/global/host/dam/images/icons/image_missing.png'>
 				</cfif>

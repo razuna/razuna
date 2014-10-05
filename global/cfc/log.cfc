@@ -75,6 +75,7 @@
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_users */ log_id
 	FROM #session.hostdbprefix#log_users
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
@@ -186,8 +187,9 @@
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_assets */ log_id
 	FROM #session.hostdbprefix#log_assets
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif structKeyExists(arguments.thestruct,"id") AND arguments.thestruct.id NEQ 0>
-		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 	</cfif>
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -324,8 +326,9 @@
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_folders */ log_id
 	FROM #session.hostdbprefix#log_folders
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
 	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
 		<cfset session.offset_log = 0>
 	</cfif>
@@ -427,6 +430,7 @@
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_searches */ log_id
 	FROM #session.hostdbprefix#log_search
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
@@ -533,6 +537,7 @@
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_errors */ id
 	FROM #session.hostdbprefix#errors
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
@@ -674,6 +679,38 @@
 	</cfif>
 	GROUP BY log_timestamp, log_action, log_desc, <cfif arguments.thestruct.logtype EQ "log_assets">log_file_type,</cfif> user_first_name, user_last_name
 	ORDER BY log_timestamp DESC
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
+
+<!--- FOLDER SUMMARY --->
+<cffunction name="log_folder_summary" output="false" access="public">
+	<cfargument name="folder_id" required="true" type="string">
+	<cfargument name="allfolders" default="false" required="false" type="string" hint="Get all folders for host">
+	<cfargument name="sortby" default="" required="false" type="string" hint="Sort order for query">
+	<!--- Qry --->
+	<cfset var qry ="">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#log_summary */ f.folder_id, f.folder_name, u.user_login_name as username,
+	(SELECT COUNT(1) FROM #session.hostdbprefix#folders WHERE folder_id_r = f.folder_id AND folder_id_r <> folder_id AND in_trash = 'F') sf_cnt
+	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON f.folder_owner = u.user_id
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND (folder_is_collection IS NULL OR folder_is_collection ='' OR folder_is_collection ='F')
+	AND in_trash = 'F'
+	AND EXISTS (SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id = f.folder_id_r)/*Make sure folder parent exists in system to avoid orphans*/
+	<cfif arguments.folder_id NEQ 0>
+		AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+		AND f.folder_id_r <> f.folder_id
+	<cfelseif !arguments.allfolders>
+		AND f.folder_level = '1'
+	</cfif>
+	ORDER BY
+	<cfif arguments.sortby NEQ ''>
+		#arguments.sortby#
+	<cfelse>
+		f.folder_name ASC
+	</cfif>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>

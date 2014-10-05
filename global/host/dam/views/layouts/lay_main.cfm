@@ -54,6 +54,8 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css?_v=#attributes.cachetag#" />
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-migrate-1.2.1.min.js?_v=#attributes.cachetag#"></script>
@@ -72,6 +74,8 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.lazyload.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.scrollstop.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/sets/html/set.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
 <cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
 	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
@@ -125,11 +129,11 @@
 	top: 0px;
 }
 </cfif>
-</style>
 <!--- Custom CSS --->
-<cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
-	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css?_v=#attributes.cachetag#" />
+<cfif application.razuna.whitelabel AND isdefined("wl_thecss")>
+#wl_thecss#
 </cfif>
+</style>
 </head>
 <body>
 <cfif cgi.http_host CONTAINS "razuna.com" AND res_account.account_type EQ 0>
@@ -184,7 +188,9 @@
 		<div id="apDiv4">#trim( maincontent )#</div>
 		<!--- <div id="apDiv5">#trim( showcontent )#</div> --->
 	</div>
-	<cfif cs.show_bottom_part><div id="footer_drop">#trim( footerdrop )#</div></cfif>
+	<!--- <cfif cs.show_basket_part OR cs.show_favorites_part> --->
+		<div id="footer_drop">#trim( footerdrop )#</div>
+	<!--- </cfif> --->
 </cfif>
 <!--- <div id="footer">#trim( footercontent )#</div> --->
 <!--- Window Div --->
@@ -208,19 +214,6 @@
 	background:url(#dynpath#/global/js/tooltip_images/black.png);
 }
 </style>
-<!--- Forum Code --->
-<script type="text/javascript" charset="utf-8">
-var hostURL = "//css.zohostatic.com/discussions/v1";//NO OUTPUTENCODING
-document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E")); //No I18N
-</script>
-<script type="text/javascript">
-var zdFBWSettings = {};
-zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
-zdFBWSettings.fbURL = "https://forums.razuna.org/fbw?fbwId=125591000000015005";
-zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
-zdFBWSettings.display = "popout";
-var zdFBW = new ZDiscussions.loadZDFeedbackTab;
-</script>
 <cfif cgi.http_host CONTAINS "razuna.com">
 <script type="text/javascript">
   var _gaq = _gaq || [];

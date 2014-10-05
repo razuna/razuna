@@ -90,7 +90,7 @@
 				</table>
 			</td>
 		</tr>
-		<!--- Show exsiting --->
+		<!--- Show existing --->
 		<cfif qry_av.assets.recordcount NEQ 0>
 			<tr>
 				<cfif qry_av.assets.av_type eq 'img'><th>Thumb</th></cfif>

@@ -213,13 +213,13 @@
 									<th style="padding-top:15px;">Online Support Tools</th>
 								</tr>
 								<tr>
-									<td><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Leave us a Feedback</a></td>
+									<td><a href="https://help.razuna.com" target="_blank">Leave us a Feedback</a></td>
 								</tr>
 								<tr>
 									<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
 								</tr>
 								<tr>
-									<td><a href="http://forums.razuna.org" target="_blank">Join the Razuna Customer Community</a></td>
+									<td><a href="https://help.razuna.com" target="_blank">Join the Razuna Customer Community</a></td>
 								</tr>
 								<tr>
 									<td><a href="http://issues.razuna.com/" target="_blank">Razuna Issue Platform</a></td>

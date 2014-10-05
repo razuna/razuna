@@ -98,6 +98,7 @@
 	<!--- Get one plugin --->
 	<cffunction name="getone" returntype="query">
 		<cfargument name="p_id" type="string" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_active,p_description,p_license
@@ -119,6 +120,7 @@
 		<cfargument name="p_path" type="string" required="true">
 		<cfargument name="p_desc" type="string" required="true">
 		<cfargument name="p_license" type="string" required="true">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#" name="qry">

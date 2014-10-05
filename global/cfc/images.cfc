@@ -65,6 +65,8 @@
 	<cfparam name="arguments.thestruct.thisview" default="">
 	<cfparam name="arguments.thestruct.folderaccess" default="">
 	<cfparam name="session.customfileid" default="">
+	<!--- Get cachetoken --->
+	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
@@ -163,9 +165,10 @@
 		<!--- Query Aliases --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry_aliases" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#imgaliases */ asset_id_r, type
-		FROM ct_aliases
+		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = c.asset_id_r AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
@@ -177,7 +180,8 @@
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum, sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date, 'null' as customfields, i.img_id as id, 'img' as kind
+
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, i.img_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'img' kind</cfif>
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -276,15 +280,16 @@
 <cffunction name="filedetail" access="public" output="false" returntype="query">
 	<cfargument name="theid" type="string" required="true">
 	<cfargument name="thecolumn" type="string" required="true">
-		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken("images")>
-		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#, CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
-		FROM #session.hostdbprefix#images i
-		WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+	<cfset var qry = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("images")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#, CASE WHEN NOT(i.img_group ='' OR i.img_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id = i.img_group) ELSE expiry_date END expiry_date_actual
+	FROM #session.hostdbprefix#images i
+	WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
 	<cfreturn qry />
 </cffunction>
 
@@ -341,6 +346,11 @@
 			DELETE FROM #session.hostdbprefix#share_options
 			WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
+			<!--- Delete aliases --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_aliases
+			WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 			<!--- Delete labels --->
 			<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
 			<!--- Custom field values --->
@@ -382,8 +392,17 @@
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<!--- <cfset arguments.thestruct.file_name = thedetail.img_filename> --->
+		<cfset arguments.thestruct.thefiletype = "img">
+		<!--- <cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id> --->
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
+		<cfset variables.cachetoken = resetcachetoken("images")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
 		<cfset resetcachetoken("labels")>
@@ -395,7 +414,7 @@
 <cffunction name="trashimagemany" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop --->
-	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+	<cfloop list="#session.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -404,6 +423,15 @@
 		WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<!--- <cfset arguments.thestruct.file_name = thedetail.img_filename> --->
+		<cfset arguments.thestruct.thefiletype = listlast(i,"-")>
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("images")>
@@ -605,6 +633,11 @@
 			DELETE FROM #arguments.thestruct.hostdbprefix#share_options
 			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
+			<!--- Delete aliases --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_aliases
+			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 			<!--- Delete labels --->
 			<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
 			<!--- Custom field values --->
@@ -630,6 +663,7 @@
 <!--- SubFunction called from deletion above --->
 <cffunction name="deletefromfilesystem" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<cftry>
 		<!--- Delete in Lucene --->
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.id#" category="img">
@@ -779,11 +813,12 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<cfparam default="0" name="session.thegroupofuser">
+	<cfset var qry = "">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketimg */ i.img_id, i.img_extension, i.thumb_extension, i.img_group, 
 	i.folder_id_r, i.path_to_asset, i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.cloud_url, 
-	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename,
+	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename, i.img_filename_org filename_org,
 	'' as perm
 	FROM #session.hostdbprefix#images i
 	WHERE 1=1 AND
@@ -824,6 +859,7 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
+	<cfset resetcachetoken('general')>
 </cffunction>
 
 <!--- SAVE THE IMAGE DETAILS --->
@@ -923,6 +959,25 @@
 				</cfloop>
 			</cfif>
 		</cfloop>
+
+		<cfif isdefined("arguments.thestruct.expiry_date")>
+			<cfquery datasource="#variables.dsn#">
+				UPDATE #session.hostdbprefix#images
+				SET 
+				<cfif expiry_date EQ ''>
+					expiry_date = null
+				<cfelseif isdate(arguments.thestruct.expiry_date)>
+					expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">
+				<cfelse>
+					expiry_date = expiry_date
+				</cfif>
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<!--- Filter out renditions --->
+				 AND img_id  NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#renlist#" list="true">)
+			</cfquery>
+		</cfif>
+
 		<!--- Save to the images table --->
 		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
@@ -939,11 +994,6 @@
 			UPDATE #session.hostdbprefix#images
 			SET 
 			img_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
-			<cfif isdefined("arguments.thestruct.expiry_date") and isdate(arguments.thestruct.expiry_date)>
-				expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">,
-			<cfelseif isdefined("arguments.thestruct.expiry_date") and expiry_date eq ''>
-				expiry_date = null,
-			</cfif>
 			<cfif isdefined("arguments.thestruct.img_upc")>
 				img_upc_number = <cfqueryparam value="#arguments.thestruct.img_upc#" cfsqltype="cf_sql_varchar">,
 			</cfif>
@@ -989,6 +1039,17 @@
 				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
 			</cfif>
 		</cfif>
+
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.file_id>
+		<cfset arguments.thestruct.file_name = qryorg.img_filename>
+		<cfset arguments.thestruct.thefiletype = "img">
+		<cfset arguments.thestruct.folder_id = qryorg.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
@@ -1136,9 +1197,11 @@
 	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai" OR arguments.thestruct.qry_detail.img_extension EQ "tif" OR arguments.thestruct.qry_detail.img_extension EQ "tiff">
 		<cfset var theargument = "#arguments.thestruct.thesource#[0]">
 		<cfset var theflatten = "-flatten ">
+		<cfset var densitySettings = " -density 300 ">
 	<cfelse>
 		<cfset var theargument = "#arguments.thestruct.thesource#">
 		<cfset var theflatten = "">
+		<cfset var densitySettings = "">
 	</cfif>
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
@@ -1276,12 +1339,12 @@
 					<cfset arguments.thestruct.xres = "72">
 					<cfset arguments.thestruct.yres = "72">
 				</cfif>
-				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
+				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
 			<cfelse>
-				<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
+				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
 			</cfif>
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
+			<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
 		</cfif>
 		<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
 		<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
@@ -1299,12 +1362,12 @@
 
 		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif'>
 			<cfif theformat NEQ 'gif' >
-				<cfset var theimargumentsthumb = "#theoriginalasset#[0] #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
+				<cfset var theimargumentsthumb = "#densitySettings# #theoriginalasset#[0] #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
 			<cfelse>
-				<cfset var theimargumentsthumb = "#theoriginalasset# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
+				<cfset var theimargumentsthumb = "#densitySettings# #theoriginalasset# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
 			</cfif>
 		<cfelse>
-			<cfset var theimargumentsthumb = "#theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
+			<cfset var theimargumentsthumb = "#densitySettings# #theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
 		</cfif>
 
 		<!--- Create script files --->
@@ -1362,6 +1425,37 @@
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.thesh#" timeout="180" />
 		</cfthread>
+
+		<!--- Before we create thumb apply watermark if any --->
+		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
+			<cfif "convert_wm_#theformat#" NEQ "" >
+				<cfset var err = "">
+				<cfif thewm.wmval.wm_use_image><cfset console("WM")>
+					<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" errorVariable="err"/>
+				</cfif>
+				<cfif thewm.wmval.wm_use_text>
+					<!--- Opacity --->
+					<cfif thewm.wmval.wm_text_opacity EQ 100>
+						<cfset var topa = "1.0">
+					<cfelse>
+						<cfset var topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
+					</cfif>
+					<!--- Put text into var --->
+					<cfif iswindows>
+						<cfset var thetext = """#thewm.wmval.wm_text_content#""">
+					<cfelse>
+						<cfset var thetext = "'#thewm.wmval.wm_text_content#'">
+					</cfif>
+					<!--- Write script --->
+					<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
+					<!--- Execute it --->
+					<cfexecute name="#arguments.thestruct.theshwm#" timeout="180" errorVariable="err"/>
+					<!--- Delete it --->
+					<cffile action="delete" file="#arguments.thestruct.theshwm#">
+				</cfif>
+			</cfif>
+		</cfif>
+
 		<cfthread action="join" name="1#thescript#" />
 		<!--- Since the image can not be read we use img to convert to itself --->
 		<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
@@ -1393,34 +1487,6 @@
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">
 		<cffile action="delete" file="#arguments.thestruct.theshtt#">
-		<!--- If we need to watermark this image then --->
-		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
-		<cfif "convert_wm_#theformat#" NEQ "" >
-			<cfif thewm.wmval.wm_use_image>
-				<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" />
-			</cfif>
-			<cfif thewm.wmval.wm_use_text>
-				<!--- Opacity --->
-				<cfif thewm.wmval.wm_text_opacity EQ 100>
-					<cfset var topa = "1.0">
-				<cfelse>
-					<cfset var topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
-				</cfif>
-				<!--- Put text into var --->
-				<cfif iswindows>
-					<cfset var thetext = """#thewm.wmval.wm_text_content#""">
-				<cfelse>
-					<cfset var thetext = "'#thewm.wmval.wm_text_content#'">
-				</cfif>
-				<!--- Write script --->
-				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
-				<!--- Execute it --->
-				<cfexecute name="#arguments.thestruct.theshwm#" timeout="180" />
-				<!--- Delete it --->
-				<cffile action="delete" file="#arguments.thestruct.theshwm#">
-			</cfif>
-		</cfif>
-		</cfif>
 		<!--- Add the metadata from the source to the converted one. If DPI is there we need to add new DPI information --->
 		<cfif thedpi EQ "">
 			<cfset var thedpitags = "">
@@ -1720,6 +1786,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("images")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, 
@@ -1778,6 +1845,7 @@
 		<cfelse>
 			<cfset thecolname = "original">
 		</cfif>
+		<cfset var qry = "">
 		<!--- Query the db --->
 		<cfquery name="qry" datasource="#variables.dsn#">
 		SELECT i.img_filename, i.img_extension, i.thumb_extension, i.folder_id_r, i.img_filename_org, i.img_group,
@@ -2072,6 +2140,7 @@
 <!--- GET RECORDS WITH EMTPY VALUES --->
 <cffunction name="getempty" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT
@@ -2091,9 +2160,10 @@
 	<cfargument name="checkinfolder" type="string" required="false" default = "" hint="check only in this folder if specified">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("images")>
+	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#checkmd5 */ img_id
+	SELECT /* #variables.cachetoken#checkmd5 */ img_id, img_filename as name, folder_id_r
 	FROM #session.hostdbprefix#images
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2114,7 +2184,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery> --->
 	<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
-		SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
+		SELECT img_description,img_keywords, lang_id_r FROM #session.hostdbprefix#images_text
 		WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="cf_sql_varchar" >
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -2127,20 +2197,16 @@
 	</cfquery>
 	<!--- Update the tables --->
 	<cfif arguments.thestruct.insert_type EQ 'replace'>
-		<!--- <cfquery name="updateimages" datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images SET 
-			img_filename = <cfqueryparam value="#select_images.img_filename#" cfsqltype="cf_sql_varchar">,
-			shared = <cfqueryparam value="#select_images.shared#" cfsqltype="cf_sql_varchar">
-			WHERE img_id IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery> --->
-		<cfquery name="updateimges_text" datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images_text SET 
-			img_description = <cfqueryparam value="#select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
-			img_keywords = <cfqueryparam value="#select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
-			WHERE img_id_r IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		<cfloop query = "select_images_text">
+			<cfquery name="updateimges_text" datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images_text SET 
+				img_description = <cfqueryparam value="#select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
+				img_keywords = <cfqueryparam value="#select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
+				WHERE img_id_r IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">
+			</cfquery>
+		</cfloop>
 		<cfquery name="updateimges_text" datasource="#application.razuna.datasource#" >
 			UPDATE #session.hostdbprefix#xmp
 				SET
@@ -2183,28 +2249,29 @@
 		</cfquery>
 	<cfelse>
 		<cfloop list="#arguments.thestruct.idList#" index="theidtoupdate" >
-			<cfquery name="append_images" datasource="#application.razuna.datasource#">
-				SELECT img_filename,shared FROM #session.hostdbprefix#images
-				WHERE img_id = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<cfquery name="append_images_text" datasource="#application.razuna.datasource#">
-				SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
-				WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+			<cfloop query = "select_images_text">
+				<cfquery name="append_images_text" datasource="#application.razuna.datasource#">
+					SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
+					WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">
+				</cfquery>
+				
+				<cfquery name="updateimagestext" datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#images_text SET 
+					img_description = <cfqueryparam value="#append_images_text.img_description# #select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
+					img_keywords = <cfqueryparam value="#append_images_text.img_keywords# #select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
+					WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">
+				</cfquery>
+			</cfloop>
+
 			<cfquery name="append_xmp" datasource="#application.razuna.datasource#">
 				SELECT subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,description,ciadrcity,ciadrctry,location,
 				ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,
 				datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights FROM #session.hostdbprefix#xmp
 				WHERE id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<cfquery name="updateimagestext" datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#images_text SET 
-				img_description = <cfqueryparam value="#append_images_text.img_description# #select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
-				img_keywords = <cfqueryparam value="#append_images_text.img_keywords# #select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
-				WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfquery name="updatexmp" datasource="#application.razuna.datasource#" >
@@ -2249,6 +2316,7 @@
 			</cfquery>
 		</cfloop>
 	</cfif>
+	<cfset resetcachetoken("images")>
 </cffunction>
 <!--- Get all asset from folder --->
 <cffunction name="getAllFolderAsset" output="false">

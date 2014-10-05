@@ -23,10 +23,29 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Check if folder re-direction needs to happen --->
+
+<!--- Initialize vars --->
+<cfset session.do_folder_redirect = false>
+<cfset session.folder_redirect_id = "0">
+<!--- Check re-direct folders to ensure user has access to it and it's a valid folder. Find the first good match and set that as re-direct folder --->
+<cfloop list="#redirectfolders#" index="redirect_folder_id">
+	<cfif myFusebox.getApplicationData().folders.checkfolder(redirect_folder_id)>
+		<cfset session.folder_redirect_id = redirect_folder_id>
+		<cfset session.do_folder_redirect = true>
+		<cfbreak>
+	</cfif>
+</cfloop>
+
+<!--- If group re-direction is not set but global re-direction is then make re-direct folder as the set global folder --->
+<cfif session.folder_redirect_id EQ "0" AND cs.folder_redirect NEQ "0" AND myFusebox.getApplicationData().folders.checkfolder(cs.folder_redirect)>
+	<cfset session.do_folder_redirect = true>
+	<cfset session.folder_redirect_id = cs.folder_redirect>
+</cfif>
 <!--- The default div. This will be overwritten by any call that calls the id of this div --->
 <div id="rightside">
 	<cfoutput>
-		<cfif cs.folder_redirect EQ "0" OR attributes.redirectmain> 
+		<cfif !session.do_folder_redirect OR attributes.redirectmain> 
 			<!--- Show if Firebug is enabled --->
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
 			
@@ -58,15 +77,67 @@
 			</cfif>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="50%" valign="top">
-						<div class="panelsnew">
-							<h1>#myFusebox.getApplicationData().defaults.trans("upload_now")#</h1>
-							<a href="##" onclick="showwindow('#myself#c.choose_folder&folder_id=x','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
-								<button class="awesome super green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button>
-							</a>
-						</div>
+					<td width="100%" valign="top">
+						<!--- How to get the most out of Razuna --->
+						<cfif application.razuna.whitelabel>
+							<cfif attributes.wl_main_static NEQ "">
+								#attributes.wl_main_static#
+								<br>
+							</cfif>
+						<cfelse>
+							<div class="panelsnew">
+								<h1>#myFusebox.getApplicationData().defaults.trans("upload_now")#</h1>
+								<a href="##" onclick="showwindow('#myself#c.choose_folder&folder_id=x','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
+									<button class="awesome super green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button>
+								</a>
+							</div>
+							<br>
+							<div class="panelsnew">
+								<h1>#myFusebox.getApplicationData().defaults.trans("razuna_main_video_header")#</h1>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
+							</div>
+							<br />
+						</cfif>
+						<!--- If WL we show the recently updated assets --->
+						<cfif structKeyExists(attributes,"wl_show_updates") AND attributes.wl_show_updates EQ "true" AND attributes.qry_log.recordcount NEQ 0>
+							<br>
+							<div class="panelsnew" style="width:100%" >
+								<h1>Most recently updated assets</h1>
+								<div style="height:200px;width:100%;overflow-y:auto;">
+									<table border="0" cellpadding="0" cellspacing="0" class="grid" >
+										<tr>
+											<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
+											<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("time")#</th>
+											<th width="100%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
+											<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("action")#</th>
+											<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("log_type_of_file")#</th>
+											<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("theuser")#</th>
+										</tr>
+										<!--- Loop over all assets log entries in database table --->
+										<cfloop query="attributes.qry_log" endrow="50">
+											<tr class="list" >
+												<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+												<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
+												<td valign="top">#log_desc#</td>
+												<td nowrap="true" align="center" valign="top">#log_action#</td>
+												<td nowrap="true" align="center" valign="top">#log_file_type#</td>
+												<td nowrap="true" align="center" valign="top">#user_first_name# #user_last_name#</td>
+											</tr>
+										</cfloop>
+									</table>
+								</div>
+							</div>
+						</cfif>
 					</td>
-					<td width="50%" valign="top">
+					<td width="1%" valign="top" nowrap="nowrap">
 						<!--- If the top part is hidden then admin functions are here and the search also --->
 						<cfif !cs.show_top_part>						
 							<!--- Search here --->
@@ -105,34 +176,12 @@
 								<div id="tab_admin">
 									<div class="panelsnew">
 										<h1>#myFusebox.getApplicationData().defaults.trans("administrator_panel")#</h1>
-										<a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("go_to_administration")#</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://forums.razuna.org/" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
+										<a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("go_to_administration")#</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="https://help.razuna.com/" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
 									</div>
 								</div>
 							</cfif>
 						</cfif>
-						<!--- How to get the most out of Razuna --->
-						<cfif application.razuna.whitelabel>
-							<cfif attributes.wl_main_static NEQ "">
-								<div class="panelsnew">
-									#attributes.wl_main_static#
-								</div>
-								<br />
-							</cfif>
-						<cfelse>
-							<div class="panelsnew">
-								<h1>#myFusebox.getApplicationData().defaults.trans("razuna_main_video_header")#</h1>
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
-								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
-								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
-								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
-								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
-							</div>
-							<br />
-						</cfif>
+						
 						<!--- Announcement for ISP --->
 						<cfif cgi.http_host CONTAINS "razuna.com">
 							<div class="panelsnew">
@@ -155,12 +204,45 @@
 						<!--- If WL we show the news section here --->
 						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
-								<cfif attributes.qry_news.recordcount NEQ 0>
-									<h1>#myFusebox.getApplicationData().defaults.trans("announcements")#</h1>
+								<!--- System News --->
+								<cfif attributes.qry_news.news.recordcount NEQ 0>
+									<h1>System News</h1>
 								</cfif>
 								<!--- News --->
 								<cfif attributes.wl_news_rss EQ "">
-									<cfloop query="attributes.qry_news">
+									<cfloop query="attributes.qry_news.news">
+										<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##sysslidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
+										<cfif currentrow EQ 1>
+											<span class="announcements">#news_text#</p>
+											<br /><br />
+										<cfelse>
+											<div id="sysslidenews#currentrow#" style="display:none;">
+												#news_text#
+												<br />
+											</div>
+										</cfif>
+									</cfloop>
+									<cfif attributes.qry_news.news.recordcount NEQ 0>
+										<br>
+									</cfif>
+								<!--- RSS --->
+								<cfelse>
+									<cfif arrayisempty(attributes.qry_news)>
+										<h2>Connection to the news is currently not available</h2>
+									<cfelse>
+										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
+											<a href="#attributes.qry_news[x].link#" target="_blank">#attributes.qry_news[x].title#</a><br />
+										</cfloop>
+										<br>
+									</cfif>
+								</cfif>
+								<!--- Host News --->
+								<cfif attributes.qry_news.news_host.recordcount NEQ 0>
+									<h1>News</h1>
+								</cfif>
+								<!--- News --->
+								<cfif attributes.wl_news_rss EQ "">
+									<cfloop query="attributes.qry_news.news_host">
 										<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
 										<cfif currentrow EQ 1>
 											<span class="announcements">#news_text#</p>
@@ -184,46 +266,12 @@
 								</cfif>
 							</div>
 						</cfif>
-						
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<!--- If WL we show the recently updated assets --->
-						<cfif application.razuna.show_recent_updates AND attributes.qry_log.recordcount NEQ 0>
-							<div class="panelsnew" style="width:100%" >
-								<h1>Most recently updated assets</h1>
-								<div style="height:200px;width:100%;overflow-y:auto;">
-								<table border="0" cellpadding="0" cellspacing="0" class="grid" >
-									<tr>
-										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
-										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("time")#</th>
-										<th width="100%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
-										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("action")#</th>
-										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("log_type_of_file")#</th>
-										<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("theuser")#</th>
-									</tr>
-									<!--- Loop over all assets log entries in database table --->
-									<cfloop query="attributes.qry_log" endrow="50">
-										<tr class="list" >
-											<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-											<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
-											<td valign="top">#log_desc#</td>
-											<td nowrap="true" align="center" valign="top">#log_action#</td>
-											<td nowrap="true" align="center" valign="top">#log_file_type#</td>
-											<td nowrap="true" align="center" valign="top">#user_first_name# #user_last_name#</td>
-										</tr>
-									</cfloop>
-								</table>
-								</div>
-							</div>
-						</cfif>
 					</td>
 				</tr>
 			</table>
 		<cfelse>
 			<script language="JavaScript" type="text/javascript">
-				$('##rightside').load('#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');
+				$('##rightside').load('#myself#c.folder&col=F&folder_id=#session.folder_redirect_id#');
 			</script>
 		</cfif>
 		<cfif structKeyExists(pl,"pview")>

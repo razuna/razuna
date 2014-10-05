@@ -245,6 +245,7 @@
 			UPC_SIZE 			VARCHAR(2) DEFAULT NULL,
 			UPC_FOLDER_FORMAT	VARCHAR(5) DEFAULT 'false',
 			FOLDER_SUBSCRIBE	VARCHAR(5) DEFAULT 'false',
+			FOLDER_REDIRECT VARCHAR(100),
 			PRIMARY KEY (GRP_ID), 
 			FOREIGN KEY (GRP_MOD_ID) REFERENCES #arguments.thestruct.theschema#.modules (MOD_ID) ON DELETE CASCADE
 		)
@@ -299,7 +300,8 @@
 		  SET2_NIRVANIX_NAME   VARCHAR(500),
 		  SET2_NIRVANIX_PASS   VARCHAR(500),
 		  USER_API_KEY		   VARCHAR(100),
-		  USER_EXPIRY_DATE DATETIME,
+		  USER_EXPIRY_DATE     DATETIME,
+		  user_search_selection VARCHAR(100),
 		  PRIMARY KEY (USER_ID)
 		)
 		
@@ -391,7 +393,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.file_types
 		(
-		  TYPE_ID              VARCHAR(5),
+		  TYPE_ID              VARCHAR(10),
 		  TYPE_TYPE            VARCHAR(3),
 		  TYPE_MIMECONTENT     VARCHAR(50),
 		  TYPE_MIMESUBCONTENT  VARCHAR(50),
@@ -542,6 +544,7 @@
 			news_active		varchar(6),
 			news_text		NVARCHAR(max),
 			news_date		varchar(20),
+			host_id 		int default 0,
 			PRIMARY KEY (news_id)
 		)
 		</cfquery>
@@ -1268,39 +1271,39 @@
 		(
 			id_r					VARCHAR(100),
 			asset_type				nvarchar(10),
-			subjectcode				nvarchar(300),
-			creator					nvarchar(300),
-			title					nvarchar(500),
-			authorsposition			nvarchar(300),
-			captionwriter			nvarchar(300),
-			ciadrextadr				nvarchar(300),
-			category				nvarchar(300),
-			supplementalcategories	NVARCHAR(max),
-			urgency					nvarchar(300),
+			subjectcode				nvarchar(1000),
+			creator					nvarchar(1000),
+			title					nvarchar(1000),
+			authorsposition				nvarchar(1000),
+			captionwriter				nvarchar(1000),
+			ciadrextadr				nvarchar(1000),
+			category				nvarchar(1000),
+			supplementalcategories			NVARCHAR(max),
+			urgency					nvarchar(500),
 			description				NVARCHAR(max),
-			ciadrcity				nvarchar(300),
-			ciadrctry				nvarchar(300),
-			location				nvarchar(300),
+			ciadrcity				nvarchar(500),
+			ciadrctry				nvarchar(500),
+			location					nvarchar(500),
 			ciadrpcode				nvarchar(300),
 			ciemailwork				nvarchar(300),
 			ciurlwork				nvarchar(300),
 			citelwork				nvarchar(300),
-			intellectualgenre		nvarchar(300),
-			instructions			NVARCHAR(max),
-			source					nvarchar(300),
+			intellectualgenre			nvarchar(500),
+			instructions				NVARCHAR(max),
+			source					nvarchar(1000),
 			usageterms				NVARCHAR(max),
-			copyrightstatus			NVARCHAR(max),
-			transmissionreference	nvarchar(300),
-			webstatement			NVARCHAR(max),
-			headline				nvarchar(500),
+			copyrightstatus				NVARCHAR(max),
+			transmissionreference			nvarchar(500),
+			webstatement				NVARCHAR(max),
+			headline				nvarchar(1000),
 			datecreated				nvarchar(200),
-			city					nvarchar(300),
-			ciadrregion				nvarchar(300),
-			country					nvarchar(300),
-			countrycode				nvarchar(300),
-			scene					nvarchar(300),
-			state					nvarchar(300),
-			credit					nvarchar(300),
+			city					nvarchar(1000),
+			ciadrregion				nvarchar(500),
+			country					nvarchar(500),
+			countrycode				nvarchar(500),
+			scene					nvarchar(500),
+			state					nvarchar(500),
+			credit					nvarchar(1000),
 			rights					NVARCHAR(max),
 			colorspace				nvarchar(50),
 			xres					nvarchar(30),
@@ -1308,7 +1311,6 @@
 			resunit					nvarchar(20),
 			host_id					INT
 		)  
-		
 		</cfquery>
 		
 		<!--- CART --->
@@ -1360,14 +1362,16 @@
 		  LINK_PATH				VARCHAR(200),
 		  share_dl_org			varchar(1) DEFAULT 'f',
 		  share_dl_thumb		varchar(1) DEFAULT 't',
-     	  share_comments		nvarchar(1) DEFAULT 'f',
+     	  	  share_comments		nvarchar(1) DEFAULT 'f',
+     	  	  share_inherit			VARCHAR(1)DEFAULT 'f',
 		  share_upload			varchar(1) DEFAULT 'f',
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
-		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
+		  IN_TRASH		   		VARCHAR(2) DEFAULT 'F',
+		  in_search_selection	VARCHAR(5) DEFAULT 'false',
 		  PRIMARY KEY (FOLDER_ID),
-		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
+		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
 		</cfquery>
@@ -1733,6 +1737,7 @@
 		   SET2_DUPLICATES_META  	VARCHAR(2000),
 		  SET2_FOLDER_SUBSCRIBE_META  	VARCHAR(2000),
 		  SET2_ASSET_EXPIRY_META  	VARCHAR(2000),
+		  SET2_META_EXPORT  	VARCHAR(1) DEFAULT 'f',
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1997,6 +2002,7 @@
 			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			cf_edit			VARCHAR(2000) DEFAULT 'true',
 			HOST_ID			INT,
+			cf_xmp_path		VARCHAR(500),
 			PRIMARY KEY (cf_id),
 		)
 		</cfquery>
@@ -2901,6 +2907,15 @@
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#user_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe(user_id)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#img_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images(hashtag)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios(hashtag)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files(hashtag)
 		</cfquery>
 		<cfreturn />
 	</cffunction>

@@ -125,6 +125,13 @@
 						<td>ID</td>
 						<td>#attributes.folder_id#</td>
 					</tr>
+					<!--- Show search selection --->
+					<cfif cs.search_selection>
+						<tr>
+							<td>#myFusebox.getApplicationData().defaults.trans("folder_search_selection")#</td>
+							<td><input type="checkbox" name="in_search_selection" value="true"<cfif qry_folder.in_search_selection> checked="checked"</cfif> /></td>
+						</tr>
+					</cfif>
 				</cfif>
 				<tr>
 					<td colspan="2" class="list"></td>
@@ -221,10 +228,12 @@
 				</cfif>   
 			</cfif>
 			<cfif attributes.isdetail EQ "T">
-				<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
-					<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
-				<cfelseif qry_folder.folder_name NEQ "my folder" AND qry_folder.folder_owner EQ session.theuserid>
-					<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
+				<cfif cs.show_trash_icon AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
+					<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+						<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
+					<cfelseif qry_folder.folder_name NEQ "my folder" AND qry_folder.folder_owner EQ session.theuserid>
+						<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
+					</cfif>
 				</cfif>
 			</cfif>
 			<!--- <cfif attributes.isdetail NEQ "T">

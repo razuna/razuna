@@ -39,7 +39,7 @@
 
 		<cfif arguments.showmsg>
 			<!--- Output to user --->
-			<h2 style="color:red;">We are so sorry. Something went wrong. <cfif application.razuna.isp OR cgi.http_host CONTAINS "razunabd.local">We have been notified of this error and will fix it asap.<cfelse>We saved the error and you or your administrator can notify us of this error within the Administration.</cfif></h2>
+			<h2 style="color:red;">We are so sorry. Something went wrong. <cfif (isdefined("application.razuna.isp") AND application.razuna.isp) OR cgi.http_host CONTAINS "razunabd.local">We have been notified of this error and will fix it asap.<cfelse>We saved the error and you or your administrator can notify us of this error within the Administration.</cfif></h2>
 		</cfif>
 		<!--- Save content --->
 		<cfsavecontent variable="errortext">
@@ -49,7 +49,7 @@
 
 		<cfdump var="#arguments.cfcatch#" label="Error">
 		<cfif IsStruct("session")>
-			<cfdump var="#session#" label="Session">	
+			<cfdump var="#session#" label="Session">
 		</cfif>
 		<cfif isStruct("form")>
 			<cfdump var="#form#" label="Form">

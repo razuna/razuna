@@ -1,5 +1,31 @@
 Please write all SQL changes in here too
 ========================================
+alter table raz1_xmp modify subjectcode varchar(1000); 
+alter table raz1_xmp modify creator varchar(1000); 
+alter table raz1_xmp modify title varchar(1000); 
+alter table raz1_xmp modify authorsposition varchar(1000); 
+alter table raz1_xmp modify captionwriter varchar(1000); 
+alter table raz1_xmp modify ciadrextadr varchar(1000); 
+alter table raz1_xmp modify category varchar(1000); 
+alter table raz1_xmp modify urgency varchar(500); 
+alter table raz1_xmp modify ciadrcity varchar(1000); 
+alter table raz1_xmp modify ciadrctry varchar(500); 
+alter table raz1_xmp modify location varchar(500); 
+alter table raz1_xmp modify intellectualgenre varchar(500); 
+alter table raz1_xmp modify source varchar(1000); 
+alter table raz1_xmp modify transmissionreference varchar(500); 
+alter table raz1_xmp modify headline varchar(1000); 
+alter table raz1_xmp modify city varchar(1000); 
+alter table raz1_xmp modify ciadrregion varchar(500); 
+alter table raz1_xmp modify country varchar(500); 
+alter table raz1_xmp modify countrycode varchar(500); 
+alter table raz1_xmp modify scene varchar(500); 
+alter table raz1_xmp modify state varchar(500); 
+alter table raz1_xmp modify credit varchar(1000); 
+alter table raz1_files_xmp modify author varchar(1000); 
+alter table raz1_files_xmp modify authorsposition varchar(1000); 
+alter table raz1_files_xmp modify captionwriter varchar(1000); 
+alter table raz1_files_xmp modify webstatement varchar(1000); 
 
 CREATE TABLE ct_aliases (
   asset_id_r varchar(100) DEFAULT NULL,
@@ -10,3 +36,32 @@ CREATE TABLE ct_aliases (
   KEY folder_id_r (folder_id_r)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE file_types modify type_id varchar(10);
+ALTER TABLE raz1_settings_2 add SET2_META_EXPORT varchar(1) DEFAULT 'f';
+ALTER TABLE raz1_folders add share_inherit varchar(1) DEFAULT 'f';
+ALTER TABLE raz1_folders add in_search_selection varchar(5) DEFAULT 'false';
+ALTER TABLE users add user_search_selection varchar(100);
+ALTER TABLE news add host_id int default 0;
+ALTER TABLE raz1_custom_fields add cf_xmp_path varchar(500);
+ALTER TABLE raz1_schedules_log add NOTIFIED varchar(5);
+ALTER TABLE raz1_schedules add SCHED_FTP_EMAIL varchar(500);
+ALTER TABLE groups add  FOLDER_REDIRECT varchar(100);
+ALTER TABLE groups add FOLDER_SUBSCRIBE varchar(5) DEFAULT 'false';
+ALTER TABLE raz1_folder_subscribe add auto_entry varchar(5) DEFAULT 'false';
+UPDATE raz1_folder_subscribe set auto_entry = 'false' WHERE (auto_entry IS  NULL OR auto_entry ='');
+ALTER TABLE raz1_images ADD INDEX  hashtag(hashtag);
+ALTER TABLE raz1_audios ADD INDEX  hashtag(hashtag);
+ALTER TABLE raz1_files ADD INDEX  hashtag(hashtag);
+ALTER TABLE raz1_folder_subscribe ADD INDEX  folder_id (folder_id);
+ALTER TABLE raz1_folder_subscribe ADD INDEX  user_id (user_id);
+ALTER TABLE raz1_schedules_log ADD INDEX sched_logtime(SCHED_LOG_TIME);
+ALTER TABLE raz1_schedules_log ADD INDEX notified(sched_id_r, notified);
+ALTER TABLE raz1_settings_2 add SET2_FOLDER_SUBSCRIBE_EMAIL_SUB varchar(50);
+ALTER TABLE raz1_settings_2 add SET2_FOLDER_SUBSCRIBE_EMAIL_BODY varchar(1000);
+ALTER TABLE raz1_settings_2 add SET2_FOLDER_SUBSCRIBE_META  varchar(2000);
+ALTER TABLE raz1_settings_2 add SET2_ASSET_EXPIRY_EMAIL_SUB varchar(50);
+ALTER TABLE raz1_settings_2 add SET2_ASSET_EXPIRY_EMAIL_BODY  varchar(1000);
+ALTER TABLE raz1_settings_2 add SET2_ASSET_EXPIRY_META  varchar(2000);
+ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_EMAIL_SUB varchar(50);
+ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_EMAIL_BODY  varchar(2000);
+ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_META  varchar(2000);
