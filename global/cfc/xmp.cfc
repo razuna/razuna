@@ -779,8 +779,8 @@
 			<cffile action="delete" file="#thesh#">
 		</cfif>
 		<!--- Parse Metadata which is now XML --->
-		<!--- <cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))> --->
-		<cfset var thexml = xmlparse(themeta)>
+		<cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))>
+		<!--- <cfset var thexml = xmlparse(themeta)> --->
 		<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
 		<!--- orientation --->
 		<cftry>
