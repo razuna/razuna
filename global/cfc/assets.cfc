@@ -1254,7 +1254,7 @@
 </Response></cfoutput>
 				</cfsavecontent>
 				<!--- RAZ-2810 Customise email message --->
-				<cfset transvalues = arraynew()>
+				<cfset var transvalues = arraynew()>
 				<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
 				<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
 				<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
@@ -1573,7 +1573,7 @@
 			<!--- </cfthread> --->
 		<cfelse>
 			<!--- RAZ-2810 Customise email message --->
-			<cfset transvalues = arraynew()>
+			<cfset var transvalues = arraynew()>
 			<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
 			<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
 			<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
@@ -1620,7 +1620,7 @@
 		<!--- Convert the now date to readable format --->
 		<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
 		<!--- RAZ-2810 Customise email message --->
-		<cfset transvalues = arraynew()>
+		<cfset var transvalues = arraynew()>
 		<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
 		<cfset transvalues[2] = "#dateformat(now(),"#thedateformat#")#">
 		<cfset transvalues[3] = "#timeformat(now(),"HH:mm:sstt")#">
@@ -3981,21 +3981,6 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Return --->
 	<cfreturn arguments.thestruct.thisvid.newid />
 </cffunction>
-
-<cffunction name="getsubfolders" output="true">
-	<cfargument name="folder_id" required="true" type="string">
-	<cfset var sflist = "-1">
-	<cfquery name="getsubfolder" datasource="#application.razuna.datasource#">
-	SELECT folder_id, folder_name from #session.hostdbprefix#folders f
-	WHERE  folder_id_r =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
-	</cfquery>
-	<cfloop query="getsubfolder">
-		<cfset sflist = listappend(sflist,getsubfolder.folder_id)>
-		<cfset tmp = getsubfolders(getsubfolder.folder_id)>
-	</cfloop>
-	<cfreturn sflist>
-</cffunction>
-
 
 <!--- EXTRACT A COMPRESSED FILE (ZIP) ------------------------------------------------------------>
 <cffunction name="extractFromZip" output="true" access="private">

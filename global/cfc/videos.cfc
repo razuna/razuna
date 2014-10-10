@@ -64,9 +64,9 @@
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
-		<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
+		<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
-		<cfset thefolderlist = arguments.folder_id & ",">
+		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
@@ -97,9 +97,9 @@
 	<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
 		<cfset var sortby = "filename_forsort">
 	<cfelseif session.sortby EQ "sizedesc">
-		<cfset var sortby = "size DESC">
+		<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 	<cfelseif session.sortby EQ "sizeasc">
-		<cfset var sortby = "size ASC">
+		<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 	<cfelseif session.sortby EQ "dateadd">
 		<cfset var sortby = "date_create DESC">
 	<cfelseif session.sortby EQ "datechanged">
@@ -308,33 +308,33 @@
 	<cfargument name="thestruct" type="struct">
 	<cfargument name="thepath" default="" required="no" type="string">
 	<cfargument name="thewebroot" default="" required="no" type="string">
-	<cfset randomvalue = createuuid()>
+	<cfset var randomvalue = createuuid()>
 	<!--- If asset has expired then show appropriate message --->
 	<cfif isdefined("arguments.thestruct.videodetails.expiry_date_actual") AND isdate(arguments.thestruct.videodetails.expiry_date_actual) AND arguments.thestruct.videodetails.expiry_date_actual lt now()>
-		<cfset thevideo = "Asset has expired. Please contact administrator to gain access to this asset.">
+		<cfset var thevideo = "Asset has expired. Please contact administrator to gain access to this asset.">
 		<cfreturn thevideo>
 	</cfif>		
 	<cfparam name="arguments.thestruct.v" default="p">
 	<!--- Now show the video file according to extension. If it is a preview movie then set the extension always to MOV --->
 	<cfif arguments.thestruct.videofield EQ "video_preview" OR arguments.thestruct.v EQ "p">
-		<cfset theextension = "mov">
+		<cfset var theextension = "mov">
 	<cfelse>
-		<cfset theextension = "#arguments.thestruct.videodetails.vid_extension#">
+		<cfset var theextension = "#arguments.thestruct.videodetails.vid_extension#">
 	</cfif>
 	<!--- File System --->
 	<cfif #arguments.thestruct.videofield# EQ "video_preview" OR arguments.thestruct.v EQ "p">
-		<cfset thevideofile = arguments.thestruct.videodetails.vid_name_pre>
-		<cfset thevideoimg = arguments.thestruct.videodetails.vid_name_pre_img>
+		<cfset var thevideofile = arguments.thestruct.videodetails.vid_name_pre>
+		<cfset var thevideoimg = arguments.thestruct.videodetails.vid_name_pre_img>
 	<cfelse>
-		<cfset thevideofile = arguments.thestruct.videodetails.vid_name_org>
-		<cfset thevideoimg = arguments.thestruct.videodetails.vid_name_image>
+		<cfset var thevideofile = arguments.thestruct.videodetails.vid_name_org>
+		<cfset var thevideoimg = arguments.thestruct.videodetails.vid_name_image>
 	</cfif>
 	<!--- Storage Decision --->
-	<cfset thestorage = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/">
-	<cfset thestoragefullpath = "#arguments.thestruct.assetpath#/#session.hostid#/">
+	<cfset var thestorage = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/">
+	<cfset var thestoragefullpath = "#arguments.thestruct.assetpath#/#session.hostid#/">
 	<!--- Set the correct path --->
-	<cfset theimage = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideoimg#">
-	<cfset thevideo = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideofile#">
+	<cfset var theimage = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideoimg#">
+	<cfset var thevideo = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideofile#">
 	<!--- Nirvanix / Amazon --->
 	<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 		<cfset theimage = arguments.thestruct.videodetails.cloud_url>
@@ -447,11 +447,11 @@
 		<cfcase value="wmv,avi">
 			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
 			<cfif #arguments.thestruct.videofield# EQ "video" OR arguments.thestruct.v EQ "o">
-				<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
-				<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
+				<cfset var theheight = #arguments.thestruct.videodetails.vheight# + 16>
+				<cfset var thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<cfelse>
-				<cfset theheight = #arguments.thestruct.videodetails.vid_preview_heigth# + 16>
-				<cfset thewidth = #arguments.thestruct.videodetails.vid_preview_width#>
+				<cfset var theheight = #arguments.thestruct.videodetails.vid_preview_heigth# + 16>
+				<cfset var thewidth = #arguments.thestruct.videodetails.vid_preview_width#>
 			</cfif>
 			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
@@ -477,11 +477,11 @@
 		<cfcase value="rm">
 			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
 			<cfif #arguments.thestruct.videofield# EQ "video" OR arguments.thestruct.v EQ "o">
-			<cfset theheight = #arguments.thestruct.videodetails.vheight#>
-			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
+				<cfset var theheight = #arguments.thestruct.videodetails.vheight#>
+				<cfset var thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<cfelse>
-			<cfset theheight = #arguments.thestruct.videodetails.vid_preview_heigth#>
-			<cfset thewidth = #arguments.thestruct.videodetails.vid_preview_width#>
+				<cfset var theheight = #arguments.thestruct.videodetails.vid_preview_heigth#>
+				<cfset var thewidth = #arguments.thestruct.videodetails.vid_preview_width#>
 			</cfif>
 			<cfsavecontent variable="thevideo"><cfoutput>
 <EMBED WIDTH=#thewidth# HEIGHT=#theheight# SRC="#thevideo#" CONTROLS=ImageWindow CONSOLE=one></cfoutput>
@@ -714,6 +714,7 @@
 <cffunction name="trashvideomany" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop --->
+	<cfset var i ="">
 	<cfloop list="#session.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
@@ -800,7 +801,6 @@
 								OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 							)
 						) = 'X' THEN 'X'
-						ELSE 'R'
 					END as permfolder
 				</cfif>
 			FROM #session.hostdbprefix#videos v 
@@ -808,8 +808,8 @@
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfif qry_video.RecordCount NEQ 0>
-			<cfset myArray = arrayNew( 1 )>
-			<cfset temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
+			<cfset var myArray = arrayNew( 1 )>
+			<cfset var temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
 			<cfloop query="qry_video">
 				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
 				SELECT file_id_r
@@ -820,6 +820,11 @@
 					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", currentRow  )>
 				</cfif>
 			</cfloop>
+			<cfquery name="qry_video" dbtype="query">
+				SELECT *
+				FROM qry_video
+				WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+			</cfquery>
 		</cfif>
 		<cfreturn qry_video />
 </cffunction>
@@ -834,7 +839,7 @@
 	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<cfset local = structNew()>
+	<cfset var local = structNew()>
 	<cfif thedetail.RecordCount EQ 0>
 		<cfset local.istrash = "trash">
 	<cfelse>
@@ -886,6 +891,7 @@
 	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 	<!--- Loop --->
+	<cfset var i = "">
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
@@ -1127,10 +1133,9 @@
 	WHERE vid_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Convert the size --->
+	<cfset var thesize = 0>
 	<cfif isnumeric(details.vlength)>
 		<cfinvoke component="global" method="converttomb" returnvariable="thesize" thesize="#details.vlength#">
-	<cfelse>
-		<cfset thesize = 0>
 	</cfif>
 	<!--- Put into struct --->
 	<cfset qry.detail = details>
@@ -1212,8 +1217,8 @@
 					AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 					</cfquery>
 					<cfif ishere.recordcount NEQ 0>
-						<cfset tdesc = evaluate(thisdesc)>
-						<cfset tkeywords = evaluate(thiskeywords)>
+						<cfset var tdesc = evaluate(thisdesc)>
+						<cfset var tkeywords = evaluate(thiskeywords)>
 						<!--- If users chooses to append values --->
 						<cfif !arguments.thestruct.batch_replace>
 							<cfif ishere.vid_description NEQ "">
@@ -1662,7 +1667,7 @@
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
 				<!--- RAZ-2810 Customise email message --->
-				<cfset transvalues = arraynew()>
+				<cfset var transvalues = arraynew()>
 				<cfset transvalues[1] = "#ucase(theformat)#">
 				<cfinvoke component="defaults" method="trans" transid="video_convert_error_subject" values="#transvalues#" returnvariable="video_convert_error_sub" />
 				<cfinvoke component="defaults" method="trans" transid="video_convert_error_message" values="#transvalues#" returnvariable="video_convert_error_msg" />
@@ -1947,7 +1952,7 @@
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Put the video id into a variable --->
-	<cfset thevideoid = #arguments.thestruct.file_id#>
+	<cfset var thevideoid = #arguments.thestruct.file_id#>
 	<!--- set session.artofimage value if it is empty  --->
 	<cfif session.artofimage EQ "">
 		<cfset session.artofimage = arguments.thestruct.artofimage>
@@ -1969,9 +1974,9 @@
 		<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#" mode="775">
 		<!--- Set the colname to get from oracle to video_preview else to video always --->
 		<cfif #art# EQ "video_preview">
-			<cfset thecolname = "video_preview">
+			<cfset var thecolname = "video_preview">
 		<cfelse>
-			<cfset thecolname = "video">
+			<cfset var thecolname = "video">
 		</cfif>
 		<!--- Query the db --->
 		<cfquery name="qry" datasource="#variables.dsn#">
@@ -1985,9 +1990,9 @@
 		</cfquery>
 		<!--- If we have the preview the name is different --->
 		<cfif thecolname EQ "video_preview">
-			<cfset thefinalname = qry.vid_name_pre>
+			<cfset var thefinalname = qry.vid_name_pre>
 		<cfelse>
-			<cfset thefinalname = qry.vid_name_org>
+			<cfset var thefinalname = qry.vid_name_org>
 		</cfif>
 		<!--- Put variables into struct for threads --->
 		<cfset arguments.thestruct.hostid = session.hostid>
@@ -2037,9 +2042,9 @@
 		<cfthread action="join" name="download#art##thevideoid#" />
 		<!--- Set extension --->
 		<cfif thecolname EQ "video_preview">
-			<cfset theext = "mov">
+			<cfset var theext = "mov">
 		<cfelse>
-			<cfset theext = qry.vid_extension>
+			<cfset var theext = qry.vid_extension>
 		</cfif>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->
 		<cfif qry.vid_group NEQ "">
@@ -2051,14 +2056,14 @@
 			</cfquery>
 		</cfif>
 		<!--- If filename contains /\ --->
-		<cfset thenewname = replace(qry.vid_filename,"/","-","all")>
+		<cfset var thenewname = replace(qry.vid_filename,"/","-","all")>
 		<cfset thenewname = replace(thenewname,"\","-","all")>
 		<cfset thenewname = listfirst(thenewname, ".") & "." & theext>
 		<!--- Rename the file --->
 		<cffile action="move" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thefinalname#" destination="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thenewname#">
 	</cfloop>
 	<!--- Check that the zip name contains no spaces --->
-	<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+	<cfset var zipname = replace(arguments.thestruct.zipname,"/","-","all")>
 	<cfset zipname = replace(zipname,"\","-","all")>
 	<cfset zipname = replace(zipname, " ", "_", "All")>
 	<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
@@ -2085,7 +2090,7 @@
 			<cfloop query="myDir">
 				<!--- get all files from the directory --->
 				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#" name="myFile" type="file">
-				<cfset new_name = replace(myFile.name, " ", "_", "All")>
+				<cfset var new_name = replace(myFile.name, " ", "_", "All")>
 				<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#myFile.name#" >
 			</cfloop>
 		</cfif>

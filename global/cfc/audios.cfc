@@ -39,7 +39,7 @@
 		<cfset arguments.thestruct = structnew()>
 	</cfif>
 	<!--- init local vars --->
-	<cfset qLocal = 0>
+	<cfset var qLocal = 0>
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
@@ -49,9 +49,9 @@
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
-		<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
+		<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
-		<cfset thefolderlist = arguments.folder_id & ",">
+		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
@@ -79,9 +79,9 @@
 	<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
 		<cfset var sortby = "filename_forsort">
 	<cfelseif session.sortby EQ "sizedesc">
-		<cfset var sortby = "size DESC">
+		<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 	<cfelseif session.sortby EQ "sizeasc">
-		<cfset var sortby = "size ASC">
+		<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 	<cfelseif session.sortby EQ "dateadd">
 		<cfset var sortby = "date_create DESC">
 	<cfelseif session.sortby EQ "datechanged">
@@ -89,9 +89,9 @@
 	</cfif>
 	<!--- If there is a columnlist then take it else the default--->
 	<cfif structkeyexists(arguments.thestruct,"columnlist")>
-		<cfset thecolumns = arguments.thestruct.columnlist>
+		<cfset var thecolumns = arguments.thestruct.columnlist>
 	<cfelse>
-		<cfset thecolumns = "a.aud_id, a.aud_name, a.aud_extension, a.aud_create_date, a.aud_change_date, a.folder_id_r, a.is_available">
+		<cfset var thecolumns = "a.aud_id, a.aud_name, a.aud_extension, a.aud_create_date, a.aud_change_date, a.folder_id_r, a.is_available">
 	</cfif>
 	<!--- Oracle --->
 	<cfif variables.database EQ "oracle">
@@ -284,14 +284,13 @@
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<cftry>
+		<cfset var thesize = 0>
 		<cfif details.recordcount NEQ 0>
 			<cfif details.aud_size EQ "">
 				<cfset details.aud_size = 1>
 			</cfif>
 			<!--- Convert the size --->
 			<cfinvoke component="global" method="converttomb" returnvariable="thesize" thesize="#details.aud_size#">
-		<cfelse>
-			<cfset thesize = 0>
 		</cfif>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error getting audio details in function audios.detail">
@@ -381,8 +380,8 @@
 					AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 					</cfquery>
 					<cfif ishere.recordcount NEQ 0>
-						<cfset tdesc = evaluate(thisdesc)>
-						<cfset tkeywords = evaluate(thiskeywords)>
+						<cfset var tdesc = evaluate(thisdesc)>
+						<cfset var tkeywords = evaluate(thiskeywords)>
 						<!--- If users chooses to append values --->
 						<cfif !arguments.thestruct.batch_replace>
 							<cfif ishere.aud_description NEQ "">
@@ -704,7 +703,6 @@
 							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 						)
 					) = 'X' THEN 'X'
-					ELSE 'R'
 				END as permfolder
 			</cfif>
 		FROM  
@@ -715,8 +713,8 @@
 			
 	</cfquery>
 	<cfif qry_audio.RecordCount NEQ 0>
-		<cfset myArray = arrayNew( 1 )>
-		<cfset temp= ArraySet(myArray, 1, qry_audio.RecordCount, "False")>
+		<cfset var myArray = arrayNew( 1 )>
+		<cfset var temp= ArraySet(myArray, 1, qry_audio.RecordCount, "False")>
 		<cfloop query="qry_audio">
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
 			SELECT file_id_r
@@ -727,6 +725,11 @@
 				<cfset temp = QuerySetCell(qry_audio, "in_collection", "True", currentRow  )>
 			</cfif>
 		</cfloop>
+		<cfquery name="qry_audio" dbtype="query">
+			SELECT *
+			FROM qry_audio
+			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+		</cfquery>
 	</cfif>
 	<cfreturn qry_audio />
 </cffunction>
@@ -735,6 +738,7 @@
 <cffunction name="trashaudiomany" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop --->
+	<cfset var i = "">
 	<cfloop list="#session.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
@@ -772,7 +776,7 @@
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<cfset local = structNew()>
+	<cfset var local = structNew()>
 	<cfif thedetail.RecordCount EQ 0>
 		<cfset local.istrash = "trash">
 	<cfelse>
@@ -822,6 +826,7 @@
 	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 	<!--- Loop --->
+	<cfset var i ="">
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
@@ -1365,7 +1370,7 @@
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
 				<!--- RAZ-2810 Customise email message --->
-				<cfset transvalues = arraynew()>
+				<cfset var transvalues = arraynew()>
 				<cfset transvalues[1] = "#ucase(theformat)#">
 				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_subject" values="#transvalues#" returnvariable="audio_convert_error_sub" />
 				<cfinvoke component="defaults" method="trans" transid="audio_convert_error_message" values="#transvalues#" returnvariable="audio_convert_error_msg" />
@@ -1601,7 +1606,7 @@
 	<cfset var tempfolder = createuuid("")>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- Put the audio id into a variable --->
-	<cfset theaudioid = #arguments.thestruct.file_id#>
+	<cfset var theaudioid = #arguments.thestruct.file_id#>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
@@ -1627,7 +1632,7 @@
 		<!--- Create subfolder for the kind of video --->
 		<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#" mode="775">
 		<!--- Set the colname to get from oracle to video_preview else to video always --->
-		<cfset thecolname = "audio">
+		<cfset var thecolname = "audio">
 		<!--- Query the db --->
 		<cfquery name="qry" datasource="#variables.dsn#">
 		SELECT a.aud_name, a.aud_extension, a.aud_name_org, a.folder_id_r, a.aud_group, a.link_kind, 
@@ -1639,7 +1644,7 @@
 		AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- If we have the preview the name is different --->
-		<cfset thefinalname = qry.aud_name_org>
+		<cfset var thefinalname = qry.aud_name_org>
 		<!--- Put variables into struct for threads --->
 		<cfset arguments.thestruct.hostid = session.hostid>
 		<cfset arguments.thestruct.qry = qry>
@@ -1689,7 +1694,7 @@
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#art##theaudioid#" />
 		<!--- Set extension --->
-		<cfset theext = qry.aud_extension>
+		<cfset var theext = qry.aud_extension>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->
 		<cfif qry.aud_group NEQ "">
 			<cfquery name="qry" datasource="#variables.dsn#">
@@ -1700,14 +1705,14 @@
 			</cfquery>
 		</cfif>
 		<!--- If filename contains /\ --->
-		<cfset thenewname = replace(qry.aud_name,"/","-","all")>
+		<cfset var thenewname = replace(qry.aud_name,"/","-","all")>
 		<cfset thenewname = replace(thenewname,"\","-","all")>
 		<cfset thenewname = listfirst(thenewname, ".") & "." & theext>
 		<!--- Rename the file --->
 		<cffile action="move" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thefinalname#" destination="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thenewname#">
 	</cfloop>
 	<!--- Check that the zip name contains no spaces --->
-	<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+	<cfset var zipname = replace(arguments.thestruct.zipname,"/","-","all")>
 	<cfset zipname = replace(zipname,"\","-","all")>
 	<cfset zipname = replace(zipname, " ", "_", "All")>
 	<!--- check the create zip --->
@@ -1737,7 +1742,7 @@
 				<!--- get all files from the directory --->
 				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#" name="myFile" type="file">
 				<!--- Rename the files --->
-				<cfset new_name = replace(myFile.name, " ", "_", "All")>
+				<cfset var new_name = replace(myFile.name, " ", "_", "All")>
 				<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#myFile.name#" >
 			</cfloop>
 		</cfif>

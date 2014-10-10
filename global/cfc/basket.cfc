@@ -266,7 +266,7 @@
 
 <!--- Assets Additional Versions --->
 <cffunction name="additional_versions" output="false">
-	<cfset getbasket = readbasket()>
+	<cfset var getbasket = readbasket()>
 	<!--- param ---> 
 	<cfset var qry = structnew()>
 	<!--- check recordcount --->
@@ -359,7 +359,7 @@
 		<cfflush>
 	</cfif>
 	<!--- Create directory --->
-	<cfset basketname = createuuid("")>
+	<cfset var basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
 	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
 	<!--- Read Basket --->
@@ -506,15 +506,15 @@
 	<!--- Start the loop to get the file --->
 	<cfloop delimiters="," list="#arguments.thestruct.artoffile#" index="art">
 		<!--- Put id and art into variables --->
-		<cfset thefileid = listfirst(art, "-")>
-		<cfset theart = listlast(art, "-")>
+		<cfset var thefileid = listfirst(art, "-")>
+		<cfset var theart = listlast(art, "-")>
 		<cfif arguments.thestruct.theid EQ thefileid>
 			<!--- Create thread  --->
-			<cfset ttd = createuuid()>
+			<cfset var ttd = createuuid()>
 			<!--- Query --->
 			<cfif theart EQ "versions" >
 				<!--- set addtional version id --->
-				<cfset theavid = listGetAt(art,2,'-')>
+				<cfset var theavid = listGetAt(art,2,'-')>
 				<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry" cachedwithin="1" region="razcache">
 					SELECT av_id,asset_id_r,folder_id_r,av_type,av_link_title,av_link_url AS path_to_asset,'' AS link_kind, folder_id_r
 					FROM #session.hostdbprefix#additional_versions
@@ -531,21 +531,21 @@
 				</cfquery>
 			</cfif>
 			<cfif theart EQ "versions">
-				<cfset theext = listlast(arguments.thestruct.qry.path_to_asset,".")>
+				<cfset var theext = listlast(arguments.thestruct.qry.path_to_asset,".")>
 				<!--- Check that the filename has an extension --->
-				<cfset rep = replacenocase(arguments.thestruct.qry.av_link_title,".#theext#","","one")>
-				<cfset thename = replace(rep,".","-","all")>
+				<cfset var rep = replacenocase(arguments.thestruct.qry.av_link_title,".#theext#","","one")>
+				<cfset var thename = replace(rep,".","-","all")>
 				<!--- If thenewname variable contains /\ --->
-				<cfset thename = replace(thename,"/","-","all")>
-				<cfset thename = replace(thename,"\","-","all")>
+				<cfset var thename = replace(thename,"/","-","all")>
+				<cfset var thename = replace(thename,"\","-","all")>
 				<cfset arguments.thestruct.thename =  "add_rend_" & thename & "_" & arguments.thestruct.qry.av_id & ".#theext#">
 			<cfelse>
 				<!--- Check that the filename has an extension --->
-				<cfset rep = replacenocase(arguments.thestruct.qry.file_name,".#arguments.thestruct.qry.file_extension#","","one")>
-				<cfset thename = replace(rep,".","-","all")>
+				<cfset var rep = replacenocase(arguments.thestruct.qry.file_name,".#arguments.thestruct.qry.file_extension#","","one")>
+				<cfset var thename = replace(rep,".","-","all")>
 				<!--- If thenewname variable contains /\ --->
-				<cfset thename = replace(thename,"/","-","all")>
-				<cfset thename = replace(thename,"\","-","all")>
+				<cfset var thename = replace(thename,"/","-","all")>
+				<cfset var thename = replace(thename,"\","-","all")>
 				<cfset arguments.thestruct.thename = thename & ".#arguments.thestruct.qry.file_extension#">
 			</cfif>
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
@@ -566,7 +566,7 @@
 
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#arguments.thestruct.qry.folder_id_r#" returnvariable="crumbs" />
-			<cfset parentfoldersname = ''>
+			<cfset var parentfoldersname = ''>
 			<cfloop list="#crumbs#" index="idx" delimiters=";">
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
@@ -645,14 +645,14 @@
 
 			<!--- RAZ-2918:: If the file have same name in basket then rename the file --->
 			<cfset var thenameorg = arguments.thestruct.thename>
-			<cfset fileNameOK = true>
-			<cfset uniqueCount = 1>
+			<cfset var fileNameOK = true>
+			<cfset var uniqueCount = 1>
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thename#")>
 					<cfset arguments.thestruct.thename = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thename,'.')> 
 					<cfset uniqueCount = uniqueCount + 1>
 				<cfelse>
-					<cfset fileNameOK = false>	
+					<cfset fileNameOK = false>
 				</cfif>	
 			</cfloop>
 
@@ -725,10 +725,10 @@
 	<!--- Start the loop to get the different kinds of images --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
 		<!--- Create uuid for thread --->
-		<cfset thethreadid = createuuid("")>
+		<cfset var thethreadid = createuuid("")>
 		<!--- Put image id and art into variables --->
-		<cfset theimgid = listfirst(art, "-")>
-		<cfset theart = listlast(art, "-")>
+		<cfset var theimgid = listfirst(art, "-")>
+		<cfset var theart = listlast(art, "-")>
 		<cfif arguments.thestruct.theid EQ theimgid>
 			<!--- set the correct img_id for related assets --->
 			<cfif theart NEQ "original" AND theart NEQ "thumb" AND theart NEQ "versions">
@@ -737,7 +737,7 @@
 			<!--- Query the db --->
 			<cfif theart EQ "versions">
 				<!--- set addtional version id --->
-				<cfset theavid = listGetAt(art,2,'-')>
+				<cfset var theavid = listGetAt(art,2,'-')>
 				<cfquery name="qry" datasource="#variables.dsn#">
 					SELECT av.av_id,av.asset_id_r,av.folder_id_r,av.av_type,av.av_link_title,av.av_link_url AS path_to_asset,'' AS img_group,'' AS link_kind, av.folder_id_r, i.img_upc_number upcnum, av.av_link_title thefilename
 					FROM #session.hostdbprefix#additional_versions av LEFT JOIN #session.hostdbprefix#images i ON av.asset_id_r = i.img_id
@@ -761,18 +761,18 @@
 
 			<!--- If we have to serve thumbnail the name is different --->
 			<cfif theart EQ "thumb">
-				<cfset theimgname = "thumb_#theimgid#.#qry.thumb_extension#">
-				<cfset thefinalname = theimgname>
-				<cfset theext = qry.thumb_extension>
+				<cfset var theimgname = "thumb_#theimgid#.#qry.thumb_extension#">
+				<cfset var thefinalname = theimgname>
+				<cfset var theext = qry.thumb_extension>
 			<cfelseif theart EQ "versions">
-				<cfset theimgname = qry.av_link_title>
-				<cfset theext = listlast(qry.path_to_asset,".")>
-				<cfset thefinalname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
+				<cfset var theimgname = qry.av_link_title>
+				<cfset var theext = listlast(qry.path_to_asset,".")>
+				<cfset var thefinalname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
 			<cfelse>
-				<cfset theimgname = qry.img_filename_org>
-				<cfset thefinalname = qry.img_filename>
-				<cfset theext = qry.img_extension>
-				<cfset theart = theext>
+				<cfset var theimgname = qry.img_filename_org>
+				<cfset var thefinalname = qry.img_filename>
+				<cfset var theext = qry.img_extension>
+				<cfset var theart = theext>
 			</cfif>
 			<!--- Get UPC number from the parent record if rendition --->
 			<cfif qry.img_group NEQ "">
@@ -783,28 +783,28 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & theext>
-				<cfset thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") &  "." & theext>
-				<cfset theart = theext & "_" & theimgid>
-				<cfset upcnum = qrysub.upcnum>
+				<cfset var rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = rep & "." & theext>
+				<cfset var thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") &  "." & theext>
+				<cfset var theart = theext & "_" & theimgid>
+				<cfset var upcnum = qrysub.upcnum>
 			<cfelseif theart EQ "versions">
-				<cfset rep = replacenocase(qry.av_link_title,".#theext#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = qry.av_link_title>
+				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = qry.av_link_title>
 			<cfelse>
 				<!--- The filename for the folder --->
-				<cfset rep = replacenocase(qry.img_filename,".#qry.img_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & theext>
+				<cfset var rep = replacenocase(qry.img_filename,".#qry.img_extension#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = rep & "." & theext>
 			</cfif>
 			<!--- If thenewname variable contains /\ --->
-			<cfset thenewname = replace(thenewname,"/","-","all")>
+			<cfset var thenewname = replace(thenewname,"/","-","all")>
 			<cfset thenewname = replace(thenewname,"\","-","all")>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
-			<cfset thefname = listfirst(thefnamewithext, ".")>
+			<cfset var thefname = listfirst(thefnamewithext, ".")>
 
 			<!--- Put variables into struct for threads --->
 			<cfset arguments.thestruct.qry = qry>
@@ -870,7 +870,7 @@
 
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" returnvariable="crumbs" />
-			<cfset parentfoldersname = ''>
+			<cfset var parentfoldersname = ''>
 			<cfloop list="#crumbs#" index="idx" delimiters=";">
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
@@ -1088,8 +1088,8 @@
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofvideo#" index="art">
 		<!--- Put image id and art into variables --->
-		<cfset thevidid = listfirst(art, "-")>
-		<cfset theart = listlast(art, "-")>
+		<cfset var thevidid = listfirst(art, "-")>
+		<cfset var theart = listlast(art, "-")>
 		<cfif arguments.thestruct.theid EQ thevidid>
 			<!--- If this is not the original video --->
 			<cfif theart NEQ "video" AND theart NEQ "versions">
@@ -1106,7 +1106,7 @@
 			<!--- Query the db --->
 			<cfif theart EQ "versions">
 				<!--- set addtional version id --->
-				<cfset theavid = listGetAt(art,2,'-')>
+				<cfset var theavid = listGetAt(art,2,'-')>
 				<cfquery name="qry" datasource="#variables.dsn#">
 					SELECT av.av_id,av.asset_id_r, av.folder_id_r,av.av_type,av_link_title,av.av_link_url AS path_to_asset,'' AS vid_group,'' AS link_kind
 					FROM #session.hostdbprefix#additional_versions av
@@ -1127,32 +1127,32 @@
 
 			<cfif qry.vid_group NEQ "">
 				<!--- The filename for the folder --->
-				 <cfset rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & qry.vid_extension> 
+				<cfset var rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = rep & "." & qry.vid_extension> 
 				<cfset thenewname = "rend_" & thenewname>
 			<cfelseif theart EQ "versions">
-				<cfset theext = listlast(qry.path_to_asset,".")>
-				<cfset rep = replacenocase(qry.av_link_title,".#theext#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
+				<cfset var theext = listlast(qry.path_to_asset,".")>
+				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
 			<cfelse>
 				<!--- The filename for the folder --->
-				<cfset rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & qry.vid_extension>
+				<cfset var rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = rep & "." & qry.vid_extension>
 			</cfif>
 			<!--- If thenewname variable contains /\ --->
-			<cfset thenewname = replace(thenewname,"/","-","all")>
+			<cfset var thenewname = replace(thenewname,"/","-","all")>
 			<cfset thenewname = replace(thenewname,"\","-","all")>
 			
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
-			<cfset thefname = listfirst(thefnamewithext, ".")>
+			<cfset var thefname = listfirst(thefnamewithext, ".")>
 			
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" returnvariable="crumbs" />
-			<cfset parentfoldersname = ''>
+			<cfset var parentfoldersname = ''>
 			<cfloop list="#crumbs#" index="idx" delimiters=";">
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
@@ -1271,7 +1271,7 @@
 			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 
 			<!--- Create uuid for thread --->
-			<cfset wvt = createuuid("")>
+			<cfset var wvt = createuuid("")>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1341,8 +1341,8 @@
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofaudio#" index="art">
 		<!--- Put image id and art into variables --->
-		<cfset theaudid = listfirst(art, "-")>
-		<cfset theart = listlast(art, "-")>
+		<cfset var theaudid = listfirst(art, "-")>
+		<cfset var theart = listlast(art, "-")>
 		<cfif arguments.thestruct.theid EQ theaudid>
 			<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
 			<cfif theart NEQ "audio" AND theart NEQ "versions">
@@ -1359,7 +1359,7 @@
 			<!--- Query the db --->
 			<cfif theart EQ "versions">
 				<!--- set addtional version id --->
-				<cfset theavid = listGetAt(art,2,'-')>
+				<cfset var theavid = listGetAt(art,2,'-')>
 				<cfquery name="qry" datasource="#variables.dsn#">
 					SELECT av_id,asset_id_r,folder_id_r,av_type,av_link_title,av_link_url AS path_to_asset,'' AS aud_group,'' AS link_kind, folder_id_r
 					FROM #session.hostdbprefix#additional_versions
@@ -1377,30 +1377,30 @@
 				</cfquery>
 			</cfif>
 			<cfif qry.aud_group NEQ "">
-				<cfset rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & qry.aud_extension> 
-				<cfset thenewname = "rend_" & thenewname>
+				<cfset var rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = rep & "." & qry.aud_extension> 
+				<cfset var thenewname = "rend_" & thenewname>
 			<cfelseif theart EQ "versions">
 				<cfset theext = listlast(qry.path_to_asset,".")>
-				<cfset rep = replacenocase(qry.av_link_title,".#theext#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
+				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
 			<cfelse>
-				<cfset rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & qry.aud_extension>
+				<cfset var rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
+				<cfset var thefname = replace(rep,".","-","all")>
+				<cfset var thenewname = rep & "." & qry.aud_extension>
 			</cfif>
 			<!--- If thenewname variable contains /\ --->
-			<cfset thenewname = replace(thenewname,"/","-","all")>
+			<cfset var thenewname = replace(thenewname,"/","-","all")>
 			<cfset thenewname = replace(thenewname,"\","-","all")>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
-			<cfset thefname = listfirst(thefnamewithext, ".")>
+			<cfset var thefname = listfirst(thefnamewithext, ".")>
 			
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" returnvariable="crumbs" />
-			<cfset parentfoldersname = ''>
+			<cfset var parentfoldersname = ''>
 			<cfloop list="#crumbs#" index="idx" delimiters=";">
 				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>

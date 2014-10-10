@@ -128,11 +128,11 @@
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0">
 								</div>
 								<div style="padding-top:5px;">
-									<div style="float:left;padding-top:2px;">
-										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_folders');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
-									</div>
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
+										<div style="float:left;padding-top:2px;">
+											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_folders');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+										</div>
 										<!--- Set vars for kind --->
 										<!--- Folder --->
 											<cfset url_remove = "ajax.remove_folder&loaddiv=folders&folder_id=#folder_id#&iscol=T&what=folder">

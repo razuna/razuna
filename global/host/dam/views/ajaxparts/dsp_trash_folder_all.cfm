@@ -128,11 +128,11 @@
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0">
 								</div>
 								<div style="padding-top:5px;">
-									<div style="float:left;padding-top:2px;">
-										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_folders');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
-									</div>
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
+										<div style="float:left;padding-top:2px;">
+											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_folders');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+										</div>
 										<div style="float:right;padding-top:2px;">
 											<!--- restore the folder --->
 											<a href="##" onclick="showwindow('#myself#c.folder_restore&type=restorefolder&id=#id#&what=#what#&loaddiv=folders&folder_id=#id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&folder_level=#folder_level#','#myFusebox.getApplicationData().defaults.trans("restore_folder")#', 550, 1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>

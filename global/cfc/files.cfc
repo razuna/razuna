@@ -77,9 +77,9 @@
 		<!--- If we need to show subfolders --->
 		<cfif session.showsubfolders EQ "T">
 			<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
-			<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
+			<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 		<cfelse>
-			<cfset thefolderlist = arguments.folder_id & ",">
+			<cfset var thefolderlist = arguments.folder_id & ",">
 		</cfif>
 		<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
 		<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
@@ -110,9 +110,9 @@
 		<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
+			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
+			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -456,6 +456,7 @@
 	<cffunction name="trashfilemany" output="true">
 		<cfargument name="thestruct" type="struct">
 		<!--- Loop --->
+		<cfset var i = "">
 		<cfloop list="#session.file_id#" index="i" delimiters=",">
 			<cfset i = listfirst(i,"-")>
 			<!--- Update in_trash --->
@@ -542,7 +543,6 @@
 									OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 								)
 							) = 'X' THEN 'X'
-							ELSE 'R'
 						END as permfolder
 					</cfif>
 				FROM 
@@ -552,8 +552,8 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfif qry_file.RecordCount NEQ 0>
-				<cfset myArray = arrayNew( 1 )>
-				<cfset temp= ArraySet(myArray, 1, qry_file.RecordCount, "False")>
+				<cfset var myArray = arrayNew( 1 )>
+				<cfset var temp= ArraySet(myArray, 1, qry_file.RecordCount, "False")>
 				<cfloop query="qry_file">
 					<cfquery name="alert_col" datasource="#application.razuna.datasource#">
 					SELECT file_id_r
@@ -564,6 +564,11 @@
 						<cfset temp = QuerySetCell(qry_file, "in_collection", "True", currentRow  )>
 					</cfif>
 				</cfloop>
+				<cfquery name="qry_file" dbtype="query">
+					SELECT *
+					FROM qry_file
+					WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+				</cfquery>
 			</cfif>
 			<cfreturn qry_file />
 	</cffunction>
@@ -584,7 +589,7 @@
 	<cffunction name="restorefile" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
-		<cfset local = structNew()>
+		<cfset var local = structNew()>
 		<cfset var thedetail = "">
 		<cfset var dir_parent_id = "">
 		<cfset var get_qry = "">
@@ -652,6 +657,7 @@
 		<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 		<!--- Loop --->
 		<!--- Delete from files DB (including referenced data)--->
+		<cfset var i = "">
 		<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 			<cfset i = listfirst(i,"-")>
 			<!--- Get file detail for log --->
@@ -847,10 +853,10 @@
 		</cfif>
 		<!--- Get file size on file system --->
 		<cfif (application.razuna.storage NEQ "nirvanix" OR application.razuna.storage NEQ "amazon" OR application.razuna.storage NEQ "akamai") AND (details.file_size EQ "0" OR details.file_size EQ "0" AND details.link_kind NEQ "url")>
-			<cfset thefilepath = "#details.set2_path_to_assets#/#session.hostid#/#details.path_to_asset#/#details.file_name_org#">
+			<cfset var thefilepath = "#details.set2_path_to_assets#/#session.hostid#/#details.path_to_asset#/#details.file_name_org#">
 			<cfinvoke component="global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
 		<cfelse>
-			<cfset theassetsize = details.file_size>
+			<cfset var theassetsize = details.file_size>
 		</cfif>
 		<!--- Convert the size --->
 		<cfif isnumeric(theassetsize)>
@@ -934,8 +940,8 @@
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 						</cfquery>
 						<cfif ishere.recordcount NEQ 0>
-							<cfset tdesc = evaluate(thisdesc)>
-							<cfset tkeywords = evaluate(thiskeywords)>
+							<cfset var tdesc = evaluate(thisdesc)>
+							<cfset var tkeywords = evaluate(thiskeywords)>
 							<!--- If users chooses to append values --->
 							<cfif !arguments.thestruct.batch_replace>
 								<cfif ishere.file_desc NEQ "">
@@ -1167,17 +1173,17 @@
 				<cfset var orgname = listfirst(qFile.filenameorg,".")>
 				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 					<cfif name EQ orgname>
-						<cfset thumbnailname = "thumb_" & qfile.img_id >
-						<cfset originalfilename = qFile.img_filename >
+						<cfset var thumbnailname = "thumb_" & qfile.img_id >
+						<cfset var originalfilename = qFile.img_filename >
 					<cfelse>
-						<cfset thumbnailname = "thumb_" & qfile.img_id & "." & qfile.thumb_extension >
-						<cfset originalfilename = qFile.img_filename >
+						<cfset var thumbnailname = "thumb_" & qfile.img_id & "." & qfile.thumb_extension >
+						<cfset var originalfilename = qFile.img_filename >
 					</cfif>
 				<cfelse>
 					<cfif arguments.thestruct.v EQ "o">
-						<cfset originalfilename =  replacenocase(qFile.img_filename, ".#qFile.extension#","","ALL")& "." & qfile.extension>
+						<cfset var originalfilename =  replacenocase(qFile.img_filename, ".#qFile.extension#","","ALL")& "." & qfile.extension>
 					<cfelse>
-						<cfset thumbnailname = "thumb_" & qfile.img_id & "." & qfile.thumb_extension>
+						<cfset var thumbnailname = "thumb_" & qfile.img_id & "." & qfile.thumb_extension>
 					</cfif>
 				</cfif>
 				<!--- Correct filename for thumbnail or original --->
@@ -1200,9 +1206,9 @@
 				<cfset var orgname = listfirst(qFile.filenameorg,".")>
 				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 					<cfif name EQ orgname>
-						<cfset originalfilename = qFile.vid_filename >
+						<cfset var originalfilename = qFile.vid_filename >
 					<cfelse>
-						<cfset originalfilename = qFile.vid_filename >
+						<cfset var originalfilename = qFile.vid_filename >
 					</cfif>
 				<cfelse>
 					<cfset originalfilename =  replacenocase(qFile.vid_filename, ".#qFile.extension#","","ALL") & "." & qfile.extension>
@@ -1223,12 +1229,12 @@
 				<cfset var orgname = listfirst(qFile.filenameorg,".")>
 				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 					<cfif name EQ orgname>
-						<cfset originalfilename = qFile.aud_name >
+						<cfset var originalfilename = qFile.aud_name >
 					<cfelse>
-						<cfset originalfilename = qFile.aud_name >
+						<cfset var originalfilename = qFile.aud_name >
 					</cfif>
 				<cfelse>
-					<cfset originalfilename =  replacenocase(qFile.aud_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
+					<cfset var originalfilename =  replacenocase(qFile.aud_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename = originalfilename >
@@ -1247,12 +1253,12 @@
 				<cfset var orgname = listfirst(qFile.filenameorg,".")>
 				<cfif structKeyExists(arguments.thestruct.getsettings,"set2_custom_file_ext") AND arguments.thestruct.getsettings.set2_custom_file_ext EQ "false">
 					<cfif name EQ orgname>
-						<cfset originalfilename = qFile.file_name >
+						<cfset var originalfilename = qFile.file_name >
 					<cfelse>
-						<cfset originalfilename = qFile.file_name >
+						<cfset var originalfilename = qFile.file_name >
 					</cfif>
 				<cfelse>
-					<cfset originalfilename =  replacenocase(qFile.file_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
+					<cfset var originalfilename =  replacenocase(qFile.file_name, ".#qFile.extension#","","ALL") & "." & qfile.extension>
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename =  originalfilename >
@@ -1287,7 +1293,7 @@
 		</cfquery>
 		<!--- Rename --->
 		<!--- If filename contains /\ --->
-		<cfset newname = replace(arguments.thestruct.zipname,"/","-","all")>
+		<cfset var newname = replace(arguments.thestruct.zipname,"/","-","all")>
 		<cfset newname = replace(newname,"\","-","all")>
 		<cfset newname = replacenocase(newname, " ", "_", "All")>
 		<cfset newname = replacenocase(newname, ".#getbin.file_extension#", "", "ALL")>
@@ -1333,7 +1339,7 @@
 			</cfthread>
 		</cfif>
 		<!--- Check that the zip name contains no spaces --->
-		<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+		<cfset var zipname = replace(arguments.thestruct.zipname,"/","-","all")>
 		<cfset zipname = replace(zipname,"\","-","all")>
 		<cfset zipname = replace(zipname, " ", "_", "All")>
 		<!--- Wait for the thread above until the file is downloaded fully --->
@@ -1362,9 +1368,9 @@
 			</cfif>
 		</cfif>
 		<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>
-			<cfset newname="#newnamenoext#">
+			<cfset var newname="#newnamenoext#">
 		<cfelse>
-		<cfset newname="#newnamenoext#.zip">
+			<cfset var newname="#newnamenoext#.zip">
 		</cfif>
 		<!--- Return --->
 		<cfreturn newname>
@@ -1441,7 +1447,7 @@
 	<!--- List the PDF image files to be shown to the browser --->
 	<cffunction name="pdfjpgs" output="true">
 		<cfargument name="thestruct" type="struct">
-		<cfset lqry = structnew()>
+		<cfset var lqry = structnew()>
 		<cfset lqry.thepdfjpgslist = "">
 		<!--- Get some file details --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="folder_id_r, path_to_asset" returnvariable="qry_thefile">
@@ -1451,7 +1457,7 @@
 			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
 			<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
 			<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
-				<cfset theloopstart = 0>
+				<cfset var theloopstart = 0>
 				<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
 				<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
 				<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9]{1,}.jpg","","ONE")>
@@ -1472,10 +1478,10 @@
 		<cfargument name="path2jpgs" required="true" hint="path to directory where jpgs will be stored">
 		
 		<cfinvoke component="settings" method="get_tools" returnVariable="thetools" /> <!--- Get tool paths --->
-		<cfset gettemp = GetTempDirectory()> 
+		<cfset var gettemp = GetTempDirectory()> 
 	 	<cfset var ttpdf = Createuuid("")>
-		<cfset theorgfile = arguments.path2pdf> <!--- Path to pdf --->
-	 	<cfset thepdfimage = replacenocase(listlast(theorgfile,"/"),".pdf",".jpg","all")> <!--- Name of image file name that will be extracted from pdf --->
+		<cfset var theorgfile = arguments.path2pdf> <!--- Path to pdf --->
+	 	<cfset var thepdfimage = replacenocase(listlast(theorgfile,"/"),".pdf",".jpg","all")> <!--- Name of image file name that will be extracted from pdf --->
 	 	<cfif FindNoCase("Windows", server.os.name)>
 			<cfset theimconvert = """#thetools.imagemagick#/convert.exe"""> <!--- imagemagick tool path --->
 			<!--- Set window scripts --->
@@ -1489,7 +1495,7 @@
 			<cfset theorgfile = replace(theorgfile,"&","\&","all")>
 			<cfset theorgfile = replace(theorgfile,"'","\'","all")>
 		</cfif>
-	 	<cfset thejpgdirectory = arguments.path2jpgs> <!--- Directory where extracted jpgs will be stored --->
+	 	<cfset var thejpgdirectory = arguments.path2jpgs> <!--- Directory where extracted jpgs will be stored --->
 		<!--- Write out script file--->
 		<cffile action="write" file="#args.thesht#" output="#theimconvert# #theorgfile# #thejpgdirectory#/#thepdfimage#" mode="777">
 		<!--- Execute script file in thread--->

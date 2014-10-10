@@ -59,9 +59,9 @@
 			<cfif arguments.sortby EQ "name">
 				<cfset var sortby = "filename_forsort">
 			<cfelseif arguments.sortby EQ "sizedesc">
-				<cfset var sortby = "size DESC">
+				<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 			<cfelseif arguments.sortby EQ "sizeasc">
-				<cfset var sortby = "size ASC">
+				<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 			<cfelseif arguments.sortby EQ "dateadd">
 				<cfset var sortby = "date_create DESC">
 			<cfelseif arguments.sortby EQ "datechanged">

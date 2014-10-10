@@ -171,11 +171,11 @@
 									</cfif>	
 								</div>
 								<div style="padding-top:5px;">
-									<div style="float:left;padding-top:2px;">
-										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_assets');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
-									</div>
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
+										<div style="float:left;padding-top:2px;">
+											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_assets');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+										</div>
 										<div style="float:right;padding-top:2px;">
 											<!--- Set vars for kind --->
 											<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=files&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">

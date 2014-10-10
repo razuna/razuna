@@ -122,7 +122,7 @@
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<cfset thethumbname = "thumb_#arguments.thestruct.file_id#.#qry.thumb_extension#">
+			<cfset var thethumbname = "thumb_#arguments.thestruct.file_id#.#qry.thumb_extension#">
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 			<cfquery datasource="#Variables.dsn#" name="qry">
@@ -133,7 +133,7 @@
 			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<cfset thethumbname = replacenocase(qry.filenameorg,".#qry.orgext#",".jpg","all")>
+			<cfset var thethumbname = replacenocase(qry.filenameorg,".#qry.orgext#",".jpg","all")>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#Variables.dsn#" name="qry">
@@ -143,7 +143,7 @@
 			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<cfset thethumbname = replacenocase(qry.filenameorg,".#qry.orgext#",".wav","all")>
+			<cfset var thethumbname = replacenocase(qry.filenameorg,".#qry.orgext#",".wav","all")>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#Variables.dsn#" name="qry">
@@ -152,7 +152,7 @@
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<cfset thethumbname = replacenocase(qry.filenameorg,".pdf",".jpg","all")>
+			<cfset var thethumbname = replacenocase(qry.filenameorg,".pdf",".jpg","all")>
 		</cfif>
 		<!--- Create a new version number --->
 		<cfquery datasource="#Variables.dsn#" name="qryversion">
@@ -566,8 +566,8 @@
 				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 			</cfinvoke>
 			<!--- Get size of original and thumbnail --->
-			<cfset ts = arguments.thestruct.therandom>
-			<cfset ths = "t#arguments.thestruct.therandom#">
+			<cfset var ts = arguments.thestruct.therandom>
+			<cfset var ths = "t#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" returnvariable="orgsize">
 				<cfoutput>#trim(orgsize)#</cfoutput>
@@ -592,8 +592,8 @@
 			<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="theheight" />
 			<cfexecute name="#arguments.thestruct.theshw#" timeout="60" variable="thewidth" />
 			<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
-			<cfset theheight = trim(listlast(theheight," "))>
-			<cfset thewidth = trim(listlast(thewidth," "))>
+			<cfset var theheight = trim(listlast(theheight," "))>
+			<cfset var thewidth = trim(listlast(thewidth," "))>
 			<cfif !isNumeric(theheight)>
 				<cfset theheight = 0>
 			</cfif>
@@ -619,7 +619,7 @@
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary(arguments.thestruct.thesource)>
+			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
@@ -652,20 +652,20 @@
 				<cfset arguments.thestruct.theidentify = "#arguments.thestruct.thetools.imagemagick#/identify">
 			</cfif>
 			<!--- Get size of original --->
-			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfset var ts = "g#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.qryfile.filename#" returnvariable="orgsize">
 				<cfoutput>#trim(orgsize)#</cfoutput>
 			</cfthread>
 			<!--- Get image width --->
-			<cfset tw = "gw#arguments.thestruct.therandom#">
+			<cfset var tw = "gw#arguments.thestruct.therandom#">
 			<cfthread name="#tw#" intstruct="#arguments.thestruct#" output="yes">
 				<cfexecute name="#attributes.intstruct.theexif#" arguments=" -S -s -ImageWidth #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="orgwidth" />
 				<cfset orgwidth = trim(listlast(orgwidth," "))>
 				<cfoutput>#trim(orgwidth)#</cfoutput>
 			</cfthread>
 			<!--- Get image height --->
-			<cfset th = "gh#arguments.thestruct.therandom#">
+			<cfset var th = "gh#arguments.thestruct.therandom#">
 			<cfthread name="#th#" intstruct="#arguments.thestruct#" output="yes">
 				<cfexecute name="#attributes.intstruct.theexif#" arguments="-S -s -ImageHeight #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="orgheight" />
 				<cfset orgheight = trim(listlast(orgheight," "))>
@@ -689,7 +689,7 @@
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#")>
+			<cfset var md5hash = hashbinary("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#")>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
@@ -726,7 +726,7 @@
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+			<cfset var md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfilelocal">
@@ -754,9 +754,9 @@
 			</cfif>
 			<!--- MD5 Hash --->
 			<cfif arguments.thestruct.qryfile.path contains arguments.thestruct.qryfile.filename>
-				<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#')>
+				<cfset var md5hash = hashbinary('#arguments.thestruct.qryfile.path#')>
 			<cfelse>
-				<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+				<cfset var md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
 			</cfif>
 			
 			<!--- Remove the filename from the path --->
@@ -805,7 +805,7 @@
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset mtt = createuuid("")>
+			<cfset var mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
@@ -1180,8 +1180,8 @@
 				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 			</cfinvoke>
 			<!--- Get size of original and thumbnail --->
-			<cfset ts = arguments.thestruct.therandom>
-			<cfset ths = "t#arguments.thestruct.therandom#">
+			<cfset var ts = arguments.thestruct.therandom>
+			<cfset var ths = "t#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" returnvariable="thread.orgsize">
 				<cfoutput>#trim(thread.orgsize)#</cfoutput>
@@ -1266,23 +1266,23 @@
 				<cfset arguments.thestruct.theidentify = "#arguments.thestruct.thetools.imagemagick#/identify">
 			</cfif>
 			<!--- Get size of original --->
-			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfset var ts = "g#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.qryfile.filename#" returnvariable="thread.orgsize">
 				<cfoutput>#trim(thread.orgsize)#</cfoutput>
 			</cfthread>
 			<!--- Get image width --->
-			<cfset tw = "gw#arguments.thestruct.therandom#">
+			<cfset var tw = "gw#arguments.thestruct.therandom#">
 			<cfthread name="#tw#" intstruct="#arguments.thestruct#" output="yes">
 				<cfexecute name="#attributes.intstruct.theexif#" arguments=" -S -s -ImageWidth #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="thread.orgwidth" />
-				<cfset orgwidth = trim(listlast(thread.orgwidth," "))>
+				<cfset var orgwidth = trim(listlast(thread.orgwidth," "))>
 				<cfoutput>#trim(orgwidth)#</cfoutput>
 			</cfthread>
 			<!--- Get image height --->
-			<cfset th = "gh#arguments.thestruct.therandom#">
+			<cfset var th = "gh#arguments.thestruct.therandom#">
 			<cfthread name="#th#" intstruct="#arguments.thestruct#" output="yes">
 				<cfexecute name="#attributes.intstruct.theexif#" arguments="-S -s -ImageHeight #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="thread.orgheight" />
-				<cfset orgheight = trim(listlast(thread.orgheight," "))>
+				<cfset var orgheight = trim(listlast(thread.orgheight," "))>
 				<cfoutput>#trim(orgheight)#</cfoutput>
 			</cfthread>
 			<!--- Join threads --->
@@ -1343,7 +1343,7 @@
 				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- Get size of original --->
-			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfset var ts = "g#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thesource#" returnvariable="thread.orgsize">
 				<cfoutput>#trim(thread.orgsize)#</cfoutput>
@@ -1380,7 +1380,7 @@
 			</cfif>
 
 			<!--- Get size of original --->
-			<cfset ts = "g#arguments.thestruct.therandom#">
+			<cfset var ts = "g#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thesource#" returnvariable="thread.orgsize">
 				<cfoutput>#trim(thread.orgsize)#</cfoutput>
@@ -1424,7 +1424,7 @@
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset mtt = createuuid("")>
+			<cfset var mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->

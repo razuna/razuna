@@ -178,11 +178,11 @@
 									</cfif>
 								</div>
 								<div style="padding-top:5px;">
-									<div style="float:left;padding-top:2px;">
-										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_assets');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
-									</div>
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
+										<div style="float:left;padding-top:2px;">
+											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_assets');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+										</div>
 										<div style="float:right;padding-top:2px;">
 											<!--- restore the file --->
 											<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=#what#&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>

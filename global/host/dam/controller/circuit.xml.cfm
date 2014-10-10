@@ -893,8 +893,8 @@
 	<!-- Remove selected folders in the trash-->
 	<fuseaction name="trashfolders_remove">
 		<!-- Param -->
-    	<set name="attributes.hostid" value="#session.hostid#" />
-    	<set name="attributes.id" value="#session.file_id#" />
+	    	<set name="attributes.hostid" value="#session.hostid#" />
+	    	<set name="attributes.id" value="#session.file_id#" />
 		<set name="attributes.trashkind" value="folders" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
@@ -5824,15 +5824,13 @@
 		<!-- If we save the basket as zip in this folder do... -->
 		<if condition="session.type EQ 'saveaszip'">
 			<true>
-				<set name="session.permlist" value="w,x" /><!-- Define permission to only display folders with write permissions for user -->
 				<set name="session.savehere" value="c.saveaszip_form" />
 			</true>
 		</if>
 		<!-- If we save the basket as collection in this folder do... -->
 		<if condition="session.type EQ 'saveascollection'">
 			<true>
-				<set name="session.permlist" value="w,x" /><!-- Define permission to only display collections with write permissions for user -->
-				<set name="session.savehere" value="c.saveascollection_form" />
+ 				<set name="session.savehere" value="c.saveascollection_form" />
 			</true>
 		</if>
 		<!-- If we choose the basket as collection in this folder do... -->
@@ -10482,7 +10480,6 @@
 				<do action="audios_detail" />
 			</true>
 		</if>
-
 	</fuseaction>
 
 	<!-- Select Label popup-->

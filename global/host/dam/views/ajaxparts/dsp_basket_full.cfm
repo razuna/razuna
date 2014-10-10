@@ -284,6 +284,7 @@
 									</cfloop>
 									<!--- List the Additional Renditions --->
 									<cfloop query="qry_addition_version.assets">
+										<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
@@ -398,6 +399,7 @@
 									</cfloop>
 									<!--- List the Additional Renditions --->
 									<cfloop query="qry_addition_version.assets">
+										<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
@@ -504,6 +506,7 @@
 									</cfloop>
 									<!--- List the Additional Renditions --->
 									<cfloop query="qry_addition_version.assets">
+										<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
@@ -588,6 +591,7 @@
 									</cfloop>
 									<!--- List the Additional Renditions --->
 									<cfloop query="qry_addition_version.assets">
+										<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 										<!--- check the file id --->
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
