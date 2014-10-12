@@ -1548,6 +1548,7 @@
 
 <!--- Get All Folder Trash --->
 <cffunction name="gettrashfolder" output="false" returntype="Query">
+	<cfargument name="noread" required="false" default="false">
 	<!--- Param --->
 	<cfset var folderIDs = "">
 	<cfset var qry = "">
@@ -1644,6 +1645,9 @@
 			SELECT *
 			FROM qry
 			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+			<cfif noread>
+				AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+			</cfif>
 		</cfquery>
 	</cfif>
 	<cfreturn qry>
@@ -1835,28 +1839,28 @@
 	<!--- set ids --->
 	<cfset var ids = "">
 	<!--- trash images --->
-	<cfinvoke component="images" method="gettrashimage" returnvariable="imagetrash" />
+	<cfinvoke component="images" method="gettrashimage" returnvariable="imagetrash" noread="true" />
 	<cfset var imageid = valueList(imagetrash.id)>
 	<cfloop list="#imageid#" index="i">
 		<!--- set ids --->
 		<cfset var ids = listAppend(ids,"#i#-img")>
 	</cfloop>
 	<!--- trash audios --->
-	<cfinvoke component="audios" method="gettrashaudio" returnvariable="audiotrash" />
+	<cfinvoke component="audios" method="gettrashaudio" returnvariable="audiotrash"  noread="true" />
 	<cfset var audioid = valueList(audiotrash.id)>
 	<cfloop list="#audioid#" index="i">
 		<!--- set ids --->
 		<cfset var ids = listAppend(ids,"#i#-aud")>
 	</cfloop>
 	<!--- trash files --->
-	<cfinvoke component="files" method="gettrashfile" returnvariable="filetrash" />
+	<cfinvoke component="files" method="gettrashfile" returnvariable="filetrash"  noread="true" />
 	<cfset var fileid = valueList(filetrash.id)>
 	<cfloop list="#fileid#" index="i">
 		<!--- set ids --->
 		<cfset var ids = listAppend(ids,"#i#-doc")>
 	</cfloop>
 	<!--- trash videos --->
-	<cfinvoke component="videos" method="gettrashvideos" returnvariable="videotrash" />
+	<cfinvoke component="videos" method="gettrashvideos" returnvariable="videotrash"  noread="true" />
 	<cfset var videoid = valueList(videotrash.id)>
 	<cfloop list="#videoid#" index="i">
 		<!--- set ids --->
@@ -1978,7 +1982,7 @@
 	<!--- set ids --->
 	<cfset var ids = "">
 	<!--- Get folders ids in the trash --->
-	<cfinvoke component="folders" method="gettrashfolder" returnvariable="qry_trash" />
+	<cfinvoke component="folders" method="gettrashfolder" returnvariable="qry_trash" noread="true"/>
 	<!--- set folder id --->
 	<cfset var filderid = valueList(qry_trash.id)>
 	<cfloop list="#filderid#" index="i">
@@ -5091,7 +5095,7 @@
 		<cfset var status = structnew()>
 		<cfset status.dir = false>
 		<!--- Does the dir contain /home --->
-		<cfif ListContains(arguments.thestruct.link_path, 'home', '/\') OR directoryexists("#arguments.thestruct.link_path#")>
+		<cfif ListContains(arguments.thestruct.link_path, 'home', '/\') AND directoryexists("#arguments.thestruct.link_path#")>
 			<!--- Set to true --->
 			<cfset status.dir = true>
 			<!--- List the content of the Dir --->

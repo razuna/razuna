@@ -502,7 +502,7 @@
 
 <!--- GET COLLECTION FILES FROM TRASH --->
 <cffunction name="get_trash_files" output="false">
-	<cfargument name="thestruct" type="struct">
+	<cfargument name="noread" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry = "">
 	<!--- Query --->
@@ -706,11 +706,9 @@
 	<cfquery name="qry" dbtype="query">
 		SELECT *
 		FROM qry
-		WHERE
-		<cfif isdefined("arguments.thestruct.noread")>
-			 lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
-		 <cfelse>
-		  	permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+		<cfif noread>
+			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif>
 	</cfquery>
 	<!--- Return --->
@@ -719,7 +717,7 @@
 
 <!--- GET COLLECTION FOLDERS FROM TRASH --->
 <cffunction name="get_trash_folders" output="false">
-	<cfargument name="thestruct" type="struct" required="false">
+	<cfargument name="noread" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
@@ -772,11 +770,9 @@
 	<cfquery name="qry" dbtype="query">
 		SELECT *
 		FROM qry
-		WHERE
-		<cfif isdefined("arguments.thestruct.noread")>
-			 lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
-		 <cfelse>
-		  	permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+		<cfif noread>
+			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif> 
 	</cfquery>
 	<!--- Return --->
@@ -785,7 +781,7 @@
 
 <!--- GET COLLECTION FROM TRASH  --->
 <cffunction name="get_trash_collection" output="false">
-	<cfargument name="thestruct" type="struct">
+	<cfargument name="noread" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
@@ -839,11 +835,9 @@
 	<cfquery name="qry" dbtype="query">
 		SELECT *
 		FROM qry
-		WHERE
-		<cfif isdefined("arguments.thestruct.noread")>
-			 lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
-		 <cfelse>
-		  	permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+		<cfif noread>
+			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif>
 	</cfquery>
 	<!--- Return --->
@@ -1787,11 +1781,10 @@
 <!--- Remove all from Trash --->
 <cffunction name="trash_remove_all" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfset thestruct.noread = true> <!--- Set flag to not return any read only permission files to prevent them from being deleted --->
 	<!--- Files --->
 	<cfif arguments.thestruct.trashkind EQ "files">
 		<!--- Get all trash files--->
-		<cfinvoke method="get_trash_files" thestruct="#thestruct#" returnvariable="arguments.qry" />
+		<cfinvoke method="get_trash_files" noread="true" returnvariable="arguments.qry" />
 		<!--- Thread --->
 		<cfthread instruct="#arguments#">
 			<cfloop query="attributes.instruct.qry">
@@ -1805,7 +1798,7 @@
 	<!--- Collections --->
 	<cfelseif arguments.thestruct.trashkind EQ "collections">
 		<!--- Get all trash collections--->
-		<cfinvoke method="get_trash_collection" thestruct="#thestruct#" returnvariable="arguments.qry" />
+		<cfinvoke method="get_trash_collection" noread="true" returnvariable="arguments.qry" />
 		<!--- Thread --->
 		<cfthread instruct="#arguments#">
 			<cfloop query="attributes.instruct.qry">
@@ -1817,7 +1810,7 @@
 	<!--- Folders --->
 	<cfelse>
 		<!--- Get all trash folders --->
-		<cfinvoke method="get_trash_folders" thestruct="#thestruct#" returnvariable="arguments.qry" />
+		<cfinvoke method="get_trash_folders"  noread="true"  returnvariable="arguments.qry" />
 		<!--- Thread --->
 		<cfthread instruct="#arguments#">
 			<cfloop query="attributes.instruct.qry">
@@ -1836,7 +1829,7 @@
 	<!--- Set file id --->
 	<cfset session.file_id ="">
 	<!--- Get collection files in the trash --->
-	<cfinvoke method="get_trash_files" returnvariable="qry_trash" />
+	<cfinvoke method="get_trash_files" noread="true" returnvariable="qry_trash" />
 	<cfloop list="#valueList(qry_trash.file_id)#" index="i">
 		<!--- set session file ids --->
 		<cfset session.file_id = listAppend(session.file_id,i)>
@@ -1869,7 +1862,7 @@
 	<!--- Set file id --->
 	<cfset session.file_id ="">
 	<!--- Get all trash collections--->
-	<cfinvoke method="get_trash_collection" returnvariable="qry" />
+	<cfinvoke method="get_trash_collection" noread="true" returnvariable="qry" />
 	<cfloop list="#valueList(qry.col_id)#" index="i">
 		<!--- set session col ids --->
 		<cfset session.file_id = listAppend(session.file_id,i)>
@@ -1895,7 +1888,7 @@
 	<!--- Set file id --->
 	<cfset session.file_id ="">
 	<!--- Get collection files in the trash --->
-	<cfinvoke method="get_trash_files" returnvariable="qry_trash" />
+	<cfinvoke method="get_trash_files" noread="true" returnvariable="qry_trash" />
 	<cfloop query="qry_trash">
 		<!--- set session file ids --->
 		<cfset session.file_id = listAppend(session.file_id,"#file_id#-#kind#")>
@@ -1940,7 +1933,7 @@
 	<!--- Set col id --->
 	<cfset session.file_id ="">
 	<!--- Get all trash collections--->
-	<cfinvoke method="get_trash_collection" returnvariable="qry" />
+	<cfinvoke method="get_trash_collection" noread="true" returnvariable="qry" />
 	<cfloop list="#valueList(qry.col_id)#" index="i">
 		<!--- set session col ids --->
 		<cfset session.file_id = listAppend(session.file_id,"#i#-collection")>
@@ -1986,7 +1979,7 @@
 	<!--- Set col id --->
 	<cfset session.file_id ="">
 	<!--- Get all trash folders--->
-	<cfinvoke method="get_trash_folders" returnvariable="qry" />
+	<cfinvoke method="get_trash_folders" noread="true" returnvariable="qry" />
 	<cfloop list="#valueList(qry.folder_id)#" index="i">
 		<!--- set session col ids --->
 		<cfset session.file_id = listAppend(session.file_id,"#i#-folder")>

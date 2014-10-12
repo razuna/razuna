@@ -486,6 +486,7 @@
 	
 	<!--- Get files from trash --->
 	<cffunction name="gettrashfile" output="false" returntype="Query">
+		<cfargument name="noread" required="false" default="false">
 		<!--- Param --->
 		<cfset var qry_file = "">
 		<!--- Get the cachetoken for here --->
@@ -568,6 +569,9 @@
 					SELECT *
 					FROM qry_file
 					WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+					<cfif noread>
+						AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+					</cfif>
 				</cfquery>
 			</cfif>
 			<cfreturn qry_file />

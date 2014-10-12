@@ -772,7 +772,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- Call include in order to get all files in trash -->
-		<do action="get_all_in_trash" />
+		<do action="get_all_in_trash_noread" />
 		<!-- CFC: Restore all -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_restore_all(qry_trash,attributes)" />
 		<!-- Show -->
@@ -791,8 +791,8 @@
 	<!-- Restore selected files -->
 	<fuseaction name="restore_selected_files_do">
 		<!-- Param -->
-    	<set name="attributes.hostid" value="#session.hostid#" />
-    	<set name="attributes.id" value="#session.file_id#" />
+	    	<set name="attributes.hostid" value="#session.hostid#" />
+	    	<set name="attributes.id" value="#session.file_id#" />
 		<set name="attributes.trashkind" value="assets" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
@@ -822,11 +822,35 @@
 		</invoke>
 	</fuseaction>
 	
+		<!-- Include for getting all files and folders in trash -->
+	<fuseaction name="get_all_in_trash_noread">
+		<!--CFC: Get trash images-->
+		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage(noread=true)" returnvariable="attributes.imagetrash" />
+		<!-- CFC: Get trash audios -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio(noread=true)" returnvariable="attributes.audiotrash" />
+		<!-- CFC: Get trash files-->
+		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile(noread=true)" returnvariable="attributes.filetrash" />
+		<!-- CFC: Get trash videos-->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos(noread=true)" returnvariable="attributes.videotrash" />
+		<!-- Combine queries above -->
+		<invoke object="myFusebox.getApplicationData().folders" method="gettrashcombined" returnvariable="qry_trash">
+			<argument name="qry_images" value="#attributes.imagetrash#" />
+			<argument name="qry_audios" value="#attributes.audiotrash#" />
+			<argument name="qry_files" value="#attributes.filetrash#" />
+			<argument name="qry_videos" value="#attributes.videotrash#" />
+		</invoke>
+	</fuseaction>
+
 	<!-- Include the trash folders-->
 	<fuseaction name="trash_folders">
 		<!--CFC: Get trash folder-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="gettrashfolder()" returnvariable="qry_trash" />
-		
+	</fuseaction>
+
+	<!-- Include the trash folders-->
+	<fuseaction name="trash_folders_noread">
+		<!--CFC: Get trash folder-->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="gettrashfolder(noread=true)" returnvariable="qry_trash" />
 	</fuseaction>
 	
 	<!-- Loads all folders in trash-->
@@ -985,7 +1009,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- Call include in order to get all files in trash -->
-		<do action="trash_folders" />
+		<do action="trash_folders_noread" />
 		<!-- CFC: Restore all -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_restore_folders(qry_trash,attributes)" />
 		<!-- Show -->
@@ -1990,7 +2014,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- Call include in order to get all files in trash -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_trash_folders()" returnvariable="qry_trash" />
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_trash_folders(noread=true)" returnvariable="qry_trash" />
 		<!-- CFC: Restore all folders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_restore_folders(qry_trash,attributes)" />
 		<!-- Show -->
