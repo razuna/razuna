@@ -58,9 +58,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
+			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
+			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -104,13 +104,13 @@
 				<!--- <cfdump var="#cattreeStruct#"><cfabort> --->
 
 				<cfif cattreeStruct['img'].recordcount GT 0 or cattreeStruct['aud'].recordcount GT 0 or cattreeStruct['vid'].recordcount GT 0 or cattreeStruct['doc'].recordcount GT 0>
-					<cfset proceedToSQL = 1>
+					<cfset var proceedToSQL = 1>
 				<cfelse>
-					<cfset proceedToSQL = 0>
+					<cfset var proceedToSQL = 0>
 				</cfif>
 			<cfelse>
 				<!--- <cfset session.search.file_id = "0"> --->
-				<cfset proceedToSQL = 0>
+				<cfset var proceedToSQL = 0>
 			</cfif>	
 		<cfelse>
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#arguments.thestruct.thetype#" hostid="#session.hostid#" returnvariable="qrylucene">
@@ -133,7 +133,7 @@
 			</cfif> --->
 			<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#arguments.thestruct.thetype#']">
 			
-			<cfset proceedToSQL = cattreeStruct['#arguments.thestruct.thetype#'].recordcount>
+			<cfset var proceedToSQL = cattreeStruct['#arguments.thestruct.thetype#'].recordcount>
 			
 		</cfif>
 		
@@ -164,10 +164,10 @@
 						SELECT  * FROM (
 					</cfif>
 				</cfif>
-				<cfset unionEnabled = 0>
+				<cfset var unionEnabled = 0>
 				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img") and  cattreeStruct['img'].recordcount NEQ 0>
 				<cfset unionEnabled = 1>
-				<cfset cattree = cattreeStruct['img']>	
+				<cfset var cattree = cattreeStruct['img']>
 				<!--- Get how many loop --->
 				<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
 				<!--- Set outer loop --->
@@ -339,8 +339,8 @@
 					<cfif arguments.thestruct.thetype EQ "all" and unionEnabled eq 1>
 						UNION ALL
 					</cfif>
-					<cfset unionEnabled = 1>
-					<cfset cattree = cattreeStruct['doc']>
+					<cfset var unionEnabled = 1>
+					<cfset var cattree = cattreeStruct['doc']>
 					<!--- Get how many loop --->
 					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
 					<!--- Set outer loop --->
@@ -494,8 +494,8 @@
 					<cfif arguments.thestruct.thetype EQ "all" and unionEnabled eq 1>
 						UNION ALL
 					</cfif>
-					<cfset unionEnabled = 1>
-					<cfset cattree = cattreeStruct['vid']>
+					<cfset var unionEnabled = 1>
+					<cfset var cattree = cattreeStruct['vid']>
 					
 					<!--- Get how many loop --->
 					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
@@ -662,8 +662,8 @@
 					<cfif arguments.thestruct.thetype EQ "all" and unionEnabled eq 1>
 						UNION ALL
 					</cfif>
-					<cfset unionEnabled = 1>
-					<cfset cattree = cattreeStruct['aud']>
+					<cfset var unionEnabled = 1>
+					<cfset var cattree = cattreeStruct['aud']>
 					
 					<!--- Get how many loop --->
 					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
@@ -891,7 +891,7 @@
 					<cfquery dbtype="query" name="qryCount">
 						SELECT sum(individualCount) as cnt from qry
 					</cfquery>
-					<cfset newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
+					<cfset var newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
 					<cfset queryAddRow(newQuery)>
 					<cfset querySetCell(newQuery, "cnt", qryCount.cnt)>
 					<cfoutput  query="qry" >
@@ -1019,7 +1019,7 @@
 				</cfquery>
 			</cfif>
 		<cfelse>
-			<cfset cattree = querynew("categorytree")>
+			<cfset var cattree = querynew("categorytree")>
 		</cfif>
 		
 		<cfreturn cattree>
@@ -1135,9 +1135,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
+			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
+			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -1256,9 +1256,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
+			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
+			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -1367,8 +1367,8 @@
 					WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 					AND (
-						<cfset upcListLen = listlen(arguments.thestruct.search_upc)>
-						<cfset currentListPos = 1> 
+						<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
+						<cfset var currentListPos = 1> 
 					<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
 						i.img_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
 						OR 
@@ -1469,8 +1469,8 @@
 						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id 
 						WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 						AND (
-							<cfset upcListLen = listlen(arguments.thestruct.search_upc)>
-							<cfset currentListPos = 1> 
+							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
+							<cfset var currentListPos = 1> 
 						<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
 							f.file_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
 							OR 
@@ -1577,8 +1577,8 @@
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 
 						AND (
-							<cfset upcListLen = listlen(arguments.thestruct.search_upc)>
-							<cfset currentListPos = 1> 
+							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
+							<cfset var currentListPos = 1> 
 						<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
 							v.vid_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
 							OR 
@@ -1691,8 +1691,8 @@
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 						
 						AND (
-							<cfset upcListLen = listlen(arguments.thestruct.search_upc)>
-							<cfset currentListPos = 1> 
+							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
+							<cfset var currentListPos = 1> 
 						<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
 							a.aud_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
 							OR 
@@ -1782,7 +1782,7 @@
 							<cfquery dbtype="query" name="qryCount">
 								SELECT sum(individualCount) as cnt from qry
 							</cfquery>
-							<cfset newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
+							<cfset var newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
 							<cfset queryAddRow(newQuery)>
 							<cfset querySetCell(newQuery, "cnt", qryCount.cnt)>
 							<cfoutput  query="qry" >

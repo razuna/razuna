@@ -128,11 +128,11 @@
 									<img src="#dynpath#/global/host/dam/images/folder-blue.png" border="0">
 								</div>
 								<div style="padding-top:5px;">
-									<div style="float:left;padding-top:2px;">
-										<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_collection');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
-									</div>
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
+										<div style="float:left;padding-top:2px;">
+											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_collection');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+										</div>
 										<!--- Set vars for kind --->
 										<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collections&showsubfolders=F&kind=collection">
 										<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collections&fromtrash=true">

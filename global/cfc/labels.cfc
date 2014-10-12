@@ -695,9 +695,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_org">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
+			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
+			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -1181,8 +1181,8 @@
 		<cfif thepath NEQ "">
 			<!--- If the rightest char is / remove it --->
 			<cfif right(thepath,1) EQ "/">
-				<cfset thelen = len(thepath)>
-				<cfset thepath = removechars(thepath,thelen,1)>
+				<cfset var thelen = len(thepath)>
+				<cfset var thepath = removechars(thepath,thelen,1)>
 			</cfif>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#labels
@@ -1190,9 +1190,9 @@
 			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
-			<cfset labelpath = thepath>
+			<cfset var labelpath = thepath>
 		<cfelse>
-			<cfset labelpath = thelabel>
+			<cfset var labelpath = thelabel>
 		</cfif>
 		<!--- Get path down --->
 		<cfinvoke method="label_get_path_down" label_id="#arguments.thestruct.label_id#" llist="#labelpath#" />

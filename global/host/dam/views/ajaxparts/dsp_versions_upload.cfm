@@ -37,7 +37,7 @@
 <body>
 <cfif structKeyExists(form,"fieldnames")>
     <div id="updummy" style="display:none;"></div>
-    <cfif form.preview>
+    <cfif isdefined("form.preview") AND form.preview>
         <script type="text/javascript">
             $('##updummy').load('#myself#c.previewimage_activate&tempid=#attributes.tempid#&type=#attributes.type#');
         </script>

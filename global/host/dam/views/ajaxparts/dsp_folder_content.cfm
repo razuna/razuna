@@ -32,6 +32,10 @@
 <cfoutput>
 	<cfset uniqueid = createuuid()>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+	<!--- If user has read-only access to folder and view chosen is quick edit then switch to default view as user can not access quick edit view on a read only folder --->
+	<cfif attributes.folderaccess EQ "R" AND session.view EQ 'combined'>
+		<cfset session.view = "">
+	</cfif>
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
 		<form id="#kind#form"></form>
@@ -759,9 +763,11 @@
 		</tr>
 		<!--- Combined View --->
 		<cfelseif session.view EQ "combined">
-			<tr>
-				<td colspan="3" align="right" style="border:0px;"><div id="updatestatusall" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
-			</tr>
+			<cfif attributes.folderaccess NEQ "R">
+				<tr>
+					<td colspan="3" align="right" style="border:0px;"><div id="updatestatusall" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
+				</tr>
+			</cfif>
 			<cfloop query="qry_files">
 				<cfset labels = labels>
 				<cfset mycurrentRow = (session.offset * session.rowmaxpage) + currentRow>
@@ -1192,9 +1198,11 @@
 					</tr>
 				</cfif>
 			</cfloop>
-			<tr>
-				<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
-			</tr>
+			<cfif attributes.folderaccess NEQ "R">
+				<tr>
+					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
+				</tr>
+			</cfif>
 		<!--- List view --->
 		<cfelseif session.view EQ "list">
 			<tr>

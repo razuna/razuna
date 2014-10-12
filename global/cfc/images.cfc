@@ -103,9 +103,9 @@
 	<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
 		<cfset var sortby = "filename_forsort">
 	<cfelseif session.sortby EQ "sizedesc">
-		<cfset var sortby = "size DESC">
+		<cfset var sortby = "cast(size as decimal(12,0))  DESC">
 	<cfelseif session.sortby EQ "sizeasc">
-		<cfset var sortby = "size ASC">
+		<cfset var sortby = "cast(size as decimal(12,0))  ASC">
 	<cfelseif session.sortby EQ "dateadd">
 		<cfset var sortby = "date_create DESC">
 	<cfelseif session.sortby EQ "datechanged">
@@ -266,7 +266,7 @@
 	<cfargument name="file_id" type="string" required="true">
 	<cfargument name="ColumnList" required="false" type="string" hint="the column list for the selection" default="*">
 	<!--- init local vars --->
-	<cfset qLocal = 0>
+	<cfset var qLocal = 0>
 	<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getAssetDetailsimg */ #Arguments.ColumnList#
 	FROM #session.hostdbprefix#images
@@ -414,6 +414,7 @@
 <cffunction name="trashimagemany" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop --->
+	<cfset var i ="">
 	<cfloop list="#session.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
@@ -443,6 +444,7 @@
 
 <!--- Get images from trash --->
 <cffunction name="gettrashimage" output="false" returntype="Query">
+	<cfargument name="noread" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry_image = "">
 	<!--- Get the cachetoken for here --->
@@ -488,7 +490,6 @@
 					OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				)
 			) = 'X' THEN 'X'
-			ELSE 'R'
 		END as permfolder
 	</cfif>
 	FROM #session.hostdbprefix#images i 
@@ -496,8 +497,8 @@
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfif qry_image.RecordCount NEQ 0>
-		<cfset myArray = arrayNew( 1 )>
-		<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
+		<cfset var myArray = arrayNew( 1 )>
+		<cfset var temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
 		<cfloop query="qry_image">
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
 			SELECT file_id_r
@@ -508,6 +509,14 @@
 				<cfset temp = QuerySetCell(qry_image, "in_collection", "True", currentRow  )>
 			</cfif>
 		</cfloop> 
+		<cfquery name="qry_image" dbtype="query">
+			SELECT *
+			FROM qry_image
+			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+			<cfif noread>
+				AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+			</cfif>
+		</cfquery>
 	</cfif>
 	<cfreturn qry_image />
 </cffunction>
@@ -522,7 +531,7 @@
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<cfset local = structNew()>
+	<cfset var local = structNew()>
 	<cfif thedetail.RecordCount EQ 0>
 		<cfset local.istrash = "trash">
 	<cfelse>
@@ -573,6 +582,7 @@
 	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 	<!--- Loop --->
+	<cfset var i = "">
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
@@ -1430,7 +1440,7 @@
 		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
 			<cfif "convert_wm_#theformat#" NEQ "" >
 				<cfset var err = "">
-				<cfif thewm.wmval.wm_use_image><cfset console("WM")>
+				<cfif thewm.wmval.wm_use_image>
 					<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" errorVariable="err"/>
 				</cfif>
 				<cfif thewm.wmval.wm_use_text>
@@ -1629,9 +1639,9 @@
 		</cfif>
         		<!--- Animated format image thumb extension --->
 		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat EQ 'gif'> 
-			<cfset thumb_extension = theformat>
+			<cfset var thumb_extension = theformat>
 		<cfelse>
-			<cfset thumb_extension = arguments.thestruct.qry_settings_image.set2_img_format>
+			<cfset var thumb_extension = arguments.thestruct.qry_settings_image.set2_img_format>
 		</cfif>
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#images
@@ -1812,14 +1822,14 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.zipit" default="T">
 	<!--- Create a temp folder --->
-	<cfset tempfolder = createuuid("")>
+	<cfset var tempfolder = createuuid("")>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Put the id into a variable --->
-	<cfset theimageid = #arguments.thestruct.file_id#>
+	<cfset var theimageid = #arguments.thestruct.file_id#>
 	<!--- set session.artofimage value if it is empty  --->
 	<cfif session.artofimage EQ "">
 		<cfset session.artofimage = arguments.thestruct.artofimage>
@@ -1841,9 +1851,9 @@
 		<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#" mode="775">
 		<!--- Set the colname to get from oracle to thumbnail else to original always --->
 		<cfif #art# EQ "thumb">
-			<cfset thecolname = "thumb">
+			<cfset var thecolname = "thumb">
 		<cfelse>
-			<cfset thecolname = "original">
+			<cfset var thecolname = "original">
 		</cfif>
 		<cfset var qry = "">
 		<!--- Query the db --->
@@ -1858,11 +1868,11 @@
 		</cfquery>
 		<!--- If we have to serve thumbnail the name is different --->
 		<cfif thecolname EQ "thumb">
-			<cfset theimgname = "thumb_#theimageid#.#qry.thumb_extension#">
-			<cfset thefinalname = listfirst(qry.img_filename_org,".") & ".#qry.thumb_extension#">
+			<cfset var theimgname = "thumb_#theimageid#.#qry.thumb_extension#">
+			<cfset var thefinalname = listfirst(qry.img_filename_org,".") & ".#qry.thumb_extension#">
 		<cfelse>
-			<cfset theimgname = qry.img_filename_org>
-			<cfset thefinalname = qry.img_filename_org>
+			<cfset var theimgname = qry.img_filename_org>
+			<cfset var thefinalname = qry.img_filename_org>
 		</cfif>
 		<!--- Put variables into struct for threads --->
 		<cfset arguments.thestruct.hostid = session.hostid>
@@ -1910,9 +1920,9 @@
 		<cfthread action="join" name="download#art##theimageid#" />
 		<!--- Set extension --->
 		<cfif thecolname EQ "thumb">
-			<cfset theext = qry.thumb_extension>
+			<cfset var theext = qry.thumb_extension>
 		<cfelse>
-			<cfset theext = qry.img_extension>
+			<cfset var theext = qry.img_extension>
 		</cfif>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->
 		<cfif qry.img_group NEQ "">
@@ -1927,14 +1937,14 @@
 			<cfset var thefilename = qry.img_filename>
 		</cfif>
 		<!--- If filename contains /\ --->
-		<cfset thenewname = replace(thefilename,"/","-","all")>
+		<cfset var thenewname = replace(thefilename,"/","-","all")>
 		<cfset thenewname = replace(thenewname,"\","-","all")>
 		<cfset thenewname = listfirst(thenewname, ".") & "." & theext>
 		<!--- Rename the file --->
 		<cffile action="move" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thefinalname#" destination="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thenewname#">
 	</cfloop>
 	<!--- Check that the zip name contains no spaces --->
-	<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+	<cfset var zipname = replace(arguments.thestruct.zipname,"/","-","all")>
 	<cfset zipname = replace(zipname,"\","-","all")>
 	<cfset zipname = replace(zipname, " ", "_", "All")>
 	<!--- check create zip --->
@@ -1962,7 +1972,7 @@
 				<!--- get all files from the directory --->
 				<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#" name="myFile" type="file">
 				<!--- Rename the files --->
-				<cfset new_name = replace(myFile.name, " ", "_", "All")>
+				<cfset var new_name = replace(myFile.name, " ", "_", "All")>
 				<cfif myDir.name NEQ "thumb">
 					<cffile action="rename" destination="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#new_name#" source="#arguments.thestruct.thepath#/outgoing/#zipname#/#myDir.name#/#myFile.name#">
 				<cfelse>
