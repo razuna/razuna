@@ -60,7 +60,7 @@
 <style>
 ##apDiv4 {
 	position: absolute;
-	left:20px;
+	margin-left:20px;
 	top:50px;
 	height: auto;
 	width: 95%;
