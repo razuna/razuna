@@ -970,12 +970,12 @@
 	<!--- Put HTTP referer into var --->
 	<cfset arguments.thestruct.comingfrom = cgi.http_referer>
 	<!--- If developer wants to debug  --->
-	<cfif arguments.thestruct.debug>
+	<cfif isBoolean(arguments.thestruct.debug) AND arguments.thestruct.debug>
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
 	</cfif>
 	<cftry>
 		<!--- This is from the uploader in Razuna --->
-		<cfif arguments.thestruct.plupload>
+		<cfif isBoolean(arguments.thestruct.plupload) AND arguments.thestruct.plupload>
 			<cfset var thesession = true>
 			<cfset var theuserid = session.theuserid>
 		<!--- Below is for API uploads --->
