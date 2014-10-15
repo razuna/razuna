@@ -165,8 +165,7 @@
 			</tr>
 			<cfloop query="qry_langs">
 				<tr>
-					<td width="1%" nowrap="true" aling="center"><input type="checkbox" name="lang_active_#lang_id#" value="t"<cfif lang_active EQ "t"> checked</cfif>></td>
-					<td width="100%">#lang_name#</td>
+					<td colspan="2"><input type="checkbox" name="lang_active_#lang_id#" value="t"<cfif lang_active EQ "t"> checked</cfif>> #lang_name#</td>
 				</tr>
 			</cfloop>
 			<tr class="list">
@@ -177,16 +176,16 @@
 				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("date")#</th>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("date_format")#</td>
-				<td colspan="2"><select name="set2_date_format" class="text">
+				<td width="80px">#myFusebox.getApplicationData().defaults.trans("date_format")#</td>
+				<td><select name="set2_date_format" class="text">
 				<option value="euro"<cfif #prefs.set2_date_format# EQ "euro"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_euro")#</option>
 				<option value="us"<cfif #prefs.set2_date_format# EQ "us"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_us")#</option>
 				<option value="sql"<cfif #prefs.set2_date_format# EQ "sql"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_sql")#</option>
 				</select></td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("date_delimiter")#</td>
-				<td colspan="2"><select name="set2_date_format_del" class="text">
+				<td width="80px">#myFusebox.getApplicationData().defaults.trans("date_delimiter")#</td>
+				<td><select name="set2_date_format_del" class="text">
 				<option value="/"<cfif #prefs.set2_date_format_del# EQ "/"> selected</cfif>>/</option>
 				<option value="."<cfif #prefs.set2_date_format_del# EQ "."> selected</cfif>>.</option>
 				<option value=","<cfif #prefs.set2_date_format_del# EQ ","> selected</cfif>>,</option>
@@ -194,11 +193,27 @@
 				<option value=":"<cfif #prefs.set2_date_format_del# EQ ":"> selected</cfif>>:</option>
 				</select></td>
 			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+			<tr><th class="textbold" colspan="2">SAML SSO</th></tr>
+			<tr><td colspan="2">#myFusebox.getApplicationData().defaults.trans("saml_desc")#</td></tr>
 			<tr>
-				<td colspan="2" align="right"><div id="form_admin_settings_status" style="float:left;font-weight:bold;color:green;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></td>
+				<td width="120px">SAML Email Path</td>
+				<td><input type="text" name="set2_saml_email" value="#prefs.set2_saml_xmlpath_email#" style="width:80%" placeholder="#myFusebox.getApplicationData().defaults.trans("saml_email_placeholder")#"></td>
 			</tr>
 			<tr>
-				<td colspan="2"><br /></td>
+				<td>SAML Password Path</td>
+				<td><input type="text" name="set2_saml_password" value="#prefs.set2_saml_xmlpath_password#" style="width:80%"  placeholder="#myFusebox.getApplicationData().defaults.trans("saml_password_placeholder")#"></td>
+			</tr>
+			<tr>
+				<td>SAML HTTP Re-direct</td>
+				<td><input type="text" name="set2_saml_redirect" value="#prefs.set2_saml_httpredirect#" style="width:80%"  placeholder="#myFusebox.getApplicationData().defaults.trans("saml_http_placeholder")#"></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="right"><div id="form_admin_settings_status" style="float:left;font-weight:bold;color:green;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></td>
 			</tr>
 		</table>
 	</form>
