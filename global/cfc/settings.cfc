@@ -79,7 +79,7 @@
 <cffunction name="getsettingsfromdam" returntype="query">
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export
+	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export, set2_saml_xmlpath_email,set2_saml_xmlpath_password, set2_saml_httpredirect
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -104,7 +104,10 @@
 	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">,
 	set2_upc_enabled = <cfqueryparam value="#arguments.thestruct.set2_upc_enabled#" cfsqltype="cf_sql_varchar">,
 	set2_rendition_metadata = <cfqueryparam value="#arguments.thestruct.set2_rendition_metadata#" cfsqltype="cf_sql_varchar">,
-	set2_meta_export = <cfqueryparam value="#arguments.thestruct.set2_meta_export#" cfsqltype="cf_sql_varchar">
+	set2_meta_export = <cfqueryparam value="#arguments.thestruct.set2_meta_export#" cfsqltype="cf_sql_varchar">,
+	set2_saml_xmlpath_email = <cfqueryparam value="#arguments.thestruct.set2_saml_email#" cfsqltype="cf_sql_varchar">,
+	set2_saml_xmlpath_password = <cfqueryparam value="#arguments.thestruct.set2_saml_password#" cfsqltype="cf_sql_varchar">,
+	set2_saml_httpredirect = <cfqueryparam value="#arguments.thestruct.set2_saml_redirect#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>

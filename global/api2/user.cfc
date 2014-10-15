@@ -332,15 +332,50 @@
 	</cffunction>
 
 	<!--- SSO --->
-	<cffunction name="sso" access="remote" output="false" returntype="struct" returnformat="json">
+	<cffunction name="saml_sso" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
-		<cfargument name="user_email" required="true" type="string">		
+		<cfargument name="samlrequest" required="true" type="string">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var qry = "">
 		<cfset var qry_isp = "">
+		<cfset var prefs = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<cftry>
+				<!--- Decode encoded XML --->
+				<cfset var xmlResponse=CharsetEncode(BinaryDecode(samlrequest,"Base64"),"utf-8")>
+				<!--- If not XML found then abort --->
+				<cfif !isxml(xmlResponse)>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "Not valid XML">
+					<cfreturn thexml>
+				</cfif>
+				<!--- Parse XML --->
+				<cfset var xmlparsed = xmlparse(xmlresponse)>
+				<cfinvoke component="global.cfc.settings" method="getsettingsfromdam" returnvariable="prefs">
+				<!--- Check xmlpath to email is entered, required field--->
+				<cfif prefs.set2_saml_xmlpath_email EQ ''>
+					<cfset thexml.responsecode = 1>
+					<cfset thexml.message = "XML path for email not defined.">
+					<cfreturn thexml>
+				</cfif>
+				<!--- Get email from XML based on XMLsearch criterion --->
+				<cfset var user_email = xmlsearch(xmlparsed, "#prefs.set2_saml_xmlpath_email#")>
+				<cfset user_email = user_email[1].xmltext>
+				<!--- Check if xmlpath to password specified, optional field --->
+				<cfif prefs.set2_saml_xmlpath_password NEQ ''>
+					<cfset var user_password = xmlsearch(xmlparsed, "#prefs.set2_saml_xmlpath_password#")>
+					<cfset user_password = user_password[1].xmltext>
+					<!--- Hash password --->
+					<cfset user_password = hash(user_password, "MD5", "UTF-8")>
+				</cfif>
+			<cfcatch>
+				<cfset thexml.responsecode = 1>
+				<cfset thexml.message = "Error occured trying to decode XML: #cfcatch.message#">
+				<cfreturn thexml>
+			</cfcatch>
+			</cftry>
 			<!--- If user is in admin --->
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Query the user --->
@@ -348,11 +383,14 @@
 				SELECT u.user_email, u.user_login_name, u.user_id, u.user_pass
 				FROM users u, ct_users_hosts ct
 				WHERE (
-					lower(u.user_email) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
-					OR lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
+					lower(u.user_email) = <cfqueryparam value="#lcase(user_email)#" cfsqltype="cf_sql_varchar">
+					OR lower(u.user_login_name) = <cfqueryparam value="#lcase(user_email)#" cfsqltype="cf_sql_varchar">
 					)
 				AND ct.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
 				AND ct.ct_u_h_user_id = u.user_id
+				<cfif isdefined("user_password")>
+					AND u.user_pass = <cfqueryparam value="#user_password#" cfsqltype="cf_sql_varchar">
+				</cfif>
 				</cfquery>
 				<!--- User found --->
 				<cfif qry.recordcount NEQ 0>
@@ -364,16 +402,21 @@
 					</cfquery>
 					<!--- If for hosted --->
 					<cfif qry_isp.opt_value>
-						<cfset var the_url = "/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & arguments.user_email & "&pass_hashed=true">
+						<cfset var the_url = "/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & user_email & "&pass_hashed=true">
 					<cfelse>
-						<cfset var the_url = "/" & cgi.context_path & "/" & application.razuna.api.hostpath["#arguments.api_key#"] & "/dam/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & arguments.user_email & "&pass_hashed=true">
+						<cfset var the_url = "/" & cgi.context_path & "/" & application.razuna.api.hostpath["#arguments.api_key#"] & "/dam/index.cfm?fa=c.dologin&tl=true&pass=" & qry.user_pass & "&name=" & user_email & "&pass_hashed=true">
 					</cfif>
 					<!--- For non hosted --->
 					<cflocation url="//#cgi.http_host#/#the_url#" addtoken="yes" />
 				<!--- NOT found --->
 				<cfelse>
-					<cfset thexml.responsecode = 1>
-					<cfset thexml.message = "User not found">
+					<!--- Check if redirect specified on fail, optional field --->
+					<cfif prefs.set2_saml_httpredirect contains 'http'>
+						<cflocation url="#prefs.set2_saml_httpredirect #" addtoken="yes" />
+					<cfelse>
+						<cfset thexml.responsecode = 1>
+						<cfset thexml.message = "User with email #user_email# not found">
+					</cfif>
 				</cfif>
 			<!--- User not admin --->
 			<cfelse>

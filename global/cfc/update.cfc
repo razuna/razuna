@@ -181,8 +181,27 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 40 (1.7) --->
-		<cfif updatenumber.opt_value LT 40>
+		<!--- If less then 41 (1.7) --->
+		<cfif updatenumber.opt_value LT 41>
+			<!--- Add SAML columns to settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_SAML_XMLPATH_EMAIL #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_SAML_XMLPATH_PASSWORD #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_SAML_HTTPREDIRECT #thevarchar#(100)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<!--- Increase type_id column in table file_types --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
