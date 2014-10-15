@@ -1,5 +1,9 @@
 Please write all SQL changes in here too
 ========================================
+
+alter table raz1_settings_2 add SET2_SAML_XMLPATH_EMAIL varchar(100);
+alter table raz1_settings_2 add SET2_SAML_XMLPATH_PASSWORD varchar(100);
+alter table raz1_settings_2 add SET2_SAML_HTTPREDIRECT varchar(100);
 alter table raz1_xmp modify subjectcode varchar(1000); 
 alter table raz1_xmp modify creator varchar(1000); 
 alter table raz1_xmp modify title varchar(1000); 
