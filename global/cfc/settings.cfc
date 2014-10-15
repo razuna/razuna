@@ -1728,7 +1728,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="thestruct" type="Struct">
 	<!--- Params --->
 	<cfset var qry = "">
-	<ctry>
+	<cftry>
 		<!--- Query --->
 		<cfquery datasource="razuna_default" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
 		SELECT news_title, news_text, news_text_long, news_date
