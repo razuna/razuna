@@ -1726,21 +1726,28 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- PARSE NEWS --->
 <cffunction name="news_get" output="false">
 	<cfargument name="thestruct" type="Struct">
+	<!--- Params --->
 	<cfset var qry = "">
-	<!--- Query --->
-	<cfquery datasource="razuna_default" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
-	SELECT news_title, news_text, news_text_long, news_date
-	FROM razuna_news
-	WHERE news_show = true
-	<cfif structkeyexists(arguments.thestruct,"frontpage")>
-		AND news_frontpage = true
-		ORDER BY news_date DESC
-		LIMIT 1
-	<cfelse>
-		ORDER BY news_date DESC
-		LIMIT 7
-	</cfif>
-	</cfquery>
+	<ctry>
+		<!--- Query --->
+		<cfquery datasource="razuna_default" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
+		SELECT news_title, news_text, news_text_long, news_date
+		FROM razuna_news
+		WHERE news_show = true
+		<cfif structkeyexists(arguments.thestruct,"frontpage")>
+			AND news_frontpage = true
+			ORDER BY news_date DESC
+			LIMIT 1
+		<cfelse>
+			ORDER BY news_date DESC
+			LIMIT 7
+		</cfif>
+		</cfquery>
+		<!--- Catch --->
+		<cfcatch type="any">
+			<cfset qry = queryNew("news_title, news_text, news_text_long, news_date")>
+		</cfcatch>
+	</cftry>
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
