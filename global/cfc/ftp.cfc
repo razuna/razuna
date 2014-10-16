@@ -32,7 +32,11 @@
     <cfset qry.backpath = "">
     <cfset qry.dirname = "">
     <!--- Open Connection to FTP Server --->
-    <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=true)>
+    <cftry>
+    	<cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=true)>
+    	<cfcatch><cfoutput><font color="##cd5c5c">Could not connect to FTP Server. Please check server credentials and try again. <br/>Error thrown was: #cfcatch.message#</font></cfoutput><cfabort></cfcatch>
+    </cftry>
+    
     <!--- Set the response form the connection into scope --->
     <cfset qry.ftp = o>
     <!--- Try to connect to the FTP server --->
@@ -44,6 +48,10 @@
             <cfset dirlist = ftplist(o,thedirname,session.ftp_passive)>
         <cfelse>
         	<cftry>
+        	     <!--- Append '/' to folderpath if nto present as some FTP servers will not return the directory listing properly without it --->
+                <cfif left(arguments.thestruct.folderpath,1) NEQ '/'>
+                	<cfset arguments.thestruct.folderpath  = '/' & arguments.thestruct.folderpath>
+                </cfif>
                 <cfset dirlist = ftplist(o,arguments.thestruct.folderpath,session.ftp_passive)>
             	<cfcatch type="any">
             		<cfparam name="folder_id" default="0" />
