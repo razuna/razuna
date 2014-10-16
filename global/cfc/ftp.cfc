@@ -44,6 +44,10 @@
             <cfset dirlist = ftplist(o,thedirname,session.ftp_passive)>
         <cfelse>
         	<cftry>
+        	     <!--- Append '/' to folderpath if nto present as some FTP servers will not return the directory listing properly without it --->
+                <cfif left(arguments.thestruct.folderpath,1) NEQ '/'>
+                	<cfset arguments.thestruct.folderpath  = '/' & arguments.thestruct.folderpath>
+                </cfif>
                 <cfset dirlist = ftplist(o,arguments.thestruct.folderpath,session.ftp_passive)>
             	<cfcatch type="any">
             		<cfparam name="folder_id" default="0" />
