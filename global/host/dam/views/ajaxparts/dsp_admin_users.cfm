@@ -239,6 +239,7 @@
 				resizable: false,
 				height:250,
 				modal: true,
+				title:'Warning!',
 				buttons: {
 					"Send Emails": function() {
 						// Show loading bar

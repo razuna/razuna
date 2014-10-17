@@ -173,7 +173,6 @@
 <cffunction hint="Add users of a group to receive folder notifications" name="add_grp_users2notify" returntype="void">
 	<cfargument name="group_id" type="string" required="true">
 	<cfargument name="user_id" type="string" required="false" hint="optional userid to pass in">
-	
 	<!--- Check if folder_subscribe for group is set to true --->
 	<cfquery datasource="#application.razuna.datasource#" name="checkgrpsettings">
 		SELECT folder_subscribe FROM groups WHERE  grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -193,6 +192,7 @@
 				AND cu.ct_g_u_user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
 		</cfquery>
+		<cfset var check_grp_entry = "">
 		<cfloop query = "getusers_fs">
 			<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#folder_subscribe
@@ -209,8 +209,62 @@
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 				)
 			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="check_grp_entry">
+				SELECT 1 FROM #session.hostdbprefix#folder_subscribe_groups 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#getusers_fs.folder_id_r#">
+				AND group_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
+			</cfquery>
+			<cfif check_grp_entry.recordcount EQ 0>
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#folder_subscribe_groups
+					(folder_id, group_id)
+					VALUES(
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#getusers_fs.folder_id_r#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
+					)
+				</cfquery>
+			</cfif>
 		</cfloop>
 	</cfif>
+</cffunction>
+<!--- ------------------------------------------------------------------------------------- --->
+<cffunction hint="Remove users of a group from receiving folder notifications" name="notifications_unsubscribe" returntype="void">
+	<cfargument name="group_id" type="string" required="true">
+	<cfset var get_unsubscribe_items = "">
+	<cfset var get_letover_items = "">
+	<cfquery datasource="#application.razuna.datasource#" name="get_unsubscribe_items">
+		SELECT fs.fs_id
+		FROM ct_groups_users cu, #session.hostdbprefix#folder_subscribe fs
+		WHERE fs.user_id = cu.ct_g_u_user_id
+		AND cu.ct_g_u_grp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
+		<!--- Exclude users that are subscribed to that folder via another group --->
+		AND NOT EXISTS (SELECT 1 FROM raz1_folder_subscribe_groups gs WHERE gs.folder_id = fs.folder_id AND gs.group_id <> cu.ct_g_u_grp_id)
+		<!--- Only get users that were subscribed automatically to folder notifications --->
+		AND fs.auto_entry='true'
+	</cfquery>
+	<!--- Remove users from notifications --->
+	<cfloop query = "get_unsubscribe_items">
+		<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#folder_subscribe WHERE fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#get_unsubscribe_items.fs_id#">
+		</cfquery>
+	</cfloop>
+	<!--- Remove group subscription --->
+	<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#folder_subscribe_groups WHERE group_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
+	</cfquery>
+
+	<!--- Delete left over users that are no longer subscribed to any groups--->
+	<cfquery datasource="#application.razuna.datasource#" name="get_leftover_items">
+		SELECT fs.fs_id
+		FROM #session.hostdbprefix#folder_subscribe fs
+		WHERE NOT EXISTS (SELECT 1 FROM raz1_folder_subscribe_groups gs WHERE gs.folder_id = fs.folder_id)
+		AND fs.auto_entry='true'
+	</cfquery>
+	<cfloop query = "get_leftover_items">
+		<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#folder_subscribe WHERE fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#get_leftover_items.fs_id#">
+		</cfquery>
+	</cfloop>
 </cffunction>
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Delete one record --->

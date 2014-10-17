@@ -7044,7 +7044,13 @@
 		<!-- Show -->
 		<do action="groups_list_users" />
 	</fuseaction>
-
+	<!-- Group Notifications Unsubscribe -->
+	<fuseaction name="group_notifications_unsubscribe">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().groups" methodcall="notifications_unsubscribe('#attributes.group_id#')" />
+		<!-- Show -->
+		<!-- <do action="groups_list" /> -->
+	</fuseaction>
 	<!--  -->
 	<!-- ADMIN: GROUPS END -->
 	<!--  -->
