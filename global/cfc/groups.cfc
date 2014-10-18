@@ -173,6 +173,8 @@
 <cffunction hint="Add users of a group to receive folder notifications" name="add_grp_users2notify" returntype="void">
 	<cfargument name="group_id" type="string" required="true">
 	<cfargument name="user_id" type="string" required="false" hint="optional userid to pass in">
+	<cfset var getusers_fs = "">
+	<cfset var getgroups_fs = "">
 	<!--- Check if folder_subscribe for group is set to true --->
 	<cfquery datasource="#application.razuna.datasource#" name="checkgrpsettings">
 		SELECT folder_subscribe FROM groups WHERE  grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -180,7 +182,8 @@
 	<!--- If folder_subscribe is set to true for group then add all users in group to receive folder notifications --->
 	<cfif checkgrpsettings.folder_subscribe EQ 'true'>
 		<cfquery datasource="#application.razuna.datasource#" name="getusers_fs">
-			SELECT fg.folder_id_r, cu.ct_g_u_user_id user_id FROM ct_groups_users cu, #session.hostdbprefix#folders_groups fg, #session.hostdbprefix#folders f
+			SELECT fg.folder_id_r, cu.ct_g_u_user_id user_id 
+			FROM ct_groups_users cu, #session.hostdbprefix#folders_groups fg, #session.hostdbprefix#folders f
 			WHERE cu.ct_g_u_grp_id = fg.grp_id_r
 			AND f.folder_id = fg.folder_id_r
 			AND cu.ct_g_u_grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -192,7 +195,6 @@
 				AND cu.ct_g_u_user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
 		</cfquery>
-		<cfset var check_grp_entry = "">
 		<cfloop query = "getusers_fs">
 			<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#folder_subscribe
@@ -209,21 +211,25 @@
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 				)
 			</cfquery>
-			<cfquery datasource="#application.razuna.datasource#" name="check_grp_entry">
-				SELECT 1 FROM #session.hostdbprefix#folder_subscribe_groups 
-				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#getusers_fs.folder_id_r#">
-				AND group_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
+		</cfloop>
+		<!--- Add entries for group in folder_subscribe_groups table --->
+		<cfquery datasource="#application.razuna.datasource#" name="getgroups_fs">
+			SELECT fs.folder_id folder_id,  cu.ct_g_u_grp_id group_id
+			FROM ct_groups_users cu, #session.hostdbprefix#folder_subscribe fs,#session.hostdbprefix#folders_groups fg
+			WHERE cu.ct_g_u_user_id = fs.user_id
+			AND cu.ct_g_u_grp_id = fg.grp_id_r
+			AND cu.ct_g_u_grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND fg.folder_id_r = fs.folder_id
+			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folder_subscribe_groups fsg WHERE fsg.folder_id = fs.folder_id AND fsg.group_id= fg.grp_id_r)
+		</cfquery>
+		<cfloop query="getgroups_fs">
+			<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folder_subscribe_groups (folder_id, group_id)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#getgroups_fs.folder_id#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
+				)
 			</cfquery>
-			<cfif check_grp_entry.recordcount EQ 0>
-				<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#folder_subscribe_groups
-					(folder_id, group_id)
-					VALUES(
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#getusers_fs.folder_id_r#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.group_id#">
-					)
-				</cfquery>
-			</cfif>
 		</cfloop>
 	</cfif>
 </cffunction>

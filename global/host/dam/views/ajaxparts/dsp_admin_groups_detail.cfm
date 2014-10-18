@@ -43,9 +43,26 @@
 						</cfif>
 					</td>
 				</tr>
-				<tr>
-					<td>
-						<cfif prefs.set2_upc_enabled>
+				<tr>	
+					<td >
+						<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong><br/>
+						#myFusebox.getApplicationData().defaults.trans("group_folder_notify_desc")#<br/>
+						<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
+						<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
+						<br/>
+						<a href="##"  onclick="unsubscribe();">#myFusebox.getApplicationData().defaults.trans("group_notifications_current_users")# </a>
+					</td>
+				</tr>
+				<!--- RAZ-2824 :: UPC folder structure download option and UPC size  ---> 
+				<cfif prefs.set2_upc_enabled>
+					<tr>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_folder_text")#</strong><br/>
+							<input type="radio" name="edit_upc_folder_structure" value="true" <cfif qry_detail.upc_folder_format EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
+							<input type="radio" name="edit_upc_folder_structure" value="false" <cfif qry_detail.upc_folder_format EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<strong>#myFusebox.getApplicationData().defaults.trans("group_upc_size_text")#</strong><br/>
 							<select name="editupcsize" id="editupcsize" style="width:50px;">
 								<option value="">None</option>
@@ -55,29 +72,11 @@
 								<option value="13" <cfif qry_detail.upc_size EQ 13 >selected=selected</cfif>>13</option>
 								<option value="14" <cfif qry_detail.upc_size EQ 14 >selected=selected</cfif>>14</option>
 							</select>
-						<cfelse>
-							<input type = "hidden" name="editupcsize" id="editupcsize" value="">
-						</cfif>
-					</td>
-					<tr>	
-						<td >
-							<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong><br/>
-							<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
-							<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
-							<br/>
-							<a href="##"  onclick="unsubscribe();">#myFusebox.getApplicationData().defaults.trans("group_notifications_current_users")# </a>
 						</td>
 					</tr>
-				<!--- RAZ-2824 :: UPC folder structure download option enabled. ---> 
-				<cfif prefs.set2_upc_enabled>
-				<tr>
-					<td><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_folder_text")#</strong><br/>
-						<input type="radio" name="edit_upc_folder_structure" value="true" <cfif qry_detail.upc_folder_format EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
-						<input type="radio" name="edit_upc_folder_structure" value="false" <cfif qry_detail.upc_folder_format EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
-					</td>
-				</tr>
 				<cfelse>
 					<input type = 'hidden' name="edit_upc_folder_structure" value="false">
+					<input type = "hidden" name="editupcsize" id="editupcsize" value="">
 				</cfif>
 				<!--- Select re-direction folder --->
 				<tr>
@@ -147,7 +146,7 @@
 			$("##fa").val('c.group_unsubscribe');
 			$( "##dialog-confirm-unsubscribe" ).dialog({
 				resizable: true,
-				height:350,
+				height:450,
 				width:350,
 				modal: true,
 				title:'Warning!',
