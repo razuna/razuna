@@ -462,6 +462,17 @@
 		#this.tableoptions#
 		</cfquery>
 
+		<!--- folder_subscribe_groups --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		  CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe_groups (
+		  folder_id varchar(100) DEFAULT NULL,
+		  group_id varchar(100) DEFAULT NULL,
+		  KEY folder_id (folder_id),
+		  KEY group_id (group_id)
+		) #this.tableoptions#
+		</cfquery>
+	
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->

@@ -181,8 +181,23 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 41 (1.7) --->
-		<cfif updatenumber.opt_value LT 41>
+		<!--- If less then 42 (1.7) --->
+		<cfif updatenumber.opt_value LT 42>
+			<!--- Add folder_subscribe_groups table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_folder_subscribe_groups (
+				  folder_id #thevarchar#(100) DEFAULT NULL,
+				  group_id #thevarchar#(100) DEFAULT NULL
+				  <cfif application.razuna.thedatabase EQ "mysql">,
+				  KEY folder_id (folder_id),
+				  KEY group_id (group_id)
+				  </cfif>
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+		
 			<!--- Add SAML columns to settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

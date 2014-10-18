@@ -332,7 +332,7 @@
 	</cffunction>
 
 	<!--- SSO --->
-	<cffunction name="saml_sso" access="remote" output="false" returntype="struct" returnformat="json">
+	<cffunction name="saml_sso" access="remote" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="SAMLResponse" required="true" type="string">
 		<!--- Check key --->
@@ -344,7 +344,9 @@
 		<cfif thesession>
 			<cftry>
 				<!--- Decode encoded XML --->
-				<cfset var xmlResponse=CharsetEncode(BinaryDecode(arguments.SAMLResponse,"Base64"),"utf-8")>
+				<cfset var xmlResponse=CharsetEncode(BinaryDecode(stripcr(arguments.SAMLResponse),"Base64"),"utf-8")>
+				<cfdump var="#xmlresponse#">
+				<cfabort>
 				<!--- If not XML found then abort --->
 				<cfif !isxml(xmlResponse)>
 					<cfset thexml.responsecode = 1>
