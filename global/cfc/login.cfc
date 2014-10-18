@@ -64,7 +64,7 @@
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<cfset var qryuser = "">
 		<!--- Check for the user --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryuser" result="myqry">
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
@@ -85,8 +85,6 @@
 		</cfif>
 		AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 		</cfquery>
-		<cfset console(myqry.sql)>
-		<cfset console(myqry.sqlparameters)>
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
