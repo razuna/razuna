@@ -194,6 +194,7 @@
 			<cfif isDefined("arguments.user_id")>
 				AND cu.ct_g_u_user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
+			GROUP BY fg.folder_id_r, cu.ct_g_u_user_id 
 		</cfquery>
 		<cfloop query = "getusers_fs">
 			<cfquery datasource="#application.razuna.datasource#">
@@ -221,6 +222,7 @@
 			AND cu.ct_g_u_grp_id = <cfqueryparam value="#arguments.group_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND fg.folder_id_r = fs.folder_id
 			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folder_subscribe_groups fsg WHERE fsg.folder_id = fs.folder_id AND fsg.group_id= fg.grp_id_r)
+			GROUP BY fs.folder_id,  cu.ct_g_u_grp_id
 		</cfquery>
 		<cfloop query="getgroups_fs">
 			<cfquery datasource="#application.razuna.datasource#">
