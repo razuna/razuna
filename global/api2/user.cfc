@@ -344,13 +344,11 @@
 		<cfif thesession>
 			<cftry>
 				<!--- Decode encoded XML --->
-				<cfset var xmlResponse=CharsetEncode(BinaryDecode(stripcr(arguments.SAMLResponse),"Base64"),"utf-8")>
-				<cfdump var="#xmlresponse#">
-				<cfabort>
+				<cfset var xmlResponse=CharsetEncode(BinaryDecode(Replace(StripCR(arguments.SAMLResponse),"#chr(10)#", "", "ALL"),"Base64"),"utf-8")>
 				<!--- If not XML found then abort --->
 				<cfif !isxml(xmlResponse)>
 					<cfset thexml.responsecode = 1>
-					<cfset thexml.message = "Not valid XML">
+					<cfset thexml.message = "Invalid XML">
 					<cfreturn thexml>
 				</cfif>
 				<!--- Parse XML --->
