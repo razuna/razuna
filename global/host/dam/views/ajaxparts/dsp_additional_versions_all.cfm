@@ -25,19 +25,13 @@
 --->
 <cfoutput>
 <cfif qry_av.assets.recordcount NEQ 0 OR qry_av.links.recordcount NEQ 0>
-	<br />
-	<cfloop query="qry_av.links">
-		<strong><a href="#av_link_url#" target="_blank">#av_link_title#</a></strong>
-		<br />
-	</cfloop>
-	<br />
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<cfloop query="qry_av.assets">
 			<!--- Format size --->
 			<cfif isnumeric(thesize)><cfset thesize = numberformat(thesize,'_.__')></cfif>
 			<tr>
 				<cfif av_type eq 'img' >
-					<td width="55" align="center">
+					<td width="75" align="center">
 						<cfif application.razuna.storage EQ 'local'>
 							<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
 						<cfelse>
@@ -68,6 +62,10 @@
 			</tr>
 		</cfloop>
 	</table>
+	<cfloop query="qry_av.links">
+		<strong><a href="#av_link_url#" target="_blank">#av_link_title#</a></strong>
+		<br />
+	</cfloop>
 	<div id="msg"></div>
 	<div id="dialog-confirm-swap" title="Swap with Original?" style="display:none;">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The Original will be replaced by this rendition and vice versa. Are you sure you wish to continue?</p>
@@ -110,6 +108,7 @@
 						if (type == 'img')loadren();
 						if (type == 'vid')loadrenvid();
 						if (type == 'aud')loadrenaud();
+						if (type == 'doc')loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');
 					});
 				},
 				Cancel: function() {
