@@ -2025,7 +2025,7 @@
     <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
 	<!--- Feedback --->
 	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
-	<cfif arguments.thestruct.fa EQ 'meta_export_do'>
+	<cfif arguments.thestruct.fa EQ 'c.meta_export_do'>
 		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
