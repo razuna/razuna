@@ -181,8 +181,16 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 42 (1.7) --->
-		<cfif updatenumber.opt_value LT 42>
+		<!--- If less then 43 (1.7) --->
+		<cfif updatenumber.opt_value LT 43>
+			<!--- Add zip_extract column to smart_folders table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_smart_folders add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> sf_zipextract #thevarchar#(1)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+
 			<!--- Add folder_subscribe_groups table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

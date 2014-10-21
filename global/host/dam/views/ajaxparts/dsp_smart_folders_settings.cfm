@@ -69,6 +69,13 @@
 							</cfloop>
 						</select>
 					</cfif>
+					<br /><br />
+					<cfif qry_sf.sf.sf_zipextract EQ '1'>
+						<cfset checked = "checked">
+					<cfelse>
+						<cfset checked = "">
+					</cfif>
+					Extract when zip archive: <input type="checkbox" name="sf_zipextract" id="sf_zipextract" #checked#>
 					<!--- <br />
 					<input type="radio" name="sf_type" id="sf_type" value="box"<cfif qry_sf.sf.sf_type EQ "box"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_box")# <cfif chk_box.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Box">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
 					<br />

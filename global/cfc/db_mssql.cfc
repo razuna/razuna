@@ -2408,6 +2408,7 @@
 			sf_type 		varchar(100),
 			sf_description 	varchar(2000),
 			sf_who	 		varchar(100),
+			sf_zipextract	 	varchar(1),
 			host_id 		int,
 			PRIMARY KEY (sf_id)
 		)

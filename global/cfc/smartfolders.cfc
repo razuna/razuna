@@ -63,7 +63,7 @@
 		<cfset var qry = structnew()>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.sf" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#sfgetone */ sf_id, sf_name, sf_type, sf_description
+		SELECT /* #variables.cachetoken#sfgetone */ sf_id, sf_name, sf_type, sf_description, sf_zipextract
 		FROM #session.hostdbprefix#smart_folders
 		WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -84,6 +84,7 @@
 		<cfargument name="thestruct" required="true" type="struct">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.sf_description" default="">
+		<cfparam name="arguments.thestruct.sf_zipextract" default="0">
 		<!--- If the ID is 0 = new folder --->
 		<cfif arguments.thestruct.sf_id EQ 0>
 			<!--- Create ID --->
@@ -116,7 +117,8 @@
 		sf_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_description#">,
 		sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_type#">,
 		sf_date_create = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		sf_date_update = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+		sf_date_update = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+		sf_zipextract = <cfqueryparam cfsqltype="cf_sql_varchar" value="#iif(arguments.thestruct.sf_zipextract EQ 'on',1,0)#">
 		WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
 		</cfquery>
 		<!--- Save to properties for search --->
