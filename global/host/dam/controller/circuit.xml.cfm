@@ -1270,7 +1270,7 @@
 			<argument name="attach" value="#thebasket#" />
 			<argument name="themessage" value="#attributes.message#" />
 			<argument name="thepath" value="#attributes.thepath#" />
-			<argument name="sendaszip" value="T" />
+			<argument name="isbasket" value="T" />
 		</invoke>
 	</fuseaction>
 	<!-- Basket FTP Form -->
