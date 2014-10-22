@@ -82,6 +82,7 @@
 	<cfargument name="hostdbprefix" default="" required="no" type="string">
 	<cfargument name="userid" default="" required="no" type="string">
 	<cfargument name="hostid" default="" required="no" type="string">
+	<cfargument name="isbasket" default="F" required="no" type="string">
 	<cftry>
 		<!--- Set data source since this call could also come from RFS --->
 		<cfif arguments.dsn EQ "">
@@ -202,6 +203,12 @@
 							</cfif>
 						</cfif>
 					</cfif>
+					<cfif arguments.isbasket EQ 'T'>
+						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
+						#basket_download_available_msg# <br/>
+						<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
+						 <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
+					 </cfif>
 				</cfmail>
 			<cfelse>
 				<!--- send message if there is a mail server set for this host --->

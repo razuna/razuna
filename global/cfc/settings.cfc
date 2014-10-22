@@ -3077,6 +3077,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
 
 <cffunction name="get_notifications" returntype="query" hint="Get notificaiton settings">

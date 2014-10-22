@@ -24,26 +24,47 @@
 *
 --->
 <cfoutput>
-	<div style="padding:10px;min-height:300px;">
+	<!--- Unsubscribe success div--->
+	<div id="unsubscribe_success" style="display:none;height:0;color:green;">
+	</div>
+	<div style="min-height:300px;margin-top:0;">
 		<!--- Group --->
 		<form name="grpedit" id="grpedit" onsubmit="updategrp(#attributes.grp_id#,'#attributes.kind#','#attributes.loaddiv#');return false;">
 			<input type="hidden" name="folder_redirect" id="folder_redirect" value="#qry_detail.folder_redirect#">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-				<tr>
-					<th>#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
-				</tr>
+			<table width="100%" border="0" cellspacing="0" cellpadding="5">
 				<tr>
 					<td width="100%">
+						<strong>#myFusebox.getApplicationData().defaults.trans("groups_edit")#</strong><br/>
 						<cfif attributes.grp_id EQ 2>
 							#qry_detail.grp_name#
 							<input type = 'hidden' name="grpname" id="grpname" value="#qry_detail.grp_name#">
 						<cfelse>
 							<input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" tabindex="1" />
 						</cfif>
+					</td>
+				</tr>
+				<tr>	
+					<td >
+						<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong><br/>
+						#myFusebox.getApplicationData().defaults.trans("group_folder_notify_desc")#<br/>
+						<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
+						<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
 						<br/>
-						<cfif prefs.set2_upc_enabled>
-							<strong>#myFusebox.getApplicationData().defaults.trans("group_upc_size_text")#</strong>
-							<select name="editupcsize" id="editupcsize" style="margin-left:10px;width:90px;">
+						<a href="##"  onclick="unsubscribe();">#myFusebox.getApplicationData().defaults.trans("group_notifications_current_users")# </a>
+					</td>
+				</tr>
+				<!--- RAZ-2824 :: UPC folder structure download option and UPC size  ---> 
+				<cfif prefs.set2_upc_enabled>
+					<tr>
+						<td><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_folder_text")#</strong><br/>
+							<input type="radio" name="edit_upc_folder_structure" value="true" <cfif qry_detail.upc_folder_format EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
+							<input type="radio" name="edit_upc_folder_structure" value="false" <cfif qry_detail.upc_folder_format EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<strong>#myFusebox.getApplicationData().defaults.trans("group_upc_size_text")#</strong><br/>
+							<select name="editupcsize" id="editupcsize" style="width:50px;">
 								<option value="">None</option>
 								<option value="10" <cfif qry_detail.upc_size EQ 10 >selected=selected</cfif>>10</option>
 								<option value="11" <cfif qry_detail.upc_size EQ 11 >selected=selected</cfif>>11</option>
@@ -51,27 +72,11 @@
 								<option value="13" <cfif qry_detail.upc_size EQ 13 >selected=selected</cfif>>13</option>
 								<option value="14" <cfif qry_detail.upc_size EQ 14 >selected=selected</cfif>>14</option>
 							</select>
-						<cfelse>
-							<input type = "hidden" name="editupcsize" id="editupcsize" value="">
-						</cfif>
-					</td>
-					<tr>	
-						<td >
-							<strong>#myFusebox.getApplicationData().defaults.trans("group_folder_notify_text")#</strong>
-							<input type="radio" name="edit_folder_subscribe" value="true" <cfif qry_detail.folder_subscribe EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
-							<input type="radio" name="edit_folder_subscribe" value="false" <cfif qry_detail.folder_subscribe EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
 						</td>
 					</tr>
-				<!--- RAZ-2824 :: UPC folder structure download option enabled. ---> 
-				<cfif prefs.set2_upc_enabled>
-				<tr>
-					<td><strong>#myFusebox.getApplicationData().defaults.trans("group_upc_folder_text")#</strong>
-						<input type="radio" name="edit_upc_folder_structure" value="true" <cfif qry_detail.upc_folder_format EQ 'true'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# 
-						<input type="radio" name="edit_upc_folder_structure" value="false" <cfif qry_detail.upc_folder_format EQ 'false'> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
-					</td>
-				</tr>
 				<cfelse>
 					<input type = 'hidden' name="edit_upc_folder_structure" value="false">
+					<input type = "hidden" name="editupcsize" id="editupcsize" value="">
 				</cfif>
 				<!--- Select re-direction folder --->
 				<tr>
@@ -121,6 +126,10 @@
 		</tr>
 	</table>
 	</div>
+	<!--- Unsubscribe Confirmation div--->
+	<div id="dialog-confirm-unsubscribe" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("group_notifications_unsubscribe")#</p>
+	</div>
 	<!--- JS --->
 	<script type="text/javascript">
 		// Activate Chosen
@@ -133,5 +142,43 @@
 				loadcontent('listusers','#myself#c.groups_list_users_add&grp_id=#attributes.grp_id#&user_id=' + $('##selectuser option:selected').val())
 			);
 		}
+		function unsubscribe(){
+			$("##fa").val('c.group_unsubscribe');
+			$( "##dialog-confirm-unsubscribe" ).dialog({
+				resizable: true,
+				height:450,
+				width:350,
+				modal: true,
+				title:'Warning!',
+				buttons: {
+					"Ok": function() {
+						// Show loading bar
+						$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+						// Get values
+						var url = '#myself#c.group_notifications_unsubscribe';
+						// Submit Form
+						$.ajax({
+							type: "POST",
+							url: url,
+							data : {group_id: '#attributes.grp_id#'},
+						   	success: function(){
+						   		$("##bodyoverlay").remove();
+						   		$("##unsubscribe_success").css('height','20px');
+						   		$("##unsubscribe_success").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("group_notifications_unsubscribe_success"))#</cfoutput>');
+								$("##unsubscribe_success").animate({opacity: 1.0}, 3000).fadeTo("slow", 0).slideUp("slow",0);
+						   	}
+
+						});
+						$( this ).dialog( "close" );	
+					},
+					Cancel: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+			return false;
+		}
+
+
 	</script>
 </cfoutput>

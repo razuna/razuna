@@ -423,6 +423,14 @@
 		)
 		</cfquery>
 
+		<!--- folder_subscribe_groups --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		  CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups (
+		  folder_id varchar(100) DEFAULT NULL,
+		  group_id varchar(100) DEFAULT NULL
+		) 
+		</cfquery>
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->
@@ -2030,6 +2038,7 @@
 			sf_type 		varchar(100),
 			sf_description 	varchar(2000),
 			sf_who	 		varchar(100),
+			sf_zipextract	 	varchar(1),
 			host_id 		bigint,
 			PRIMARY KEY (sf_id)
 		)
@@ -2333,6 +2342,10 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#aud_hashtag  ON #arguments.thestruct.host_db_prefix#audios(hashtag);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag  ON #arguments.thestruct.host_db_prefix#files(hashtag);
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_group ON #arguments.thestruct.host_db_prefix#folder_subscribe_groups(folder_id,group_id);
+		</cfquery>
+
 		<cfreturn />
 	</cffunction>
 	

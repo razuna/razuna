@@ -112,7 +112,7 @@
 		</cfif>
 		<!--- Show related videos (if any) --->
 		<tr>
-			<td style="padding:0;margin:0;">
+			<td colspan="2" style="padding:0;margin:0;">
 				<div id="relatedvideos"></div>
 			</td>
 		</tr>

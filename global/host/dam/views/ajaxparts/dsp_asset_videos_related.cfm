@@ -32,12 +32,13 @@
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F">
 						<strong>#ucase(vid_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB, #vid_width#x#vid_height# pixel) [#vid_filename#]<br />
-						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank">
+						<a href="#myself#c.serve_file&file_id=#vid_id#&type=vid"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank" style="padding-left:20px;">
 					<cfelse>
-						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank">
+						<a href="#myself#c.serve_file&file_id=#vid_id#&type=vid"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
 					View</a>
-					 | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">Direct Link</a>
 					 | <a href="##" onclick="toggleslide('dive#vid_id#','inpute#vid_id#');return false;">Embed</a>
 					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#vid_id#&thetype=vid&cf_show=vid','Metadata',550,2);return false;">Metadata</a>

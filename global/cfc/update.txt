@@ -30,6 +30,14 @@ alter table raz1_files_xmp modify author varchar(1000);
 alter table raz1_files_xmp modify authorsposition varchar(1000); 
 alter table raz1_files_xmp modify captionwriter varchar(1000); 
 alter table raz1_files_xmp modify webstatement varchar(1000); 
+alter table raz1_smart_folders add sf_zipextract varchar(1);
+
+CREATE TABLE raz1_folder_subscribe_groups (
+  folder_id varchar(100) DEFAULT NULL,
+  group_id varchar(100) DEFAULT NULL,
+  KEY folder_id (folder_id),
+  KEY group_id (group_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE ct_aliases (
   asset_id_r varchar(100) DEFAULT NULL,

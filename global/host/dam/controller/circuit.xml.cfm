@@ -1270,7 +1270,7 @@
 			<argument name="attach" value="#thebasket#" />
 			<argument name="themessage" value="#attributes.message#" />
 			<argument name="thepath" value="#attributes.thepath#" />
-			<argument name="sendaszip" value="T" />
+			<argument name="isbasket" value="T" />
 		</invoke>
 	</fuseaction>
 	<!-- Basket FTP Form -->
@@ -7044,7 +7044,13 @@
 		<!-- Show -->
 		<do action="groups_list_users" />
 	</fuseaction>
-
+	<!-- Group Notifications Unsubscribe -->
+	<fuseaction name="group_notifications_unsubscribe">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().groups" methodcall="notifications_unsubscribe('#attributes.group_id#')" />
+		<!-- Show -->
+		<!-- <do action="groups_list" /> -->
+	</fuseaction>
 	<!--  -->
 	<!-- ADMIN: GROUPS END -->
 	<!--  -->
@@ -10393,6 +10399,9 @@
 		<do action="storage" />
 		<!-- Set that function should move file instead of copy -->
 		<set name="attributes.actionforfile" value="move" />
+		<!-- CFC: Get one -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(session.sf_id)" returnvariable="qry_sf" />
+		<set name="attributes.zip_extract" value="#qry_sf.sf.sf_zipextract#" />
 		<!-- CFC: get class according to type -->
 		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="downloadfiles(session.sf_path,attributes)" returnvariable="attributes.thefile" />		
 		<!-- Call CFC -->

@@ -559,7 +559,15 @@
 			rec_uuid 		varchar(100) DEFAULT NULL
 		)
 		</cfquery>
-		
+
+		<!--- folder_subscribe_groups --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		  CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe_groups (
+		  folder_id varchar(100) DEFAULT NULL,
+		  group_id varchar(100) DEFAULT NULL
+		) 
+		</cfquery>
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->
@@ -2400,6 +2408,7 @@
 			sf_type 		varchar(100),
 			sf_description 	varchar(2000),
 			sf_who	 		varchar(100),
+			sf_zipextract	 	varchar(1),
 			host_id 		int,
 			PRIMARY KEY (sf_id)
 		)
@@ -2919,6 +2928,9 @@
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#file_hashtag ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files(hashtag)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#folder_group ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folder_subscribe_groups(folder_id,group_id)
 		</cfquery>
 		<cfreturn />
 	</cffunction>
