@@ -85,7 +85,6 @@
 		</cfif>
 		AND (u.user_expiry_date is null OR u.user_expiry_date >= '#dateformat(now(),"yyyy-mm-dd")#')
 		</cfquery>
-
 		<!--- Check the AD user --->
 		<cfif structKeyExists(arguments.thestruct,'ad_server_name') AND arguments.thestruct.ad_server_name NEQ ''>
 			<cfif qryuser.recordcount EQ 0>
