@@ -5095,7 +5095,7 @@
 		<cfset var status = structnew()>
 		<cfset status.dir = false>
 		<!--- Does the dir contain /home --->
-		<cfif ListContains(arguments.thestruct.link_path, 'home', '/\') AND directoryexists("#arguments.thestruct.link_path#")>
+		<cfif (application.razuna.isp AND ListContains(arguments.thestruct.link_path, 'home', '/\') AND directoryexists("#arguments.thestruct.link_path#")) OR (!application.razuna.isp AND directoryexists("#arguments.thestruct.link_path#"))>
 			<!--- Set to true --->
 			<cfset status.dir = true>
 			<!--- List the content of the Dir --->
