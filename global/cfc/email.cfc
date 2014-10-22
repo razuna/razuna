@@ -234,6 +234,12 @@
 							</cfif>
 						</cfif>
 					</cfif>
+					<cfif arguments.isbasket EQ 'T'>
+						<cfinvoke component="defaults" method="trans" transid="basket_download_available_message" returnvariable="basket_download_available_msg" />
+						#basket_download_available_msg# <br/>
+						<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
+						 <a href='#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#'>#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.attach#</a>
+					 </cfif>
 				</cfmail>
 			</cfif>
 		</cfif>
