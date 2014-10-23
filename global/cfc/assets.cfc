@@ -7614,7 +7614,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Check if last char is alphabet --->
 	<cfset var fn_first = listfirst(arguments.thestruct.theoriginalfilename,".")>
 	<cfset var fn_last_char = right(fn_first,1)> 
-	<cfif not isnumeric(fn_last_char)>
+	<cfif refindnocase('[a-z]',fn_last_char)>
 		<cfset var fn_ischar = true>
 	<cfelse>
 		<cfset fn_ischar = false>
