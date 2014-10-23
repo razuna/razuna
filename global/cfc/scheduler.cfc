@@ -729,8 +729,10 @@
 			INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
 			INNER JOIN users u ON u.user_id = fs.user_id
 			WHERE
+			<!--- User is not administrator --->
+			NOT EXISTS (SELECT 1 FROM ct_groups_users cu WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id in ('1','2'))
 			<!--- User is not folder_owner --->
-			f.folder_owner <>  fs.user_id 
+			AND f.folder_owner <>  fs.user_id 
 			 <!--- Folder is not shared with everybody --->
 			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0') 
 			<!--- User is not part of group that has access to folder --->
