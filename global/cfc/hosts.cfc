@@ -253,12 +253,7 @@
 				>
 			</cfif>
 			<!--- Add scheduled tasks --->
-			<!--- Get the correct paths for hosted vs non-hosted --->
-			<cfif !application.razuna.isp>
-				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam">
-			<cfelse>
-				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/admin">
-			</cfif>
+			<cfset var taskpath =  "#session.thehttp##cgi.http_host#/razuna/admin">
 			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
 				task="RazFolderSubscribe" 
@@ -289,17 +284,6 @@
 				endTime="23:59 PM"
 				interval="3600"
 			>
-			<!--- Add a scheduled task on hosted to tell lucene to update its index. Set to run only once.  --->
-			<!--- <cfif application.razuna.isp>
-				<cfschedule action="update"
-					task="RazLuceneIndexUpdate_#hostid.id#" 
-					operation="HTTPRequest"
-					url="#taskpath#/index.cfm?fa=c.w_lucene_update_index&host_id=#hostid.id#"
-					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-					startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
-					interval="once"
-				>
-			</cfif> --->
 			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
 			<cftry>
 				<!--- Create collection --->
