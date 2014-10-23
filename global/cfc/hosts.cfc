@@ -253,7 +253,7 @@
 				>
 			</cfif>
 			<!--- Add scheduled tasks --->
-			<cfset var taskpath =  "#session.thehttp##cgi.http_host#/razuna/admin">
+			<cfset var taskpath =  "#session.thehttp##cgi.http_host##cgi.context_path#/admin">
 			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
 				task="RazFolderSubscribe" 

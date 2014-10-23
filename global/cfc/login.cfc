@@ -214,7 +214,7 @@
 		<cfif arguments.thestruct.loginto EQ "admin">
 			<!--- Get the correct paths for hosted vs non-hosted --->
 			<cftry>
-				<cfset var taskpath =  "#session.thehttp##cgi.http_host#/razuna/admin">
+				<cfset var taskpath =  "#session.thehttp##cgi.http_host##cgi.context_path#/admin">
 				<cfthread action="run" intvar="#taskpath#">
 					<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 					<cfschedule action="update"
