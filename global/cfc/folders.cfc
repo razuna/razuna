@@ -5413,6 +5413,14 @@
 	<cfthread action="run" intvar="#arguments.thestruct#" name="#tt#">
 		<cfzip action="create" ZIPFILE="#attributes.intvar.thepath#/outgoing/folder_#attributes.intvar.folder_id#.zip" source="#attributes.intvar.newpath#" recurse="true"/>
 	</cfthread>
+	<!--- Get thread status --->
+	<cfset var thethread=cfthread["#tt#"]> 
+	<!--- Output to page to prevent it from timing out while thread is running --->
+	<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+		<cfoutput> . </cfoutput>
+		<cfset sleep(3000) > 
+		<cfflush>
+	</cfloop>
 	<cfthread action="join" name="#tt#"/>
 
 	<!--- Zip path for download --->
@@ -7535,6 +7543,14 @@
 	<cfthread action="run" intvar="#arguments.thestruct#" name="#tt#">
 		<cfzip action="create" ZIPFILE="#attributes.intvar.thepath#/outgoing/folder_#attributes.intvar.folder_id#.zip" source="#attributes.intvar.newpath#" recurse="true"/>
 	</cfthread>
+	<!--- Get thread status --->
+	<cfset var thethread=cfthread["#tt#"]> 
+	<!--- Output to page to prevent it from timing out while thread is running --->
+	<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+		<cfoutput> . </cfoutput>
+		<cfset sleep(3000) > 
+		<cfflush>
+	</cfloop>
 	<cfthread action="join" name="#tt#"/>
 
 	<!--- Zip path for download --->
@@ -7996,6 +8012,14 @@
 	<cfthread action="run" intvar="#arguments#" name="#tt#">
 		<cfzip action="create" ZIPFILE="#attributes.intvar.thestruct.thepath#/outgoing/#attributes.intvar.dl_name#.zip" source="#attributes.intvar.thestruct.newpath#" recurse="true"/>
 	</cfthread>
+	<!--- Get thread status --->
+	<cfset var thethread=cfthread["#tt#"]> 
+	<!--- Output to page to prevent it from timing out while thread is running --->
+	<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+		<cfoutput> . </cfoutput>
+		<cfset sleep(3000) > 
+		<cfflush>
+	</cfloop>
 	<cfthread action="join" name="#tt#"/>
 	<cfinvoke component="defaults" method="trans" transid="download_folder_output3" returnvariable="download_folder_output3" />
 	<!--- Zip path for download --->
@@ -8115,6 +8139,14 @@
 	<cfthread action="run" intvar="#arguments.thestruct#" name="#tt#">
 		<cfzip action="create" ZIPFILE="#attributes.intvar.thepath#/outgoing/folder_#attributes.intvar.folder_id#.zip" source="#attributes.intvar.newpath#" recurse="true"/>
 	</cfthread>
+	<!--- Get thread status --->
+	<cfset var thethread=cfthread["#tt#"]> 
+	<!--- Output to page to prevent it from timing out while thread is running --->
+	<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+		<cfoutput> . </cfoutput>
+		<cfset sleep(3000) > 
+		<cfflush>
+	</cfloop>
 	<cfthread action="join" name="#tt#"/>
 
 	<!--- Zip path for download --->
