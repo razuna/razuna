@@ -1099,7 +1099,7 @@
 		<if condition="attributes.fromshare EQ 'T'">
 			<true>
 				<!-- CFC: Get folder or collection share options -->
-				<if condition="session.iscol EQ 'F'">
+				<if condition="isdefined('session.iscol') AND session.iscol EQ 'F'">
 					<true>
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(session.fid)" returnvariable="qry_folder" />
 					</true>
@@ -4561,7 +4561,7 @@
 	<!-- Basket include -->
 	<fuseaction name="basket_put_include">
 		<!-- Put session file_id into attributes -->
-		<if condition="!structkeyexists(attributes,'file_id')">
+		<if condition="!structkeyexists(attributes,'file_id') AND isdefined('session.file_id')">
 			<true>
 				<set name="attributes.file_id" value="#session.file_id#" />
 			</true>
