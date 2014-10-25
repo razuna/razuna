@@ -440,6 +440,14 @@
 	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
 		<cfzip action="create" ZIPFILE="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.zipname#" source="#attributes.intstruct.newpath#" recurse="true" timeout="300" />
 	</cfthread>
+	<!--- Get thread status --->
+	<cfset var thethread=cfthread["#basketname#"]> 
+	<!--- Output to page to prevent it from timing out while thread is running --->
+	<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+		<cfoutput> . </cfoutput>
+		<cfset sleep(3000) > 
+		<cfflush>
+	</cfloop>
 	<cfthread action="join" name="#basketname#" />
 	<!--- Remove the temp folder --->
 	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes">
@@ -460,7 +468,7 @@
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
 		<cfinvoke component="defaults" method="trans" transid="download_basket_output3" returnvariable="download_basket_output3" />
-		<cfoutput><strong style="color:green;"><a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">#download_basket_output3#</a></strong><br><br></cfoutput>
+		<cfoutput><br/><br/><strong style="color:green;"><a href="#session.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">#download_basket_output3#</a></strong><br><br></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->

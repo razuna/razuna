@@ -1113,6 +1113,16 @@
 					<cfset var thefilefield = "file">
 				<cfelse>
 					<cfset var thefilefield = "filedata">
+					<!--- Check to ensure filedata parameter was passed properly --->
+					<cfif !isdefined("filedata")>
+					<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>1</responsecode>
+<message>Missing 'filedata' parameter</message>
+</Response></cfoutput>
+					</cfsavecontent>
+					<cfreturn thexml>
+					</cfif>
 				</cfif>
 				<!--- Upload file --->
 				<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#thefilefield#" result="thefile">
