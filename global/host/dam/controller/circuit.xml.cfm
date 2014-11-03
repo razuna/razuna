@@ -3875,6 +3875,12 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- Check alias folder access if main folder has no access -->
+		<if condition="attributes.folderaccess EQ 'n'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaliasaccess(attributes.file_id)" returnvariable="attributes.folderaccess" />
+			</true>
+		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
@@ -3973,6 +3979,12 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- Check alias folder access if main folder has no access -->
+		<if condition="attributes.folderaccess EQ 'n'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaliasaccess(attributes.file_id)" returnvariable="attributes.folderaccess" />
+			</true>
+		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
@@ -4174,6 +4186,12 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- Check alias folder access if main folder has no access -->
+		<if condition="attributes.folderaccess EQ 'n'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaliasaccess(attributes.file_id)" returnvariable="attributes.folderaccess" />
+			</true>
+		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
@@ -4372,6 +4390,12 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- Check alias folder access if main folder has no access -->
+		<if condition="attributes.folderaccess EQ 'n'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaliasaccess(attributes.file_id)" returnvariable="attributes.folderaccess" />
+			</true>
+		</if>
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
