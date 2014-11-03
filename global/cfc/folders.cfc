@@ -3276,6 +3276,27 @@
 	<cfreturn folderaccess />
 </cffunction>
 
+<!--- SET ALIAS ACCESS PERMISSION --->
+<cffunction hint="SET ALIAS ACCESS PERMISSION" name="setaliasaccess" output="true" returntype="string" hint="Looks at all folders that asset is an alias in and get permission for asset based on the alias folder permissions">
+	<cfargument name="asset_id" required="true" type="string">
+	<cfset var folderaccess = "n">
+	<cfset var aliasfolders = "">
+	<cfquery datasource="#application.razuna.datasource#" name="aliasfolders" cachedwithin="1" region="razcache">
+		SELECT folder_id_r FROM ct_aliases WHERE asset_id_r =  <cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
+	<cfloop query="aliasfolders">
+		<cfset var permfolder = setaccess(folder_id_r)>
+		<cfif permfolder EQ "R" AND folderaccess NEQ "W" AND folderaccess NEQ "X">
+			<cfset var folderaccess = permfolder>
+		<cfelseif permfolder EQ "W" AND folderaccess NEQ "X">
+			<cfset var folderaccess = permfolder>
+		<cfelseif permfolder EQ "X">
+			<cfset var folderaccess = permfolder>
+		</cfif>
+	</cfloop>
+	<cfreturn folderaccess />
+</cffunction>
+
 <!--- THE FOLDERS OF THIS HOST --------------------------------------------------->
 <cffunction name="getserverdir" output="true">
 	<cfargument name="thepath" type="string" default="">
@@ -5733,6 +5754,14 @@
 			AND (img_group IS NULL OR img_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION
+			SELECT /* #variables.cachetoken#sv */ <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as id
+			FROM #session.hostdbprefix#images i, ct_aliases ct
+			WHERE i.img_id = ct.asset_id_r
+			AND ct.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND (i.img_group IS NULL OR i.img_group = '')
+			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfif>
 		<cfif arguments.thestruct.thekind EQ "ALL">
 			UNION ALL
@@ -5744,6 +5773,14 @@
 			AND (vid_group IS NULL OR vid_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION 
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as id
+			FROM #session.hostdbprefix#videos v, ct_aliases ct
+			WHERE v.vid_id = ct.asset_id_r
+			AND ct.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND (v.vid_group IS NULL OR v.vid_group = '')
+			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfif>
 		<cfif arguments.thestruct.thekind EQ "ALL">
 			UNION ALL
@@ -5755,6 +5792,14 @@
 			AND (aud_group IS NULL OR aud_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			UNION
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as id
+			FROM #session.hostdbprefix#audios a, ct_aliases ct
+			WHERE a.aud_id = ct.asset_id_r
+			AND ct.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND (a.aud_group IS NULL OR a.aud_group = '')
+			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfif>
 		<cfif arguments.thestruct.thekind EQ "ALL">
 			UNION ALL
@@ -5771,6 +5816,21 @@
 				AND (
 				lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
 				OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
+				)
+			</cfif>
+			UNION
+			SELECT <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as id
+			FROM #session.hostdbprefix#files f, ct_aliases ct
+			WHERE f.file_id = ct.asset_id_r
+			AND ct.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			<cfif arguments.thestruct.thekind EQ "other">
+				AND lower(f.file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+			<cfelseif arguments.thestruct.thekind NEQ "all">
+				AND (
+				lower(f.file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
+				OR lower(f.file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
 				)
 			</cfif>
 		</cfif>

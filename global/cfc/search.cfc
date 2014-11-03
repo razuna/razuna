@@ -179,7 +179,7 @@
 					<cfif q_start NEQ 1>
 						UNION ALL
 					</cfif>
-					SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, i.folder_id_r folder_id_r, i.img_group groupid,
+					SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, i.folder_id_r, i.img_group groupid,
 					i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 					i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 					i.path_to_asset, i.cloud_url, i.cloud_url_org, i.in_trash, it.img_description description, it.img_keywords keywords, 
@@ -324,10 +324,10 @@
 					WHEN NOT (i.img_group is null OR i.img_group='')
 					 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#images WHERE img_id = i.img_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
 					ELSE 1 END  = 1
-
+					 GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash, i.img_upc_number, i.expiry_date
 					<!--- Get Aliases --->
 					UNION ALL
-					SELECT /* #variables.cachetoken#search_images */ i.img_id id,  i.img_filename filename, ct.folder_id_r folder_id_r, i.img_group groupid,
+					SELECT /* #variables.cachetoken#search_images */ i.img_id id,  i.img_filename filename, ct.folder_id_r, i.img_group groupid,
 					i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 					i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 					i.path_to_asset, i.cloud_url, i.cloud_url_org, i.in_trash, it.img_description description, it.img_keywords keywords, 
@@ -336,7 +336,7 @@
 						SELECT so.asset_format
 						FROM #session.hostdbprefix#share_options so
 						WHERE i.img_id = so.group_asset_id
-						AND so.folder_id_r = i.folder_id_r
+						AND so.folder_id_r = max(i.folder_id_r)
 						AND so.asset_type = 'img'
 						AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					) AS theformat,
@@ -477,7 +477,7 @@
 			    	<cfset q_start = q_end + 1>
 			    	<cfset q_end = q_end + sqlInCluseLimit>
 			    </cfloop>
-				    GROUP BY i.img_id, i.img_filename, folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash, i.img_upc_number, i.expiry_date
+				    GROUP BY i.img_id, i.img_filename, ct.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash, i.img_upc_number, i.expiry_date
 				
 				</cfif> <!--- Image search end here --->
 				
@@ -501,7 +501,7 @@
 						<cfif q_start NEQ 1>
 							UNION ALL
 						</cfif>
-						SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r folder_id_r, '' as groupid,
+						SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, '' as groupid,
 						f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 						f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 						f.path_to_asset, f.cloud_url, f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
@@ -629,10 +629,10 @@
 						<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
 						WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('W','X') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 						ELSE 1 END  = 1
-						
+						GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash, f.file_upc_number, f.expiry_date
 						<!--- Get aliases --->
 						UNION ALL
-						SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, ct.folder_id_r folder_id_r, '' as groupid,
+						SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, ct.folder_id_r, '' as groupid,
 						f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 						f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 						f.path_to_asset, f.cloud_url, f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
@@ -765,7 +765,7 @@
 						<cfset q_start = q_end + 1>
 				    		<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
-			    	GROUP BY f.file_id, f.file_name, folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash, f.file_upc_number, f.expiry_date
+			    	GROUP BY f.file_id, f.file_name, ct.folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash, f.file_upc_number, f.expiry_date
 				</cfif><!--- Document search end here --->
 				
 				
@@ -791,7 +791,7 @@
 						<cfif q_start NEQ 1>
 							UNION ALL
 						</cfif>
-						SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, v.folder_id_r folder_id_r, v.vid_group groupid,
+						SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_group groupid,
 						v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 						v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 						v.path_to_asset, v.cloud_url, v.cloud_url_org, v.in_trash, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,  '0' isalias,
@@ -932,10 +932,11 @@
 						WHEN NOT (v.vid_group is null OR v.vid_group='')
 						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#videos WHERE vid_id = v.vid_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
 						ELSE 1 END  = 1
+						GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash, v.vid_upc_number, v.expiry_date
 
 					<!--- Get aliases --->
 					UNION ALL
-					SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, ct.folder_id_r folder_id_r, v.vid_group groupid,
+					SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, ct.folder_id_r, v.vid_group groupid,
 						v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 						v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 						v.path_to_asset, v.cloud_url, v.cloud_url_org, v.in_trash, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,  '1' isalias,
@@ -943,7 +944,7 @@
 							SELECT so.asset_format
 							FROM #session.hostdbprefix#share_options so
 							WHERE v.vid_id = so.group_asset_id
-							AND so.folder_id_r = v.folder_id_r
+							AND so.folder_id_r = max(v.folder_id_r)
 							AND so.asset_type = 'vid'
 							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 						) AS theformat,
@@ -1080,7 +1081,7 @@
 					<cfset q_start = q_end + 1>
 				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
-				    GROUP BY v.vid_id, v.vid_filename, folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash, v.vid_upc_number, v.expiry_date
+				    GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash, v.vid_upc_number, v.expiry_date
 				</cfif><!--- Video search end here --->
 				
 				<!--- Audio search start here --->
@@ -1104,7 +1105,7 @@
 						<cfif q_start NEQ 1>
 							UNION ALL
 						</cfif>
-						SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r folder_id_r, a.aud_group groupid,
+						SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_group groupid,
 						a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 						a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 						a.path_to_asset, a.cloud_url, a.cloud_url_org, a.in_trash, aut.aud_description description, aut.aud_keywords keywords, '0' as vwidth, '0' as vheight,  '0' isalias,
@@ -1245,9 +1246,10 @@
 						WHEN NOT (a.aud_group is null OR a.aud_group='')
 						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#audios WHERE aud_id = a.aud_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
 						ELSE 1 END  = 1
+						 GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash, a.aud_upc_number, a.expiry_date
 					<!--- Get aliases --->
 					UNION ALL
-					SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, ct.folder_id_r folder_id_r, a.aud_group groupid,
+					SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, ct.folder_id_r, a.aud_group groupid,
 						a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 						a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 						a.path_to_asset, a.cloud_url, a.cloud_url_org, a.in_trash, aut.aud_description description, aut.aud_keywords keywords, '0' as vwidth, '0' as vheight,  '1' isalias,
@@ -1255,7 +1257,7 @@
 							SELECT so.asset_format
 							FROM #session.hostdbprefix#share_options so
 							WHERE a.aud_id = so.group_asset_id
-							AND so.folder_id_r = a.folder_id_r
+							AND so.folder_id_r = max(a.folder_id_r)
 							AND so.asset_type = 'aud'
 							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 						) AS theformat,
@@ -1392,7 +1394,7 @@
 						<cfset q_start = q_end + 1>
 				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
-				    GROUP BY a.aud_id, a.aud_name, folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash, a.aud_upc_number, a.expiry_date
+				    GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash, a.aud_upc_number, a.expiry_date
 				</cfif><!--- Audio search end here --->
 				<!--- MySql OR H2 --->
 				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
