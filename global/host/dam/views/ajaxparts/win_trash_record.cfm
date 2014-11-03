@@ -47,7 +47,7 @@
 			<tr>
 				<td align="right" style="padding-top:10px;">
 					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search" OR attributes.loaddiv EQ "labels">
-						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&label_id=#attributes.label_id#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');<cfif attributes.loaddiv EQ "search">replacewin();<cfelse>replacewinlabels();</cfif>" class="button">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&label_id=#attributes.label_id#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');<cfif attributes.loaddiv NEQ "labels">replacewin();<cfelse>replacewinlabels();</cfif>" class="button">
 					<cfelse>
 						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
 					</cfif>
@@ -57,11 +57,12 @@
 	</div>
 	<script type="text/javascript">
 		// This is for search results
+
 		function replacewin(){
 			// Loop over file_ids and remove div
 			<cfloop list="#session.file_id#" index="i">
 				// Remove the div
-				$('###i#').remove();
+				$('div[id^=#i#]div[id$=#i#]').remove();
 				// Get the value in hidden field and convert to array
 				var theval = $('##searchlistids').val().split(',');
 				// Remove the id from hidden input field
