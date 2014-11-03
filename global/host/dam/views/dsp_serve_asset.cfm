@@ -59,7 +59,7 @@
 <!--- Default file name when prompted to download --->
 <cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
 <!--- Ignore content-length attribute for previews --->
-<cfif isdefined("v") AND v neq "p">
+<cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
 	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
 </cfif>
 <!--- File is external --->
