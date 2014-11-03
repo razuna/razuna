@@ -30,7 +30,39 @@
 			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("alias_remove")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="loadcontent('#attributes.loaddiv#','#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&iscol=F&folder_id=#attributes.folder_id#&loaddiv=#attributes.loaddiv#');destroywindow(1);" class="button"></td>
+			<td align="right" style="padding-top:10px;">
+				<cfif attributes.loaddiv contains "search">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="$('##div_forall').load('#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&iscol=F');replacewinalias();destroywindow(1);" class="button">
+				<cfelse>
+
+					<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="loadcontent('#attributes.loaddiv#','#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&iscol=F&folder_id=#attributes.folder_id#&loaddiv=#attributes.loaddiv#');destroywindow(1);" class="button">
+				</cfif>
+
+			</td>
 		</tr>
 	</table>
+	<script type="text/javascript">
+		// This is for search results
+		function replacewinalias(){
+			// Loop over file_ids and remove div
+			<cfloop list="#session.file_id#" index="i">
+				// Remove the div
+				$('div[id*=#i#_alias]').remove();
+				// Get the value in hidden field and convert to array
+				var theval = $('##searchlistids').val().split(',');
+				// Remove the id from hidden input field
+				var theids = $.grep(theval, function (theid){
+					return theid !== '#i#_alias';
+				});
+				// Save back to hidden filed as string
+				$('##searchlistids').val(theids);
+			</cfloop>
+			// Deselect all
+			CheckAllNot('searchformall');
+			// Close Windows
+			destroywindow(2);
+			destroywindow(1);
+			// $('##div_win_trash_record').html('<div style="padding:10px;">The asset(s) have been successfully trashed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+		}
+	</script>
 </cfoutput>
