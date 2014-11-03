@@ -1880,6 +1880,7 @@ Comment:<br>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("search")>
 	</cffunction>
 
 	<!--- Remove Alias --->
@@ -1897,6 +1898,7 @@ Comment:<br>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("search")>
 	</cffunction>
 
 	<!--- Check for alias --->
