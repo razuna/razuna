@@ -97,9 +97,9 @@
 	<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
 		<cfset var sortby = "filename_forsort">
 	<cfelseif session.sortby EQ "sizedesc">
-		<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+		<cfset var sortby = "size DESC">
 	<cfelseif session.sortby EQ "sizeasc">
-		<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+		<cfset var sortby = "size ASC">
 	<cfelseif session.sortby EQ "dateadd">
 		<cfset var sortby = "date_create DESC">
 	<cfelseif session.sortby EQ "datechanged">
@@ -115,7 +115,7 @@
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+				SELECT #Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, cast(v.vid_size as decimal(12,0))  size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')

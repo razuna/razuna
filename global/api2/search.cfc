@@ -59,9 +59,9 @@
 			<cfif arguments.sortby EQ "name">
 				<cfset var sortby = "filename_forsort">
 			<cfelseif arguments.sortby EQ "sizedesc">
-				<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+				<cfset var sortby = "size_num DESC">
 			<cfelseif arguments.sortby EQ "sizeasc">
-				<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+				<cfset var sortby = "size_num ASC">
 			<cfelseif arguments.sortby EQ "dateadd">
 				<cfset var sortby = "date_create DESC">
 			<cfelseif arguments.sortby EQ "datechanged">
@@ -228,7 +228,7 @@
 				i.path_to_asset, 
 				i.cloud_url, 
 				i.cloud_url_org,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, cast(i.img_size as decimal(12,0))  AS size_num,
 				i.img_width AS width,
 				i.img_height AS height,
 				it.img_description description, 
@@ -474,7 +474,7 @@
 				v.path_to_asset, 
 				v.cloud_url, 
 				v.cloud_url_org,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, 
+				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, cast(v.vid_size as decimal(12,0))  AS size_num,
 				v.vid_width AS width,
 				v.vid_height AS height,
 				vt.vid_description description, 
@@ -714,7 +714,7 @@
 				a.path_to_asset, 
 				a.cloud_url, 
 				a.cloud_url_org,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size,
+				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, cast(a.aud_size as decimal(12,0))  AS size_num,
 				0 AS width,
 				0 AS height,
 				aut.aud_description description, 
@@ -962,7 +962,7 @@
 				f.path_to_asset, 
 				f.cloud_url, 
 				f.cloud_url_org,
-				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, 
+				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, cast(f.file_size as decimal(12,0))  AS size_num,
 				0 AS width,
 				0 AS height,
 				ft.file_desc description, 
