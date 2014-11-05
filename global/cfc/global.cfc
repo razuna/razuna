@@ -1901,6 +1901,24 @@ Comment:<br>
 		<cfset resetcachetoken("search")>
 	</cffunction>
 
+	<!--- Remove many Aliases --->
+	<cffunction name="alias_remove_many" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Remove --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM ct_aliases
+		WHERE rec_uuid in (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#" list="true">)
+		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("search")>
+	</cffunction>
+
+
 	<!--- Check for alias --->
 	<cffunction name="getAlias" output="false">
 		<cfargument name="asset_id_r" type="string" required="true">

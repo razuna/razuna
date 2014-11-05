@@ -485,13 +485,13 @@ function storeids(theform){
 			if (document.forms[theform].elements[i].checked) {
 				fileids += document.forms[theform].elements[i].value + ',';
 			}
-			else {
+			/* else {
 				del_fileids += document.forms[theform].elements[i].value + ',';
-			}
+			}*/
 		}
 	}
 	// Store in session
-	$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids});
+	$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids,individual_select:true});
 }
 function storeone(theid) {
 	// Remove all first

@@ -34,7 +34,7 @@
 		<form name="#kind#form" id="#kind#form" action="#self#" onsubmit="combinedsavevid();return false;">
 		<input type="hidden" name="thetype" value="vid">
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
-		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+		<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<th width="100%" colspan="6">
