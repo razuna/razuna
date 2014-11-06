@@ -47,6 +47,8 @@
 			<tr>
 			<cfif attributes.in_collection>
 				<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("alert_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
+			<cfelseif isdefined('attributes.what') AND attributes.what contains 'basket'>
+				<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("basket_remove_record")#</td>
 			<cfelse>
 				<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("delete_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
 			</cfif>

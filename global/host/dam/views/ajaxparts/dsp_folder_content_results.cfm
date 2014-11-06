@@ -60,7 +60,7 @@
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
 		<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.qall.listid)#">
 		<input type="hidden" name="editids" id="editids" value="#session.search.edit_ids#">
-		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+		<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<!--- Header --->
 		<cfif attributes.folder_id NEQ 0>

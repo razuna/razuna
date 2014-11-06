@@ -408,6 +408,7 @@ Comment:<br>
 				WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cart_product_id#">
 				AND asset_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cart_file_type#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				ORDER BY asset_format DESC
 				</cfquery>
 				<!--- Create list --->
 				<cfloop query="qry_asset">
@@ -435,6 +436,7 @@ Comment:<br>
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="Yes">)
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			ORDER BY asset_format ASC
 			</cfquery>
 		<cfelseif structkeyexists(arguments.thestruct,"thumb_img_id")>
 			<!--- Get the thumb --->
@@ -444,6 +446,7 @@ Comment:<br>
 			FROM #session.hostdbprefix#share_options
 			WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thumb_img_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			ORDER BY asset_format ASC
 			</cfquery>
 		<cfelse>
 			<!--- Query --->
@@ -453,6 +456,7 @@ Comment:<br>
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			ORDER BY asset_format ASC
 			</cfquery>
 		</cfif>
 		<!--- Return --->
@@ -1900,6 +1904,24 @@ Comment:<br>
 		<cfset resetcachetoken("audios")>
 		<cfset resetcachetoken("search")>
 	</cffunction>
+
+	<!--- Remove many Aliases --->
+	<cffunction name="alias_remove_many" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Remove --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM ct_aliases
+		WHERE rec_uuid in (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#" list="true">)
+		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("search")>
+	</cffunction>
+
 
 	<!--- Check for alias --->
 	<cffunction name="getAlias" output="false">

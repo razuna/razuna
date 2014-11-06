@@ -3477,9 +3477,9 @@
 	<cfif session.sortby EQ "name">
 		<cfset var sortby = "filename_forsort">
 	<cfelseif session.sortby EQ "sizedesc">
-		<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+		<cfset var sortby = "size DESC">
 	<cfelseif session.sortby EQ "sizeasc">
-		<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+		<cfset var sortby = "size ASC">
 	<cfelseif session.sortby EQ "dateadd">
 		<cfset var sortby = "date_create DESC">
 	<cfelseif session.sortby EQ "datechanged">
@@ -3742,7 +3742,7 @@
 			GROUP BY so.asset_format
 		) AS theformat,
 		lower(i.img_filename) as filename_forsort,
-		i.img_size as size,
+		cast(i.img_size as decimal(12,0)) as size,
 		i.hashtag,
 		'' as labels, i.img_upc_number as upc_number, i.img_extension as extension, i.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
@@ -3804,7 +3804,7 @@
 			GROUP BY so.asset_format
 		) AS theformat,
 		lower(v.vid_filename) as filename_forsort,
-		v.vid_size as size,
+		cast(v.vid_size as decimal(12,0))  as size,
 		v.hashtag,
 		'' as labels, v.vid_upc_number as upc_number, v.vid_extension as extension, v.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
@@ -3863,7 +3863,7 @@
 			GROUP BY so.asset_format
 		) AS theformat,
 		lower(a.aud_name) as filename_forsort,
-		a.aud_size as size,
+		cast(a.aud_size as decimal(12,0))  as size,
 		a.hashtag,
 		'' as labels, a.aud_upc_number as upc_number, a.aud_extension as extension, a.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
@@ -3912,7 +3912,7 @@
 		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
-		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels, f.file_upc_number as upc_number, f.file_extension as extension, f.expiry_date, 'null' as customfields
+		lower(f.file_name) as filename_forsort, cast(f.file_size as decimal(12,0))  as size, f.hashtag, '' as labels, f.file_upc_number as upc_number, f.file_extension as extension, f.expiry_date, 'null' as customfields
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -4112,9 +4112,19 @@
 	<cfset theids.docids = "">
 	<cfset theids.vidids = "">
 	<cfset theids.audids = "">
+	<cfset theids.aliasids = "">
+	<cfset var isalias = "">
 	<!--- Get the ids and put them into the right struct --->
 	<cfloop list="#arguments.thestruct.id#" delimiters="," index="i">
-		<cfif i CONTAINS "-img">
+		<cfquery name="isalias" datasource="#application.razuna.datasource#">
+			SELECT rec_uuid FROM ct_aliases 
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(i,"-")#">
+		</cfquery>
+		<cfif isalias.recordcount NEQ 0>
+			<cfset var aliasid = isalias.rec_uuid>
+			<cfset theids.aliasids = aliasid & "," & theids.aliasids >
+		<cfelseif i CONTAINS "-img">
 			<cfset var imgid = listfirst(i,"-")>
 			<cfset theids.imgids = imgid & "," & theids.imgids >
 		<cfelseif  i CONTAINS "-doc">
@@ -5856,6 +5866,10 @@
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
 	<cfparam name="arguments.thestruct.del_file_id" default="">
+	<!--- Check if files are individual selects --->
+	<cfif isdefined("arguments.thestruct.individual_select") AND arguments.thestruct.individual_select EQ 'true'>
+		<cfset session.individual_select = true>
+	</cfif>
 	<!--- Now simply add the selected fileids to the session --->
 	<cfset session.file_id = "">
 	<cfset session.file_id = listappend(session.file_id,"#arguments.thestruct.file_id#")>
@@ -5863,9 +5877,9 @@
 	<cfif session.file_id NEQ "">
 		<cfset list_file_ids = "">
 		<cfloop index="idx" from="1" to="#listlen(session.file_id)#">
-			<cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)>
-				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>		
-			</cfif>
+			<!--- <cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)> --->
+				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>
+			<!--- </cfif> --->
 		</cfloop>
 		<cfset session.thefileid = list_file_ids>
 		<cfset session.file_id = list_file_ids>
@@ -6177,9 +6191,9 @@
 		<cfelseif session.sortby EQ "kind">
 			<cfset var sortby = "type">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+			<cfset var sortby = "size DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+			<cfset var sortby = "size ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -6246,7 +6260,7 @@
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			img_id as file_id,
 			lower(img_filename) as filename_forsort,
-			img_size as size,
+			cast(img_size as decimal(12,0)) as size,
 			img_create_time as date_create,
 			img_change_time as date_change,
 			hashtag,
@@ -6266,7 +6280,7 @@
 			SELECT 
 			vid_id as file_id,
 			lower(vid_filename) as filename_forsort,
-			vid_size as size,
+			cast(vid_size as decimal(12,0))  as size,
 			vid_create_time as date_create,
 			vid_change_time as date_change,
 			hashtag,
@@ -6286,7 +6300,7 @@
 			SELECT 
 			aud_id as file_id,
 			lower(aud_name) as filename_forsort,
-			aud_size as size,
+			cast(aud_size as decimal(12,0))  as size,
 			aud_create_time as date_create,
 			aud_change_time as date_change,
 			hashtag,
@@ -6306,7 +6320,7 @@
 			SELECT 
 			file_id as file_id,
 			lower(file_name) as filename_forsort,
-			file_size as size,
+			cast(file_size as decimal(12,0))  as size,
 			file_create_time as date_create,
 			file_change_time as date_change,
 			hashtag,
@@ -6387,7 +6401,7 @@
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			#theid# as file_id,
 			lower(#thename#) as filename_forsort,
-			#thesize# as size,
+			cast(#thesize# as decimal(12,0)) as size,
 			#thedatecreate# as date_create,
 			#thedatechange# as date_change,
 			#thehashtag#,

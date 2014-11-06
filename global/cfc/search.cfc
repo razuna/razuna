@@ -58,9 +58,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+			<cfset var sortby = "size DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+			<cfset var sortby = "size ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -1743,9 +1743,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+			<cfset var sortby = "size DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+			<cfset var sortby = "size ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -1864,9 +1864,9 @@
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+			<cfset var sortby = "size DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+			<cfset var sortby = "size ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">

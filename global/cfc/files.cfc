@@ -110,9 +110,9 @@
 		<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
 			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "cast(size as decimal(12,0)) DESC">
+			<cfset var sortby = "size DESC">
 		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "cast(size as decimal(12,0)) ASC">
+			<cfset var sortby = "size ASC">
 		<cfelseif session.sortby EQ "dateadd">
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
@@ -244,7 +244,7 @@
 				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 			</cfif>
 			
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, hashtag, 
 			file_create_time date_create, file_change_date date_change, f.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, f.file_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'doc' kind</cfif>
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">

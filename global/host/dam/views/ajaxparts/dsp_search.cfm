@@ -49,7 +49,7 @@
 			<div style="margin:0;padding:0;" id="refine_search_panel">
 				<form action="#self#" method="post" id="form_searchsearch" name="form_searchsearch">
 				<input type="hidden" name="#theaction#" value="c.search_simple">
-				<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+				<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 				<input type="hidden" name="searchtext" id="s_searchtext" value="">
 				<input type="hidden" name="listdocid" id="s_listdocid" value="#attributes.listdocid#">
 				<input type="hidden" name="listimgid" id="s_listimgid" value="#attributes.listimgid#">
