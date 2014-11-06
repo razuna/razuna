@@ -3796,6 +3796,14 @@
 			</true>
 		</if>
 	</fuseaction>
+
+	<!-- Trash aliases -->
+	<fuseaction name="alias_trash_many">
+		<!-- CFC: Trash -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="alias_remove_many(attributes)" />
+	</fuseaction>
+
+
 	<!-- Trash ALL -->
 	<fuseaction name="all_trash_many">
 		<!-- Param -->
@@ -3833,6 +3841,13 @@
 			<true>
 				<set name="attributes.id" value="#theids.audids#" />
 				<do action="aud_trash_many" />
+			</true>
+		</if>
+		<!-- For Aliases -->
+		<if condition="#theids.aliasids# NEQ ''">
+			<true>
+				<set name="attributes.id" value="#theids.aliasids#" />
+				<do action="alias_trash_many" />
 			</true>
 		</if>
 		<!-- Show the folder listing -->
@@ -4590,10 +4605,17 @@
 				<set name="attributes.file_id" value="#session.file_id#" />
 			</true>
 		</if>
-		<!-- IF we come from search we need to set the ids from the passed form submit -->
-		<if condition=" isdefined('attributes.thekind') AND attributes.thekind EQ 'search'">
+		<!-- If we come from search we need to set the ids from the passed form submit -->
+		<if condition="isdefined('attributes.thekind') AND attributes.thekind EQ 'search'">
 			<true>
-				<set name="attributes.file_id" value="#attributes.edit_ids#" />
+				<if condition="isdefined('session.individual_select') AND session.individual_select EQ 'true'">
+					<true>
+						<set name="attributes.file_id" value="#session.file_id#" />
+					</true>
+					<false>
+						<set name="attributes.file_id" value="#attributes.edit_ids#" />
+					</false>
+				</if>
 			</true>
 		</if>
 		<!-- CFC: Put file into basket -->
@@ -9914,12 +9936,14 @@
 		<!-- Params -->
 		<set name="attributes.file_id" value="" overwrite="false" />
 		<set name="attributes.thetype" value="" overwrite="false" />
+		<set name="session.individual_select" value="false" />
 		<!-- Put existing values together -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="store_selection(attributes)" />
 	</fuseaction>
 	
 	<!-- Store all ids -->
 	<fuseaction name="store_file_all">
+		<set name="session.individual_select" value="false" />
 		<if condition="attributes.folder_id NEQ '0'">
 			<true>
 				<!-- CFC: Store -->
@@ -9966,6 +9990,7 @@
 	<!-- Store all ids for search -->
 	<fuseaction name="store_file_search">
 		<!-- Simply set sessions -->
+		<set name="session.individual_select" value="false" />
 		<set name="session.file_id" value="#attributes.fileids#" />
 		<set name="session.thefileid" value="#session.file_id#" />
 		<if condition="isdefined('attributes.editids')">

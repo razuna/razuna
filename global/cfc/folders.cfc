@@ -4112,9 +4112,19 @@
 	<cfset theids.docids = "">
 	<cfset theids.vidids = "">
 	<cfset theids.audids = "">
+	<cfset theids.aliasids = "">
+	<cfset var isalias = "">
 	<!--- Get the ids and put them into the right struct --->
 	<cfloop list="#arguments.thestruct.id#" delimiters="," index="i">
-		<cfif i CONTAINS "-img">
+		<cfquery name="isalias" datasource="#application.razuna.datasource#">
+			SELECT rec_uuid FROM ct_aliases 
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#listfirst(i,"-")#">
+		</cfquery>
+		<cfif isalias.recordcount NEQ 0>
+			<cfset var aliasid = isalias.rec_uuid>
+			<cfset theids.aliasids = aliasid & "," & theids.aliasids >
+		<cfelseif i CONTAINS "-img">
 			<cfset var imgid = listfirst(i,"-")>
 			<cfset theids.imgids = imgid & "," & theids.imgids >
 		<cfelseif  i CONTAINS "-doc">
@@ -5856,6 +5866,10 @@
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
 	<cfparam name="arguments.thestruct.del_file_id" default="">
+	<!--- Check if files are individual selects --->
+	<cfif isdefined("arguments.thestruct.individual_select") AND arguments.thestruct.individual_select EQ 'true'>
+		<cfset session.individual_select = true>
+	</cfif>
 	<!--- Now simply add the selected fileids to the session --->
 	<cfset session.file_id = "">
 	<cfset session.file_id = listappend(session.file_id,"#arguments.thestruct.file_id#")>
@@ -5863,9 +5877,9 @@
 	<cfif session.file_id NEQ "">
 		<cfset list_file_ids = "">
 		<cfloop index="idx" from="1" to="#listlen(session.file_id)#">
-			<cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)>
-				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>		
-			</cfif>
+			<!--- <cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)> --->
+				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>
+			<!--- </cfif> --->
 		</cfloop>
 		<cfset session.thefileid = list_file_ids>
 		<cfset session.file_id = list_file_ids>
