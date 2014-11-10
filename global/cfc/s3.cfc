@@ -349,7 +349,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var versionID = "">
 		<cfset var binaryFileData = "">
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
-		<cfset var filename = listlast(arguments.filekey,FileSeparator())>
+		<cfset var filename = listlast(arguments.filekey,'\/')>
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
 			<cfset arguments.contenttype = getPageContext().getServletContext().getMimeType("#arguments.theasset#")>
@@ -385,22 +385,24 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var result = "">
 		<cfset var errorvar = "">
 		<cfset var thefilename = createuuid('')>
-		<cfset var thefile = gettempdirectory() & "#thefilename##theext#">
-		<cfset var classpath = "#expandpath('../../')#WEB-INF/lib">
-		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, FileSeparator()),"")>
+		<cfset var thescriptfile = gettempdirectory() & "#thefilename##theext#">
+		<cfset var classpath = replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
+		<cfset arguments.theasset = replace(replace(arguments.theasset,"/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
+		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
 		<cfset var chunksize = 10000> <!--- 10 mb chunk size by default --->
 		<!--- If file > 500mb then use 100mb chunk sizes --->
 		<cfif arguments.theassetsize GT 500000> 
 			<cfset var chunksize = 100000> 
 		</cfif>
 		<!--- Write script file --->
-		<cffile action="write" file="#thefile#" output="cd #classpath#; java HJSplit -s#chunksize# #arguments.theasset# #assetdir#" mode="777">
-		<cfexecute name="#thefile#" timeout="30" variable="result" errorVariable="errorvar"/>
+		<cffile action="write" file="#thescriptfile#" output="cd #classpath#" mode="777" addnewline="true">
+		<cffile action="append" file="#thescriptfile#" output="java HJSplit -s#chunksize# #arguments.theasset# #assetdir#" mode="777" addnewline="true">
+		<cfexecute name="#thescriptfile#" timeout="30" variable="result" errorVariable="errorvar"/>
 		<cfif len(errorvar)>
 			<cfthrow message="Error occurred while executing HJSplit: #errorvar#">
 		</cfif>
 		<!--- Delete script file --->
-		<cffile action="delete" file="#thefile#">
+		<cffile action="delete" file="#thescriptfile#">
 
 		<!--- ************* Get listing of the file parts  ******************* --->
 		<cfset var dirqry ="">
