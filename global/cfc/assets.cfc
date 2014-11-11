@@ -2117,7 +2117,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset resizeargs = "#thumb_width#x">
 			</cfif>
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 300 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Execute --->
@@ -4417,7 +4417,7 @@ This is the main function called directly by a single upload else from addassets
 										<cfset resizeargs = "#thumb_width#x">
 									</cfif>
 									<!--- Script: Create thumbnail --->
-									<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+									<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 300 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 									<!--- Script: Create images --->
 									<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 									<!--- Execute --->
@@ -6042,7 +6042,7 @@ This is the main function called directly by a single upload else from addassets
 								<cfset var resizeargs = "#thumb_width#x">
 							</cfif>
 							<!--- Script: Create thumbnail --->
-							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  #theorgfileflat# -resize #resizeargs# -colorspace sRGB -background white -flatten #path_to_file#/#thepdfimage#" mode="777">
+							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theimconvert# -density 300 -quality 100  #theorgfileflat# -resize #resizeargs# -colorspace sRGB -background white -flatten #path_to_file#/#thepdfimage#" mode="777">
 							<!--- Script: Create images --->
 							<cffile action="write" file="#thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 #theorgfile# #pdf_path#/#thepdfimage#" mode="777">
 							<!--- Execute --->
