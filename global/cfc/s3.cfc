@@ -393,6 +393,9 @@ Version 1.8 - Released: July 27, 2010
 		<!--- If file > 500mb then use 100mb chunk sizes --->
 		<cfif arguments.theassetsize GT 500000> 
 			<cfset var chunksize = 100000> 
+		<!--- If file > 5gb then use 500mb chunk sizes --->
+		<cfelseif arguments.theassetsize GT 5000000> 
+			<cfset var chunksize = 500000> 
 		</cfif>
 		<!--- Write script file --->
 		<cffile action="write" file="#thescriptfile#" output="cd #classpath#" mode="777" addnewline="true">
@@ -407,11 +410,9 @@ Version 1.8 - Released: July 27, 2010
 		<!--- ************* Get listing of the file parts  ******************* --->
 		<cfset var dirqry ="">
 		<cfdirectory action="list" directory="#assetdir#" name="dirqry">
-		
 		<cfquery name="dirqry" dbtype="query">
-			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%'
+			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name asc
 		</cfquery>
-
 		<cfset var partnum = 1>
 		<cfset var etags= []> <!--- intialize etag array to hold eatgs of all the file parts after upload --->
 
