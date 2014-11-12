@@ -411,7 +411,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var dirqry ="">
 		<cfdirectory action="list" directory="#assetdir#" name="dirqry">
 		<cfquery name="dirqry" dbtype="query">
-			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name asc
+			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
 		</cfquery>
 		<cfset var partnum = 1>
 		<cfset var etags= []> <!--- intialize etag array to hold eatgs of all the file parts after upload --->
