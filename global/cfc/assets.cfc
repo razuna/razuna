@@ -688,11 +688,10 @@
 	<cfset arguments.thestruct.ftp_passive = session.ftp_passive>
 	<cfset arguments.thestruct.ftp_user = session.ftp_user>
 	<cfset arguments.thestruct.ftp_pass = session.ftp_pass>
-	<cfinvoke method="addassetftp" thestruct="#arguments.thestruct#" />
 	<!--- Start the thread for adding --->
-	<!--- <cfthread intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetftp" thestruct="#attributes.intstruct#" />
-	</cfthread> --->
+	</cfthread>
 </cffunction>
 
 
