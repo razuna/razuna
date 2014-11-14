@@ -950,7 +950,11 @@
 	</cfloop>
 	<!--- Delete error folder if no errors encountered --->
 	<cfif !error AND isdefined("arguments.thestruct.sched_id")>
-		<cfset ftpremovedir(ftpdata=o, directory="#arguments.thestruct.errordir#", stoponerror=true)>
+		<cftry>
+			<cfset ftpremovedir(ftpdata=o, directory="#arguments.thestruct.errordir#", stoponerror=true)>
+			<cfcatch></cfcatch>
+		</cftry>
+		
 	</cfif>
 	<!--- Close connection --->
 	<cfset ftpclose(o)>
