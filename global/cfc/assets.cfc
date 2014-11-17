@@ -755,9 +755,10 @@
 			<!--- Create uuid --->
 			<!--- <cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run"> --->
-				<!--- Open connection --->
-				<!--- Get the file --->
-				<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
+				<!--- Get the file and lock it by name for 10 hours so no other process can access it again --->
+				<cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#">
+					<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
+				</cflock>
 				<cfif isdefined("arguments.thestruct.sched_id")>
 					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<cfset var done = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=true)>

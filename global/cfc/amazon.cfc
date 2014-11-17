@@ -88,14 +88,22 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
-		<!--- <cfset var aws = AmazonRegisterDataSource("up",application.razuna.awskey,application.razuna.awskeysecret,application.razuna.awslocation)> --->
-		<!--- Upload asset --->
-		<cfset AmazonS3write(
-			datasource=application.razuna.s3ds,
-			bucket=arguments.awsbucket,
-			key=arguments.key,
-			file=arguments.theasset
-		)>
+
+		<cfset var minsize = 5200000> <!--- min file size in bytes after which multipart upload is initiated. Must be >5.120 mb which is AWS minimum chunk size for multipart upload --->
+		<cfset var theassetsize = 0>
+		<cftry>
+			<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#arguments.theasset#" returnvariable="theassetsize">
+			<!--- If file size > 5.2 mb use multipart upload --->
+			<cfif theassetsize LT minsize>
+				<cfinvoke component="global.cfc.s3" method="putobject" bucketname='#arguments.awsbucket#' filekey='#arguments.key#' theasset='#arguments.theasset#' >
+			<cfelse>
+				<cfinvoke component="global.cfc.s3" method="putobjectmultipart" bucketname='#arguments.awsbucket#' filekey='#arguments.key#' theasset='#arguments.theasset#' theassetsize='#int(theassetsize/1000)#' >
+			</cfif>
+			<cfcatch>
+				<cfset cfcatch.custom_message = "Error in function amazon.upload">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			</cfcatch>
+		</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

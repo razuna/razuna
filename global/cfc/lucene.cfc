@@ -261,7 +261,9 @@
 		<!--- Remove lock file --->
 		<cfif !arguments.hosted>
 			<cftry>
-				<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+				<cfif fileExists("#GetTempDirectory()#/#lockfile#")>
+					<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+				</cfif>
 				<cfcatch type="any">
 					<cfset console("--- ERROR removing lock file: - #now()# ---")>
 					<cfset console(cfcatch)>
