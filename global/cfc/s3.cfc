@@ -389,7 +389,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var classpath = replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset arguments.theasset = replace(replace(arguments.theasset,"/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
-		<cfset var chunksize = 10000> <!--- 10 mb chunk size by default --->
+		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
 		<!--- If file > 500mb then use 100mb chunk sizes --->
 		<cfif arguments.theassetsize GT 500000> 
 			<cfset var chunksize = 100000> 
@@ -414,7 +414,7 @@ Version 1.8 - Released: July 27, 2010
 			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
 		</cfquery>
 		<cfset var partnum = 1>
-		<cfset var etags= []> <!--- intialize etag array to hold eatgs of all the file parts after upload --->
+		<cfset var etags= []> <!--- intialize etag array to hold etags of all the file parts after upload --->
 
 		<!--- ************* Upload the file parts  ******************* --->		
 		<cfloop query="dirqry">
