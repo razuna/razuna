@@ -89,11 +89,11 @@
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
 
-		<cfset var minsize = 10000000> <!--- min file size in bytes after which multipart upload is initiated. Must be >5.120 mb which is AWS minimum chunk size for multipart upload --->
+		<cfset var minsize = 5200000> <!--- min file size in bytes after which multipart upload is initiated. Must be >5.120 mb which is AWS minimum chunk size for multipart upload --->
 		<cfset var theassetsize = 0>
 		<cftry>
 			<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#arguments.theasset#" returnvariable="theassetsize">
-			<!--- If file size > 10 mb use multipart upload --->
+			<!--- If file size > 5.2 mb use multipart upload --->
 			<cfif theassetsize LT minsize>
 				<cfinvoke component="global.cfc.s3" method="putobject" bucketname='#arguments.awsbucket#' filekey='#arguments.key#' theasset='#arguments.theasset#' >
 			<cfelse>
