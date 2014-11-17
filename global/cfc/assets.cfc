@@ -688,11 +688,10 @@
 	<cfset arguments.thestruct.ftp_passive = session.ftp_passive>
 	<cfset arguments.thestruct.ftp_user = session.ftp_user>
 	<cfset arguments.thestruct.ftp_pass = session.ftp_pass>
-	<cfinvoke method="addassetftp" thestruct="#arguments.thestruct#" />
 	<!--- Start the thread for adding --->
-	<!--- <cfthread intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetftp" thestruct="#attributes.intstruct#" />
-	</cfthread> --->
+	</cfthread>
 </cffunction>
 
 
@@ -704,6 +703,7 @@
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfparam name="arguments.thestruct.folderpath" default="">
 	<cfset var ts = dateformat(now(),"mm.dd.yyyy")>
+	<cfset var error = false>
 	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
 	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
 	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
@@ -785,7 +785,8 @@
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 							)
 						</cfquery>
-						<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset error = true>
 					</cfif>
 				</cfif>
 			<!--- </cfthread> --->
@@ -908,6 +909,7 @@
 					</cfquery>
 					<cftry>
 					<cfset var dup= ftprename(ftpdata=o, oldfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+					<cfset error = true>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
@@ -936,7 +938,8 @@
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 							)
 						</cfquery>
-						<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset error = true>
 					<cfcatch></cfcatch>
 					</cftry>
 				</cfif>
@@ -946,6 +949,14 @@
 			</cfcatch>
 		</cftry>
 	</cfloop>
+	<!--- Delete error folder if no errors encountered --->
+	<cfif !error AND isdefined("arguments.thestruct.sched_id")>
+		<cftry>
+			<cfset ftpremovedir(ftpdata=o, directory="#arguments.thestruct.errordir#", stoponerror=true)>
+			<cfcatch></cfcatch>
+		</cftry>
+		
+	</cfif>
 	<!--- Close connection --->
 	<cfset ftpclose(o)>
 </cffunction>

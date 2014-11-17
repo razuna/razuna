@@ -1892,7 +1892,7 @@
 					i.thumb_extension ext, i.img_filename_org filename_org,'img' AS kind, i.is_available,
 					i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 					i.path_to_asset,i.cloud_url, i.cloud_url_org, i.in_trash, it.img_description description, it.img_keywords keywords, 
-					'0' AS vwidth, '0' AS vheight, 
+					'0' AS vwidth, '0' AS vheight, '0' AS isalias,
 					( 
 					SELECT so.asset_format 
 					FROM raz1_share_options so 
@@ -2008,7 +2008,7 @@
 					f.file_extension ext, f.file_name_org filename_org, f.file_type AS kind,f.is_available, 
 					f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url, 
 					f.path_to_asset, f.cloud_url,f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
-					'0' AS vwidth, '0' AS vheight, '0' AS theformat,LOWER(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
+					'0' AS vwidth, '0' AS vheight, '0' AS isalias,'0' AS theformat,LOWER(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
 					fo.folder_name, 
 					'' AS labels, 
 					'0' AS width, '0' AS height, '' AS xres, '' AS yres,'' AS colorspace, f.expiry_date expiry_date_actual,
@@ -2106,7 +2106,7 @@
 						SELECT /* #variables.cachetoken#search_upc_files */ v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_group groupid, 
 						v.vid_extension ext, v.vid_name_image filename_org,'vid' AS kind, v.is_available, 
 						v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url, 
-						v.path_to_asset,v.cloud_url, v.cloud_url_org, v.in_trash, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) AS vwidth,CAST(v.vid_height AS CHAR) AS vheight,
+						v.path_to_asset,v.cloud_url, v.cloud_url_org, v.in_trash, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) AS vwidth,CAST(v.vid_height AS CHAR) AS vheight, '0' AS isalias,
 						(
 						SELECT so.asset_format
 							FROM #session.hostdbprefix#share_options so
@@ -2218,7 +2218,7 @@
 						SELECT /* #variables.cachetoken#search_upc_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_group groupid, 
 						a.aud_extension ext, a.aud_name_org filename_org, 'aud' AS kind,a.is_available, 
 						a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url, 
-						a.path_to_asset, a.cloud_url,a.cloud_url_org, a.in_trash, aut.aud_description description, aut.aud_keywords keywords,'0' AS vwidth, '0' AS vheight, 
+						a.path_to_asset, a.cloud_url,a.cloud_url_org, a.in_trash, aut.aud_description description, aut.aud_keywords keywords,'0' AS vwidth, '0' AS vheight, '0' AS isalias,
 						(
 							SELECT so.asset_format
 							FROM #session.hostdbprefix#share_options so
