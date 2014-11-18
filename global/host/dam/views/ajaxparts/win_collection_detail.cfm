@@ -183,10 +183,10 @@
 													<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- The preview video --->
-												<tr>
+												<!--- <tr>
 													<td width="1%"><input type="radio" name="artofvideo#myid#" value="#myid#-video_preview"<cfif theart EQ "video_preview"> checked</cfif> /></td>
 													<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(vid_extension)# (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
-												</tr>
+												</tr> --->
 											</cfif>
 										</cfloop>
 										<!--- List the converted formats --->
