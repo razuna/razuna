@@ -88,6 +88,10 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="contentType" type="string" required="no" default="">
+		<cfargument name="awskey" type="string" required="no" default="#application.razuna.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#application.razuna.awskeysecret#">
+		<cfargument name="awsdatasource" type="string" required="no" default="#application.razuna.s3ds#">
 
 		<cfset var minsize = 5200000> <!--- min file size in bytes after which multipart upload is initiated. Must be >5.120 mb which is AWS minimum chunk size for multipart upload --->
 		<cfset var theassetsize = 0>
@@ -95,9 +99,11 @@
 			<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#arguments.theasset#" returnvariable="theassetsize">
 			<!--- If file size > 5.2 mb use multipart upload --->
 			<cfif theassetsize LT minsize>
-				<cfinvoke component="global.cfc.s3" method="putobject" bucketname='#arguments.awsbucket#' filekey='#arguments.key#' theasset='#arguments.theasset#' >
+				<cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey, awsdatasource=arguments.awsdatasource)>
+				<cfset singleobj.putobject(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#')>
 			<cfelse>
-				<cfinvoke component="global.cfc.s3" method="putobjectmultipart" bucketname='#arguments.awsbucket#' filekey='#arguments.key#' theasset='#arguments.theasset#' theassetsize='#int(theassetsize/1000)#' >
+				<cfset var multiobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey, awsdatasource=arguments.awsdatasource)>
+				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#',contenttype='#arguments.contenttype#')>
 			</cfif>
 			<cfcatch>
 				<cfset cfcatch.custom_message = "Error in function amazon.upload">

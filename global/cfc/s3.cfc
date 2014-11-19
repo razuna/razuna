@@ -14,16 +14,15 @@ Thanks to Jerad Sloan for the Cache Control headers.
 Version 1.8 - Released: July 27, 2010
 --->
 
-	<cfset variables.accessKeyId = application.razuna.awskey>
-	<cfset variables.secretAccessKey = application.razuna.awskeysecret>
-
 	<cffunction name="init" access="public" returnType="s3" output="false"
 				hint="Returns an instance of the CFC initialized.">
 		<cfargument name="accessKeyId" type="string" required="true" hint="Amazon S3 Access Key ID.">
 		<cfargument name="secretAccessKey" type="string" required="true" hint="Amazon S3 Secret Access Key.">
+		<cfargument name="awsdatasource" type="string" required="true" hint="Amazon datasource.">
 		
 		<cfset variables.accessKeyId = arguments.accessKeyId>
 		<cfset variables.secretAccessKey = arguments.secretAccessKey>
+		<cfset variables.awsdatasource = arguments.awsdatasource>
 	
 		<cfreturn this>
 	</cffunction>
@@ -318,7 +317,7 @@ Version 1.8 - Released: July 27, 2010
  --->
 
 		<cfset AmazonS3write(
-			datasource=application.razuna.s3ds,
+			datasource=variables.awsdatasource,
 			bucket=arguments.bucketName,
 			key=arguments.fileKey,
 			file=arguments.theasset
@@ -451,7 +450,7 @@ Version 1.8 - Released: July 27, 2010
 			<cfthread action="join" name="addasset_#tmp#" />
 			 --->
 			<cfset AmazonS3write(
-				datasource=application.razuna.s3ds,
+				datasource=variables.awsdatasource,
 				bucket=arguments.bucketName,
 				key='#arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#',
 				file='#assetdir#/#dirqry.name#'

@@ -582,7 +582,7 @@
 			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
 			<cfif isdefined("arguments.thestruct.localupload")AND NOT isdefined("arguments.thestruct.awsdatasource") >
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -609,14 +609,32 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cfset var theassetsize = "0">
+					<!--- Get Size --->
+					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
+					<cfif theassetsize LT 5200000>
+						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					</cfif>
+
 					<cftry>
-						<cfset AmazonS3write(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-							key='#arguments.thestruct.thename#'
-						)>
+						<cfif theassetsize LT 5200000>
+								<cfset AmazonS3write(
+								datasource='#arguments.thestruct.awsdatasource#',
+								bucket='#arguments.thestruct.awsbucket#',
+								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+								key='#arguments.thestruct.thename#'
+							)>
+						<cfelse>
+							<cfinvoke component="amazon" method="Upload">
+								<cfinvokeargument name="key" value="/#arguments.thestruct.thename#">
+								<cfinvokeargument name="theasset" value="#thefilepath#">
+								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
+							</cfinvoke>
+						</cfif>
+
 						<cfset AmazonS3setacl(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -634,10 +652,14 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfif theassetsize LT 5200000>
+							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						</cfif>
 						<cfcatch>
-							<!--- Rename file back if any error happens --->
-							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfif theassetsize LT 5200000>
+								<!--- Rename file back if any error happens --->
+								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
@@ -890,7 +912,7 @@
 			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
 			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 			<!--- If extension is missing then put it in  --->
@@ -927,14 +949,33 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cfset var theassetsize = "0">
+					<!--- Get Size --->
+					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
+					<cfif theassetsize LT 5200000>
+						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					</cfif>
+
 					<cftry>
-						<cfset AmazonS3write(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-							key='#arguments.thestruct.thefinalname#'
-						)>
+						<cfif theassetsize LT 5200000>
+								<cfset AmazonS3write(
+								datasource='#arguments.thestruct.awsdatasource#',
+								bucket='#arguments.thestruct.awsbucket#',
+								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+								key='#arguments.thestruct.thefinalname#'
+							)>
+						<cfelse>
+							<cfinvoke component="amazon" method="Upload">
+								<cfinvokeargument name="key" value="/#arguments.thestruct.thefinalname#">
+								<cfinvokeargument name="theasset" value="#thefilepath#">
+								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+								<cfinvokeargument name="contenttype" value="multipart/x-zip">
+								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
+							</cfinvoke>
+						</cfif>
+
 						<cfset AmazonS3setacl(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -952,16 +993,26 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfif theassetsize LT 5200000>
+							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						</cfif>
 						<cfcatch>
-							<!--- Rename file back if any error happens --->
-							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfif theassetsize LT 5200000>
+								<!--- Rename file back if any error happens --->
+								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
 					<cfcontinue>
 				</cfif>
+				<cfcontinue>
 			</cfif>
+
+
+
+
+
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
@@ -1168,7 +1219,7 @@
 			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
 			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource") >
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -1208,14 +1259,33 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cfset var theassetsize = "0">
+					<!--- Get Size --->
+					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
+					<cfif theassetsize LT 5200000>
+						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					</cfif>
+
 					<cftry>
-						<cfset AmazonS3write(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-							key='#arguments.thestruct.thenewname#'
-						)>
+						<cfif theassetsize LT 5200000>
+								<cfset AmazonS3write(
+								datasource='#arguments.thestruct.awsdatasource#',
+								bucket='#arguments.thestruct.awsbucket#',
+								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+								key='#arguments.thestruct.thenewname#'
+							)>
+						<cfelse>
+							<cfinvoke component="amazon" method="Upload">
+								<cfinvokeargument name="key" value="/#arguments.thestruct.thenewname#">
+								<cfinvokeargument name="theasset" value="#thefilepath#">
+								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+								<cfinvokeargument name="contenttype" value="multipart/x-zip">
+								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
+							</cfinvoke>
+						</cfif>
+
 						<cfset AmazonS3setacl(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -1229,14 +1299,18 @@
 							 key='#arguments.thestruct.thenewname#',
 							 expiration=epoch
 							)>
+							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
+								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+							</cfif>
 						</cfif>
-						<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+						<cfif theassetsize LT 5200000>
+							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
 						</cfif>
-						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
 						<cfcatch>
-							<!--- Rename file back if any error happens --->
-							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfif theassetsize LT 5200000>
+								<!--- Rename file back if any error happens --->
+								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
@@ -1244,6 +1318,7 @@
 				</cfif>
 				<cfcontinue>
 			</cfif>
+
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
@@ -1416,7 +1491,7 @@
 			<!--- If local directory for upload defined and this is not AWS copy then use the upload directory else create diretory --->
 			<cfif isdefined("arguments.thestruct.localupload") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfset arguments.thestruct.thedir = arguments.thestruct.uploaddir>
-			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#")>
+			<cfelseif NOT directoryexists("#arguments.thestruct.thedir#") AND NOT isdefined("arguments.thestruct.awsdatasource")>
 				<cfdirectory action="create" directory="#arguments.thestruct.thedir#" mode="775">
 			</cfif>
 
@@ -1456,14 +1531,33 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					<cfset var theassetsize = "0">
+					<!--- Get Size --->
+					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
+					<cfif theassetsize LT 5200000>
+						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+					</cfif>
+
 					<cftry>
-						<cfset AmazonS3write(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-							key='#arguments.thestruct.thenewname#'
-						)>
+						<cfif theassetsize LT 5200000>
+								<cfset AmazonS3write(
+								datasource='#arguments.thestruct.awsdatasource#',
+								bucket='#arguments.thestruct.awsbucket#',
+								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
+								key='#arguments.thestruct.thenewname#'
+							)>
+						<cfelse>
+							<cfinvoke component="amazon" method="Upload">
+								<cfinvokeargument name="key" value="/#arguments.thestruct.thenewname#">
+								<cfinvokeargument name="theasset" value="#thefilepath#">
+								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+								<cfinvokeargument name="contenttype" value="multipart/x-zip">
+								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
+							</cfinvoke>
+						</cfif>
+
 						<cfset AmazonS3setacl(
 							datasource='#arguments.thestruct.awsdatasource#',
 							bucket='#arguments.thestruct.awsbucket#',
@@ -1481,10 +1575,14 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						<cfif theassetsize LT 5200000>
+							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+						</cfif>
 						<cfcatch>
-							<!--- Rename file back if any error happens --->
-							<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							<cfif theassetsize LT 5200000>
+								<!--- Rename file back if any error happens --->
+								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
+							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
