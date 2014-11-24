@@ -12,21 +12,42 @@ Thanks to Joel Greutman for the fix on the getObject link.
 Thanks to Jerad Sloan for the Cache Control headers.
 
 Version 1.8 - Released: July 27, 2010
---->
 
-	<cffunction name="init" access="public" returnType="s3" output="false"
-				hint="Returns an instance of the CFC initialized.">
+Modified from original by Razuna to add suport for multipart uploads and getting aws URL based on regional endpoints
+--->
+	<cffunction name="init" access="public" returnType="s3" output="false" hint="Returns an instance of the CFC initialized.">
 		<cfargument name="accessKeyId" type="string" required="true" hint="Amazon S3 Access Key ID.">
 		<cfargument name="secretAccessKey" type="string" required="true" hint="Amazon S3 Secret Access Key.">
-		<cfargument name="awsdatasource" type="string" required="true" hint="Amazon datasource.">
-		
+		<cfargument name="storagelocation" type="string" required="true" hint="Amazon S3 bucket location">
 		<cfset variables.accessKeyId = arguments.accessKeyId>
 		<cfset variables.secretAccessKey = arguments.secretAccessKey>
-		<cfset variables.awsdatasource = arguments.awsdatasource>
-	
+		<cfset variables.awsURL = getS3Host('#arguments.storagelocation#')>
 		<cfreturn this>
 	</cffunction>
 	
+	<cffunction name="getS3Host" returntype="String" hint="Gets regional endpoint based on where bucket is located to reduce latency. See http://docs.aws.amazon.com/general/latest/gr/rande.html">
+		<cfargument name="amzregion" type="string" required="true">
+		<cfset var awsURL = 'https://s3.amazonaws.com'>
+		 <cfif arguments.amzRegion EQ "us-east">
+	  		<cfset awsURL = "https://s3.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "us-west-1">
+	  		<cfset awsURL = "https://s3-us-west-1.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "us-west-2">
+	  		<cfset awsURL = "https://s3-us-west-2.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "eu">
+	  		<cfset awsURL ="https://s3-eu-west-1.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "ap-southeast-1">
+	  		<cfset awsURL ="https://s3-ap-southeast-1.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "ap-southeast-2">
+	  		<cfset awsURL = "https://s3-ap-southeast-2.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "ap-northeast-1">
+	  		<cfset awsURL = "https://s3-ap-northeast-1.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "sa-east-1">
+	  		<cfset awsURL = "https://s3-sa-east-1.amazonaws.com">
+  		</cfif> 
+  		<cfreturn awsURL>
+	</cffunction>
+
 	<cffunction name="HMAC_SHA1" returntype="binary" access="private" output="false" hint="NSA SHA-1 Algorithm">
 	   <cfargument name="signKey" type="string" required="true" />
 	   <cfargument name="signMessage" type="string" required="true" />
@@ -74,7 +95,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 		
 		<!--- get all buckets via REST --->
-		<cfhttp method="GET" url="http://s3.amazonaws.com">
+		<cfhttp method="GET" url="#variables.awsURL#">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 		</cfhttp>
@@ -115,14 +136,14 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 		<cfif arguments.storageLocation NEQ "">
 			<cfsavecontent variable="strXML"><cfoutput>
-				<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>#arguments.storageLocation#</LocationConstraint></CreateBucketConfiguration>
+				<CreateBucketConfiguration xmlns="#variables.awsURL#/doc/2006-03-01/"><LocationConstraint>#arguments.storageLocation#</LocationConstraint></CreateBucketConfiguration>
 			</cfoutput></cfsavecontent>
 		<cfelse>
 			<cfset strXML = "">
 		</cfif>
 		
 		<!--- put the bucket via REST --->
-		<cfhttp method="PUT" url="http://s3.amazonaws.com/#arguments.bucketName#" charset="utf-8">
+		<cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName#" charset="utf-8">
 			<cfhttpparam type="header" name="Content-Type" value="text/html">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="x-amz-acl" value="#arguments.acl#">
@@ -180,12 +201,12 @@ Version 1.8 - Released: July 27, 2010
 			<cfif isNumeric(arguments.maxKeys)>
 				<cfset maxKeysString = "&max-keys=#arguments.maxKeys#">
 			</cfif>
-			<cfhttp method="GET" url="http://s3.amazonaws.com/#arguments.bucketName#?versions#prefixString##markerString##maxKeysString#">
+			<cfhttp method="GET" url="#variables.awsURL#/#arguments.bucketName#?versions#prefixString##markerString##maxKeysString#">
 				<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 				<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			</cfhttp>		
 		<cfelse>
-			<cfhttp method="GET" url="http://s3.amazonaws.com/#arguments.bucketName#">
+			<cfhttp method="GET" url="#variables.awsURL#/#arguments.bucketName#">
 				<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 				<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 				<cfif compare(arguments.prefix,'')>
@@ -263,16 +284,6 @@ Version 1.8 - Released: July 27, 2010
 		<cfreturn true>
 	</cffunction>
 
-	<cfscript>
-		public string function generateMd5Hash( required string body ) {
-
-		var bytes = binaryDecode( hash( body ), "hex" );
-
-		return( binaryEncode( bytes, "base64") );
-
-	}
-	</cfscript>
-
 	<cffunction name="putObject" access="public" output="true" returntype="boolean" description="Puts an object into a bucket using the multipart upload api.">
 		<cfargument name="bucketName" type="string" required="yes">
 		<cfargument name="fileKey" type="string" required="yes">
@@ -283,55 +294,36 @@ Version 1.8 - Released: July 27, 2010
 		<cfargument name="acl" type="string" required="no" default="public-read">
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
 
-		<!---
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
-		
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
+			<!--- Try finding content type by looking at mime types defined at server --->
 			<cfset arguments.contenttype = getPageContext().getServletContext().getMimeType("#arguments.theasset#")>
 		</cfif>
-		
-		<cfset var binaryFileData = "">
+		<cfset var binaryFileData = "">	
+		<!--- Read the data into a variable --->
+		<cffile action="readbinary" file="#arguments.theasset#" variable="binaryFileData">
+		<!--- Generate the MD5 hash for the Content-MD5 header. --->
+		<cfset var md5hash = binaryEncode(binarydecode(hashbinary(binaryfiledata),"hex"), "base64")>
 		<!--- Create a canonical string to send --->
-		<cfset var cs = "PUT\n\n#arguments.contentType#\n#dateTimeString#\nx-amz-acl:#arguments.acl#\nx-amz-storage-class:#arguments.storageClass#\n/#arguments.bucketName##arguments.fileKey#">
-		
+		<cfset var cs = "PUT\n#md5hash#\n#arguments.contenttype#\n#dateTimeString#\nx-amz-acl:#arguments.acl#\nx-amz-storage-class:#arguments.storageClass#\n/#arguments.bucketName##arguments.fileKey#">
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)> 
-		<!--- Read the image data into a variable --->
-		<cffile action="readbinary" file="#arguments.theasset#" variable="binaryFileData">
-		<!--- <cfset var md5hash = hashbinary("#arguments.theasset#")> --->
 		<!--- Send the file to amazon. The "X-amz-acl" controls the access properties of the file --->
-		<cfhttp method="PUT" url="http://s3.amazonaws.com/#arguments.bucketName##arguments.fileKey#" timeout="#arguments.HTTPtimeout#">
+		<cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#" timeout="#arguments.HTTPtimeout#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
+			<cfhttpparam type="header" name="Content-MD5" value="#md5hash#">
 			<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
-			<!--- <cfhttpparam type="header" name="Content-Disposition" value=" inline; filename='photo.jpg' "> --->
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="x-amz-acl" value="#arguments.acl#">
 			<cfhttpparam type="header" name="x-amz-storage-class" value="#arguments.storageClass#">
 			<cfhttpparam type="header" name="Cache-Control" value="max-age=#arguments.cacheControl#">
-			<!--- <cfhttpparam type="header" name="Content-MD5" value="#md5hash#"> --->
-			<!--- <cfhttpparam type="header" name="Content-Encoding" value="base64"> --->
-			<!--- <cfhttpparam type="body" value="#tostring(binaryFileData)#"> --->
-			<cfhttpparam type="body" value="#binaryFileData#">
+			<cfhttpparam type="body" value="#tostring(binaryFileData,'iso-8859-1')#">
 		</cfhttp> 
- --->
-
-		<cfset AmazonS3write(
-			datasource=variables.awsdatasource,
-			bucket=arguments.bucketName,
-			key=arguments.fileKey,
-			file=arguments.theasset
-		)>
-
-		<!--- Rename object so we can set cachecontrol it --->
-		<!--- <cfset renameObject(arguments.bucketName,arguments.fileKey,arguments.bucketName,arguments.fileKey,'50000')> --->
-
-		<!--- <cftry>
-			<cfset versionID = cfhttp.responseHeader['x-amz-request-id']>
-
-			<cfcatch></cfcatch>
-		</cftry>
-		 --->
+		<!--- If response is not a 2xx HTTP code (success) --->
+		<cfif isdefined("cfhttp.responseheader.status_code") AND !reFind( "^2\d\d", cfhttp.responseheader.status_code)>
+			<cfthrow  message="AWS file #arguments.fileKey# was not uploaded successfully" detail = "Explanation: #cfhttp.responseheader.explanation#;  Status Code: #cfhttp.responseheader.status_code#; Filecontent: #xmlformat(xmlparse(cfhttp.filecontent))#">
+		</cfif>
 		<cfreturn true>
 	</cffunction>
 
@@ -353,8 +345,6 @@ Version 1.8 - Released: July 27, 2010
 		<cfif arguments.contenttype EQ "">
 			<cfset arguments.contenttype = getPageContext().getServletContext().getMimeType("#arguments.theasset#")>
 		</cfif>
-		<!--- <cfset var md5hash = hashbinary("#arguments.theasset#")> --->
-
 
 		<!--- ************* Initiate multipart upload on AWS server and get the uploadid ******************* --->
 		<!--- Create a canonical string to send --->
@@ -362,8 +352,7 @@ Version 1.8 - Released: July 27, 2010
 		
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)>
-		
-		<cfhttp method="POST" url="http://s3.amazonaws.com/#arguments.bucketName##arguments.fileKey#?uploads" timeout="#arguments.HTTPtimeout#">
+		<cfhttp method="POST" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploads" timeout="#arguments.HTTPtimeout#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
@@ -371,7 +360,10 @@ Version 1.8 - Released: July 27, 2010
 			<cfhttpparam type="header" name="x-amz-acl" value="#arguments.acl#">
 			<cfhttpparam type="header" name="x-amz-storage-class" value="#arguments.storageClass#">
 		</cfhttp> 
-
+		<!--- If response is not a 2xx HTTP code (success) --->
+		<cfif isdefined("cfhttp.responseheader.status_code") AND !reFind( "^2\d\d", cfhttp.responseheader.status_code)>
+			<cfthrow  message="AWS file #arguments.fileKey# was not uploaded successfully" detail = "Explanation: #cfhttp.responseheader.explanation#;  Status Code: #cfhttp.responseheader.status_code#; Filecontent: #xmlformat(xmlparse(cfhttp.filecontent))#">
+		</cfif>
 		<cfset var uploadid =xmlparse(cfhttp.filecontent)>
 		<cfset uploadid  = uploadid.InitiateMultipartUploadResult.UploadId.xmltext>
 		
@@ -389,12 +381,16 @@ Version 1.8 - Released: July 27, 2010
 		<cfset arguments.theasset = replace(replace(arguments.theasset,"/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
 		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
-		<!--- If file > 500mb then use 100mb chunk sizes --->
-		<cfif arguments.theassetsize GT 500000> 
-			<cfset var chunksize = 100000> 
-		<!--- If file > 5gb then use 500mb chunk sizes --->
+		<!--- If file > 100mb then use 10mb chunk sizes --->
+		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 5000000> 
+			<cfset var chunksize = 10000> 
+		<!--- If file > 5gb then use 100mb chunk sizes --->
 		<cfelseif arguments.theassetsize GT 5000000> 
-			<cfset var chunksize = 500000> 
+			<cfset chunksize = 100000> 
+		</cfif>
+		<!--- If chunks are more than 10,000 then increase chunksize as AWS does not accept more than 10,000 parts --->
+		<cfif int(arguments.theassetsize /chunksize) GT 10000>
+			<cfset chunksize =  int(arguments.theassetsize /10000)>
 		</cfif>
 		<!--- Write script file --->
 		<cffile action="write" file="#thescriptfile#" output="cd #classpath#" mode="777" addnewline="true">
@@ -412,88 +408,131 @@ Version 1.8 - Released: July 27, 2010
 		<cfquery name="dirqry" dbtype="query">
 			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
 		</cfquery>
-		<cfset var partnum = 1>
+		<cfset var orig_dirqry = dirqry>
 		<cfset var etags= []> <!--- intialize etag array to hold etags of all the file parts after upload --->
-
-		<!--- ************* Upload the file parts  ******************* --->		
-		<cfloop query="dirqry">
-			<!---
-			<!--- Create a canonical string to send --->
-			<cfset var cs = "PUT\n\n#arguments.contentType#\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#">
+		<cfset var etag = "">
+		<cfset var tmp = createUUID('')>
+		<cfset var threadnamelist = "">
+		<cfset var retries = 0>
+		<!--- If all parts have not been uploaded then re-try upto 2 times --->
+		<cfloop condition="dirqry.recordcount NEQ 0 AND retries LTE 2">
+			<cfset retries = retries + 1>
+			<!--- ************* Upload the file parts  ******************* --->
+			<cfloop query="dirqry">
+				<cfset dateTimeString = GetHTTPTimeString(Now())>
+				<cfset var partnum = int(listlast(dirqry.name,'.'))>
+				<cffile action="readbinary" file="#assetdir#/#dirqry.name#" variable="binaryFileData">
+				<!--- Generate the MD5 hash for the Content-MD5 header. --->
+				<cfset var md5hash = binaryEncode(binarydecode(hashbinary(binaryfiledata),"hex"), "base64")>
+				<!--- Create a canonical string to send --->
+				<cfset var cs = "PUT\n#md5hash#\n#arguments.contentType#\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#">
+				<!--- Create a proper signature --->
+				<cfset var signature = createSignature(cs)>
+				 <cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
+					<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
+					<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
+					<cfhttpparam type="header" name="Date" value="#dateTimeString#">
+					<cfhttpparam type="header" name="Content-MD5" value="#md5hash#">
+					<cfhttpparam type="body" value="#tostring(binaryFileData,'iso-8859-1')#">
+				</cfhttp>
+				<!--- If response is not a 2xx HTTP code (success)  --->
+				<cfif isdefined("cfhttp.statuscode") AND !reFind( "^2\d\d", cfhttp.statuscode)>
+					<cflog application="no" file="AWS_Errors" type="Error" text="AWS part file #arguments.fileKey#?partNumber=#partnum# was not uploaded successfully, ErrorDetail: #cfhttp.errordetail#; FileContent: #cfhttp.filecontent#">
+				<cfelse>
+					<cfset etag = replace(cfhttp.responseheader.etag,'"','','ALL')>
+					<cfset etags ['#partnum#'] = etag>
+					<cffile action="delete" file="#assetdir#/#dirqry.name#">
+				</cfif>
+			</cfloop>
+			<cfdirectory action="list" directory="#assetdir#" name="dirqry">
+			<cfquery name="dirqry" dbtype="query">
+				SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
+			</cfquery>
+		</cfloop>
+		<!--- If all parts could not be uploaded even after 2 re-tries then throw error --->
+		<cfif dirqry.recordcount NEQ 0>
+			<!--- Delete leftover files --->
+			<cfloop query="dirqry">
+				<cffile action="delete" file="#assetdir#/#dirqry.name#">
+			</cfloop>
+			<cfset dateTimeString = GetHTTPTimeString(Now())>
+			<!--- Abort multipart upload --->
+			<cfset var cs = "DELETE\n\n\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#">
 			<!--- Create a proper signature --->
 			<cfset var signature = createSignature(cs)>
-			<cfset binaryFileData = filereadbinary("#assetdir#/#dirqry.name#")>
-
-			 <cfhttp method="PUT" url="http://s3.amazonaws.com/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
+			 <cfhttp method="DELETE" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
 				<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
-				<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
 				<cfhttpparam type="header" name="Date" value="#dateTimeString#">
-				<!--- <cfhttpparam type="header" name="Content-MD5" value="#md5hash#"> --->
-				<cfhttpparam type="body" value="#tostring(binaryFileData)#" encoded="true" mimetype="#arguments.contentType#">
-				
-			</cfhttp> 
-			<cfdump var="#cfhttp#">
-			<cfset var etag =replace(cfhttp.responseheader.etag,'"','','ALL')> 
-			<cfset etag = xmlSearch(cfhttp.filecontent, "string( //*[ local-name() = 'ETag' ] )" )>
-			Partnum = #partnum#; contenttype = #arguments.contenttype#, etag = #etag#; md5hash = #md5hash#<br/><cfflush/> 
-			<cfset arrayAppend( etags, etag )>--->
-
-			
-			<!--- <cfthread name="addasset_#partnum#" action="run" partnum = '#partnum#' uploadid= '#uploadid#'> 
-			<cfset AmazonS3write(
-				datasource=datasource,
-				bucket=arguments.bucketName,
-				key='#arguments.fileKey#?partNumber=#attributes.partnum#&uploadId=#attributes.uploadID#',
-				file='#assetdir#/#dirqry.name#'
-			)>
-			</cfthread> 
-			<cfthread action="join" name="addasset_#tmp#" />
-			 --->
-			<cfset AmazonS3write(
-				datasource=variables.awsdatasource,
-				bucket=arguments.bucketName,
-				key='#arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#',
-				file='#assetdir#/#dirqry.name#'
-			)>
-			<cfset partnum = partnum + 1>
-			<cffile action="delete" file="#assetdir#/#dirqry.name#">
-		</cfloop>
-
-		<!--- ************* Get list of parts uploaded and their etag values from AWS server ******************* --->
-		<!--- Get current datetime as it may have changed significantly after uploads and AWS will report time skew error if too far out from AWS server time --->
-		<cfset dateTimeString = GetHTTPTimeString(Now())>
-		<cfset var cs = "GET\n\n\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#">
-		<!--- Create a proper signature --->
-		<cfset var signature = createSignature(cs)>
-		 <cfhttp method="GET" url="http://s3.amazonaws.com/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
-			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
-			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
-		</cfhttp> 
-		<!--- <cfdump var='#cfhttp#'> --->
-		<cfset var response = xmlparse(cfhttp.filecontent)>
-		<!--- <cfdump var="#response#"> --->
-		<cfset var etagarr = response.ListPartsResult.Part>
-		<!--- <cfdump var="#etagarr#"> --->
-		<cfif isarray(etagarr)>
-			<cfloop array="#etagarr#" index="i">
-				<cfset arrayAppend( etags, replace(i.etag.xmltext,'"','','ALL') )>
-			</cfloop>
-		<cfelse>
-			<cfset arrayAppend( etags, replace(etagarr.etag.xmltext,'"','','ALL') )>
+			</cfhttp>
+			<cfthrow message="All AWS parts could not be successfully uploaded for file #filename#. Please see 'AWS_Errors log' in OpenBD admin for more details.">
 		</cfif>
+
+		<!--- UPLOAD PARTS IN PARALLEL: Runs into memory issues if parts are too big. Also AWS seems to be slow to respond to parallel requests so time advantage for smaller parts does not justify using parallel uploads
+		 <cfset var start = GetTickCount()>
+	 	<cfloop query="dirqry">
+			<cfset threadnamelist =  listappend(threadnamelist,'multipart_#dirqry.currentrow#_#tmp#')>
+			<cfthread name="multipart_#dirqry.currentrow#_#tmp#" action="run" assetdir='#assetdir#' arguments='#arguments#' variables='#variables#' currentrow='#dirqry.currentrow#' filename='#dirqry.name#' uploadid='#uploadid#' dateTimeString='#dateTimeString#'> 
+				<cftry>
+					<cffile action="readbinary" file="#attributes.assetdir#/#attributes.filename#" variable="binaryFileData">
+					<!--- Generate the MD5 hash for the Content-MD5 header. --->
+					<cfset var md5hash = binaryEncode(binarydecode(hashbinary(binaryfiledata),"hex"), "base64")>
+					<!--- Create a canonical string to send --->
+					<cfset var cs = "PUT\n#md5hash#\n#attributes.arguments.contentType#\n#attributes.dateTimeString#\n/#attributes.arguments.bucketName##attributes.arguments.fileKey#?partNumber=#attributes.currentrow#&uploadId=#attributes.uploadID#">
+					<!--- Create a proper signature --->
+					<!--- <cfset var signature = createSignature(cs)> --->
+					<cfset var signobj = createObject("component","global.cfc.s3").init(accessKeyId=variables.accessKeyId,secretAccessKey=variables.secretAccessKey)>
+					<cfset var signature = signobj.createSignature(cs)>
+					<cfset console("Start thread #attributes.currentrow#")>
+					<cfset var startthread = GetTickCount()>
+					 <cfhttp method="PUT" url="#variables.awsURL#/#attributes.arguments.bucketName##attributes.arguments.fileKey#?partNumber=#attributes.currentrow#&uploadId=#attributes.uploadID#" timeout="#attributes.arguments.HTTPtimeout#">
+						<cfhttpparam type="header" name="Authorization" value="AWS #attributes.variables.accessKeyId#:#signature#">
+						<cfhttpparam type="header" name="Content-MD5" value="#md5hash#">
+						<cfhttpparam type="header" name="Content-Type" value="#attributes.arguments.contentType#">
+						<cfhttpparam type="header" name="Date" value="#attributes.dateTimeString#">
+						<cfhttpparam type="body" value="#tostring(binaryFileData,'iso-8859-1')#">
+					</cfhttp>
+					<cfset var endthread = GetTickCount()>
+					<cfset var threadtottime = ((endthread-startthread)/1000)/60>
+					<cfset console("THREAD #attributes.currentrow# TIME")>
+					<cfset console(threadtottime)>
+					<cfset console("End thread #attributes.currentrow#")>
+					<cfset console(cfhttp)>
+					<cfset console("****************************************")>
+					<!--- If response is not 'OK' then throw error --->
+					<cfif isdefined("cfhttp.statuscode") AND cfhttp.statuscode DOES NOT CONTAIN '200'>
+						<cfthrow message="AWS part file #attributes.arguments.fileKey#?partNumber=#attributes.currentrow# was not uploaded successfully" detail = "Status Code: #cfhttp.statuscode#; Filecontent: #cfhttp.filecontent#">
+					</cfif>
+					<cffile action="delete" file="#attributes.assetdir#/#attributes.filename#">
+					<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+					<cfcatch><cfset console(cfcatch)></cfcatch>
+				</cftry>
+			</cfthread> 
+		</cfloop> 
+		<cfset var thethread=cfthread["multipart_1_#tmp#"]> 
+		<!--- Output to page to prevent it from timing out while thread is running --->
+		<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+			<cfoutput> #thethread.status#</cfoutput>
+			<cfset sleep(3000) > 
+			<cfflush>
+		</cfloop>
+		<cfthread action="join" name="#threadnamelist#"/>
+		<cfset var end = GetTickCount()>
+		<cfset var tottime = ((end-start)/1000)/60>
+		<cfset console("TIME")>
+		<cfset console(tottime)> --->
+
 		<!--- Make up XML to complete the multipart upload --->
 		<cfset xml = [ "<CompleteMultipartUpload>" ]>
-		<cfloop from="1" to="#dirqry.recordcount#" index="i">
+		<cfloop from="1" to="#orig_dirqry.recordcount#" index="i">
 			<cfset arrayAppend(xml,
 					"<Part>" &
-						"<PartNumber>#( i )#</PartNumber>" &
-						"<ETag>#etags[ i ]#</ETag>" &
+						"<PartNumber>#i#</PartNumber>" &
+						"<ETag>#etags[i]#</ETag>" &
 					"</Part>")
 			>
 		</cfloop>
 		<cfset arrayAppend( xml, "</CompleteMultipartUpload>" )>
 		<cfset body = arrayToList( xml, chr( 10 ) )>
-
 		<!--- ************* Sent request to complete multipart upload and combine all parts on AWS server ******************* --->
 		<cfset arguments.contenttype = "text\xml">
 		<!--- Create a canonical string to send --->
@@ -501,14 +540,16 @@ Version 1.8 - Released: July 27, 2010
 		
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)>
-
-		<cfhttp method="POST" url="http://s3.amazonaws.com/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
+		<cfhttp method="POST" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="body" value="#body#">
 		</cfhttp> 
-		<!--- <cfdump var="#cfhttp#"> --->
+		<!--- If response is not a 2xx HTTP code (success) then throw error --->
+		<cfif isdefined("cfhttp.responseheader.status_code") AND !reFind( "^2\d\d", cfhttp.responseheader.status_code)>
+			<cfthrow  message="AWS file #arguments.fileKey# was not uploaded successfully" detail = "Explanation: #cfhttp.responseheader.explanation#;  Status Code: #cfhttp.responseheader.status_code#; Filecontent: #xmlformat(xmlparse(cfhttp.filecontent))#">
+		</cfif>
 		<cfreturn true>
 	</cffunction>
 
@@ -528,7 +569,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 
 		<!--- Create the timed link for the image --->
-		<cfset timedAmazonLink = "http://s3.amazonaws.com/#arguments.bucketName#/#arguments.fileKey#?AWSAccessKeyId=#URLEncodedFormat(variables.accessKeyId)#&Expires=#epochTime#&Signature=#URLEncodedFormat(signature)#">
+		<cfset timedAmazonLink = "#variables.awsURL#/#arguments.bucketName#/#arguments.fileKey#?AWSAccessKeyId=#URLEncodedFormat(variables.accessKeyId)#&Expires=#epochTime#&Signature=#URLEncodedFormat(signature)#">
 
 		<cfreturn timedAmazonLink>
 	</cffunction>
@@ -547,7 +588,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 
 		<!--- delete the object via REST --->
-		<cfhttp method="DELETE" url="http://s3.amazonaws.com/#arguments.bucketName##arguments.fileKey#">
+		<cfhttp method="DELETE" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 		</cfhttp>
@@ -556,66 +597,54 @@ Version 1.8 - Released: July 27, 2010
 	</cffunction>
 
 
-	<cffunction name="copyObject" access="public" output="false" returntype="boolean" description="Copies an object.">
+	<cffunction name="copyObject" access="public" output="false" returntype="boolean" 
+				description="Copies an object.">
 		<cfargument name="oldBucketName" type="string" required="yes">
 		<cfargument name="oldFileKey" type="string" required="yes">
 		<cfargument name="newBucketName" type="string" required="yes">
 		<cfargument name="newFileKey" type="string" required="yes">
-		<cfargument name="cachecontrol" type="string" required="no" default="86400">
-		<cfargument name="acl" type="string" required="no" default="public-read">
-		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
-
+	
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
 
 		<!--- Create a canonical string to send based on operation requested ---> 
-		<!--- <cfset var cs = "PUT\n\n\n#dateTimeString#\nx-amz-copy-source:/#arguments.oldBucketName##arguments.oldFileKey#\n/#arguments.newBucketName##arguments.newFileKey#"> --->
-		
-		<cfset arguments.contenttype='application/xml'>
-
-		<cfset arguments.newFileKey = replace(arguments.newFileKey,'picture','hey')>
-		<cfset var cs = "PUT\n\n#arguments.contentType#\n#dateTimeString#\nx-amz-copy-source:/#arguments.oldBucketName##arguments.oldFileKey#\n/#arguments.newbucketName##arguments.newfileKey#">
+		<cfset var cs = "PUT\n\n\n#dateTimeString#\nx-amz-copy-source:/#arguments.oldBucketName#/#arguments.oldFileKey#\n/#arguments.newBucketName#/#arguments.newFileKey#">
 		
 		<!--- <cfset var cs = "PUT\n\napplication/octet-stream\n#dateTimeString#\nx-amz-copy-source:/#arguments.oldBucketName#/#arguments.oldFileKey#\n/#arguments.newBucketName#/#arguments.newFileKey#"> --->
 		
 		<!--- Create a proper signature --->
-		<cfset var signature = createSignature(cs)>
+		<cfset var signature = createSignature(cs)>	
 		
-		<!--- <cfif compare(arguments.oldBucketName,arguments.newBucketName) or compare(arguments.oldFileKey,arguments.newFileKey)> --->
+		<cfif compare(arguments.oldBucketName,arguments.newBucketName) or compare(arguments.oldFileKey,arguments.newFileKey)>
 		
 			<!--- delete the object via REST --->
-			<cfhttp method="PUT" url="http://s3.amazonaws.com/#arguments.newBucketName##arguments.newFileKey#">
-				<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
+			<cfhttp method="PUT" url="#variables.awsURL#/#arguments.newBucketName#/#arguments.newFileKey#">
 				<cfhttpparam type="header" name="Date" value="#dateTimeString#">
-				<!--- <cfhttpparam type="header" name="x-amz-acl" value="#arguments.acl#">
-				<cfhttpparam type="header" name="x-amz-storage-class" value="#arguments.storageClass#"> --->
-				<!--- <cfhttpparam type="header" name="x-amz-metadata-directive" value="REPLACE"> --->
-				<cfhttpparam type="header" name="Cache-Control" value="public, max-age=#arguments.cacheControl#">
-				<cfhttpparam type="header" name="x-amz-copy-source" value="/#arguments.oldBucketName##arguments.oldFileKey#">
+				<cfhttpparam type="header" name="x-amz-copy-source" value="/#arguments.oldBucketName#/#arguments.oldFileKey#">
 				<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			</cfhttp>
-			<!--- <cfset console(cfhttp.filecontent)> --->
-			
-		<!--- 	<cfreturn true>
+						
+			<cfreturn true>
 		<cfelse>
 			<cfreturn false>
-		</cfif> --->
-		<cfreturn true>
+		</cfif>
 	</cffunction>
 
-	<cffunction name="renameObject" access="public" output="false" returntype="boolean" description="Renames an object by copying then deleting original.">
+	<cffunction name="renameObject" access="public" output="false" returntype="boolean" 
+				description="Renames an object by copying then deleting original.">
 		<cfargument name="oldBucketName" type="string" required="yes">
 		<cfargument name="oldFileKey" type="string" required="yes">
 		<cfargument name="newBucketName" type="string" required="yes">
 		<cfargument name="newFileKey" type="string" required="yes">
-		<cfargument name="cachecontrol" type="string" required="no" default="86400">
-		<!--- <cfif compare(arguments.oldBucketName,arguments.newBucketName) or compare(arguments.oldFileKey,arguments.newFileKey)> --->
-			<cfset copyObject(arguments.oldBucketName,arguments.oldFileKey,arguments.newBucketName,arguments.newFileKey,arguments.cachecontrol)>
+		
+		<cfif compare(arguments.oldBucketName,arguments.newBucketName) or compare(arguments.oldFileKey,arguments.newFileKey)>
+			<cfset copyObject(arguments.oldBucketName,arguments.oldFileKey,arguments.newBucketName,arguments.newFileKey)>
 			<cfset deleteObject(arguments.oldBucketName,arguments.oldFileKey)>
 			<cfreturn true>
-		<!--- <cfelse>
+		<cfelse>
 			<cfreturn false>
-		</cfif> --->
+		</cfif>
 	</cffunction>
+
 
 	<cffunction name="getBucketVersioning" access="public" output="false" returntype="string" 
 				description="Determines versioning setting for a bucket.">
@@ -632,7 +661,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 
 		<!--- get the bucket via REST --->
-		<cfhttp method="GET" url="http://s3.amazonaws.com/#arguments.bucketName#?versioning">
+		<cfhttp method="GET" url="#variables.awsURL#/#arguments.bucketName#?versioning">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 		</cfhttp>
@@ -661,11 +690,11 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 
 		<cfsavecontent variable="strXML">
-			<VersioningConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Status><cfoutput>#arguments.versioning#</cfoutput></Status></VersioningConfiguration>
+			<VersioningConfiguration xmlns="#variables.awsURL#/doc/2006-03-01/"><Status><cfoutput>#arguments.versioning#</cfoutput></Status></VersioningConfiguration>
 		</cfsavecontent>
 
 		<!--- put the bucket via REST --->
-		<cfhttp method="PUT" url="http://s3.amazonaws.com/#arguments.bucketName#?versioning" charset="utf-8">
+		<cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName#?versioning" charset="utf-8">
 			<cfhttpparam type="header" name="Content-Type" value="text/html">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">

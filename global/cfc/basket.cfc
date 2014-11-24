@@ -609,38 +609,15 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cfset var theassetsize = "0">
-					<!--- Get Size --->
-					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
-					<cfif theassetsize LT 5200000>
-						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-					</cfif>
-
 					<cftry>
-						<cfif theassetsize LT 5200000>
-								<cfset AmazonS3write(
-								datasource='#arguments.thestruct.awsdatasource#',
-								bucket='#arguments.thestruct.awsbucket#',
-								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-								key='#arguments.thestruct.thename#'
-							)>
-						<cfelse>
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#arguments.thestruct.thename#">
-								<cfinvokeargument name="theasset" value="#thefilepath#">
-								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
-								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
-								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
-							</cfinvoke>
-						</cfif>
-
-						<cfset AmazonS3setacl(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							key='#arguments.thestruct.thename#',
-							acl = 'public-read'
-						)>
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#arguments.thestruct.thename#">
+							<cfinvokeargument name="theasset" value="#thefilepath#">
+							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+							<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
+						</cfinvoke>
 						<cfif art contains "doc">
 							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
@@ -652,14 +629,7 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cfif theassetsize LT 5200000>
-							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-						</cfif>
 						<cfcatch>
-							<cfif theassetsize LT 5200000>
-								<!--- Rename file back if any error happens --->
-								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
@@ -949,39 +919,16 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cfset var theassetsize = "0">
-					<!--- Get Size --->
-					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
-					<cfif theassetsize LT 5200000>
-						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-					</cfif>
-
 					<cftry>
-						<cfif theassetsize LT 5200000>
-								<cfset AmazonS3write(
-								datasource='#arguments.thestruct.awsdatasource#',
-								bucket='#arguments.thestruct.awsbucket#',
-								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-								key='#arguments.thestruct.thefinalname#'
-							)>
-						<cfelse>
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#arguments.thestruct.thefinalname#">
-								<cfinvokeargument name="theasset" value="#thefilepath#">
-								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-								<cfinvokeargument name="contenttype" value="multipart/x-zip">
-								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
-								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
-								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
-							</cfinvoke>
-						</cfif>
-
-						<cfset AmazonS3setacl(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							key='#arguments.thestruct.thefinalname#',
-							acl = 'public-read'
-						)>
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#arguments.thestruct.thefinalname#">
+							<cfinvokeargument name="theasset" value="#thefilepath#">
+							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="contenttype" value="multipart/x-zip">
+							<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+							<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
+						</cfinvoke>
 						<cfif art contains "original">
 							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
@@ -993,14 +940,7 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cfif theassetsize LT 5200000>
-							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-						</cfif>
 						<cfcatch>
-							<cfif theassetsize LT 5200000>
-								<!--- Rename file back if any error happens --->
-								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
@@ -1008,11 +948,6 @@
 				</cfif>
 				<cfcontinue>
 			</cfif>
-
-
-
-
-
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
@@ -1260,38 +1195,16 @@
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
 					<cfset var theassetsize = "0">
-					<!--- Get Size --->
-					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
-					<cfif theassetsize LT 5200000>
-						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-					</cfif>
-
 					<cftry>
-						<cfif theassetsize LT 5200000>
-								<cfset AmazonS3write(
-								datasource='#arguments.thestruct.awsdatasource#',
-								bucket='#arguments.thestruct.awsbucket#',
-								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-								key='#arguments.thestruct.thenewname#'
-							)>
-						<cfelse>
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#arguments.thestruct.thenewname#">
-								<cfinvokeargument name="theasset" value="#thefilepath#">
-								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-								<cfinvokeargument name="contenttype" value="multipart/x-zip">
-								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
-								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
-								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
-							</cfinvoke>
-						</cfif>
-
-						<cfset AmazonS3setacl(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							key='#arguments.thestruct.thenewname#',
-							acl = 'public-read'
-						)>
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#arguments.thestruct.thenewname#">
+							<cfinvokeargument name="theasset" value="#thefilepath#">
+							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="contenttype" value="multipart/x-zip">
+							<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+							<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
+						</cfinvoke>
 						<cfif art contains "video">
 							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
@@ -1303,14 +1216,7 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cfif theassetsize LT 5200000>
-							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-						</cfif>
 						<cfcatch>
-							<cfif theassetsize LT 5200000>
-								<!--- Rename file back if any error happens --->
-								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
@@ -1318,7 +1224,6 @@
 				</cfif>
 				<cfcontinue>
 			</cfif>
-
 
 			<!--- If skip duplicates is on then ignore file if it already exists intead of renaming it --->
 			<cfif arguments.thestruct.skipduplicates AND fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
@@ -1531,39 +1436,16 @@
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
-					<cfset var theassetsize = "0">
-					<!--- Get Size --->
-					<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
-					<cfif theassetsize LT 5200000>
-						<cffile action="rename" source="#thefilepath#" destination="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-					</cfif>
-
 					<cftry>
-						<cfif theassetsize LT 5200000>
-								<cfset AmazonS3write(
-								datasource='#arguments.thestruct.awsdatasource#',
-								bucket='#arguments.thestruct.awsbucket#',
-								file='#replacenocase(thefilepath,'.#fileext#','.zip')#',
-								key='#arguments.thestruct.thenewname#'
-							)>
-						<cfelse>
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#arguments.thestruct.thenewname#">
-								<cfinvokeargument name="theasset" value="#thefilepath#">
-								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-								<cfinvokeargument name="contenttype" value="multipart/x-zip">
-								<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
-								<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
-								<cfinvokeargument name="awsdatasource" value="#arguments.thestruct.awsdatasource#">
-							</cfinvoke>
-						</cfif>
-
-						<cfset AmazonS3setacl(
-							datasource='#arguments.thestruct.awsdatasource#',
-							bucket='#arguments.thestruct.awsbucket#',
-							key='#arguments.thestruct.thenewname#',
-							acl = 'public-read'
-						)>
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#arguments.thestruct.thenewname#">
+							<cfinvokeargument name="theasset" value="#thefilepath#">
+							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="contenttype" value="multipart/x-zip">
+							<cfinvokeargument name="awskey" value="#arguments.thestruct.awskey#">
+							<cfinvokeargument name="awssecretkey" value="#arguments.thestruct.awssecretkey#">
+							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
+						</cfinvoke>
 						<cfif art contains "audio">
 							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
@@ -1575,14 +1457,8 @@
 								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
-						<cfif theassetsize LT 5200000>
-							<cffile action="rename" destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-						</cfif>
+
 						<cfcatch>
-							<cfif theassetsize LT 5200000>
-								<!--- Rename file back if any error happens --->
-								<cffile action="rename"destination="#thefilepath#" source="#replacenocase(thefilepath,'.#fileext#','.zip')#">
-							</cfif>
 							<cfthrow detail="#cfcatch.detail#<br/>#cfcatch.message#">
 						</cfcatch>
 					</cftry>
@@ -1868,33 +1744,45 @@
 		<cfset var basketname = createuuid("")>
 
 		<cfset var aws_id = listlast(arguments.thestruct.bucket_aws,'_')>
+		<cfset var qry_aws_bucket ="">
+		<cfset var qry_aws_key ="">
+		<cfset var qry_aws_secret_key ="">
+		<cfset var qry_aws_location ="">
 
-		<cfquery name="aws_bucket" datasource="#variables.dsn#">
+		<cfquery name="qry_aws_bucket" datasource="#variables.dsn#">
 			SELECT set_pref
 			FROM #session.hostdbprefix#settings
 			WHERE set_id = <cfqueryparam value="#arguments.thestruct.bucket_aws#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 
-		<cfquery name="aws_key" datasource="#variables.dsn#">
+		<cfquery name="qry_aws_key" datasource="#variables.dsn#">
 			SELECT set_pref
 			FROM #session.hostdbprefix#settings
 			WHERE set_id = <cfqueryparam value="aws_access_key_id_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 
-		<cfquery name="aws_secret_key" datasource="#variables.dsn#">
+		<cfquery name="qry_aws_secret_key" datasource="#variables.dsn#">
 			SELECT set_pref
 			FROM #session.hostdbprefix#settings
 			WHERE set_id = <cfqueryparam value="aws_secret_access_key_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 
+		<cfquery name="qry_aws_location" datasource="#variables.dsn#">
+			SELECT set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE set_id = <cfqueryparam value="aws_bucket_location_#aws_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+
 		<!--- Register AWS datasource and set vars --->
-		<cfset arguments.thestruct.awsdatasource = AmazonRegisterDataSource('basketaws','#aws_key.set_pref#','#aws_secret_key.set_pref#')>
-		<cfset arguments.thestruct.awsbucket = aws_bucket.set_pref>
-		<cfset arguments.thestruct.awskey= aws_key.set_pref>
-		<cfset arguments.thestruct.awssecretkey= aws_secret_key.set_pref>
+		<cfset arguments.thestruct.awsdatasource = AmazonRegisterDataSource('basketaws','#qry_aws_key.set_pref#','#qry_aws_secret_key.set_pref#','#qry_aws_location.set_pref#')>
+		<cfset arguments.thestruct.awsbucket = qry_aws_bucket.set_pref>
+		<cfset arguments.thestruct.awskey= qry_aws_key.set_pref>
+		<cfset arguments.thestruct.awssecretkey= qry_aws_secret_key.set_pref>
+		<cfset arguments.thestruct.awslocation= qry_aws_location.set_pref>
 		<!--- Get list of files in AWS bucket --->
 		<cfset arguments.thestruct.s3list = AmazonS3list(
 			datasource='#arguments.thestruct.awsdatasource#',
