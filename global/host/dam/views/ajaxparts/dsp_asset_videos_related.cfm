@@ -32,10 +32,10 @@
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F">
 						<strong>#ucase(vid_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB, #vid_width#x#vid_height# pixel) [#vid_filename#]<br />
-						<a href="#myself#c.serve_file&file_id=#vid_id#&type=vid"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+						<a href="#myself#c.serve_file&file_id=#vid_id#&type=vid" target="_blank" ><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank" style="padding-left:20px;">
 					<cfelse>
-						<a href="#myself#c.serve_file&file_id=#vid_id#&type=vid"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+						<a href="#myself#c.serve_file&file_id=#vid_id#&type=vid" target="_blank" ><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
 					View</a>
