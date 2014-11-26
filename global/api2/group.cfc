@@ -44,7 +44,7 @@
 				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- If group does not exist do the insert --->
-				<cfif qry.recordcount EQ 0>
+				<cfif thexml.recordcount EQ 0>
 					<cfset thexml = querynew("responsecode,message")>
 					<cfset queryaddrow(thexml,1)>
 					<cfset querysetcell(thexml,"responsecode","1")>
@@ -79,7 +79,7 @@
 				WHERE grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- If group does not exist do the insert --->
-				<cfif qry.recordcount EQ 0>
+				<cfif thexml.recordcount EQ 0>
 					<cfset thexml = querynew("responsecode,message")>
 					<cfset queryaddrow(thexml,1)>
 					<cfset querysetcell(thexml,"responsecode","1")>
@@ -126,7 +126,7 @@
 				AND u.user_id = ct.ct_u_h_user_id
 				</cfquery>
 				<!--- If user does not exist do the insert --->
-				<cfif qry.recordcount EQ 0>
+				<cfif thexml.recordcount EQ 0>
 					<cfset thexml = querynew("responsecode,message")>
 					<cfset queryaddrow(thexml,1)>
 					<cfset querysetcell(thexml,"responsecode","1")>

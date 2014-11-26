@@ -151,7 +151,7 @@
 			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- If user does not exist do the insert --->
-			<cfif qry.recordcount EQ 0>
+			<cfif thexml.recordcount EQ 0>
 				<cfset thexml = querynew("responsecode,message")>
 				<cfset queryaddrow(thexml,1)>
 				<cfset querysetcell(thexml,"responsecode","1")>
