@@ -62,10 +62,16 @@
 					<cfif chk_s3.recordcount EQ 0>
 						<span style="color:red;"><em>(<cfset transvalues[1] = "Amazon S3">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span>
 					<cfelse>
+						<cfset bucket = "">
+						<cfloop query="qry_sf.sfprop">
+							<cfif qry_sf.sfprop.sf_prop_value contains 'aws_bucket'>
+								<cfset bucket = qry_sf.sfprop.sf_prop_value>
+							</cfif>
+						</cfloop>
 						Bucket: 
 						<select name="sf_s3_bucket">
 							<cfloop query="qry_s3_buckets">
-								<option value="#set_id#">#set_pref#</option>
+								<option value="#set_id#" <cfif set_id EQ bucket>selected="#bucket#"</cfif>>#set_pref#</option>
 							</cfloop>
 						</select>
 					</cfif>

@@ -10428,6 +10428,7 @@
 	<fuseaction name="sf_load_account">
 		<!-- Param -->
 		<set name="attributes.noview" value="false" overwrite="false" />
+		<set name="attributes.root" value="false" overwrite="false" /> 
 		<set name="session.sf_account" value="#attributes.sf_type#" />
 		<set name="attributes.path" value="/" overwrite="false" />
 		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
@@ -10435,6 +10436,7 @@
 		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" method="metadata_and_thumbnails" returnvariable="qry_sf_list">
 			<argument name="path" value="#attributes.path#" />
 			<argument name="sf_id" value="#session.sf_id#" />
+			<argument name="root" value="#attributes.root#" />
 		</invoke>
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />

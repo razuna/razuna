@@ -43,7 +43,7 @@
 				<!--- Load external accounts here --->
 				<div id="sf_account"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>
 				<script type="text/javascript">
-					$('##sf_account').load('#myself#c.sf_load_account', { sf_id: "#qry_sf.sf.sf_id#", sf_type: "#qry_sf.sf.sf_type#" })
+					$('##sf_account').load('#myself#c.sf_load_account', { sf_id: "#qry_sf.sf.sf_id#", sf_type: "#qry_sf.sf.sf_type#", root: "true" })
 				</script>
 			</cfif>
 		<!--- If this is a saved search --->

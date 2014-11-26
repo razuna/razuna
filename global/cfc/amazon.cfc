@@ -275,10 +275,11 @@
 	<cffunction name="metadata_and_thumbnails">
 		<cfargument name="path" required="false" default="">
 		<cfargument name="sf_id" required="true">
+		<cfargument name="root" required="false" default="false">
 		<!--- Param --->
 		<cfset var result = structNew()>
 		<!--- Check that we have a Amazon Datasource --->
-		<cfset var ar = awssourcecheck(arguments.sf_id)>
+		<cfset var ar = awssourcecheck(arguments.sf_id, arguments.root)>
 		<!--- Only continue if we are true --->
 		<cfif ar>
 			<!--- If path is only a / --->
@@ -301,12 +302,14 @@
 	<!--- Check RegisterDatasource --->
 	<cffunction name="awssourcecheck" access="private" returntype="String">
 		<cfargument name="sf_id" required="true">
+		<cfargument name="root" required="false" default="false" hint="If called from tree menu or not. Forces setting of proper bucket name from smart folder settings when called from root menu.">
 		<!--- Param --->
 		<cfset var exists = false>
 		<cfset var qry = "">
 		<cfset var qry_aws_settings = "">
+
 		<!--- Check if a session with this smartfolder id exists --->
-		<cfif !structKeyExists(session,"aws") OR !structKeyExists(session.aws,arguments.sf_id)>
+		<cfif !structKeyExists(session,"aws") OR !structKeyExists(session.aws,arguments.sf_id) OR arguments.root>
 			<cftry>
 				<!--- Query --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
