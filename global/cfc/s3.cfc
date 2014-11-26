@@ -382,11 +382,14 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
 		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
 		<!--- If file > 100mb then use 10mb chunk sizes --->
-		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 5000000> 
+		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 500000> 
 			<cfset var chunksize = 10000> 
-		<!--- If file > 5gb then use 100mb chunk sizes --->
+		<!--- If file > 500mb then use 100mb chunk sizes --->
+		<cfelseif arguments.theassetsize GT 500000 AND arguments.theassetsize LTE 5000000> 
+			<cfset var chunksize = 100000>
+		<!--- If file > 5gb then use 500mb chunk sizes --->
 		<cfelseif arguments.theassetsize GT 5000000> 
-			<cfset chunksize = 100000> 
+			<cfset chunksize = 500000> 
 		</cfif>
 		<!--- If chunks are more than 10,000 then increase chunksize as AWS does not accept more than 10,000 parts --->
 		<cfif int(arguments.theassetsize /chunksize) GT 10000>
