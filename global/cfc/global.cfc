@@ -100,6 +100,10 @@
 	<cffunction hint="CONVERT BYTES TO MB" name="converttomb" output="false">
 		<cfargument name="thesize" default="" required="yes" type="string">
 		<cfargument name="unit" default="MB" required="no" type="string">
+		<!--- Check to make sure size is numeric --->
+		<cfif not isnumeric(thesize)>
+			<cfreturn 0>
+		</cfif>
 		<!--- Set local variable --->
 		<cfset var divisor = 0>
 		<cfswitch expression="#arguments.unit#">
