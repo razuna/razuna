@@ -1271,6 +1271,7 @@
 			<argument name="themessage" value="#attributes.message#" />
 			<argument name="thepath" value="#attributes.thepath#" />
 			<argument name="isbasket" value="T" />
+			<argument name="from" value="#attributes.from#" />
 		</invoke>
 	</fuseaction>
 	<!-- Basket FTP Form -->
