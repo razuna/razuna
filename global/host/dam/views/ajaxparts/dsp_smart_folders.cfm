@@ -64,18 +64,20 @@
 					<cfif !sf_cloud_found>
 						<h1>#myFusebox.getApplicationData().defaults.trans("cloud_accounts")#</h1>
 					</cfif>
-					<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#&root=true');">
-						<div style="float:left;padding-right:5px;padding-bottom:5px;">
-							<cfif sf_type EQ "dropbox">
-								<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
-							<cfelseif sf_type EQ "amazon">
-								<img src="#dynpath#/global/host/dam/images/amazon-s3.gif" border="0" width="18px" />
-							</cfif>
-						</div>
-						<div style="float:left;text-decoration:none;padding-top:2px;">
-							#sf_name#
-						</div>
-					</a>
+					<cfif listfindnocase('r,w,x',myFusebox.getApplicationData().folders.setaccess(sf_id,true))>
+						<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#&root=true');">
+							<div style="float:left;padding-right:5px;padding-bottom:5px;">
+								<cfif sf_type EQ "dropbox">
+									<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
+								<cfelseif sf_type EQ "amazon">
+									<img src="#dynpath#/global/host/dam/images/amazon-s3.gif" border="0" width="18px" />
+								</cfif>
+							</div>
+							<div style="float:left;text-decoration:none;padding-top:2px;">
+								#sf_name#
+							</div>
+						</a>
+					</cfif>
 					<cfset sf_cloud_found = true>
 				</cfif>
 				

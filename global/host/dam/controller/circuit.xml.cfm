@@ -1271,6 +1271,7 @@
 			<argument name="themessage" value="#attributes.message#" />
 			<argument name="thepath" value="#attributes.thepath#" />
 			<argument name="isbasket" value="T" />
+			<argument name="from" value="#attributes.from#" />
 		</invoke>
 	</fuseaction>
 	<!-- Basket FTP Form -->
@@ -8341,6 +8342,15 @@
 		<set name="session.iscol" value="F" overwrite="false" />
 		<set name="attributes.loginto" value="dam" />
 		<set name="attributes.from_share" value="t" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="attributes.ad_server_secure" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_ldap')" returnvariable="attributes.ad_ldap" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_domain')" returnvariable="attributes.ad_domain" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ldap_dn')" returnvariable="attributes.ldap_dn" />
 		<!-- Check the user and let him in ot nor -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- User is found -->
@@ -9354,6 +9364,15 @@
 				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 			</true>
 		</if>
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_secure')" returnvariable="attributes.ad_server_secure" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_ldap')" returnvariable="attributes.ad_ldap" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_domain')" returnvariable="attributes.ad_domain" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ldap_dn')" returnvariable="attributes.ldap_dn" />
 		<!-- Check the user and let him in ot nor -->
 		<set name="attributes.loginto" value="dam" />
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
@@ -10410,6 +10429,7 @@
 	<fuseaction name="sf_load_account">
 		<!-- Param -->
 		<set name="attributes.noview" value="false" overwrite="false" />
+		<set name="attributes.root" value="false" overwrite="false" /> 
 		<set name="session.sf_account" value="#attributes.sf_type#" />
 		<set name="attributes.path" value="/" overwrite="false" />
 		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
@@ -10417,6 +10437,7 @@
 		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" method="metadata_and_thumbnails" returnvariable="qry_sf_list">
 			<argument name="path" value="#attributes.path#" />
 			<argument name="sf_id" value="#session.sf_id#" />
+			<argument name="root" value="#attributes.root#" />
 		</invoke>
 		<!-- CFC: Get access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />

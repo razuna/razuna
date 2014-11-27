@@ -88,14 +88,44 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
-		<!--- <cfset var aws = AmazonRegisterDataSource("up",application.razuna.awskey,application.razuna.awskeysecret,application.razuna.awslocation)> --->
-		<!--- Upload asset --->
-		<cfset AmazonS3write(
-			datasource=application.razuna.s3ds,
-			bucket=arguments.awsbucket,
-			key=arguments.key,
-			file=arguments.theasset
-		)>
+		<cfargument name="contentType" type="string" required="no" default="">
+		<cfargument name="awskey" type="string" required="no" default="#application.razuna.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#application.razuna.awskeysecret#">
+		<cfargument name="awslocation" type="string" required="no" default="#application.razuna.awslocation#">
+
+		<cfset var minsize = 5200000> <!--- min file size in bytes after which multipart upload is initiated. Must be >5.120 mb which is AWS minimum chunk size for multipart upload --->
+		<cfset var theassetsize = 0>
+		<cftry>
+			<!--- Detect content type if not specified--->
+			<cfif arguments.contenttype EQ "">
+				<!--- Try finding content type by looking at mime types defined at server --->
+				<cfset arguments.contenttype = getPageContext().getServletContext().getMimeType("#arguments.theasset#")>
+				<!--- If contenttype still empty then try looking it up in file_types tables --->
+				<cfif arguments.contenttype EQ "">
+					<cfset var getcontenttype = "">
+					<cfset var fileext = listlast(arguments.key,'.')>
+					<cfquery datasource="#application.razuna.datasource#" name="getcontenttype">
+						SELECT type_mimecontent, type_mimesubcontent FROM file_types WHERE type_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fileext#">
+					</cfquery>
+					<cfif getcontenttype.recordcount EQ 1 AND getcontenttype.type_mimecontent NEQ "" AND getcontenttype.type_mimesubcontent NEQ "">
+						<cfset arguments.contenttype = "#getcontenttype.type_mimecontent#/#getcontenttype.type_mimesubcontent#">
+					</cfif>
+				</cfif>
+			</cfif>
+			<cfinvoke component="global.cfc.global" method="getfilesize" filepath="#arguments.theasset#" returnvariable="theassetsize">
+			<!--- If file size > 5.2 mb use multipart upload --->
+			<cfif theassetsize LT minsize>
+				<cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
+				<cfset singleobj.putobject(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', contenttype="#arguments.contenttype#")>
+			<cfelse>
+				<cfset var multiobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
+				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#')>
+			</cfif>
+			<cfcatch>
+				<cfset cfcatch.custom_message = "Error in function amazon.upload">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			</cfcatch>
+		</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -245,10 +275,11 @@
 	<cffunction name="metadata_and_thumbnails">
 		<cfargument name="path" required="false" default="">
 		<cfargument name="sf_id" required="true">
+		<cfargument name="root" required="false" default="false">
 		<!--- Param --->
 		<cfset var result = structNew()>
 		<!--- Check that we have a Amazon Datasource --->
-		<cfset var ar = awssourcecheck(arguments.sf_id)>
+		<cfset var ar = awssourcecheck(arguments.sf_id, arguments.root)>
 		<!--- Only continue if we are true --->
 		<cfif ar>
 			<!--- If path is only a / --->
@@ -271,12 +302,14 @@
 	<!--- Check RegisterDatasource --->
 	<cffunction name="awssourcecheck" access="private" returntype="String">
 		<cfargument name="sf_id" required="true">
+		<cfargument name="root" required="false" default="false" hint="If called from tree menu or not. Forces setting of proper bucket name from smart folder settings when called from root menu.">
 		<!--- Param --->
 		<cfset var exists = false>
 		<cfset var qry = "">
 		<cfset var qry_aws_settings = "">
+
 		<!--- Check if a session with this smartfolder id exists --->
-		<cfif !structKeyExists(session,"aws") OR !structKeyExists(session.aws,arguments.sf_id)>
+		<cfif !structKeyExists(session,"aws") OR !structKeyExists(session.aws,arguments.sf_id) OR arguments.root>
 			<cftry>
 				<!--- Query --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">

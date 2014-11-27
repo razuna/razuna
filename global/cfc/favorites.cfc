@@ -131,6 +131,41 @@
 					)
 		END as thename,
 		CASE
+			WHEN f.fav_type = 'file'
+				THEN
+					CASE 
+						WHEN f.fav_kind = 'doc' 
+							THEN (
+								SELECT folder_id_r 
+								FROM #session.hostdbprefix#files 
+								WHERE file_id = f.fav_id
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								)
+						WHEN f.fav_kind = 'img'
+							THEN (
+								SELECT folder_id_r 
+								FROM #session.hostdbprefix#images 
+								WHERE img_id = f.fav_id
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								)
+						WHEN f.fav_kind = 'vid'
+							THEN (
+								SELECT folder_id_r 
+								FROM #session.hostdbprefix#videos 
+								WHERE vid_id = f.fav_id
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								)
+						WHEN f.fav_kind = 'aud'
+							THEN (
+								SELECT folder_id_r 
+								FROM #session.hostdbprefix#audios 
+								WHERE aud_id = f.fav_id
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								)
+					END
+			ELSE 0
+		END as folder_id,
+		CASE
 			WHEN f.fav_kind = 'doc' 
 				THEN (
 					SELECT file_extension

@@ -51,7 +51,7 @@
 						</a>		
 					<cfelse>
 						<cfif fav_kind EQ "img">
-							<a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#myid#&what=images&loaddiv=&folder_id=0','#thename#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#myid#&what=images&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
 								<cfloop query="qry_theimage">
 									<cfif myid EQ img_id>
 										<cfif link_kind NEQ "url">
@@ -67,7 +67,7 @@
 								</cfloop>	
 							</a>
 						<cfelseif fav_kind EQ "vid">
-							<a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#myid#&what=videos&loaddiv=&folder_id=0','#thename#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#myid#&what=videos&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
 								<cfloop query="qry_thevideo">
 									<cfif myid EQ vid_id>
 										<cfif link_kind NEQ "url">
@@ -83,7 +83,7 @@
 								</cfloop>	
 							</a>				
 						<cfelseif fav_kind EQ "aud">
-							<a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#myid#&what=audios&loaddiv=&folder_id=0','#thename#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#myid#&what=audios&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
 								<cfloop query="qry_theaudio">
 									<cfif myid EQ aud_id>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="120" border="0">
@@ -91,7 +91,7 @@
 								</cfloop>
 							</a>
 						<cfelse>
-							<a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#myid#&what=files&loaddiv=&folder_id=0','#thename#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#myid#&what=files&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
 								<cfloop query="qry_thefile">
 									<cfif myid EQ file_id>
 										<!--- Show the thumbnail --->

@@ -688,11 +688,10 @@
 	<cfset arguments.thestruct.ftp_passive = session.ftp_passive>
 	<cfset arguments.thestruct.ftp_user = session.ftp_user>
 	<cfset arguments.thestruct.ftp_pass = session.ftp_pass>
-	<cfinvoke method="addassetftp" thestruct="#arguments.thestruct#" />
 	<!--- Start the thread for adding --->
-	<!--- <cfthread intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetftp" thestruct="#attributes.intstruct#" />
-	</cfthread> --->
+	</cfthread>
 </cffunction>
 
 
@@ -704,6 +703,7 @@
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfparam name="arguments.thestruct.folderpath" default="">
 	<cfset var ts = dateformat(now(),"mm.dd.yyyy")>
+	<cfset var error = false>
 	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
 	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
 	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
@@ -755,9 +755,10 @@
 			<!--- Create uuid --->
 			<!--- <cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run"> --->
-				<!--- Open connection --->
-				<!--- Get the file --->
-				<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
+				<!--- Get the file and lock it by name for 10 hours so no other process can access it again --->
+				<cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#">
+					<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
+				</cflock>
 				<cfif isdefined("arguments.thestruct.sched_id")>
 					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<cfset var done = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=true)>
@@ -784,7 +785,8 @@
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 							)
 						</cfquery>
-						<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset error = true>
 					</cfif>
 				</cfif>
 			<!--- </cfthread> --->
@@ -907,6 +909,7 @@
 					</cfquery>
 					<cftry>
 					<cfset var dup= ftprename(ftpdata=o, oldfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+					<cfset error = true>
 					<cfcatch type="any">
 						<cfset cfcatch.custom_message = "Error in function assets.addassetftp">
 						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
@@ -935,7 +938,8 @@
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="false">
 							)
 						</cfquery>
-						<cfset var err = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.errordir#/#arguments.thestruct.thefilename#", stoponerror=true)>
+						<cfset error = true>
 					<cfcatch></cfcatch>
 					</cftry>
 				</cfif>
@@ -945,6 +949,14 @@
 			</cfcatch>
 		</cftry>
 	</cfloop>
+	<!--- Delete error folder if no errors encountered --->
+	<cfif !error AND isdefined("arguments.thestruct.sched_id")>
+		<cftry>
+			<cfset ftpremovedir(ftpdata=o, directory="#arguments.thestruct.errordir#", stoponerror=true)>
+			<cfcatch></cfcatch>
+		</cftry>
+		
+	</cfif>
 	<!--- Close connection --->
 	<cfset ftpclose(o)>
 </cffunction>
@@ -2117,7 +2129,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset resizeargs = "#thumb_width#x">
 			</cfif>
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 300 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 			<!--- Execute --->
@@ -2938,26 +2950,50 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- DB update --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET
-			<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
-				img_filename_org = <cfqueryparam value="#arguments.thestruct.image_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
-				<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
-					img_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
-				</cfif>
-				<cfif arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar>
-					img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images
+				SET
+				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					img_filename_org = <cfqueryparam value="#arguments.thestruct.image_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+					<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
+						img_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+					</cfif>
+					<cfif arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar>
+						img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+					<cfelse>
+						img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">,
+						img_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar"> 
+					</cfif>
 				<cfelse>
-					img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">,
-					img_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar"> 
+					img_filename_org = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
+					img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
 				</cfif>
-			<cfelse>
-				img_filename_org = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
-			img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
-			</cfif>
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
-			</cfquery>
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+			<!--- Try writing without metadata --->
+			<cfcatch>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images
+				SET
+				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
+					img_filename_org = <cfqueryparam value="#arguments.thestruct.image_name#.#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+					<cfif structKeyExists(arguments.thestruct,'qryGroupDetails') AND arguments.thestruct.qryGroupDetails.recordcount NEQ 0 >
+						img_group =  <cfqueryparam value="#arguments.thestruct.qryGroupDetails.id#" cfsqltype="cf_sql_varchar">,
+					</cfif>
+					<cfif arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar>
+						img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+					<cfelse>
+						img_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar"> 
+					</cfif>
+				<cfelse>
+					img_filename_org = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+				</cfif>
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+			</cfcatch>
+			</cftry>
 		<!--- </cfthread> --->
 		<!--- Check if image is an animated GIF. Remove double quotes from path if present --->
 		<cfset var isAnimGIF = isAnimatedGIF("#replace(arguments.thestruct.thesource,'"','','ALL')#", arguments.thestruct.thetools.imagemagick)>
@@ -4417,7 +4453,7 @@ This is the main function called directly by a single upload else from addassets
 										<cfset resizeargs = "#thumb_width#x">
 									</cfif>
 									<!--- Script: Create thumbnail --->
-									<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+									<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 300 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 									<!--- Script: Create images --->
 									<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
 									<!--- Execute --->
@@ -6042,7 +6078,7 @@ This is the main function called directly by a single upload else from addassets
 								<cfset var resizeargs = "#thumb_width#x">
 							</cfif>
 							<!--- Script: Create thumbnail --->
-							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theimconvert# -density 400 -quality 100  #theorgfileflat# -resize #resizeargs# -colorspace sRGB -background white -flatten #path_to_file#/#thepdfimage#" mode="777">
+							<cffile action="write" file="#thesh#" output="#arguments.thestruct.theimconvert# -density 300 -quality 100  #theorgfileflat# -resize #resizeargs# -colorspace sRGB -background white -flatten #path_to_file#/#thepdfimage#" mode="777">
 							<!--- Script: Create images --->
 							<cffile action="write" file="#thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 #theorgfile# #pdf_path#/#thepdfimage#" mode="777">
 							<!--- Execute --->

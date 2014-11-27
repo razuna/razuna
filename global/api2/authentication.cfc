@@ -96,6 +96,13 @@
 				WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				</cfquery>
+				<cfquery datasource="razuna_default" name="qry_config">
+				SELECT conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location
+				FROM razuna_config
+				</cfquery>
+				<cfset application.razuna.api.awskey = qry_config.conf_aws_access_key>
+				<cfset application.razuna.api.awskeysecret = qry_config.conf_aws_secret_access_key>
+				<cfset application.razuna.api.awslocation = qry_config.conf_aws_location>
 				<cfset application.razuna.awsbucket = qry.set2_aws_bucket>
 				<cfset application.razuna.awskey = application.razuna.api.awskey>
 				<cfset application.razuna.awskeysecret = application.razuna.api.awskeysecret>
