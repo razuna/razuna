@@ -113,9 +113,16 @@
 						<td colspan="2"><h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2></td>
 					</tr>
 				</cfif>
+				<cfquery name="org_share_setting" dbtype="query">
+					SELECT * FROM qry_share_options WHERE asset_format= 'org'
+				</cfquery>
 				<tr>
 					<td width="100%" nowrap="true" valign="top" align="center" style="padding-top:20px;padding-right:10px;">
-						<iframe src="#myself#ajax.audios_detail_flash&file_id=#attributes.file_id#&path_to_asset=#qry_detail.detail.path_to_asset#&aud_name=#qry_detail.detail.aud_name_org#&aud_extension=#qry_detail.detail.aud_extension#&link_kind=#qry_detail.detail.link_kind#&link_path_url=#URLEncodedFormat(qry_detail.detail.link_path_url)#&fromdetail=T<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">&cloud_url=#urlencodedformat(qry_detail.detail.cloud_url)#&cloud_url_org=#urlencodedformat(qry_detail.detail.cloud_url_org)#</cfif>" frameborder="false" scrolling="false" style="border:0px;width:400px;height:150px;" id="ifupload"></iframe>
+						<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
+							<iframe src="#myself#ajax.audios_detail_flash&file_id=#attributes.file_id#&path_to_asset=#qry_detail.detail.path_to_asset#&aud_name=#qry_detail.detail.aud_name_org#&aud_extension=#qry_detail.detail.aud_extension#&link_kind=#qry_detail.detail.link_kind#&link_path_url=#URLEncodedFormat(qry_detail.detail.link_path_url)#&fromdetail=T<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">&cloud_url=#urlencodedformat(qry_detail.detail.cloud_url)#&cloud_url_org=#urlencodedformat(qry_detail.detail.cloud_url_org)#</cfif>" frameborder="false" scrolling="false" style="border:0px;width:400px;height:150px;" id="ifupload"></iframe>
+						<cfelse>
+							<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" border="0" width="128" height="128">
+						</cfif>
 						<cfif qry_detail.detail.link_kind EQ "url">
 							<br /><a href="#qry_detail.detail.link_path_url#" target="_blank">#qry_detail.detail.link_path_url#</a>
 						<cfelseif qry_detail.detail.link_kind EQ "lan">
