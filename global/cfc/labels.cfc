@@ -1259,7 +1259,6 @@
 	<cffunction name="getchildlabels" access="public" returntype="string" hint="Returns all children labels for a given label">
 	    <cfargument name="parentid" type="string" required="yes" default=0 hint="labels_id of parent label for which to get children">
 	    <cfargument name="level" type="numeric" required="no" default=0>
-	    <cfset console("parentid=#parentid#")>
 	    <!--- Get the cachetoken for here --->
 	    <cfset variables.cachetoken = getcachetoken("labels")>
 	    <!--- scoping the variables that need to have their values kept private
