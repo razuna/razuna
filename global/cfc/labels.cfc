@@ -1107,8 +1107,10 @@
 	<!--- ADMIN: Remove label --->
 	<cffunction name="admin_remove" output="false" access="public">
 		<cfargument name="id" type="string">
-		<!--- Call this again to see if there are any more records below it --->
-		<cfinvoke method="label_get_ids" label_id="#arguments.id#" llist="#arguments.id#" returnVariable="llist" />
+		<!--- Get all child labels for parent label --->
+		<cfinvoke method="getchildlabels" parentid="#arguments.id#" level="0" returnVariable="llist" />
+		<!--- Append parent label to list --->
+		<cfset llist = listappend(llist,id)>
 		<!--- DB labels --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#labels
@@ -1254,27 +1256,47 @@
 		<cfreturn llist />
 	</cffunction>
 	
-	<!--- Label Ids get recursive --->
-	<cffunction name="label_get_ids" output="false" access="public" returnType="string">
-		<cfargument name="label_id" type="string" required="true">
-		<cfargument name="llist" default="" type="string" required="false">
-		<cfset var qry = "">
-			<!--- Query --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT label_id,label_id_r
-			FROM #session.hostdbprefix#labels
-			WHERE label_id_r = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
-			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-			</cfquery>
-			<!--- Set into list --->
-			<cfset llist = arguments.llist &","&qry.label_id>
-			<!--- Check the recursive call --->
-			<cfif qry.recordcount NEQ 0 AND ListContainsnocase(llist,qry.label_id,',')>
-				<!--- Call this again to see if there are any more records below it --->
-				<cfinvoke method="label_get_ids" label_id="#qry.label_id#" llist="#llist#" returnVariable="llist" />
-			</cfif>
-		<!--- Return --->
-		<cfreturn llist />
+	<cffunction name="getchildlabels" access="public" returntype="string" hint="Returns all children labels for a given label">
+	    <cfargument name="parentid" type="string" required="yes" default=0 hint="labels_id of parent label for which to get children">
+	    <cfargument name="level" type="numeric" required="no" default=0>
+	    <!--- Get the cachetoken for here --->
+	    <cfset variables.cachetoken = getcachetoken("labels")>
+	    <!--- scoping the variables that need to have their values kept private
+	    to a particular instance of the function call... --->
+	    <cfset var checkforkids = ""><!--- used to hold temporary check for children --->
+	    <cfset var objnav = ""><!--- used to hold temporary subqueries --->
+	   
+	    <!--- On our initial call to this function, we will purge the sublabellist  --->
+	    <cfif arguments.level eq 0>
+	        <cfset variables.sublabellist = "">
+	    </cfif>
+	    <!--- retrieve children of our current parent label --->
+	    <cfquery name="objnav" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	        SELECT /* #variables.cachetoken#getchildlabelsobjnav */ label_id, label_text
+	        FROM #session.hostdbprefix#labels 
+	        WHERE label_id_r = <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
+	        AND label_id <> <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
+	    </cfquery>
+	    <!--- loop through this parent's children... --->
+	    <cfloop query="objnav">
+	        <!--- check for children. if there are any, call this function recursively --->
+	        <cfquery name="checkforkids" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#getchildlabelscheckforkids*/ label_id, label_text
+			FROM  #session.hostdbprefix#labels 
+			WHERE label_id_r  = <cfqueryparam value="#objnav.label_id#" cfsqltype="cf_sql_varchar">
+			AND label_id <> <cfqueryparam value="#objnav.label_id#" cfsqltype="cf_sql_varchar">
+	        </cfquery>
+	        <cfif checkforkids.recordcount gt 0><!--- this child has kids too! add it to the sublabellist, then make the recursive call... --->
+				<cfset variables.sublabellist = listappend(variables.sublabellist, objnav.label_id) >
+				<cfset getchildlabels(parentid = objnav.label_id, level = arguments.level + 1) >
+	        <cfelse><!--- this child is childless...just add it to the sublabellist... --->
+				<cfset variables.sublabellist = listappend(variables.sublabellist, objnav.label_id)  >
+	        </cfif>
+	    </cfloop>
+	    <!--- return final variable to the caller... --->
+	    <cfif arguments.level eq 0>
+	        <cfreturn variables.sublabellist>
+	    </cfif>
 	</cffunction>
 	
 	<!--- Get the all labels for show --->
