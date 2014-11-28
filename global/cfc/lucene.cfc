@@ -1072,7 +1072,7 @@
 		<cfargument name="assetid" required="true">
 		<!--- Param --->
 		<cfset var qry = "">
-		<cfset recs2index = 500><!---  enter number of files to be indexed on one go --->
+		<cfset recs2index = 2000><!---  enter number of files to be indexed on one go --->
 		<!--- Select 500 newest files that need to be indexed --->
 		<cfquery datasource="#arguments.dsn#" name="qry">
 		SELECT <cfif arguments.thedatabase EQ "mssql"> TOP #recs2index#</cfif>* FROM (
