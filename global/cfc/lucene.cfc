@@ -109,6 +109,13 @@
 	<!--- INDEX: Update --->
 	<cffunction name="index_update_hosted" access="public" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
+		<cfthread action="run" intstruct="#arguments.thestruct#" priority="low"> 
+			<cfinvoke component="lucene" method="index_update_hosted_thread" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	</cffunction>
+
+	<cffunction name="index_update_hosted_thread" access="public" output="false" returntype="void">
+		<cfargument name="thestruct" type="struct">
 		<!--- Name of lock file --->
 		<cfset var lockfile = "lucene.lock">
 		<!--- Check if lucene.lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
