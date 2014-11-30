@@ -385,11 +385,8 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 500000> 
 			<cfset var chunksize = 10000> 
 		<!--- If file > 500mb then use 100mb chunk sizes --->
-		<cfelseif arguments.theassetsize GT 500000 AND arguments.theassetsize LTE 5000000> 
-			<cfset var chunksize = 100000>
-		<!--- If file > 5gb then use 500mb chunk sizes --->
-		<cfelseif arguments.theassetsize GT 5000000> 
-			<cfset chunksize = 500000> 
+		<cfelseif arguments.theassetsize GT 500000> 
+			<cfset var chunksize = 100000> 
 		</cfif>
 		<!--- If chunks are more than 10,000 then increase chunksize as AWS does not accept more than 10,000 parts --->
 		<cfif int(arguments.theassetsize /chunksize) GT 10000>
@@ -445,6 +442,10 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 					<cfset etag = replace(cfhttp.responseheader.etag,'"','','ALL')>
 					<cfset etags ['#partnum#'] = etag>
 					<cffile action="delete" file="#assetdir#/#dirqry.name#">
+				</cfif>
+				<!--- Limit threads --->
+				<cfif chunksize GTE 100000>
+					<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 				</cfif>
 			</cfloop>
 			<cfdirectory action="list" directory="#assetdir#" name="dirqry">

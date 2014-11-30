@@ -125,24 +125,31 @@
 					</tr>
 				</cfif>
 				<tr>
+					<cfquery name="org_share_setting" dbtype="query">
+						SELECT * FROM qry_share_options WHERE asset_format= 'org'
+					</cfquery>
 					<!--- Thumbnail --->
 					<td nowrap="true" valign="top" align="center" style="padding-top:20px;">
-						<cfif qry_detail.detail.link_kind NEQ "lan">
-							<div id="thevideodetail">
-								<cfif qry_detail.detail.link_kind EQ "url">
-									<cfif qry_detail.detail.link_path_url contains "http">
-										<a href="#qry_detail.detail.link_path_url#" target="_blank">#qry_detail.detail.link_path_url#</a>
+						<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
+							<cfif qry_detail.detail.link_kind NEQ "lan">
+								<div id="thevideodetail">
+									<cfif qry_detail.detail.link_kind EQ "url">
+										<cfif qry_detail.detail.link_path_url contains "http">
+											<a href="#qry_detail.detail.link_path_url#" target="_blank">#qry_detail.detail.link_path_url#</a>
+										<cfelse>
+											#qry_detail.detail.link_path_url#
+										</cfif>
 									<cfelse>
-										#qry_detail.detail.link_path_url#
+										<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#&#uniqueid#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a>
 									</cfif>
-								<cfelse>
-									<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#&#uniqueid#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a>
-								</cfif>
-							</div>
+								</div>
+							<cfelse>
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400"><br />
+								#qry_detail.detail.link_path_url#<br />
+								#myFusebox.getApplicationData().defaults.trans("link_videos_desc")#
+							</cfif>
 						<cfelse>
-							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400"><br />
-							#qry_detail.detail.link_path_url#<br />
-							#myFusebox.getApplicationData().defaults.trans("link_videos_desc")#
+							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400">
 						</cfif>
 					</td>
 				<cfif qry_detail.detail.link_kind EQ "url">
