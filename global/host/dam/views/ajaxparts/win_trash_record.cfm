@@ -38,6 +38,7 @@
 <cfparam name="attributes.released" default="false">
 <cfparam name="attributes.view" default="">
 <cfparam name="attributes.label_id" default="">
+<cfparam name="attributes.offset" default="0">
 <cfoutput>
 	<div id="div_win_trash_record">
 		<table border="0" cellpadding="5" cellspacing="5" width="100%">
@@ -47,9 +48,9 @@
 			<tr>
 				<td align="right" style="padding-top:10px;">
 					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search" OR attributes.loaddiv EQ "labels">
-						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&label_id=#attributes.label_id#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');<cfif attributes.loaddiv NEQ "labels">replacewin();<cfelse>replacewinlabels();</cfif>" class="button">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&label_id=#attributes.label_id#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#&offset=#attributes.offset#');<cfif attributes.loaddiv NEQ "labels">replacewin();<cfelse>replacewinlabels();</cfif>" class="button">
 					<cfelse>
-						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#&offset=#attributes.offset#');" class="button">
 					</cfif>
 				</td>
 			</tr>
