@@ -41,14 +41,10 @@
 <cfelse>
 	<cfset show_netpath = false>
 </cfif>
-<cfif session.user_os EQ 'mac'>
-	<cfset slash = "/">
-<cfelse>
-	<cfset slash = "\">
-</cfif>
 
 <script type="text/javascript">
       function copyToClipboard(text) {
+      	 text = decodeURIComponent(text);
 	  window.prompt("Copy to clipboard: Ctrl+C (CMD+C on Macs), Enter", text);
 	}
 </script>
@@ -213,9 +209,9 @@
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -241,7 +237,7 @@
 															<!--- Format the netwrk path variable --->
 															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\thumb_#img_id#.#thumb_extension#','\','#slash#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -269,9 +265,9 @@
 														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel) [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -295,7 +291,7 @@
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
 														<!--- Remove line breaks --->
-														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
 														Get Local Path
 														</a>
@@ -354,9 +350,9 @@
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -384,9 +380,9 @@
 														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel) [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -410,7 +406,7 @@
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
 														<!--- Remove line breaks --->
-														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
 														Get Local Path
 														</a>
@@ -461,9 +457,9 @@
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -491,9 +487,9 @@
 														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -517,7 +513,7 @@
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
 														<!--- Remove line breaks --->
-														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
 														Get Local Path
 														</a>
@@ -576,9 +572,9 @@
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\#filename_org#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
-															<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
 															Get Local Path
 															</a>
@@ -602,7 +598,7 @@
 														<!--- Format the netwrk path variable --->
 														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
 														<!--- Remove line breaks --->
-														<cfset thepath = REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL')>
+														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
 														Get Local Path
 														</a>
