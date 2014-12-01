@@ -24,6 +24,7 @@
 *
 --->
 <cfoutput>
+	<cfparam name="attributes.offset" default="0">
 	<div id="labels_tab">
 		<ul>	
 			<li><a href="##lab_content" onclick="loadcontent('lab_content','#myself#c.labels_main_assets&label_id=#attributes.label_id#&label_kind=assets');">#myFusebox.getApplicationData().defaults.trans("labels_content")# (#qry_labels_count.count_assets#)</a></li>
@@ -44,7 +45,7 @@
 		// The tabs
 		jqtabs("labels_tab");
 		// Initial load
-		loadcontent('lab_content','#myself#c.labels_main_assets&label_id=#attributes.label_id#&label_kind=assets');
+		loadcontent('lab_content','#myself#c.labels_main_assets&label_id=#attributes.label_id#&label_kind=assets&offset=#attributes.offset#');
 	</script>
 
 </cfoutput>

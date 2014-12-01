@@ -24,6 +24,7 @@
 *
 --->
 <!--- Define variables --->
+<cfparam name="attributes.offset" default="0">
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
@@ -32,10 +33,10 @@
 		<tr>
 			<td align="right" style="padding-top:10px;">
 				<cfif attributes.loaddiv contains "search">
-						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="$('##div_forall').load('#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&iscol=F');replacewinalias();destroywindow(1);" class="button">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="$('##div_forall').load('#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&iscol=F&offset=#attributes.offset#');replacewinalias();destroywindow(1);" class="button">
 				<cfelse>
 
-					<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="loadcontent('#attributes.loaddiv#','#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&iscol=F&folder_id=#attributes.folder_id#&loaddiv=#attributes.loaddiv#');destroywindow(1);" class="button">
+					<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("alias_remove_button")#" onclick="loadcontent('#attributes.loaddiv#','#myself#c.alias_remove&id=#attributes.id#&kind=<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&iscol=F&folder_id=#attributes.folder_id#&loaddiv=#attributes.loaddiv#&offset=#attributes.offset#');destroywindow(1);" class="button">
 				</cfif>
 
 			</td>
