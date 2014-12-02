@@ -235,7 +235,7 @@
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace('#netpath#\#session.hostid#\#path_to_asset#\thumb_#img_id#.#thumb_extension#','\','#slash#','ALL'))>
+															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\thumb_#img_id#.#thumb_extension#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 															<!--- Remove line breaks --->
 															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 															<a href="##" onclick="copyToClipboard ('#thepath#')";>
@@ -289,7 +289,7 @@
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel) 
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
-														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<cfset thepath = trim(replace(replace('#netpath#\#session.hostid##av_link_url#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 														<!--- Remove line breaks --->
 														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
@@ -404,7 +404,7 @@
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
-														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<cfset thepath = trim(replace(replace('#netpath#\#session.hostid##av_link_url#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 														<!--- Remove line breaks --->
 														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
@@ -511,7 +511,7 @@
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
-														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<cfset thepath = trim(replace(replace('#netpath#\#session.hostid##av_link_url#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 														<!--- Remove line breaks --->
 														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
@@ -596,7 +596,7 @@
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
-														<cfset thepath = trim(replace('#netpath#\#session.hostid##av_link_url#','\','#slash#','ALL'))>
+														<cfset thepath = trim(replace(replace('#netpath#\#session.hostid##av_link_url#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
 														<!--- Remove line breaks --->
 														<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
 														<a href="##" onclick="copyToClipboard ('#thepath#')";>
