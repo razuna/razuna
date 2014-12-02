@@ -24,11 +24,13 @@
 *
 --->
 <cfoutput>
+<cfset tmp = createuuid('')>
 <script type="text/javascript"  src='#dynpath#/global/js/ckeditor/ckeditor.js'> </script>
+<!--- Create unique message id to prevent conflicts with other processes that use this same code --->
 <script type="text/javascript">
-	CKEDITOR.replace('message',{height:200} );
+	CKEDITOR.replace('message_#tmp#',{height:200}); 
 </script>
-<form name="sendemailform" id="sendemailform" action="#self#" method="post">
+<form name="sendemailform_#tmp#" id="sendemailform_#tmp#" action="#self#" method="post">
 <input type="hidden" name="#theaction#" value="#xfa.submit#">
 <input type="hidden" name="file_id" value="#attributes.file_id#">
 <input type="hidden" name="thetype" value="#attributes.thetype#">
@@ -37,6 +39,7 @@
 <input type="hidden" name="artofvideo" id="sendemailform_artofvideo" value="">
 <input type="hidden" name="artofaudio" id="sendemailform_artofaudio" value="">
 <input type="hidden" name="artoffile" id="sendemailform_artoffile" value="">
+<input type="hidden" name="tmp" id="tmp" value="#tmp#">
 <input type="hidden" name="from" id="sendemailform_from" value="#qryuseremail#">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<cfif attributes.frombasket EQ "T">
@@ -240,7 +243,7 @@
 		<td valign="top" colspan="2">#myFusebox.getApplicationData().defaults.trans("message")#</td>
 	</tr>
 	<tr>
-		<td colspan="2"><textarea name="message">
+		<td colspan="2"><textarea name="message_#tmp#">
 			<p>EDIT THIS MESSAGE BEFORE SENDING!</p>
 
 			<cfif attributes.frombasket NEQ "T">
@@ -291,35 +294,39 @@
 		</textarea></td>
 	</tr>
 	<tr>
-		<td colspan="2"><div id="successemail" style="width:70%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("send_email")#" class="button"></div></td>
+		<td colspan="2"><div id="successemail_#tmp#" style="width:70%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("send_email")#" class="button"></div></td>
 	</tr>
 </table>
 </form>
 <script type="text/javascript">
-	 function checkzip()
-	 {
-		var ischecked = false;
-	 	$('##sendemailform input[type=checkbox]').each(function () 
-	 	{
-			if (this.checked) 
-				{ischecked  = true;}
-		});
-	           if (!ischecked || $("##zipname").val().length == 0)
-	          		{
-	          			$("input[name=sendaszip][value=F]").prop('checked', true);
-	          		}
-	 }
-	$("##sendemailform").validate({
+	<cfif attributes.frombasket EQ "F">
+		 function checkzip()
+		 {
+			var ischecked = false;
+		 	$('##sendemailform_#tmp# input[type=checkbox]').each(function () 
+		 	{
+				if (this.checked) 
+					{ischecked  = true;}
+			});
+		           if (!ischecked || $("##zipname").val().length == 0)
+		          		{
+		          			$("input[name=sendaszip][value=F]").prop('checked', true);
+		          		}
+		 }
+	</cfif>
+	$("##sendemailform_#tmp#").validate({
 		submitHandler: function(form) 
 		{
-		checkzip();
-		CKEDITOR.instances["message"].updateElement();
+		<cfif attributes.frombasket EQ "F">
+			checkzip();
+		</cfif>
+		CKEDITOR.instances["message_#tmp#"].updateElement();
 		// Show status
-		$("##successemail").css("display","");
-   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
+		$("##successemail_#tmp#").css("display","");
+   		$("##successemail_#tmp#").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
 		// Get values
-		var url = formaction("sendemailform");
-		var items = formserialize("sendemailform");
+		var url = formaction("sendemailform_#tmp#");
+		var items = formserialize("sendemailform_#tmp#");
 		// Submit Form
 		$.ajax(
 			{
@@ -327,7 +334,7 @@
 			url: url,
 		   	data: items,
 		   	success: function(){
-		   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+		   		$("##successemail_#tmp#").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		   	}
 		});
 		return false;
