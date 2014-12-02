@@ -46,7 +46,7 @@
 			<hr/>
 			<!--- email settings for new registration from site --->
 			<h4>#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</h4>
-			<table border"0">
+			<table border="0" width="100%">
 			<tr>
 				<td colspan="2">
 				#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_desc")#
@@ -77,7 +77,7 @@
 			<hr/>
 			<!--- New User Welcome Email settings  --->
 			<h4>#myFusebox.getApplicationData().defaults.trans("new_user_email_header")#</h4>
-			<table border"0">
+			<table border="0" width="100%">
 			<tr>
 				<td colspan="2">
 				#myFusebox.getApplicationData().defaults.trans("new_user_email_desc")#
@@ -95,7 +95,7 @@
 				#myFusebox.getApplicationData().defaults.trans("new_user_email_body")#
 				</td>
 				<td>
-				<textarea name="set2_new_user_email_body"  id="set2_new_user_email_body"  class="ckeditor">
+				<cftextarea name="set2_new_user_email_body"  id="set2_new_user_email_body">
 				<cfif  attributes.notifications.set2_new_user_email_body neq "">
 					#attributes.notifications.set2_new_user_email_body#
 				<cfelse>
@@ -103,14 +103,14 @@
 				Username: $username$<br>
 				Password: $password$
 				</cfif>
-				</textarea>
+				</cftextarea>
 				</td>
 			</tr>
 			</table>
 			<hr/>
 
 		<h4>#myFusebox.getApplicationData().defaults.trans("folder_subscribe_email_header")# </h4>
-		<table border"0">
+		<table border="0" width="100%">
 			<tr>
 				<td width="120"><label for="folder_subscribe_subject">#myFusebox.getApplicationData().defaults.trans("the_email_subject")#</label></td>
 				<td><cfinput type="text" name="folder_subscribe_subject" id="folder_subscribe_subject" maxlength="50" size="50" value="#attributes.notifications.set2_folder_subscribe_email_sub#"></td>
@@ -135,7 +135,7 @@
 		</table>
 		<hr/>
 		<h4>#myFusebox.getApplicationData().defaults.trans("asset_expiry_email_header")#</h4>
-		<table border"0">
+		<table border="0" width="100%">
 			<tr>
 			<td width="120"><label for="asset_expiry_subject">#myFusebox.getApplicationData().defaults.trans("the_email_subject")#</label></td>
 			<td><cfinput type="text" name="asset_expiry_subject" id="asset_expiry_subject" maxlength="50" size="50" value="#attributes.notifications.set2_asset_expiry_email_sub#"></td>
@@ -161,7 +161,7 @@
 		<hr/>
 		<h4>#myFusebox.getApplicationData().defaults.trans("duplicate_email_header")#</h4>
 		#myFusebox.getApplicationData().defaults.trans("duplicate_email_desc")#
-		<table border"0">
+		<table border="0" width="100%">
 			<tr>
 				<td width="120"><label for="duplicates_subject">#myFusebox.getApplicationData().defaults.trans("the_email_subject")#</label></td>
 				<td><cfinput type="text" name="duplicates_subject" id="duplicates_subject" maxlength="50" size="50" value="#attributes.notifications.set2_duplicates_email_sub#"></td>

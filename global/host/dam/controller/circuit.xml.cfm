@@ -1246,6 +1246,7 @@
 		<set name="attributes.what" value="basket" overwrite="false" />
 		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
+		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1268,7 +1269,7 @@
 			<argument name="to" value="#attributes.to#" />
 			<argument name="subject" value="#attributes.subject#" />
 			<argument name="attach" value="#thebasket#" />
-			<argument name="themessage" value="#attributes.message#" />
+			<argument name="themessage" value="#evaluate(attributes.message)#" />
 			<argument name="thepath" value="#attributes.thepath#" />
 			<argument name="isbasket" value="T" />
 			<argument name="from" value="#attributes.from#" />
@@ -4735,6 +4736,7 @@
 	<!-- Send Action -->
 	<fuseaction name="email_send_action">
 		<set name="attributes.embedurl" value="F" overwrite="false" />
+		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
 		<!-- If we need to send as attachments -->
 		<if condition="attributes.sendaszip EQ 'T'">
 			<true>
@@ -4778,7 +4780,7 @@
 					<argument name="bcc" value="#attributes.bcc#" />
 					<argument name="subject" value="#attributes.subject#" />
 					<argument name="attach" value="#thefile#" />
-					<argument name="themessage" value="#attributes.message#" />
+					<argument name="themessage" value="#evaluate(attributes.message)#" />
 					<argument name="thepath" value="#attributes.thepath#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
@@ -4795,7 +4797,7 @@
 					<argument name="bcc" value="#attributes.bcc#" />
 					<argument name="to" value="#attributes.to#" />
 					<argument name="subject" value="#attributes.subject#" />
-					<argument name="themessage" value="#attributes.message#" />
+					<argument name="themessage" value="#evaluate(attributes.message)#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
 				</invoke>
