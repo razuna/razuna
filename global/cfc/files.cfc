@@ -443,6 +443,9 @@
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<!--- Remove item from basket and favorites --->
+		<cfinvoke component="favorites" method="removeitem" favid="#arguments.thestruct.id#" />
+		<cfinvoke component="basket" method="removeitem" thefileid="#arguments.thestruct.id#" />
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
@@ -475,6 +478,9 @@
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 			<cfset arguments.thestruct.folder_action = true>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<!--- Remove item from basket and favorites --->
+		<cfinvoke component="favorites" method="removeitem" favid="#i#" />
+		<cfinvoke component="basket" method="removeitem" thefileid="#i#" />
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
