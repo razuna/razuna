@@ -193,7 +193,7 @@
 <cffunction name="removeitem" output="false">
 	<cfargument name="favid" default="" required="yes" type="string">
 	<!--- Remove --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#users_favorites
 	WHERE user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 	AND fav_id = <cfqueryparam value="#arguments.favid#" cfsqltype="CF_SQL_VARCHAR">

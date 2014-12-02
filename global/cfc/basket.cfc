@@ -287,7 +287,7 @@
 <cffunction name="removeitem" output="false">
 	<cfargument name="thefileid" default="" required="yes" type="string">
 	<!--- Remove --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#cart
 	WHERE cart_product_id = <cfqueryparam value="#arguments.thefileid#" cfsqltype="CF_SQL_VARCHAR">
 	AND cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
