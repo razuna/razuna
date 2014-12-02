@@ -1138,6 +1138,9 @@
 				</cfif>
 				<!--- Upload file --->
 				<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#thefilefield#" result="thefile">
+				<cfif thefile.filesize LT 0 AND isdefined('arguments.thestruct.file_size') >
+					<cfset thefile.filesize = arguments.thestruct.file_size>
+				</cfif>
 				<cfset thefile.serverFileExt = "#lcase(thefile.serverFileExt)#">
 				<!--- If the extension is longer then 9 chars --->
 				<cfif len(thefile.serverFileExt) GT 9>
