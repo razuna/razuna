@@ -1572,7 +1572,7 @@
 				</cfif>
 				SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
 				FROM #session.hostdbprefix#files_desc
-				WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
+				WHERE file_id_r IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
 				AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfset q_start = q_end + 1>
