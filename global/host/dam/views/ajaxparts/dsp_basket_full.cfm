@@ -125,14 +125,16 @@
 				<td>#myFusebox.getApplicationData().defaults.trans("empty_basket")#</td>
 			</tr>
 		<cfelse>
-			<!--- Select All --->
-			<tr>
-				<td colspan="4" style="padding-top:15px;">
-					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
-					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect #myFusebox.getApplicationData().defaults.trans("originals")#</a>
-					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
-				</td>
-			</tr>
+			<cfif isadmin OR !qry_customization.hide_select_links>
+				<!--- Select All --->
+				<tr>
+					<td colspan="4" style="padding-top:15px;">
+						<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
+						<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect #myFusebox.getApplicationData().defaults.trans("originals")#</a>
+						<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
+					</td>
+				</tr>
+			</cfif>
 			<cfif attributes.fromshare EQ "T" AND qry_folder.share_order EQ "T">
 				<tr>
 					<td colspan="4">#myFusebox.getApplicationData().defaults.trans("basket_order")#</td>
@@ -790,42 +792,69 @@
 		$('#basket').load('<cfoutput>#myself#</cfoutput>c.basket');
 	</cfif>
 
+	// Initialize global variables to store selection statuses
+	if (window.checkall_global==undefined)
+		checkall_global= false; 
+	if (window.checkorg_global==undefined)
+		checkorg_global= false; 
+	if (window.checkthumb_global==undefined)
+		checkthumb_global= false; 
 	// Select All
 	$('#checkall').click(function () {
 		$('#thebasket :checkbox').each( function() {
-			if(this.checked){
+			if(!checkall_global){
 				$(this).prop('checked', false);
 			}
 			else{
 				$(this).prop('checked', true);
 			}
 		})
+		if (checkall_global)
+		{
+			checkall_global = false;
+			checkorg_global = false;
+			checkthumb_global = false;
+		}
+		else
+		{
+			checkall_global= true;
+			checkorg_global = true;
+			checkthumb_global = true;
+		}
 		return false;
 	});
 
 	// Select Originals
 	$('#checkorg').click(function() {
 		$('#thebasket').find('[id*="imgorg"],[id*="vid"],[id*="aud"],[id*="doc"]').each( function() {
-			if(this.checked){
+			if(!checkorg_global){
 				$(this).prop('checked', false);
 			}
 			else{
 				$(this).prop('checked', true);
 			}
 		})
+		if (checkorg_global)
+			checkorg_global = false;
+		else
+			checkorg_global= true;
 		return false;
 	});
 
 	// Select Thumbnails
 	$('#checkthumb').click(function() {
 		$('#thebasket').find('[id*="imgt"]').each( function() {
-			if(this.checked){
+			if(!checkthumb_global){
 				$(this).prop('checked', false);
 			}
 			else{
 				$(this).prop('checked', true);
 			}
 		})
+		if (checkthumb_global)
+			checkthumb_global = false;
+		else
+			checkthumb_global= true;
 		return false;
 	});
 
