@@ -7046,6 +7046,7 @@
 	</fuseaction>
 	<!-- Groups Detail -->
 	<fuseaction name="groups_detail">
+		<set name="attributes.dam" value="T" />
 		<!-- CFC: Get details -->
 		<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetailedit(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get all users -->
