@@ -244,32 +244,6 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
-	<!--- get endpoint --->
-	<cffunction name="endpoints" access="public" output="true">
-		<cfargument name="location" type="string" required="true" />
-		<cfset var x = "">
-		<!--- Define endpoint --->
-		<cfif arguments.location EQ "us-east">
-			<cfset x = "s3">
-		<cfelseif arguments.location EQ "us-west-2">
-			<cfset x = "s3-us-west-2">
-		<cfelseif arguments.location EQ "us-west-1">
-			<cfset x = "s3-us-west-1">
-		<cfelseif arguments.location EQ "eu">
-			<cfset x = "s3-eu-west-1">
-		<cfelseif arguments.location EQ "ap-southeast-1">
-			<cfset x = "s3-ap-southeast-1">
-		<cfelseif arguments.location EQ "ap-northeast-1">
-			<cfset x = "s3-ap-northeast-1">
-		<cfelseif arguments.location EQ "sa-east-1">
-			<cfset x = "s3-sa-east-1">
-		</cfif> 
-		<!--- Append amazon.com --->
-		<cfset x = x & ".amazon.com">
-		<!--- Return --->
-		<cfreturn x />
-	</cffunction>
 
 	<!--- Retrieves file and folder metadata --->
 	<cffunction name="metadata_and_thumbnails">
