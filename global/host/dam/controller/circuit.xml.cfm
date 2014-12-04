@@ -4737,6 +4737,7 @@
 	<fuseaction name="email_send_action">
 		<set name="attributes.embedurl" value="F" overwrite="false" />
 		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
+		<do action="store_art_values" />
 		<!-- If we need to send as attachments -->
 		<if condition="attributes.sendaszip EQ 'T'">
 			<true>
