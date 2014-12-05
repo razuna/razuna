@@ -36,10 +36,10 @@
 					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
 					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''> 
 					 	<a href="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" target="_blank">
-					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" height="50">
+					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" style="max-height:50px;max-width:100px;">
 					 	</a>
 					 <cfelse>
-					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" height="50"></a>
+					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" style="max-height:50px;max-width:100px;"></a>
 					 </cfif>
 				</td>
 				<td width="10"></td>
@@ -52,8 +52,10 @@
 					</cfif>
 					</a> 
 					<a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
-					<a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;" style="padding-left:20px;">Direct Link</a>
-					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
+					<a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
+					 <cfif cs.show_metadata_link>
+						 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("metadata")#</a>
+					 </cfif>
 					 <cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_images&file_id=#img_id#&img_group_id=#img_group#&thetype=img&cf_show=img&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 						 | <a href="##" onclick="remren('#img_id#');return false;">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
