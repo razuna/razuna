@@ -195,7 +195,7 @@
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 													<span style="padding-left:30px">
 														<cfif attributes.fromshare EQ "F">
-															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" style="text-decoration:none">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
 														<cfelse>
 															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
 														</cfif>	
@@ -346,7 +346,7 @@
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 													<span style="padding-left:30px">
 														<cfif attributes.fromshare EQ "F">
-															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" style="text-decoration:none">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
 														<cfelse>
 															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
 														</cfif>	
@@ -462,7 +462,7 @@
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 													<span style="padding-left:30px">
 														<cfif attributes.fromshare EQ "F">
-															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" style="text-decoration:none">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
 														<cfelse>
 															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
 														</cfif>	
@@ -586,7 +586,7 @@
 													<cfif attributes.fromshare EQ "F"></a></cfif>
 													<span style="padding-left:30px">
 														<cfif attributes.fromshare EQ "F">
-															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" style="text-decoration:none">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
 														<cfelse>
 															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
 														</cfif>	
