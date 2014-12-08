@@ -29,7 +29,7 @@
 	<cfset docalcs = true>
 	<br />
 	<cfif attributes.folderaccess NEQ "R">
-		<div class="collapsable"><div class="headers">&gt; Create new renditions</div></div>
+		<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
 		<br />
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<cftry>

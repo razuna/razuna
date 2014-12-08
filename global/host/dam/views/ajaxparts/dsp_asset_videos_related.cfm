@@ -39,9 +39,11 @@
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
 					View</a>
-					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">Direct Link</a>
-					 | <a href="##" onclick="toggleslide('dive#vid_id#','inpute#vid_id#');return false;">Embed</a>
-					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#vid_id#&thetype=vid&cf_show=vid','Metadata',550,2);return false;">Metadata</a>
+					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
+					 | <a href="##" onclick="toggleslide('dive#vid_id#','inpute#vid_id#');return false;">#myFusebox.getApplicationData().defaults.trans("embed")#</a>
+					 <cfif cs.show_metadata_link>
+					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#vid_id#&thetype=vid&cf_show=vid','Metadata',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("metadata")#</a>
+ 					</cfif>
 					 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_videos&file_id=#vid_id#&vid_group_id=#vid_group#&thetype=vid&cf_show=vid&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remren('#vid_id#');">#myFusebox.getApplicationData().defaults.trans("delete")#</a>

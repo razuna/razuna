@@ -2,7 +2,7 @@
 	<!--- Format sizes --->
 	<cfif isnumeric(qry_detail.theprevsize)><cfset qry_detail.theprevsize = numberformat(qry_detail.theprevsize,'_.__')></cfif>
 	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
-	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadren();return false;">Refresh</a></div></div>
+	<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("existing_renditions")# - <a href="##" onclick="loadren();return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a></div></div>
 	<br />
 	<cfquery name="thumb_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'thumb'
@@ -30,7 +30,7 @@
 						<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> (#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.theprevsize# MB, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel)
 						<br /> 
 						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
-						<a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');return false;" style="padding-left:20px;">Direct Link</a>
+						<a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 						<div id="divp#attributes.file_id#" style="display:none;">
 							<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
 							<br />
@@ -87,7 +87,7 @@
 						<br>
 						<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
 						<cfif qry_detail.detail.link_kind NEQ "lan">
-							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">Direct Link</a>
+							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 						</cfif>
 						<div id="divo#attributes.file_id#" style="display:none;">
 							<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" />

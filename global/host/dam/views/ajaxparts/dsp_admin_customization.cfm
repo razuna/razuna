@@ -1195,6 +1195,15 @@
 								</select>
 							</div>
 							<br />
+							<strong>#myFusebox.getApplicationData().defaults.trans("metadata_customization_header")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("metadata_customization_desc")#
+							<br />
+							<div>
+								<input type="radio" name="show_metadata_link" value="true"<cfif qry_customization.show_metadata_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# 
+								<input type="radio" name="show_metadata_link" value="false"<cfif !qry_customization.show_metadata_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+							</div>
+
 							<!---
 		<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_move")#</strong>
 							<br />

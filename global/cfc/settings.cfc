@@ -1891,6 +1891,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.myfolder_upload = true>
 	<cfset v.show_top_part = true>
 	<cfset v.show_basket_part = true>
+	<cfset v.show_metadata_link = true>
 	<cfset v.show_favorites_part = true>
 	<cfset v.show_manage_part = true>
 	<cfset v.show_manage_part_slct = "">
@@ -2020,6 +2021,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.folder_redirect = custom_value>
 			<cfelseif custom_id EQ "myfolder_create" AND !custom_value>
 				<cfset v.myfolder_create = false>
+			<cfelseif custom_id EQ "show_metadata_link" AND !custom_value>
+				<cfset v.show_metadata_link = false>
 			<cfelseif custom_id EQ "myfolder_upload" AND !custom_value>
 				<cfset v.myfolder_upload = false>
 			<cfelseif custom_id EQ "show_top_part" AND !custom_value>
