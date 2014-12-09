@@ -113,6 +113,44 @@
 				<cfset arguments.thestruct.label_id = arguments.label_id>
 				<cfset arguments.thestruct.label_text = arguments.label_text>
 				<cfset arguments.thestruct.label_parent = arguments.label_parent>
+				<!--- Check label exists --->
+				<cfif arguments.label_id NEQ 0>
+					<cfset var label_exists = "">
+					<cfquery datasource="#application.razuna.api.dsn#" name="label_exists">
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+					WHERE  label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+					</cfquery>
+					<cfif label_exists.recordcount EQ 0>
+						<cfset thexml.responsecode = 1>
+						<cfset thexml.message = "Label_id '#arguments.label_id#' does not exist. Please check label_id and try again.">
+						<cfset thexml.label_id = arguments.label_id>
+						<cfreturn thexml>
+					</cfif>
+				</cfif>
+				<!--- Check parent label exists --->
+				<cfif arguments.label_parent NEQ 0>
+					<cfset var parent_label_exists = "">
+					<cfquery datasource="#application.razuna.api.dsn#" name="parent_label_exists">
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
+					WHERE  label_id = <cfqueryparam value="#arguments.label_parent#" cfsqltype="cf_sql_varchar" />
+					AND label_id  <> <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+					</cfquery>
+					<cfif parent_label_exists.recordcount EQ 0>
+						<cfset thexml.responsecode = 1>
+						<cfset thexml.message = "Parent label_id '#arguments.label_parent#' does not exist. Please check label_id and try again.">
+						<cfset thexml.label_id = arguments.label_id>
+						<cfreturn thexml>
+					</cfif>
+					<!--- Ensure that parent label is not a child of the label to avoid circular references --->
+					<cfset var child_labels = "">
+					<cfinvoke component="global.cfc.labels" method="getchildlabels" parentid="#arguments.label_id#" returnVariable="child_labels">
+					<cfif listfind(child_labels,arguments.label_parent)>
+						<cfset thexml.responsecode = 1>
+						<cfset thexml.message = "Parent label_id '#arguments.label_parent#' is currently a child of the label '#arguments.label_id#'. Please address this issue first to avoid a circular reference.">
+						<cfset thexml.label_id = arguments.label_id>
+						<cfreturn thexml>
+					</cfif>
+				</cfif>
 				<!--- call internal method --->
 				<cfinvoke component="global.cfc.labels" method="admin_update" thestruct="#arguments.thestruct#" returnVariable="lid">
 				<!--- Return --->
