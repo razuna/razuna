@@ -1441,7 +1441,7 @@
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.thesh#" timeout="180" />
 		</cfthread>
-
+		<cfthread action="join" name="1#thescript#" />
 		<!--- Before we create thumb apply watermark if any --->
 		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
 			<cfif "convert_wm_#theformat#" NEQ "" >
@@ -1471,8 +1471,6 @@
 				</cfif>
 			</cfif>
 		</cfif>
-
-		<cfthread action="join" name="1#thescript#" />
 		<!--- Since the image can not be read we use img to convert to itself --->
 		<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.thesht#" timeout="180" />

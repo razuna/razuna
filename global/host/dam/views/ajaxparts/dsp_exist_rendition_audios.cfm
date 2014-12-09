@@ -39,7 +39,7 @@
 	<input type="hidden" name="convert_width_3gp" value="">
 	<input type="hidden" name="convert_height_3gp" value="">
 	<input type="hidden" name="link_kind" id="link_kind" value="#qry_detail.detail.link_kind#">
-	<div class="collapsable"><div class="headers">Create new renditions</div></div>
+	<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
 			<br />
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr class="list">

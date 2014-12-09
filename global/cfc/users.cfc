@@ -160,7 +160,8 @@
 		<cfquery dbtype="query" name="localquery">
 		SELECT *, <cfif isdefined("arguments.thestruct.sortby")>'yes'<cfelse>'no'</cfif> sorted, <cfif isdefined("arguments.thestruct.sortby")>'#arguments.thestruct.sortby#'<cfelse>''</cfif>sortby
 		FROM localquery
-		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		WHERE  ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		AND ct_g_u_grp_id NOT LIKE '1,%'
 		<cfif isdefined("arguments.thestruct.sortby")>
 			ORDER  BY #arguments.thestruct.sortby# #arguments.thestruct.sortorder#
 		<cfelse>

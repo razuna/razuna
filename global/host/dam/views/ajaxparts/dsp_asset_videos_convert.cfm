@@ -29,7 +29,7 @@
 	<cfquery name="org_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'org'
 	</cfquery>
-	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadrenvid();return false;">Refresh</a></div></div>
+	<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("existing_renditions")# - <a href="##" onclick="loadrenvid();return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a></div></div>
 	<br />
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 		<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
@@ -62,7 +62,7 @@
 							<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)
 							<br />
 							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
-							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">Direct Link</a>
+							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
 							<!--- Direct link --->
 							<div id="divo#attributes.file_id#" style="display:none;">
@@ -125,7 +125,7 @@
 	</table>
 	<br />
 	<cfif attributes.folderaccess NEQ "R">
-		<div class="collapsable"><div class="headers">&gt; Create new renditions</div></div>
+		<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
 		<br />
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<cfset theaspectratio = #qry_detail.detail.vwidth# / #qry_detail.detail.vheight#>

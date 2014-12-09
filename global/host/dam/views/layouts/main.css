@@ -1052,3 +1052,8 @@ font-weight: bold;
 .chzn-container { 
 	width: 250px !important;
 }
+
+.smallfont{font-size : 8pt;}
+.ltgrey{color:#666666;}
+a:link .nolink{text-decoration: none;}
+

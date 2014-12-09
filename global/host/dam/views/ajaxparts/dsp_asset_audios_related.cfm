@@ -41,9 +41,11 @@
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
 					Play</a> 
-					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');return false;">Direct Link</a>
-					| <a href="##" onclick="toggleslide('dive#aud_id#','inpute#aud_id#');return false;">Embed</a>
-					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">Metadata</a>
+					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');return false;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
+					| <a href="##" onclick="toggleslide('dive#aud_id#','inpute#aud_id#');return false;">#myFusebox.getApplicationData().defaults.trans("embed")#</a>
+					 <cfif cs.show_metadata_link>
+						| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("metadata")#</a>
+					</cfif>
 					| <a href="##" onclick="showwindow('#myself#c.exist_rendition_audios&file_id=#aud_id#&aud_group_id=#aud_group#&thetype=aud&cf_show=aud&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remrenaud('#aud_id#');">#myFusebox.getApplicationData().defaults.trans("delete")#</a>

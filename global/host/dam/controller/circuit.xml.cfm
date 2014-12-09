@@ -1246,6 +1246,7 @@
 		<set name="attributes.what" value="basket" overwrite="false" />
 		<set name="attributes.format" value="csv" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
+		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1268,7 +1269,7 @@
 			<argument name="to" value="#attributes.to#" />
 			<argument name="subject" value="#attributes.subject#" />
 			<argument name="attach" value="#thebasket#" />
-			<argument name="themessage" value="#attributes.message#" />
+			<argument name="themessage" value="#evaluate(attributes.message)#" />
 			<argument name="thepath" value="#attributes.thepath#" />
 			<argument name="isbasket" value="T" />
 			<argument name="from" value="#attributes.from#" />
@@ -4087,6 +4088,8 @@
 	</fuseaction>
 	<!-- Load related videos -->
 	<fuseaction name="videos_detail_related">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get related videos -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="qry_related" />
@@ -4241,6 +4244,8 @@
 	</fuseaction>
 	<!-- Load related images -->
 	<fuseaction name="images_detail_related">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="qry_settings_image" />
 		<!-- CFC: Get global settings -->
 		<!-- <invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_web()" returnvariable="qry_settings" /> -->
@@ -4561,6 +4566,8 @@
 	</fuseaction>
 	<!-- Load related audios -->
 	<fuseaction name="audios_detail_related">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Get permissions of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get related audios -->
@@ -4735,6 +4742,8 @@
 	<!-- Send Action -->
 	<fuseaction name="email_send_action">
 		<set name="attributes.embedurl" value="F" overwrite="false" />
+		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
+		<do action="store_art_values" />
 		<!-- If we need to send as attachments -->
 		<if condition="attributes.sendaszip EQ 'T'">
 			<true>
@@ -4778,7 +4787,7 @@
 					<argument name="bcc" value="#attributes.bcc#" />
 					<argument name="subject" value="#attributes.subject#" />
 					<argument name="attach" value="#thefile#" />
-					<argument name="themessage" value="#attributes.message#" />
+					<argument name="themessage" value="#evaluate(attributes.message)#" />
 					<argument name="thepath" value="#attributes.thepath#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
@@ -4795,7 +4804,7 @@
 					<argument name="bcc" value="#attributes.bcc#" />
 					<argument name="to" value="#attributes.to#" />
 					<argument name="subject" value="#attributes.subject#" />
-					<argument name="themessage" value="#attributes.message#" />
+					<argument name="themessage" value="#evaluate(attributes.message)#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
 				</invoke>
@@ -7044,6 +7053,7 @@
 	</fuseaction>
 	<!-- Groups Detail -->
 	<fuseaction name="groups_detail">
+		<set name="attributes.dam" value="T" />
 		<!-- CFC: Get details -->
 		<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetailedit(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get all users -->
@@ -9452,6 +9462,8 @@
 	</fuseaction>
 	<!-- Called from the detail pages -->
 	<fuseaction name="av_load">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: Get access to this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Query Widgets -->

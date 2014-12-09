@@ -43,6 +43,11 @@
 <cfparam name="attributes.selected" default="false">
 <cfoutput>
 	<div id="div_win_remove_record">
+		<cfif isdefined('attributes.what') AND attributes.what contains 'basket'>
+			<cfset win_title = myFusebox.getApplicationData().defaults.trans("remove_txt")>
+		<cfelse>
+			<cfset win_title = myFusebox.getApplicationData().defaults.trans("remove")>
+		</cfif>
 		<table border="0" cellpadding="5" cellspacing="5" width="100%">
 			<tr>
 			<cfif attributes.in_collection>
@@ -56,16 +61,16 @@
 			<tr>
 				<td align="right" style="padding-top:10px;">
 					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search">
-						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');replacewin();" class="button">
+						<input type="button" name="remove" value="#win_title#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');replacewin();" class="button">
 					<cfelse>
 						<cfif attributes.in_collection>
 							<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("yes")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');$('##rightside').load('#myself#c.<cfif loaddiv EQ "assets">folder_explorer_trash&trashkind=assets<cfelse>collection_explorer_trash&trashkind=files</cfif>');" class="button">
 							<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("no")#" onclick="destroywindow(2);destroywindow(1);" class="button">
 						<cfelse>
 							<cfif attributes.selected>
-								<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="destroywindow(1);$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection_explorer_trash&selected=collection<cfelse>folder_explorer_trash&selected=assets</cfif>');" class="button">
+								<input type="button" name="remove" value="#win_title#" onclick="destroywindow(1);$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection_explorer_trash&selected=collection<cfelse>folder_explorer_trash&selected=assets</cfif>');" class="button">
 							<cfelse>
-								<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');<cfif attributes.fromtrash>$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ 'collections'>collection_explorer_trash&trashkind=collections<cfelse>folder_explorer_trash&trashkind=assets</cfif>');</cfif>" class="button">
+								<input type="button" name="remove" value="#win_title#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');<cfif attributes.fromtrash>$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ 'collections'>collection_explorer_trash&trashkind=collections<cfelse>folder_explorer_trash&trashkind=assets</cfif>');</cfif>" class="button">
 							</cfif>
 						</cfif>
 					</cfif>

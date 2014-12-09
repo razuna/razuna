@@ -194,7 +194,9 @@
 			</cfif>
 			<!--- Show basket link --->
 			<cfif cs.show_basket_part>
-				<div style="float:left;padding-right:20px;"><a href="##" onClick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></div>
+				<div style="float:left;padding-right:20px;vertical-align:top">
+					<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a>
+				</div>
 			</cfif>
 			<!--- Feedback --->
 			<cfif w EQ 300>

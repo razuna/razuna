@@ -125,14 +125,16 @@
 				<td>#myFusebox.getApplicationData().defaults.trans("empty_basket")#</td>
 			</tr>
 		<cfelse>
-			<!--- Select All --->
-			<tr>
-				<td colspan="4" style="padding-top:15px;">
-					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
-					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect #myFusebox.getApplicationData().defaults.trans("originals")#</a>
-					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
-				</td>
-			</tr>
+			<cfif isadmin OR !qry_customization.hide_select_links>
+				<!--- Select All --->
+				<tr>
+					<td colspan="4" style="padding-top:15px;">
+						<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
+						<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect #myFusebox.getApplicationData().defaults.trans("originals")#</a>
+						<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
+					</td>
+				</tr>
+			</cfif>
 			<cfif attributes.fromshare EQ "T" AND qry_folder.share_order EQ "T">
 				<tr>
 					<td colspan="4">#myFusebox.getApplicationData().defaults.trans("basket_order")#</td>
@@ -191,6 +193,15 @@
 													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
+													<span style="padding-left:30px">
+														<cfif attributes.fromshare EQ "F">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
+														<cfelse>
+															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
+														</cfif>	
+															<span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("basket_remove")#</span>
+														</a>
+													</span>
 												</td>
 											</tr>
 											<!--- Original --->
@@ -333,6 +344,15 @@
 													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
+													<span style="padding-left:30px">
+														<cfif attributes.fromshare EQ "F">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
+														<cfelse>
+															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
+														</cfif>	
+															<span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("basket_remove")#</span>
+														</a>
+													</span>
 												</td>
 											</tr>
 											<!--- The Original video --->
@@ -440,6 +460,15 @@
 													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
+													<span style="padding-left:30px">
+														<cfif attributes.fromshare EQ "F">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
+														<cfelse>
+															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
+														</cfif>	
+															<span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("basket_remove")#</span>
+														</a>
+													</span>
 												</td>
 											</tr>
 											<!--- The Original audio --->
@@ -555,6 +584,15 @@
 													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 													<strong>#filename#</strong>
 													<cfif attributes.fromshare EQ "F"></a></cfif>
+													<span style="padding-left:30px">
+														<cfif attributes.fromshare EQ "F">
+															<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_basket"))#',400,1);return false;" style="text-decoration:none">
+														<cfelse>
+															<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');" style="text-decoration:none">
+														</cfif>	
+															<span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("basket_remove")#</span>
+														</a>
+													</span>
 												</td>
 											</tr>
 											<!--- The Original --->
@@ -564,7 +602,7 @@
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
-												</cfif>																					
+												</cfif>
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
@@ -612,15 +650,6 @@
 							</td>
 					</cfdefaultcase>
 				</cfswitch>
-				<td width="1%" align="center" nowrap="nowrap" valign="top">
-					<cfif attributes.fromshare EQ "F">
-						<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">
-					<cfelse>
-						<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');">
-					</cfif>	
-					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" />
-					</a>
-				</td>
 			</tr>
 			</cfloop>
 		</cfif>
@@ -790,42 +819,69 @@
 		$('#basket').load('<cfoutput>#myself#</cfoutput>c.basket');
 	</cfif>
 
+	// Initialize global variables to store selection statuses
+	if (window.checkall_global==undefined)
+		checkall_global= false; 
+	if (window.checkorg_global==undefined)
+		checkorg_global= false; 
+	if (window.checkthumb_global==undefined)
+		checkthumb_global= false; 
 	// Select All
 	$('#checkall').click(function () {
 		$('#thebasket :checkbox').each( function() {
-			if(this.checked){
+			if(!checkall_global){
 				$(this).prop('checked', false);
 			}
 			else{
 				$(this).prop('checked', true);
 			}
 		})
+		if (checkall_global)
+		{
+			checkall_global = false;
+			checkorg_global = false;
+			checkthumb_global = false;
+		}
+		else
+		{
+			checkall_global= true;
+			checkorg_global = true;
+			checkthumb_global = true;
+		}
 		return false;
 	});
 
 	// Select Originals
 	$('#checkorg').click(function() {
 		$('#thebasket').find('[id*="imgorg"],[id*="vid"],[id*="aud"],[id*="doc"]').each( function() {
-			if(this.checked){
+			if(!checkorg_global){
 				$(this).prop('checked', false);
 			}
 			else{
 				$(this).prop('checked', true);
 			}
 		})
+		if (checkorg_global)
+			checkorg_global = false;
+		else
+			checkorg_global= true;
 		return false;
 	});
 
 	// Select Thumbnails
 	$('#checkthumb').click(function() {
 		$('#thebasket').find('[id*="imgt"]').each( function() {
-			if(this.checked){
+			if(!checkthumb_global){
 				$(this).prop('checked', false);
 			}
 			else{
 				$(this).prop('checked', true);
 			}
 		})
+		if (checkthumb_global)
+			checkthumb_global = false;
+		else
+			checkthumb_global= true;
 		return false;
 	});
 

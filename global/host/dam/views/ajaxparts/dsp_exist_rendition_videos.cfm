@@ -47,7 +47,7 @@
 	<cfif foundit EQ 0>
 		<input type="hidden" name="link_path_url" value="#qry_detail.detail.link_path_url#">
 	</cfif>
-	<div class="collapsable"><div class="headers">Create new renditions</div></div>
+	<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
 		<br />
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<cfset theaspectratio = #qry_detail.detail.vwidth# / #qry_detail.detail.vheight#>

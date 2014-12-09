@@ -15,7 +15,7 @@
 			</a>
 		</cfif>
 		<cfif cs.button_send_email  AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
-			<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;">
+			<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;">
 				<div style="float:left;">
 					<img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" style="padding-right:3px;" />
 				</div>

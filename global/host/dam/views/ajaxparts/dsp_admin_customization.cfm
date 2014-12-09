@@ -1195,6 +1195,15 @@
 								</select>
 							</div>
 							<br />
+							<strong>#myFusebox.getApplicationData().defaults.trans("metadata_customization_header")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("metadata_customization_desc")#
+							<br />
+							<div>
+								<input type="radio" name="show_metadata_link" value="true"<cfif qry_customization.show_metadata_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# 
+								<input type="radio" name="show_metadata_link" value="false"<cfif !qry_customization.show_metadata_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#
+							</div>
+
 							<!---
 		<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_move")#</strong>
 							<br />
@@ -1367,6 +1376,17 @@
 									<option value="#user_id#"<cfif listfind(qry_customization.metadata_btn_basket,user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
 								</cfloop>
 							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_select_links")#</strong><br/>
+							#myFusebox.getApplicationData().defaults.trans("basket_customize_select_links_desc")#<br/>
+							<div>
+							       <input type="radio" name="hide_select_links" value="true"<cfif qry_customization.hide_select_links> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# 
+							       <input type="radio" name="hide_select_links" value="false"<cfif !qry_customization.hide_select_links> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#
+							</div>
+							<br />
 						</td>
 					</tr>
 				</table>
