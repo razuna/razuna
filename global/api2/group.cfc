@@ -188,7 +188,7 @@
 				</cfif>
 			<!--- User not systemadmin --->
 			<cfelse>
-				<cfset var thexml = noaccess()>
+				<cfset var thexml = noaccess("s")>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -236,7 +236,7 @@
 				</cfif>
 			<!--- User not systemadmin --->
 			<cfelse>
-				<cfset var thexml = noaccess()>
+				<cfset var thexml = noaccess("s")>
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -282,7 +282,7 @@
 				</cfif>
 			<!--- User not systemadmin --->
 			<cfelse>
-				<cfset var thexml = noaccess()>
+				<cfset var thexml = noaccess("s")>
 			</cfif>
 			<!--- No session found --->
 		<cfelse>
