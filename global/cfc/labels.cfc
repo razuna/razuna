@@ -731,29 +731,31 @@
 			i.folder_id_r,cast(i.img_size as decimal(12,0)) as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 			i.path_to_asset, i.cloud_url, i.cloud_url_org, 'R' as permfolder, i.expiry_date, f.folder_name, 'null' as customfields
-			<!--- custom metadata fields to show --->
-			<cfif arguments.thestruct.cs.images_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
-					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number"  OR m CONTAINS "expiry_date">i
-					<cfelse>x
-					</cfif>.#m#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.files_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
+			<cfif isdefined('arguments.thestruct.cs')>
+				<!--- custom metadata fields to show --->
+				<cfif arguments.thestruct.cs.images_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+						,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
+						<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number"  OR m CONTAINS "expiry_date">i
+						<cfelse>x
+						</cfif>.#m#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.files_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
 			</cfif>
 			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#images i 
 			LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
@@ -798,29 +800,31 @@
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f.cloud_url_org, 'R' as permfolder, f.expiry_date, fo.folder_name, 'null' as customfields
-			<!--- custom metadata fields to show --->
-			<cfif arguments.thestruct.cs.images_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.files_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-					,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
-					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number"  OR m CONTAINS "expiry_date">f
-					<cfelse>x
-					</cfif>.#m#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
+			<cfif isdefined('arguments.thestruct.cs')>
+				<!--- custom metadata fields to show --->
+				<cfif arguments.thestruct.cs.images_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.files_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+						,<cfif m CONTAINS "keywords" OR m CONTAINS "desc">ft
+						<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number"  OR m CONTAINS "expiry_date">f
+						<cfelse>x
+						</cfif>.#m#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
 			</cfif>
 			FROM ct_labels ct, #session.hostdbprefix#folders fo, #session.hostdbprefix#files f 
 			LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 
@@ -865,28 +869,30 @@
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 			v.path_to_asset, v.cloud_url, v.cloud_url_org, 'R' as permfolder, v.expiry_date, f.folder_name, 'null' as customfields
-			<!--- custom metadata fields to show --->
-			<cfif arguments.thestruct.cs.images_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
-					<cfelse>v
-					</cfif>.#m#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.files_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
+			<cfif isdefined('arguments.thestruct.cs')>
+				<!--- custom metadata fields to show --->
+				<cfif arguments.thestruct.cs.images_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+						,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+						<cfelse>v
+						</cfif>.#m#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.files_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
 			</cfif>
 			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -929,28 +935,30 @@
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 			a.path_to_asset, a.cloud_url, a.cloud_url_org, 'R' as permfolder, a.expiry_date, f.folder_name, 'null' as customfields
-			<!--- custom metadata fields to show --->
-			<cfif arguments.thestruct.cs.images_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.videos_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.files_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-					,null AS #listlast(m," ")#
-				</cfloop>
-			</cfif>
-			<cfif arguments.thestruct.cs.audios_metadata NEQ "">
-				<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
-					<cfelse>a
-					</cfif>.#m#
-				</cfloop>
+			<cfif isdefined('arguments.thestruct.cs')>
+				<!--- custom metadata fields to show --->
+				<cfif arguments.thestruct.cs.images_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.files_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+						,null AS #listlast(m," ")#
+					</cfloop>
+				</cfif>
+				<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+					<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+						,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
+						<cfelse>a
+						</cfif>.#m#
+					</cfloop>
+				</cfif>
 			</cfif>
 			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -1293,6 +1301,9 @@
 				<cfset variables.sublabellist = listappend(variables.sublabellist, objnav.label_id)  >
 	        </cfif>
 	    </cfloop>
+	  <!---   <cfif listlen(variables.sublabellist) GTE 5000>
+	    	<cfthrow message="Too many children returned > 5000. This typically happens due to a circular reference in parent-child relationships for label. Please check the relationships and try again.">
+	    </cfif> --->
 	    <!--- return final variable to the caller... --->
 	    <cfif arguments.level eq 0>
 	        <cfreturn variables.sublabellist>

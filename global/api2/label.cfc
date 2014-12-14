@@ -141,14 +141,16 @@
 						<cfset thexml.label_id = arguments.label_id>
 						<cfreturn thexml>
 					</cfif>
-					<!--- Ensure that parent label is not a child of the label to avoid circular references --->
-					<cfset var child_labels = "">
-					<cfinvoke component="global.cfc.labels" method="getchildlabels" parentid="#arguments.label_id#" returnVariable="child_labels">
-					<cfif listfind(child_labels,arguments.label_parent)>
-						<cfset thexml.responsecode = 1>
-						<cfset thexml.message = "Parent label_id '#arguments.label_parent#' is currently a child of the label '#arguments.label_id#'. Please address this issue first to avoid a circular reference.">
-						<cfset thexml.label_id = arguments.label_id>
-						<cfreturn thexml>
+					<cfif arguments.label_id NEQ 0>
+						<!--- Ensure that parent label is not a child of the label to avoid circular references --->
+						<cfset var child_labels = "">
+						<cfinvoke component="global.cfc.labels" method="getchildlabels" parentid="#arguments.label_id#" returnVariable="child_labels">
+						<cfif listfind(child_labels,arguments.label_parent)>
+							<cfset thexml.responsecode = 1>
+							<cfset thexml.message = "Parent label_id '#arguments.label_parent#' is currently a child of the label '#arguments.label_id#'. Please address this issue first to avoid a circular reference.">
+							<cfset thexml.label_id = arguments.label_id>
+							<cfreturn thexml>
+						</cfif>
 					</cfif>
 				</cfif>
 				<!--- call internal method --->
