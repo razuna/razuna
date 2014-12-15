@@ -1004,6 +1004,20 @@ Comment:<br>
 <!--- Remove versions link ---------------------------------------------------------------------->
 	<cffunction name="remove_av_link" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
+		<cfset var getinfo = "">
+		<cfquery datasource="#application.razuna.datasource#" name="getinfo">
+		SELECT av_link_title, av_type, 
+		CASE
+		WHEN av_type = 'img'  THEN (SELECT folder_id_r FROM #session.hostdbprefix#images WHERE img_id = a.asset_id_r)
+		WHEN av_type = 'aud' THEN  (SELECT folder_id_r FROM #session.hostdbprefix#audios WHERE aud_id = a.asset_id_r)
+		WHEN av_type = 'vid' THEN  (SELECT folder_id_r FROM #session.hostdbprefix#videos WHERE vid_id = a.asset_id_r)
+		ELSE (SELECT folder_id_r FROM #session.hostdbprefix#files WHERE file_id = a.asset_id_r)
+		END folder_id
+		FROM #session.hostdbprefix#additional_versions a
+		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		</cfquery>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#additional_versions
@@ -1032,6 +1046,15 @@ Comment:<br>
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<!--- Log entry --->
+		<cfinvoke component="extQueryCaching" method="log_assets">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
+			<cfinvokeargument name="logaction" value="Delete">
+			<cfinvokeargument name="logdesc" value="Deleted Additional Rendition: #getinfo.av_link_title#">
+			<cfinvokeargument name="logfiletype" value="#getinfo.av_type#">
+			<cfinvokeargument name="assetid" value="#arguments.thestruct.file_id#">
+			<cfinvokeargument name="folderid" value="#getinfo.folder_id#">
+		</cfinvoke>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />

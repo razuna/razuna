@@ -359,9 +359,16 @@
 			<cfinvoke component="extQueryCaching" method="log_assets">
 				<cfinvokeargument name="theuserid" value="#session.theuserid#">
 				<cfinvokeargument name="logaction" value="Delete">
-				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.img_filename#">
+				<cfif thedetail.img_group NEQ ''>
+					<cfset var rend =" Rendition">
+				</cfif>
+				<cfinvokeargument name="logdesc" value="Deleted#rend#: #thedetail.img_filename#">
 				<cfinvokeargument name="logfiletype" value="img">
-				<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+				<cfif thedetail.img_group NEQ ''>
+					<cfinvokeargument name="assetid" value="#thedetail.img_group#">
+				<cfelse>
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+				</cfif>
 				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 			</cfinvoke>
 			<!--- Delete from file system --->
@@ -1024,7 +1031,7 @@
 		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
 		<!--- Select the record to get the original filename or assign if one is there --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
-		SELECT img_filename_org, img_filename, img_extension, thumb_extension, link_kind, link_path_url, path_to_asset, folder_id_r
+		SELECT img_filename_org, img_filename, img_extension, thumb_extension, link_kind, link_path_url, path_to_asset, folder_id_r, img_group
 		FROM #session.hostdbprefix#images
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1041,18 +1048,25 @@
 			<cfelse>
 				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 			</cfif>
+			<cfif qryorg.img_group NEQ ''>
+				<cfset var rend = " Rendition">
+				<cfset var theid = qryorg.img_group>
+			<cfelse>
+				<cfset var rend = "">
+				<cfset var theid = arguments.thestruct.file_id>
+			</cfif>
 			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryorg.folder_id_r#')>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated#rend#: #qryorg.img_filename#',logfiletype='img',assetid='#theid#',folderid='#qryorg.folder_id_r#')>
 		<cfelse>
 			<!--- If updating additional version then get info and log change--->
 			<cfquery datasource="#variables.dsn#" name="qryaddver">
-			SELECT av_link_title, folder_id_r
+			SELECT av_link_title, folder_id_r, asset_id_r
 			FROM #session.hostdbprefix#additional_versions
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfif qryaddver.recordcount neq 0>
-				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated Additional Rendition: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
 			</cfif>
 		</cfif>
 

@@ -5913,6 +5913,15 @@ This is the main function called directly by a single upload else from addassets
 <filetype>#xmlformat(arguments.thestruct.type)#</filetype>
 </Response></cfoutput>
 	</cfsavecontent>
+	<!--- Log entry --->
+	<cfinvoke component="extQueryCaching" method="log_assets">
+		<cfinvokeargument name="theuserid" value="#session.theuserid#">
+		<cfinvokeargument name="logaction" value="Add">
+		<cfinvokeargument name="logdesc" value="Added Additional Rendition: #arguments.thestruct.av_link_title#">
+		<cfinvokeargument name="logfiletype" value="#arguments.thestruct.type#">
+		<cfinvokeargument name="assetid" value="#arguments.thestruct.file_id#">
+		<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
+	</cfinvoke>
 	<!--- Return --->
 	<cfreturn thexml />
 </cffunction>

@@ -1107,13 +1107,13 @@
 			<cfelse>
 				<!--- If updating additional version then get info and log change--->
 				<cfquery datasource="#variables.dsn#" name="qryaddver">
-				SELECT av_link_title, folder_id_r
+				SELECT av_link_title, folder_id_r, asset_id_r
 				FROM #session.hostdbprefix#additional_versions
 				WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<cfif qryaddver.recordcount neq 0>
-					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
+					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated Additional Rendition: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
 				</cfif>
 			</cfif>
 
