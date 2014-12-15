@@ -37,11 +37,11 @@
 		<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th width="100%" colspan="6">
+				<td width="100%" colspan="6">
 					<!--- Show notification of folder is being shared --->
 					<cfinclude template="inc_folder_header.cfm">
 					<cfinclude template="dsp_folder_navigation.cfm">
-				</th>
+				</td>
 			</tr>
 			<tr>
 				<cfset thetype = "aud">

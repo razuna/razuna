@@ -24,13 +24,13 @@
 *
 --->
 <cfoutput>
-
+<cfset tmp = createuuid('')>
 <div style="float:right;padding-right:10px;">
 	<!--- Drop down menu --->
 	<div>
 		<div style="float:left;"><a href="##" onclick="$('##foldertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
-		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##foldertools').toggle();" class="ddicon"></div>
-		<div id="foldertools" class="ddselection_header" style="top:70px;width:137px;z-index:6;right:10px;">
+		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##foldertools_#tmp#').toggle();" class="ddicon"></div>
+		<div id="foldertools_#tmp#" class="ddselection_header" style="top:70px;width:137px;z-index:6;right:10px;">
 			<cfif attributes.iscol EQ "f">
 				<p><a href="##" onclick="showwindow('#myself#c.folder_subscribe&theid=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_subscribe")#',800,1);$('##foldertools').toggle();return false;">
 				#myFusebox.getApplicationData().defaults.trans("folder_subscribe")#</a></p>
