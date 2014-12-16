@@ -163,7 +163,7 @@
 								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 								)
 					END
-			ELSE 0
+			ELSE '0'
 		END as folder_id,
 		CASE
 			WHEN f.fav_kind = 'doc' 
