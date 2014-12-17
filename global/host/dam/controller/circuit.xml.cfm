@@ -2630,7 +2630,7 @@
 		<if condition="attributes.folder_id EQ 0 AND attributes.rid NEQ 0">
 			<true>
 				<set name="attributes.folder_id_org" value="#attributes.folder_id#" />
-				<set name="attributes.folder_id" value="#attributes.rid#" />
+				<set name="attributes.folder_id" value="#attributes.theid#" />
 			</true>
 		</if> 
 		<!-- CFC: Load Groups of this folder -->

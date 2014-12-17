@@ -165,7 +165,7 @@
 							</cfloop>
 							<cfif attributes.rid NEQ 0>
 								<tr>
-									<td colspan="5"><em>Sub-Folders automatically inherit permissions for their parents folder. Change them if you like.</em></td>
+									<td colspan="5"><em>#myFusebox.getApplicationData().defaults.trans("subfolder_inherit")#</em></td>
 								</tr>
 							</cfif>
 						</table>

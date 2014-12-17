@@ -619,6 +619,8 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfif thedetail.vid_group NEQ ''>
 				<cfset var rend =" Rendition">
+			<cfelse>
+				<cfset var rend ="">
 			</cfif>
 			<cfinvokeargument name="logdesc" value="Deleted#rend#: #thedetail.vid_filename#">
 			<cfinvokeargument name="logfiletype" value="vid">

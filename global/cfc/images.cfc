@@ -361,6 +361,8 @@
 				<cfinvokeargument name="logaction" value="Delete">
 				<cfif thedetail.img_group NEQ ''>
 					<cfset var rend =" Rendition">
+				<cfelse>
+					<cfset var rend ="">
 				</cfif>
 				<cfinvokeargument name="logdesc" value="Deleted#rend#: #thedetail.img_filename#">
 				<cfinvokeargument name="logfiletype" value="img">
