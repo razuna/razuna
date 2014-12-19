@@ -1048,12 +1048,17 @@
 			<!--- Move --->
 			<cfset arguments.thestruct.file_id = arguments.thestruct.aud_id>
 			<cfinvoke method="filedetail" theid="#arguments.thestruct.aud_id#" thecolumn="aud_name, folder_id_r" returnvariable="arguments.thestruct.qryaud">
+			<!--- If no records found then return --->
+			<cfif arguments.thestruct.qryaud.recordcount EQ 0>
+				<cfreturn>
+			</cfif>
+			<cfset var qry_alias="">
 			<!--- Check if this is an alias --->
-			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.aud_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
+			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.aud_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias"/>
 			<!--- If this is an alias --->
 			<cfif qry_alias>
 				<!--- Move alias --->
-				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.aud_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#" />
+				<cfinvoke component="global" method="moveAlias" asset_id_r="#arguments.thestruct.aud_id#" new_folder_id_r="#arguments.thestruct.folder_id#" pre_folder_id_r="#session.thefolderorg#"/>
 			<cfelse>
 				<!--- Ignore if the folder id is the same --->
 				<cfif arguments.thestruct.qryaud.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
@@ -1070,7 +1075,7 @@
 					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 						<!--- Update Dates --->
 						<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.aud_id#" />
-						<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+						<!--- Move related renditions too --->
 						<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 						<!--- Execute workflow --->
 						<cfset arguments.thestruct.fileid = arguments.thestruct.aud_id>
@@ -1083,6 +1088,12 @@
 						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 					<!--- </cfthread> --->
+					<!--- Delete any aliases of the file in the folder if present --->
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE  FROM ct_aliases
+					WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
 					<!--- Log --->
 					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid=arguments.thestruct.aud_id,folderid='#arguments.thestruct.folder_id#')>
 				</cfif>
@@ -1098,7 +1109,7 @@
 	<cfreturn />
 </cffunction>
 
-<!--- Move related videos --->
+<!--- Move related audios --->
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same aud_id as related --->
@@ -1111,7 +1122,7 @@
 	<!--- Loop over the found records --->
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
-			<!--- Update DB --->
+			<!--- Update renditions --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#audios
 			SET 
@@ -1122,6 +1133,14 @@
 			</cfquery>
 		</cfloop>
 	</cfif>
+	<!--- Update additional renditions --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#additional_versions
+	SET 
+	folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
