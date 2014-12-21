@@ -1297,7 +1297,7 @@ Comment:<br>
 		<cfflush>
 		<!--- Query images --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT img_id, path_to_asset, img_filename_org, thumb_extension
+		SELECT img_id, path_to_asset, img_filename_org, thumb_extension, img_group
 		FROM #session.hostdbprefix#images
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -1306,13 +1306,32 @@ Comment:<br>
 		<cfflush>
 		<!--- Loop over images and redo the urls --->
 		<cfloop query="qry">
+			<!--- Find id of thumb to re-create Rules: If original rendition then use img_group, if renditon of rendition then extract from filename_org second last id embedded in name --->
+			<cfset var thethumbid= qry.img_id>
+			<cfif qry.img_group NEQ ''>
+				<cfset var qryorg = "">
+				<cfquery datasource="#application.razuna.datasource#" name="qryorg">
+				SELECT img_filename_org, img_extension
+				FROM #session.hostdbprefix#images
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.img_group#">
+				</cfquery>
+				<!--- Remove original filename from rend filename --->
+				<cfset thethumbid = replace(qry.img_filename_org,replace(qryorg.img_filename_org,"." & qryorg.img_extension,"") & "_","")>
+				<cfset var listsz = listlen(thethumbid,"_")>
+				<cfif listsz EQ 1> <!--- If original rendition --->
+					<cfset thethumbid = qry.img_group>
+				<cfelse><!--- If rendition of rendition --->
+					<cfset thethumbid = listGetAt(thethumbid,listsz-1,"_")>
+				</cfif>
+			</cfif>
 			<!--- Feedback --->
 			<cfoutput>. </cfoutput>
 			<cfflush>
 			<!--- put thumbnail path together --->
-			<cfset t = path_to_asset & "/thumb_" & img_id & "." & thumb_extension>
+			<cfset t = qry.path_to_asset & "/thumb_" & thethumbid & "." & qry.thumb_extension>
 			<!--- put org name together --->
-			<cfset a = path_to_asset & "/" & img_filename_org>
+			<cfset a = qry.path_to_asset & "/" & qry.img_filename_org>
 			<!--- Nirvanix or Amazon --->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get signed URLS for thumb --->
@@ -1332,7 +1351,7 @@ Comment:<br>
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
-			WHERE img_id = <cfqueryparam value="#img_id#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE img_id = <cfqueryparam value="#qry.img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfloop>
