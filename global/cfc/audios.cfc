@@ -558,6 +558,8 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfif details.aud_group NEQ ''>
 				<cfset var rend =" Rendition">
+			<cfelse>
+				<cfset var rend ="">
 			</cfif>
 			<cfinvokeargument name="logdesc" value="Deleted#rend#: #details.aud_name#">
 			<cfinvokeargument name="logfiletype" value="aud">
