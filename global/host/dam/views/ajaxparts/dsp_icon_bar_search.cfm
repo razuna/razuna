@@ -30,7 +30,7 @@
 		<!--- Icons and drop down menu --->
 		<td align="left" width="1%" nowrap="true">
 			<div id="tooltip" style="float:left;min-width:600px;">
-				<cfif !attributes.cv>
+				<cfif !attributes.cv AND attributes.share EQ "F">
 					<!--- Select --->
 					<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 						<!--- <div style="float:left;">

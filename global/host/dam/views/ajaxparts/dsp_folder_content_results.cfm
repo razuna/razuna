@@ -95,11 +95,10 @@
 		</cfif>
 		
 		<!--- Icon Bar --->
-		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-			<tr>
-				<td colspan="6" style="border:0px;"><cfinclude template="dsp_icon_bar_search.cfm"></td>
-			</tr>
-		</cfif>
+		<tr>
+			<td colspan="6" style="border:0px;"><cfinclude template="dsp_icon_bar_search.cfm"></td>
+		</tr>
+	
 		<!--- Thumbnail --->
 		<cfset mysqloffset = session.offset * session.rowmaxpage>
 		<cfif session.view EQ "">
