@@ -125,7 +125,7 @@
 				<td>#myFusebox.getApplicationData().defaults.trans("empty_basket")#</td>
 			</tr>
 		<cfelse>
-			<cfif isadmin OR !qry_customization.hide_select_links>
+			<cfif !qry_customization.hide_select_links>
 				<!--- Select All --->
 				<tr>
 					<td colspan="4" style="padding-top:15px;">

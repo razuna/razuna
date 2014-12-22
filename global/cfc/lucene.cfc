@@ -1080,7 +1080,7 @@
 		<!--- Param --->
 		<cfset var qry = "">
 		<cfset recs2index = 2000><!---  enter number of files to be indexed on one go --->
-		<!--- Select 500 newest files that need to be indexed --->
+		<!--- Select 2000 newest files that need to be indexed --->
 		<cfquery datasource="#arguments.dsn#" name="qry">
 		SELECT <cfif arguments.thedatabase EQ "mssql"> TOP #recs2index#</cfif>* FROM (
 				SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize, img_change_time as changetime

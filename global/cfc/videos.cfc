@@ -617,9 +617,19 @@
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#session.theuserid#">
 			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
+			<cfif thedetail.vid_group NEQ ''>
+				<cfset var rend =" Rendition">
+			<cfelse>
+				<cfset var rend ="">
+			</cfif>
+			<cfinvokeargument name="logdesc" value="Deleted#rend#: #thedetail.vid_filename#">
 			<cfinvokeargument name="logfiletype" value="vid">
-			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+			<cfif thedetail.vid_group NEQ ''>
+				<cfinvokeargument name="assetid" value="#thedetail.vid_group#">
+			<cfelse>
+				<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+			</cfif>
+			
 			<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
@@ -1321,7 +1331,7 @@
 		<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.file_id#" />
 		<!--- Query again --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
-		SELECT vid_name_org, vid_filename, path_to_asset, folder_id_r
+		SELECT vid_name_org, vid_filename, path_to_asset, folder_id_r, vid_group
 		FROM #session.hostdbprefix#videos
 		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1357,18 +1367,25 @@
 					</cfquery>
 				</cfif>
 			</cfif>
+			<cfif qryorg.vid_group NEQ ''>
+				<cfset var rend = " Rendition">
+				<cfset var theid = qryorg.vid_group>
+			<cfelse>
+				<cfset var rend = "">
+				<cfset var theid = arguments.thestruct.file_id>
+			</cfif>
 			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated#rend#: #qryorg.vid_filename#',logfiletype='vid',assetid='#theid#',folderid='#arguments.thestruct.folder_id#')>
 		<cfelse>
 			<!--- If updating additional version then get info and log change--->
 			<cfquery datasource="#variables.dsn#" name="qryaddver">
-			SELECT av_link_title, folder_id_r
+			SELECT av_link_title, folder_id_r, asset_id_r
 			FROM #session.hostdbprefix#additional_versions
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfif qryaddver.recordcount neq 0>
-				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryaddver.av_link_title#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#qryaddver.folder_id_r#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated Additional Rendition: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
 			</cfif>
 		</cfif>
 
@@ -2141,6 +2158,11 @@
 			<cfset arguments.thestruct.storage = application.razuna.storage>
 			<!--- Move --->
 			<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
+			<!--- If no records found then return --->
+			<cfif arguments.thestruct.qryvid.recordcount EQ 0>
+				<cfreturn>
+			</cfif>
+			<cfset var qry_alias="">
 			<!--- Check if this is an alias --->
 			<cfinvoke component="global" method="getAlias" asset_id_r="#arguments.thestruct.vid_id#" folder_id_r="#session.thefolderorg#" returnvariable="qry_alias" />
 			<!--- If this is an alias --->
@@ -2163,7 +2185,7 @@
 					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 						<!--- Update Dates --->
 						<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
-						<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+						<!--- Move related renditions too --->
 						<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 						<!--- Execute workflow --->
 						<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
@@ -2175,6 +2197,12 @@
 						<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 						<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 					<!--- </cfthread> --->
+					<!--- Delete any aliases of the file in the folder if present --->
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE  FROM ct_aliases
+					WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
 					<!--- Log --->
 					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id,folderid='#arguments.thestruct.folder_id#')>
 				</cfif>
@@ -2203,7 +2231,7 @@
 	<!--- Loop over the found records --->
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
-			<!--- Update DB --->
+			<!--- Update renditions --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#videos
 			SET 
@@ -2212,9 +2240,16 @@
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Update Lucene --->
 		</cfloop>
 	</cfif>
+	<!--- Update additional renditions --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#additional_versions
+	SET 
+	folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
 	<cfreturn />
 </cffunction>
 

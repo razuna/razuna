@@ -2630,7 +2630,7 @@
 		<if condition="attributes.folder_id EQ 0 AND attributes.rid NEQ 0">
 			<true>
 				<set name="attributes.folder_id_org" value="#attributes.folder_id#" />
-				<set name="attributes.folder_id" value="#attributes.rid#" />
+				<set name="attributes.folder_id" value="#attributes.theid#" />
 			</true>
 		</if> 
 		<!-- CFC: Load Groups of this folder -->
@@ -5386,21 +5386,21 @@
 		<!-- ACTION: Search all -->
 		<if condition="attributes.thetype EQ 'all'">
 			<true>
-					<!-- XFA -->
-					<xfa name="filedetail" value="c.files_detail" />
-					<xfa name="imagedetail" value="c.images_detail" />
-					<xfa name="videodetail" value="c.videos_detail" />
-					<xfa name="fvideosloader" value="c.folder_videos_show" />
-					<xfa name="audiodetail" value="c.audios_detail" />
-					<!-- CFC: Customization -->
-					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
-					<set name="attributes.cs" value="#cs#" />
-<!-- CFC: Get settings -->
+				<!-- XFA -->
+				<xfa name="filedetail" value="c.files_detail" />
+				<xfa name="imagedetail" value="c.images_detail" />
+				<xfa name="videodetail" value="c.videos_detail" />
+				<xfa name="fvideosloader" value="c.folder_videos_show" />
+				<xfa name="audiodetail" value="c.audios_detail" />
+				<!-- CFC: Customization -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+				<set name="attributes.cs" value="#cs#" />
+				<!-- CFC: Get settings -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
-					<!-- CFC: Get placement for fields-->
-					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
-					<set name="attributes.cs_place" value="#cs_place#" />
-					<!-- CFC: Get settings -->
+				<!-- CFC: Get placement for fields-->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+				<set name="attributes.cs_place" value="#cs_place#" />
+				<!-- CFC: Get settings -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />	
 				<!-- Check the DataBase  -->
 				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
@@ -10335,6 +10335,11 @@
 		<do action="search_include" />
 		<!-- CFC: Get customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
+		<!-- CFC: Get placement for fields-->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
+		<set name="attributes.cs_place" value="#cs_place#" />
+		<!-- CFC: Get settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Call search API -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_api(attributes)" returnvariable="qry_files" />
 		<!-- Set results into different variable name -->

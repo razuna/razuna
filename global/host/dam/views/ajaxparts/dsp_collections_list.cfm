@@ -29,6 +29,7 @@
 	<cfset isadmin = false>
 </cfif>
 <cfoutput>
+	<cfinclude template="dsp_folder_navigation.cfm">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<cfif attributes.folderaccess NEQ "R">
 			<tr>
@@ -38,7 +39,7 @@
 							<a href="##" onclick="showwindow('#myself#c.saveascollection_form&folder_id=#attributes.folder_id#&coladd=T','#myFusebox.getApplicationData().defaults.trans("collection_create")#',600,1);">#myFusebox.getApplicationData().defaults.trans("collection_create")#</a> | <a href="##" onclick="$('##rightside').load('#myself#c.folder_new&theid=#qry_folder.folder_id#&level=#qry_folder.folder_level#&rid=#qry_folder.rid#&iscol=#qry_folder.folder_is_collection#');return false;">#myFusebox.getApplicationData().defaults.trans("folder_new")#</a>
 						</cfif>
 					</div>
-					<cfinclude template="dsp_folder_navigation.cfm">
+					
 				</th>
 			</tr>
 		</cfif>

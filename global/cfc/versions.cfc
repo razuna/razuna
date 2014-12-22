@@ -46,6 +46,16 @@
 <cffunction name="remove" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfset var qry = "">
+	<cfset var getinfo = "">
+	<!--- Query --->
+	<cfquery datasource="#Variables.dsn#" name="getinfo">
+	SELECT ver_filename_org, asset_id_r
+	FROM #session.hostdbprefix#versions
+	WHERE ver_version = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.version#">
+	AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+	AND ver_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
+	</cfquery>
+
 	<!--- Query --->
 	<cfquery datasource="#Variables.dsn#">
 	DELETE FROM #session.hostdbprefix#versions
@@ -77,6 +87,9 @@
 	<cfelseif application.razuna.storage EQ "amazon">
 		<cfinvoke component="amazon" method="deletefolder" folderpath="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" awsbucket="#arguments.thestruct.awsbucket#" />
 	</cfif>
+
+	<!--- Add entry into log --->
+	<cfset log_assets(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted Version: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#')>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -163,7 +176,7 @@
 		</cfquery>
 		<!--- Query original file name of this version we need to replay --->
 		<cfquery datasource="#Variables.dsn#" name="qrycurrentversion">
-		SELECT ver_filename_org, ver_thumbnail
+		SELECT ver_filename_org, ver_thumbnail, ver_type
 		FROM #session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
@@ -489,6 +502,8 @@
 		<cfset arguments.thestruct.qrydetail.filenameorg = qry.filenameorg>
 		<cfset arguments.thestruct.qrydetail.folder_id_r = qry.folder_id_r>
 		<cfset arguments.thestruct.filenameorg = qry.filenameorg>
+		<!--- Add entry into log --->
+		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Playback of Version: #qrycurrentversion.ver_filename_org#',logfiletype='#qrycurrentversion.ver_type#',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.playback">
 			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
@@ -1115,6 +1130,8 @@
 		<cfset arguments.thestruct.qrydetail.path_to_asset = arguments.thestruct.qryfilelocal.path_to_asset>
 		<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
+		<!--- Add entry into log --->
+		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added New Version: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.create">
 			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
@@ -1539,6 +1556,7 @@
 		</cfif>
 		)
 		</cfquery>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added Old Version: #arguments.thestruct.filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.create">
 			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
