@@ -4503,7 +4503,7 @@
 						</cfif> 
 					<!--- saveaszip or as a collection --->
 					<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
-						<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');" style="white-space:normal;">
+						<a href="##" onclick="loadcontent('win_choosefolder_#session.tmpid#','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');" style="white-space:normal;">
 					<!--- upload --->
 					<cfelseif session.type EQ "uploadinto">
 						<a href="##" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;" style="white-space:normal;">

@@ -3171,6 +3171,8 @@
 				<!-- CFC: Add path -->
 				<if condition="!attributes.av">
 					<true>
+						<!-- link path is not needed when coming from 'add from server' -->
+						<set name="attributes.link_path" value="" />
 						<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
 					</true>
 					<false>
