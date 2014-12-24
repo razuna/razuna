@@ -83,6 +83,7 @@
 			<cfset session.theuserid = qry.user_id>
 			<cfset session.thelangid = 1>
 			<cfset session.login = "T">
+			<cfset session.libpath  =  replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 			<!--- Put user groups into session if present--->
 			<cfif listlen(valuelist(qry.grpid)) GT 0>
 				<cfset session.thegroupofuser = valuelist(qry.grpid)>

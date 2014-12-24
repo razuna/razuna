@@ -168,6 +168,8 @@
 			<cfelse>
 				<cfset session.user_os = 'unknown'>
 			</cfif>
+			<!--- Set lib path --->
+			<cfset session.libpath  =  replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
 			<cfinvoke component="groups_users" method="getGroupsOfUser">
 				<cfinvokeargument name="user_id" value="#qryuser.user_id#" />
