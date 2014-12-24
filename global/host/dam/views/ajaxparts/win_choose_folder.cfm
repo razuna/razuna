@@ -30,10 +30,11 @@ div.folders .tree li a,
 	white-space: nowrap !important;
 }
 </style>
+<cfset session.tmpid = createuuid('')>
 <cfoutput>
 	<div class="folders">
 		<div ><strong><cfif attributes.iscol EQ "T">Choose a collection folder first...<cfelse>Choose from the folder list below:</cfif></strong></div>
-		<div id="win_choosefolder"></div>
+		<div id="win_choosefolder_#session.tmpid#"></div>
 		<!--- For different kind of folder action --->
 		<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 OR session.type EQ "restorefolder" OR session.type EQ "restoreselectedfolders" OR session.type EQ "restorefolderall" OR session.type EQ "restorecolfolder" OR session.type EQ 'restorecolfolderall' OR session.type EQ 'restoreselectedcolfolder' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 			<div style="clear:both;padding-top:15px;" />
@@ -60,7 +61,7 @@ div.folders .tree li a,
 	<script language="javascript" type="text/javascript">
 		// Load Folders
 		$(function () { 
-			$("##win_choosefolder").tree({
+			$("##win_choosefolder_#session.tmpid#").tree({
 				// plugins : {
 				// 	cookie : { prefix : "treemovebox_" }
 				// },
