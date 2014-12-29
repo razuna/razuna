@@ -154,7 +154,7 @@
 															<cfelse>
 																<cfif qry_detail.detail.link_kind NEQ "url">
 																	<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br />
-																	<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+																	<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#attributes.file_id#&type=doc','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
 																	<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank" style="padding-left:20px;"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | 
 																	<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 																	<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#attributes.file_id#" target="_blank">PDF as image(s)</a>
