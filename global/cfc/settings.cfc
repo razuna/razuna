@@ -456,6 +456,7 @@
 	<cfparam default="" name="qry.ffmpeg">
 	<cfparam default="" name="qry.dcraw">
 	<cfparam default="" name="qry.mp4box">
+	<cfparam default="" name="qry.ghostscript">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
 	SELECT thetool, thepath
@@ -589,7 +590,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Update Tools --->
 	<cfloop collection="#arguments.thestruct#" item="myform">
-		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "mp4box">
+		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "mp4box" OR myform CONTAINS "ghostscript">
 			<!--- Select --->
 			<cfquery datasource="#application.razuna.datasource#" name="x">
 			SELECT thetool
@@ -1763,6 +1764,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- If ImageMagick we change theapp to convert --->
 	<cfif arguments.thestruct.theapp EQ "imagemagick">
 		<cfset arguments.thestruct.theapp = "convert">
+	<cfelseif arguments.thestruct.theapp EQ "ghostscript">
+		<cfif isWindows>
+			<cfset arguments.thestruct.theapp = "gswin32c">
+		<cfelse>
+			<cfset arguments.thestruct.theapp = "gs">
+		</cfif>
 	</cfif>
 	<!--- The executables --->
 	<cfif isWindows>
