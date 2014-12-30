@@ -1350,10 +1350,10 @@
 		</cfif>
 		<!--- Check if colorspace attribute for sRGB is set to 'T' in settings. If so it will override the colorspace parameter passed. --->
 		<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
-			<cfset var csarguments = "-set colorspace sRGB">
+			<cfset var csarguments = "-colorspace sRGB">
 		<!--- Check is colorspace parameter is passed --->
 		<cfelseif structKeyExists(arguments.thestruct,"colorspace") AND arguments.thestruct.colorspace NEQ "">
-			<cfset var csarguments = "-set colorspace #arguments.thestruct.colorspace# ">
+			<cfset var csarguments = "-colorspace #arguments.thestruct.colorspace# ">
 		<cfelse>
 			<cfset var csarguments = "">	
 		</cfif>	
