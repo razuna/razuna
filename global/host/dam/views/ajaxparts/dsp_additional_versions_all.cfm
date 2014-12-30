@@ -43,7 +43,7 @@
 				<td valign="top">
 					<strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)
 					<br />
-					<a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+					<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
 					<a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 					 <cfif cs.show_metadata_link>
 						| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#av_id#&thetype=#av_type#&cf_show=#av_type#&av=1','#myFusebox.getApplicationData().defaults.trans("metadata")#',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("metadata")#</a>

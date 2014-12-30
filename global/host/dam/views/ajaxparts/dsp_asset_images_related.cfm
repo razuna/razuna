@@ -51,7 +51,7 @@
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename_org#" target="_blank">
 					</cfif>
 					</a> 
-					<a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o" target="_blank" style="color:white;text-decoration:none;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("download")#</button></a>
+					<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#img_id#&type=img&v=o','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
 					<a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 					 <cfif cs.show_metadata_link>
 						 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("metadata")#</a>
