@@ -1397,8 +1397,6 @@
 				</cfif><!--- Audio search end here --->
 				<!--- MySql OR H2 --->
 				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-					<!--- Order by does not work with H2 as it needs the proper column name --->
-					<cfif application.razuna.thedatabase NEQ "h2">ORDER BY #sortby#</cfif>
 					) as t 
 					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -1406,12 +1404,14 @@
 					</cfif>
 					AND kind IS NOT NULL
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
+						ORDER BY #sortby#
 						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 							LIMIT #mysqloffset#,#session.rowmaxpage#
 						</cfif>
 					<cfelse>
 						GROUP BY kind
 					</cfif>
+					
 				</cfif>
 					<cfif application.razuna.thedatabase EQ "mssql">
 							) sorted_inline_view
@@ -2324,8 +2324,6 @@
 						<!--- Audio search end here --->
 						<!--- MySql OR H2 --->
 						<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-							<!--- Order by does not work with H2 as it needs the proper column name --->
-							<cfif application.razuna.thedatabase NEQ "h2">ORDER BY #sortby#</cfif>
 							) as t 
 					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -2333,6 +2331,7 @@
 					</cfif>
 					AND kind IS NOT NULL
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
+						ORDER BY #sortby#
 						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 							LIMIT #mysqloffset#,#session.rowmaxpage#
 						</cfif>

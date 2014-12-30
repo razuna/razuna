@@ -36,13 +36,13 @@
 			<!--- Hide if row is 0 --->
 			<cfif rowback NEQ 0>
 				<div style="float:left;">
-					<a href="##" onclick="showwindow('#myself#c.detail_proxy&file_id=#attributes.file_id#&what=#attributes.what#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#rowback#&filecount=#attributes.filecount#&#file_extension#','',1000,1);return false;"><button type="button" class="awesome small green">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</button></a>
+					<button type="button" class="awesome small green" onclick="showwindow('#myself#c.detail_proxy&file_id=#attributes.file_id#&what=#attributes.what#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#rowback#&filecount=#attributes.filecount#&#file_extension#','',1000,1);return false;">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</button>
 				</div>
 			</cfif>
 			<!--- Hide if filecount eq row --->
 			<cfif NOT rownext GT attributes.filecount>
 				<div style="float:right;">
-					<a href="##" onclick="showwindow('#myself#c.detail_proxy&file_id=#attributes.file_id#&what=#attributes.what#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#rownext#&filecount=#attributes.filecount#&#file_extension#','',1000,1);return false;"><button type="button" class="awesome small green">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</button></a>
+					<button type="button" class="awesome small green" onclick="showwindow('#myself#c.detail_proxy&file_id=#attributes.file_id#&what=#attributes.what#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&row=#rownext#&filecount=#attributes.filecount#&#file_extension#','',1000,1);return false;">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</button>
 				</div>
 			</cfif>
 		</div>

@@ -377,7 +377,6 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var errorvar = "">
 		<cfset var thefilename = createuuid('')>
 		<cfset var thescriptfile = gettempdirectory() & "#thefilename##theext#">
-		<cfset var classpath = replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset arguments.theasset = replace(replace(arguments.theasset,"/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
 		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
@@ -393,7 +392,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 			<cfset chunksize =  int(arguments.theassetsize /10000)>
 		</cfif>
 		<!--- Write script file --->
-		<cffile action="write" file="#thescriptfile#" output="cd #classpath#" mode="777" addnewline="true">
+		<cffile action="write" file="#thescriptfile#" output="cd #session.libpath#" mode="777" addnewline="true">
 		<cffile action="append" file="#thescriptfile#" output="java HJSplit -s#chunksize# #arguments.theasset# #assetdir#" mode="777" addnewline="true">
 		<cfexecute name="#thescriptfile#" timeout="30" variable="result" errorVariable="errorvar"/>
 		<cfif len(errorvar)>
