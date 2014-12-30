@@ -2080,6 +2080,10 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Set some more vars but only for PDF --->
 	<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+		<cfset  var perc = '%'>
+		<cfif arguments.thestruct.isWindows>
+			<cfset  var perc = '%%'> <!--- escape % sign for .bat files on windows --->
+		</cfif>
 		<!--- If this is a linked asset --->
 		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 			<!--- Create var with temp directory to hold the thumbnail and images --->
@@ -2091,7 +2095,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var getlast = listlast(arguments.thestruct.qryfile.path,"/\")>
 			<cfset arguments.thestruct.thepdfimage = replacenocase(getlast,".pdf",".jpg","all")>
 			<!--- Set naming format for pdf images --->
-			<cfset arguments.thestruct.thepdfimage2 = replacenocase(getlast,".pdf","-%02d.jpg","all")>
+			<cfset arguments.thestruct.thepdfimage2 = replacenocase(getlast,".pdf","-#perc#d.jpg","all")>
 		<!--- For importpath --->
 		<cfelseif arguments.thestruct.importpath NEQ "" AND arguments.thestruct.importpath>
 			<!--- Create var with temp directory to hold the thumbnail and images --->
@@ -2102,7 +2106,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- The name for the pdf --->
 			<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
 			<!--- Set naming format for pdf images --->
-			<cfset arguments.thestruct.thepdfimage2 = replacenocase(arguments.thestruct.qryfile.filename,".pdf","-%02d.jpg","all")>
+			<cfset arguments.thestruct.thepdfimage2 = replacenocase(arguments.thestruct.qryfile.filename,".pdf","-#perc#d.jpg","all")>
 			<!--- Create temp folder --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thetempdirectory#" mode="775" />
 		<cfelse>
@@ -2113,7 +2117,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- The name for the pdf --->
 			<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
 			<!--- Set naming format for pdf images --->
-			<cfset arguments.thestruct.thepdfimage2 = replacenocase(arguments.thestruct.qryfile.filename,".pdf","-%02d.jpg","all")>
+			<cfset arguments.thestruct.thepdfimage2 = replacenocase(arguments.thestruct.qryfile.filename,".pdf","-#perc#d.jpg","all")>
 		</cfif>
 	</cfif>
 	<!--- If we are PDF we create thumbnail and images from the PDF --->
