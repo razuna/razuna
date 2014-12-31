@@ -1279,7 +1279,7 @@
 			<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#videos
 				SET 
-				<cfif expiry_date EQ ''>
+				<cfif expiry_date EQ '00/00/0000'>
 					expiry_date = null
 				<cfelseif isdate(arguments.thestruct.expiry_date)>
 					expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">

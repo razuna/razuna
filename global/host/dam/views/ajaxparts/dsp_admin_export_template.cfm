@@ -51,6 +51,7 @@
 						<option value="img_file_url"<cfif listFind(qry_export.images_metadata,"img_file_url")> selected="selected"</cfif>>File URL</option>
 						<option value="img_create_time"<cfif listFind(qry_export.images_metadata,"img_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="img_change_time"<cfif listFind(qry_export.images_metadata,"img_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="img_expiry_date"<cfif listFind(qry_export.images_metadata,"img_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
 						<option value="img_width"<cfif listFind(qry_export.images_metadata,"img_width")> selected="selected"</cfif>>Width</option>
 						<option value="img_height"<cfif listFind(qry_export.images_metadata,"img_height")> selected="selected"</cfif>>Height</option>
 						<option value="img_size"<cfif listFind(qry_export.images_metadata,"img_size")> selected="selected"</cfif>>Size</option>
@@ -90,6 +91,7 @@
 						<option value="vid_file_url"<cfif listFind(qry_export.videos_metadata,"vid_file_url")> selected="selected"</cfif>>File URL</option>
 						<option value="vid_create_time"<cfif listFind(qry_export.videos_metadata,"vid_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="vid_change_time"<cfif listFind(qry_export.videos_metadata,"vid_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="vid_expiry_date"<cfif listFind(qry_export.videos_metadata,"vid_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
 						<option value="vid_width"<cfif listFind(qry_export.videos_metadata,"vid_width")> selected="selected"</cfif>>Width</option>
 						<option value="vid_height"<cfif listFind(qry_export.videos_metadata,"vid_height")> selected="selected"</cfif>>Height</option>
 						<option value="vid_size"<cfif listFind(qry_export.videos_metadata,"vid_size")> selected="selected"</cfif>>Size</option>
@@ -122,6 +124,7 @@
 						<option value="file_file_url"<cfif listFind(qry_export.files_metadata,"file_file_url")> selected="selected"</cfif>>File URL</option>
 						<option value="file_create_time"<cfif listFind(qry_export.files_metadata,"file_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="file_change_time"<cfif listFind(qry_export.files_metadata,"file_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="file_expiry_date"<cfif listFind(qry_export.files_metadata,"file_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
 						<option value="file_size"<cfif listFind(qry_export.files_metadata,"file_size")> selected="selected"</cfif>>Size</option>
 						<cfif prefs.set2_upc_enabled>
 							<option value="file_upc_number"<cfif listFind(qry_export.files_metadata,"file_upc_number")> selected="selected"</cfif>>UPC Number</option>
@@ -159,6 +162,7 @@
 						<option value="aud_file_url"<cfif listFind(qry_export.audios_metadata,"aud_file_url")> selected="selected"</cfif>>File URL</option>
 						<option value="aud_create_time"<cfif listFind(qry_export.audios_metadata,"aud_create_time")> selected="selected"</cfif>>Create Date</option>
 						<option value="aud_change_time"<cfif listFind(qry_export.audios_metadata,"aud_change_time")> selected="selected"</cfif>>Change Date</option>
+						<option value="aud_expiry_date"<cfif listFind(qry_export.audios_metadata,"aud_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
 						<option value="aud_size"<cfif listFind(qry_export.audios_metadata,"aud_size")> selected="selected"</cfif>>Size</option>
 						<cfif prefs.set2_upc_enabled>
 							<option value="aud_upc_number"<cfif listFind(qry_export.audios_metadata,"aud_upc_number")> selected="selected"</cfif>>UPC Number</option>
