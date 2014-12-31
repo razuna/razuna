@@ -41,7 +41,9 @@
 			<th>Backup</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("admin_maintenance_backup_desc2")#<br /><br />
+			<td>#defaultsObj.trans("admin_maintenance_backup_desc2")#<br />
+			<cfif !application.razuna.isp>#defaultsObj.trans("admin_maintenance_backup_desc3")#<br /></cfif>
+			<br />
 			<!--- Backup to: <input type="radio" name="tofiletype" id="tofiletype" value="raz" checked="checked"> Razuna format &mdash; Export to:<input type="radio" name="tofiletype" id="tofiletype" value="sql"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file ---> <input type="button" name="backup" value="Backup Database Now" class="button" onclick="dobackup();"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
 		</tr>
 	</table>
@@ -81,7 +83,7 @@
 		<cfloop query="qry_backup">
 			<tr>
 				<td>#dateformat(back_date,"mmmm dd yyyy")#, #timeformat(back_date,"HH:mm:ss")#</td>
-				<td><a href="##" onclick="dorestore('#back_id#');">Restore</a></td>
+				<td><a href="##" onclick="confirmrestore('#back_id#');">Restore</a></td>
 				<td><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=prefs_backup&id=#back_id#&loaddiv=backrest','#defaultsObj.trans("remove_selected")#',400,1);return false">Remove</a></td>
 			</tr>
 		</cfloop>
@@ -90,6 +92,11 @@
 		</tr>
 	</table>
 	<div id="dummy_maintenance"></div>
+	<!--- Div for hidden window for deleting --->
+	<div id="dialog-confirm-restore" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#defaultsObj.trans("restore_warning")#
+		</p>
+	</div>
 	<!--- Load Progress --->
 	<script language="JavaScript" type="text/javascript">
 		// Do Backup
@@ -107,5 +114,22 @@
 		function dorestore(backid){
 			window.open('#myself#c.prefs_restore_do&back_id=' + escape(backid), 'winrestore', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=500,height=500');
 		}
+
+		function confirmrestore(backid){
+			$( "##dialog-confirm-restore" ).dialog({
+				resizable: false,
+				height:250,
+				modal: true,
+				buttons: {
+						"I understand. Begin Restore": function() {
+							dorestore(backid);
+							$( this ).dialog( "close" );
+						},
+						Cancel: function() {
+							$( this ).dialog( "close" );
+					}
+				}
+			});
+	}
 	</script>
 </cfoutput>
