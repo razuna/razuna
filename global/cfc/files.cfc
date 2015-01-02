@@ -1555,10 +1555,11 @@
 		<!--- Qry. We take the query and do a IN --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailforbasketfile */ f.file_id, f.file_extension, f.file_extension, f.file_size, f.folder_id_r, f.file_name_org, 
-		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename, f.file_name_org filename_org,
+		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename, f.file_name_org filename_org, fo.share_dl_org, fo.share_dl_thumb,
 		'' as perm
-		FROM #session.hostdbprefix#files f
-		WHERE f.file_id 
+		FROM #session.hostdbprefix#files f, #session.hostdbprefix#folders fo
+		WHERE f.folder_id_r = fo.folder_id AND
+		f.file_id 
 		<cfif arguments.thestruct.qrybasket.recordcount EQ 0>
 		= '0'
 		<cfelse>

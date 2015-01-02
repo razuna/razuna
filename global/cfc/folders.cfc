@@ -2324,6 +2324,10 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("audios")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("images")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
