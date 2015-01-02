@@ -121,9 +121,9 @@
 	<!--- Get cachetoken --->
 	<cfset variables.cachetoken = getcachetoken("users")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="0" region="razcache">
 	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
-	0 AS thetotal, u.user_pass, 
+	0 AS thetotal, u.user_pass, (SELECT count(1) FROM users uu, ct_groups_users cg WHERE cg.ct_g_u_user_id = uu.user_id AND cg.ct_g_u_grp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="1"> AND uu.user_id <>'1') numsysadmin,
 		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT ct_g_u_grp_id ORDER BY ct_g_u_grp_id SEPARATOR ',') AS grpid
@@ -996,23 +996,38 @@
 	<cfif arguments.thestruct.allusers>
 		<!--- Query all users --->
 		<cfinvoke method="getall" thestruct="#arguments.thestruct#" returnvariable="qry_users" />
-		<!--- Now filter out all users in admin group --->
+		<cfset arguments.thestruct.numsysadmin = qry_users.numsysadmin>
+		<!--- Now filter out all users in admin and sysadmin group --->
 		<cfquery dbtype="query" name="qry_users">
 		SELECT *
 		FROM qry_users
 		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
+		AND ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 		<!--- Put all the userids into a list --->
 		<cfset arguments.thestruct.theuserid = valueList(qry_users.user_id,",")>
 	</cfif>
 	<!--- Loop over the userid --->
 	<cfloop list="#arguments.thestruct.theuserid#" delimiters="," index="i">
-		<!--- Delete user --->
-		<cfset arguments.thestruct.id = i>
-		<cfinvoke method="delete" thestruct="#arguments.thestruct#" />
-		<!--- Delete in groups users --->
-		<cfset arguments.thestruct.newid = i>
-		<cfinvoke component="groups_users" method="deleteUser" thestruct="#arguments.thestruct#" />
+		<cfset var qry = "">
+		<!--- Check if only 1 sysadmin present--->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT *
+		FROM users u, ct_groups_users cg 
+		WHERE  cg.ct_g_u_user_id = u.user_id 
+		AND cg.ct_g_u_user_id =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+		AND cg.ct_g_u_grp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+		AND (SELECT count(1) FROM users uu, ct_groups_users cgu WHERE cgu.ct_g_u_user_id = uu.user_id AND cgu.ct_g_u_grp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="1"> AND uu.user_id <>'1')  = 1
+		</cfquery>
+		<!--- Do not delete if only 1 system admin is present --->
+		<cfif qry.recordcount EQ 0>
+			<!--- Delete user --->
+			<cfset arguments.thestruct.id = i>
+			<cfinvoke method="delete" thestruct="#arguments.thestruct#" />
+			<!--- Delete in groups users --->
+			<cfset arguments.thestruct.newid = i>
+			<cfinvoke component="groups_users" method="deleteUser" thestruct="#arguments.thestruct#" />
+		</cfif>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
