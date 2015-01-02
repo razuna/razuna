@@ -5916,6 +5916,19 @@
 	<cfreturn ishere>
 </cffunction>
 
+<!--- Check foldername for invalid characters --->
+<cffunction name="foldernamecheck_invalidchars" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Param --->
+	<cfset var isinvalid = false>
+	<cfset var invalidcharlist= '/\\*?<>|":'>
+	<!--- Check for invalid characters--->
+	<cfif refind( "[#invalidcharlist#]" , arguments.thestruct.folder_name) >
+		<cfset var isinvalid = true>
+	</cfif>
+	<cfreturn isinvalid>
+</cffunction>
+
 <!--- Asset Trash Count --->
 <cffunction name="trashcount" output="false">
 	<cfargument name="thestruct" type="struct">

@@ -52,7 +52,7 @@
 							<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
 							#qry_folder.folder_name#
 						<cfelse>
-							<div style="float:left;"><input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#" onkeyup="samefoldernamecheck('#attributes.theid#');"  autocomplete="off"></div> <div id="samefoldername"></div>
+							<div style="float:left;"><input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#" onkeyup="samefoldernamecheck('#attributes.theid#');foldernamecheck_invalidchars('#attributes.theid#');"  autocomplete="off"></div> <div id="samefoldername"></div><div id="invalidchars"></div>
 						</cfif>
 					</td>
 				</tr>
