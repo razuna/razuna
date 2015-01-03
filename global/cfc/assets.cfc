@@ -2011,7 +2011,11 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<!--- Delete on the file system --->
 			<cfif directoryexists(temppath)>
-				<cfdirectory action="delete" recurse="true" directory="#temppath#">
+				<cftry>
+					<cfdirectory action="delete" recurse="true" directory="#temppath#">
+					<cfcatch></cfcatch>
+				</cftry>
+
 			</cfif>
 		</cfloop>
 		<cftry>
