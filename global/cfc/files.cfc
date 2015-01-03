@@ -1486,25 +1486,25 @@
 		<cfargument name="thestruct" type="struct">
 		<cfset var lqry = structnew()>
 		<cfset lqry.thepdfjpgslist = "">
+		<cfset var qry_thefile = "">
 		<!--- Get some file details --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="folder_id_r, path_to_asset" returnvariable="qry_thefile">
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Get the directory list --->
 			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
-			<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
-			<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
-				<cfset var theloopstart = 0>
-				<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
-				<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
-				<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9]{1,}.jpg","","ONE")>
-				<cfloop from="#theloopstart#" to="#looptil#" index="i">
-					<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
-				</cfloop>
-				<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
-			<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
-				<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
-			</cfif>
+			<cfset var numbr = ArrayNew(1)>
+			
+			<cfset var tmp = queryAddColumn(lqry.qry_pdfjpgs, "numbering","integer",numbr)>
+
+			<cfloop query="lqry.qry_pdfjpgs">
+				<cfset tmp = querySetCell(lqry.qry_pdfjpgs, "numbering", replacenocase(listlast(name,'-'),'.jpg','' ,'ALL'), currentrow)>
+			</cfloop>
+			<!--- Order by page numbering --->
+			<cfquery name="lqry.qry_pdfjpgs" dbtype="query">
+				SELECT * FROM lqry.qry_pdfjpgs ORDER BY numbering ASC
+			</cfquery>
+			<cfset lqry.thepdfjpgslist = valuelist(lqry.qry_pdfjpgs.name)>
 		</cfif>
 		<!--- Return --->
 		<cfreturn lqry>
