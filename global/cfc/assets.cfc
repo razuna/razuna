@@ -5829,7 +5829,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 	<cfset arguments.thestruct.thesource = "#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 	<cfset arguments.thestruct.destination = "#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
-	<cfset arguments.thestruct.qryfile.extension = arguments.thestruct.qrysettings.set2_img_format>
+	<cfset arguments.thestruct.qryfile.extension = thefile.serverFileExt>
 	<cfif arguments.thestruct.isWindows>
 		<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 		<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
