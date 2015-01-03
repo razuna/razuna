@@ -2182,6 +2182,13 @@
 		<!-- Show -->
 		<do action="ajax.folder_namecheck" />
 	</fuseaction>
+	<!-- Check for invalid characters in folder name -->
+	<fuseaction name="folder_name_invalidchars">
+		<!-- CFC: check for invalid characters -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="foldernamecheck_invalidchars(attributes)" returnvariable="attributes.invalidchars" />
+		<!-- Show -->
+		<do action="ajax.folder_name_invalidchars" />
+	</fuseaction>
 	<!-- Check for the same collection name -->
 	<fuseaction name="collection_namecheck">
 		<!-- CFC: check for same name -->
