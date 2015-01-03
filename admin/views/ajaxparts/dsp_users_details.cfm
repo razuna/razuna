@@ -38,6 +38,7 @@
   </style>
 
 <cfoutput>
+<cfparam name="attributes.numsysadmin" default="0">
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
 <input type="hidden" name="#theaction#" value="c.users_save">
 <input type="hidden" name="user_id" value="#attributes.user_id#">
@@ -286,8 +287,16 @@
 	}
 	// SystemAdmin checkbox clicked
 	function chksysadmin(){
+		if (#attributes.numsysadmin# == 1 && #listfind(grpnrlist,'1')# !=0)
+		{
+			// Check sys admin
+			$('##admin_group_1').prop('checked',true);
+			// Disable sys admin
+			$('##admin_group_1').attr('disabled',true);
+			alert('This user is the only System adminstrator present. Please add another user as System Administrator before removing this user from the group.');
+		}
 		// Check if sysadmin is checked
-		var sysadminischecked = $('##admin_group_1').is(':checked');		
+		var sysadminischecked = $('##admin_group_1').is(':checked');
 		// Check all hosts
 		if (sysadminischecked == true){
 			// Uncheck admin

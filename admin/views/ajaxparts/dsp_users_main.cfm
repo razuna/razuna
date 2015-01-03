@@ -80,19 +80,19 @@
 						<cfset host_list = valuelist(hosts.host_name)>
 						<tr>
 							<td valign="top" nowrap width="1%"><cfif qry_users.recordcount NEQ 1><input type="checkbox" name="theuserid" value="#user_id#" onclick="showhidedelete();" /></cfif></td>
-							<td valign="top" nowrap><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#urlEncodedFormat(qry_users.user_first_name&' '&qry_users.user_last_name)#',600,1);return false;"<cfif listfind(ct_g_u_grp_id,"1")> style="font-weight:bold;color:green;"</cfif>>#user_login_name#</a></td>
+							<td valign="top" nowrap><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#&numsysadmin=#numsysadmin#','#urlEncodedFormat(qry_users.user_first_name&' '&qry_users.user_last_name)#',600,1);return false;"<cfif listfind(ct_g_u_grp_id,"1")> style="font-weight:bold;color:green;"</cfif>>#user_login_name#</a></td>
 							<td valign="top" nowrap width="25%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#urlEncodedFormat(qry_users.user_first_name&' '&qry_users.user_last_name)#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
 							<td valign="top" nowrap width="15%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#urlEncodedFormat(qry_users.user_first_name&' '&qry_users.user_last_name)#',600,1);return false;">#user_company#</a></td>
 							<td valign="top" nowrap width="15%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#urlEncodedFormat(qry_users.user_first_name&' '&qry_users.user_last_name)#',600,1);return false;">#user_email#</a></td>
 							<td valign="top" width="15%">#host_list#</td>
 							<td valign="top" nowrap width="1%"><cfif #user_active# EQ "T"><img src="images/im-user.png" width="16" height="16" border="0" /><cfelse><img src="images/im-user-busy.png" width="16" height="16" border="0" /></cfif></td>
-							<cfif qry_users.recordcount NEQ 1>
+							<cfif qry_users.recordcount NEQ 1 AND !(listfind(ct_g_u_grp_id,"1") AND numsysadmin EQ '1')>
 								<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
 							</cfif>
 						</tr>
 					</cfoutput>
 					<tr>
-						<td colspan="8" style="padding-top:20px;"><em>(Users in green are in the SystemAdministrator group)</em></td>
+						<td colspan="8" style="padding-top:20px;"><em>(Users in green are in the SystemAdministrator group. There must be atleast one System Administrator present at all times.)</em></td>
 					</tr>
 				</table>
 			</div>
