@@ -1311,6 +1311,19 @@
 			</cfif>
 			<cfset cfcatch.custom_message = "Error in API upload in function assets.addassetapi">
 			<cfset errobj.logerrors(cfcatch,false)/>
+			<!--- Delete leftover entries --->
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#audios WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#videos WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#files WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
