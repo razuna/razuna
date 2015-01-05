@@ -136,6 +136,18 @@
 					<input type="radio" name="set2_rendition_metadata" value="true" <cfif prefs.set2_rendition_metadata eq 'true'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_on")#
 				</td>
 			</tr>
+			<tr>
+				<td colspan="2">
+					<br />
+					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_search_desc")#</strong>
+					<br />
+					#myFusebox.getApplicationData().defaults.trans("image_settings_rendition_search_subdesc")#
+					<br /><br />
+					<input type="radio" name="set2_rendition_search" value="f" <cfif prefs.set2_rendition_search eq 'f' or prefs.set2_rendition_search eq ''> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_search_off")#
+					<br />
+					<input type="radio" name="set2_rendition_search" value="t" <cfif prefs.set2_rendition_search eq 't'> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_rendition_search_on")#
+				</td>
+			</tr>
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>

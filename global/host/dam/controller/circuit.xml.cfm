@@ -5127,6 +5127,7 @@
 				<set name="attributes.cs" value="#cs#" />
 				<!-- CFC: Get settings -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+				<set name="attributes.prefs" value="#prefs#" />
 				<!-- Check the DataBase  -->
 				<if condition="attributes.database EQ 'mysql' OR attributes.database EQ 'h2'">
 					<true>
@@ -5169,6 +5170,7 @@
 						<set name="attributes.cs" value="#cs#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5216,6 +5218,7 @@
 						<set name="attributes.cs" value="#cs#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5263,6 +5266,7 @@
 						<set name="attributes.cs" value="#cs#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5310,6 +5314,7 @@
 						<set name="attributes.cs" value="#cs#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5406,6 +5411,7 @@
 				<set name="attributes.cs" value="#cs#" />
 				<!-- CFC: Get settings -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+				<set name="attributes.prefs" value="#prefs#" />
 				<!-- CFC: Get placement for fields-->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
 				<set name="attributes.cs_place" value="#cs_place#" />
@@ -5456,6 +5462,7 @@
 						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5506,6 +5513,7 @@
 						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5556,6 +5564,7 @@
 						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
@@ -5606,6 +5615,7 @@
 						<set name="attributes.cs_place" value="#cs_place#" />
 						<!-- CFC: Get settings -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
+						<set name="attributes.prefs" value="#prefs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->

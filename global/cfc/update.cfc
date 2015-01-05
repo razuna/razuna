@@ -181,6 +181,18 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
+
+		<!--- If less then 45 (1.7.1) --->
+		<cfif updatenumber.opt_value LT 45>
+			<!--- Add SAML columns to settings_2 table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_RENDITION_SEARCH #thevarchar#(1) DEFAULT 'f'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+		</cfif>
+
 		<!--- If less then 43 (1.7) --->
 		<cfif updatenumber.opt_value LT 43>
 			<!--- Add zip_extract column to smart_folders table --->
