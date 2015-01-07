@@ -3248,12 +3248,8 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Rename the UPC addtional rendition image --->
 						<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND attributes.intstruct.upcRenditionNum NEQ "">
 							<cfpause interval="5" />
-							<cfinvoke component="s3" method="renameObject">
-								<cfinvokeargument name="oldBucketName" value="#attributes.intstruct.awsbucket#">
-								<cfinvokeargument name="newBucketName" value="#attributes.intstruct.awsbucket#">
-								<cfinvokeargument name="oldFileKey" value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
-								<cfinvokeargument name="newFileKey" value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#">
-							</cfinvoke>
+							<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+							<cfset  renobj.renameObject(oldBucketName='#attributes.intstruct.awsbucket#', newBucketName ="#attributes.intstruct.awsbucket#", oldFileKey = "#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#",  newFileKey = "#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#")>
 						</cfif>
 					</cfthread>
 					<cfthread action="join" name="#upt#" />
@@ -3874,12 +3870,8 @@ This is the main function called directly by a single upload else from addassets
 					<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
 					<cfpause interval="5" />
 						<cfthread name="rename#upmt#" intupstruct="#arguments.thestruct#" action="run">
-							<cfinvoke component="s3" method="renameObject">
-								<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
-								<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
-								<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.qryfile.filename#">
-								<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.vid_name#.#attributes.intupstruct.qryfile.extension#">
-							</cfinvoke>
+							<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+							<cfset  renobj.renameObject(oldBucketName='#attributes.intupstruct.awsbucket#', newBucketName ="#attributes.intupstruct.awsbucket#", oldFileKey = "#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.qryfile.filename#",  newFileKey = "#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.vid_name#.#attributes.intupstruct.qryfile.extension#")>
 						</cfthread>
 						<cfthread action="join" name="rename#upmt#" />
 					</cfif>
@@ -5027,12 +5019,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
 					<cfpause interval="5" />
 					<cfthread name="rename#upa#" intupstruct="#arguments.thestruct#" action="run">
-						<cfinvoke component="s3" method="renameObject">
-							<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
-							<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
-							<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
-							<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.aud_name#.#attributes.intupstruct.qryfile.extension#">
-						</cfinvoke>
+						<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+						<cfset  renobj.renameObject(oldBucketName='#attributes.intupstruct.awsbucket#', newBucketName ="#attributes.intupstruct.awsbucket#", oldFileKey = "#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#",  newFileKey = "#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.aud_name#.#attributes.intupstruct.qryfile.extension#")>
 					</cfthread>
 					<cfthread action="join" name="rename#upa#" />
 				</cfif>
