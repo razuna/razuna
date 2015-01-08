@@ -422,7 +422,7 @@
 			<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#audios
 				SET 
-				<cfif expiry_date EQ ''>
+				<cfif expiry_date EQ '00/00/0000'>
 					expiry_date = null
 				<cfelseif isdate(arguments.thestruct.expiry_date)>
 					expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">
@@ -1156,10 +1156,10 @@
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size, 
-	a.link_kind, a.link_path_url, a.path_to_asset, a.aud_name_org filename_org,
+	a.link_kind, a.link_path_url, a.path_to_asset, a.aud_name_org filename_org, f.share_dl_org, f.share_dl_thumb,
 	'' as perm
-	FROM #session.hostdbprefix#audios a
-	WHERE 
+	FROM #session.hostdbprefix#audios a, #session.hostdbprefix#folders f
+	WHERE a.folder_id_r = f.folder_id AND
 	<cfif arguments.thestruct.related EQ "T">
 		a.aud_group
 	<cfelse>

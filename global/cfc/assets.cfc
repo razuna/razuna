@@ -1311,6 +1311,19 @@
 			</cfif>
 			<cfset cfcatch.custom_message = "Error in API upload in function assets.addassetapi">
 			<cfset errobj.logerrors(cfcatch,false)/>
+			<!--- Delete leftover entries --->
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#audios WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#videos WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+				DELETE FROM #session.hostdbprefix#files WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+			</cfquery>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -2011,7 +2024,11 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<!--- Delete on the file system --->
 			<cfif directoryexists(temppath)>
-				<cfdirectory action="delete" recurse="true" directory="#temppath#">
+				<cftry>
+					<cfdirectory action="delete" recurse="true" directory="#temppath#">
+					<cfcatch></cfcatch>
+				</cftry>
+
 			</cfif>
 		</cfloop>
 		<cftry>
@@ -2080,6 +2097,10 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Set some more vars but only for PDF --->
 	<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+		<cfset  var perc = '%'>
+		<cfif arguments.thestruct.isWindows>
+			<cfset  var perc = '%%'> <!--- escape % sign for .bat files on windows --->
+		</cfif>
 		<!--- If this is a linked asset --->
 		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 			<!--- Create var with temp directory to hold the thumbnail and images --->
@@ -2090,6 +2111,8 @@ This is the main function called directly by a single upload else from addassets
 			<!--- The name for the pdf --->
 			<cfset var getlast = listlast(arguments.thestruct.qryfile.path,"/\")>
 			<cfset arguments.thestruct.thepdfimage = replacenocase(getlast,".pdf",".jpg","all")>
+			<!--- Set naming format for pdf images --->
+			<cfset arguments.thestruct.thepdfimage2 = replacenocase(getlast,".pdf","-#perc#d.jpg","all")>
 		<!--- For importpath --->
 		<cfelseif arguments.thestruct.importpath NEQ "" AND arguments.thestruct.importpath>
 			<!--- Create var with temp directory to hold the thumbnail and images --->
@@ -2099,6 +2122,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<!--- The name for the pdf --->
 			<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
+			<!--- Set naming format for pdf images --->
+			<cfset arguments.thestruct.thepdfimage2 = replacenocase(arguments.thestruct.qryfile.filename,".pdf","-#perc#d.jpg","all")>
 			<!--- Create temp folder --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thetempdirectory#" mode="775" />
 		<cfelse>
@@ -2108,6 +2133,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<!--- The name for the pdf --->
 			<cfset arguments.thestruct.thepdfimage = replacenocase(arguments.thestruct.qryfile.filename,".pdf",".jpg","all")>
+			<!--- Set naming format for pdf images --->
+			<cfset arguments.thestruct.thepdfimage2 = replacenocase(arguments.thestruct.qryfile.filename,".pdf","-#perc#d.jpg","all")>
 		</cfif>
 	</cfif>
 	<!--- If we are PDF we create thumbnail and images from the PDF --->
@@ -2133,8 +2160,22 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			<!--- Script: Create thumbnail --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# -density 290 -quality 100  ""#arguments.thestruct.theorgfileflat#"" -resize #resizeargs# -colorspace sRGB -background white -flatten ""#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+
+
 			<!--- Script: Create images --->
-			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#""" mode="777">
+			<!--- If ghsotscript path specified the use GS for PDF page extraction else use imagemagick --->
+			<cfif arguments.thestruct.thetools.ghostscript NEQ "">
+				<!--- Get GS executable path --->
+				<cfif arguments.thestruct.isWindows>
+					<cfset arguments.thestruct.thegs = """#arguments.thestruct.thetools.ghostscript#/gswin32c.exe""">
+				<cfelse>
+					<cfset arguments.thestruct.thegs = "#arguments.thestruct.thetools.ghostscript#/gs">
+				</cfif>
+				<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.thegs# -dSAFER -dBATCH -dNOPAUSE -r150 -sDEVICE=png16m -dTextAlphaBits=4 -sOutputFile=""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage2#"" ""#arguments.thestruct.theorgfile#""" mode="777">
+			<cfelse>
+				<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# -density 100 -quality 100 ""#arguments.thestruct.theorgfile#"" -scene 1 ""#arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage2#""" mode="777">
+			</cfif>
+
 			<!--- Execute --->
 			<cfthread name="#ttpdf#" action="run" pdfintstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
@@ -3207,12 +3248,8 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Rename the UPC addtional rendition image --->
 						<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND attributes.intstruct.upcRenditionNum NEQ "">
 							<cfpause interval="5" />
-							<cfinvoke component="s3" method="renameObject">
-								<cfinvokeargument name="oldBucketName" value="#attributes.intstruct.awsbucket#">
-								<cfinvokeargument name="newBucketName" value="#attributes.intstruct.awsbucket#">
-								<cfinvokeargument name="oldFileKey" value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
-								<cfinvokeargument name="newFileKey" value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#">
-							</cfinvoke>
+							<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+							<cfset  renobj.renameObject(oldBucketName='#attributes.intstruct.awsbucket#', newBucketName ="#attributes.intstruct.awsbucket#", oldFileKey = "#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#",  newFileKey = "#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.image_name#.#attributes.intstruct.qryfile.extension#")>
 						</cfif>
 					</cfthread>
 					<cfthread action="join" name="#upt#" />
@@ -3833,12 +3870,8 @@ This is the main function called directly by a single upload else from addassets
 					<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
 					<cfpause interval="5" />
 						<cfthread name="rename#upmt#" intupstruct="#arguments.thestruct#" action="run">
-							<cfinvoke component="s3" method="renameObject">
-								<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
-								<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
-								<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.qryfile.filename#">
-								<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.vid_name#.#attributes.intupstruct.qryfile.extension#">
-							</cfinvoke>
+							<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+							<cfset  renobj.renameObject(oldBucketName='#attributes.intupstruct.awsbucket#', newBucketName ="#attributes.intupstruct.awsbucket#", oldFileKey = "#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.qryfile.filename#",  newFileKey = "#attributes.intupstruct.qryfile.folder_id#/vid/#attributes.intupstruct.thisvid.newid#/#attributes.intupstruct.vid_name#.#attributes.intupstruct.qryfile.extension#")>
 						</cfthread>
 						<cfthread action="join" name="rename#upmt#" />
 					</cfif>
@@ -4986,12 +5019,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND arguments.thestruct.upcRenditionNum NEQ "">
 					<cfpause interval="5" />
 					<cfthread name="rename#upa#" intupstruct="#arguments.thestruct#" action="run">
-						<cfinvoke component="s3" method="renameObject">
-							<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
-							<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
-							<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
-							<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.aud_name#.#attributes.intupstruct.qryfile.extension#">
-						</cfinvoke>
+						<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+						<cfset  renobj.renameObject(oldBucketName='#attributes.intupstruct.awsbucket#', newBucketName ="#attributes.intupstruct.awsbucket#", oldFileKey = "#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#",  newFileKey = "#attributes.intupstruct.qryfile.folder_id#/aud/#attributes.intupstruct.newid#/#attributes.intupstruct.aud_name#.#attributes.intupstruct.qryfile.extension#")>
 					</cfthread>
 					<cfthread action="join" name="rename#upa#" />
 				</cfif>
@@ -5788,7 +5817,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 	<cfset arguments.thestruct.thesource = "#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 	<cfset arguments.thestruct.destination = "#arguments.thestruct.theincomingtemppath#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
-	<cfset arguments.thestruct.qryfile.extension = arguments.thestruct.qrysettings.set2_img_format>
+	<cfset arguments.thestruct.qryfile.extension = thefile.serverFileExt>
 	<cfif arguments.thestruct.isWindows>
 		<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 		<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">

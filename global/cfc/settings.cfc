@@ -79,7 +79,7 @@
 <cffunction name="getsettingsfromdam" returntype="query">
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export, set2_saml_xmlpath_email,set2_saml_xmlpath_password, set2_saml_httpredirect
+	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export, set2_saml_xmlpath_email,set2_saml_xmlpath_password, set2_saml_httpredirect, set2_rendition_search
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -107,7 +107,8 @@
 	set2_meta_export = <cfqueryparam value="#arguments.thestruct.set2_meta_export#" cfsqltype="cf_sql_varchar">,
 	set2_saml_xmlpath_email = <cfqueryparam value="#arguments.thestruct.set2_saml_email#" cfsqltype="cf_sql_varchar">,
 	set2_saml_xmlpath_password = <cfqueryparam value="#arguments.thestruct.set2_saml_password#" cfsqltype="cf_sql_varchar">,
-	set2_saml_httpredirect = <cfqueryparam value="#arguments.thestruct.set2_saml_redirect#" cfsqltype="cf_sql_varchar">
+	set2_saml_httpredirect = <cfqueryparam value="#arguments.thestruct.set2_saml_redirect#" cfsqltype="cf_sql_varchar">,
+	set2_rendition_search = <cfqueryparam value="#arguments.thestruct.set2_rendition_search#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -456,6 +457,7 @@
 	<cfparam default="" name="qry.ffmpeg">
 	<cfparam default="" name="qry.dcraw">
 	<cfparam default="" name="qry.mp4box">
+	<cfparam default="" name="qry.ghostscript">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
 	SELECT thetool, thepath
@@ -589,7 +591,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Update Tools --->
 	<cfloop collection="#arguments.thestruct#" item="myform">
-		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "mp4box">
+		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "mp4box" OR myform CONTAINS "ghostscript">
 			<!--- Select --->
 			<cfquery datasource="#application.razuna.datasource#" name="x">
 			SELECT thetool
@@ -1763,6 +1765,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- If ImageMagick we change theapp to convert --->
 	<cfif arguments.thestruct.theapp EQ "imagemagick">
 		<cfset arguments.thestruct.theapp = "convert">
+	<cfelseif arguments.thestruct.theapp EQ "ghostscript">
+		<cfif isWindows>
+			<cfset arguments.thestruct.theapp = "gswin32c">
+		<cfelse>
+			<cfset arguments.thestruct.theapp = "gs">
+		</cfif>
 	</cfif>
 	<!--- The executables --->
 	<cfif isWindows>

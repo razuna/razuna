@@ -208,17 +208,16 @@
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="folderpathdest" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="awskey" type="string" required="no" default="#application.razuna.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#application.razuna.awskeysecret#">
+		<cfargument name="awslocation" type="string" required="no" default="#application.razuna.awslocation#">
 		<!--- Get keys --->
 		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
 		<!--- Call the renameobject function which will copy and delete at the same time --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
-			<cfinvoke component="s3" method="renameObject">
-				<cfinvokeargument name="oldBucketName" value="#arguments.awsbucket#">
-				<cfinvokeargument name="newBucketName" value="#arguments.awsbucket#">
-				<cfinvokeargument name="oldFileKey" value="#key#">
-				<cfinvokeargument name="newFileKey" value="#arguments.folderpathdest#/#thefile#">
-			</cfinvoke>
+			<cfset var moveobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
+			<cfset moveobj.renameObject(oldBucketName='#arguments.awsbucket#', newBucketName ="#arguments.awsbucket#", oldFileKey = "#key#",  newFileKey = "#arguments.folderpathdest#/#thefile#")>
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
@@ -229,17 +228,16 @@
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="folderpathdest" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="awskey" type="string" required="no" default="#application.razuna.awskey#">
+		<cfargument name="awssecretKey" type="string" required="no" default="#application.razuna.awskeysecret#">
+		<cfargument name="awslocation" type="string" required="no" default="#application.razuna.awslocation#">
 		<!--- Get keys --->
 		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
 		<!--- Call the copyobject function --->
 		<cfloop query="thekeys" >
 			<cfset thefile = listlast(key,"/")>
-			<cfinvoke component="s3" method="copyObject">
-				<cfinvokeargument name="oldBucketName" value="#arguments.awsbucket#">
-				<cfinvokeargument name="newBucketName" value="#arguments.awsbucket#">
-				<cfinvokeargument name="oldFileKey" value="#key#">
-				<cfinvokeargument name="newFileKey" value="#arguments.folderpathdest#/#thefile#">
-			</cfinvoke>
+			<cfset var copyobj = createObject("component","global.cfc.s3").init(accessKeyId=arguments.awskey,secretAccessKey=arguments.awssecretkey,storagelocation = arguments.awslocation)>
+			<cfset copyobj.copyObject(oldBucketName='#arguments.awsbucket#', newBucketName ="#arguments.awsbucket#", oldFileKey = "#key#",  newFileKey = "#arguments.folderpathdest#/#thefile#")>
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />

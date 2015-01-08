@@ -293,6 +293,7 @@
 		<set name="session.firsttime.path_exiftool" value="#attributes.path_exiftool#" />
 		<set name="session.firsttime.path_dcraw" value="#attributes.path_dcraw#" />
 		<set name="session.firsttime.path_mp4box" value="#attributes.path_mp4box#" />
+		<set name="session.firsttime.path_ghostscript" value="#attributes.path_ghostscript#" />
 		<!-- Show -->
 		<do action="ajax.first_time_account" />
 	</fuseaction>
@@ -469,6 +470,7 @@
 		<set name="attributes.exiftool" value="#session.firsttime.path_exiftool#" />
 		<set name="attributes.dcraw" value="#session.firsttime.path_dcraw#" />
 		<set name="attributes.mp4box" value="#session.firsttime.path_mp4box#" />
+		<set name="attributes.ghostscript" value="#session.firsttime.path_ghostscript#" />
 		<!-- Update the global config file with the new datasource -->
 		<set name="attributes.conf_database" value="#session.firsttime.database#" />
 		<set name="attributes.conf_schema" value="#session.firsttime.db_schema#" />

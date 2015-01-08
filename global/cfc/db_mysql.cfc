@@ -1856,6 +1856,7 @@
 		  SET2_SAML_XMLPATH_EMAIL  	VARCHAR(100),
 		  SET2_SAML_XMLPATH_PASSWORD  	VARCHAR(100),
 		  SET2_SAML_HTTPREDIRECT  VARCHAR(100),
+		  SET2_RENDITION_SEARCH  VARCHAR(1) DEFAULT 'f',
 		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),
   		  KEY #arguments.thestruct.host_db_prefix#set2_id (SET2_ID),

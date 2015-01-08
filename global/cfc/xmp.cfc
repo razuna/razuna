@@ -1642,16 +1642,16 @@
 		<!--- Get selected metadata to export --->
 		<cfloop query="arguments.thestruct.export_template">
 			<cfif exp_field EQ 'images_metadata'>
-				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_labels,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number,img_type,img_folder_id,img_foldername,img_file_url", "id,filename,description,keywords,labels,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url")>
+				<cfset arguments.thestruct.img_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"img_id,img_filename,img_description,img_keywords,img_labels,img_create_time,img_change_time,img_width,img_height,img_size,img_upc_number,img_type,img_folder_id,img_foldername,img_file_url,img_expiry_date", "id,filename,description,keywords,labels,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url,expiry_date")>
 			</cfif>
 			<cfif exp_field EQ 'files_metadata'>
-				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_labels,file_create_time,file_change_time,file_size,file_upc_number,file_type,file_folder_id,file_foldername,file_file_url", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url")>
+				<cfset arguments.thestruct.doc_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"file_id,file_name,file_desc,file_keywords,file_labels,file_create_time,file_change_time,file_size,file_upc_number,file_type,file_folder_id,file_foldername,file_file_url,file_expiry_date", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url,expiry_date")>
 			</cfif>
 			<cfif exp_field EQ 'audios_metadata'>
-				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_labels,aud_create_time,aud_change_time,aud_size,aud_upc_number,aud_type,aud_folder_id,aud_foldername,aud_file_url", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url")>
+				<cfset arguments.thestruct.aud_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"aud_id,aud_name,aud_description,aud_keywords,aud_labels,aud_create_time,aud_change_time,aud_size,aud_upc_number,aud_type,aud_folder_id,aud_foldername,aud_file_url,aud_expiry_date", "id,filename,description,keywords,labels,create_date,change_date,size,upc_number,type,folder_id,foldername,file_url,expiry_date")>
 			</cfif>
 			<cfif exp_field EQ 'videos_metadata'>
-				<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_labels,vid_create_time,vid_change_time,vid_width,vid_height,vid_size,vid_upc_number,vid_type,vid_folder_id,vid_foldername,vid_file_url", "id,filename,description,keywords,labels,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url")>
+			<cfset arguments.thestruct.vid_columns = ReplaceList(arguments.thestruct.export_template.exp_value,"vid_id,vid_filename,vid_description,vid_keywords,vid_labels,vid_create_time,vid_change_time,vid_width,vid_height,vid_size,vid_upc_number,vid_type,vid_folder_id,vid_foldername,vid_file_url,vid_expiry_date", "id,filename,description,keywords,labels,create_date,change_date,width,height,size,upc_number,type,folder_id,foldername,file_url,expiry_date")>
 			</cfif>
 		</cfloop>
 		<!--- Set Columns for Export --->
@@ -1670,7 +1670,7 @@
 		</cfif>
 		<cfset arguments.thestruct.meta_fields="#listremoveduplicates(arguments.thestruct.meta_fields)#">
 	<cfelse>
-		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,create_date,change_date,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,create_date,change_date,expiry_date,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	</cfif>
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
@@ -1691,8 +1691,9 @@
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", cart_product_id)>
 			<cfset arguments.thestruct.file_id = cart_product_id>
 			<cfset arguments.thestruct.filetype = cart_file_type>
-			<cfset arguments.thestruct.create_date = cart_create_date>
-			<cfset arguments.thestruct.change_date = cart_change_date>
+			<cfset arguments.thestruct.create_date = create_date>
+			<cfset arguments.thestruct.change_date = change_date>
+			<cfset arguments.thestruct.expiry_date = expiry_date>
 			<cfset arguments.thestruct.width = cart_width>
 			<cfset arguments.thestruct.height = cart_height>
 			<cfset arguments.thestruct.size = cart_size>
@@ -1712,7 +1713,7 @@
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
-		img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number
+		img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1721,7 +1722,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number
+		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1730,7 +1731,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number
+		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1739,7 +1740,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number
+		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
@@ -1756,6 +1757,7 @@
 			<cfset arguments.thestruct.filetype = thetype>
 			<cfset arguments.thestruct.create_date = create_date>
 			<cfset arguments.thestruct.change_date = change_date>
+			<cfset arguments.thestruct.expiry_date = expiry_date>
 			<cfset arguments.thestruct.width = width>
 			<cfset arguments.thestruct.height = height>
 			<cfset arguments.thestruct.size = size>
@@ -1776,25 +1778,25 @@
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			<cfif arguments.thestruct.filetype EQ 'img'>
 			SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
-			img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number
+			img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 			<cfelseif arguments.thestruct.filetype EQ 'vid'>
-			SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number
+			SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number, expiry_date
 			FROM #session.hostdbprefix#videos
 			WHERE  vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 			<cfelseif arguments.thestruct.filetype EQ 'aud'>
-			SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number
+			SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number, expiry_date
 			FROM #session.hostdbprefix#audios
 			WHERE  aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 			<cfelse>
-			SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number
+			SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org, file_create_time AS create_date, file_change_time AS change_date, file_size AS size, NULL AS width, NULL As height, file_upc_number as upc_number, expiry_date
 			FROM #session.hostdbprefix#files
 			WHERE
 			 file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -1811,6 +1813,7 @@
 				<cfset arguments.thestruct.filetype = thetype>
 				<cfset arguments.thestruct.create_date = create_date>
 				<cfset arguments.thestruct.change_date = change_date>
+				<cfset arguments.thestruct.expiry_date = expiry_date>
 				<cfset arguments.thestruct.width = width>
 				<cfset arguments.thestruct.height = height>
 				<cfset arguments.thestruct.size = size>
@@ -1965,7 +1968,7 @@
 
 <!--- Export CSV --->
 <cffunction name="export_csv" output="false">
-	<cfargument name="thestruct" type="struct">		
+	<cfargument name="thestruct" type="struct">
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<cfif isdefined("arguments.thestruct.exportname")>
@@ -2097,6 +2100,10 @@
 						<cfif ("#idx#" EQ "img_change_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_change_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_change_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_change_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
 							<cfset QuerySetCell(arguments.thestruct.tq, "change_date", dateformat(arguments.thestruct.change_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.change_date,'HH:mm:ss'))>
 						</cfif>
+						<!--- Add Expiry Date --->
+						<cfif ("#idx#" EQ "img_expiry_date" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_expiry_date" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_expiry_date" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_expiry_date" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+							<cfset QuerySetCell(arguments.thestruct.tq, "expiry_date", dateformat(arguments.thestruct.expiry_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.expiry_date,'HH:mm:ss'))>
+						</cfif>
 						<!--- Add Width --->
 						<cfif ("#idx#" EQ "img_width" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_width" AND "#arguments.thestruct.filetype#" EQ "vid")> 
 							<cfset QuerySetCell(arguments.thestruct.tq, "width", arguments.thestruct.width)>
@@ -2166,6 +2173,8 @@
 		<cfset QuerySetCell(arguments.thestruct.tq, "create_date", dateformat(arguments.thestruct.create_date,'#thedateformat#') & "  " & timeformat(arguments.thestruct.create_date,'HH:mm:ss'))>
 		<!--- Add change_date --->
 		<cfset QuerySetCell(arguments.thestruct.tq, "change_date", dateformat(arguments.thestruct.change_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.change_date,'HH:mm:ss'))>
+		<!--- Add expiry_date --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "expiry_date", dateformat(arguments.thestruct.expiry_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.expiry_date,'HH:mm:ss'))>
 		<!--- Add Labels --->
 		<cfif arguments.thestruct.qry_labels NEQ "">
 			<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>

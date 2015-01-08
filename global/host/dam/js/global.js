@@ -1903,6 +1903,13 @@ function samefoldernamecheck(theid){
 	var folderidr = $("#rid").val();
 	$('#samefoldername').load('index.cfm?fa=c.folder_namecheck', { folder_name:foldername, folder_id_r:folderidr, folder_id:theid } );
 }
+// Check for invalid characters in folder name
+function foldernamecheck_invalidchars(theid){
+	// Values
+	var foldername = $("#folder_name").val();
+	var folderidr = $("#rid").val();
+	$('#invalidchars').load('index.cfm?fa=c.folder_name_invalidchars', { folder_name:foldername, folder_id_r:folderidr, folder_id:theid} );
+}
 // Check for same collection name
 function samecollectionnamecheck(theid){
 	// Values

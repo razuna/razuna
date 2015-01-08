@@ -992,7 +992,7 @@
 				<cfquery datasource="#variables.dsn#">
 					UPDATE #session.hostdbprefix#files
 					SET 
-					<cfif expiry_date EQ ''>
+					<cfif expiry_date EQ '00/00/0000'>
 					expiry_date = null
 					<cfelseif isdate(arguments.thestruct.expiry_date)>
 						expiry_date= <cfqueryparam value="#arguments.thestruct.expiry_date#" cfsqltype="cf_sql_date">
@@ -1486,25 +1486,25 @@
 		<cfargument name="thestruct" type="struct">
 		<cfset var lqry = structnew()>
 		<cfset lqry.thepdfjpgslist = "">
+		<cfset var qry_thefile = "">
 		<!--- Get some file details --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="folder_id_r, path_to_asset" returnvariable="qry_thefile">
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Get the directory list --->
 			<cfdirectory action="list" directory="#arguments.thestruct.assetpath#/#session.hostid#/#qry_thefile.path_to_asset#/razuna_pdf_images/" name="lqry.qry_pdfjpgs" filter="*.jpg" sort="name">
-			<!--- When there are multiple PDF pages then loop and form a list of the extracted images --->
-			<cfif lqry.qry_pdfjpgs.recordcount NEQ 1>
-				<cfset var theloopstart = 0>
-				<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
-				<!--- Loop and make a list of PDF images e.g. if PDF has 3 pages then the list will be pdf-0.jpg,pdf-1.jpg,pdf-2.jpg --->
-				<cfset var jpgname = rereplace(lqry.qry_pdfjpgs.name,"-[0-9]{1,}.jpg","","ONE")>
-				<cfloop from="#theloopstart#" to="#looptil#" index="i">
-					<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & jpgname & "-#i#.jpg">
-				</cfloop>
-				<cfset lqry.thepdfjpgslist = replace(lqry.thepdfjpgslist,",","","ONE")> <!--- Remove first redundant comma in list--->
-			<cfelse> <!--- If only one page in PDF then its simply pdf.jpg with no numbers appended ---> 
-				<cfset lqry.thepdfjpgslist =  lqry.qry_pdfjpgs.name>
-			</cfif>
+			<cfset var numbr = ArrayNew(1)>
+			
+			<cfset var tmp = queryAddColumn(lqry.qry_pdfjpgs, "numbering","integer",numbr)>
+
+			<cfloop query="lqry.qry_pdfjpgs">
+				<cfset tmp = querySetCell(lqry.qry_pdfjpgs, "numbering", replacenocase(listlast(name,'-'),'.jpg','' ,'ALL'), currentrow)>
+			</cfloop>
+			<!--- Order by page numbering --->
+			<cfquery name="lqry.qry_pdfjpgs" dbtype="query">
+				SELECT * FROM lqry.qry_pdfjpgs ORDER BY numbering ASC
+			</cfquery>
+			<cfset lqry.thepdfjpgslist = valuelist(lqry.qry_pdfjpgs.name)>
 		</cfif>
 		<!--- Return --->
 		<cfreturn lqry>
@@ -1555,10 +1555,11 @@
 		<!--- Qry. We take the query and do a IN --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailforbasketfile */ f.file_id, f.file_extension, f.file_extension, f.file_size, f.folder_id_r, f.file_name_org, 
-		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename, f.file_name_org filename_org,
+		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename, f.file_name_org filename_org, fo.share_dl_org, fo.share_dl_thumb,
 		'' as perm
-		FROM #session.hostdbprefix#files f
-		WHERE f.file_id 
+		FROM #session.hostdbprefix#files f, #session.hostdbprefix#folders fo
+		WHERE f.folder_id_r = fo.folder_id AND
+		f.file_id 
 		<cfif arguments.thestruct.qrybasket.recordcount EQ 0>
 		= '0'
 		<cfelse>

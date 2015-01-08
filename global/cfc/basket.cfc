@@ -118,6 +118,99 @@
 			CASE 
 				WHEN c.cart_file_type = 'doc' 
 					THEN (
+						SELECT file_change_time
+						FROM #session.hostdbprefix#files 
+						WHERE file_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'img'
+					THEN (
+						SELECT img_change_time
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid'
+					THEN (
+						SELECT vid_change_time
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'aud'
+					THEN (
+						SELECT aud_change_time
+						FROM #session.hostdbprefix#audios 
+						WHERE aud_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as change_date,
+
+			CASE 
+				WHEN c.cart_file_type = 'doc' 
+					THEN (
+						SELECT file_create_time
+						FROM #session.hostdbprefix#files 
+						WHERE file_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'img'
+					THEN (
+						SELECT img_create_time
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid'
+					THEN (
+						SELECT vid_create_time 
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'aud'
+					THEN (
+						SELECT aud_create_time
+						FROM #session.hostdbprefix#audios 
+						WHERE aud_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as create_date,
+
+			CASE 
+				WHEN c.cart_file_type = 'doc' 
+					THEN (
+						SELECT expiry_date 
+						FROM #session.hostdbprefix#files 
+						WHERE file_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'img'
+					THEN (
+						SELECT expiry_date 
+						FROM #session.hostdbprefix#images 
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid'
+					THEN (
+						SELECT expiry_date 
+						FROM #session.hostdbprefix#videos 
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'aud'
+					THEN (
+						SELECT expiry_date
+						FROM #session.hostdbprefix#audios 
+						WHERE aud_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as expiry_date,
+
+			CASE 
+				WHEN c.cart_file_type = 'doc' 
+					THEN (
 						SELECT file_name 
 						FROM #session.hostdbprefix#files 
 						WHERE file_id = c.cart_product_id

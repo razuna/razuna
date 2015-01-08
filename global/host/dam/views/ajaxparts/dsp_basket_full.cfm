@@ -168,8 +168,9 @@
 						<tr class="list">
 							<td width="1%" nowrap="true">
 								<cfquery name="getimg" dbtype="query">
-									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url FROM qry_theimage WHERE img_id= '#myid#'
+									SELECT img_id, thumb_extension, path_to_asset, cloud_url, folder_id_r, filename, link_kind, link_path_url, share_dl_org, share_dl_thumb FROM qry_theimage WHERE img_id= '#myid#'
 								</cfquery>
+								<!--- Display all thumbs first--->
 								<cfloop query="getimg">
 									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#&basketview=yes','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 										<cfif link_kind NEQ "url">
@@ -206,7 +207,7 @@
 											</tr>
 											<!--- Original --->
 											<cfif attributes.fromshare EQ "T">
-												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#img_id#-org-1">
+												<cfif qry_theimage.share_dl_org EQ "T" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
@@ -214,7 +215,7 @@
 													</tr>
 												</cfif>
 											<cfelse>
-												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1" OR qry_theimage.share_dl_org EQ "T">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
@@ -234,27 +235,29 @@
 											<!--- Thumbnail --->
 											<cfif link_kind EQ "">
 												<cfif attributes.fromshare EQ "T">
-													<cfif qry_folder.share_dl_thumb EQ "T" OR qry_share_options CONTAINS "#myid#-thumb-1">
+													<cfif qry_theimage.share_dl_thumb EQ "T" OR qry_share_options CONTAINS "#myid#-thumb-1">
 														<tr>
 															<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
 															<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
 														</tr>
 													</cfif>
 												<cfelse>
-													<tr>
-														<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
-														<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)
-														<cfif show_netpath>
-															<!--- Format the netwrk path variable --->
-															<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\thumb_#img_id#.#thumb_extension#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
-															<!--- Remove line breaks --->
-															<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
-															<a href="##" onclick="copyToClipboard ('#thepath#')";>
-															Get Local Path
-															</a>
-														</cfif>
-														</td>
-													</tr>
+													<cfif perm NEQ "R" OR qry_share_options CONTAINS "#myid#-thumb-1" OR qry_theimage.share_dl_thumb EQ "T">
+														<tr>
+															<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
+															<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)
+															<cfif show_netpath>
+																<!--- Format the netwrk path variable --->
+																<cfset thepath = trim(replace(replace('#netpath#\#session.hostid#\#path_to_asset#\thumb_#img_id#.#thumb_extension#','\','#fileseparator()#','ALL'),'/','#fileseparator()#','ALL'))>
+																<!--- Remove line breaks --->
+																<cfset thepath = URLEncodedFormat(REReplace(thepath ,'#chr(13)#|#chr(9)#|\n|\r','','ALL'))>
+																<a href="##" onclick="copyToClipboard ('#thepath#')";>
+																Get Local Path
+																</a>
+															</cfif>
+															</td>
+														</tr>
+													</cfif>
 												</cfif>
 											</cfif>
 										</cfif>
@@ -357,14 +360,14 @@
 											</tr>
 											<!--- The Original video --->
 											<cfif attributes.fromshare EQ "T">
-												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#vid_id#-org-1">
+												<cfif qry_thevideo.share_dl_org EQ "T" OR qry_share_options CONTAINS "#vid_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												</cfif>																					
 											<cfelse>
-												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1" OR qry_thevideo.share_dl_org EQ "T">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
@@ -473,14 +476,14 @@
 											</tr>
 											<!--- The Original audio --->
 											<cfif attributes.fromshare EQ "T">
-												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#aud_id#-org-1">
+												<cfif qry_theaudio.share_dl_org EQ "T" OR qry_share_options CONTAINS "#aud_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>											
 												</cfif>
 											<cfelse>
-												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1" OR qry_theaudio.share_dl_org EQ "T">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
@@ -597,14 +600,14 @@
 											</tr>
 											<!--- The Original --->
 											<cfif attributes.fromshare EQ "T">
-												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#file_id#-org-1">
+												<cfif qry_thefile.share_dl_org EQ "T" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												</cfif>
 											<cfelse>
-												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1" OR qry_thefile.share_dl_org EQ "T">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>

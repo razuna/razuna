@@ -90,21 +90,32 @@
 		<br />
 		<div id="checkexiftool" style="display:none;"></div>
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_dcraw")# (optional)</span>
+		<span class="loginform_header">#defaultsObj.trans("header_dcraw")# (#defaultsObj.trans("optional")#)</span>
 		<br />
 		#defaultsObj.trans("header_dcraw_desc")#
 		<br />
 		<input type="text" name="path_dcraw" id="path_dcraw" size="60" class="text" value="#dc#" onkeyup="checkpath('dcraw');">
 		<br />
 		<div id="checkdcraw" style="display:none;"></div>
+		
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("header_mp4box")# (optional)</span>
+		<span class="loginform_header">#defaultsObj.trans("header_mp4box")# (#defaultsObj.trans("optional")#)</span>
 		<br />
 		#defaultsObj.trans("header_mp4box_desc")#
 		<br />
 		<input type="text" name="path_mp4box" id="path_MP4Box" size="60" class="text" value="#mp#" onkeyup="checkpath('MP4Box');">
 		<br />
 		<div id="checkMP4Box" style="display:none;"></div>
+
+		<br />
+		<span class="loginform_header">#defaultsObj.trans("header_ghostscript")# (#defaultsObj.trans("optional")#)</span>
+		<br />
+		#defaultsObj.trans("header_ghostscript_desc")#
+		<br />
+		<input type="text" name="path_ghostscript" id="path_ghostscript" size="60" class="text" value="#mp#" onkeyup="checkpath('ghostscript');">
+		<br />
+		<div id="checkghostscript" style="display:none;"></div>
+
 		<br />
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">

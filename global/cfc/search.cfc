@@ -310,8 +310,11 @@
 					<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 					</cfif>
-					<!--- Exclude related images
-					AND (i.img_group IS NULL OR i.img_group = '') --->
+					<!--- Exclude related images if rendition setting is set to hide--->
+					<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+						AND (i.img_group IS NULL OR i.img_group = '') 
+					</cfif>
+					
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 					<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -459,8 +462,10 @@
 					<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 					</cfif>
-					<!--- Exclude related images
-					AND (i.img_group IS NULL OR i.img_group = '') --->
+					<!--- Exclude related images if rendition setting is set to hide--->
+					<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+						AND (i.img_group IS NULL OR i.img_group = '') 
+					</cfif>
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 					<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -915,8 +920,10 @@
 						<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 							AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 						</cfif>
-						<!--- Exclude related images
-						AND (v.vid_group IS NULL OR v.vid_group = '') --->
+						<!--- Exclude related images if rendition setting is set to hide--->
+						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+							AND (v.vid_group IS NULL OR v.vid_group = '')
+						</cfif>
 						AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -1061,8 +1068,10 @@
 						<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 							AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 						</cfif>
-						<!--- Exclude related images
-						AND (v.vid_group IS NULL OR v.vid_group = '') --->
+						<!--- Exclude related images if rendition setting is set to hide--->
+						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+							AND (v.vid_group IS NULL OR v.vid_group = '') 
+						</cfif>
 						AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -1230,8 +1239,10 @@
 						<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 							AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 						</cfif>
-						<!--- Exclude related images
-						AND (a.aud_group IS NULL OR a.aud_group = '') --->
+						<!--- Exclude related images if rendition setting is set to hide--->
+						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+							AND (a.aud_group IS NULL OR a.aud_group = '') 
+						</cfif>
 						AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -1375,8 +1386,10 @@
 						<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 							AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 						</cfif>
-						<!--- Exclude related images
-						AND (a.aud_group IS NULL OR a.aud_group = '') --->
+						<!--- Exclude related images if rendition setting is set to hide--->
+						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+							AND (a.aud_group IS NULL OR a.aud_group = '') 
+						</cfif>
 						AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -1985,6 +1998,10 @@
 						<cfset currentListPos = currentListPos+1> 
 					</cfloop>
 					)
+					<!--- Exclude related images if rendition setting is set to hide--->
+					<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+						AND (i.img_group IS NULL OR i.img_group = '') 
+					</cfif>
 					 <!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 					AND CASE 
 					<!--- Check if admin user --->
@@ -2195,6 +2212,10 @@
 							<cfset currentListPos = currentListPos+1> 
 						</cfloop>
 						)
+						<!--- Exclude related images if rendition setting is set to hide--->
+						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+							AND (v.vid_group IS NULL OR v.vid_group = '') 
+						</cfif>
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 						AND CASE 
 						<!--- Check if admin user --->
@@ -2309,6 +2330,10 @@
 							<cfset currentListPos = currentListPos+1> 
 						</cfloop>
 						)
+						<!--- Exclude related images if rendition setting is set to hide--->
+						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
+							AND (a.aud_group IS NULL OR a.aud_group = '') 
+						</cfif>
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 						AND CASE 
 						<!--- Check if admin user --->

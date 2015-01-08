@@ -71,7 +71,7 @@
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
 						<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("expiry_date")#</strong></td>
-						<td width="100%"><input name="expiry_date" id="expiry_date"></td>
+						<td width="100%"><input name="expiry_date" id="expiry_date"> <span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("expiry_date_remove")#</span></td>
 					</tr>
 				</table>
 			</div>
@@ -139,8 +139,11 @@
 			</div>
 			
 		</div>
+		<div id="dialog" title="Warning!">
+		  <p>#myFusebox.getApplicationData().defaults.trans("batch_replace_warning")#</p>
+		</div>
 		<!--- Submit Button --->
-		<div style="float:right;padding:10px;">New values will <input type="radio" name="batch_replace" value="true" /> replace or <input type="radio" name="batch_replace" value="false" checked="checked" /> append to existing records. <input type="submit" name="submit" value="Batch records now" class="button"></div>
+		<div style="float:right;padding:10px;">New values will <input type="radio" name="batch_replace" value="true" onclick="$('##dialog').dialog();"/> replace or <input type="radio" name="batch_replace" value="false" checked="checked" /> append to existing records. <input type="submit" name="submit" value="Batch records now" class="button"></div>
 		<div id="updatebatch" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</form>
 	<!--- Activate the Tabs --->

@@ -2324,6 +2324,10 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("audios")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("images")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -5916,6 +5920,19 @@
 	<cfreturn ishere>
 </cffunction>
 
+<!--- Check foldername for invalid characters --->
+<cffunction name="foldernamecheck_invalidchars" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Param --->
+	<cfset var isinvalid = false>
+	<cfset var invalidcharlist= '/\\*?<>|":'>
+	<!--- Check for invalid characters--->
+	<cfif refind( "[#invalidcharlist#]" , arguments.thestruct.folder_name) >
+		<cfset var isinvalid = true>
+	</cfif>
+	<cfreturn isinvalid>
+</cffunction>
+
 <!--- Asset Trash Count --->
 <cffunction name="trashcount" output="false">
 	<cfargument name="thestruct" type="struct">
@@ -6702,12 +6719,8 @@
 					<cfthread action="join" name="copyfolderimg#newimgid#"  />
 					<cfpause interval="5" />
 					<cfthread name="renamethumb#newimgid#" intupstruct="#arguments.thestruct#">
-						<cfinvoke component="s3" method="renameObject">
-							<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
-							<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
-							<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.select_images.img_id#.jpg">
-							<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.newimgid#.jpg">
-						</cfinvoke>
+						<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
+						<cfset  renobj.renameObject(oldBucketName='#attributes.intupstruct.awsbucket#', newBucketName ="#attributes.intupstruct.awsbucket#", oldFileKey = "#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.select_images.img_id#.jpg",  newFileKey = "#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.newimgid#.jpg")>
 					</cfthread>
 					<cfthread action="join" name="renamethumb#newimgid#" />
 					<cfpause interval="5" />

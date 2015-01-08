@@ -82,7 +82,7 @@
 		</tr>
 		<!--- DCRAW Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_dcraw")# (optional)</th>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_dcraw")# (#defaultsObj.trans("optional")#)</th>
 		</tr>
 		<tr>
 			<td colspan="2">#defaultsObj.trans("header_dcraw_desc")#</td>
@@ -97,7 +97,7 @@
 		</tr>
 		<!--- MP4Box Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_mp4box")# (optional)</th>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_mp4box")# (#defaultsObj.trans("optional")#)</th>
 		</tr>
 		<tr>
 			<td colspan="2">#defaultsObj.trans("header_mp4box_desc")#</td>
@@ -106,6 +106,20 @@
 			<td nowrap="true">#defaultsObj.trans("header_mp4box")#</td>
 			<td><input type="text" name="mp4box" id="MP4Box" value="#thetools.mp4box#" size="60" class="text" onkeyup="checkpath('MP4Box');">
 			<div id="checkMP4Box" style="display:none;"></div></td>
+		</tr>
+		<tr>
+			<td class="list" colspan="2"></td>
+		</tr>
+		<tr>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_ghostscript")#</th>
+		</tr>
+		<tr>
+			<td colspan="2">#defaultsObj.trans("header_ghostscript_desc")#</td>
+		</tr>
+		<tr>
+			<td>#defaultsObj.trans("header_ghostscript")# (#defaultsObj.trans("optional")#)</td>
+			<td><input type="text" name="ghostscript" id="ghostscript" value="#thetools.ghostscript#" size="60" class="text" onkeyup="checkpath('ghostscript');">
+			<div id="checkghostscript" style="display:none;"></div></td>
 		</tr>
 	</table>
 </cfoutput>
