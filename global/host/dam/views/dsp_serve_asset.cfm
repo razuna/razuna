@@ -40,9 +40,9 @@
 	<cfelse>
 		<!--- Default file name when prompted to download --->
 		<cfif qry_binary.thefilename does not contain ".#theext#">
-			<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#.#theext#"' />
+			<cfheader name="content-disposition" value='attachment; filename="#urlencodedformat(qry_binary.thefilename,'utf-8')#.#theext#"' />
 		<cfelse>
-			<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+			<cfheader name="content-disposition" value='attachment; filename="#replace(urlencodedformat(replace(qry_binary.thefilename,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')#"' />
 		</cfif>
 	</cfif> 
 	<!--- Get file --->
@@ -57,7 +57,7 @@
 <!--- Storage Decision --->
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <!--- Default file name when prompted to download --->
-<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+<cfheader name="content-disposition" value='attachment; filename="#replace(urlencodedformat(replace(qry_binary.thefilename,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')#"' />
 <!--- Ignore content-length attribute for previews --->
 <cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
 	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
