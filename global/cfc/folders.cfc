@@ -5670,7 +5670,7 @@
 			</cfif>
 
 			<!--- convert the filename without space and foreign chars --->
-			<!--- <cfinvoke component="global" method="convertname" returnvariable="thefinalname" thename="#thefinalname#"> --->
+			<cfinvoke component="global" method="cleanfilename" returnvariable="thefinalname" thename="#thefinalname#">
 				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
@@ -7880,7 +7880,7 @@
 			       </cfif>        
 			</cfloop>
 			<!--- convert the filename without space and foreign chars --->
-			<!--- <cfinvoke component="global" method="convertname" returnvariable="thefinalname" thename="#thefinalname#"> --->
+			<cfinvoke component="global" method="cleanfilename" returnvariable="thefinalname" thename="#thefinalname#">
 
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">

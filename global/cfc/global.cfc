@@ -192,9 +192,10 @@
 <!--- CONVERT ILLEGAL CHARS ---------------------------------------------------------------------->
 	<cffunction hint="CONVERT ILLEGAL CHARS" name="convertname" output="false">
 		<cfargument name="thename" required="yes" type="string">
+		<cfset var fileNameExt = "">
 		<!--- Detect file extension --->
 		<cfinvoke component="assets" method="getFileExtension" theFileName="#thename#" returnvariable="fileNameExt">
-		<cfset thefilename = "#fileNameExt.theName#">
+		<cfset var thefilename = "#fileNameExt.theName#">
 		<!--- Convert space to an underscore --->
 		<cfset thefilename = REReplaceNoCase(thefilename, " ", "_", "ALL")>
 		<!--- All foreign chars are now converted, except the - --->
@@ -219,6 +220,13 @@
 		</cfif>
 		<cfreturn thefilename>
 	</cffunction>
+
+	<cffunction hint="Clean filename of special characters" name="cleanfilename" output="false">
+		<cfargument name="thename" required="yes" type="string">
+		<cfset var thefilename = reReplace(arguments.thename, "[{}()^$&%##!@=<>:;,~`'*?/+|\[\]\-\\]","","ALL")>
+		<cfreturn thefilename>
+	</cffunction>
+
 
 <!--- GET ALL ALLOWED FILE TYPES ---------------------------------------------------------------------->
 	<cffunction name="filetypes" output="false">

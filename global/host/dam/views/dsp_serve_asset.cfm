@@ -30,19 +30,24 @@
 <cfparam default="F" name="attributes.download">
 <cfparam default="" name="qry_binary.qfile.link_kind">
 <cfparam default="false" name="attributes.av">
+
+<!--- Clean filename to make it suitable for download and encode with utf-8 --->
+<cfset filenamefordownload =myFusebox.getApplicationData().global.cleanfilename(qry_binary.thefilename)>
+<cfset filenamefordownload = replace(urlencodedformat(replace(filenamefordownload,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')>
+
 <!--- This is for additional versions --->
 <cfif attributes.av>
 	<!--- Grab theurl and get filename --->
 	<cfset theext = listlast(listfirst(listlast(qry_binary.qfile.path_to_asset,'/'),'?'),'.')>
 	<!--- RAZ-2519 users download with their custom filename --->
 	<cfif structKeyExists(attributes,"set2_custom_file_ext") AND attributes.set2_custom_file_ext EQ "false">
-		<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+		<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#"' />
 	<cfelse>
 		<!--- Default file name when prompted to download --->
 		<cfif qry_binary.thefilename does not contain ".#theext#">
-			<cfheader name="content-disposition" value='attachment; filename="#urlencodedformat(qry_binary.thefilename,'utf-8')#.#theext#"' />
+			<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#.#theext#"' />
 		<cfelse>
-			<cfheader name="content-disposition" value='attachment; filename="#replace(urlencodedformat(replace(qry_binary.thefilename,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')#"' />
+			<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#"' />
 		</cfif>
 	</cfif> 
 	<!--- Get file --->
@@ -57,7 +62,7 @@
 <!--- Storage Decision --->
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <!--- Default file name when prompted to download --->
-<cfheader name="content-disposition" value='attachment; filename="#replace(urlencodedformat(replace(qry_binary.thefilename,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')#"' />
+<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#"' />
 <!--- Ignore content-length attribute for previews --->
 <cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
 	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
