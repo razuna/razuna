@@ -1692,44 +1692,44 @@
 				<!--- IMAGES --->
 				<cfif kind EQ "img">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#images
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="images" method="removeimage" thestruct="#attributes.instruct.thestruct#" />
 				<!--- VIDEOS --->
 				<cfelseif kind EQ "vid">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#videos
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct.thestruct#" />
 				<!--- FILES --->
 				<cfelseif kind EQ "doc">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#files
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct.thestruct#" />
 				<!--- AUDIOS --->
 				<cfelseif kind EQ "aud">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#audios
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct.thestruct#" />

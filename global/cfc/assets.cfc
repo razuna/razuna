@@ -6271,9 +6271,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -6382,9 +6390,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -6501,9 +6517,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -6619,9 +6643,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -6731,9 +6763,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -6843,9 +6883,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -6955,9 +7003,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
@@ -7067,9 +7123,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc">
+			</cfif>
+			<cfif !directoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 			</cfif>
 		</cfif>
