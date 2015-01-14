@@ -721,10 +721,14 @@
 			<!-- Files -->
 			<true>
 				<!-- Call include in order to get all files in trash -->
-				<do action="get_all_in_trash" />
+				<!-- <do action="get_all_in_trash" /> -->
 				<!-- CFC: Remove all -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_remove_all(qry_trash,attributes)" />
+				<!-- <invoke object="myFusebox.getApplicationData().folders" methodcall="trash_remove_all(qry_trash,attributes)" /> -->
+				<set name="attributes.folder_id" value="0" />
+				<set name="attributes.thekind" value="trashfiles" />
+				<do action="store_file_all" />
 				<!-- Show -->
+				<set name="attributes.selected" value="assets" />
 				<do action="folder_explorer_trash" />
 			</true>
 			<false>

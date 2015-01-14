@@ -685,9 +685,9 @@
 		<cfset arguments.thestruct.qrydetail = thedetail>
 		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-			<cfinvoke method="deletefromfilesystem" thestruct="#arguments.thestruct#">
-		<!--- </cfthread> --->
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+		</cfthread>
 	</cfif>
 	<cfreturn />
 </cffunction>
@@ -986,9 +986,9 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-				<cfinvoke method="deletefromfilesystem" thestruct="#arguments.thestruct#">
-			<!--- </cfthread> --->
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+			</cfthread>
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
