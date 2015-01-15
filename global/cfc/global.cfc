@@ -223,7 +223,7 @@
 
 	<cffunction hint="Clean filename of special characters" name="cleanfilename" output="false">
 		<cfargument name="thename" required="yes" type="string">
-		<cfset var thefilename = reReplace(arguments.thename, "[{}()^$&%##!@=<>:;,~`'*?/+|\[\]\-\\]","","ALL")>
+		<cfset var thefilename = reReplace(arguments.thename, "[{}()^$&%##!@=<>:;,~`'*?/+|\[\]\\]","","ALL")>
 		<cfreturn thefilename>
 	</cffunction>
 
