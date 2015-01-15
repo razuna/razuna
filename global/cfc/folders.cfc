@@ -1692,44 +1692,44 @@
 				<!--- IMAGES --->
 				<cfif kind EQ "img">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#images
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="images" method="removeimage" thestruct="#attributes.instruct.thestruct#" />
 				<!--- VIDEOS --->
 				<cfelseif kind EQ "vid">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#videos
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct.thestruct#" />
 				<!--- FILES --->
 				<cfelseif kind EQ "doc">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#files
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct.thestruct#" />
 				<!--- AUDIOS --->
 				<cfelseif kind EQ "aud">
 					<!--- Change db to have another in_trash flag --->
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#audios
 					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
 					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
-					</cfquery>
+					</cfquery> --->
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct.thestruct#" />
@@ -1946,26 +1946,28 @@
 <cffunction name="trashfiles_remove" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfset arguments.thestruct.ids = arguments.thestruct.id>
-	<cfloop list="#arguments.thestruct.ids#" index="i" delimiters=",">
-		<!--- get images --->
-		<cfif i CONTAINS "-img">
-			<!--- set image id --->
-			<cfset arguments.thestruct.id = listFirst(i,'-')>
-			<cfinvoke component="images" method="removeimage"  thestruct="#arguments.thestruct#" />
-		<cfelseif i CONTAINS "-aud">
-			<!--- set audio id --->
-			<cfset arguments.thestruct.id = listFirst(i,'-')>
-			<cfinvoke component="audios" method="removeaudio" thestruct="#arguments.thestruct#" />
-		<cfelseif i CONTAINS "-vid">
-			<!--- set video id --->
-			<cfset arguments.thestruct.id = listFirst(i,'-')>
-			<cfinvoke component="videos" method="removevideo" thestruct="#arguments.thestruct#" />
-		<cfelseif i CONTAINS "-doc">
-			<!--- set file id --->
-			<cfset arguments.thestruct.id = listFirst(i,'-')>
-			<cfinvoke component="files" method="removefile" thestruct="#arguments.thestruct#" />
-		</cfif>
-	</cfloop>
+	<cfthread instruct="#arguments.thestruct#">
+		<cfloop list="#attributes.instruct.ids#" index="i" delimiters=",">
+			<!--- get images --->
+			<cfif i CONTAINS "-img">
+				<!--- set image id --->
+				<cfset attributes.instruct.id = listFirst(i,'-')>
+				<cfinvoke component="images" method="removeimage"  thestruct="#attributes.instruct#" />
+			<cfelseif i CONTAINS "-aud">
+				<!--- set audio id --->
+				<cfset attributes.instruct.id = listFirst(i,'-')>
+				<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct#" />
+			<cfelseif i CONTAINS "-vid">
+				<!--- set video id --->
+				<cfset attributes.instruct.id = listFirst(i,'-')>
+				<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct#" />
+			<cfelseif i CONTAINS "-doc">
+				<!--- set file id --->
+				<cfset attributes.instruct.id = listFirst(i,'-')>
+				<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct#" />
+			</cfif>
+		</cfloop>
+	</cfthread>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("images")>
@@ -5670,7 +5672,7 @@
 			</cfif>
 
 			<!--- convert the filename without space and foreign chars --->
-			<cfinvoke component="global" method="convertname" returnvariable="thefinalname" thename="#thefinalname#">
+			<cfinvoke component="global" method="cleanfilename" returnvariable="thefinalname" thename="#thefinalname#">
 				
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
@@ -7876,7 +7878,7 @@
 			       </cfif>        
 			</cfloop>
 			<!--- convert the filename without space and foreign chars --->
-			<cfinvoke component="global" method="convertname" returnvariable="thefinalname" thename="#thefinalname#">
+			<cfinvoke component="global" method="cleanfilename" returnvariable="thefinalname" thename="#thefinalname#">
 
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">

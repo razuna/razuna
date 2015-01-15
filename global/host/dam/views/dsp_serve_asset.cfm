@@ -30,19 +30,25 @@
 <cfparam default="F" name="attributes.download">
 <cfparam default="" name="qry_binary.qfile.link_kind">
 <cfparam default="false" name="attributes.av">
+
+<!--- Clean filename to make it suitable for download and encode with utf-8 --->
+<cfset filenamefordownload_clean =myFusebox.getApplicationData().global.cleanfilename(qry_binary.thefilename)>
+<!--- Urlencode filename while preserving the '.' --->
+<cfset filenamefordownload = replace(urlencodedformat(replace(filenamefordownload_clean,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')>
+
 <!--- This is for additional versions --->
 <cfif attributes.av>
 	<!--- Grab theurl and get filename --->
 	<cfset theext = listlast(listfirst(listlast(qry_binary.qfile.path_to_asset,'/'),'?'),'.')>
 	<!--- RAZ-2519 users download with their custom filename --->
 	<cfif structKeyExists(attributes,"set2_custom_file_ext") AND attributes.set2_custom_file_ext EQ "false">
-		<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+		<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#"' />
 	<cfelse>
 		<!--- Default file name when prompted to download --->
 		<cfif qry_binary.thefilename does not contain ".#theext#">
-			<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#.#theext#"' />
+			<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#.#theext#"' />
 		<cfelse>
-			<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+			<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#"' />
 		</cfif>
 	</cfif> 
 	<!--- Get file --->
@@ -56,8 +62,9 @@
 </cfif>
 <!--- Storage Decision --->
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
-<!--- Default file name when prompted to download --->
-<cfheader name="content-disposition" value='attachment; filename="#qry_binary.thefilename#"' />
+<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
+<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
+
 <!--- Ignore content-length attribute for previews --->
 <cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
 	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
