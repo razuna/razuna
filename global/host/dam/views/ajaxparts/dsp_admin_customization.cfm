@@ -1515,10 +1515,10 @@
 				});
 				// Feedback
 				$('##status_custom_1').fadeTo("fast", 100);
-				$('##status_custom_1').html('<span style="font-weight:bold;color:green;">We saved the change successfully!</span>');
+				$('##status_custom_1').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change_success")#</span>');
 				$('##status_custom_1').fadeTo(5000, 0);
 				$('##status_custom_2').fadeTo("fast", 100);
-				$('##status_custom_2').html('<span style="font-weight:bold;color:green;">We saved the change successfully!</span>');
+				$('##status_custom_2').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change_success")#</span>');
 				$('##status_custom_2').fadeTo(5000, 0);
 				return false;
 			});

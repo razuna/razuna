@@ -95,7 +95,7 @@ function save_setting(labelset_div){
 	// Feedback
 	$('##save_status_label').fadeTo("slow", 100);
 	$('##save_status_label').css('display','');
-	$('##save_status_label').html('We saved the change successfully!');
+	$('##save_status_label').html('#myFusebox.getApplicationData().defaults.trans("saved_change_success")#');
 	$('##save_status_label').fadeTo(2000, 0);
 }
 </script>
