@@ -1686,7 +1686,6 @@
 <cffunction name="trash_remove_all" output="false" returntype="void">
 	<cfargument name="qry_all" type="Query">
 	<cfargument name="thestruct" type="struct">
-	<cfset console('trash oh no')>
 	<!--- Thread --->
 	<cfthread instruct="#arguments#">
 		<!--- Loop over the query --->
@@ -1950,7 +1949,6 @@
 <cffunction name="trashfiles_remove" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfset arguments.thestruct.ids = arguments.thestruct.id>
-	<cfset console("listlen = #listLen(arguments.thestruct.ids)#")>
 	<cfloop list="#arguments.thestruct.ids#" index="i" delimiters=",">
 		<!--- get images --->
 		<cfif i CONTAINS "-img">
