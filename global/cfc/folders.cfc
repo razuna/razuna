@@ -1321,7 +1321,8 @@
 	<!--- Apply custom setting to new folder --->
 	<cfinvoke method="apply_custom_shared_setting" folder_id="#newfolderid#" />
 	<!--- Log --->
-	<cfset log_folders(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.folder_name# (ID: #newfolderid#)')>
+	<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added" />
+	<cfset log_folders(theuserid=session.theuserid,logaction='Add',logdesc='#added#: #arguments.thestruct.folder_name# (ID: #newfolderid#)')>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<!--- Return --->
@@ -1453,7 +1454,8 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Log --->
-			<cfset log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#)')>
+			<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
+			<cfset log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='#deleted#: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#)')>
 			<!--- Flush Cache --->
 			<cfset variables.cachetoken = resetcachetoken("folders")>
 			<!--- The rest goes in a thread since it can run in the background --->
@@ -1497,7 +1499,8 @@
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<!--- Log --->
-						<cfinvoke component="extQueryCaching" method="log_folders" theuserid="#session.theuserid#" logaction="Delete" logdesc="Deleted: #foldernamesub.folder_name# (ID: #thefolderid#)" />
+						<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
+						<cfinvoke component="extQueryCaching" method="log_folders" theuserid="#session.theuserid#" logaction="Delete" logdesc="#deleted#: #foldernamesub.folder_name# (ID: #thefolderid#)" />
 						<!--- Delete folder in DB --->
 						<cfquery datasource="#application.razuna.datasource#">
 						DELETE FROM	#session.hostdbprefix#folders
@@ -1683,6 +1686,7 @@
 <cffunction name="trash_remove_all" output="false" returntype="void">
 	<cfargument name="qry_all" type="Query">
 	<cfargument name="thestruct" type="struct">
+	<cfset console('trash oh no')>
 	<!--- Thread --->
 	<cfthread instruct="#arguments#">
 		<!--- Loop over the query --->
@@ -1946,6 +1950,7 @@
 <cffunction name="trashfiles_remove" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfset arguments.thestruct.ids = arguments.thestruct.id>
+	<cfset console("listlen = #listLen(arguments.thestruct.ids)#")>
 	<cfloop list="#arguments.thestruct.ids#" index="i" delimiters=",">
 		<!--- get images --->
 		<cfif i CONTAINS "-img">
@@ -2469,7 +2474,8 @@
 			</cfif>
 		</cfif>
 		<!--- Log --->
-		<cfset log_folders(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.folder_name# (ID: #arguments.thestruct.folder_id#)')>
+		<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
+		<cfset log_folders(theuserid=session.theuserid,logaction='Update',logdesc='#updated#: #arguments.thestruct.folder_name# (ID: #arguments.thestruct.folder_id#)')>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("search")>
 		<cfset resetcachetoken("labels")>
@@ -3373,7 +3379,8 @@
 		<!--- Clear session.type --->
 		<cfset session.type = "">
 		<!--- Log --->
-		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#)')>
+		<cfinvoke component="defaults" method="trans" transid="moved" returnvariable="moved" />
+		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='#moved#: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#)')>
 		<!--- Ups something went wrong --->
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while moving folder - #cgi.http_host# in function folders.move">

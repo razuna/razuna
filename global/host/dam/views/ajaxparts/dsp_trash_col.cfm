@@ -92,7 +92,7 @@
 	<div style="clear:both;">
 		<!--- If all is selected show the description --->
 		<div id="selectstoreallform_collection" style="display:none;width:100%;text-align:center;">
-			<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('allform_collection');return false;">Deselect all</a>
+			<strong>#myFusebox.getApplicationData().defaults.trans('selectall_files_section')#</strong> <a href="##" onclick="CheckAllNot('allform_collection');return false;">#myFusebox.getApplicationData().defaults.trans('deselect_all')#</a>
 		</div>
 		<!--- show the available folder list for restoring --->
 		<form name="allform_collection" id="allform_collection" action="#self#" onsubmit="">

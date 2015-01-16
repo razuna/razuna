@@ -100,14 +100,14 @@
 			<td>
 				<!--- Add User --->
 				<div>
-					<strong>Add Users to Group</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("add_users_group")#</strong>
 					<br />
 					<cfif listfind('1,2', attributes.grp_id) >
 						#myFusebox.getApplicationData().defaults.trans("admin_user_assign_warn")#
 						<br/>
 					</cfif>
 					<div style="clear:both;padding-top:5px;"></div>
-					<select data-placeholder="Choose a User" class="chzn-select" style="width:350px;" tabindex="2" id="selectuser" onchange="userselected();">
+					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_user")#" class="chzn-select" style="width:350px;" tabindex="2" id="selectuser" onchange="userselected();">
 		          		<option value=""></option>
 		          		<cfoutput query="qry_users" group="user_id">
 		          			<!--- Exclude admins from being selected as admins have all access and can not be part of any groups. Exception is when this is the 'Administrators' group then admin users can be shown --->
@@ -151,7 +151,7 @@
 				modal: true,
 				title:'Warning!',
 				buttons: {
-					"Ok": function() {
+					"#myFusebox.getApplicationData().defaults.trans('ok')#": function() {
 						// Show loading bar
 						$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 						// Get values
@@ -171,7 +171,7 @@
 						});
 						$( this ).dialog( "close" );	
 					},
-					Cancel: function() {
+					"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 						$( this ).dialog( "close" );
 					}
 				}

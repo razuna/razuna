@@ -360,10 +360,11 @@
 			<cfset arguments.thestruct.folder_action = true>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 			<!--- Log --->
+			<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 			<cfinvoke component="extQueryCaching" method="log_assets">
 				<cfinvokeargument name="theuserid" value="#session.theuserid#">
 				<cfinvokeargument name="logaction" value="Delete">
-				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
+				<cfinvokeargument name="logdesc" value="#deleted#: #thedetail.file_name#">
 				<cfinvokeargument name="logfiletype" value="doc">
 				<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
@@ -690,10 +691,11 @@
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 				</cfif>
 				<!--- Log --->
+				<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 				<cfinvoke component="extQueryCaching" method="log_assets">
 					<cfinvokeargument name="theuserid" value="#session.theuserid#">
 					<cfinvokeargument name="logaction" value="Delete">
-					<cfinvokeargument name="logdesc" value="Deleted: #thedetail.file_name#">
+					<cfinvokeargument name="logdesc" value="#deleted#: #thedetail.file_name#">
 					<cfinvokeargument name="logfiletype" value="doc">
 					<cfinvokeargument name="assetid" value="#i#">
 					<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
@@ -1103,7 +1105,8 @@
 					<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 				</cfif>
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
+				<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='#updated#: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.folder_id#')>
 			<cfelse>
 				<!--- If updating additional version then get info and log change--->
 				<cfquery datasource="#variables.dsn#" name="qryaddver">
@@ -1113,7 +1116,9 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<cfif qryaddver.recordcount neq 0>
-					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated Additional Rendition: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
+					<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
+					<cfinvoke component="defaults" method="trans" transid="additional_rendition" returnvariable="additional_rendition" />
+					<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='#updated# #additional_rendition#: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
 				</cfif>
 			</cfif>
 
@@ -1458,7 +1463,8 @@
 					AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
 					<!--- Log --->
-					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
+					<cfinvoke component="defaults" method="trans" transid="moved" returnvariable="moved" />
+					<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='#moved#: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id,folderid='#arguments.thestruct.folder_id#')>
 				</cfif>
 			</cfif>
 			<!--- Flush Cache --->

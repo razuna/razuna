@@ -90,22 +90,22 @@
 		</td>
 		<!--- Sort by --->
 		<td align="right" width="1%" nowrap="true">
-			Sort by: 
+			#myFusebox.getApplicationData().defaults.trans('sort_by')#: 
 			 <select name="selectsortbysearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectsortbysearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changesortbysearch('selectsortbysearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');" style="width:80px;">
-			 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-			 	<option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option>
-			 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-			 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-			 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-			 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-			 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+			 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("name")#</option>
+			 	<option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("assets_type")#</option>
+			 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_desc")#</option>
+			 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_asc")#</option>
+			 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("date_added")#</option>
+			 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("last_changed")#</option>
+			 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("same_file")#</option>
 			 </select>
 		</td>
 		<!--- Change the amount of images shown --->
 		<td align="right" width="1%" nowrap="true">
 			<cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25>
 				<select name="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerowmaxsearch('selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
-					<option value="0">Show how many...</option>
+					<option value="0">#myFusebox.getApplicationData().defaults.trans("show_how_many")#</option>
 					<option value="0">---</option>
 					<option value="25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
 					<option value="50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
@@ -119,17 +119,17 @@
 
 <!--- If all is selected show the description --->
 <div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
-	<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Deselect all</a>
+	<strong>#myFusebox.getApplicationData().defaults.trans("selectall_files_section")#</strong> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">#myFusebox.getApplicationData().defaults.trans("deselect_all")#</a>
 	<br>
 </div>
 <div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
-	<em>Please note that you cannot edit files with the <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> icon, because you have "read-only" permission for those files!</em>
+	<em>#myFusebox.getApplicationData().defaults.trans("edit_file_1")# <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> #myFusebox.getApplicationData().defaults.trans("edit_file_2")#</em>
 </div>
 <!--- action with selection --->
 <div id="folderselectionsearchform#attributes.thetype#" class="actiondropdown">
 	<!--- Select all link --->
 	<!--- <div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#">
-		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Deselect all</a>
+		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">#myFusebox.getApplicationData().defaults.trans('deselect_all')#</a>
 	</div> --->
 	<!--- Actions with selection icons --->
 	<cfif cs.show_basket_part AND  cs.button_basket AND (cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>

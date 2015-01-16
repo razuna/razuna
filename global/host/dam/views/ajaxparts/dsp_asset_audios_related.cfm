@@ -90,8 +90,8 @@
 		</tr>
 	</table>
 </cfif>
-<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+<div id="dialog-confirm-rendition" title="#myFusebox.getApplicationData().defaults.trans("remove_rend_confirm")#" style="display:none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>#myFusebox.getApplicationData().defaults.trans("remove_rend")#</p>
 </div>
 <!--- Js --->
 <script type="text/javascript">
@@ -101,11 +101,11 @@ function remrenaud(id){
 		height:140,
 		modal: true,
 		buttons: {
-			"Yes, remove rendition": function() {
+			"#myFusebox.getApplicationData().defaults.trans("remove_rend_ok")#": function() {
 				$( this ).dialog( "close" );
 				$('##relatedaudios').load('#myself#c.audios_remove_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadrenaud(); });
 			},
-			Cancel: function() {
+			"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 				$( this ).dialog( "close" );
 			}
 		}

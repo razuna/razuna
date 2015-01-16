@@ -341,14 +341,8 @@ $(document).bind('click', function(e) {
 		$('#per_' + thisid).prop('checked','checked');
 	}
 // Flash footer_tabs
-function flash_footer(what){
-	// Display notification
-	if(what == "basket"){
-		$.sticky('<span style="color:green;font-weight:bold;">Item is now in your basket</span>');
-	}
-	else {
-		$.sticky('<span style="color:green;font-weight:bold;">Item is now saved to your favorites</span>');
-	}
+function flash_footer(text){
+	$.sticky(text);
 }
 // Global Tagit events
 function raztagit(thediv,fileid,thetype,raztags,perm){
@@ -381,11 +375,11 @@ function raztagit(thediv,fileid,thetype,raztags,perm){
 }
 
 // Adding labels for users who can not edit
-function razaddlabels(thediv,fileid,thetype){
+function razaddlabels(thediv,fileid,thetype,text){
 	$('#' + thediv).chosen().change(
 		loadcontent('div_forall','index.cfm?fa=c.label_add_all&fileid=' + fileid + '&thetype=' + thetype + '&labels=' + $('#' + thediv).val())
 	);
-	$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+	$.sticky(text);
 }
 
 // For the Quick Search
@@ -1991,13 +1985,13 @@ $(document).tooltip({
 	}
 });
 // Remove label while click on X
-function removeLabel(assetID,assetType,labelID,aHrefElement){
+function removeLabel(assetID,assetType,labelID,aHrefElement,text){
 	//console.log(aHrefElement);
 	$(aHrefElement).parent('.singleLabel').remove();
 	loadcontent('div_forall','index.cfm?fa=c.asset_label_add_remove&fileid=' +assetID+ '&thetype=' +assetType+ '&checked=false&labels=' + labelID);
 	// For RAZ-2708 Advanced Search : Check the condition for remove labels
 	if (assetID != '0') {
-		$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+		$.sticky(text);
 	}
 }
 //Check the label name, first char should be charactors or numbers

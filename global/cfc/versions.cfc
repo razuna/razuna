@@ -87,9 +87,10 @@
 	<cfelseif application.razuna.storage EQ "amazon">
 		<cfinvoke component="amazon" method="deletefolder" folderpath="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/#arguments.thestruct.version#" awsbucket="#arguments.thestruct.awsbucket#" />
 	</cfif>
-
+	<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
+	<cfinvoke component="defaults" method="trans" transid="plugin_version" returnvariable="version" />
 	<!--- Add entry into log --->
-	<cfset log_assets(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted Version: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#')>
+	<cfset log_assets(theuserid=session.theuserid,logaction='Delete',logdesc='#deleted# #version#: #getinfo.ver_filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#getinfo.asset_id_r#',folderid='#arguments.thestruct.folder_id#')>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1107,7 +1108,7 @@
 			file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			file_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.thesize#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
-			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,<cfinvoke component="defaults" method="trans" transid="ftp_read_error" returnvariable="ftp_read_error" />
 			<cfif cloud_url.theurl NEQ ''>cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,</cfif>
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
 			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
@@ -1131,7 +1132,9 @@
 		<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<!--- Add entry into log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added New Version: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
+		<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
+		<cfinvoke component="defaults" method="trans" transid="new_version" returnvariable="new_version" />
+		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='#added_txt# #new_version#: #arguments.thestruct.qryfilelocal.file_name_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error in function versions.create">
 			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>

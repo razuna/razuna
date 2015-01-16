@@ -31,7 +31,7 @@
 		<input type="hidden" name="logtype" id="logtype" value="log_assets">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 				<tr>
-					<th>Search Log</th>
+					<th>#myFusebox.getApplicationData().defaults.trans("search_log")#</th>
 				</tr>
 				<tr>
 					<td><input type="text" name="searchtext" id="searchtext" style="width:300px"> <input type="submit" name="search" value="Search"> <div id="submitsearch"></div></td>
@@ -104,7 +104,7 @@
 				alert('The first character of your search string is an illegal one. Please remove it!');
 			}
 			else if (theentry == "") {
-				alert('Please enter a search term!');
+				alert('#myFusebox.getApplicationData().defaults.trans("enter_search_term")#');
 			}
 			else {
 				// Get values

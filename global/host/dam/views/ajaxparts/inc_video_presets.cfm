@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<select id="preset_#incval.theformat#" onChange="setpreset('#incval.theformat#','#incval.theform#');">
-		<option value="">Choose Preset</option>
+		<option value="">#myFusebox.getApplicationData().defaults.trans("choose_preset")#</option>
 		<option value="">---</option>
 		<option value="">HD Presets</option>
 		<option value="hd480">852x480</option>

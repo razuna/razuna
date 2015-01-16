@@ -27,6 +27,6 @@
 	<cfif attributes.checkstatus.dir>
 		<span style="color:green;font-weight:bold;">Success. The directory can be read and contains <cfif attributes.checkstatus.countdirs.thecount NEQ "">#attributes.checkstatus.countdirs.thecount# sub-folders and</cfif> #attributes.checkstatus.countfiles.thecount# files.</span>
 	<cfelse>
-		<span style="color:red;font-weight:bold;">Oops. We can't read the provided directory!</span>
+		<span style="color:red;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("read_folder_error")#</span>
 	</cfif>
 </cfoutput>

@@ -189,7 +189,15 @@
 		<cfreturn size>
 	</cffunction>
 
-<!--- CONVERT ILLEGAL CHARS ---------------------------------------------------------------------->
+	<cffunction name="deAccent" hint="Replaces accented characters with their non accented closest equivalents.">
+		<cfargument name="str" required="yes" type="string">
+		<cfset var newstr = "">
+		<cfset var list1 = "á,é,í,ó,ú,ý,à,è,ì,ò,ù,â,ê,î,ô,û,ã,ñ,õ,ä,ë,ï,ö,ü,ÿ,å,æ,ø,À,È,Ì,Ò,Ù,Á,É,Í,Ó,Ú,Ý,Â,Ê,Î,Ô,Û,Ã,Ñ,Õ,Ä,Ë,Ï,Ö,Ü,Å,Æ,Ø">
+		<cfset var list2 = "a,e,i,o,y,u,a,e,i,o,u,a,e,i,o,u,a,n,o,a,e,i,o,u,y,aa,ae,o,A,E,I,O,U,A,E,I,O,U,Y,A,E,I,O,U,A,N,O,A,E,I,O,U,AA,AE,O">
+		<cfset newstr = ReplaceList(str,list1,list2)>
+		<cfreturn newstr>
+	</cffunction>
+	
 	<cffunction hint="CONVERT ILLEGAL CHARS" name="convertname" output="false">
 		<cfargument name="thename" required="yes" type="string">
 		<cfset var fileNameExt = "">
@@ -200,18 +208,8 @@
 		<cfset thefilename = REReplaceNoCase(thefilename, " ", "_", "ALL")>
 		<!--- All foreign chars are now converted, except the - --->
 		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:alnum:]^\-\_\.]", "", "ALL")>
-		<!--- Danish Chars --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "([å]+)", "aa", "ALL")>
-		<cfset thefilename = REReplaceNoCase(thefilename, "([æ]+)", "ae", "ALL")>
-		<cfset thefilename = REReplaceNoCase(thefilename, "([ø]+)", "o", "ALL")>
-		<!--- German Chars --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "([ü]+)", "ue", "ALL")>
-		<cfset thefilename = REReplaceNoCase(thefilename, "([ä]+)", "ae", "ALL")>
-		<cfset thefilename = REReplaceNoCase(thefilename, "([ö]+)", "oe", "ALL")>
-		<!--- French Chars --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "([è]+)", "e", "ALL")>
-		<cfset thefilename = REReplaceNoCase(thefilename, "([à]+)", "a", "ALL")>
-		<cfset thefilename = REReplaceNoCase(thefilename, "([é]+)", "e", "ALL")>
+		<!--- Deaccent chars --->
+		<cfset thefilename = deaccent(thefilename)>
 		<!--- If all fails then --->
 		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\-\_\.\s]", "", "ALL")>
 		<!--- Re-add the extension to the name --->
@@ -1110,7 +1108,8 @@ Comment:<br>
 		<cfset var theids = "">
 		<cfset var qry = "">
 		<!--- Feedback --->
-		<cfoutput><strong>Starting the Clean up process...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="db_cleaner_start" returnvariable="db_cleaner_start" />
+		<cfoutput><strong>#db_cleaner_start#...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Query --->
 		<cfif arguments.thestruct.thetype EQ "img">
@@ -1151,20 +1150,27 @@ Comment:<br>
 			</cfquery>
 		</cfif>
 		<!--- Feedback --->
-		<cfoutput><strong>You have #qry.recordcount# records. We are starting to check each record now...</strong><br><br>Below you will find records that are missing the asset on the filesytem. Tip: If you want to remove all at once scroll down to the bottom.<br /><br /></cfoutput>
+		<cfset transvalues[1] = "#qry.recordcount#">
+		<cfinvoke component="defaults" method="trans" transid="db_cleaner_feedback" values="#transvalues#" returnvariable="db_cleaner_feedback" />
+		<cfoutput>#db_cleaner_feedback#<br /><br /></cfoutput>
 		<cfflush>
 		<!--- Local --->
+		<cfinvoke component="defaults" method="trans" transid="checking" returnvariable="checking" />
+		<cfinvoke component="defaults" method="trans" transid="missing_orig_asset" returnvariable="missing_orig_asset" />
+		<cfinvoke component="defaults" method="trans" transid="missing_thumb" returnvariable="missing_thumb" />
+		<cfinvoke component="defaults" method="trans" transid="checked_at" returnvariable="checked_at" />
+		<cfinvoke component="defaults" method="trans" transid="remove_asset_db" returnvariable="remove_asset_db" />
 		<cfif application.razuna.storage EQ "local">
 			<cfloop query="qry">
 				<!--- Checking message --->
-				<cfoutput>Checking: #filename#...<br></cfoutput>
+				<cfoutput>#checking#: #filename#...<br></cfoutput>
 				<cfflush>
 				<!--- Check Original --->
 				<cfif NOT fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#filenameorg#")>
 					<cfset foundsome = true>
 					<cfset theids = theids & "," & id>
-					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#filenameorg#<br />
-					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">Remove this asset in the database</a><br />
+					<cfoutput><strong style="color:red;">#missing_orig_asset#: #filename#</strong><br>#checked_at#: #arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#filenameorg#<br />
+					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">#remove_asset_db#</a><br />
 					<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 					</cfoutput>
 					<cfflush>
@@ -1178,7 +1184,7 @@ Comment:<br>
 					</cfif>
 					<cfif NOT fileexists("#pathtocheck#")>
 						<cfset foundsome = true>
-						<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #pathtocheck#<br /><br />
+						<cfoutput><strong style="color:red;">#missing_thumb#: #filename#</strong><br>#checked_at#: #pathtocheck#<br /><br />
 						</cfoutput>
 						<cfflush>
 					</cfif>
@@ -1189,7 +1195,7 @@ Comment:<br>
 			<cfloop query="qry">
 				<cfif cloud_url_org NEQ "">
 					<!--- Checking message --->
-					<cfoutput>Checking: #filename#...<br></cfoutput>
+					<cfoutput>#checking#: #filename#...<br></cfoutput>
 					<cfflush>
 					<!--- Check Original --->
 					<cfif cloud_url_org DOES NOT CONTAIN "://">
@@ -1200,8 +1206,8 @@ Comment:<br>
 					<cfif cfhttp.responseheader.status_code NEQ 200>
 						<cfset foundsome = true>
 						<cfset theids = theids & "," & id>
-						<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #cloud_url_org#<br />
-						<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">Remove this asset in the database</a><br />
+						<cfoutput><strong style="color:red;">#missing_orig_asset#: #filename#</strong><br>#checked_at#: #cloud_url_org#<br />
+						<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">#remove_asset_db#</a><br />
 						<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 						</cfoutput>
 						<cfflush>
@@ -1216,7 +1222,7 @@ Comment:<br>
 							</cfif>
 							<cfif cfhttp.responseheader.status_code NEQ 200>
 								<cfset foundsome = true>
-								<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #cloud_url#<br />
+								<cfoutput><strong style="color:red;">#missing_thumb#: #filename#</strong><br>#checked_at#: #cloud_url#<br />
 								</cfoutput>
 								<cfflush>
 							</cfif>
@@ -1226,29 +1232,33 @@ Comment:<br>
 				<cfelse>
 					<cfset foundsome = true>
 					<cfset theids = theids & "," & id>
-					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br />
-					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">Remove this asset in the database</a><br />
+					<cfoutput><strong style="color:red;">#missing_orig_asset#: #filename#</strong><br />
+					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">#remove_asset_db#</a><br />
 					<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 					</cfoutput>
 					<cfflush>
 				</cfif>
 			</cfloop>
 		</cfif>
+		<cfinvoke component="defaults" method="trans" transid="missing_assets" returnvariable="missing_assets" />
+		<cfinvoke component="defaults" method="trans" transid="remove_assets_click" returnvariable="remove_assets_click" />
+		<cfinvoke component="defaults" method="trans" transid="remove_assets_btn" returnvariable="remove_assets_btn" />
+		<cfinvoke component="defaults" method="trans" transid="awesome_rock_on" returnvariable="awesome_rock_on" />
 		<!--- Feedback --->
 		<cfif foundsome>
-			<cfoutput><br /><strong>Looks like some assets are missing on the system.</strong><br /><br /></cfoutput>
+			<cfoutput><br /><strong>#missing_assets#</strong><br /><br /></cfoutput>
 			<cfflush>
-			You can remove all the asset above with one single click below. Note: This will remove the assets from the database and the search index.<br />
+			#remove_assets_click#<br />
 			<cfoutput>
 			<form action="index.cfm" method="post">
 				<input type="hidden" name="fa" value="c.admin_cleaner_check_asset_delete" />
 				<input type="hidden" name="id" value="#theids#" />
 				<input type="hidden" name="thetype" value="#arguments.thestruct.thetype#" />
-				<input type="submit" value="Remove above assets" name="submitbutton" class="button" />
+				<input type="submit" value="#remove_assets_btn#" name="submitbutton" class="button" />
 			</form>
 			</cfoutput>
 		<cfelse>
-			<cfoutput><br /><strong style="color:green;">Awesome. All looks stylish and clean. Rock on.</strong><br><br></cfoutput>
+			<cfoutput><br /><strong style="color:green;">#awesome_rock_on#</strong><br><br></cfoutput>
 			<cfflush>
 		</cfif>
 		<!--- Return --->

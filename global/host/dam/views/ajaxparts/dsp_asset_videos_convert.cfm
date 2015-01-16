@@ -29,7 +29,7 @@
 	<cfquery name="org_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'org'
 	</cfquery>
-	<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("existing_renditions")# - <a href="##" onclick="loadrenvid();return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a></div></div>
+	<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("existing_renditions")# - <a href="##" onclick="loadrenvid();return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a></div></div>
 	<br />
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 		<cfif attributes.folderaccess NEQ "R" OR (org_share_setting.recordcount EQ 1 AND org_share_setting.asset_dl EQ 1)>
@@ -63,7 +63,7 @@
 							<br />
 							<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#attributes.file_id#&type=vid','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
 							<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;" style="padding-left:20px;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
-							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
+							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">#myFusebox.getApplicationData().defaults.trans("embed")#</a>
 							<!--- Direct link --->
 							<div id="divo#attributes.file_id#" style="display:none;">
 								<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" />
@@ -125,7 +125,7 @@
 	</table>
 	<br />
 	<cfif attributes.folderaccess NEQ "R">
-		<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
+		<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
 		<br />
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<cfset theaspectratio = #qry_detail.detail.vwidth# / #qry_detail.detail.vheight#>
@@ -250,11 +250,11 @@
 				<option value="5">176x144 (200K)</option>
 				<option value="6">128x96 (300K)</option>
 				<option value="7">176x144 (300K)</option>
-				<option value="8">128x96 (No size limit)</option>
-				<option value="9">176x144 (No size limit)</option>
-				<option value="10">352x288 (No size limit)</option>
-				<option value="11">704x576 (No size limit)</option>
-				<option value="12">1408x1152 (No size limit)</option>
+				<option value="8">128x96 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="9">176x144 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="10">352x288 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="11">704x576 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="12">1408x1152 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
 				</select>
 				</td>
 				<td nowrap="true"></td>
@@ -276,7 +276,7 @@
 		<!--- Additional Renditions --->
 		<cfif cs.tab_additional_renditions>
 			<div class="collapsable">
-				<a href="##" onclick="$('##moreversions').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("adiver_header")#</div></a>
+				<a href="##" onclick="$('##moreversions').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("adiver_header")#</div></a>
 				<div id="moreversions" style="display:none;padding-top:10px;"></div>
 			</div>
 		</cfif>

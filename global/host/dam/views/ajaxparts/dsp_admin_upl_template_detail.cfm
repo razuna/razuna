@@ -87,7 +87,7 @@
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_jpg" id="convert_wm_jpg">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<cfset wm_temp_id = wm_temp_id>
@@ -95,7 +95,7 @@
 							</cfloop>
 						</select>
 					</cfif>
-					<a href="##" onclick="$('##jpg_more').slideToggle('slow');return false;">Additional JPG conversions</a>
+					<a href="##" onclick="$('##jpg_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# JPG #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -112,7 +112,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_2" id="convert_wm_jpg_2">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -131,7 +131,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_3" id="convert_wm_jpg_3">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -150,7 +150,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_4" id="convert_wm_jpg_4">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -169,7 +169,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_5" id="convert_wm_jpg_5">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -188,7 +188,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_jpg_6" id="convert_wm_jpg_6">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -211,7 +211,7 @@
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_gif" id="convert_wm_gif">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<cfset wm_temp_id = wm_temp_id>
@@ -219,7 +219,7 @@
 							</cfloop>
 						</select>
 					</cfif>
-					<a href="##" onclick="$('##gif_more').slideToggle('slow');return false;">Additional GIF conversions</a>
+					<a href="##" onclick="$('##gif_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# GIF #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -236,7 +236,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_2" id="convert_wm_gif_2">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -255,7 +255,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_3" id="convert_wm_gif_3">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -274,7 +274,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_4" id="convert_wm_gif_4">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -293,7 +293,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_5" id="convert_wm_gif_5">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -312,7 +312,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_gif_6" id="convert_wm_gif_6">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -335,7 +335,7 @@
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_png" id="convert_wm_png">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<cfset wm_temp_id = wm_temp_id>
@@ -343,7 +343,7 @@
 							</cfloop>
 						</select>
 					</cfif>
-					<a href="##" onclick="$('##png_more').slideToggle('slow');return false;">Additional PNG conversions</a>
+					<a href="##" onclick="$('##png_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# PNG #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -360,7 +360,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_2" id="convert_wm_png_2">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -379,7 +379,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_3" id="convert_wm_png_3">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -398,7 +398,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_4" id="convert_wm_png_4">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -417,7 +417,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_5" id="convert_wm_png_5">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -436,7 +436,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_png_6" id="convert_wm_png_6">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -459,7 +459,7 @@
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_tif" id="convert_wm_tif">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<cfset wm_temp_id = wm_temp_id>
@@ -467,7 +467,7 @@
 							</cfloop>
 						</select>
 					</cfif>
-					<a href="##" onclick="$('##tif_more').slideToggle('slow');return false;">Additional TIF conversions</a>
+					<a href="##" onclick="$('##tif_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# TIF #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -484,7 +484,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_2" id="convert_wm_tif_2">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -503,7 +503,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_3" id="convert_wm_tif_3">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -522,7 +522,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_4" id="convert_wm_tif_4">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -541,7 +541,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_5" id="convert_wm_tif_5">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -560,7 +560,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_tif_6" id="convert_wm_tif_6">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -583,7 +583,7 @@
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<select name="convert_wm_bmp" id="convert_wm_bmp">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<cfset wm_temp_id = wm_temp_id>
@@ -591,7 +591,7 @@
 							</cfloop>
 						</select>
 					</cfif>
-					<a href="##" onclick="$('##bmp_more').slideToggle('slow');return false;">Additional BMP conversions</a>
+					<a href="##" onclick="$('##bmp_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# BMP #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -608,7 +608,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_2" id="convert_wm_bmp_2">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -627,7 +627,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_3" id="convert_wm_bmp_3">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -646,7 +646,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_4" id="convert_wm_bmp_4">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -665,7 +665,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_5" id="convert_wm_bmp_5">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -684,7 +684,7 @@
 									<!--- Watermark --->
 									<cfif attributes.wmtemplates.recordcount NEQ 0>
 										<select name="convert_wm_bmp_6" id="convert_wm_bmp_6">
-											<option value="" selected="selected">Apply watermark</option>
+											<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 											<option value="">---</option>
 											<cfloop query="attributes.wmtemplates">
 												<cfset wm_temp_id = wm_temp_id>
@@ -712,7 +712,7 @@
 			<tr>
 				<td></td>
 				<td></td>
-				<td><strong>Choose Preset</strong></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("choose_preset")#</strong></td>
 				<td><strong>#myFusebox.getApplicationData().defaults.trans("size")#</strong></td>
 				<!--- <td><strong>BitRate</strong></td> --->
 			</tr>
@@ -725,7 +725,7 @@
 					<cfset incval.theformat = "ogv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="100%"><input type="text" size="3" name="convert_width_ogv" id="convert_width_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv" id="convert_height_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##ogv_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td width="100%"><input type="text" size="3" name="convert_width_ogv" id="convert_width_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_ogv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_ogv" id="convert_height_ogv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_ogv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##ogv_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_ogv"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_ogv" value="#bit#">kb/s</td> --->
 			</tr>
@@ -791,7 +791,7 @@
 					<cfset incval.theformat = "webm">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_webm" id="convert_width_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm" id="convert_height_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##webm_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_webm" id="convert_width_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_webm">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_webm" id="convert_height_webm" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_webm">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##webm_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_webm"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_webm" value="#bit#">kb/s</td> --->
 			</tr>
@@ -857,7 +857,7 @@
 					<cfset incval.theformat = "flv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_flv" id="convert_width_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv" id="convert_height_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##flv_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_flv" id="convert_width_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_flv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_flv" id="convert_height_flv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_flv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##flv_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_flv"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_flv" value="#bit#">kb/s</td> --->
 			</tr>
@@ -923,7 +923,7 @@
 					<cfset incval.theformat = "mp4">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mp4" id="convert_width_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4" id="convert_height_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mp4_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_mp4" id="convert_width_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mp4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mp4" id="convert_height_mp4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mp4">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mp4_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_mp4"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mp4" value="#bit#">kb/s</td> --->
 			</tr>
@@ -989,7 +989,7 @@
 					<cfset incval.theformat = "wmv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" id="convert_width_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv" id="convert_height_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##wmv_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" id="convert_width_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_wmv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_wmv" id="convert_height_wmv" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_wmv">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##wmv_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_wmv"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td width="100%" nowrap="true"><input type="text" size="4" name="convert_bitrate_wmv" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1055,7 +1055,7 @@
 					<cfset incval.theformat = "avi">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_avi" id="convert_width_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi" id="convert_height_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##avi_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_avi" id="convert_width_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_avi">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_avi" id="convert_height_avi" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_avi">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##avi_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_avi"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1121,7 +1121,7 @@
 					<cfset incval.theformat = "mov">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mov" id="convert_width_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov" id="convert_height_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mov_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_mov" id="convert_width_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mov">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mov" id="convert_height_mov" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mov">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mov_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_mov"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1187,7 +1187,7 @@
 					<cfset incval.theformat = "mpg">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mpg" id="convert_width_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg" id="convert_height_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mpg_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><input type="text" size="3" name="convert_width_mpg" id="convert_width_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_mpg">#upl_temp_value#</cfif></cfloop>" maxlength="4"> x <input type="text" size="3" name="convert_height_mpg" id="convert_height_mpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_mpg">#upl_temp_value#</cfif></cfloop>" maxlength="4"> <a href="##" onclick="$('##mpg_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 				<!--- <cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_mpg"><cfset bit = upl_temp_value></cfif></cfloop> --->
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mpg" value="#bit#">kb/s</td> --->
 			</tr>
@@ -1258,15 +1258,15 @@
 				<option value="5">176x144 (200K)</option>
 				<option value="6">128x96 (300K)</option>
 				<option value="7">176x144 (300K)</option>
-				<option value="8">128x96 (No size limit)</option>
-				<option value="9">176x144 (No size limit)</option>
-				<option value="10">352x288 (No size limit)</option>
-				<option value="11">704x576 (No size limit)</option>
-				<option value="12">1408x1152 (No size limit)</option>
+				<option value="8">128x96 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="9">176x144 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="10">352x288 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="11">704x576 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="12">1408x1152 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
 				</select>
 				</td>
 				<td>
-					<a href="##" onclick="$('##3gp_more').slideToggle('slow');return false;">additional conversions</a>
+					<a href="##" onclick="$('##3gp_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 				<!--- <cfset b3gp = 64>
 				<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_3gp"><cfset b3gp = upl_temp_value></cfif></cfloop>
@@ -1291,11 +1291,11 @@
 									<option value="5">176x144 (200K)</option>
 									<option value="6">128x96 (300K)</option>
 									<option value="7">176x144 (300K)</option>
-									<option value="8">128x96 (No size limit)</option>
-									<option value="9">176x144 (No size limit)</option>
-									<option value="10">352x288 (No size limit)</option>
-									<option value="11">704x576 (No size limit)</option>
-									<option value="12">1408x1152 (No size limit)</option>
+									<option value="8">128x96 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+									<option value="9">176x144 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+									<option value="10">352x288 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+									<option value="11">704x576 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+									<option value="12">1408x1152 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
 									</select>
 									</td>
 								<!---<td><input type="text" size="3" name="convert_width_3gp_2" id="convert_width_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_2" id="convert_height_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_2">#upl_temp_value#</cfif></cfloop>"></td>--->
@@ -1387,7 +1387,7 @@
 						<option value="256"<cfif bitrate_mp3 EQ 256> selected="true"</cfif>>256</option>
 						<option value="320"<cfif bitrate_mp3 EQ 320> selected="true"</cfif>>320</option>
 					</select>
-					 <a href="##" onclick="$('##mp3_more').slideToggle('slow');return false;">additional conversions</a>
+					 <a href="##" onclick="$('##mp3_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a>
 				</td>
 			</tr>
 			<tr>
@@ -1516,7 +1516,7 @@
 				<option value="80"<cfif bitrate_ogg EQ 80> selected="true"</cfif>>224</option>
 				<option value="90"<cfif bitrate_ogg EQ 90> selected="true"</cfif>>290</option>
 				<option value="100"<cfif bitrate_ogg EQ 100> selected="true"</cfif>>434</option>
-				</select> <a href="##" onclick="$('##ogg_more').slideToggle('slow');return false;">additional conversions</a></td>
+				</select> <a href="##" onclick="$('##ogg_more').slideToggle('slow');return false;">#myFusebox.getApplicationData().defaults.trans("additional")# #myFusebox.getApplicationData().defaults.trans("conversions")#</a></td>
 			</tr>
 			<tr>
 				<td colspan="3">

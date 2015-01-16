@@ -61,7 +61,7 @@
 		<td align="left" width="1%" nowrap="true">
 			<div>
 				<!--- Icons --->
-				<div id="tooltip" style="float:left;width:490px;">
+				<div id="tooltip" style="float:left;width:600px;">
 					<!--- Upload --->
 					<cfif attributes.folderaccess NEQ "R"> 
 						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (isadmin)>
@@ -96,12 +96,12 @@
 						<!--- RAZ-3192 Hide more actions for read-only groups --->
 						<cfif attributes.folderaccess NEQ "R">
 							<!--- More actions --->
-							<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
+							<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("more_actions")#</a></div>
 							<div style="float:left;padding-right:15px;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
 						</cfif>
 
 						<!--- Views --->
-						<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">Views</a></div>
+						<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("views")#</a></div>
 						<div style="float:left;;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##dropviews#thediv#').toggle();"></div>
 					</cfif>
 				</div>
@@ -124,7 +124,7 @@
 							<!--- Favorite Folder --->
 							<cfif cs.icon_favorite_folder AND cs.show_favorites_part>
 								<p>
-									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer();$('##drop#thediv#').toggle();return false;">
+									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');$('##drop#thediv#').toggle();return false;">
 										<div style="float:left;padding-right:5px;">
 											<img src="#dynpath#/global/host/dam/images/folder-favorites.png" width="16" height="16" border="0" />
 										</div>
@@ -139,7 +139,7 @@
 										<div style="float:left;padding-right:5px;">
 											<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
 										</div>
-										<div style="padding-top:2px;">Show assets from Sub-Folders</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("show_assets_subfolders")#</div>
 									</a>
 								</p>
 								<p><hr></p>
@@ -151,7 +151,7 @@
 										<div style="float:left;padding-right:5px;">
 											<img src="#dynpath#/global/host/dam/images/preferences-desktop-printer-2.png" border="0" width="16" height="16" />
 										</div>
-										<div style="padding-top:2px;">Print</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("print")#</div>
 									</a>
 								</p>
 							</cfif>
@@ -161,7 +161,7 @@
 										<div style="float:left;padding-right:5px;">
 											<img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" />
 										</div>
-										<div style="padding-top:2px;">RSS-Feed of this folder</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("rss_feed")#</div>
 									</a>
 								</p>
 							</cfif>
@@ -171,7 +171,7 @@
 										<div style="float:left;padding-right:5px;">
 											<img src="#dynpath#/global/host/dam/images/page-word.png" border="0" width="16" height="16" />
 										</div>
-										<div style="padding-top:2px;">Create a Word-Document</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("create_worddoc")#</div>
 									</a>
 								</p>
 							</cfif>
@@ -206,7 +206,7 @@
 										<div style="float:left;padding-right:5px;">
 											<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
 										</div>
-										<div style="padding-top:2px;">Download assets in this folder</div>
+										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("download_assets")#</div>
 									</a>
 								</p>
 							</cfif>
@@ -221,7 +221,7 @@
 								<div style="float:left;padding-right:5px;">
 									<img src="#dynpath#/global/host/dam/images/view-list-icons.png" border="0" width="16" height="16">
 								</div>
-								<div style="padding-top:2px;">Thumbnail View</div>
+								<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("thumb_view")#</div>
 							</a>
 						</p>
 						<p>
@@ -229,7 +229,7 @@
 								<div style="float:left;padding-right:5px;">
 									<img src="#dynpath#/global/host/dam/images/view-list-text-3.png" border="0" width="16" height="16">
 								</div>
-								<div style="padding-top:2px;">List View</div>
+								<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("list_view")#</div>
 							</a>
 						</p>
 						<cfif attributes.folderaccess NEQ "R">
@@ -238,7 +238,7 @@
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/view-list-details-4.png" border="0" width="16" height="16">
 									</div>
-									<div style="padding-top:2px;">Quick Edit View</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("quickedit_view")#</div>
 								</a>
 							</p>
 						</cfif>
@@ -294,28 +294,28 @@
 		<!--- Sort by --->
 		<cfif attributes.bot eq "true">
 			<td align="right" width="1%" nowrap="true">
-				Sort by: 
+				#myFusebox.getApplicationData().defaults.trans('sort_by')#: 
 				<select name="selectsortby#kind#" id="selectsortby#kind#" onChange="changesortby('selectsortby#kind#');" style="width:100px;">
-					<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-					<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-					<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-				 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-				 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-				 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-				 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+					<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("name")#</option>
+					<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("assets_type")#</option></cfif>
+					<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_desc")#</option>
+				 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_asc")#</option>
+				 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("date_added")#</option>
+				 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("last_changed")#</option>
+				 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("same_file")#</option>
 				</select>
 			</td>
 		<cfelse>
 			<td align="right" width="1%" nowrap="true">
-				Sort by: 
+				#myFusebox.getApplicationData().defaults.trans('sort_by')#: 
 				 <select name="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changesortby('selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" style="width:100px;">
-				 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-				 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-				 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-				 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-				 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-				 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-				 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+				 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("name")#</option>
+				 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("assets_type")#</option></cfif>
+				 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_desc")#</option>
+				 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_asc")#</option>
+				 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("date_added")#</option>
+				 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("last_changed")#</option>
+				 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("same_file")#</option>
 				 </select>
 			</td>
 		</cfif>
@@ -332,7 +332,7 @@
 			</td>
 		<cfelse>
 			<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
-				<option value="javascript:return false;">Show how many...</option>
+				<option value="javascript:return false;">#myFusebox.getApplicationData().defaults.trans("show_how_many")#...</option>
 				<option value="javascript:return false;">---</option>
 				<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
 				<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
@@ -345,13 +345,13 @@
 </table>
 <!--- If all is selected show the description --->
 <div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form" style="display:none;width:100%;text-align:center;">
-	<strong>All files in this <cfif kind EQ "all">folder<cfelse>section</cfif> have been selected</strong> <a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>
+	<strong><cfif kind EQ "all">#myFusebox.getApplicationData().defaults.trans("selectall_files_folder")#<cfelse>#myFusebox.getApplicationData().defaults.trans("selectall_files_section")#</cfif></strong> <a href="##" onclick="CheckAllNot('#kind#form');return false;">#myFusebox.getApplicationData().defaults.trans("deselect_all")#</a>
 </div>
 <!--- Put in basket button / Action Menu --->
 <div id="folderselection#kind#form" class="actiondropdown"> 
 	<!--- Select all link --->
 	<!--- <div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form">
-	 	<a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>
+	 	<a href="##" onclick="CheckAllNot('#kind#form');return false;">#myFusebox.getApplicationData().defaults.trans('deselect_all')#</a>
 	</div> --->
 	<cfset actions = false>
 	<!--- Actions with selection icons --->
@@ -447,7 +447,7 @@
 		</cfloop>
 	</cfif>
 	<cfif !actions>
-		No actions found for user
+		#myFusebox.getApplicationData().defaults.trans("no_actions")#
 	</cfif> 
 </div>
 		

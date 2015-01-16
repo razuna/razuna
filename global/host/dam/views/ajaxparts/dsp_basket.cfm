@@ -107,7 +107,7 @@
 									</cfloop>
 								</cfdefaultcase>
 							</cfswitch>
-							<div style="padding-top:3px;font-weight:normal;"><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_remove&id=#cart_product_id#');return false;">Remove</a></div>	
+							<div style="padding-top:3px;font-weight:normal;"><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_remove&id=#cart_product_id#');return false;">#myFusebox.getApplicationData().defaults.trans("remove_txt")#</a></div>	
 						</td>				
 					</cfloop>
 				</tr>

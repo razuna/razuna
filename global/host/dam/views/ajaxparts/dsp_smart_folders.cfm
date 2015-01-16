@@ -27,7 +27,7 @@
 	<!--- Drop down menu --->
 	<cfif qry_sf.recordcount NEQ 0>
 		<div style="width:60px;float:right;position:absolute;left:190px;top:3px;">
-			<div style="float:left;"><a href="##" onclick="$('##sfmanage').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
+			<div style="float:left;"><a href="##" onclick="$('##sfmanage').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##sfmanage').toggle();" class="ddicon"></div>
 			<div id="sfmanage" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>

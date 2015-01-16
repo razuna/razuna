@@ -31,10 +31,10 @@
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="release" value="true">
-		<h2>Release this collection</h2>
-		Releasing a collection will freeze the collection for further changes. It can be used in order to "lock" the collection. Only an Administrator can Un-Release a collection and make changes to it.
+		<h2>#myFusebox.getApplicationData().defaults.trans('release_collection')#</h2>
+		#myFusebox.getApplicationData().defaults.trans('release_collection_desc')#
 		<br /><br />
-		<strong>Change Collection Name to</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans('change_collection_name')#</strong>
 		<input type="text" style="width:400px;" name="col_name" value="#qry_detail.col_name# copy">
 		<br /><br />
 		<cfloop query="qry_langs">
@@ -52,7 +52,7 @@
 		<!--- Labels --->
 		<!--- <strong>#myFusebox.getApplicationData().defaults.trans("labels")#</strong>
 		<br />
-		<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_col_copy" onchange="razaddlabels('tags_col_copy','#attributes.col_id#','collection');" multiple="multiple">
+		<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:400px;" id="tags_col_copy" onchange="razaddlabels('tags_col_copy','#attributes.col_id#','collection','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 			<option value=""></option>
 			<cfloop query="attributes.thelabelsqry">
 				<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -60,8 +60,8 @@
 		</select>
 		<br /> --->
 		<!--- Save --->
-		<div style="float:left;padding:20px 0px 20px 0px;"><input type="checkbox" name="copycol" id="copycol" value="true" checked="checked"> Copy the collection at the same time</div>
-		<div style="float:right;padding:20px 0px 20px 0px;"><input type="submit" name="submit" value="Release Collection" class="button"></div>
+		<div style="float:left;padding:20px 0px 20px 0px;"><input type="checkbox" name="copycol" id="copycol" value="true" checked="checked"> #myFusebox.getApplicationData().defaults.trans('copy_collection')#</div>
+		<div style="float:right;padding:20px 0px 20px 0px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans('release_collection')#" class="button"></div>
 	</form>
 	<!--- JS --->
 	<script type="text/javascript">

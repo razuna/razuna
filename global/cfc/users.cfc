@@ -346,7 +346,8 @@
 		<cfelse>
 			<cfset logsection = "Admin">
 		</cfif>
-		<cfset log_users(theuserid=newid,logaction='Add',logsection='#logsection#',logdesc='Added: UserID: #newid# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
+		<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added" />
+		<cfset log_users(theuserid=newid,logaction='Add',logsection='#logsection#',logdesc='#added#: UserID: #newid# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
 		<!--- Send email to user --->
 		<cfif arguments.thestruct.emailinfo>
 			<cfinvoke method="emailinfo" user_id="#newid#" userpass="#arguments.thestruct.user_pass#" >
@@ -388,7 +389,8 @@
 	<cfif NOT structkeyexists(arguments.thestruct,("logsection"))>
 		<cfset arguments.thestruct.logsection = "admin">
 	</cfif>
-	<cfset log_users(theuserid=arguments.thestruct.id,logaction='Delete',logsection='#arguments.thestruct.logsection#',logdesc='Deleted: UserID: #arguments.thestruct.id# eMail: #theuser.user_email# First Name: #theuser.user_first_name# Last Name: #theuser.user_last_name#')>
+	<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
+	<cfset log_users(theuserid=arguments.thestruct.id,logaction='Delete',logsection='#arguments.thestruct.logsection#',logdesc='#deleted#: UserID: #arguments.thestruct.id# eMail: #theuser.user_email# First Name: #theuser.user_first_name# Last Name: #theuser.user_last_name#')>
 	<!--- Remove from the User Table --->
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM users
@@ -536,7 +538,9 @@
 		<cfelse>
 			<cfset logsection = "Admin">
 		</cfif>
-		<cfset log_users(theuserid=arguments.thestruct.user_id,logsection='#logsection#',logaction='Update',logdesc='Updated: UserID: #arguments.thestruct.user_id# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
+		<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
+				<cfset var rend =" #rendition#">
+		<cfset log_users(theuserid=arguments.thestruct.user_id,logsection='#logsection#',logaction='Update',logdesc='#updated#: UserID: #arguments.thestruct.user_id# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>

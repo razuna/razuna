@@ -117,7 +117,7 @@
 			<cfif cs.tab_labels>
 				<div id="batch_labels" style="min-height:200px;">
 					<strong>Choose #myFusebox.getApplicationData().defaults.trans("labels")#</strong><br />
-					<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" name="labels" id="tags_labels" multiple="multiple">
+					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" name="labels" id="tags_labels" multiple="multiple">
 						<option value=""></option>
 						<cfloop query="qry_labels">
 							<cfset l = replace(label_path," "," AND ","all")>

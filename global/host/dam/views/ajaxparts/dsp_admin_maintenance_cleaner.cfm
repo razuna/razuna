@@ -99,11 +99,11 @@ else
 	}
 </style>
 <cfoutput>
-	<h2>1. Records that are not assigned to a folder</h2>
-	<p>Check here for records that are not assigned to any folder. This usually means they are left over records or so called "zombie" records that can be removed.</p>
+	<h2>1. #myFusebox.getApplicationData().defaults.trans("db_cleaner_header_1")#</h2>
+	<p>#myFusebox.getApplicationData().defaults.trans("db_cleaner_desc")#</p>
 	<!--- Files --->
 	<cfif qry_files.recordcount EQ 0>
-		<span style="color:green;">There are no document records that are not assigned to a folder. This is a good thing!</span><br />
+		<span style="color:green;">#myFusebox.getApplicationData().defaults.trans("db_cleaner_docs")#</span><br />
 	<cfelse>
 		<!--- Set variables for the include --->
 		<cfset thetitle = "Document">
@@ -113,7 +113,7 @@ else
 	</cfif>
 	<!--- Audios --->
 	<cfif qry_audios.recordcount EQ 0>
-		<span style="color:green;">There are no audio records that are not assigned to a folder. This is a good thing!</span><br />
+		<span style="color:green;">#myFusebox.getApplicationData().defaults.trans("db_cleaner_audios")#</span><br />
 	<cfelse>
 		<!--- Set variables for the include --->
 		<cfset thetitle = "Audios">
@@ -123,7 +123,7 @@ else
 	</cfif>
 	<!--- Videos --->
 	<cfif qry_videos.recordcount EQ 0>
-		<span style="color:green;">There are no video records that are not assigned to a folder. This is a good thing!</span><br />
+		<span style="color:green;">#myFusebox.getApplicationData().defaults.trans("db_cleaner_videos")#</span><br />
 	<cfelse>
 		<!--- Set variables for the include --->
 		<cfset thetitle = "Videos">
@@ -133,7 +133,7 @@ else
 	</cfif>
 	<!--- Images --->
 	<cfif qry_images.recordcount EQ 0>
-		<span style="color:green;">There are no image records that are not assigned to a folder. This is a good thing!</span><br />
+		<span style="color:green;">#myFusebox.getApplicationData().defaults.trans("db_cleaner_images")#</span><br />
 	<cfelse>
 		<!--- Set variables for the include --->
 		<cfset thetitle = "Images">
@@ -141,11 +141,11 @@ else
 		<cfset theqry = qry_images>
 		<cfinclude template="inc_admin_asset_tables.cfm" />
 	</cfif>
-	<h2>2. Check records against the file system</h2>
-	<p>Here we will check your records against the assets on your filesystem.</p>
-	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=img&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">Check Image records</a></p>
-	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=vid&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">Check Video records</a></p>
-	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=doc&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">Check Document records</a></p>
-	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=aud&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">Check Audio records</a></p>
+	<h2>2. #myFusebox.getApplicationData().defaults.trans("db_cleaner_header_2")#</h2>
+	<p>#myFusebox.getApplicationData().defaults.trans("db_cleaner_check")#</p>
+	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=img&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">#myFusebox.getApplicationData().defaults.trans("db_cleaner_check_image")#</a></p>
+	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=vid&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">#myFusebox.getApplicationData().defaults.trans("db_cleaner_check_video")#</a></p>
+	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=doc&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">#myFusebox.getApplicationData().defaults.trans("db_cleaner_check_doc")#</a></p>
+	<p><a href="##" onclick="window.open('#myself#c.admin_cleaner_check_asset&thetype=aud&v=#createuuid()#', 'windocleaner', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=800,height=600');">#myFusebox.getApplicationData().defaults.trans("db_cleaner_check_audio")#</a></p>
 	
 </cfoutput>

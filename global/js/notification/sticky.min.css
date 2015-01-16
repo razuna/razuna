@@ -1,17 +1,20 @@
 div.sticky-queue
 	{ 
 	position:fixed;
-	background:yellow;
+	background:#FFFFA9;
 	border:1px solid #999;
 	box-shadow:0px 0px 5px #bbb;
 	-moz-box-shadow:0px 0px 5px #bbb;
 	-webkit-box-shadow:0px 0px 5px #bbb;
-	width:200px;
+	width:270px;
 	z-index:50000;
 	}
 div.sticky-note
 	{ 
 		padding-right:20px;
+		color: brown;
+		font-family: georgia;
+		font-weight: bold;
 	}
 div.sticky
 	{

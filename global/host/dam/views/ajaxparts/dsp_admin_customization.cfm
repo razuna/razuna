@@ -25,17 +25,17 @@
 --->
 <cfoutput>
 	<cfif session.hosttype EQ 0>
-		This section allows you to customize Razuna to your needs like hiding tabs, or other aspects of it.<br><br>
+		#myFusebox.getApplicationData().defaults.trans("customize_razuna")#<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
-		<div>#myFusebox.getApplicationData().defaults.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">Read the documentation!</a></div>
+		<div>#myFusebox.getApplicationData().defaults.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">#myFusebox.getApplicationData().defaults.trans("read_documentation")#</a></div>
 		<form name="form_admin_custom" id="form_admin_custom" method="post" action="#self#?#theaction#=c.admin_customization_save">
 		<input type="hidden" name="folder_redirect" value="#qry_customization.folder_redirect#" >
-		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">Apply to all tenants</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
+		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("apply_tenants")#</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		<div style="clear:both;"><br /></div>
 		<div id="customization" class="collapsable">
 			<!--- Logo and images --->
-			<a href="##" onclick="$('##logoimage').slideToggle('slow');return false;"><div class="headers">&gt; Logo and login image</div></a>
+			<a href="##" onclick="$('##logoimage').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans('logo_login_image')#</div></a>
 			<div id="logoimage" style="display:none;padding-top:10px;">
 				<!--- Upload Logo --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -55,7 +55,7 @@
 							<div id="loadlogo"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo');return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a> | <a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo&remove=t');">#myFusebox.getApplicationData().defaults.trans('remove_txt')#</a>
 						</td>
 					</tr>
 				</table>
@@ -77,7 +77,7 @@
 							<div id="loadloginimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg');return false;">Refresh</a> | <a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg');return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a> | <a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg&remove=t');">#myFusebox.getApplicationData().defaults.trans('remove_txt')#</a>
 						</td>
 					</tr>
 				</table>
@@ -99,7 +99,7 @@
 							<div id="loadfaviconimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon');return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a> | <a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon&remove=t');">#myFusebox.getApplicationData().defaults.trans('remove_txt')#</a>
 						</td>
 					</tr>
 				</table>
@@ -107,12 +107,12 @@
 			<div stlye="clear:both;"><br /></div>
 			
 			<!--- User options --->
-			<a href="##" onclick="$('##useroptions').slideToggle('slow');return false;"><div class="headers">&gt; User Options</div></a>
+			<a href="##" onclick="$('##useroptions').slideToggle('slow');return false;"><div class="headers">User Options</div></a>
 			<div id="useroptions" style="display:none;padding-top:10px;">
 				<!--- User --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
-						<th>User Options</th>
+						<th>#myFusebox.getApplicationData().defaults.trans('user_options')#</th>
 					</tr>
 					<tr>
 						<td>
@@ -155,12 +155,12 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Designs --->
-			<a href="##" onclick="$('##designs').slideToggle('slow');$('.chzn4-select').chosen({search_contains: true});return false;"><div class="headers">&gt; Design</div></a>
+			<a href="##" onclick="$('##designs').slideToggle('slow');$('.chzn4-select').chosen({search_contains: true});return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans('design')#</div></a>
 			<div id="designs" style="display:none;padding-top:10px;">
 				<!--- Design --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
-						<th>Design</th>
+						<th>#myFusebox.getApplicationData().defaults.trans('design')#</th>
 					</tr>
 					<tr class="list">
 						<td>
@@ -194,7 +194,7 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_manage_part_desc2")#
 							<br />
-							<select data-placeholder="Choose a group or user" class="chzn4-select" style="width:500px;" name="show_manage_part_slct" id="show_manage_part_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn4-select" style="width:500px;" name="show_manage_part_slct" id="show_manage_part_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.show_manage_part_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -309,7 +309,7 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_trash_icon_desc2")#
 							<br />
-							<select data-placeholder="Choose a group or user" class="chzn4-select" style="width:500px;" name="show_trash_icon_slct" id="show_trash_icon_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn4-select" style="width:500px;" name="show_trash_icon_slct" id="show_trash_icon_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.show_trash_icon_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -324,7 +324,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Upload --->
-			<a href="##" onclick="$('##uploadoptions').slideToggle('slow');return false;"><div class="headers">&gt; Upload</div></a>
+			<a href="##" onclick="$('##uploadoptions').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans('upload')#</div></a>
 			<div id="uploadoptions" style="display:none;padding-top:10px;">
 				<!--- Upload --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -365,7 +365,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Shared settings --->
-			<a href="##" onclick="$('##sharedoptions').slideToggle('slow');return false;"><div class="headers">&gt; Shared Folder/Collection Options</div></a>
+			<a href="##" onclick="$('##sharedoptions').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans('shared_folder_collection')#</div></a>
 			<div id="sharedoptions" style="display:none;padding-top:10px;">
 				<!--- Share --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -400,7 +400,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Folder View --->
-			<a href="##" onclick="$('##folderview').slideToggle('slow');$('.chzn3-select').chosen({search_contains: true});return false;"><div class="headers">&gt; Folderview</div></a>
+			<a href="##" onclick="$('##folderview').slideToggle('slow');$('.chzn3-select').chosen({search_contains: true});return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans('folder_view')#</div></a>
 			<div id="folderview" style="display:none;padding-top:10px;">
 				<!--- Folder View --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -411,7 +411,7 @@
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_desc")#
 							<br /><br />
-							<strong>Tabs</strong>
+							<strong>#myFusebox.getApplicationData().defaults.trans('tabs')#</strong>
 							<br /><br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_images")#</strong>
 							<br />
@@ -455,7 +455,7 @@
 							<br />
 							<div><input type="radio" name="tab_xls" value="true"<cfif qry_customization.tab_xls> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_xls" value="false"<cfif !qry_customization.tab_xls> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br /><br />
-							<strong>Icons</strong>
+							<strong>#myFusebox.getApplicationData().defaults.trans('icons')#</strong>
 							<br /><br />
 							<!--- Create Alias Icon --->
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_alias")#</strong>
@@ -466,7 +466,7 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
 							<br/>
-							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_alias_slct" id="icon_alias_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn3-select" style="width:500px;" name="icon_alias_slct" id="icon_alias_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.icon_alias_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -486,7 +486,7 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
 							<br/>
-							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_move_slct" id="icon_move_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn3-select" style="width:500px;" name="icon_move_slct" id="icon_move_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.icon_move_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -506,7 +506,7 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
 							<br/>
-							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_batch_slct" id="icon_batch_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn3-select" style="width:500px;" name="icon_batch_slct" id="icon_batch_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.icon_batch_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -528,7 +528,7 @@
 
 							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
 							<br/>
-							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_metadata_export_slct" id="icon_metadata_export_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn3-select" style="width:500px;" name="icon_metadata_export_slct" id="icon_metadata_export_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.icon_metadata_export_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -547,7 +547,7 @@
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("folder_view_icon_desc")# 
 							<br/>
-							<select data-placeholder="Choose a group or user" class="chzn3-select" style="width:500px;" name="icon_metadata_import_slct" id="icon_metadata_import_slct" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn3-select" style="width:500px;" name="icon_metadata_import_slct" id="icon_metadata_import_slct" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#"<cfif listfind(qry_customization.icon_metadata_import_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -662,18 +662,18 @@
 							<select name="images_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
-								<option value="img_id AS cs_img_id"<cfif listFind(qry_customization.images_metadata,"img_id AS cs_img_id")> selected="selected"</cfif>>ID</option>
-								<option value="img_filename AS cs_img_filename"<cfif listFind(qry_customization.images_metadata,"img_filename AS cs_img_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="img_description AS cs_img_description"<cfif listFind(qry_customization.images_metadata,"img_description AS cs_img_description")> selected="selected"</cfif>>Description</option>
-								<option value="img_keywords AS cs_img_keywords"<cfif listFind(qry_customization.images_metadata,"img_keywords AS cs_img_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="img_create_time AS cs_img_create_time"<cfif listFind(qry_customization.images_metadata,"img_create_time AS cs_img_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="img_change_time AS cs_img_change_time"<cfif listFind(qry_customization.images_metadata,"img_change_time AS cs_img_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="img_width AS cs_img_width"<cfif listFind(qry_customization.images_metadata,"img_width AS cs_img_width")> selected="selected"</cfif>>Width</option>
-								<option value="img_height AS cs_img_height"<cfif listFind(qry_customization.images_metadata,"img_height AS cs_img_height")> selected="selected"</cfif>>Height</option>
-								<option value="img_size AS cs_img_size"<cfif listFind(qry_customization.images_metadata,"img_size AS cs_img_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_img_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_img_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="img_id AS cs_img_id"<cfif listFind(qry_customization.images_metadata,"img_id AS cs_img_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="img_filename AS cs_img_filename"<cfif listFind(qry_customization.images_metadata,"img_filename AS cs_img_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="img_description AS cs_img_description"<cfif listFind(qry_customization.images_metadata,"img_description AS cs_img_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="img_keywords AS cs_img_keywords"<cfif listFind(qry_customization.images_metadata,"img_keywords AS cs_img_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="img_create_time AS cs_img_create_time"<cfif listFind(qry_customization.images_metadata,"img_create_time AS cs_img_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="img_change_time AS cs_img_change_time"<cfif listFind(qry_customization.images_metadata,"img_change_time AS cs_img_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="img_width AS cs_img_width"<cfif listFind(qry_customization.images_metadata,"img_width AS cs_img_width")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('width')#</option>
+								<option value="img_height AS cs_img_height"<cfif listFind(qry_customization.images_metadata,"img_height AS cs_img_height")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('heigth')#</option>
+								<option value="img_size AS cs_img_size"<cfif listFind(qry_customization.images_metadata,"img_size AS cs_img_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_img_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_img_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="img_upc_number AS cs_img_upc_number"<cfif listFind(qry_customization.images_metadata,"img_upc_number AS cs_img_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="img_upc_number AS cs_img_upc_number"<cfif listFind(qry_customization.images_metadata,"img_upc_number AS cs_img_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</'option>
 								</cfif>
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 								<cfloop list="#attributes.meta_img#" index="i">
@@ -705,18 +705,18 @@
 							<select name="videos_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<!--- Default values --->
-								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata,"vid_id AS cs_vid_id")> selected="selected"</cfif>>ID</option>
-								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="vid_description AS cs_vid_description"<cfif listFind(qry_customization.videos_metadata,"vid_description AS cs_vid_description")> selected="selected"</cfif>>Description</option>
-								<option value="vid_keywords AS cs_vid_keywords"<cfif listFind(qry_customization.videos_metadata,"vid_keywords AS cs_vid_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="vid_create_time AS cs_vid_create_time"<cfif listFind(qry_customization.videos_metadata,"vid_create_time AS cs_vid_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="vid_change_time AS cs_vid_change_time"<cfif listFind(qry_customization.videos_metadata,"vid_change_time AS cs_vid_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="vid_width AS cs_vid_width"<cfif listFind(qry_customization.videos_metadata,"vid_width AS cs_vid_width")> selected="selected"</cfif>>Width</option>
-								<option value="vid_height AS cs_vid_height"<cfif listFind(qry_customization.videos_metadata,"vid_height AS cs_vid_height")> selected="selected"</cfif>>Height</option>
-								<option value="vid_size AS cs_vid_size"<cfif listFind(qry_customization.videos_metadata,"vid_size AS cs_vid_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_vid_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_vid_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata,"vid_id AS cs_vid_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="vid_description AS cs_vid_description"<cfif listFind(qry_customization.videos_metadata,"vid_description AS cs_vid_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="vid_keywords AS cs_vid_keywords"<cfif listFind(qry_customization.videos_metadata,"vid_keywords AS cs_vid_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="vid_create_time AS cs_vid_create_time"<cfif listFind(qry_customization.videos_metadata,"vid_create_time AS cs_vid_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="vid_change_time AS cs_vid_change_time"<cfif listFind(qry_customization.videos_metadata,"vid_change_time AS cs_vid_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="vid_width AS cs_vid_width"<cfif listFind(qry_customization.videos_metadata,"vid_width AS cs_vid_width")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('width')#</option>
+								<option value="vid_height AS cs_vid_height"<cfif listFind(qry_customization.videos_metadata,"vid_height AS cs_vid_height")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('heigth')#</option>
+								<option value="vid_size AS cs_vid_size"<cfif listFind(qry_customization.videos_metadata,"vid_size AS cs_vid_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_vid_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_vid_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="vid_upc_number AS cs_vid_upc_number"<cfif listFind(qry_customization.videos_metadata,"vid_upc_number AS cs_vid_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="vid_upc_number AS cs_vid_upc_number"<cfif listFind(qry_customization.videos_metadata,"vid_upc_number AS cs_vid_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 							</select>
 						</td>
@@ -743,16 +743,16 @@
 							<select name="files_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
-								<option value="file_id AS cs_file_id"<cfif listFind(qry_customization.files_metadata,"file_id AS cs_file_id")> selected="selected"</cfif>>ID</option>
-								<option value="file_name AS cs_file_filename"<cfif listFind(qry_customization.files_metadata,"file_name AS cs_file_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="file_desc AS cs_file_description"<cfif listFind(qry_customization.files_metadata,"file_desc AS cs_file_description")> selected="selected"</cfif>>Description</option>
-								<option value="file_keywords AS cs_file_keywords"<cfif listFind(qry_customization.files_metadata,"file_keywords AS cs_file_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="file_create_time AS cs_file_create_time"<cfif listFind(qry_customization.files_metadata,"file_create_time AS cs_file_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="file_change_time AS cs_file_change_time"<cfif listFind(qry_customization.files_metadata,"file_change_time AS cs_file_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="file_size AS cs_file_size"<cfif listFind(qry_customization.files_metadata,"file_size AS cs_file_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_file_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_file_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="file_id AS cs_file_id"<cfif listFind(qry_customization.files_metadata,"file_id AS cs_file_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="file_name AS cs_file_filename"<cfif listFind(qry_customization.files_metadata,"file_name AS cs_file_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="file_desc AS cs_file_description"<cfif listFind(qry_customization.files_metadata,"file_desc AS cs_file_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="file_keywords AS cs_file_keywords"<cfif listFind(qry_customization.files_metadata,"file_keywords AS cs_file_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="file_create_time AS cs_file_create_time"<cfif listFind(qry_customization.files_metadata,"file_create_time AS cs_file_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="file_change_time AS cs_file_change_time"<cfif listFind(qry_customization.files_metadata,"file_change_time AS cs_file_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="file_size AS cs_file_size"<cfif listFind(qry_customization.files_metadata,"file_size AS cs_file_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_file_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_file_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="file_upc_number AS cs_file_upc_number"<cfif listFind(qry_customization.files_metadata,"file_upc_number AS cs_file_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="file_upc_number AS cs_file_upc_number"<cfif listFind(qry_customization.files_metadata,"file_upc_number AS cs_file_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 								<cfloop list="#attributes.meta_doc#" index="i">
@@ -785,16 +785,16 @@
 							<select name="audios_metadata" multiple="multiple" style="width:400px;height:130px;">
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<!--- Default values --->
-								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata,"aud_id AS cs_aud_id")> selected="selected"</cfif>>ID</option>
-								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="aud_description AS cs_aud_description"<cfif listFind(qry_customization.audios_metadata,"aud_description AS cs_aud_description")> selected="selected"</cfif>>Description</option>
-								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="aud_change_time AS cs_aud_change_time"<cfif listFind(qry_customization.audios_metadata,"aud_change_time AS cs_aud_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="aud_size AS cs_aud_size"<cfif listFind(qry_customization.audios_metadata,"aud_size AS cs_aud_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_aud_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_aud_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata,"aud_id AS cs_aud_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="aud_description AS cs_aud_description"<cfif listFind(qry_customization.audios_metadata,"aud_description AS cs_aud_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="aud_change_time AS cs_aud_change_time"<cfif listFind(qry_customization.audios_metadata,"aud_change_time AS cs_aud_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="aud_size AS cs_aud_size"<cfif listFind(qry_customization.audios_metadata,"aud_size AS cs_aud_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_aud_expiry_date"<cfif listFind(qry_customization.images_metadata,"expiry_date AS cs_aud_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="aud_upc_number AS cs_aud_upc_number"<cfif listFind(qry_customization.audios_metadata,"aud_upc_number AS cs_aud_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="aud_upc_number AS cs_aud_upc_number"<cfif listFind(qry_customization.audios_metadata,"aud_upc_number AS cs_aud_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 							</select>
 						</td>
@@ -827,18 +827,18 @@
 							<select name="images_metadata_top" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
-								<option value="img_id AS cs_img_id"<cfif listFind(qry_customization.images_metadata_top,"img_id AS cs_img_id")> selected="selected"</cfif>>ID</option>
-								<option value="img_filename AS cs_img_filename"<cfif listFind(qry_customization.images_metadata_top,"img_filename AS cs_img_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="img_description AS cs_img_description"<cfif listFind(qry_customization.images_metadata_top,"img_description AS cs_img_description")> selected="selected"</cfif>>Description</option>
-								<option value="img_keywords AS cs_img_keywords"<cfif listFind(qry_customization.images_metadata_top,"img_keywords AS cs_img_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="img_create_time AS cs_img_create_time"<cfif listFind(qry_customization.images_metadata_top,"img_create_time AS cs_img_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="img_change_time AS cs_img_change_time"<cfif listFind(qry_customization.images_metadata_top,"img_change_time AS cs_img_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="img_width AS cs_img_width"<cfif listFind(qry_customization.images_metadata_top,"img_width AS cs_img_width")> selected="selected"</cfif>>Width</option>
-								<option value="img_height AS cs_img_height"<cfif listFind(qry_customization.images_metadata_top,"img_height AS cs_img_height")> selected="selected"</cfif>>Height</option>
-								<option value="img_size AS cs_img_size"<cfif listFind(qry_customization.images_metadata_top,"img_size AS cs_img_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_img_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_img_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="img_id AS cs_img_id"<cfif listFind(qry_customization.images_metadata_top,"img_id AS cs_img_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="img_filename AS cs_img_filename"<cfif listFind(qry_customization.images_metadata_top,"img_filename AS cs_img_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="img_description AS cs_img_description"<cfif listFind(qry_customization.images_metadata_top,"img_description AS cs_img_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="img_keywords AS cs_img_keywords"<cfif listFind(qry_customization.images_metadata_top,"img_keywords AS cs_img_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="img_create_time AS cs_img_create_time"<cfif listFind(qry_customization.images_metadata_top,"img_create_time AS cs_img_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="img_change_time AS cs_img_change_time"<cfif listFind(qry_customization.images_metadata_top,"img_change_time AS cs_img_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="img_width AS cs_img_width"<cfif listFind(qry_customization.images_metadata_top,"img_width AS cs_img_width")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('width')#</option>
+								<option value="img_height AS cs_img_height"<cfif listFind(qry_customization.images_metadata_top,"img_height AS cs_img_height")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('heigth')#</option>
+								<option value="img_size AS cs_img_size"<cfif listFind(qry_customization.images_metadata_top,"img_size AS cs_img_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_img_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_img_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="img_upc_number AS cs_img_upc_number"<cfif listFind(qry_customization.images_metadata_top,"img_upc_number AS cs_img_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="img_upc_number AS cs_img_upc_number"<cfif listFind(qry_customization.images_metadata_top,"img_upc_number AS cs_img_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 								<cfloop list="#attributes.meta_img#" index="i">
@@ -870,18 +870,18 @@
 							<select name="videos_metadata_top" multiple="multiple" style="width:400px;height:130px;">
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<!--- Default values --->
-								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata_top,"vid_id AS cs_vid_id")> selected="selected"</cfif>>ID</option>
-								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata_top,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="vid_description AS cs_vid_description"<cfif listFind(qry_customization.videos_metadata_top,"vid_description AS cs_vid_description")> selected="selected"</cfif>>Description</option>
-								<option value="vid_keywords AS cs_vid_keywords"<cfif listFind(qry_customization.videos_metadata_top,"vid_keywords AS cs_vid_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="vid_create_time AS cs_vid_create_time"<cfif listFind(qry_customization.videos_metadata_top,"vid_create_time AS cs_vid_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="vid_change_time AS cs_vid_change_time"<cfif listFind(qry_customization.videos_metadata_top,"vid_change_time AS cs_vid_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="vid_width AS cs_vid_width"<cfif listFind(qry_customization.videos_metadata_top,"vid_width AS cs_vid_width")> selected="selected"</cfif>>Width</option>
-								<option value="vid_height AS cs_vid_height"<cfif listFind(qry_customization.videos_metadata_top,"vid_height AS cs_vid_height")> selected="selected"</cfif>>Height</option>
-								<option value="vid_size AS cs_vid_size"<cfif listFind(qry_customization.videos_metadata_top,"vid_size AS cs_vid_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_vid_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_vid_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="vid_id AS cs_vid_id"<cfif listFind(qry_customization.videos_metadata_top,"vid_id AS cs_vid_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="vid_filename AS cs_vid_filename"<cfif listFind(qry_customization.videos_metadata_top,"vid_filename AS cs_vid_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="vid_description AS cs_vid_description"<cfif listFind(qry_customization.videos_metadata_top,"vid_description AS cs_vid_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="vid_keywords AS cs_vid_keywords"<cfif listFind(qry_customization.videos_metadata_top,"vid_keywords AS cs_vid_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="vid_create_time AS cs_vid_create_time"<cfif listFind(qry_customization.videos_metadata_top,"vid_create_time AS cs_vid_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="vid_change_time AS cs_vid_change_time"<cfif listFind(qry_customization.videos_metadata_top,"vid_change_time AS cs_vid_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="vid_width AS cs_vid_width"<cfif listFind(qry_customization.videos_metadata_top,"vid_width AS cs_vid_width")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('width')#</option>
+								<option value="vid_height AS cs_vid_height"<cfif listFind(qry_customization.videos_metadata_top,"vid_height AS cs_vid_height")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('heigth')#</option>
+								<option value="vid_size AS cs_vid_size"<cfif listFind(qry_customization.videos_metadata_top,"vid_size AS cs_vid_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_vid_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_vid_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="vid_upc_number AS cs_vid_upc_number"<cfif listFind(qry_customization.videos_metadata_top,"vid_upc_number AS cs_vid_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="vid_upc_number AS cs_vid_upc_number"<cfif listFind(qry_customization.videos_metadata_top,"vid_upc_number AS cs_vid_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 							</select>
 						</td>
@@ -908,16 +908,16 @@
 							<select name="files_metadata_top" multiple="multiple" style="width:400px;height:130px;">
 								<!--- Default values --->
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
-								<option value="file_id AS cs_file_id"<cfif listFind(qry_customization.files_metadata_top,"file_id AS cs_file_id")> selected="selected"</cfif>>ID</option>
-								<option value="file_name AS cs_file_filename"<cfif listFind(qry_customization.files_metadata_top,"file_name AS cs_file_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="file_desc AS cs_file_description"<cfif listFind(qry_customization.files_metadata_top,"file_desc AS cs_file_description")> selected="selected"</cfif>>Description</option>
-								<option value="file_keywords AS cs_file_keywords"<cfif listFind(qry_customization.files_metadata_top,"file_keywords AS cs_file_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="file_create_time AS cs_file_create_time"<cfif listFind(qry_customization.files_metadata_top,"file_create_time AS cs_file_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="file_change_time AS cs_file_change_time"<cfif listFind(qry_customization.files_metadata_top,"file_change_time AS cs_file_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="file_size AS cs_file_size"<cfif listFind(qry_customization.files_metadata_top,"file_size AS cs_file_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_file_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_file_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="file_id AS cs_file_id"<cfif listFind(qry_customization.files_metadata_top,"file_id AS cs_file_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="file_name AS cs_file_filename"<cfif listFind(qry_customization.files_metadata_top,"file_name AS cs_file_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="file_desc AS cs_file_description"<cfif listFind(qry_customization.files_metadata_top,"file_desc AS cs_file_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="file_keywords AS cs_file_keywords"<cfif listFind(qry_customization.files_metadata_top,"file_keywords AS cs_file_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="file_create_time AS cs_file_create_time"<cfif listFind(qry_customization.files_metadata_top,"file_create_time AS cs_file_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="file_change_time AS cs_file_change_time"<cfif listFind(qry_customization.files_metadata_top,"file_change_time AS cs_file_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="file_size AS cs_file_size"<cfif listFind(qry_customization.files_metadata_top,"file_size AS cs_file_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_file_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_file_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="file_upc_number AS cs_file_upc_number"<cfif listFind(qry_customization.files_metadata_top,"file_upc_number AS cs_file_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="file_upc_number AS cs_file_upc_number"<cfif listFind(qry_customization.files_metadata_top,"file_upc_number AS cs_file_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("extended_metadata")# ---</option>
 								<cfloop list="#attributes.meta_doc#" index="i">
@@ -950,16 +950,16 @@
 							<select name="audios_metadata_top" multiple="multiple" style="width:400px;height:130px;">
 								<option value="">--- #myFusebox.getApplicationData().defaults.trans("standard_fields")# ---</option>
 								<!--- Default values --->
-								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata_top,"aud_id AS cs_aud_id")> selected="selected"</cfif>>ID</option>
-								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata_top,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>Filename</option>
-								<option value="aud_description AS cs_aud_description"<cfif listFind(qry_customization.audios_metadata_top,"aud_description AS cs_aud_description")> selected="selected"</cfif>>Description</option>
-								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata_top,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>Keywords</option>
-								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata_top,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>Create Date</option>
-								<option value="aud_change_time AS cs_aud_change_time"<cfif listFind(qry_customization.audios_metadata_top,"aud_change_time AS cs_aud_change_time")> selected="selected"</cfif>>Change Date</option>
-								<option value="aud_size AS cs_aud_size"<cfif listFind(qry_customization.audios_metadata_top,"aud_size AS cs_aud_size")> selected="selected"</cfif>>Size</option>
-								<option value="expiry_date AS cs_aud_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_aud_expiry_date")> selected="selected"</cfif>>Expiry Date</option>
+								<option value="aud_id AS cs_aud_id"<cfif listFind(qry_customization.audios_metadata_top,"aud_id AS cs_aud_id")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('id')#</option>
+								<option value="aud_name AS cs_aud_filename"<cfif listFind(qry_customization.audios_metadata_top,"aud_name AS cs_aud_filename")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('file_name')#</option>
+								<option value="aud_description AS cs_aud_description"<cfif listFind(qry_customization.audios_metadata_top,"aud_description AS cs_aud_description")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('description')#</option>
+								<option value="aud_keywords AS cs_aud_keywords"<cfif listFind(qry_customization.audios_metadata_top,"aud_keywords AS cs_aud_keywords")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('keywords')#</option>
+								<option value="aud_create_time AS cs_aud_create_time"<cfif listFind(qry_customization.audios_metadata_top,"aud_create_time AS cs_aud_create_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('create_date')#</option>
+								<option value="aud_change_time AS cs_aud_change_time"<cfif listFind(qry_customization.audios_metadata_top,"aud_change_time AS cs_aud_change_time")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('change_date')#</option>
+								<option value="aud_size AS cs_aud_size"<cfif listFind(qry_customization.audios_metadata_top,"aud_size AS cs_aud_size")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('size')#</option>
+								<option value="expiry_date AS cs_aud_expiry_date"<cfif listFind(qry_customization.images_metadata_top,"expiry_date AS cs_aud_expiry_date")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('expiry_date')#</option>
 								<cfif prefs.set2_upc_enabled>
-								<option value="aud_upc_number AS cs_aud_upc_number"<cfif listFind(qry_customization.audios_metadata_top,"aud_upc_number AS cs_aud_upc_number")> selected="selected"</cfif>>UPC Number</option>
+								<option value="aud_upc_number AS cs_aud_upc_number"<cfif listFind(qry_customization.audios_metadata_top,"aud_upc_number AS cs_aud_upc_number")> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans('upc_number')#</option>
 								</cfif>
 							</select>
 						</td>
@@ -981,7 +981,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Detail View --->
-			<a href="##" onclick="$('##detailview').slideToggle('slow');$('.chzn2-select').chosen({search_contains: true});return false;"><div class="headers">&gt; File Detail</div></a>
+			<a href="##" onclick="$('##detailview').slideToggle('slow');$('.chzn2-select').chosen({search_contains: true});return false;"><div class="headers">File Detail</div></a>
 			<div id="detailview" style="display:none;padding-top:10px;">
 				<!--- Asset View --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -1104,7 +1104,7 @@
 								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
 								<br/>
 
-								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_email_slct" id="btn_email_slct" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn2-select" style="width:500px;" name="btn_email_slct" id="btn_email_slct" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.btn_email_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1125,7 +1125,7 @@
 								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
 								<br/>
 
-								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_ftp_slct" id="btn_ftp_slct" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn2-select" style="width:500px;" name="btn_ftp_slct" id="btn_ftp_slct" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.btn_ftp_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1144,7 +1144,7 @@
 								<br/><br/>
 								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
 								<br/>
-								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_basket_slct" id="btn_basket_slct" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn2-select" style="width:500px;" name="btn_basket_slct" id="btn_basket_slct" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.btn_basket_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1164,7 +1164,7 @@
 								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
 								<br/>
 
-								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_collection_slct" id="btn_collection_slct" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn2-select" style="width:500px;" name="btn_collection_slct" id="btn_collection_slct" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.btn_collection_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1184,7 +1184,7 @@
 								#myFusebox.getApplicationData().defaults.trans("file_detail_btn_desc")# 
 								<br/>
 
-								<select data-placeholder="Choose a group or user" class="chzn2-select" style="width:500px;" name="btn_print_slct" id="btn_print_slct" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn2-select" style="width:500px;" name="btn_print_slct" id="btn_print_slct" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.btn_print_slct,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1317,7 +1317,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Basket View --->
-			<a href="##" onclick="$('##basketview').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_basket")#</div></a>
+			<a href="##" onclick="$('##basketview').slideToggle('slow');$('.chzn-select').chosen({search_contains: true});return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("header_basket")#</div></a>
 			<div id="basketview" style="display:none;padding-top:10px;">
 				<strong>#myFusebox.getApplicationData().defaults.trans("basket_customize_header")#</strong><br/>
 				#myFusebox.getApplicationData().defaults.trans("basket_customize_desc")#
@@ -1325,7 +1325,7 @@
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_publish")#</td>
 						<td>
-							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="publish_btn_basket" id="publish_btn_basket" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="publish_btn_basket" id="publish_btn_basket" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.publish_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1339,7 +1339,7 @@
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_email")#</td>
 						<td>
-							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="email_btn_basket" id="email_btn_basket" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="email_btn_basket" id="email_btn_basket" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.email_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1353,7 +1353,7 @@
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_ftp")#</td>
 						<td>
-							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="ftp_btn_basket" id="ftp_btn_basket" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="ftp_btn_basket" id="ftp_btn_basket" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.ftp_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1367,7 +1367,7 @@
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("basket_customize_export")#</td>
 						<td>
-							<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="metadata_btn_basket" id="metadata_btn_basket" multiple="multiple">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="metadata_btn_basket" id="metadata_btn_basket" multiple="multiple">
 								<option value=""></option>
 								<cfloop query="qry_groups">
 									<option value="#grp_id#"<cfif listfind(qry_customization.metadata_btn_basket,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -1425,7 +1425,7 @@
 			</div>
 			<div stlye="clear:both;"><br /></div>
 			<!--- Search --->
-			<a href="##" onclick="$('##search').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("header_search")# </div></a>
+			<a href="##" onclick="$('##search').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("header_search")# </div></a>
 			<div id="search" style="display:none;padding-top:10px;">
 				#myFusebox.getApplicationData().defaults.trans("search_customize_desc")#
 				<br />
@@ -1445,7 +1445,7 @@
 
 		<div style="clear:both;"></div>
 		<div id="status_custom_2" style="float:left;padding-top:15px;"></div>
-		<div style="float:right;padding-top:15px;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">Apply to all tenants</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
+		<div style="float:right;padding-top:15px;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("apply_tenants")#</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		</form>
 		<div style="clear:both;"></div>
 		<div id="dummy_maintenance"></div>

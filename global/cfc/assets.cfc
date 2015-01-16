@@ -2649,10 +2649,11 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	</cfif>
 	<!--- Log --->
+	<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
 		<cfinvokeargument name="logaction" value="Add">
-		<cfinvokeargument name="logdesc" value="Added: #arguments.thestruct.qryfile.filename#">
+		<cfinvokeargument name="logdesc" value="#added_txt#: #arguments.thestruct.qryfile.filename#">
 		<cfinvokeargument name="logfiletype" value="doc">
 		<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 		<cfinvokeargument name="folderid" value="#arguments.thestruct.qryfile.folder_id#">
@@ -2852,10 +2853,11 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 				</cfif>
 				<!--- Log --->
+				<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
 				<cfinvoke component="extQueryCaching" method="log_assets">
 					<cfinvokeargument name="theuserid" value="#attributes.intstruct.theuserid#">
 					<cfinvokeargument name="logaction" value="Add">
-					<cfinvokeargument name="logdesc" value="Added: #attributes.intstruct.qryfile.filename#">
+					<cfinvokeargument name="logdesc" value="#added_txt#: #attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="logfiletype" value="img">
 					<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
 					<cfinvokeargument name="folderid" value="#attributes.intstruct.qryfile.folder_id#">
@@ -4047,7 +4049,8 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		</cfif>
 		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid=arguments.thestruct.thisvid.newid,folderid='#arguments.thestruct.folder_id#')>
+		<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
+		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='#added_txt#: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid=arguments.thestruct.thisvid.newid,folderid='#arguments.thestruct.folder_id#')>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("folders")>
@@ -5153,10 +5156,11 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		</cfif>
 		<!--- Log --->
+		<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
 			<cfinvokeargument name="logaction" value="Add">
-			<cfinvokeargument name="logdesc" value="Added: #arguments.thestruct.qryfile.filename#">
+			<cfinvokeargument name="logdesc" value="#added_txt#: #arguments.thestruct.qryfile.filename#">
 			<cfinvokeargument name="logfiletype" value="aud">
 			<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 			<cfinvokeargument name="folderid" value="#arguments.thestruct.qryfile.folder_id#">
@@ -5943,10 +5947,12 @@ This is the main function called directly by a single upload else from addassets
 </Response></cfoutput>
 	</cfsavecontent>
 	<!--- Log entry --->
+	<cfinvoke component="defaults" method="trans" transid="added" returnvariable="added_txt" />
+	<cfinvoke component="defaults" method="trans" transid="additional_rendition" returnvariable="additional_rendition" />
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
 		<cfinvokeargument name="logaction" value="Add">
-		<cfinvokeargument name="logdesc" value="Added Additional Rendition: #arguments.thestruct.av_link_title#">
+		<cfinvokeargument name="logdesc" value="#added_txt# #additional_rendition#: #arguments.thestruct.av_link_title#">
 		<cfinvokeargument name="logfiletype" value="#arguments.thestruct.type#">
 		<cfinvokeargument name="assetid" value="#arguments.thestruct.file_id#">
 		<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">

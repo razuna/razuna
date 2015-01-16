@@ -58,16 +58,16 @@
 		</ul>
 		<div id="colassets">
 			<!--- Top Buttons --->
-			<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; Back to Collection list</a></div>
+			<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; #myFusebox.getApplicationData().defaults.trans('back_to_collection')#</a></div>
 			<cfif attributes.folderaccess NEQ "R">
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<cfif qry_assets.recordcount NEQ 0>
 						<!--- If released --->
 						<cfif qry_detail.col_released EQ 'true'>
-							<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+							<strong style="color:green;">#myFusebox.getApplicationData().defaults.trans('released_collection')#</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">#myFusebox.getApplicationData().defaults.trans('undo_released_collection')#</a></em></cfif>
 						<!--- Not released --->
 						<cfelse>
-							<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+							<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="#myFusebox.getApplicationData().defaults.trans('release')#" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans('release_collection')#',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
 						</cfif>
 					</cfif>
 				</div>
@@ -318,14 +318,14 @@
 			</table>
 			<!--- Bottom Buttons --->
 			<cfif attributes.folderaccess NEQ "R" AND qry_assets.recordcount NEQ 0>
-				<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; Back to Collection list</a></div>
+				<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; #myFusebox.getApplicationData().defaults.trans('back_to_collection')#</a></div>
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<!--- If released --->
 					<cfif qry_detail.col_released EQ 'true'>
-						<strong style="color:green;">This is a released collection!</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+						<strong style="color:green;">#myFusebox.getApplicationData().defaults.trans('released_collection')#</strong><cfif isadmin><br /><em><a href="##" onclick="dorelease();">#myFusebox.getApplicationData().defaults.trans('undo_released_collection')#</a></em></cfif>
 					<!--- Not released --->
 					<cfelse>
-						<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+						<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="#myFusebox.getApplicationData().defaults.trans('release')#" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans('release_collection')#',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
 					</cfif>
 				</div>
 				<div style="clear:both;"></div>
@@ -370,7 +370,7 @@
 							<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 							<td width="100%" colspan="5">
 								<cfif attributes.thelabelsqry.recordcount lte 200>
-									<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_col" onchange="razaddlabels('tags_col','#attributes.col_id#','collection');" multiple="multiple">
+									<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:400px;" id="tags_col" onchange="razaddlabels('tags_col','#attributes.col_id#','collection','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 										<option value=""></option>
 										<cfloop query="attributes.thelabelsqry">
 											<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -387,7 +387,7 @@
 											<cfif ListFind(qry_labels,'#label_id#') NEQ 0>
 											<div class='singleLabel' id="#label_id#">
 												<span>#label_path#</span>
-												<a class='labelRemove'  onclick="removeLabel('#attributes.col_id#','collection','#label_id#',this)" >X</a>
+												<a class='labelRemove'  onclick="removeLabel('#attributes.col_id#','collection','#label_id#',this,'#myFusebox.getApplicationData().defaults.trans("change_saved")#')" >X</a>
 											</div>
 											</cfif>
 										</cfloop>
@@ -535,7 +535,7 @@
 						<tr>
 							<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email")#</td>
 							<td class="td2">
-								<select data-placeholder="Choose a User" class="chzn-select" style="width:250px;" id="share_order_user" name="share_order_user">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_user")#" class="chzn-select" style="width:250px;" id="share_order_user" name="share_order_user">
 									<option value=""></option>
 									<cfloop query="qry_users">
 										<option value="#user_id#"<cfif qry_detail.share_order_user EQ user_id> selected</cfif>>#user_first_name# #user_last_name#</option>

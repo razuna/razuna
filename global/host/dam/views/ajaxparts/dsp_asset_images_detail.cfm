@@ -62,7 +62,7 @@
 			</cfif>
 			<!--- Metadata tabs  --->
 			<cfif cs.tab_metadata>
-				<li><a href="##meta">Meta Data</a></li>
+				<li><a href="##meta">#myFusebox.getApplicationData().defaults.trans('metadata')#</a></li>
 			</cfif>
 			<!--- Comments --->
 			<cfif cs.tab_comments>
@@ -114,7 +114,7 @@
 				<!--- If cloud url is empty --->
 				<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND qry_detail.detail.cloud_url_org EQ "" AND qry_detail.detail.link_kind NEQ "url">
 					<tr>
-						<td colspan="3"><h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2></td>
+						<td colspan="3"><h2 style="color:red;">#myFusebox.getApplicationData().defaults.trans('redo_add_file')#</h2></td>
 					</tr>
 				</cfif>
 				<!--- URL to files --->
@@ -146,7 +146,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value; <cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.img_upc.value = document.form#attributes.file_id#.fname.value.split('.')[0];}</cfif>"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value; <cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.img_upc.value = document.form#attributes.file_id#.fname.value.split('.')[0];}</cfif>"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 							<!--- Description & Keywords --->
 							<cfloop query="qry_langs">
@@ -190,7 +190,7 @@
 												</cfif>	
 											</cfif>
 											<cfif attributes.thelabelsqry.recordcount lte 200>
-												<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_img" onchange="razaddlabels('tags_img','#attributes.file_id#','img');" multiple="multiple">
+												<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tags_img" onchange="razaddlabels('tags_img','#attributes.file_id#','img','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 													<option value=""></option>
 													<cfloop query="attributes.thelabelsqry">
 														<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -207,7 +207,7 @@
 															<cfif ListFind(qry_labels,'#label_id#') NEQ 0>
 															<div class='singleLabel' id="#label_id#">
 																<span>#label_path#</span>
-																<a class='labelRemove'  onclick="removeLabel('#attributes.file_id#','img', '#label_id#',this)" >X</a>
+																<a class='labelRemove'  onclick="removeLabel('#attributes.file_id#','img', '#label_id#',this,'#myFusebox.getApplicationData().defaults.trans("change_saved")#')" >X</a>
 															</div>
 															</cfif>
 														</cfloop>
@@ -257,14 +257,14 @@
 							</tr>
 							<tr>
 								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
-								<td nowrap="true" valign="top"><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.folder&col=F&folder_id=#qry_detail.detail.folder_id_r#');destroywindow(1);">#qry_detail.detail.folder_name#</a> <cfif cs.show_favorites_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" style="padding-top:3px;" /></a></cfif></td>
+								<td nowrap="true" valign="top"><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.folder&col=F&folder_id=#qry_detail.detail.folder_id_r#');destroywindow(1);">#qry_detail.detail.folder_name#</a> <cfif cs.show_favorites_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" style="padding-top:3px;" /></a></cfif></td>
 							</tr>
 							<tr>
 								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("created_by")#</td>
 								<td valign="top" nowrap="nowrap">#qry_detail.detail.user_first_name# #qry_detail.detail.user_last_name#</td>
 							</tr>
 							<tr>
-								<td nowrap="true" valign="top">ID</td>
+								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans('id')#</td>
 								<td nowrap="true" valign="top" colspan="5">#attributes.file_id#</td>
 							</tr>
 						</table>
@@ -301,14 +301,14 @@
 		<cfif cs.tab_metadata>
 			<div id="meta" class="collapsable">
 				<!--- Description & Keywords --->
-				<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
+				<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
 				<div id="detaildesc" style="padding-top:10px;">
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 						<!--- Filename --->
 						<tr>
 							<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
 							<td width="100%" nowrap="true">
-								<input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
+								<input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
 							</td>
 						</tr>
 						<!--- Desc --->
@@ -333,7 +333,7 @@
 				<!--- Custom fields --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
 					<br />
-					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
+					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
 					<div id="customfields" style="padding-top:10px;">
 						<cfinclude template="inc_custom_fields.cfm">
 					</div>
@@ -343,7 +343,7 @@
 					<!--- XMP Description --->
 					<cfif cs.tab_xmp_description>
 						<br />
-						<a href="##" onclick="$('##xmpdesc').slideToggle('slow');return false;"><div class="headers">&gt; XMP Description</div></a>
+						<a href="##" onclick="$('##xmpdesc').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("xmp_description")#</div></a>
 						<div id="xmpdesc" style="display:none;padding-top:10px;">
 							<cfinclude template="dsp_asset_images_xmp.cfm">
 						</div>
@@ -352,7 +352,7 @@
 					<!--- IPTC Contact --->
 					<cfif cs.tab_iptc_contact>
 						<br />
-						<a href="##" onclick="$('##iptccontact').slideToggle('slow');return false;"><div class="headers">&gt; IPTC Contact</div></a>
+						<a href="##" onclick="$('##iptccontact').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("iptc_contact")#</div></a>
 						<div id="iptccontact" style="display:none;padding-top:10px;">
 							<cfinclude template="dsp_asset_images_iptc_contact.cfm">
 						</div>
@@ -361,7 +361,7 @@
 					<!--- IPTC Image --->
 					<cfif cs.tab_iptc_image>
 						<br />
-						<a href="##" onclick="$('##iptcimage').slideToggle('slow');return false;"><div class="headers">&gt; IPTC Image</div></a>
+						<a href="##" onclick="$('##iptcimage').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("iptc_image")#</div></a>
 						<div id="iptcimage" style="display:none;padding-top:10px;">
 							<cfinclude template="dsp_asset_images_iptc_image.cfm">
 						</div>
@@ -370,7 +370,7 @@
 					<!--- IPTC Content --->
 					<cfif cs.tab_iptc_content>
 						<br />
-						<a href="##" onclick="$('##iptccontent').slideToggle('slow');return false;"><div class="headers">&gt; IPTC Content</div></a>
+						<a href="##" onclick="$('##iptccontent').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("iptc_content")#</div></a>
 						<div id="iptccontent" style="display:none;padding-top:10px;">
 							<cfinclude template="dsp_asset_images_iptc_content.cfm">
 						</div>
@@ -379,7 +379,7 @@
 					<!--- IPTC Status --->
 					<cfif cs.tab_iptc_status>
 						<br />
-						<a href="##" onclick="$('##iptcstatus').slideToggle('slow');return false;"><div class="headers">&gt; IPTC Status</div></a>
+						<a href="##" onclick="$('##iptcstatus').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("iptc_status")#</div></a>
 						<div id="iptcstatus" style="display:none;padding-top:10px;">
 							<cfinclude template="dsp_asset_images_iptc_status.cfm">
 						</div>
@@ -388,7 +388,7 @@
 					<!--- Origin --->
 					<cfif cs.tab_origin>
 						<br />
-						<a href="##" onclick="$('##origin').slideToggle('slow');return false;"><div class="headers">&gt; IPTC Origin</div></a>
+						<a href="##" onclick="$('##origin').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("iptc_origin")#</div></a>
 						<div id="origin" style="display:none;padding-top:10px;">
 							<cfinclude template="dsp_asset_images_origin.cfm">
 						</div>
@@ -396,7 +396,7 @@
 					</cfif>
 					<!--- Raw Metadata --->
 					<br />
-					<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">&gt; Raw Metadata</div></a>
+					<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("raw_metadata")#</div></a>
 					<div id="rawmetadata" style="display:none;padding-top:10px;">
 						<div style="height:400px;overflow:auto;">#ParagraphFormat(qry_detail.detail.img_meta)#</div>
 					</div>
@@ -482,7 +482,7 @@
 					str = str +'Only numeric values are allowed in UPC\n';
 				}
 				else if (val_upc.trim() !='' && val_upc.length <6){
-				 	str = str +'Incorrect UPC size. Please check UPC and try again.';
+				 	str = str +'#myFusebox.getApplicationData().defaults.trans("xmp_description")#';
 				 }
 				// <cfif qry_GroupsOfUser.recordcount NEQ 0 AND qry_GroupsOfUser.upc_size NEQ "">
 				// if ('#qry_GroupsOfUser.upc_size#' != val_upc.length && val_upc != ''){
@@ -538,7 +538,7 @@
 					$( this ).dialog( "close" );
 					$('##div_forall').load('#myself#c.recreatepreview&file_id=#attributes.file_id#-img&thetype=img');
 				},
-				Cancel: function() {
+				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 					$( this ).dialog( "close" );
 				}
 			}
