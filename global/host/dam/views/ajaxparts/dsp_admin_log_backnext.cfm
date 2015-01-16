@@ -31,7 +31,7 @@
 				<cfif qry_log.thetotal GT session.rowmaxpage>
 					<span style="padding-left:10px;">
 						<cfset thepage = ceiling(qry_log.thetotal / session.rowmaxpage)>
-						Page: 
+						#myFusebox.getApplicationData().defaults.trans("page")#: 
 							<select class="thepagelist"  onChange="loadcontent('#thediv#', $('.thepagelist :selected').val());">
 							<cfloop from="1" to="#thepage#" index="i">
 								<cfset loopoffset = i - 1>
@@ -44,7 +44,7 @@
 				<cfif qry_log.thetotal GT session.rowmaxpage>
 					<span style="padding-left:10px;">
 						<cfset thepage = ceiling(qry_log.thetotal / session.rowmaxpage)>
-						Page: 
+						#myFusebox.getApplicationData().defaults.trans("page")#: 
 							<select id="thepagelist" onChange="loadcontent('#thediv#', $('##thepagelist :selected').val());">
 							<cfloop from="1" to="#thepage#" index="i">
 								<cfset loopoffset = i - 1>

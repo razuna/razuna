@@ -78,7 +78,7 @@
 			<cfif qry_filecount.thetotal GT session.rowmaxpage>
 				<span style="padding-left:10px;">
 					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
-					Page: 
+					#myFusebox.getApplicationData().defaults.trans("page")#: 
 						<select id="thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
 							<cfloop from="1" to="#thepage#" index="i">
 								<cfset loopoffset = i - 1>

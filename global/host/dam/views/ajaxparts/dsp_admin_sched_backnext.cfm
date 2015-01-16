@@ -22,7 +22,7 @@
 					<cfif qry_schedules.recordcount GT session.rowmaxpage>
 						<span style="padding-left:10px;">
 							<cfset thepage = ceiling(qry_schedules.recordcount / session.rowmaxpage)>
-							Page: 
+							#myFusebox.getApplicationData().defaults.trans("page")#: 
 								<select class="theschedlist"  onChange="loadcontent('admin_schedules', $('.theschedlist :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
@@ -35,7 +35,7 @@
 					<cfif qry_schedules.recordcount GT session.rowmaxpage>
 						<span style="padding-left:10px;">
 							<cfset thepage = ceiling(qry_schedules.recordcount / session.rowmaxpage)>
-							Page: 
+							#myFusebox.getApplicationData().defaults.trans("page")#: 
 								<select id="theschedlist" onChange="loadcontent('admin_schedules', $('##theschedlist :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>

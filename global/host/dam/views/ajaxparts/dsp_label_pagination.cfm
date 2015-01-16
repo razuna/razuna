@@ -100,7 +100,7 @@
 					<cfif qry_labelcount.thetotal GT session.rowmaxpage>
 						<span style="padding-left:10px;">
 							<cfset thepage = ceiling(qry_labelcount.thetotal / session.rowmaxpage)>
-							Page: 
+							#myFusebox.getApplicationData().defaults.trans("page")#: 
 								<select class="thepagelist#kind#" onChange="loadcontent('#thediv#', $('.thepagelist#kind# :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
@@ -113,7 +113,7 @@
 					<cfif qry_labelcount.thetotal GT session.rowmaxpage>
 						<span style="padding-left:10px;">
 							<cfset thepage = ceiling(qry_labelcount.thetotal / session.rowmaxpage)>
-							Page: 
+							#myFusebox.getApplicationData().defaults.trans("page")#: 
 								<select id="thepagelist#kind#" onChange="loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>

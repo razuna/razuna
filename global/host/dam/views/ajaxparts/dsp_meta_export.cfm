@@ -30,8 +30,8 @@
 		<cfif attributes.what EQ "folder">
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 				Please select <select name="expwhat" id="expwhat">
-					<option value="folder" selected="selected">Export this folder</option>
-					<option value="all">Export ALL assets in Razuna</option>
+					<option value="folder" selected="selected">#myFusebox.getApplicationData().defaults.trans("export_folder")#</option>
+					<option value="all">#myFusebox.getApplicationData().defaults.trans("export_all_assets")#</option>
 				</select>
 			</cfif>
 		<cfelse>

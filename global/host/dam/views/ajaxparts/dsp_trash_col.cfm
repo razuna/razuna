@@ -66,7 +66,7 @@
 			<cfif qry_trash.recordcount GT session.trash_collection_rowmaxpage>
 				<span style="padding-left:10px;">
 					<cfset thepage = ceiling(qry_trash.recordcount / session.trash_collection_rowmaxpage)>
-					Page: 
+					#myFusebox.getApplicationData().defaults.trans("page")#: 
 					<select class="thepagelist_collection"  onChange="loadcontent('collections', $('.thepagelist_collection :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>

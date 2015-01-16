@@ -737,7 +737,8 @@
 	<!--- Write file to file system --->
 	<cffile action="write" file="#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Feedback --->
-	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfinvoke component="defaults" method="trans" transid="downloadable_file" returnvariable="downloadable_file" />
+	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">#downloadable_file#</strong></a></p></cfoutput>
 	<cfflush>
 	<!--- Call function to remove older files --->
 	<cfinvoke method="remove_files" thepath="#arguments.thepath#" />
@@ -782,7 +783,8 @@
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#",true)>
 	<!--- Feedback --->
-	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfinvoke component="defaults" method="trans" transid="downloadable_file" returnvariable="downloadable_file" />
+	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#"><strong style="color:green;">#downloadable_file#</strong></a></p></cfoutput>
 	<cfflush>
 	<!--- Call function to remove older files --->
 	<cfinvoke method="remove_files" thepath="#arguments.thepath#" />

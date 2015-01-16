@@ -96,7 +96,7 @@
 							<!--- Pages --->
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
 								<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
-								Page: 
+								#myFusebox.getApplicationData().defaults.trans("page")#: 
 									<select id="thepagelistw" onChange="jumppage();">
 									<cfloop from="1" to="#thepage#" index="i">
 										<cfset loopoffset = i - 1>
