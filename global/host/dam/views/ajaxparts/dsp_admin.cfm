@@ -102,7 +102,7 @@
 			<!--- While Label News --->
 			<cfif application.razuna.whitelabel>
 				<cfif isadmin OR (structkeyexists(tabaccess_struct,"whitelabelling_access") AND tabaccess_struct.whitelabelling_access)>
-					<li><a href="##wl" onclick="loadcontent('wl','#myself#c.wl_host');">White-Labelling</a></li>
+					<li><a href="##wl" onclick="loadcontent('wl','#myself#c.wl_host');">#myFusebox.getApplicationData().defaults.trans("white_labelling")#</a></li>
 				</cfif>
 			</cfif>
 		</ul>
@@ -150,7 +150,7 @@
 				<cfelse>
 					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 						<tr>
-							<th colspan="2">#myFusebox.getApplicationData().defaults.trans("select_log")#: <a href="##" onclick="loadcontent('log_show','#myself#c.log_assets&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_assets")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_searches_sum&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_searches_sum")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_searches&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_searches")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_folders&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_folders")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_users&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_users_header")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_errors&offset_log=0');">Errors</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_folder_summary&folder_id=0');">Folder Summary</a></th>
+							<th colspan="2">#myFusebox.getApplicationData().defaults.trans("select_log")#: <a href="##" onclick="loadcontent('log_show','#myself#c.log_assets&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_assets")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_searches_sum&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_searches_sum")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_searches&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_searches")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_folders&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_header_folders")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_users&offset_log=0');">#myFusebox.getApplicationData().defaults.trans("log_users_header")#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_errors&offset_log=0');">#myFusebox.getApplicationData().defaults.trans('errors')#</a> | <a href="##" onclick="loadcontent('log_show','#myself#c.log_folder_summary&folder_id=0');">#myFusebox.getApplicationData().defaults.trans('folder_summary')#</a></th>
 						</tr>
 					</table>
 					<div id="log_show"></div>

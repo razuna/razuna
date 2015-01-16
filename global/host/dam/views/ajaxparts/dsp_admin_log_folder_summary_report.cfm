@@ -29,7 +29,7 @@
 	<cfheader name="Content-Disposition" value="filename=Folder_Summary_Report.xls"> 
 
 	<table border="1" cellpadding="0" cellspacing="0" width="100%" class="grid">
-		<th>Folder</th><th>Audios</th><th>Excel</th><th>Images</th><th>Other</th><th>PDF</th><th>Videos</th><th>Word</th>
+		<th>#myFusebox.getApplicationData().defaults.trans('folder')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_audios')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_excel')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_images')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_others')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_pdf')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_videos')#</th><th>#myFusebox.getApplicationData().defaults.trans('folder_word')#</th>
 		<cfloop query ="folders">
 			<!--- Get asset totals for folder that is sorted so we can display it properly --->
 			<cfif session.getallassets>

@@ -29,11 +29,11 @@
 			<td>
 				<input type="text" name="label_text_edit" id="label_text_edit_#attributes.label_id#" style="width:400px;" value="#qry_label.label_text#">
 				<br /><br />
-				Nest label under:<br />
+				#myFusebox.getApplicationData().defaults.trans("nest_label")#:<br />
 				<select name="sublabelofedit" id="sublabelofedit" style="width:240px;">
-					<option value="0">Please select a parent...</option>
+					<option value="0">#myFusebox.getApplicationData().defaults.trans("parent_select")#...</option>
 					<option value="0">---</option>
-					<option value="0">Move to root</option>
+					<option value="0">#myFusebox.getApplicationData().defaults.trans("move_to_root")#</option>
 					<option value="0">---</option>
 					<cfloop query="list_labels_dropdown">
 						<cfif qry_label.label_id NEQ label_id>

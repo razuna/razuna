@@ -26,7 +26,7 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 	<tr>
-		<td class="td2" valign="top"><strong>Headline</strong></td>
+		<td class="td2" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("headline")#</strong></td>
 		<td class="td2"><textarea name="iptc_content_headline" style="width:350px;height:40px;" onchange="javascript:document.form#attributes.file_id#.xmp_origin_headline.value = document.form#attributes.file_id#.iptc_content_headline.value">#qry_xmp.iptcheadline#</textarea></td>
 	</tr>
 	<cfloop query="qry_langs">
@@ -41,15 +41,15 @@
 		</tr>
 	</cfloop>
 	<tr>
-		<td class="td2" valign="top" nowrap="nowrap"><strong>IPTC Subject Code</strong></td>
+		<td class="td2" valign="top" nowrap="nowrap"><strong>#myFusebox.getApplicationData().defaults.trans("iptc_subject_code")#</strong></td>
 		<td class="td2"><textarea name="iptc_content_subject_code" style="width:350px;height:40px;">#qry_xmp.iptcsubjectcode#</textarea></td>
 	</tr>
 	<tr>
 		<td class="td2" valign="top"></td>
-		<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#. Subject Codes are defined at <a href="http://www.newscodes.org" target="_blank">http://www.newscodes.org</a></td>
+		<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#. #myFusebox.getApplicationData().defaults.trans("subject_code_defined")# <a href="http://www.newscodes.org" target="_blank">http://www.newscodes.org</a></td>
 	</tr>
 	<tr>
-		<td class="td2" nowrap="nowrap"><strong>Description Writer</strong></td>
+		<td class="td2" nowrap="nowrap"><strong>#myFusebox.getApplicationData().defaults.trans("description_writer")#</strong></td>
 		<td class="td2"><input type="text" name="iptc_content_description_writer" style="width:350px;" value="#qry_xmp.descwriter#" onchange="javascript:document.form#attributes.file_id#.xmp_description_writer.value = document.form#attributes.file_id#.iptc_content_description_writer.value"></td>
 	</tr>
 </table>

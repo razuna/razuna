@@ -134,7 +134,7 @@
 					<tr>
 						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email")#</td>
 						<td class="td2">
-							<select data-placeholder="Choose a User" class="chzn-select" style="width:250px;" name="share_order_user">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_user")#" class="chzn-select" style="width:250px;" name="share_order_user">
 								<option value=""></option>
 								<cfloop query="qry_users">
 									<option value="#user_id#"<cfif qry_folder.share_order_user EQ user_id> selected</cfif>>#user_first_name# #user_last_name#</option>

@@ -53,7 +53,7 @@
 	<input type="hidden" name="xres" id="xres" value="#qry_xmp.xres#">
 	<input type="hidden" name="yres" id="yres" value="#qry_xmp.yres#">
 	<input type="hidden" name="resunit" id="resunit" value="#qry_xmp.resunit#">
-	<div class="collapsable"><div class="headers">Create New Renditions For Existing Rendition</div></div>
+	<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("create_rend_existing")#</div></div>
 			<br />
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid" id="newren">
 				<tr class="list">
@@ -65,13 +65,13 @@
 					<option value="pixels">Pixels</option>
 					<cfif docalcs><option value="inches">Inches</option></cfif>
 				</select>
-				or <input type="text" size="4" name="convert_dpi_jpg" id="convert_dpi_jpg" maxlength="3"> dpi harkirat
+				or <input type="text" size="4" name="convert_dpi_jpg" id="convert_dpi_jpg" maxlength="3"> dpi
 				</td>
 					<!--- Watermark --->
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<td width="1%" nowrap="true">
 							<select name="convert_wm_jpg" id="convert_wm_jpg">
-								<option value="" selected="selected">Apply watermark</option>
+								<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 								<option value="">---</option>
 								<cfloop query="attributes.wmtemplates">
 									<option value="#wm_temp_id#">#wm_name#</option>
@@ -116,7 +116,7 @@
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<td width="1%" nowrap="true">
 							<select name="convert_wm_gif" id="convert_wm_gif">
-								<option value="" selected="selected">Apply watermark</option>
+								<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 								<option value="">---</option>
 								<cfloop query="attributes.wmtemplates">
 									<option value="#wm_temp_id#">#wm_name#</option>
@@ -140,7 +140,7 @@
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<td width="1%" nowrap="true">
 							<select name="convert_wm_png" id="convert_wm_png">
-								<option value="" selected="selected">Apply watermark</option>
+								<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 								<option value="">---</option>
 								<cfloop query="attributes.wmtemplates">
 									<option value="#wm_temp_id#">#wm_name#</option>
@@ -164,7 +164,7 @@
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<td width="1%" nowrap="true">
 							<select name="convert_wm_tif" id="convert_wm_tif">
-								<option value="" selected="selected">Apply watermark</option>
+								<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 								<option value="">---</option>
 								<cfloop query="attributes.wmtemplates">
 									<option value="#wm_temp_id#">#wm_name#</option>
@@ -188,7 +188,7 @@
 					<cfif attributes.wmtemplates.recordcount NEQ 0>
 						<td width="1%" nowrap="true">
 							<select name="convert_wm_bmp" id="convert_wm_bmp">
-								<option value="" selected="selected">Apply watermark</option>
+								<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 								<option value="">---</option>
 								<cfloop query="attributes.wmtemplates">
 									<option value="#wm_temp_id#">#wm_name#</option>

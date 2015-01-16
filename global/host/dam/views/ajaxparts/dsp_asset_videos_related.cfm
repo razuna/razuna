@@ -38,7 +38,7 @@
 						<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#vid_id#&type=vid','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
-					View</a>
+					#myFusebox.getApplicationData().defaults.trans("view_link")#</a>
 					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 					 | <a href="##" onclick="toggleslide('dive#vid_id#','inpute#vid_id#');return false;">#myFusebox.getApplicationData().defaults.trans("embed")#</a>
 					 <cfif cs.show_metadata_link>
@@ -87,8 +87,8 @@
 		</tr>
 	</table>
 </cfif>
-<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+<div id="dialog-confirm-rendition" title="#myFusebox.getApplicationData().defaults.trans("remove_rend_confirm")#" style="display:none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>#myFusebox.getApplicationData().defaults.trans("remove_rend")#</p>
 </div>
 <!--- Js --->
 <script type="text/javascript">
@@ -98,11 +98,11 @@ function remren(id){
 		height:140,
 		modal: true,
 		buttons: {
-			"Yes, remove rendition": function() {
+			"#myFusebox.getApplicationData().defaults.trans("remove_rend_ok")#": function() {
 				$( this ).dialog( "close" );
 				$('##relatedvideos').load('#myself#c.videos_remove_related&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadrenvid(); });
 			},
-			Cancel: function() {
+			"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 				$( this ).dialog( "close" );
 			}
 		}

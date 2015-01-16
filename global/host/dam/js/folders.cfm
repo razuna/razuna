@@ -21,7 +21,7 @@
 		if (nocheck != true){
 			var checkfolder = $('#folder_name').val();
 			if (checkfolder == ""){
-				alert('Please enter name!');
+				alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("enter_name"))#</cfoutput>');
 				return false;
 			}
 		}
@@ -29,7 +29,7 @@
 		if (nocheck == true){
 			var checklink = $('#link_path').val();
 			if (checklink == ""){
-				alert('Please enter an absolute path!');
+				alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("enter_path"))#</cfoutput>');
 				return false;
 			}
 		}
@@ -65,7 +65,7 @@
 					}
 					else{
 						$('#linkbutton').css('display','none');
-						alert('We are in the process of linking your folder(s). Please refresh your folder list.');
+						alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("folder_link"))#</cfoutput>');
 					}
 			   	}
 			});

@@ -32,11 +32,11 @@
 				<cfif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 1>
 					#myFusebox.getApplicationData().defaults.trans("log_header_folders")#
 				<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 2>
-					Collections
+					#myFusebox.getApplicationData().defaults.trans('customization_explorer_collections')#
 				<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 3>
-					Smart Folders
+					#myFusebox.getApplicationData().defaults.trans('customization_explorer_smartfolder')#
 				<cfelseif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 4>
-					Labels
+					#myFusebox.getApplicationData().defaults.trans('labels')#
 				</cfif>
 			</a>
 		</div>
@@ -45,12 +45,12 @@
 		</div>
 		<div id="mainselection" class="ddselection_header" style="display:none;top:17px;margin-left:10px;">
 			<p><a href="##" onclick="switchmainselection('folders','Folders');"><div id="section_folders" style="float:left;padding-right:2px;padding-top:3px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("log_header_folders")#</a></p>
-			<p><a href="##" onclick="switchmainselection('smart_folders','Smart Folders');"><div id="section_smart_folders" style="float:left;padding-right:14px;">&nbsp;</div>Smart Folders</a></p>
+			<p><a href="##" onclick="switchmainselection('smart_folders','#myFusebox.getApplicationData().defaults.trans("customization_explorer_smartfolder")#');"><div id="section_smart_folders" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans('customization_explorer_smartfolder')#</a></p>
 			<cfif cs.tab_collections>
-				<p><a href="##" onclick="switchmainselection('collections','Collections');"><div id="section_collections" style="float:left;padding-right:14px;">&nbsp;</div>Collections</a></p>
+				<p><a href="##" onclick="switchmainselection('collections','#myFusebox.getApplicationData().defaults.trans("header_collections")#');"><div id="section_collections" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans('customization_explorer_collections')#</a></p>
 			</cfif>
 			<cfif cs.tab_labels>
-				<p><a href="##" onclick="switchmainselection('labels','Labels');"><div id="section_labels" style="float:left;padding-right:14px;">&nbsp;</div>Labels</a></p>
+				<p><a href="##" onclick="switchmainselection('labels','#myFusebox.getApplicationData().defaults.trans("labels")#');"><div id="section_labels" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("labels")#</a></p>
 			</cfif>
 		</div>
 	</div>

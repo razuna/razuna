@@ -360,7 +360,8 @@
 				<cfinvokeargument name="theuserid" value="#session.theuserid#">
 				<cfinvokeargument name="logaction" value="Delete">
 				<cfif thedetail.img_group NEQ ''>
-					<cfset var rend =" Rendition">
+					<cfinvoke component="defaults" method="trans" transid="rendition" returnvariable="rendition" />
+					<cfset var rend =" #rendition#">
 				<cfelse>
 					<cfset var rend ="">
 				</cfif>
@@ -615,10 +616,11 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 			</cfif>
 			<!--- Log --->
+			<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 			<cfinvoke component="extQueryCaching" method="log_assets">
 				<cfinvokeargument name="theuserid" value="#session.theuserid#">
 				<cfinvokeargument name="logaction" value="Delete">
-				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.img_filename#">
+				<cfinvokeargument name="logdesc" value="#deleted#: #thedetail.img_filename#">
 				<cfinvokeargument name="logfiletype" value="img">
 				<cfinvokeargument name="assetid" value="#i#">
 				<cfinvokeargument name="folderid" value="#arguments.thestruct.folder_id#">
@@ -1058,7 +1060,8 @@
 				<cfset var theid = arguments.thestruct.file_id>
 			</cfif>
 			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated#rend#: #qryorg.img_filename#',logfiletype='img',assetid='#theid#',folderid='#qryorg.folder_id_r#')>
+			<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='#updated##rend#: #qryorg.img_filename#',logfiletype='img',assetid='#theid#',folderid='#qryorg.folder_id_r#')>
 		<cfelse>
 			<!--- If updating additional version then get info and log change--->
 			<cfquery datasource="#variables.dsn#" name="qryaddver">
@@ -1068,7 +1071,9 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfif qryaddver.recordcount neq 0>
-				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated Additional Rendition: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
+				<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
+				<cfinvoke component="defaults" method="trans" transid="additional_rendition" returnvariable="additional_rendition" />
+				<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='#updated# #additional_rendition#: #qryaddver.av_link_title#',logfiletype='img',assetid='#qryaddver.asset_id_r#',folderid='#qryaddver.folder_id_r#')>
 			</cfif>
 		</cfif>
 
@@ -1786,7 +1791,8 @@
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
 		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.folder_id_r#')>
+		<cfinvoke component="defaults" method="trans" transid="converted" returnvariable="converted" />
+		<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='#converted#: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.folder_id_r#')>
 		<!--- Call Plugins --->
 		<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
 		<cfset arguments.thestruct.file_name = "#arguments.thestruct.thenamenoext#.#theformat#">
@@ -2082,7 +2088,8 @@
 				AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Log --->
-				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id,folderid='#arguments.thestruct.folder_id#')>
+				<cfinvoke component="defaults" method="trans" transid="moved" returnvariable="moved" />
+				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='#moved#: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id,folderid='#arguments.thestruct.folder_id#')>
 			</cfif>
 		</cfif>
 	<cfreturn />

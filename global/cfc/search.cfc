@@ -563,7 +563,7 @@
 						<cfif arguments.thestruct.cs.files_metadata NEQ "">
 							<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 								,<cfif m CONTAINS "keywords" OR m CONTAINS "description">fd
-								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
+								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number" OR m CONTAINS "expiry_date">f
 								<cfelse>x
 								</cfif>.#m#
 							</cfloop>
@@ -694,7 +694,7 @@
 						<cfif arguments.thestruct.cs.files_metadata NEQ "">
 							<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 								,<cfif m CONTAINS "keywords" OR m CONTAINS "description">fd
-								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
+								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number" OR m CONTAINS "expiry_date">f
 								<cfelse>x
 								</cfif>.#m#
 							</cfloop>
@@ -2077,7 +2077,7 @@
 						<cfif arguments.thestruct.cs.files_metadata NEQ "">
 							<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
 								,<cfif m CONTAINS "keywords" OR m CONTAINS "description">fd
-								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number">f
+								<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename" OR m CONTAINS "_number" OR m CONTAINS "expiry_date">f
 								<cfelse>x
 								</cfif>.#m#
 							</cfloop>

@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 <div>
-	<strong>Existing Users</strong> <br />
+	<strong>#myFusebox.getApplicationData().defaults.trans("existing_users")#</strong> <br />
 	<div style="clear:both;padding-top:5px;"></div>
 	<cfloop query="qry_groupusers">
 		<div>

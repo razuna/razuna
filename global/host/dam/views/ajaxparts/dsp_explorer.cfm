@@ -34,7 +34,7 @@
 	<cfif cs.show_manage_part AND (isadmin OR  cs.show_manage_part_slct EQ "" OR listfind(cs.show_manage_part_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_manage_part_slct,session.thegroupofuser) NEQ "")>
 		<!--- Drop down menu --->
 		<div style="width:60px;float:right;position:absolute;left:190px;top:3px;">
-			<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
+			<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
 			<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 				<cfif isadmin>

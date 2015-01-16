@@ -50,7 +50,7 @@
 			<!--- Loop over all scheduled events in database table --->
 			<cfloop query="qry_templates">
 				<tr class="list">
-					<td nowrap="true" valign="top"><a href="##" onclick="showwindow('#myself#c.upl_template_detail&upl_temp_id=#upl_temp_id#','#upl_name#',650,1);">#upl_name#</a></td>
+					<td nowrap="true" valign="top"><a href="##" onclick="showwindow('#myself#c.upl_template_detail&upl_temp_id=#upl_temp_id#','#upl_name#',700,1);">#upl_name#</a></td>
 					<td nowrap="true" valign="top">#upl_description#</td>
 					<td nowrap="true" valign="top" align="center"><cfif upl_active EQ 1><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
 					<td nowrap="true" valign="top" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=upl_templates&id=#upl_temp_id#&loaddiv=admin_upl_templates','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>

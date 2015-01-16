@@ -33,11 +33,11 @@
 			<td style="border:0px;">
 				<input type="text" name="label_text" id="label_text_update" style="width:200px;" value="#qry_label.label_text#"> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" onclick="updatelabel();">
 				<br /><br />
-				Nest label under:<br />
+				#myFusebox.getApplicationData().defaults.trans("nest_label")#:<br />
 				<select name="sublabelofedit" id="sublabelofedit" style="width:240px;">
-					<option value="0">Please select a parent...</option>
+					<option value="0">#myFusebox.getApplicationData().defaults.trans("parent_select")#...</option>
 					<option value="0">---</option>
-					<option value="0">Move to root</option>
+					<option value="0">#myFusebox.getApplicationData().defaults.trans("move_to_root")#</option>
 					<option value="0">---</option>
 					<cfloop query="list_labels_dropdown">
 						<cfif qry_label.label_id NEQ label_id AND label_id_r NEQ qry_label.label_id>
@@ -56,13 +56,13 @@
 			<td class="list"></td>
 		</tr>
 		<tr>
-			<th>Remove</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("remove_txt")#</th>
 		</tr>
 		<tr>
-			<td>Removing this label, will remove the label itself and/or any sub-labels. It will not remove any assets that have been labeled.</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("remove_label_desc")#</td>
 		</tr>
 		<tr>
-			<td><input type="button" value="Remove Label" name="remlabel" class="button" onclick="labrem();" /></td>
+			<td><input type="button" value="#myFusebox.getApplicationData().defaults.trans("remove_label")#" name="remlabel" class="button" onclick="labrem();" /></td>
 		</tr>
 	</table>
 	<div id="label_dummy" style="display:none;"></div>

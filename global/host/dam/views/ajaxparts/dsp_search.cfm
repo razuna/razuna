@@ -70,29 +70,29 @@
 							</div>
 						</td>
 						<td valign="top" width="1%" nowrap="nowrap">
-							Filename
+							#myFusebox.getApplicationData().defaults.trans("file_name")#
 							<br />
 							<input type="text" name="filename" id="s_filename" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.filename))#">
 						</td>
 						<td valign="top" width="1%" >
-							Description
+							#myFusebox.getApplicationData().defaults.trans("description")#
 							<br />
 							<input type="text" name="description" id="s_description" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.description))#">
 						</td>
 						<td valign="top" width="1%" nowrap="nowrap">
-							Extension
+							#myFusebox.getApplicationData().defaults.trans("extension")#
 							<br />
 							<input type="text" name="extension" id="s_extension" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.extension))#">
 						</td>
 					</tr>
 					<tr>
 						<td valign="top" width="1%" nowrap="nowrap">
-							#myFusebox.getApplicationData().defaults.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">Help</a>)
+							#myFusebox.getApplicationData().defaults.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">#myFusebox.getApplicationData().defaults.trans("help")#</a>)
 							<br />
-							<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:180px;" placeholder="Enter search term">
+							<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:180px;" placeholder="#myFusebox.getApplicationData().defaults.trans("enter_search_term_2")#">
 						</td>
 						<td valign="top" width="1%" nowrap="nowrap">
-							Keywords
+							#myFusebox.getApplicationData().defaults.trans("keywords")#
 							<br />
 							<input type="text" name="keywords" id="s_keywords" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.keywords))#">
 							<br>
@@ -102,7 +102,7 @@
 							<br />
 							<!--- RAZ-2708 Check the labels record count is less than 200 --->
 							<cfif attributes.thelabelsqry.recordcount LTE 200>
-								<select data-placeholder="Choose a label" class="chzn-select" style="min-width:150px;" name="labels" id="search_labels" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="min-width:150px;" name="labels" id="search_labels" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
 										<cfset l = replace(label_path," "," ","all")>
@@ -118,7 +118,7 @@
 											<cfif ListFind(evaluate("session.search.labels_#attributes.thetype#"),'#label_id#') NEQ 0>
 											<div class='singleLabel' id="#label_id#">
 												<span>#label_path#</span>
-												<a class='labelRemove'  onclick="removeLabel('0','#attributes.thetype#', '#label_id#',this)" >X</a>
+												<a class='labelRemove'  onclick="removeLabel('0','#attributes.thetype#', '#label_id#',this,'#myFusebox.getApplicationData().defaults.trans("change_saved")#')" >X</a>
 											</div>
 											</cfif>
 										</cfloop>
@@ -131,18 +131,18 @@
 							</cfif>
 						</td>
 						<td valign="top" width="1%" nowrap="nowrap">
-							All Metadata
+							#myFusebox.getApplicationData().defaults.trans("all")# #myFusebox.getApplicationData().defaults.trans("metadata")#
 							<br />
 							<input type="text" name="rawmetadata" id="s_metadata" style="width:180px;" class="textbold" value="#htmleditformat(urldecode(attributes.metadata))#">
 						</td>
 					</tr>
 					<tr>
 						<td>
-							Match: 
+							#myFusebox.getApplicationData().defaults.trans("match")#: 
 							<br /> 
 							<select name="andor" id="andor">
-								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>Match ALL terms</option>
-								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>Match ANY term</option>
+								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_all")#</option>
+								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_any")#</option>
 							</select>
 						</td>
 						<td>
@@ -191,7 +191,7 @@
 					</tr>
 					<tr>
 						<td>
-							<button class="awesome big green">Search</button>
+							<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("user_search")#</button>
 						</td>
 					</tr>
 					<!--- Has to be here or else search mocks up --->
@@ -300,7 +300,7 @@
 				alert('The first character of your search string is an illegal one. Please remove it!');
 			}
 			else if (searchtext == "") {
-				alert('Please enter a search term!');
+				alert('<cfoutput>#myFusebox.getApplicationData().defaults.trans("enter_search_term")#</cfoutput>');
 			}
 			else {
 				// Show loading bar

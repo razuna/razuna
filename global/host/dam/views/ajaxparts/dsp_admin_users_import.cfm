@@ -30,24 +30,24 @@
 		<input type="hidden" name="#theaction#" value="c.users_import_do">
 		<input type="hidden" name="tempid" value="#tempid#">
 		<!--- Desc --->
-		<p>Quickly import users into your Razuna account.</p>
+		<p>#myFusebox.getApplicationData().defaults.trans("users_import")#</p>
 		<p><hr /></p>
 		<div>
-			<div style="float:left;width:150px;font-weight:bold;">File Format</div>
+			<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_format")#</div>
 			<div style="float:left;">
 				<input type="radio" name="file_format" value="csv" checked="checked"> CSV <input type="radio" name="file_format" value="xlsx"> XLSx <input type="radio" name="file_format" value="xls"> XLS
 			</div>
 			<div style="clear:both;padding-bottom:10px;"></div>
 			<!--- Upload file --->
-			<div style="float:left;width:150px;font-weight:bold;padding-top:7px;">Upload File</div>
+			<div style="float:left;width:150px;font-weight:bold;padding-top:7px;">#myFusebox.getApplicationData().defaults.trans("upload_file")#</div>
 			<div style="float:left;"><iframe src="#myself#ajax.users_import_upload&tempid=#tempid#" frameborder="false" scrolling="false" style="border:0px;width:300px;height:50px;" id="usersupload"></iframe></div>
 		</div>
 		<div style="clear:both;padding-bottom:10px;"></div>
 			<!--- Loading Bars --->
 		<div style="float:left;padding:10px;color:green;font-weight:bold;display:none;" id="importstatus"></div>
-		<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="Import users" class="button"></div>
+		<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("import_users")#" class="button"></div>
 		<cfif structKeyExists(attributes,"ad_server_name") AND attributes.ad_server_name NEQ "" AND structKeyExists(attributes,"ad_server_username") AND attributes.ad_server_username NEQ "" AND structKeyExists(attributes,"ad_server_password") AND attributes.ad_server_password NEQ "" AND structKeyExists(attributes,"ad_server_start") AND attributes.ad_server_start NEQ "">
-			<div style="float:right;padding:10px;"><button onclick="showwindow('#myself#c.ad_server_users_list','AD Server Users List',600,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("Import_AD_Users")#</button></div>
+			<div style="float:right;padding:10px;"><button onclick="showwindow('#myself#c.ad_server_users_list','#myFusebox.getApplicationData().defaults.trans("ad_server_users_list")#',600,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("Import_AD_Users")#</button></div>
 		</cfif>
 		</form>
 	</div>

@@ -107,7 +107,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					Filename for Attachment <input type="text" size="50" name="zipname" id="zipname" value="#attributes.filename#">.zip
+					#myFusebox.getApplicationData().defaults.trans("filename_attachment")# <input type="text" size="50" name="zipname" id="zipname" value="#attributes.filename#">.zip
 				</td>
 			</tr>
 			<tr>

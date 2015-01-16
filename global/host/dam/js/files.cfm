@@ -51,7 +51,7 @@ function sendtobasket(theform, from){
 // Feedback on putting assets in basket
 function sendtobasket_feedback(){
 	// Flash the Basket
-	flash_footer('basket');
+	flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');
 	// Reload Basket
 	loadcontent('thedropbasket','index.cfm?fa=c.basket');
 }

@@ -39,7 +39,7 @@
 						<td valign="top" nowrap width="20%" >#sn#</td>
 						<td valign="top" nowrap width="20%">#company#</td>
 						<td valign="top" nowrap width="5%">#mail#</td>
-						<td valign="top"><cfif qCheckUser.recordcount NEQ 0>Imported<cfelse>Not Imported</cfif></td>
+						<td valign="top"><cfif qCheckUser.recordcount NEQ 0>#myFusebox.getApplicationData().defaults.trans("imported")#<cfelse>#myFusebox.getApplicationData().defaults.trans("not_imported")#</cfif></td>
 					</tr>
 				</cfoutput>
 			</cfif>

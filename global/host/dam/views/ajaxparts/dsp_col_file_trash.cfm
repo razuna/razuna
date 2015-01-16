@@ -66,7 +66,7 @@
 			<cfif qry_trash.recordcount GT session.col_trash_rowmaxpage>
 				<span style="padding-left:10px;">
 					<cfset thepage = ceiling(qry_trash.recordcount / session.col_trash_rowmaxpage)>
-					Page: 
+					#myFusebox.getApplicationData().defaults.trans("page")#: 
 					<select class="thepagelist_assets"  onChange="loadcontent('files', $('.thepagelist_assets :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>
@@ -92,7 +92,7 @@
 	<div style="clear:both;">
 		<!--- If all is selected show the description --->
 		<div id="selectstoreallform_assets" style="display:none;width:100%;text-align:center;">
-			<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('allform_assets');return false;">Deselect all</a>
+			<strong>#myFusebox.getApplicationData().defaults.trans('selectall_files_section')#</strong> <a href="##" onclick="CheckAllNot('allform_assets');return false;">#myFusebox.getApplicationData().defaults.trans('deselect_all')#</a>
 		</div>
 		<form name="allform_assets" id="allform_assets" action="#self#" onsubmit="">
 			<!--- show the available folder list for restoring --->

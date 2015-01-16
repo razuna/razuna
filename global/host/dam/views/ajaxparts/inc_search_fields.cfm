@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<tr>
-		<td>Search Term</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("search_term")#</td>
 		<td><input type="hidden" name="thetype" value="#myvar.thetype#">
 			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
 	</tr>
@@ -43,15 +43,15 @@
 		</td>
 	</cfif>
 	<tr>
-		<td>Filename</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
 		<td><input type="text" name="filename" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td>Keywords</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("keywords")#</td>
 		<td><input type="text" name="keywords" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td>Description</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("description")#</td>
 		<td><input type="text" name="description" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
@@ -59,7 +59,7 @@
 		<td>
 			<!--- Check the labels record count is less than 200 --->
 			<cfif attributes.thelabelsqry.recordcount LTE 200>
-				<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
+				<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
 					<option value=""></option>
 					<cfloop query="attributes.thelabelsqry">
 						<cfset l = replace(label_path," "," ","all")>
@@ -75,7 +75,7 @@
 							<cfif ListFind(evaluate("session.search.labels_#myvar.thetype#"),'#label_id#') NEQ 0>
 							<div class='singleLabel'  id="#label_id#">
 								<span>#label_path#</span>
-								<a class='labelRemove'  onclick="removeLabel('0','#myvar.thetype#', '#label_id#',this)" >X</a>
+								<a class='labelRemove'  onclick="removeLabel('0','#myvar.thetype#', '#label_id#',this,'#myFusebox.getApplicationData().defaults.trans("change_saved")#')" >X</a>
 							</div>
 							</cfif>
 						</cfloop>
@@ -90,11 +90,11 @@
 		</td>
 	</tr>
 	<tr>
-		<td>Extension</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("extension")#</td>
 		<td><input type="text" name="extension" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td nowrap="true">All Metadata</td>
+		<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("all")# #myFusebox.getApplicationData().defaults.trans("metadata")#</td>
 		<td><input type="text" name="rawmetadata" style="width:300px;" class="textbold"></td>
 	</tr>
 	<cfloop query="qry_fields">

@@ -100,7 +100,7 @@
 					<cfif qry_labelcount.thetotal GT session.rowmaxpage>
 						<span style="padding-left:10px;">
 							<cfset thepage = ceiling(qry_labelcount.thetotal / session.rowmaxpage)>
-							Page: 
+							#myFusebox.getApplicationData().defaults.trans("page")#: 
 								<select class="thepagelist#kind#" onChange="loadcontent('#thediv#', $('.thepagelist#kind# :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
@@ -113,7 +113,7 @@
 					<cfif qry_labelcount.thetotal GT session.rowmaxpage>
 						<span style="padding-left:10px;">
 							<cfset thepage = ceiling(qry_labelcount.thetotal / session.rowmaxpage)>
-							Page: 
+							#myFusebox.getApplicationData().defaults.trans("page")#: 
 								<select id="thepagelist#kind#" onChange="loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
@@ -128,30 +128,30 @@
 			<cfif attributes.bot eq "true">
 				<td align="right" width="1%" nowrap="true">
 					<cfif qry_labelcount.thetotal neq 0>
-					Sort by: 
+					#myFusebox.getApplicationData().defaults.trans('sort_by')#: 
 					 <select name="selectsortby#kind#" id="selectsortby#kind#" onChange="changesortby('selectsortby#kind#');" style="width:100px;">
-					 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-					 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-					 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-					 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-					 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-					 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-					 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+					 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("name")#</option>
+					 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("assets_type")#</option></cfif>
+					 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_desc")#</option>
+					 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_asc")#</option>
+					 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("date_added")#</option>
+					 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("last_changed")#</option>
+					 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("same_file")#</option>
 					 </select>
 					</cfif>
 				</td>
 			<cfelse>
 				<td align="right" width="1%" nowrap="true">
 					<cfif qry_labelcount.thetotal neq 0>
-					Sort by: 
+					#myFusebox.getApplicationData().defaults.trans('sort_by')#: 
 					 <select name="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changesortby('selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" style="width:100px;">
-					 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-					 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-					 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-					 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-					 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-					 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-					 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+					 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("name")#</option>
+					 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("assets_type")#</option></cfif>
+					 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_desc")#</option>
+					 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("size_asc")#</option>
+					 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("date_added")#</option>
+					 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("last_changed")#</option>
+					 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("same_file")#</option>
 					 </select>
 					</cfif>
 				</td>
@@ -161,7 +161,7 @@
 				<td align="right" width="1%" nowrap="true">
 					<cfif qry_labelcount.thetotal GT session.rowmaxpage OR qry_labelcount.thetotal GT 25>
 						<select name="selectrowperpage#kind#" id="selectrowperpage#kind#" onChange="changerow('#thediv#','selectrowperpage#kind#')" style="width:80px;">
-						<option value="javascript:return false;">Show how many...</option>
+						<option value="javascript:return false;">#myFusebox.getApplicationData().defaults.trans("show_how_many")#...</option>
 						<option value="javascript:return false;">---</option>
 						<option value="#myself##thefa#&label_id=#attributes.label_id#&label_kind=#attributes.label_kind#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
 						<option value="#myself##thefa#&label_id=#attributes.label_id#&label_kind=#attributes.label_kind#&offset=0&rowmaxpage=50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
@@ -174,7 +174,7 @@
 				<td align="right" width="1%" nowrap="true">
 					<cfif qry_labelcount.thetotal GT session.rowmaxpage OR qry_labelcount.thetotal GT 25>
 						<select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
-						<option value="javascript:return false;">Show how many...</option>
+						<option value="javascript:return false;">#myFusebox.getApplicationData().defaults.trans("show_how_many")#...</option>
 						<option value="javascript:return false;">---</option>
 						<option value="#myself##thefa#&label_id=#attributes.label_id#&label_kind=#attributes.label_kind#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
 						<option value="#myself##thefa#&label_id=#attributes.label_id#&label_kind=#attributes.label_kind#&offset=0&rowmaxpage=50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
@@ -188,10 +188,10 @@
 	</table>
 	<!--- If all is selected show the description --->
 	<div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>label_form" style="display:none;width:100%;text-align:center;">
-		<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('label_form');return false;">Deselect all</a>
+		<strong>#myFusebox.getApplicationData().defaults.trans("selectall_files_section")#</strong> <a href="##" onclick="CheckAllNot('label_form');return false;">#myFusebox.getApplicationData().defaults.trans("deselect_all")#</a>
 	</div>
 	<div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>label_form" style="display:none;width:100%;text-align:center;">
-		<em>Please note that you cannot edit files with the <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> icon, because you have "read-only" permission for those files!</em>
+		<em>#myFusebox.getApplicationData().defaults.trans("edit_file_1")# <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> #myFusebox.getApplicationData().defaults.trans("edit_file_2")#</em>
 	</div>
 	<!--- Put in basket button / Action Menu --->
 	<div id="folderselectionlabel_form" class="actiondropdown">

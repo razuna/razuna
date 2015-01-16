@@ -30,13 +30,13 @@
 	<input type="hidden" name="col_id" value="#attributes.col_id#">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="release" value="#attributes.release#">
-		<h2>Release this collection</h2>
-		Releasing a collection will freeze the collection for further changes. It can be used in order to "lock" the collection. Only an Administrator can Un-Release a collection and make changes to it.
+		<h2>#myFusebox.getApplicationData().defaults.trans('release_collection')#</h2>
+		#myFusebox.getApplicationData().defaults.trans('release_collection_desc')#
 		<br /><br />
-		<strong>Change Collection Name to</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans('change_collection_name')#</strong>
 		<input type="text" style="width:400px;" name="col_name">
 		<!--- Save --->
-		<div style="float:right;padding:20px 0px 20px 0px;"><input type="submit" name="submit" value="Release Collection" class="button"></div>
+		<div style="float:right;padding:20px 0px 20px 0px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans('release_collection')#" class="button"></div>
 	</form>
 	<!--- JS --->
 	<script type="text/javascript">
