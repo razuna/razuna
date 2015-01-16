@@ -631,6 +631,8 @@
 		<set name="attributes.trashall" value="false" overwrite="false" />
 		<set name="attributes.restoreall" value="false" overwrite="false" />
 		<set name="attributes.removeselecteditems" value="false" overwrite="false" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
 		<!-- Set the offset -->
 		<if condition="structkeyexists(attributes,'offset')" >
 			<true>
@@ -714,8 +716,6 @@
 		<set name="attributes.trashall" value="true" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Check storage -->
-		<do action="storage" />
 		<!-- Decide on files or collection -->
 		<if condition="!attributes.col">
 			<!-- Files -->
@@ -732,6 +732,8 @@
 				<do action="folder_explorer_trash" />
 			</true>
 			<false>
+				<!-- Action: Check storage -->
+				<do action="storage" />
 				<!-- CFC: Get all for collection trash -->
 				<invoke object="myFusebox.getApplicationData().collections" methodcall="trash_remove_all(attributes)" />
 				<!-- Show -->
