@@ -451,6 +451,10 @@
 		<cfoutput><br /><strong>#download_basket_output2#</strong><br /><br /></cfoutput>
 		<cfflush>
 	</cfif>
+	<cfinvoke component="defaults" method="trans" transid="getting_image" returnvariable="getting_image" />
+	<cfinvoke component="defaults" method="trans" transid="getting_video" returnvariable="getting_video" />
+	<cfinvoke component="defaults" method="trans" transid="getting_audio" returnvariable="getting_audio" />
+	<cfinvoke component="defaults" method="trans" transid="getting_file" returnvariable="getting_file" />
 	<!--- Create directory --->
 	<cfset var basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
@@ -467,7 +471,7 @@
 			<cfcase value="img">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting image "#filename#"</strong><br><br></cfoutput>
+					<cfoutput><strong>#getting_image# "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Image --->
@@ -477,7 +481,7 @@
 			<cfcase value="vid">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting video "#filename#"</strong><br><br></cfoutput>
+					<cfoutput><strong>#getting_video# "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Video --->
@@ -487,7 +491,7 @@
 			<cfcase value="aud">
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting audio "#filename#"</strong><br><br></cfoutput>
+					<cfoutput><strong>#getting_audio# "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write Video --->
@@ -497,7 +501,7 @@
 			<cfdefaultcase>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
-					<cfoutput><strong>Getting file "#filename#"</strong><br><br></cfoutput>
+					<cfoutput><strong>#getting_file# "#filename#"</strong><br><br></cfoutput>
 					<cfflush>
 				</cfif>
 				<!--- Write file --->

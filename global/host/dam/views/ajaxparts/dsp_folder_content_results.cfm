@@ -199,12 +199,12 @@
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-img&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-img&thetype=#theid#-img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											<cfif cs.show_favorites_part>
-												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 											</cfif>
 										</div>
 										<cfif permfolder NEQ "R">
@@ -221,7 +221,7 @@
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<cfif cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 										<div>
-											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-img&thetype=#theid#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-img&thetype=#theid#-img&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 										</div>
 									</cfif>
 								</cfif>
@@ -361,12 +361,12 @@
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-vid&thetype=#theid#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-vid&thetype=#theid#-vid');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											<cfif cs.show_favorites_part>
-												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=vid');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=vid');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											
 										</div>
@@ -387,7 +387,7 @@
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<cfif cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 										<div>
-											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-vid&thetype=#theid#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-vid&thetype=#theid#-vid&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 										</div>
 									</cfif>
 								</cfif>
@@ -517,12 +517,12 @@
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-aud&thetype=#theid#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-aud&thetype=#theid#-aud');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											<cfif cs.show_favorites_part>
-												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=aud');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											
 										</div>
@@ -540,7 +540,7 @@
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<cfif cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 										<div>
-											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-aud&thetype=#theid#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-aud&thetype=#theid#-aud&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 										</div>
 									</cfif>
 								</cfif>
@@ -676,12 +676,12 @@
 												<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 											</cfif>
 											<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=doc&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-doc&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+											<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-doc&thetype=#theid#-doc');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 											<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 												<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=doc','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 											</cfif>
 											<cfif cs.show_favorites_part>
-												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=doc');flash_footer();return false;" timeformatle="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=doc');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" timeformatle="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 											</cfif>
 										</div>
 										<cfif permfolder NEQ "R">
@@ -698,7 +698,7 @@
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<cfif cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 										<div>
-											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-doc&thetype=#theid#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+											<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-doc&thetype=#theid#-doc&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 										</div>
 									</cfif>
 								</cfif>
@@ -835,12 +835,12 @@
 											<img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" />
 										</cfif>
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
 										<cfif cs.show_favorites_part>
-											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
@@ -858,7 +858,7 @@
 							</div>
 							<div style="float:left;">
 								#myFusebox.getApplicationData().defaults.trans("labels")#<br />
-								<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tagss_img#theid#" onchange="razaddlabels('tagss_img#theid#','#theid#','img');" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tagss_img#theid#" onchange="razaddlabels('tagss_img#theid#','#theid#','img','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
 										<option value="#label_id#"<cfif ListFind(labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -915,12 +915,12 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
 										<cfif cs.show_favorites_part>
-											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
@@ -938,7 +938,7 @@
 							</div>
 							<div style="float:left;">
 								#myFusebox.getApplicationData().defaults.trans("labels")#<br />
-								<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tagss_vid#theid#" onchange="razaddlabels('tagss_vid#theid#','#theid#','vid');" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tagss_vid#theid#" onchange="razaddlabels('tagss_vid#theid#','#theid#','vid','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
 										<option value="#label_id#"<cfif ListFind(labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -991,12 +991,12 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
 										<cfif cs.show_favorites_part>
-											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
@@ -1015,7 +1015,7 @@
 							</div>
 							<div style="float:left;">
 								#myFusebox.getApplicationData().defaults.trans("labels")#<br />
-								<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tagss_aud#theid#" onchange="razaddlabels('tagss_aud#theid#','#theid#','aud');" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tagss_aud#theid#" onchange="razaddlabels('tagss_aud#theid#','#theid#','aud','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
 										<option value="#label_id#"<cfif ListFind(labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -1084,12 +1084,12 @@
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_search_#uniqueid#_#id#" style="display:inline">
 										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-doc');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
 										<cfif cs.show_favorites_part>
-											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
@@ -1108,7 +1108,7 @@
 							</div>
 							<div style="float:left;">
 								#myFusebox.getApplicationData().defaults.trans("labels")#<br />
-								<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tagss_doc#theid#" onchange="razaddlabels('tagss_doc#theid#','#theid#','doc');" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tagss_doc#theid#" onchange="razaddlabels('tagss_doc#theid#','#theid#','doc','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
 										<option value="#label_id#"<cfif ListFind(labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>

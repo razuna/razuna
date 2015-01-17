@@ -1983,7 +1983,8 @@
 	<!--- Feedback --->
 	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
 	<cfif arguments.thestruct.fa EQ 'c.meta_export_do'>
-		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="downloadable_file" returnvariable="downloadable_file" />
+		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.csv"><strong style="color:green;">#downloadable_file#</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->
@@ -2029,7 +2030,8 @@
 	<!--- Feedback --->
 	<!--- Show export file link only if export file is generated from a direct call to fuseaction. If called from other fuseactions then dont show link as file will be part of other download --->
 	<cfif arguments.thestruct.fa EQ 'c.meta_export_do'>
-		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="downloadable_file" returnvariable="downloadable_file" />
+		<cfoutput><p><a href="outgoing/metadata-export-#suffix#.#arguments.thestruct.format#"><strong style="color:green;">#downloadable_file#</strong></a></p></cfoutput>
 	</cfif>
 	<cfflush>
 	<!--- Call function to remove older files --->

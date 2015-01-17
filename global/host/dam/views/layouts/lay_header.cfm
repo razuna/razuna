@@ -63,7 +63,7 @@
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
 				<div style="float:left;background-color:##ddd;padding:4px;">
 					<div style="float:left;">
-						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search"  title="Uses AND for multiple keywords except if you use OR/AND or double quotes. See search help for more information.">
+						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="" title="#myFusebox.getApplicationData().defaults.trans('quick_search_title')#" placeholder="#myFusebox.getApplicationData().defaults.trans('quick_search')#">
 					</div>
 					<!--- If the search selection is on we search with folder ids --->
 					<cfif cs.search_selection>
@@ -89,12 +89,12 @@
 							<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 							<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
 							<p><hr></p>
-							<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">Help with Search</a></cfif></p>
+							<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">#myFusebox.getApplicationData().defaults.trans('help_with_search')#</a></cfif></p>
 						</div>
 					</cfif>
 					<!--- Search button --->
 					<div style="float:left;padding-left:2px;padding-top:1px;">
-						<button class="awesome big green">Search</button>
+						<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans('header_search')#</button>
 						<!--- <img src="#dynpath#/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon"> --->
 					</div>
 				</div>
@@ -130,7 +130,7 @@
 				<!--- Profile --->
 				<p>
 					<!--- RAZ-2718 Encode User's first and last name for title --->
-					<a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#urlEncodedFormat(session.firstlastname)#',600,1);$('##userselection').toggle();return false;">My info</a>
+					<a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#urlEncodedFormat(session.firstlastname)#',600,1);$('##userselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("my_info")#</a>
 					<cfif qry_detail.user_pass EQ "">
 						<img width="20" height="20" border="0" src="/razuna/global/host/dam/images/active_directory_user.png">
 					</cfif>
@@ -147,20 +147,20 @@
 					<cfif application.razuna.whitelabel>
 						#wl_link_support#
 					<cfelse>
-						<a href="https://help.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
+						<a href="https://help.razuna.com" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("help_support")#</a>
 					</cfif>
 				</p>
 				<p>
 					<cfif application.razuna.whitelabel>
 						#wl_link_doc#
 					<cfelse>
-						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Documentation (Wiki)</a>
+						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("doc_wiki")#</a>
 					</cfif>
 				</p>
 				<p><hr></p>
 				<!--- Account --->
 				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
-					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a></p>
+					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
 					<p><hr></p>
 				</cfif>
 				<!--- Languages --->
@@ -189,7 +189,7 @@
 			<!--- Account --->
 		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
 				<div style="float:left;padding-right:20px;">
-					<a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a>
+					<a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
 				</div>
 			</cfif>
 			<!--- Show basket link --->
@@ -227,14 +227,14 @@
 				buttons: {
 				"#myFusebox.getApplicationData().defaults.trans("header_upc_search")#": function() {
 					if($('##search_upc').val() == ""){
-						alert("Please enter value for UPC Number");
+						alert("#myFusebox.getApplicationData().defaults.trans('upc_num_check')#");
 					} else {
 						$( this ).dialog( "close" );
 						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","));	
 					}
 					
 				},
-				Cancel: function() {
+				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 					$( this ).dialog( "close" );
 				}
 			}

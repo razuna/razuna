@@ -56,10 +56,10 @@
 				<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 				<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
 				<p><hr></p>
-				<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
+				<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("help_with_search")#</a></p>
 			</div>
 			<div style="float:left;">
-				<input name="simplesearchtext" id="simplesearchtext" size="25" type="text" class="textbold" style="width:150px;" value="Quick Search">
+				<input name="simplesearchtext" id="simplesearchtext" size="25" type="text" class="textbold" style="width:150px;" placeholder="#myFusebox.getApplicationData().defaults.trans("quick_search")#">
 			</div>
 			<div style="float:right;padding-left:2px;padding-top:4px;" id="searchicon">
 				<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">

@@ -70,10 +70,10 @@
 	</cfloop>
 	<div id="msg"></div>
 	<div id="dialog-confirm-swap" title="Swap with Original?" style="display:none;">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The Original will be replaced by this rendition and vice versa. Are you sure you wish to continue?</p>
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>#myFusebox.getApplicationData().defaults.trans("swap_confirm")#</p>
 	</div>
-	<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
-		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+	<div id="dialog-confirm-rendition" title="#myFusebox.getApplicationData().defaults.trans("remove_rend_confirm")#" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>#myFusebox.getApplicationData().defaults.trans("remove_rend")#</p>
 	</div>
 	<!--- Js --->
 	<script type="text/javascript">
@@ -83,16 +83,16 @@
 			height:160,
 			modal: true,
 			buttons: {
-				"Yes": function() {
+				"#myFusebox.getApplicationData().defaults.trans('yes')#": function() {
 					$( this ).dialog( "close" );
 					$('##div_forall').load('#myself#c.swap_rendition_original&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&id=' + id, function(){ 
 						if (type == 'img')loadren();
 						if (type == 'vid')loadrenvid();
 						if (type == 'aud')loadrenaud();
-						$('##msg').html('<font color=steelblue">The rendition has been swapped. Please reload the page to see changes.</font>');
+						$('##msg').html('<font color=steelblue">#myFusebox.getApplicationData().defaults.trans("swap_ok")#</font>');
 					 });
 				},
-				Cancel: function() {
+				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 					$( this ).dialog( "close" );
 				}
 			}
@@ -104,7 +104,7 @@
 			height:140,
 			modal: true,
 			buttons: {
-				"Yes, remove rendition": function() {
+				"#myFusebox.getApplicationData().defaults.trans("remove_rend_ok")#": function() {
 					$( this ).dialog( "close" );
 					$('##div_forall').load('#myself#c.av_link_remove_new&file_id=#attributes.file_id#&id=' + id, function(){ 
 						if (type == 'img')loadren();
@@ -113,7 +113,7 @@
 						if (type == 'doc')loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');
 					});
 				},
-				Cancel: function() {
+				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 					$( this ).dialog( "close" );
 				}
 			}
@@ -121,7 +121,7 @@
 	};
 	function useforpreview(av_id,type){
 			$('##div_forall').load('#myself#c.use_rendition_for_preview&userendforpreview=1&file_id=#attributes.file_id#&av_id=' + av_id + '&type=' + type);
-			$('##msg').html('<font color=steelblue">The preview has been updated. Please reload the page to see changes.</font>');
+			$('##msg').html('<font color=steelblue">#myFusebox.getApplicationData().defaults.trans("preview_updated")#</font>');
 
 	};
 	</script>

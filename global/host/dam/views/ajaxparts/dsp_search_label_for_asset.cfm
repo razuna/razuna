@@ -61,7 +61,7 @@
 			$(".check").change(function(){
 				if($(this).is(":checked")){
 					$(":checkbox[value='"+$(this).val()+"']").attr("checked", true);
-					newElement = "<div class='singleLabel' id="+$(this).val()+"><span>"+$(this).attr('data-label-text')+"</span><a class='labelRemove' onclick=removeLabel('#attributes.file_id#','#attributes.file_type#','"+$(this).val()+"',this) >X</a></div>";
+					newElement = "<div class='singleLabel' id="+$(this).val()+"><span>"+$(this).attr('data-label-text')+"</span><a class='labelRemove' onclick=removeLabel('#attributes.file_id#','#attributes.file_type#','"+$(this).val()+"',this, '#myFusebox.getApplicationData().defaults.trans("change_saved")#') >X</a></div>";
 					<cfif attributes.file_id NEQ '0'>
 						$('##select_lables_#attributes.file_id#').append(newElement);
 					<cfelse>
@@ -80,7 +80,7 @@
 					loadcontent('div_forall','index.cfm?fa=c.asset_label_add_remove&fileid=#attributes.file_id#&thetype=#attributes.file_type#&checked=false&labels=' + $(this).val());
 				}
 				<cfif attributes.file_id NEQ '0'> 
-				$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+				$.sticky('<span style="color:green;font-Weight:bold;">#myFusebox.getApplicationData().defaults.trans("change_saved")#</span>');
 				</cfif>
 				return false;
 			 });

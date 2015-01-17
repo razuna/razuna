@@ -34,12 +34,12 @@
 	<p>#myFusebox.getApplicationData().defaults.trans("import_metadata_desc")#</p>
 	<p><hr /></p>
 	<div>
-		<div style="float:left;width:150px;font-weight:bold;">Apply to...</div>
+		<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("apply_to")#...</div>
 		<div style="float:left;">
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-				Please select <select name="expwhat" id="expwhat">
-					<option value="folder" selected="selected">all assets in THIS folder</option>
-					<option value="all">all assets in Razuna</option>
+				#myFusebox.getApplicationData().defaults.trans("please_select")# <select name="expwhat" id="expwhat">
+					<option value="folder" selected="selected">#myFusebox.getApplicationData().defaults.trans("all_assets_folder")#</option>
+					<option value="all">#myFusebox.getApplicationData().defaults.trans("all_assets_razuna")#</option>
 				</select>
 			<cfelse>
 				<input type="hidden" name="expwhat" id="expwhat" value="" />
@@ -66,24 +66,24 @@
 --->
 		<!--- Template --->
 		<div style="clear:both;padding-bottom:10px;"></div>
-		<div style="float:left;width:150px;font-weight:bold;">Choose Template</div>
+		<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("choose_template")#</div>
 		<div style="float:left;width:300px;">
 			<select name="impp_template" id="impp_template" style="width:150px;"<!---  disabled="disabled" --->>
-				<option value="" selected="selected">No template</option>
+				<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("no_template")#</option>
 				<cfloop query="qry_imptemp">
 					<option value="#imp_temp_id#">#imp_name#</option>
 				</cfloop>
 			</select>
 			<br />
-			<i>(You only need to select a template if you use custom headers (columns)!)</i>
+			<i>#myFusebox.getApplicationData().defaults.trans("template_select_help")#</i>
 		</div>
 		<!--- Add or append --->
 		<div style="clear:both;padding-bottom:10px;"></div>
-		<div style="float:left;width:150px;font-weight:bold;">Add or append</div>
-		<div style="float:left;width:300px;">According to your decision below the import will either replace or append to the current metadata<br /><input type="radio" name="imp_write" value="replace" checked="checked" /> Replace <input type="radio" name="imp_write" value="add" /> Append</div>
+		<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("add_append")#</div>
+		<div style="float:left;width:300px;">#myFusebox.getApplicationData().defaults.trans("replace_append_decision")#<br /><input type="radio" name="imp_write" value="replace" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("replace")# <input type="radio" name="imp_write" value="add" /> #myFusebox.getApplicationData().defaults.trans("append")#</div>
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<!--- Upload file --->
-		<div style="float:left;width:150px;font-weight:bold;padding-top:7px;">Upload File</div>
+		<div style="float:left;width:150px;font-weight:bold;padding-top:7px;">#myFusebox.getApplicationData().defaults.trans("upload_file")#</div>
 		<div style="float:left;"><iframe src="#myself#ajax.meta_imp_upload&folder_id=#attributes.folder_id#&tempid=#attributes.tempid#" frameborder="false" scrolling="false" style="border:0px;width:300px;height:55px;" id="metaupload"></iframe></div>
 	</div>
 	<div style="clear:both;padding-bottom:20px;"></div>

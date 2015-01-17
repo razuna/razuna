@@ -83,9 +83,9 @@
 		</tr>
 		<tr>
 			<td colspan="4">
-				This folder is being shared: <cfif qry_folder.folder_shared EQ "T">Yes<cfelse>No</cfif><br>
-				The original asset can be downloaded: <cfif qry_folder.share_dl_org EQ "T">Yes<cfelse>No</cfif><br>
-				Assets have to be ordered: <cfif qry_folder.share_order EQ "T">Yes<cfelse>No</cfif>
+				#myFusebox.getApplicationData().defaults.trans("folder_shared_txt")#: <cfif qry_folder.folder_shared EQ "T">#myFusebox.getApplicationData().defaults.trans("yes")#<cfelse>#myFusebox.getApplicationData().defaults.trans("no")#</cfif><br>
+				#myFusebox.getApplicationData().defaults.trans("original_asset_download")#: <cfif qry_folder.share_dl_org EQ "T">#myFusebox.getApplicationData().defaults.trans("yes")#<cfelse>#myFusebox.getApplicationData().defaults.trans("no")#</cfif><br>
+				#myFusebox.getApplicationData().defaults.trans("asset_ordering")#: <cfif qry_folder.share_order EQ "T">#myFusebox.getApplicationData().defaults.trans("yes")#<cfelse>#myFusebox.getApplicationData().defaults.trans("no")#</cfif>
 			</td>
 		</tr>
 		<tr>
@@ -93,9 +93,9 @@
 		</tr>
 		<tr>
 			<th></th>
-			<th nowrap="nowrap">Downloadable</th>
-			<th nowrap="nowrap">Orderable</th>
-			<th nowrap="nowrap">Selected*</th>
+			<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("downloadable")#</th>
+			<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("orderable")#</th>
+			<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("selected")#*</th>
 		</tr>
 		<cfif attributes.type EQ "img">
 			<tr class="list">
@@ -191,7 +191,7 @@
 			</cfloop>
 		</cfif>
 		<tr>
-			<td colspan="4" align="right">* Selected is valid when you use a widget. The selected asset is then used for the larger preview or for the slideshow.</td>
+			<td colspan="4" align="right">* #myFusebox.getApplicationData().defaults.trans("share_select_desc")#</td>
 		</tr>
 	</table>
 	<div id="save_status" style="padding:10px;color:green;display:none;"></div>
@@ -208,7 +208,7 @@
 		// Feedback
 		$('##save_status').fadeTo("fast", 100);
 		$('##save_status').css('display','');
-		$('##save_status').html('We saved the change successfully!');
+		$('##save_status').html('#myFusebox.getApplicationData().defaults.trans("saved_change_success")#');
 		$('##save_status').fadeTo(1000, 0);
 	}
 </script>

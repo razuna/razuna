@@ -48,7 +48,7 @@
 								<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("enabled")#</td>
 								<td><input type="radio" name="cf_enabled" value="T" checked="true">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_enabled" value="F">#myFusebox.getApplicationData().defaults.trans("no")#</td>
 							</tr>
-							<!--- The text in the languages --->					
+							<!--- The text in the languages --->
 							<cfloop query="qry_langs">
 								<tr>
 									<td valign="top" width="120" nowrap="true">#lang_name#</td>
@@ -59,12 +59,12 @@
 								<td width="120" nowrap="true">#myFusebox.getApplicationData().defaults.trans("custom_field_for")#</td>
 								<td>
 									<select name="cf_show" style="width:150px;">
-										<option value="all" selected="true">All</option>
+										<option value="all" selected="true">#myFusebox.getApplicationData().defaults.trans("all")#</option>
 										<option value="img">#myFusebox.getApplicationData().defaults.trans("only_images")#</option>
 										<option value="vid">#myFusebox.getApplicationData().defaults.trans("only_videos")#</option>
 										<option value="doc">#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 										<option value="aud">#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
-										<option value="users">Users</option>
+										<option value="users">#myFusebox.getApplicationData().defaults.trans("users")#</option>
 									</select>
 								</td>
 							</tr>
@@ -76,10 +76,10 @@
 								<td width="120" nowrap="true">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</td>
 								<td>
 									<select name="cf_type" style="width:150px;">
-										<option value="text" selected="true">Text</option>
-										<option value="textarea">Textarea</option>
-										<option value="radio">Radio Button (Yes/No)</option>
-										<option value="select">Select</option>
+										<option value="text" selected="true">#myFusebox.getApplicationData().defaults.trans("text")#</option>
+										<option value="textarea">#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
+										<option value="radio">#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
+										<option value="select">#myFusebox.getApplicationData().defaults.trans("select")#</option>
 									</select>
 								</td>
 							</tr>
@@ -94,11 +94,11 @@
 						</table>
 					</td>
 					<td valign="top" width="100%" style="padding-left:10px;">
-						Groups/Users that can edit the field:<br />
-						<select data-placeholder="Choose a group or user" class="chzn-select" style="width:410px;" name="cf_edit" id="cf_edit" multiple="multiple">
+						#myFusebox.getApplicationData().defaults.trans("groups_users_edit")#<br />
+						<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:410px;" name="cf_edit" id="cf_edit" multiple="multiple">
 							<option value=""></option>
-							<option value="1">System-Administrators</option>
-							<option value="2">Administrators</option>
+							<option value="1">#myFusebox.getApplicationData().defaults.trans("system_administrators")#</option>
+							<option value="2">#myFusebox.getApplicationData().defaults.trans("administrators")#</option>
 							<cfloop query="qry_groups">
 								<option value="#grp_id#">#grp_name#</option>
 							</cfloop>
@@ -107,7 +107,7 @@
 							</cfloop>
 						</select>
 						<br />
-						<em>(If left empty users can edit field according to their folder permissions)</em>
+						<em>#myFusebox.getApplicationData().defaults.trans("field_empty_permissions")#</em>
 					</td>
 					<td valign="top" nowrap="true">
 						<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button">

@@ -34,7 +34,12 @@
     <!--- Open Connection to FTP Server --->
     <cftry>
     	<cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=true)>
-    	<cfcatch><cfoutput><font color="##cd5c5c">Could not connect to FTP Server. Please check server credentials and try again. <br/>Error thrown was: #cfcatch.message#</font></cfoutput><cfabort></cfcatch>
+    	<cfcatch>
+    		<cfset var transvalues = arraynew()>
+	    	<cfset transvalues[1] = cfcatch.message>
+	    	<cfinvoke component="defaults" method="trans" transid="ftp_error" values = "#transvalues#" returnvariable="ftp_error" />
+	    	<cfoutput><font color="##cd5c5c">#ftp_error#</font></cfoutput><cfabort>
+    	</cfcatch>
     </cftry>
     
     <!--- Set the response form the connection into scope --->
@@ -55,13 +60,15 @@
                 <cfset dirlist = ftplist(o,arguments.thestruct.folderpath,session.ftp_passive)>
             	<cfcatch type="any">
             		<cfparam name="folder_id" default="0" />
+            		<cfinvoke component="defaults" method="trans" transid="ftp_read_error" returnvariable="ftp_read_error" />
             		<cfoutput>
-            		<span style="color:red;font-weight:bold;">Sorry, but somehow we can't read this directory!</span>
+            		<span style="color:red;font-weight:bold;">#ftp_read_error#</span>
             		<br />
         			<br />
         			<cfset l = listlast(arguments.thestruct.folderpath,"/")>
         			<cfset p = replacenocase(arguments.thestruct.folderpath,"/#l#","","one")>
-            		<a href="##" onclick="loadcontent('addftp','index.cfm?fa=c.asset_add_ftp_reload&folderpath=#URLEncodedFormat(p)#&folder_id=#folder_id#');">Take me back to the last directory</a>
+        			<cfinvoke component="defaults" method="trans" transid="ftp_back_dir" returnvariable="ftp_back_dir" />
+            		<a href="##" onclick="loadcontent('addftp','index.cfm?fa=c.asset_add_ftp_reload&folderpath=#URLEncodedFormat(p)#&folder_id=#folder_id#');">#ftp_back_dir#</a>
             		</cfoutput>
             		<cfabort>
             	</cfcatch>

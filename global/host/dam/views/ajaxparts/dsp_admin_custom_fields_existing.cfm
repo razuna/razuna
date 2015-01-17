@@ -68,7 +68,7 @@
 								<cfelseif cf_show EQ "all">
 									#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#
 								<cfelseif cf_show EQ "users">
-									Users
+									#myFusebox.getApplicationData().defaults.trans("users")#
 								</cfif>
 							</td>
 							<td width="1%" nowrap="true" align="center"><cfif cf_enabled EQ "T"><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>

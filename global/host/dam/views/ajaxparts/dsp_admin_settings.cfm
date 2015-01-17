@@ -210,18 +210,18 @@
 			</tr>
 		</table>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-			<tr><th class="textbold" colspan="2">SAML SSO</th></tr>
+			<tr><th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("saml_sso")#</th></tr>
 			<tr><td colspan="2">#myFusebox.getApplicationData().defaults.trans("saml_desc")#</td></tr>
 			<tr>
-				<td width="120px">SAML Email Path</td>
+				<td width="120px">#myFusebox.getApplicationData().defaults.trans("saml_email_path")#</td>
 				<td><input type="text" name="set2_saml_email" value="#prefs.set2_saml_xmlpath_email#" style="width:80%" placeholder="#myFusebox.getApplicationData().defaults.trans("saml_email_placeholder")#"></td>
 			</tr>
 			<tr>
-				<td>SAML Password Path</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("saml_password_path")#</td>
 				<td><input type="text" name="set2_saml_password" value="#prefs.set2_saml_xmlpath_password#" style="width:80%"  placeholder="#myFusebox.getApplicationData().defaults.trans("saml_password_placeholder")#"></td>
 			</tr>
 			<tr>
-				<td>SAML HTTP Re-direct</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("saml_http_redirect")#</td>
 				<td><input type="text" name="set2_saml_redirect" value="#prefs.set2_saml_httpredirect#" style="width:80%"  placeholder="#myFusebox.getApplicationData().defaults.trans("saml_http_placeholder")#"></td>
 			</tr>
 			<tr>

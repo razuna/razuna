@@ -25,9 +25,8 @@
 --->
 <cfoutput>
 	<cfif NOT qry_ftp.ftp.Succeeded>
-		<h2>An error occured while connecting to your FTP site</h2>
-		<p>Unfortunately, an error occured connecting to your FTP site. Please check your login and password. Below is the error the FTP site reported:</p>
-		<p>Error: #qry_ftp.ftp.errortext#<br />Error Code: #qry_ftp.ftp.errorcode#</p>
+		#myFusebox.getApplicationData().defaults.trans("ftp_error_connect")#
+		<p>#myFusebox.getApplicationData().defaults.trans("error")#: #qry_ftp.ftp.errortext#<br />#myFusebox.getApplicationData().defaults.trans("error")# #myFusebox.getApplicationData().defaults.trans("code")#: #qry_ftp.ftp.errorcode#</p>
 	<cfelse>
 		<cfparam default="/" name="folderpath">
 		<form name="assetftpform" id="assetftpform" method="post" action="#self#">
@@ -66,7 +65,7 @@
 				</tr>
 			</cfloop>
 				<tr>
-					<td colspan="3"><input type="button" name="back" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#URLEncodedFormat(session.ftp_server)#&ftp_user=#URLEncodedFormat(session.ftp_user)#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_add_selected")#" class="button"> <div id="ftpuploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
+					<td colspan="3"><input type="button" name="back" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="#myFusebox.getApplicationData().defaults.trans('refresh')#" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#URLEncodedFormat(session.ftp_server)#&ftp_user=#URLEncodedFormat(session.ftp_user)#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_add_selected")#" class="button"> <div id="ftpuploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
 				</tr>
 			</table>
 			<br>
@@ -92,7 +91,7 @@
 						<cfif qry_templates.recordcount NEQ 0>
 							<div>
 								<select name="upl_template">
-									<option value="0" selected="selected">Choose Rendition Template</option>
+									<option value="0" selected="selected">#myFusebox.getApplicationData().defaults.trans("choose_rend_template")#</option>
 									<option value="0">---</option>
 									<cfloop query="qry_templates">
 										<option value="#upl_temp_id#">#upl_name#</option>

@@ -26,43 +26,43 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 	<tr>
-		<td class="td2"><strong>Creator</strong></td>
+		<td class="td2"><strong>#myFusebox.getApplicationData().defaults.trans("creator")#</strong></td>
 		<td class="td2" width="100%"><input type="text" name="iptc_contact_creator" style="width:350px;" value="#qry_xmp.creator#" onchange="javascript:document.form#attributes.file_id#.xmp_author.value = document.form#attributes.file_id#.iptc_contact_creator.value"></td>
 	</tr>
 	<tr>
-		<td class="td2" nowrap="nowrap"><strong>Creator's Job Title</strong></td>
+		<td class="td2" nowrap="nowrap"><strong>#myFusebox.getApplicationData().defaults.trans("creator_job_title")#</strong></td>
 		<td class="td2" width="100%"><input type="text" name="iptc_contact_creator_job_title" style="width:350px;" value="#qry_xmp.authorstitle#" onchange="javascript:document.form#attributes.file_id#.xmp_author_title.value = document.form#attributes.file_id#.iptc_contact_creator_job_title.value"></td>
 	</tr>
 	<tr>
-		<td class="td2" valign="top"><strong>Address</strong></td>
+		<td class="td2" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("address")#</strong></td>
 		<td class="td2" width="100%"><textarea name="iptc_contact_address" style="width:350px;height:40px;">#qry_xmp.iptcaddress#</textarea></td>
 	</tr>
 	<tr>
-		<td class="td2"><strong>City</strong></td>
+		<td class="td2"><strong>#myFusebox.getApplicationData().defaults.trans("user_city")#</strong></td>
 		<td class="td2" width="100%"><input type="text" name="iptc_contact_city" style="width:350px;" value="#qry_xmp.iptccity#"></td>
 	</tr>
 	<tr>
-		<td class="td2"><strong>State/Province</strong></td>
+		<td class="td2"><strong>#myFusebox.getApplicationData().defaults.trans("state_province")#</strong></td>
 		<td class="td2" width="100%"><input type="text" name="iptc_contact_state_province" style="width:350px;" value="#qry_xmp.iptcstate#"></td>
 	</tr>
 	<tr>
-		<td class="td2"><strong>Postal Code</strong></td>
+		<td class="td2"><strong>#myFusebox.getApplicationData().defaults.trans("postal_code")#</strong></td>
 		<td class="td2" width="100%"><input type="text" name="iptc_contact_postal_code" style="width:350px;" value="#qry_xmp.iptczip#"></td>
 	</tr>
 	<tr>
-		<td class="td2"><strong>Country</strong></td>
+		<td class="td2"><strong>#myFusebox.getApplicationData().defaults.trans("user_country")#</strong></td>
 		<td class="td2" width="100%"><input type="text" name="iptc_contact_country" style="width:350px;" value="#qry_xmp.iptccountry#"></td>
 	</tr>
 	<tr>
-		<td class="td2" valign="top"><strong>Phone(s)</strong></td>
+		<td class="td2" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("phones")#</strong></td>
 		<td class="td2" width="100%"><textarea name="iptc_contact_phones" style="width:350px;height:40px;">#qry_xmp.iptcphone#</textarea></td>
 	</tr>
 	<tr>
-		<td class="td2" valign="top"><strong>eMail(s)</strong></td>
+		<td class="td2" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("emails")#</strong></td>
 		<td class="td2" width="100%"><textarea name="iptc_contact_emails" style="width:350px;height:40px;">#qry_xmp.iptcemail#</textarea></td>
 	</tr>
 	<tr>
-		<td class="td2" valign="top"><strong>Website(s)</strong></td>
+		<td class="td2" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("websites")#</strong></td>
 		<td class="td2" width="100%"><textarea name="iptc_contact_websites" style="width:350px;height:40px;">#qry_xmp.iptcwebsite#</textarea></td>
 	</tr>
 </table>

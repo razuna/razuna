@@ -67,7 +67,7 @@
 				height: 200,
 				modal: true,
 				buttons: {
-					"Delete record": function() {
+					"#myFusebox.getApplicationData().defaults.trans('remove')#": function() {
 						// Call action to delete this workflow
 						$('##div_forall').load('#myself#c.wl_news_remove&news_id=' + nid);
 						// Refresh list in the back
@@ -75,7 +75,7 @@
 						// Close this window
 						$( this ).dialog( "close" );
 					},
-					Cancel: function() {
+					"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 						$( this ).dialog( "close" );
 					}
 				}

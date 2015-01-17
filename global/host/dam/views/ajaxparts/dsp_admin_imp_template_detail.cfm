@@ -65,16 +65,16 @@
 			<div id="input#currentRow#" style="margin-bottom:4px;" class="clonedInput">
 		        <input type="text" name="field_#currentRow#" id="field_#currentRow#" style="width:250px;" value="#imp_field#" />
 		        <select id="select_#currentRow#" name="select_#currentRow#" style="width:250px;">
-		        	<option selected="selected">Map to ...</option>
-		        	<option>--- Key fields ---</option>
+		        	<option selected="selected">#myFusebox.getApplicationData().defaults.trans("map_to")# ...</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("key_fields")# ---</option>
 		        	<cfloop list="#attributes.meta_keys#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        	<option>--- Default ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("default")# ---</option>
 		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        	<option>--- Custom Fields ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("custom_fields_header")# ---</option>
 		        	<cfloop query="attributes.meta_cf">#theimpmap#<option value="#cf_id#"<cfif cf_id EQ theimpmap> selected="selected"</cfif>>#cf_text#</option></cfloop>
-		        	<option>--- For Images ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_images")# ---</option>
 		        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
-		        	<option>--- For Documents (PDF) ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_documents")# ---</option>
 		        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
 		        </select>
 		    </div>
@@ -84,16 +84,16 @@
 		    <div id="input1" style="margin-bottom:4px;" class="clonedInput">
 		        <input type="text" name="field_1" id="field_1" style="width:250px;" />
 		        <select id="select_1" name="select_1" style="width:250px;">
-		        	<option selected="selected">Map to ...</option>
-		        	<option>--- Key fields ---</option>
+		        	<option selected="selected">#myFusebox.getApplicationData().defaults.trans("map_to")# ...</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("key_fields")# ---</option>
 		        	<cfloop list="#attributes.meta_keys#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        	<option>--- Default ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("default")# ---</option>
 		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        	<option>--- Custom Fields ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("custom_fields_header")# ---</option>
 		        	<cfloop query="attributes.meta_cf"><option value="#cf_id#">#cf_text#</option></cfloop>
-		        	<option>--- For Images ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_images")#---</option>
 		        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-		        	<option>--- For Documents (PDF) ---</option>
+		        	<option>--- #myFusebox.getApplicationData().defaults.trans("for_documents")# ---</option>
 		        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
 		        </select>
 		    </div>

@@ -35,10 +35,10 @@
 	</cfif>
 
 	<div style="padding-bottom:10px;float:left;">
-		<strong>Total: #qry_users.recordcount# users</strong>
+		<strong>#myFusebox.getApplicationData().defaults.trans("total")# : #qry_users.recordcount# #lcase(myFusebox.getApplicationData().defaults.trans("users"))#</strong>
 	</div>
 	<div style="padding-bottom:10px;float:right;">
-		<div style="padding-top:4px;"><a href="##" onclick="$('##theusersearch').toggle('slow');" style="text-decoration:underline;padding-right:5px;">Search</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#c.users_import','Import',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Import</a> | <a href="##" onclick="showwindow('#myself#ajax.users_export','Export',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Export</a></div>
+		<div style="padding-top:4px;"><a href="##" onclick="$('##theusersearch').toggle('slow');" style="text-decoration:underline;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("header_search")#</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#c.users_import','#myFusebox.getApplicationData().defaults.trans("import")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("import")#</a> | <a href="##" onclick="showwindow('#myself#ajax.users_export','Export',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("export")#</a></div>
 	</div>
 	<!--- The search --->
 	<div id="theusersearch" style="display:none;clear:both;float:right;">
@@ -47,7 +47,7 @@
 				<tr>
 					<td>#myFusebox.getApplicationData().defaults.trans("username")#</td>
 					<td>#myFusebox.getApplicationData().defaults.trans("user_company")#</td>
-					<td colspan="2">eMail</td>
+					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("email")#</td>
 				</tr>
 				<tr>
 					<td><input type="text" size="25" name="user_login_name" id="user_login_name2" /></td>
@@ -73,8 +73,8 @@
 						<!--- Select all link --->
 						<div style="float:left;">
 							<a href="##" onclick="selectusers();return false;" id="selectalluserslink">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
-							<a href="##" id="selectdelete" style="display:none;padding-left:15px;" onclick="$('##form_users_list').submit();">Delete</a>
-							<a href="##" id="selectwelcome" style="display:none;padding-left:15px;" onclick="sendemails();">Send welcome email</a>
+							<a href="##" id="selectdelete" style="display:none;padding-left:15px;" onclick="$('##form_users_list').submit();">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
+							<a href="##" id="selectwelcome" style="display:none;padding-left:15px;" onclick="sendemails();">#myFusebox.getApplicationData().defaults.trans("send_welcome_email")#</a>
 						</div>
 						<!--- Next and back --->
 						<div style="float:right;">
@@ -105,7 +105,7 @@
 					<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("ad_user")#</th>
 					<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
 					<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
-					<th><a href="##" onclick="loadcontent('admin_users','#myself#c.users&sortby=user_email&sortorder=#sortorder#');return false;">eMail</a> <cfif qry_users.sortby eq 'user_email'><img src="#dynpath#/global/host/dam/images/arrow_#direction#.gif" width="10" height="10" border="0" valign="#align#"></cfif></th>
+					<th><a href="##" onclick="loadcontent('admin_users','#myself#c.users&sortby=user_email&sortorder=#sortorder#');return false;">#myFusebox.getApplicationData().defaults.trans("email")#</a> <cfif qry_users.sortby eq 'user_email'><img src="#dynpath#/global/host/dam/images/arrow_#direction#.gif" width="10" height="10" border="0" valign="#align#"></cfif></th>
 					<th colspan="2"></th>
 				</tr>
 				<!--- For paging --->
@@ -207,7 +207,7 @@
 				height:250,
 				modal: true,
 				buttons: {
-					"I understand. Delete users": function() {
+					"#myFusebox.getApplicationData().defaults.trans('understood')#": function() {
 						// Show loading bar
 						$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 						// Get values
@@ -225,7 +225,7 @@
 						});
 						$( this ).dialog( "close" );	
 					},
-					Cancel: function() {
+					"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 						$( this ).dialog( "close" );
 					}
 				}
@@ -241,7 +241,7 @@
 				modal: true,
 				title:'Warning!',
 				buttons: {
-					"Send Emails": function() {
+					"#myFusebox.getApplicationData().defaults.trans('send_emails')#": function() {
 						// Show loading bar
 						$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 						// Get values
@@ -259,7 +259,7 @@
 						});
 						$( this ).dialog( "close" );	
 					},
-					Cancel: function() {
+					"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 						$( this ).dialog( "close" );
 					}
 				}

@@ -58,7 +58,7 @@
 					<br />
 					<input type="radio" name="sf_type" id="sf_type" value="dropbox"<cfif qry_sf.sf.sf_type EQ "dropbox" OR qry_sf.sf.sf_type EQ ""> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_dropbox")# <cfif chk_dropbox.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Dropbox">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
 					<br />
-					<input type="radio" name="sf_type" id="sf_type" value="amazon"<cfif qry_sf.sf.sf_type EQ "amazon"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_s3")# 
+					<input type="radio" name="sf_type" id="sf_type" value="amazon"<cfif qry_sf.sf.sf_type EQ "amazon"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_s3")#
 					<cfif chk_s3.recordcount EQ 0>
 						<span style="color:red;"><em>(<cfset transvalues[1] = "Amazon S3">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span>
 					<cfelse>
@@ -68,7 +68,7 @@
 								<cfset bucket = qry_sf.sfprop.sf_prop_value>
 							</cfif>
 						</cfloop>
-						Bucket: 
+						#myFusebox.getApplicationData().defaults.trans('bucket')#: 
 						<select name="sf_s3_bucket">
 							<cfloop query="qry_s3_buckets">
 								<option value="#set_id#" <cfif set_id EQ bucket>selected="#bucket#"</cfif>>#set_pref#</option>
@@ -81,7 +81,7 @@
 					<cfelse>
 						<cfset checked = "">
 					</cfif>
-					Extract when zip archive: <input type="checkbox" name="sf_zipextract" id="sf_zipextract" #checked#>
+					#myFusebox.getApplicationData().defaults.trans('scheduled_uploads_extract_zip')#: <input type="checkbox" name="sf_zipextract" id="sf_zipextract" #checked#>
 					<!--- <br />
 					<input type="radio" name="sf_type" id="sf_type" value="box"<cfif qry_sf.sf.sf_type EQ "box"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_box")# <cfif chk_box.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Box">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
 					<br />
@@ -223,7 +223,7 @@
 						$("##sf_status").html("#myFusebox.getApplicationData().defaults.trans("success")#");
 						$("##sf_status").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 						// Update folder list
-						switchmainselection('smart_folders','Smart Folders');
+						switchmainselection('smart_folders','#myFusebox.getApplicationData().defaults.trans("customization_explorer_smartfolder")#');
 						// $('##explorer').load('#myself#c.smart_folders');
 						// Toogle
 						$('.ddselection_header').hide();
@@ -246,12 +246,12 @@
 						// Refresh right side
 						$('##rightside').load('#myself#c.smart_folders_content&sf_id=0');
 						// Refresh folder list
-						switchmainselection('smart_folders','Smart Folders');
+						switchmainselection('smart_folders','#myFusebox.getApplicationData().defaults.trans("customization_explorer_smartfolder")#');
 						// $('##explorer').load('#myself#c.smart_folders');
 						// Close this window
 						$( this ).dialog( "close" );
 					},
-					Cancel: function() {
+					"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
 						$( this ).dialog( "close" );
 					}
 				}

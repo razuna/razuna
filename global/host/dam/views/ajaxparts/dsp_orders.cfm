@@ -25,16 +25,16 @@
 --->
 <cfoutput>
 	<div style="padding-top:5px;">
-		<a href="##" onclick="loadcontent('thedroporders','#myself#c.orders');">Refresh</a> | <a href="##" onclick="loadcontent('thedroporders','#myself#c.orders_reset');">Reset CartID</a>
+		<a href="##" onclick="loadcontent('thedroporders','#myself#c.orders');">#myFusebox.getApplicationData().defaults.trans("refresh")#</a> | <a href="##" onclick="loadcontent('thedroporders','#myself#c.orders_reset');">#myFusebox.getApplicationData().defaults.trans("reset_cart")#</a>
 	</div>
 	<div style="overflow:auto;font-weight:normal;">
 		<table border="0">
 			<cfloop query="qry_orders">
 				<tr>
-					<td><strong>OrderID:</strong> <a href="##" onclick="tooglefooter('2');loadcontent('rightside','#myself#c.order_show&cart_id=#cart_id#');$('##footer_drop').css('height','30px');">#cart_id#</a></td>
-					<td><strong>Date:</strong> #cart_order_date#</td>
-					<td><strong>Status:</strong> <cfif cart_order_done EQ 0><span style="color:red;">Pending</span><cfelse><span style="color:green;">Done</span></cfif></td>
-					<td><a href="##" onclick="loadcontent('thedroporders','#myself#c.order_remove&cart_id=#cart_id#');">Remove</a></td>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("orderid")#:</strong> <a href="##" onclick="tooglefooter('2');loadcontent('rightside','#myself#c.order_show&cart_id=#cart_id#');$('##footer_drop').css('height','30px');">#cart_id#</a></td>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("date")#:</strong> #cart_order_date#</td>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("ad_status")#:</strong> <cfif cart_order_done EQ 0><span style="color:red;">#myFusebox.getApplicationData().defaults.trans("pending")#</span><cfelse><span style="color:green;">#myFusebox.getApplicationData().defaults.trans("done")#</span></cfif></td>
+					<td><a href="##" onclick="loadcontent('thedroporders','#myself#c.order_remove&cart_id=#cart_id#');">#myFusebox.getApplicationData().defaults.trans("remove_txt")#</a></td>
 				<tr>
 			</cfloop>
 		</table>

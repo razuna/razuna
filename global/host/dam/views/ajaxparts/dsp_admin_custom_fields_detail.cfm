@@ -76,20 +76,20 @@
 							<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</td>
 							<td width="100%">
 								<select name="cf_type" style="width:150px;">
-									<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>Text</option>
-									<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>Textarea</option>
-									<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>Radio Button (Yes/No)</option>
-									<option value="select"<cfif qry_field.cf_type EQ "select"> selected="true"</cfif>>Select</option>
+									<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("text")#</option>
+									<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
+									<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
+									<option value="select"<cfif qry_field.cf_type EQ "select"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("select")#</option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td nowrap="nowrap" valign="top">Select list</td>
-							<td><textarea name="cf_select_list" style="width:150px;height:40px;">#qry_field.cf_select_list#</textarea><br /><em>(Separate values with a coma)</em></td>
+							<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("select_list")#</td>
+							<td><textarea name="cf_select_list" style="width:150px;height:40px;">#qry_field.cf_select_list#</textarea><br /><em>#myFusebox.getApplicationData().defaults.trans("separate_comma")#</em></td>
 						</tr>
 						<tr>
-							<td width="120" nowrap="true" style="padding-right:10px;" valign="top">Show in form</td>
-							<td width="100%"><input type="radio" name="cf_in_form" value="true"<cfif qry_field.cf_in_form> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_in_form" value="false"<cfif !qry_field.cf_in_form> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#<br /><em>(only applies to "users" fields and the request form)</em></td>
+							<td width="120" nowrap="true" style="padding-right:10px;" valign="top">#myFusebox.getApplicationData().defaults.trans("show_in_form")#</td>
+							<td width="100%"><input type="radio" name="cf_in_form" value="true"<cfif qry_field.cf_in_form> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_in_form" value="false"<cfif !qry_field.cf_in_form> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#<br /><em>#myFusebox.getApplicationData().defaults.trans("apply_users_request")#</em></td>
 						</tr>
 						<!--- <tr>
 							<td width="120" nowrap="true" style="padding-right:10px;">Custom Group</td>
@@ -100,11 +100,11 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					Groups/Users that can edit the field:<br />
-					<select data-placeholder="Choose a group or user" class="chzn-select" style="width:500px;" name="cf_edit" id="cf_edit_#attributes.cf_id#" multiple="multiple">
+					#myFusebox.getApplicationData().defaults.trans("groups_users_edit")#<br />
+					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="cf_edit" id="cf_edit_#attributes.cf_id#" multiple="multiple">
 						<option value=""></option>
-						<option value="1"<cfif listfind(qry_field.cf_edit,1)> selected="selected"</cfif>>System-Administrators</option>
-						<option value="2"<cfif listfind(qry_field.cf_edit,2)> selected="selected"</cfif>>Administrators</option>
+						<option value="1"<cfif listfind(qry_field.cf_edit,1)> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("system_administrators")#</option>
+						<option value="2"<cfif listfind(qry_field.cf_edit,2)> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("administrators")#</option>
 						<cfloop query="qry_groups">
 							<option value="#grp_id#"<cfif listfind(qry_field.cf_edit,grp_id)> selected="selected"</cfif>>#grp_name#</option>
 						</cfloop>
@@ -113,12 +113,12 @@
 						</cfloop>
 					</select>
 					<br />
-					<em>(If left empty users can edit field according to their folder permissions)</em>
+					<em>#myFusebox.getApplicationData().defaults.trans("field_empty_permissions")#</em>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2">
-					XMP path to use for parsing: <br/>
+					#myFusebox.getApplicationData().defaults.trans("xmp_parse_path")# <br/>
 					<input type="text" name="cf_xmp_path" size="30" value="#qry_field.cf_xmp_path#" style="width:490px;">
 				</td>
 			</tr>

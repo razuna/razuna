@@ -28,9 +28,9 @@
 		<ul>
 			<li><a href="##addsingle">#myFusebox.getApplicationData().defaults.trans("header_add_asset")#</a></li>
 			<li><a href="##addserver">#myFusebox.getApplicationData().defaults.trans("header_add_asset_server")#</a></li>
-			<cfif cs.tab_add_from_email>
+			<!--- <cfif cs.tab_add_from_email>
 				<li><a href="##addemail" onclick="loadcontent('addemail','#myself##xfa.addemail#&folder_id=#folder_id#');">#myFusebox.getApplicationData().defaults.trans("header_add_asset_email")#</a></li>
-			</cfif>
+			</cfif> --->
 			<cfif cs.tab_add_from_ftp>
 				<li><a href="##addftp" onclick="loadcontent('addftp','#myself##xfa.addftp#&folder_id=#folder_id#');">#myFusebox.getApplicationData().defaults.trans("header_add_asset_ftp")#</a></li>
 			</cfif>
@@ -55,7 +55,7 @@
 				<input type="button" value="#myFusebox.getApplicationData().defaults.trans("import_from_folder_button")#" onclick="importpath();" class="button" />
 			</p>
 		</div>
-		<cfif cs.tab_add_from_email><div id="addemail">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
+		<!--- <cfif cs.tab_add_from_email><div id="addemail">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif> --->
 		<cfif cs.tab_add_from_ftp><div id="addftp">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 		<cfif cs.tab_add_from_link><div id="addlink">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 	</div>

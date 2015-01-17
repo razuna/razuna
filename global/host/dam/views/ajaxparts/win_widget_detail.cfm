@@ -158,9 +158,9 @@
 		</div>
 		<!--- widget_code --->
 		<div id="widget_code">
-			<strong>Link to Widget</strong><br />
-			<input type="text" style="width:450px;" id="widget_text" readonly="readonly" value="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#"> <a href="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" target="_blank" id="widget_link">Jump to</a><br />
-			<strong>Embed Code</strong><br />
+			<strong>#myFusebox.getApplicationData().defaults.trans("widget_link")#</strong><br />
+			<input type="text" style="width:450px;" id="widget_text" readonly="readonly" value="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#"> <a href="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" target="_blank" id="widget_link">#myFusebox.getApplicationData().defaults.trans("jump_to")#</a><br />
+			<strong>#myFusebox.getApplicationData().defaults.trans("embed_code")#</strong><br />
 			<textarea id="widget_textarea" style="width:450px;height:100px;" readonly="readonly"><iframe frameborder="0" src="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" scrolling="auto" width="100%" height="500"></iframe></textarea>
 		</div>
 		<!--- Loading Bars --->

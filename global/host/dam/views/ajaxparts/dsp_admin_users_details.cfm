@@ -87,7 +87,7 @@
 			</tr>
 			<tr>
 				<td nowrap="nowrap" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("password_confirm")#*</strong></td>
-				<td><span id="spryconfirm1"><input type="password" name="user_pass_confirm" id="user_pass_confirm" style="width:300px;" class="text" <cfif attributes.user_id EQ 0><cfelseif qry_detail.user_pass EQ "">disabled</cfif>></span><br ><cfif qry_detail.user_pass NEQ "" OR attributes.user_id EQ 0><a href="##" onclick="loadpass();return false;" title="Click here to generate a secure password">Generate password</a></cfif><div id="randompass"></div></td>
+				<td><span id="spryconfirm1"><input type="password" name="user_pass_confirm" id="user_pass_confirm" style="width:300px;" class="text" <cfif attributes.user_id EQ 0><cfelseif qry_detail.user_pass EQ "">disabled</cfif>></span><br ><cfif qry_detail.user_pass NEQ "" OR attributes.user_id EQ 0><a href="##" onclick="loadpass();return false;" title="#myFusebox.getApplicationData().defaults.trans("generate_password_desc")#">#myFusebox.getApplicationData().defaults.trans("generate_password")#</a></cfif><div id="randompass"></div></td>
 			</tr>
 			<tr>
 				<th colspan="2"><br /></th>
@@ -297,7 +297,7 @@
 <div id="dialog-confirm-admin" style="display:none;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 250px 0;"></span>This user has access to the following tenants: #valuelist(qry_userhosts.host_name)#.<br/><br/>If you choose to make this user an administrator it will automatically become an administrator for all tenants it has access to and any groups assignments for the user will be lost.</div>
 <div id="dialog-confirm-admin2" style="display:none;"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 250px 0;"></span>This user has access to the following tenants: #valuelist(qry_userhosts.host_name)#.<br/><br/>If you choose to remove this user as an administrator then it will also be removed as administrator from all other tenants.</div>
 <div id="submit" style="float:right;padding:10px;">
-	<cfif !attributes.myinfo><input type="checkbox" value="true" name="emailinfo" /> <span style="padding-right:15px;">Send user welcome email</span></cfif><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+	<cfif !attributes.myinfo><input type="checkbox" value="true" name="emailinfo" /> <span style="padding-right:15px;">#myFusebox.getApplicationData().defaults.trans("send_welcome_email")#</span></cfif><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 
 </form>
 

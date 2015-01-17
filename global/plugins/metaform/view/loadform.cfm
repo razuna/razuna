@@ -105,7 +105,7 @@
 													<cfset thereq = false>
 												</cfif>
 												#ucase(thefield)#<cfif thereq> *</cfif><br />
-												<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" name="#id#_#thefield#" id="#id#_#thefield#"multiple="multiple">
+												<select data-placeholder="Choose label" class="chzn-select" style="width:410px;" name="#id#_#thefield#" id="#id#_#thefield#"multiple="multiple">
 													<option value=""></option>
 													<cfloop query="result.cfc.pl.loadform.qry_labels">
 														<option value="#label_id#">#label_path#</option>

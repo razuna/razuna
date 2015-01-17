@@ -46,10 +46,10 @@
 	<div id="tabs_footer">
 		<ul>
 			<li style="#basket_css#" ><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></li>
-			<li style="#favorites_css#"><a href="##thedropfav" id="div_link_fav"onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">Show #myFusebox.getApplicationData().defaults.trans("header_favorites")#</a></li>
-			<li style="#orders_css#"><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">Show Orders</a></li>
+			<li style="#favorites_css#"><a href="##thedropfav" id="div_link_fav"onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">#myFusebox.getApplicationData().defaults.trans("show_favorites")#</a></li>
+			<li style="#orders_css#"><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">#myFusebox.getApplicationData().defaults.trans("show_orders")#</a></li>
 			<cfif !application.razuna.whitelabel>
-				<li style="float:right;"><a href="##raztab" onclick="tooglefooter('3');">About Razuna</a></li>
+				<li style="float:right;"><a href="##raztab" onclick="tooglefooter('3');">#myFusebox.getApplicationData().defaults.trans("about")# Razuna</a></li>
 			<cfelseif application.razuna.whitelabel AND wl_text NEQ "">
 				<li style="float:right;"><a href="##raztab" onclick="tooglefooter('3');">#wl_text#</a></li>
 			</cfif>
@@ -68,10 +68,10 @@
 					<br>
 					<cfif !application.razuna.isp>
 						<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#<br>
-						Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br>
+						#myFusebox.getApplicationData().defaults.trans("licensed_under")# <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br>
 					</cfif>
-					<a href="http://razuna.com" target="_blank">Razuna Hosted Platform</a> and <a href="http://razuna.org" target="_blank">Razuna Open Source</a><br>
-					<a href="http://blog.razuna.com" target="_blank">Visit the Razuna Blog for latest news.</a>
+					<a href="http://razuna.com" target="_blank">Razuna #myFusebox.getApplicationData().defaults.trans("hosted_platform")#</a> and <a href="http://razuna.org" target="_blank">Razuna #myFusebox.getApplicationData().defaults.trans("open_source")#</a><br>
+					<a href="http://blog.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("visit_blog")#</a>
 				</cfif>
 			</div>
 		</div>
@@ -89,24 +89,24 @@
 			// Resize and show
 			thefooterslider.css('height','160px');
 			if(what == 0){
-				$('##div_link_basket').html('Hide #myFusebox.getApplicationData().defaults.trans("header_basket")#');
+				$('##div_link_basket').html('#myFusebox.getApplicationData().defaults.trans("hide_basket")#');
 				//loadcontent('thedropbasket','#myself#c.basket');
 			}
 			else if (what == 1){
-				$('##div_link_fav').html('Hide #myFusebox.getApplicationData().defaults.trans("header_favorites")#');
+				$('##div_link_fav').html('#myFusebox.getApplicationData().defaults.trans("hide_favorites")#');
 				//loadcontent('thedropfav','#myself#c.favorites');
 			}
 			else if (what == 2){
-				$('##div_link_orders').html('Hide Orders');
+				$('##div_link_orders').html('#myFusebox.getApplicationData().defaults.trans("hide_orders")#');
 				//loadcontent('thedroporders','#myself#c.orders');
 			}
 		}
 		else {
 			// Resize and Hide
 			if(selected == what){
-				$('##div_link_basket').html('Show #myFusebox.getApplicationData().defaults.trans("header_basket")#');
-				$('##div_link_fav').html('Show #myFusebox.getApplicationData().defaults.trans("header_favorites")#');
-				$('##div_link_orders').html('Show Orders');
+				$('##div_link_basket').html('#myFusebox.getApplicationData().defaults.trans("show_basket")#');
+				$('##div_link_fav').html('#myFusebox.getApplicationData().defaults.trans("show_favorites")#');
+				$('##div_link_orders').html('#myFusebox.getApplicationData().defaults.trans("show_orders")#');
 				thefooterslider.css('height','30px');
 			}
 		}	
@@ -160,7 +160,7 @@
 			url: url,
 		   	data: items,
 		   	success: function(){
-		   		$('##send_feedback_status').html('We have sent your feedback and will contact you if needed. Thank you.');
+		   		$('##send_feedback_status').html('#myFusebox.getApplicationData().defaults.trans("send_feedback_status")#');
 		   	}
 		});
 		return false;

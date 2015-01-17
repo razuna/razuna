@@ -129,9 +129,9 @@
 				<!--- Select All --->
 				<tr>
 					<td colspan="4" style="padding-top:15px;">
-						<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect All</a>
-						<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect #myFusebox.getApplicationData().defaults.trans("originals")#</a>
-						<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
+						<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans('all')#</a>
+						<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans("originals")#</a>
+						<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans('thumbnails')#</a>
 					</td>
 				</tr>
 			</cfif>
