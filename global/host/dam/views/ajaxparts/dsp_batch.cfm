@@ -116,8 +116,8 @@
 			<!--- Labels --->
 			<cfif cs.tab_labels>
 				<div id="batch_labels" style="min-height:200px;">
-					<strong>Choose #myFusebox.getApplicationData().defaults.trans("labels")#</strong><br />
-					<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" name="labels" id="tags_labels" multiple="multiple">
+					<strong>#myFusebox.getApplicationData().defaults.trans("choose")# #myFusebox.getApplicationData().defaults.trans("labels")#</strong><br />
+					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" name="labels" id="tags_labels" multiple="multiple">
 						<option value=""></option>
 						<cfloop query="qry_labels">
 							<cfset l = replace(label_path," "," AND ","all")>
@@ -143,7 +143,7 @@
 		  <p>#myFusebox.getApplicationData().defaults.trans("batch_replace_warning")#</p>
 		</div>
 		<!--- Submit Button --->
-		<div style="float:right;padding:10px;">New values will <input type="radio" name="batch_replace" value="true" onclick="$('##dialog').dialog();"/> replace or <input type="radio" name="batch_replace" value="false" checked="checked" /> append to existing records. <input type="submit" name="submit" value="Batch records now" class="button"></div>
+		<div style="float:right;padding:10px;">#myFusebox.getApplicationData().defaults.trans("batch_desc_1")# <input type="radio" name="batch_replace" value="true" onclick="$('##dialog').dialog();"/> #myFusebox.getApplicationData().defaults.trans("batch_desc_2")# <input type="radio" name="batch_replace" value="false" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("batch_desc_3")#. <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("batch_recs")#" class="button"></div>
 		<div id="updatebatch" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</form>
 	<!--- Activate the Tabs --->

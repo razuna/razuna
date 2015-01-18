@@ -159,7 +159,7 @@
 										<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("help_with_search")#</a></p>
 									</div>
 									<div style="float:left;">
-										<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:250px;" placeholder="Quick Search">
+										<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:250px;" placeholder="#myFusebox.getApplicationData().defaults.trans("quick_search")#">
 									</div>
 									<div style="float:left;">
 										<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("header_search")#</button>

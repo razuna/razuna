@@ -155,8 +155,8 @@
 																<cfif qry_detail.detail.link_kind NEQ "url">
 																	<strong>#myFusebox.getApplicationData().defaults.trans("original")#</strong><br />
 																	<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#attributes.file_id#&type=doc','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
-																	<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank" style="padding-left:20px;"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | 
-																	<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
+																	<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank" style="padding-left:20px;"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>#myFusebox.getApplicationData().defaults.trans("view_link")#</a> | 
+																	<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">#myFusebox.getApplicationData().defaults.trans("direct_link")#</a>
 																	<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#attributes.file_id#" target="_blank">PDF as image(s)</a>
 																	</cfif>
 																	<div id="divo#attributes.file_id#" style="display:none;width:450px;">
@@ -193,7 +193,7 @@
 										<!--- Filename --->
 										<tr>
 											<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-											<td width="100%"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.file_upc.value = document.form#attributes.file_id#.file_name.value.split('.')[0];}</cfif>"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+											<td width="100%"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;<cfif prefs.set2_upc_enabled>if (!isNaN(document.form#attributes.file_id#.fname.value.substr(0,6))) {document.form#attributes.file_id#.file_upc.value = document.form#attributes.file_id#.file_name.value.split('.')[0];}</cfif>"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 										</tr>
 										<!--- Description & Keywords --->
 										<cfloop query="qry_langs">
@@ -235,7 +235,7 @@
 															</cfif>	
 														</cfif>
 														<cfif attributes.thelabelsqry.recordcount lte 200>
-															<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_doc" onchange="razaddlabels('tags_doc','#attributes.file_id#','doc');" multiple="multiple">
+															<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tags_doc" onchange="razaddlabels('tags_doc','#attributes.file_id#','doc','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 															<option value=""></option>
 															<cfloop query="attributes.thelabelsqry">
 																<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -252,7 +252,7 @@
 																		<cfif ListFind(qry_labels,'#label_id#') NEQ 0>
 																		<div class='singleLabel' id="#label_id#">
 																			<span>#label_path#</span>
-																			<a class='labelRemove'  onclick="removeLabel('#attributes.file_id#','doc', '#label_id#',this)" >X</a>
+																			<a class='labelRemove'  onclick="removeLabel('#attributes.file_id#','doc', '#label_id#',this,'#myFusebox.getApplicationData().defaults.trans("change_saved")#')" >X</a>
 																		</div>
 																		</cfif>
 																	</cfloop>
@@ -303,7 +303,7 @@
 										</tr>
 										<tr>
 											<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
-											<td valign="top"><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.folder&col=F&folder_id=#qry_detail.detail.folder_id_r#');destroywindow(1);">#qry_detail.detail.folder_name#</a> <cfif cs.show_favorites_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+											<td valign="top"><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.folder&col=F&folder_id=#qry_detail.detail.folder_id_r#');destroywindow(1);">#qry_detail.detail.folder_name#</a> <cfif cs.show_favorites_part><a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 										</tr>
 										<tr>
 											<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("created_by")#</td>
@@ -342,7 +342,7 @@
 		<cfif cs.tab_metadata>
 			<div id="meta" class="collapsable">
 				<!--- Description & Keywords --->
-				<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
+				<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
 					<div id="detaildesc" style="padding-top:10px;">
 						<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 							<tr>
@@ -352,7 +352,7 @@
 											<!--- Filename --->
 											<tr>
 												<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-												<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
+												<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_favorites_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
 												</td>
 											</tr>
 											<cfloop query="qry_langs">
@@ -413,7 +413,7 @@
 				<!--- Custom fields --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
 					<br />
-					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
+					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
 					<div id="customfields" style="padding-top:10px;">
 						<cfinclude template="inc_custom_fields.cfm">
 					</div>
@@ -422,7 +422,7 @@
 				<!--- Raw Metadata --->
 				<cfif qry_detail.detail.link_kind NEQ "url">
 					<br />
-					<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">&gt; Raw Metadata</div></a>
+					<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("raw_metadata")#</div></a>
 					<div id="rawmetadata" style="display:none;padding-top:10px;">
 						<div style="height:400px;overflow:auto;">#ParagraphFormat(qry_detail.detail.file_meta)#</div>
 					</div>

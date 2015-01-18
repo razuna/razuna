@@ -172,11 +172,11 @@
 				<option value="5">176x144 (200K)</option>
 				<option value="6">128x96 (300K)</option>
 				<option value="7">176x144 (300K)</option>
-				<option value="8">128x96 (No size limit)</option>
-				<option value="9">176x144 (No size limit)</option>
-				<option value="10">352x288 (No size limit)</option>
-				<option value="11">704x576 (No size limit)</option>
-				<option value="12">1408x1152 (No size limit)</option>
+				<option value="8">128x96 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="9">176x144 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="10">352x288 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="11">704x576 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
+				<option value="12">1408x1152 (#myFusebox.getApplicationData().defaults.trans("no_size_limit")#)</option>
 				</select>
 				</td>
 				<td nowrap="true"></td>

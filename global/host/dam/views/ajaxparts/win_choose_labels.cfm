@@ -33,7 +33,7 @@
 					<input name="searchtext" id="searchtext" type="text" class="textbold" style="width:250px;" value="">
 				</div>
 				<div style="float:left;padding-left:2px;padding-top:1px;">
-					<button class="awesome big green" onclick="choose_label();">Search</button>
+					<button class="awesome big green" onclick="choose_label();">#myFusebox.getApplicationData().defaults.trans("user_search")#</button>
 				</div>
 			</div>
 		</div>

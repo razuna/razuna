@@ -33,7 +33,7 @@
 		<tr class="list">
 			<td colspan="2" style="padding-top:15px;">#myFusebox.getApplicationData().defaults.trans("admin_labels_allow")# 
 				<br/><br/>
-				<select data-placeholder="Choose a group or user" class="chzn-select" style="width:410px;" name="labels_public" id="labels_public" onchange="save_setting('labels_public')" multiple="multiple">
+				<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:410px;" name="labels_public" id="labels_public" onchange="save_setting('labels_public')" multiple="multiple">
 					<option value=""></option>
 					<cfloop query="qry_groups">
 						<option value="#grp_id#"<cfif listfind(qry_labels_setting.set2_labels_users,grp_id)> selected="selected"</cfif>>#grp_name#</option>
@@ -51,7 +51,7 @@
 			<th nowrap="nowrap" style="padding:18px 0 18px 0;">
 				<input type="text" name="label_text" id="label_text_admin" style="width:200px;">
 				<select name="sublabelofnew" id="sublabelofnew" style="width:240px;">
-					<option value="0" selected="selected">Nest label under...</option>
+					<option value="0" selected="selected">#myFusebox.getApplicationData().defaults.trans("nest_label")#...</option>
 					<cfloop query="qry_labels">
 						<option value="#label_id#">#label_path#</option>
 					</cfloop>
@@ -95,7 +95,7 @@ function save_setting(labelset_div){
 	// Feedback
 	$('##save_status_label').fadeTo("slow", 100);
 	$('##save_status_label').css('display','');
-	$('##save_status_label').html('We saved the change successfully!');
+	$('##save_status_label').html('#myFusebox.getApplicationData().defaults.trans("saved_change_success")#');
 	$('##save_status_label').fadeTo(2000, 0);
 }
 </script>

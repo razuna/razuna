@@ -34,10 +34,10 @@
 <!--- </cfif> --->
 <cfoutput>
 	<cfif qry_favorites.recordcount EQ 0>
-		<div style="text-align:center;width:100%;color:grey;"><h2>Drag asset here to add to your favorites</h2></div>
+		<div style="text-align:center;width:100%;color:grey;"><h2>#myFusebox.getApplicationData().defaults.trans("fav_drag")#</h2></div>
 	<cfelse>
 		<div style="padding-top:5px;">
-			<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites');">Refresh</a>
+			<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites');">#myFusebox.getApplicationData().defaults.trans("refresh")#</a>
 		</div>
 		<div style="overflow:auto;font-weight:normal;">
 		<table border="0">
@@ -108,7 +108,7 @@
 							</a>
 						</cfif>
 					</cfif>
-				<div style="padding-top:3px;font-weight:normal;"><a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_remove&id=#myid#');return false;">Remove</a></div>
+				<div style="padding-top:3px;font-weight:normal;"><a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_remove&id=#myid#');return false;">#myFusebox.getApplicationData().defaults.trans("remove_txt")#</a></div>
 				</td>
 			</cfloop>
 			</tr>

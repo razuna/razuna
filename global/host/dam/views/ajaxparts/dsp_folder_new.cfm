@@ -88,7 +88,7 @@
 							<td width="100%" colspan="5">
 							<!--- RAZ-2898 : Show Advanced labels --->
 							<cfif attributes.thelabelsqry.recordcount lte 200>
-								<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_folder" onchange="razaddlabels('tags_folder','#attributes.folder_id#','folder');" multiple="multiple">
+								<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:410px;" id="tags_folder" onchange="razaddlabels('tags_folder','#attributes.folder_id#','folder','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
 									<option value=""></option>
 									<cfloop query="attributes.thelabelsqry">
 										<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
@@ -105,7 +105,7 @@
 											<cfif ListFind(qry_labels,'#label_id#') NEQ 0>
 											<div class='singleLabel' id="#label_id#">
 												<span>#label_path#</span>
-												<a class='labelRemove'  onclick="removeLabel('#attributes.folder_id#','folder', '#label_id#',this)" >X</a>
+												<a class='labelRemove'  onclick="removeLabel('#attributes.folder_id#','folder', '#label_id#',this,'#myFusebox.getApplicationData().defaults.trans("change_saved")#')" >X</a>
 											</div>
 											</cfif>
 										</cfloop>
@@ -207,7 +207,7 @@
 					</tr>
 					<tr>
 						<td class="td2" width="100%">
-							<input name="link_path" id="link_path" type="text" style="width:450px;"> <a href="##" onclick="jschecklink();">Check Folder</a>
+							<input name="link_path" id="link_path" type="text" style="width:450px;"> <a href="##" onclick="jschecklink();">#myFusebox.getApplicationData().defaults.trans("check_folder")#</a>
 							<div id="foldercheck"></div>
 						</td>
 					</tr>

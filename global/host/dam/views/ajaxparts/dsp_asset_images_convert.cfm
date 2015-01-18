@@ -29,7 +29,7 @@
 	<cfset docalcs = true>
 	<br />
 	<cfif attributes.folderaccess NEQ "R">
-		<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
+		<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("create_new_renditions")#</div></div>
 		<br />
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<cftry>
@@ -61,7 +61,7 @@
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
 						<select name="convert_wm_jpg" id="convert_wm_jpg">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<option value="#wm_temp_id#">#wm_name#</option>
@@ -80,14 +80,14 @@
 					<br />
 					#myFusebox.getApplicationData().defaults.trans("data_size")#: #qry_detail.thesize# MB
 					<br />
-					ColorSpace: <cfif qry_xmp.colorspace EQ "">could not be read properly for this file<cfelse>#qry_xmp.colorspace#</cfif>
+					#myFusebox.getApplicationData().defaults.trans("colorspace")#: <cfif qry_xmp.colorspace EQ "">#myFusebox.getApplicationData().defaults.trans("no_read")#<cfelse>#qry_xmp.colorspace#</cfif>
 					<br />
 					<cfif qry_xmp.resunit EQ "inches">
-						X Resolution: #qry_xmp.xres# dpi
+						X #myFusebox.getApplicationData().defaults.trans("resolution")#: #qry_xmp.xres# dpi
 						<br />
-						Y Resolution: #qry_xmp.yres# dpi
+						Y #myFusebox.getApplicationData().defaults.trans("resolution")#: #qry_xmp.yres# dpi
 						<br />
-						Resolution Unit: #qry_xmp.resunit#
+						#myFusebox.getApplicationData().defaults.trans("resolution")# #myFusebox.getApplicationData().defaults.trans("unit")#: #qry_xmp.resunit#
 					</cfif>
 				</td>
 			</tr>
@@ -106,7 +106,7 @@
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
 						<select name="convert_wm_gif" id="convert_wm_gif">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<option value="#wm_temp_id#">#wm_name#</option>
@@ -130,7 +130,7 @@
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
 						<select name="convert_wm_png" id="convert_wm_png">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<option value="#wm_temp_id#">#wm_name#</option>
@@ -154,7 +154,7 @@
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
 						<select name="convert_wm_tif" id="convert_wm_tif">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<option value="#wm_temp_id#">#wm_name#</option>
@@ -178,7 +178,7 @@
 				<cfif attributes.wmtemplates.recordcount NEQ 0>
 					<td width="1%" nowrap="true">
 						<select name="convert_wm_bmp" id="convert_wm_bmp">
-							<option value="" selected="selected">Apply watermark</option>
+							<option value="" selected="selected">#myFusebox.getApplicationData().defaults.trans("apply_watermark")#</option>
 							<option value="">---</option>
 							<cfloop query="attributes.wmtemplates">
 								<option value="#wm_temp_id#">#wm_name#</option>
@@ -194,7 +194,7 @@
 		<!--- Additional Renditions --->
 		<cfif cs.tab_additional_renditions>
 			<div class="collapsable">
-				<a href="##" onclick="$('##moreversions').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("adiver_header")#</div></a>
+				<a href="##" onclick="$('##moreversions').slideToggle('slow');return false;"><div class="headers">#myFusebox.getApplicationData().defaults.trans("adiver_header")#</div></a>
 				<div id="moreversions" style="display:none;padding-top:10px;"></div>
 			</div>
 		</cfif>

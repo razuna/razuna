@@ -29,7 +29,7 @@
 			<form action="#self#" method="post" name="form_login_mini" id="form_login_mini">
 				<input type="hidden" name="#theaction#" value="#xfa.submitform#">
 				<input type="hidden" name="mini" value="T">
-			    <h1>SIGN IN</h1>
+			    <h1>#myFusebox.getApplicationData().defaults.trans("sign_in")#</h1>
 			    <input type="text" name="theemail" id="theemail" value="#cookie.loginname#" placeholder="Username" />
 			    <input type="password" name="pass" id="pass" value="#cookie.loginpass#" placeholder="Password" />
 			    <p>
@@ -47,7 +47,7 @@
 						</select>
 					</cfif>
 					<br /><br />
-					<a href="//#cgi.http_host##cgi.script_name#" target="_blank" style="text-decoration:underline">I forgot my password</a> | <a href="//#cgi.http_host##cgi.script_name#" target="_blank" style="text-decoration:underline">Standard View</a>
+					<a href="//#cgi.http_host##cgi.script_name#" target="_blank" style="text-decoration:underline">#myFusebox.getApplicationData().defaults.trans("forgot_password")#</a> | <a href="//#cgi.http_host##cgi.script_name#" target="_blank" style="text-decoration:underline">#myFusebox.getApplicationData().defaults.trans("standard_view")#</a>
 				</p>
 			</form>
 		</div>

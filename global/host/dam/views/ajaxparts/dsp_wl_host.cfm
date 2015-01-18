@@ -30,11 +30,11 @@
 		<div id="tab_wl">
 			<ul>
 				<!--- Options --->
-				<li><a href="##wl_options">Options</a></li>
+				<li><a href="##wl_options">#myFusebox.getApplicationData().defaults.trans("options")#</a></li>
 				<!--- CSS --->
 				<li><a href="##wl_css">CSS</a></li>
 				<!--- News --->
-				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">News</a></li>
+				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">#myFusebox.getApplicationData().defaults.trans("news")#</a></li>
 			</ul>
 			<!--- Content --->
 			<div id="wl_options">
@@ -96,7 +96,7 @@
 				<hr>
 				<br>
 				#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates_desc")#<br/><br/>
-				<strong>Show list of most recently updated assets</strong><br />
+				<strong>#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates_header")#</strong><br />
 				<input type="radio" value="true" name="wl_show_updates_#session.hostid#"<cfif qry_wl.wl_show_updates> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("show")#<br />
 				<input type="radio" value="false" name="wl_show_updates_#session.hostid#"<cfif !qry_wl.wl_show_updates> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("hide")#
 				<div style="clear:both;"></div>

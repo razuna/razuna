@@ -52,7 +52,7 @@
 				</tr>
 			</cfloop>
 			<tr>
-				<td colspan="5"><input type="button" name="back" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('addemail','#myself#c.asset_add_email&folder_id=#folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addemail','#myself#c.asset_add_email_show&folder_id=#attributes.folder_id#&email_server=#attributes.email_server#&email_address=#attributes.email_address#&email_pass=#attributes.email_pass#&email_subject=#attributes.email_subject#');"> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_add_email_attachment")#" class="button"></td>
+				<td colspan="5"><input type="button" name="back" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('addemail','#myself#c.asset_add_email&folder_id=#folder_id#');return false;" class="button"> <input type="button" name="button" value="#myFusebox.getApplicationData().defaults.trans('refresh')#" class="button" onClick="loadcontent('addemail','#myself#c.asset_add_email_show&folder_id=#attributes.folder_id#&email_server=#attributes.email_server#&email_address=#attributes.email_address#&email_pass=#attributes.email_pass#&email_subject=#attributes.email_subject#');"> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_add_email_attachment")#" class="button"></td>
 			</tr>
 		</table>
 		<br>

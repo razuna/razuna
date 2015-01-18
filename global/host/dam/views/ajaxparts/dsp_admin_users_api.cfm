@@ -37,7 +37,7 @@
 		<tr>
 			<td style="padding-top:20px;">
 				<cfset transvalues = arraynew()>
-				<cfset transvalues[1] = "<a href='##' onclick=loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#&reset=true');>Reset Key</a>">
+				<cfset transvalues[1] = "<a href='##' onclick=loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#&reset=true');>#myFusebox.getApplicationData().defaults.trans("reset_key")#</a>">
 	 			<cfinvoke component="global.cfc.defaults" method="trans" transid="api_key_desc" values="#transvalues#" returnvariable="api_key_description" />
 				#api_key_description#
 			</td>

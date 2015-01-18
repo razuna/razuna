@@ -2,7 +2,7 @@
 	<!--- Format sizes --->
 	<cfif isnumeric(qry_detail.theprevsize)><cfset qry_detail.theprevsize = numberformat(qry_detail.theprevsize,'_.__')></cfif>
 	<cfif isnumeric(qry_detail.thesize)><cfset qry_detail.thesize = numberformat(qry_detail.thesize,'_.__')></cfif>
-	<div class="collapsable"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("existing_renditions")# - <a href="##" onclick="loadren();return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a></div></div>
+	<div class="collapsable"><div class="headers">#myFusebox.getApplicationData().defaults.trans("existing_renditions")# - <a href="##" onclick="loadren();return false;">#myFusebox.getApplicationData().defaults.trans("refresh")#</a></div></div>
 	<br />
 	<cfquery name="thumb_share_setting" dbtype="query">
 		SELECT * FROM qry_share_options WHERE asset_format= 'thumb'

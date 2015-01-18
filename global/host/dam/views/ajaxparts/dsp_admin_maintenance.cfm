@@ -120,7 +120,7 @@ var img = $('##dbf_img:checked').val();
 				loadcontent('dummy_maintenance','#myself#c.admin_flush_db');
 				// Load in status
 				$('##flush_db_feedback').css('display','');
-				$('##flush_db_feedback').html('<span style="color:green;font-weight:bold;">Database caches have been flushed!</span>');
+				$('##flush_db_feedback').html('<span style="color:green;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("db_cache_flush")#</span>');
 			}
 			// Do Re-Index
 			function doreindexassets(){

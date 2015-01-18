@@ -1051,7 +1051,7 @@
 		<cfset var thescript = createuuid() & "_hostsize">
 		<cfset thesh = GetTempDirectory() & "/#thescript#.sh">
 		<cffile action="write" file="#thesh#" output="du -sh #assetdir#/#arguments.host_id#" mode="777"><!--- Write out script file to disk --->
-		<cfexecute name="#thesh#" variable="size" timeout="60"/> <!--- Execute the script --->
+		<cfexecute name="#thesh#" variable="size" timeout="600"/> <!--- Execute the script --->
 		<cfset host_size = gettoken(size,1,"#chr(9)#")> <!--- Store result --->	
 		<cffile action="delete" file="#thesh#"> <!--- Delete file after done executing --->
 	<cfelse> <!--- For windows use the java io file operations to calculate size --->	

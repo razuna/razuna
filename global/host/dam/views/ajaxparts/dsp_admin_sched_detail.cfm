@@ -170,8 +170,8 @@
 									<td><input type="text" name="ftpFolder" size="25" value="#qry_detail.sched_ftp_folder#" /></td>
 								</tr>
 								<tr>
-									<td>Notification Email(s)</td>
-									<td><input type="text" name="ftpemails" size="25" value="#qry_detail.sched_ftp_email#" maxlength="500" placeholder="separate emails by comma"/></td>
+									<td>#myFusebox.getApplicationData().defaults.trans("notification_emails")#</td>
+									<td><input type="text" name="ftpemails" size="25" value="#qry_detail.sched_ftp_email#" maxlength="500" placeholder="#myFusebox.getApplicationData().defaults.trans("separate_emails_comma")#"/></td>
 								</tr>
 							</table>
 						</td>
@@ -266,7 +266,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="2"><em>(Time is server time. Current time is: #LSTimeFormat(now(), 'HH:mm')#)</em></td>
+						<td colspan="2"><em>(#myFusebox.getApplicationData().defaults.trans("server_time")#: #LSTimeFormat(now(), 'HH:mm')#)</em></td>
 					</tr>
 				</table>
 			</td>
@@ -286,11 +286,11 @@
 							<td><input type="checkbox" name="zipExtract" value="1" <cfif qry_detail.sched_zip_extract EQ 1 OR qry_detail.sched_zip_extract EQ ""> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("scheduled_uploads_extract_zip")#</td>
 						</tr>
 						<tr>
-							<td>Rendition Templates</td>
+							<td>#myFusebox.getApplicationData().defaults.trans("admin_upload_templates")#</td>
 							<td>
 								<cfif qry_templates.recordcount NEQ 0>
 									<select name="upl_template">
-										<option value="0"<cfif qry_detail.sched_upl_template EQ 0> selected="selected"</cfif>>Choose Rendition Template</option>
+										<option value="0"<cfif qry_detail.sched_upl_template EQ 0> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("choose_rend_template")#</option>
 										<option value="0">---</option>
 										<cfloop query="qry_templates">
 											<option value="#upl_temp_id#"<cfif qry_detail.sched_upl_template EQ upl_temp_id> selected="selected"</cfif>>#upl_name#</option>

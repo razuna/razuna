@@ -75,19 +75,19 @@
 					</td>
 				</tr>
 				<tr>
-					<th style="padding-top:15px;">Upload your thumbnail or ...</th>
+					<th style="padding-top:15px;">#myFusebox.getApplicationData().defaults.trans("upload_thumb")# ...</th>
 				</tr>
 				<tr>
-					<td><input type="file" name="thumb_folder_file" id="thumb_folder_file" size="50"></td>
+					<td><input type="file" name="thumb_folder_file" id="thumb_folder_file" size="50" lang="it-CH"></td>
 				</tr>
 				<tr>
-					<th style="padding-top:15px;">...choose from existing images in this folder</th>
+					<th style="padding-top:15px;">...#myFusebox.getApplicationData().defaults.trans("choose_existing")#</th>
 				</tr>
 				<!--- Thumbnail Combo --->
 				<tr>
 					<td width="100%" nowrap="true" colspan="2">
 						<div style="float:left;">
-							<select data-placeholder="Choose a thumbnail" class="chzn-select" style="width:400px;" id="thumb_folder" name="thumb_folder">
+							<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_thumb")#" class="chzn-select" style="width:400px;" id="thumb_folder" name="thumb_folder">
 								<option value=""></option>
 								<cfloop query="qry_files" >
 									<cfif application.razuna.storage EQ 'local'>
@@ -98,7 +98,7 @@
 								</cfloop>
 							</select>
 						</div>
-						<div style="float:left;padding-left:10px;"><input type="submit" name="submitapply" id="foldersubmitbutton" value="Apply" class="button"></div>
+						<div style="float:left;padding-left:10px;"><input type="submit" name="submitapply" id="foldersubmitbutton" value="#myFusebox.getApplicationData().defaults.trans("apply")#" class="button"></div>
 					</td>
 				</tr>
 				<tr>

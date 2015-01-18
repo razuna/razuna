@@ -28,7 +28,7 @@
 <div style="float:right;padding-right:10px;">
 	<!--- Drop down menu --->
 	<div>
-		<div style="float:left;"><a href="##" onclick="$('##foldertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
+		<div style="float:left;"><a href="##" onclick="$('##foldertools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##foldertools_#tmp#').toggle();" class="ddicon"></div>
 		<div id="foldertools_#tmp#" class="ddselection_header" style="top:70px;width:137px;z-index:6;right:10px;">
 			<cfif attributes.iscol EQ "f">
