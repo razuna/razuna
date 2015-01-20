@@ -38,12 +38,12 @@ div.folders .tree li a,
 		<!--- For different kind of folder action --->
 		<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 OR session.type EQ "restorefolder" OR session.type EQ "restoreselectedfolders" OR session.type EQ "restorefolderall" OR session.type EQ "restorecolfolder" OR session.type EQ 'restorecolfolderall' OR session.type EQ 'restoreselectedcolfolder' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 			<div style="clear:both;padding-top:15px;" />
-			<div><a href="##" onclick="movethisfolder();return false;">Move the folder to the top level</a></div>
+			<div><a href="##" onclick="movethisfolder();return false;">#myFusebox.getApplicationData().defaults.trans("move_folder_top")#</a></div>
 		</cfif>
 		<!--- For copy folder --->
 		<cfif session.type EQ "copyfolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 			<div style="clear:both;padding-top:15px;" />
-			<div><a href="##" onclick="copythisfolder();return false;">Copy the folder to the top level</a></div>
+			<div><a href="##" onclick="copythisfolder();return false;">#myFusebox.getApplicationData().defaults.trans("copy_folder_top")#</a></div>
 		</cfif>
 		<!--- RAZ-273 Inherit permissions of parent folder for copy folder--->
 		<cfif session.type EQ "copyfolder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
@@ -51,7 +51,7 @@ div.folders .tree li a,
 		</cfif>
 		<div id="div_choosecol"></div>
 		<div style="clear:both;padding-top:15px;" />
-		<div id="div_choosefolder_status" style="color:green;font-weight:bold;"></div>
+		<div id="div_choosefolder_status_#session.tmpid#" style="color:green;font-weight:bold;"></div>
 	</div>
 	<!--- <cfif session.type EQ "choosecollection" OR session.type EQ "saveascollection">
 		<cfset iscol = "T">
