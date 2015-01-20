@@ -2422,6 +2422,27 @@
 							<cfset qry =newQuery/>
 						</cfif>
 					</cfif>
+
+				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
+					<!--- Init var for new fileid --->
+					<cfset var editids = "0,">
+					<cfset var fileids = "">
+					<!--- Get proper folderaccess --->
+					<cfloop query="qry">
+						<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+						<!--- Add labels query --->
+						<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+						<!--- Store only file_ids where folder access is not read-only --->
+						<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+							<cfset editids = editids & listid & ",">
+						</cfif>
+						<cfset fileids = fileids & id & ",">
+					</cfloop>
+					<!--- Save the editable ids in a session --->
+					<cfset session.search.edit_ids = editids>
+					<!--- Save fileids into session --->
+					<cfset session.search.search_file_ids = fileids>
+				</cfif>
 			<!--- Qry Return --->
 				<cfreturn qry>	
 	</cffunction>

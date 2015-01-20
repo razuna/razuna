@@ -1017,6 +1017,10 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="qry" type="query" required="true">
 		<!--- Params --->
+		<!--- Return if not coming from a rebuild request--->
+		<cfif not isdefined("arguments.thestruct.thepath")>
+			<cfreturn/>
+		</cfif>
 		<cfset var docpath = arguments.thestruct.thepath & "/incoming/reindex_" & createuuid("")>
 		<!--- Create a temp folder for the documents --->
 		<cfdirectory action="create" directory="#docpath#" mode="775">

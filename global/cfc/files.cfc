@@ -1443,8 +1443,6 @@
 					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 						<!--- Update Dates --->
 						<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
-						<!--- Move additional renditions --->
-						<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 						<!--- Execute workflow --->
 						<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
 						<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
@@ -1472,20 +1470,6 @@
 			<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfreturn />
 	</cffunction>
-
-<!--- Move related files --->
-<cffunction name="moverelated" output="false">
-	<cfargument name="thestruct" type="struct">
-	<!--- Update additional renditions --->
-	<cfquery datasource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#additional_versions
-	SET 
-	folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
-	<cfreturn />
-</cffunction>
 	
 	<!--- List the PDF image files to be shown to the browser --->
 	<cffunction name="pdfjpgs" output="true">
