@@ -161,6 +161,7 @@
 			<cfquery dbtype="query" name="thexml">
 			SELECT *
 			FROM qry, q
+			ORDER BY #session.sortby#
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
