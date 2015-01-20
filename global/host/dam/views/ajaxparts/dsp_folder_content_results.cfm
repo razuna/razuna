@@ -161,6 +161,7 @@
 									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
 								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
+
 									<!--- Show assets --->
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -168,11 +169,6 @@
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-												<cfif refind('\.[0-9]',filename) AND !fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
-													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
-												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
-												</cfif>
 											</cfif>
 										<cfelse>
 											<!--- Check if filename format follows UPC renditions naming and if thumb exists for it --->

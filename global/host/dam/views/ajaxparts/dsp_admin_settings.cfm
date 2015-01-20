@@ -41,24 +41,18 @@
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>
-			<!--- Hide UPC settings if storage is not local --->
-			 <cfif !application.razuna.storage eq 'local'>
-			 	<cfset csshide= "style='display:none'">
-			 <cfelse> 
-			 	<cfset csshide= "">
-			</cfif>
-				<!--- UPC Enabled --->
-				<tr #csshide#>
-					<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("upc_enabled")#</th>
-				</tr>
-				<tr #csshide#>
-					<td colspan="2">
-						<input type="radio" name="set2_upc_enabled" value="true" <cfif prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("yes")#
-						<input type="radio" name="set2_upc_enabled" value="false" <cfif !prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("no")#
-					</td>
-				</tr>
+			<!--- UPC Enabled --->
+			<tr>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("upc_enabled")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="radio" name="set2_upc_enabled" value="true" <cfif prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("yes")#
+					<input type="radio" name="set2_upc_enabled" value="false" <cfif !prefs.set2_upc_enabled>checked="checked"</cfif> >#myFusebox.getApplicationData().defaults.trans("no")#
+				</td>
+			</tr>
 			
-				<tr class="list" #csshide#>
+				<tr class="list">
 					<td colspan="2"><br /></td>
 				</tr>
 
