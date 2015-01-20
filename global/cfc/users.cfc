@@ -539,7 +539,6 @@
 			<cfset logsection = "Admin">
 		</cfif>
 		<cfinvoke component="defaults" method="trans" transid="updated" returnvariable="updated" />
-				<cfset var rend =" #rendition#">
 		<cfset log_users(theuserid=arguments.thestruct.user_id,logsection='#logsection#',logaction='Update',logdesc='#updated#: UserID: #arguments.thestruct.user_id# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
 	</cfif>
 	<!--- Flush Cache --->

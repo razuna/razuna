@@ -1141,14 +1141,6 @@
 			</cfquery>
 		</cfloop>
 	</cfif>
-	<!--- Update additional renditions --->
-	<cfquery datasource="#application.razuna.datasource#">
-	UPDATE #session.hostdbprefix#additional_versions
-	SET 
-	folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
 	<cfreturn />
 </cffunction>
 

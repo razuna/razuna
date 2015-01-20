@@ -756,9 +756,9 @@
 			<!--- <cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run"> --->
 				<!--- Get the file and lock it by name for 10 hours so no other process can access it again --->
-				<cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#">
+				<!--- <cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#"> --->
 					<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
-				</cflock>
+				<!--- </cflock> --->
 				<cfif isdefined("arguments.thestruct.sched_id")>
 					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<cfset var done = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=true)>
@@ -5240,7 +5240,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 	</cfif>
 
-		<cfif isdefined("arguments.thestruct.userendforpreview")>
+	<cfif isdefined("arguments.thestruct.userendforpreview")>
 		<cfset arguments.thestruct.tempid = createuuid()>
 		<!--- Change tempid a bit --->
 		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
@@ -5252,7 +5252,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
 		</cfif>
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT '#arguments.thestruct.tempid#' tempid, av_link_url filename, asset_id_r file_id, '#arguments.thestruct.theincomingtemppath#' path, av_thumb_url,
+			SELECT '#arguments.thestruct.tempid#' tempid, av_link_url filename, asset_id_r file_id, '#arguments.thestruct.theincomingtemppath#' path, av_thumb_url, av_link_title, av_id, folder_id_r,
 			CASE 
 			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = asset_id_r) THEN 'img'
 			WHEN EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = asset_id_r) THEN 'vid'
@@ -5266,8 +5266,12 @@ This is the main function called directly by a single upload else from addassets
 		</cfquery>
 		<cfset qry.filename = listlast(qry.filename,'/')>
 		<!--- If file exists then copy else abort process --->
-		<cfif fileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#")>
+		<cfif application.razuna.storage EQ "local" AND fileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#")>
 			<cffile action="copy" source="#arguments.thestruct.assetpath#/#session.hostid#/#qry.av_thumb_url#" destination="#qry.path#/#qry.filename#">
+		<cfelseif application.razuna.storage EQ "amazon">
+			<cfset qry.filename = listfirst(listlast(qry.filename,'\/'),'?')>
+			<cfset var filekey =  "/" & qry.folder_id_r & "/" & "img/#qry.av_id#" & "/" & listfirst(listlast(qry.av_thumb_url,'/\'),'?')>
+			<cfinvoke component="amazon" method="download" key = "#filekey#" theasset = "#qry.path#/#qry.filename#" awsbucket = "#arguments.thestruct.awsbucket#">
 		<cfelse>
 			<cfabort>
 		</cfif>
@@ -5276,7 +5280,6 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Query the image --->
 		<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
 	</cfif>
-
 	<!--- If record return zero records then abort --->
 	<cfif qry.recordcount NEQ 0>
 		<!--- Query existing record --->	
