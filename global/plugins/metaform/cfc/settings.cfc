@@ -165,6 +165,7 @@
 	<!--- saveForm Thread --->
 	<cffunction name="saveformthread" access="private" output="false" returntype="struct">
 		<cfargument name="args" required="true">
+		<cfset console(args)>
 		<!--- Loop over the fields --->
 		<cfloop list="#arguments.args.fieldnames#" delimiters="," index="i">
 			<cfif i CONTAINS "_">
