@@ -289,7 +289,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="fileKey" type="string" required="yes">
 		<cfargument name="theasset" type="string" required="yes">
 		<cfargument name="contentType" type="string" required="no" default="">
-		<cfargument name="HTTPtimeout" type="numeric" required="no" default="300">
+		<cfargument name="HTTPtimeout" type="numeric" required="no" default="86400">
 		<cfargument name="cacheControl" type="numeric" required="false" default="86400">
 		<cfargument name="acl" type="string" required="no" default="public-read">
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
@@ -333,7 +333,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="theasset" type="string" required="yes">
 		<cfargument name="theassetsize" type="string" required="yes" hint="in kb">
 		<cfargument name="contentType" type="string" required="no" default="">
-		<cfargument name="HTTPtimeout" type="numeric" required="no" default="300">
+		<cfargument name="HTTPtimeout" type="numeric" required="no" default="86400">
 		<cfargument name="cacheControl" type="boolean" required="false" default="86400">
 		<cfargument name="acl" type="string" required="no" default="public-read">
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
@@ -381,10 +381,10 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
 		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
 		<!--- If file > 100mb then use 10mb chunk sizes --->
-		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 500000> 
+		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 5000000> 
 			<cfset var chunksize = 10000> 
-		<!--- If file > 500mb then use 100mb chunk sizes --->
-		<cfelseif arguments.theassetsize GT 500000> 
+		<!--- If file > 5gb then use 100mb chunk sizes --->
+		<cfelseif arguments.theassetsize GT 5000000> 
 			<cfset var chunksize = 100000> 
 		</cfif>
 		<!--- If chunks are more than 10,000 then increase chunksize as AWS does not accept more than 10,000 parts --->
@@ -405,7 +405,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var dirqry ="">
 		<cfdirectory action="list" directory="#assetdir#" name="dirqry">
 		<cfquery name="dirqry" dbtype="query">
-			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
+			SELECT name FROM dirqry WHERE lower(name) LIKE '%#lcase(filename)#.%' ORDER BY name ASC
 		</cfquery>
 		<cfset var orig_dirqry = dirqry>
 		<cfset var etags= []> <!--- intialize etag array to hold etags of all the file parts after upload --->

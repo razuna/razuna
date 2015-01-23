@@ -57,6 +57,7 @@
 	<div id="basketstatus" style="display:none;padding:10px;font-weight:bold;"></div>
 	<form name="thebasket" id="thebasket" method="post" action="#self#" target="_blank">
 	<input type="hidden" name="#theaction#" id="#theaction#" value="c.basket_download">
+	<input type="hidden" name="uploadspeed" id="uploadspeed" value="0">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid thumbview">
 
 		<tr>
@@ -723,7 +724,50 @@
     {
         document.getElementById("divProgress").innerHTML += message + '<br />';
     }
-     
+
+   // Find client upload speeds
+var speed = 0;
+ function checkUploadSpeed( iterations, update ) {
+    var average = 0,
+        index = 0,
+        timer = window.setInterval( check, 5000 ); //check every 5 seconds
+    check();
+    
+    function check() {
+        var spxhr = new XMLHttpRequest(),
+         <cfoutput> url = 'https://s3.amazonaws.com?cache=' + Math.floor( Math.random() * 10000 ), //prevent url cache</cfoutput>  
+            data = getRandomString( 1 ), //1 meg POST size handled by all servers
+            startTime,
+            speed = 0;
+        spxhr.onreadystatechange = function ( event ) {
+            if( spxhr.readyState == 4 ) {
+                speed = Math.round( 1024 / ( ( new Date() - startTime ) / 1000 ) );
+                average == 0 
+                    ? average = speed 
+                    : average = Math.round( ( average + speed ) / 2 );
+                update( speed, average );
+                index++;
+                if( index == iterations ) {
+                    window.clearInterval( timer );
+                };
+            };
+        };
+        spxhr.open( 'POST', url, true );
+        startTime = new Date();
+        spxhr.send( data );
+    };
+    
+    function getRandomString( sizeInMb ) {
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+`-=[]\{}|;':,./<>?", //random data prevents gzip effect
+            iterations = sizeInMb * 1024 * 1024, //get byte count
+            result = '';
+        for( var index = 0; index < iterations; index++ ) {
+            result += chars.charAt( Math.floor( Math.random() * chars.length ) );
+        };     
+        return result;
+    };
+};
+
 	    function basket_upload(type)
 	    {
 	        resetLog();
@@ -732,7 +776,10 @@
 	            log_message("Your browser does not support the native XMLHttpRequest object.");
 	            return;
 	        }
-	         
+	         checkUploadSpeed( 1, function ( speed, average ) {
+
+	         	$( '#uploadspeed' ).val(speed);
+
 	        try
 	        {
 	            var xhr = new XMLHttpRequest();  
@@ -742,15 +789,19 @@
 	            {
 	                try
 	                {
-	                    if (xhr.readyState > 2)
+	                    if (xhr.readyState > 2 && xhr.readyState!=4)
 	                    {
 	                        var new_response = xhr.responseText.substring(xhr.previous_text.length);
 	                        var result = JSON.parse( new_response );
-	                        log_message(result.message);
+	                        if (result.message !='')
+	                        	log_message(result.message);
 	                        //update the progressbar
 	                       document.getElementById('progressor').style.width = result.progress + "%";
 	                        xhr.previous_text = xhr.responseText;
 	                    }   
+	                    // If request has completed
+	                   if (xhr.readyState==4)
+	                    	$("#upload_aws").prop("disabled",false);
 	                }
 	                catch (e)
 	                {
@@ -762,7 +813,10 @@
 	            // Set proper fuseaction
 	            <cfoutput> 
 	            if (type=='aws')
+	            {
 	            	$("###theaction#").prop("value", "c.basket_upload2aws");
+	            	$("##upload_aws").prop("disabled",true);
+	            }
 	            else
 			$("###theaction#").prop("value", "c.basket_upload2local");
 		</cfoutput>
@@ -772,7 +826,7 @@
 		createTarget();
 	            xhr.open("POST", "", true);
 	            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded"); // set form encoding for params
-	            xhr.send(items);      
+	            xhr.send(items);
 	            // Set fuseaction back to download
 		<cfoutput>$("###theaction#").prop("value", "c.basket_download");</cfoutput>
 	        }
@@ -780,6 +834,8 @@
 	        {
 	            log_message("<b>[XHR] Exception: " + e + "</b>");
 	        }
+
+	        } );
 	    }
 	    
 	// Check folder path

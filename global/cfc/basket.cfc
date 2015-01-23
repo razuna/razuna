@@ -717,14 +717,14 @@
 							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
 						</cfinvoke>
 						<cfif art contains "doc">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
+							<cfset session.theawsurl["#arguments.thestruct.thename#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
 							 bucket='#arguments.thestruct.awsbucket#',
 							 key='#arguments.thestruct.thename#',
 							 expiration=epoch
 							)>
 							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+								<cfset session.theawsurl["#arguments.thestruct.thename#"] = replacenocase(session.theawsurl["#arguments.thestruct.thename#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
 						<cfcatch>
@@ -1028,14 +1028,14 @@
 							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
 						</cfinvoke>
 						<cfif art contains "original">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
+							<cfset session.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
 							 bucket='#arguments.thestruct.awsbucket#',
 							 key='#arguments.thestruct.thefinalname#',
 							 expiration=epoch
 							)>
 							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+								<cfset session.theawsurl["#arguments.thestruct.thefinalname#"] = replacenocase(session.theawsurl["#arguments.thestruct.thefinalname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
 						<cfcatch>
@@ -1304,14 +1304,14 @@
 							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
 						</cfinvoke>
 						<cfif art contains "video">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+							<cfset session.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
 							 bucket='#arguments.thestruct.awsbucket#',
 							 key='#arguments.thestruct.thenewname#',
 							 expiration=epoch
 							)>
 							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+								<cfset session.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(session.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
 						<cfcatch>
@@ -1545,14 +1545,14 @@
 							<cfinvokeargument name="awslocation" value="#arguments.thestruct.awslocation#">
 						</cfinvoke>
 						<cfif art contains "audio">
-							<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
+							<cfset session.theawsurl["#arguments.thestruct.thenewname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
 							 bucket='#arguments.thestruct.awsbucket#',
 							 key='#arguments.thestruct.thenewname#',
 							 expiration=epoch
 							)>
 							<cfif arguments.thestruct.cs.basket_awsurl NEQ "">
-								<cfset arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(arguments.thestruct.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
+								<cfset session.theawsurl["#arguments.thestruct.thenewname#"] = replacenocase(session.theawsurl["#arguments.thestruct.thenewname#"] ,"https://s3.amazonaws.com","#arguments.thestruct.cs.basket_awsurl#","ALL")>
 							</cfif>
 						</cfif>
 
@@ -1832,7 +1832,13 @@
 	<cfparam default="" name="arguments.thestruct.newpath" >
 	<cfparam default="true" name="arguments.thestruct.skipduplicates">
 	<cfparam default="true" name="arguments.thestruct.localupload">
-	<cfset arguments.thestruct.theawsurl = structnew()>
+	<cfset session.theawsurl = structnew()>
+	<cfset var aws_urls = "">
+	<cfset var error = "">
+	<cfset var done = "">
+	<cfinvoke component="defaults" method="trans" transid="aws_urls" returnvariable="aws_urls" />
+	<cfinvoke component="defaults" method="trans" transid="error" returnvariable="error" />
+	<cfinvoke component="defaults" method="trans" transid="done" returnvariable="done" />
 	<cftry>
 		<!--- The tool paths --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -1890,60 +1896,105 @@
 		<!--- Read Basket --->
 		<cfinvoke method="readbasket" returnvariable="thebasket">
 		<cfset var filectr = 0>
+
+		<cfquery name="totsize" dbtype="query">
+			SELECT sum(cart_size) basketsize FROM thebasket
+		</cfquery>
+		<!--- Size of all assets in basket in MB --->
+		<cfset var basketsize = totsize.basketsize/1000000>
+		<cfset var resctr = 0>
+		<!--- Add buffer time to upload in ms to account for minor variations --->
+		<cfset var buffer = 1000>
+		<!--- Calculate amount of time it will take to upload 5mb chunks based on measured upload speed of client--->
+		<cfif arguments.thestruct.uploadspeed NEQ 0 AND arguments.thestruct.uploadspeed GT 400>
+			<!--- Calculate how long it will take to upload 5mb based on upload speed in ms --->
+			<cfset var mb5time = (5000/arguments.thestruct.uploadspeed)*1000 + buffer>
+		<cfelse>
+			<cfset var mb5time = 5000>
+		</cfif>
+		<!--- <cfset console("speed=#arguments.thestruct.uploadspeed#, mb5time = #mb5time#")> --->
 		<!--- Loop trough the basket --->
 		<cfloop query="thebasket">
 			<!--- Set the asset id into a var --->
 			<cfset arguments.thestruct.theid = cart_product_id>
-			<!--- Get the files according to the extension --->
-			<cfswitch expression="#cart_file_type#">
-				<!--- Images --->
-				<cfcase value="img">
-					<cfset res.message  = 'Copying image "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-					<!--- Write Image --->
-					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
-					
-				</cfcase>
-				<!--- Videos --->
-				<cfcase value="vid">
-					<!--- Write Video --->
-					<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
-					<cfset res.message  = 'Copying video "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-				</cfcase>
-				<!--- Audios --->
-				<cfcase value="aud">
-					<cfset res.message  = 'Copying audio "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-					<!--- Write Audio --->
-					<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
-				</cfcase>
-				<!--- All other files --->
-				<cfdefaultcase>
-					<cfset res.message  = 'Copying file "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-					<!--- Write file --->
-					<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
-				</cfdefaultcase>
-			</cfswitch>
-			<cfset filectr = filectr + 1>
-			<cfset res.progress = int((filectr/thebasket.recordcount)*100)>
+			<cfset var tt = createuuid('')>
+			<!--- Write Image --->
+			<cfthread action="run" intstruct = "#arguments.thestruct#" cart_file_type = "#cart_file_type#" name="#tt#">
+				<!--- Get the files according to the extension --->
+				<cfswitch expression="#cart_file_type#">
+					<!--- Images --->
+					<cfcase value="img">
+						<cfinvoke method="writeimages" thestruct="#intstruct#">
+					</cfcase>
+					<!--- Videos --->
+					<cfcase value="vid">
+						<!--- Write Video --->
+						<cfinvoke method="writevideos" thestruct="#intstruct#">
+					</cfcase>
+					<!--- Audios --->
+					<cfcase value="aud">
+						<!--- Write Audio --->
+						<cfinvoke method="writeaudios" thestruct="#intstruct#">
+					</cfcase>
+					<!--- All other files --->
+					<cfdefaultcase>
+						<!--- Write file --->
+						<cfinvoke method="writefiles" thestruct="#intstruct#">
+					</cfdefaultcase>
+				</cfswitch>
+			</cfthread>
+			<cfset res.message  = 'Copying "#filename#"'>
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+			<cfset var thethread=cfthread["#tt#"]> 
+			<!--- Get file size in MB --->
+ 			<cfset var filesize = cart_size/1000000>
+			<!--- <cfset console("fielsize = #filesize#")> --->
+			<!--- Calculate size of progress bar in % that the file will take up --->
+			<cfset var chunksize =  (filesize/basketsize)*100>
+			<!--- <cfset console("chunksize = #chunksize#")> --->
+			<!--- Divide progress bar into parts based on uploading 5mb chunks at a time --->
+			<cfif arguments.thestruct.uploadspeed NEQ 0 AND arguments.thestruct.uploadspeed GT 400>
+				<cfset var numparts = chunksize/(ceiling(filesize/5))>
+			<cfelse>
+				<cfset var numparts =  chunksize/basketsize>
+			</cfif>
+			<cfset var chunkctr = 0>
+			<!--- <Cfset console("numparts = #numparts#")> --->
+			<!--- Update progress bar on page  --->
+			<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+				<cfset sleep(mb5time) > 
+				<cfif chunkctr EQ 0>
+					<cfset chunkctr = chunkctr + resctr + numparts>
+				<cfelse>
+					<cfset chunkctr = chunkctr + numparts>
+				</cfif>
+				<cfif chunkctr gt (resctr + chunksize)>
+					<cfset chunkctr = resctr + chunksize>
+				</cfif>
+				<!--- <cfset console("chunk counter % = #chunkctr#")> --->
+				<cfset res.progress = chunkctr>
+				<cfset res.message = "">
+				<cfoutput>#serializeJSON(res)#</cfoutput>
+				<cfflush>
+			</cfloop>
+			<cfset resctr = resctr + chunksize>
+			<cfset res.progress = resctr>
+			<!--- <cfset console("res counter % = #resctr#")> --->
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
 		</cfloop>
-		<cfset res.message  = '-------------- DONE -------------- '>
+		<cfset res.progress = 100>
+		<cfset res.message  = '-------------- #ucase(done)# -------------- '>
 		<cfoutput>#serializeJSON(res)#</cfoutput>
 		<cfflush>
-
-		<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
+		<cfif !structIsEmpty(session.theawsurl)>
 			<cfoutput>
 				<cfsavecontent variable="res.message">
-					<strong>AWS URL's</strong><br/>Please be sure to copy these as once generated for a file these will not be re-generated.<br/><br/>
+					<strong>AWS URL's</strong><br/>#aws_urls#<br/><br/>
 					<font size="1">
-					<cfloop collection="#arguments.thestruct.theawsurl#" item="theurl">
-						#theurl# : <a href="#structfind(arguments.thestruct.theawsurl,theurl)#" target="_blank">#structfind(arguments.thestruct.theawsurl,theurl)#</a><br/>
+					<cfloop collection="#session.theawsurl#" item="theurl">
+						#theurl# : <a href="#structfind(session.theawsurl,theurl)#" target="_blank">#structfind(session.theawsurl,theurl)#</a><br/>
 					</cfloop>
 					</font>
 				</cfsavecontent>
@@ -1951,18 +2002,17 @@
 			</cfoutput>
 			<cfflush>
 		</cfif>
-
 		<cfcatch>
-			<cfset res.message  = '<font color="##cd5c5c">-------------- ERROR --------------<br/>' & cfcatch.message & '<br/>'  & cfcatch.detail & '</font>'>
+			<cfset res.message  = '<font color="##cd5c5c">-------------- #ucase(error)# --------------<br/>' & cfcatch.message & '<br/>'  & cfcatch.detail & '</font>'>
 			<cfoutput>#serializeJSON(res)#</cfoutput>
 			<cfflush>
-			<cfif !structIsEmpty(arguments.thestruct.theawsurl)>
+			<cfif !structIsEmpty(session.theawsurl)>
 				<cfoutput>
 					<cfsavecontent variable="res.message">
-						<strong>AWS URL's</strong><br/>Please be sure to copy these as once generated for a file these will not be re-generated.<br/><br/>
+						<strong>AWS URL's</strong><br/>#aws_urls#<br/><br/>
 						<font size="1">
-						<cfloop collection="#arguments.thestruct.theawsurl#" item="theurl">
-							#theurl# : <a href="#structfind(arguments.thestruct.theawsurl,theurl)#" target="_blank">#structfind(arguments.thestruct.theawsurl,theurl)#</a><br/>
+						<cfloop collection="#session.theawsurl#" item="theurl">
+							#theurl# : <a href="#structfind(session.theawsurl,theurl)#" target="_blank">#structfind(session.theawsurl,theurl)#</a><br/>
 						</cfloop>
 						</font>
 					</cfsavecontent>
