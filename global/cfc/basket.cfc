@@ -693,13 +693,12 @@
 				<cfset var awsfileexists = false>
 				
 				<!--- convert the filename without space and foreign chars --->
-				<cfinvoke component="global" method="cleanfilename" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop list="#arguments.thestruct.s3list#" index='bucketfile'>
 						<cfif bucketfile DOES NOT CONTAIN "$folder$"> <!--- Ignore folders --->
 							<cfif bucketfile EQ arguments.thestruct.thename>
 								<cfset awsfileexists = true>
-								<cfset console("file exists")>
 								<cfbreak>
 							</cfif>
 						</cfif>
@@ -1013,7 +1012,7 @@
 				</cfif>
 				<cfset var awsfileexists = false>
 				<!--- convert the filename without space and foreign chars --->
-				<cfinvoke component="global" method="cleanfilename" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop list="#arguments.thestruct.s3list#" index='bucketfile'>
 						<cfif bucketfile DOES NOT CONTAIN "$folder$"> <!--- Ignore folders --->
@@ -1299,7 +1298,7 @@
 
 				<cfset var awsfileexists = false>
 				<!--- convert the filename without space and foreign chars --->
-				<cfinvoke component="global" method="cleanfilename" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop list="#arguments.thestruct.s3list#" index='bucketfile'>
 						<cfif bucketfile DOES NOT CONTAIN "$folder$"> <!--- Ignore folders --->
@@ -1331,7 +1330,6 @@
 						<cfset var endtime = gettickcount()>
 						<cfset var timediff = (endtime - starttime)/1000>
 						<cfif art contains "video">
-							<cfset console("video upload speed = #arguments.thestruct.filesize/timediff#")>
 							<cfif application.uploadspeed EQ 0>
 								<cfset application.uploadspeed = arguments.thestruct.filesize/timediff>
 							</cfif>
@@ -1553,7 +1551,7 @@
 
 				<cfset var awsfileexists = false>
 				<!--- convert the filename without space and foreign chars --->
-				<cfinvoke component="global" method="cleanfilename" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
+				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
 					<cfloop list="#arguments.thestruct.s3list#" index='bucketfile'>
 						<cfif bucketfile DOES NOT CONTAIN "$folder$"> <!--- Ignore folders --->
@@ -1944,11 +1942,10 @@
 		<cfloop array = "#bucketlistarr#" index='struct'>
 			<cfset arguments.thestruct.s3list = listappend(arguments.thestruct.s3list, listlast(struct["key"],'/\'))>
 		</cfloop>
-		<cfset console(arguments.thestruct.s3list)>
 		<!--- Read Basket --->
 		<cfinvoke method="readbasket" returnvariable="thebasket">
 		<cfset var filectr = 0>
-
+		<!--- Get total size of all assets in cart --->
 		<cfquery name="totsize" dbtype="query">
 			SELECT sum(cart_size) basketsize FROM thebasket
 		</cfquery>
@@ -1956,7 +1953,7 @@
 		<cfset var basketsize = totsize.basketsize/1000000>
 		<cfset var resctr = 0>
 		<!--- Add buffer time to upload in ms to account for minor variations --->
-		<cfset var buffer = 500>
+		<cfset var buffer = 800>
 		<!--- Calculate amount of time it will take to upload 5mb chunks based on measured upload speed of client--->
 		<cfif application.uploadspeed NEQ 0>
 			<!--- Calculate how long it will take to upload 5mb based on upload speed in ms --->
@@ -1964,7 +1961,6 @@
 		<cfelse>
 			<cfset var mb5time = 5000>
 		</cfif>
-		<cfset console("mb5time = #mb5time#")>
 		<!--- Loop trough the basket --->
 		<cfloop query="thebasket">
 			<!--- Set the asset id into a var --->
@@ -2001,10 +1997,9 @@
 			<cfflush>
 			<cfset var thethread=cfthread["#tt#"]> 
 			<!--- Get file size in MB --->
-			<!--- <cfset console("fielsize = #arguments.thestruct.filesize#")> --->
 			<!--- Calculate size of progress bar in % that the file will take up --->
 			<cfset var chunksize =  (arguments.thestruct.filesize/basketsize)*100>
-			<cfset console("chunksize = #chunksize#")>
+			<!--- <cfset console("chunksize = #chunksize#")> --->
 			<!--- Divide progress bar into parts based on uploading 5mb chunks at a time --->
 			<cfif application.uploadspeed NEQ 0>
 				<cfset var numparts = chunksize/(ceiling(arguments.thestruct.filesize/5))>
@@ -2012,7 +2007,7 @@
 				<cfset var numparts =  chunksize/basketsize>
 			</cfif>
 			<cfset var chunkctr = 0>
-			<Cfset console("numparts = #numparts#")>
+			<!--- <Cfset console("numparts = #numparts#")> --->
 			<!--- Update progress bar on page  --->
 			<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
 				<cfset sleep(mb5time) > 
@@ -2022,24 +2017,24 @@
 					<cfset chunkctr = chunkctr + numparts>
 				</cfif>
 				<cfif chunkctr gt (resctr + chunksize)>
-					<cfset console("chunk ctr greater")>
+					<!--- <cfset console("chunk ctr greater")> --->
 					<cfset chunkctr = resctr + chunksize>
 				</cfif>
-				<cfset console("chunk counter % = #chunkctr#")>
-				<cfset res.progress = chunkctr>
-				<cfset res.message = "hey">
+				<!--- <cfset console("chunk counter % = #chunkctr#")> --->
+				<cfset res.progress = "#chunkctr#">
+				<cfset res.message = "">
 				<cfoutput>#serializeJSON(res)#</cfoutput>
 				<cfflush>
 			</cfloop>
 			<cfset resctr = resctr + chunksize>
-			<cfset res.progress = resctr>
+			<cfset res.progress = "#resctr#">
 			<cfset res.message = "">
-			<cfset console("res counter % = #resctr#")>
+			<!--- <cfset console("res counter % = #resctr#")> --->
 			<cfoutput>#serializeJSON(res)#</cfoutput>
 			<cfflush>
 		</cfloop>
-		<cfset res.progress = 100>
-		<cfset res.message  = ' wowowowowowowowowo-------------- #ucase(done)# --------------#repeatString("  ",250)#'>
+		<cfset res.progress = "100">
+		<cfset res.message  = ' -------------- #ucase(done)# --------------#repeatString("  ",250)#'>
 		<cfoutput>#serializeJSON(res)#</cfoutput>
 		<cfflush>
 		<cfif !structIsEmpty(session.theawsurl)>

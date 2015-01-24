@@ -23,6 +23,9 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+
+<cfheader name="Content-Type"  value="text/octet-stream">
+<cfheader name="Cache-Control" value="no-cache"> 
 <cfparam name="session.user_os" default="unknown">
 <cfif !isdefined("qry_customization.#session.user_os#_netpath2asset") >
 	<cfparam name= "qry_customization.#session.user_os#_netpath2asset" default="">
@@ -734,12 +737,6 @@
 	            return;
 	        }
 
-	         if (type=='aws')
-	            {
-	            	// Disable aws upload button to prevent users from hitting it again and nitiaing multiple requests
-	            	$("#upload_aws").prop("disabled","true");
-	            }
-
 	        try
 	        {
 	            var xhr = new XMLHttpRequest();  
@@ -748,24 +745,25 @@
 	            xhr.onreadystatechange = function() 
 	            {
 	                try
-	                { console.log(xhr.readyState);
-	                    if (xhr.readyState > 2 && xhr.readyState!=4)
+	                { 
+	                    if (xhr.readyState > 2)
 	                    {
-	                        var new_response = xhr.responseText.substring(xhr.previous_text.length);
-	                        var result = JSON.parse( new_response );
+	                        var new_response = xhr.responseText.substring(xhr.previous_text.length); 
+	                        var resparr = new_response.split('{');
+	                        for (var i=1;i<resparr.length;i++)
+	                        {
+	                        new_response =  '{' + resparr[i];
+	                        var result = $.parseJSON( new_response );
 	                        if (result.message !='')
 	                        	log_message(result.message);
 	                        //update the progressbar
-	                        console.log(result);
 	                       document.getElementById('progressor').style.width = result.progress + "%";
-	                        xhr.previous_text = xhr.responseText;
+	                       } 
+	                       xhr.previous_text = xhr.responseText;
 	                    }   
 	                    // If request has completed
 	                   if (xhr.readyState==4)
-	                   {
 	                    	$("#upload_aws").prop("disabled",false);
-	                    	document.getElementById('progressor').style.width = 100 + "%";
-	                    }
 	                }
 	                catch (e)
 	                {
@@ -779,6 +777,7 @@
 	            if (type=='aws')
 	            {
 	            	$("###theaction#").prop("value", "c.basket_upload2aws");
+	            	// Disable aws upload button to prevent users from hitting it again and initiating multiple requests
 	            	$("##upload_aws").prop("disabled",true);
 	            }
 	            else
@@ -788,7 +787,7 @@
 		var items = formserialize("thebasket");
 		// Get values for fields
 		createTarget();
-	            xhr.open("POST", "", true);
+	            xhr.open("POST", " ", true);
 	            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded"); // set form encoding for params
 	            xhr.send(items);
 	            // Set fuseaction back to download

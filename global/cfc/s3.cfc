@@ -342,10 +342,11 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var versionID = "">
 		<cfset var binaryFileData = "">
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<cfset var filename = listlast(arguments.filekey,'\/')>
+
 		<!--- Encode filename --->
 		<cfset arguments.fileKey = urlEncodedFormat(arguments.fileKey,'utf-8')>
-
-		<cfset var filename = listlast(arguments.filekey,'\/')>
+		
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
 			<cfset arguments.contenttype = getPageContext().getServletContext().getMimeType("#arguments.theasset#")>
@@ -407,11 +408,20 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cffile action="delete" file="#thescriptfile#">
 
 		<!--- ************* Get listing of the file parts  ******************* --->
-		<cfset var dirqry ="">
-		<cfdirectory action="list" directory="#assetdir#" name="dirqry">
+		
+		<!--- There seems to be a bug in cfdirectory with files containing . in their names as the filters don't work in those cases so we will use our own code instead --->
+		<!--- <cfdirectory action="list" directory="#assetdir#" name="dirqry">
 		<cfquery name="dirqry" dbtype="query">
 			SELECT name FROM dirqry WHERE lower(name) LIKE '%#lcase(filename)#.%' ORDER BY name ASC
-		</cfquery>
+		</cfquery> --->
+		<cfset fileList = createObject("java","java.io.File").init("#assetdir#").listFiles() />
+		<cfset var dirqry  = queryNew("Name") />
+		<cfloop from="1" to="#arrayLen(fileList)#" index="i">
+			 <cfif refindnocase('.[0-9]$',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
+			 	 <cfset queryAddRow(dirqry) />
+			  	<cfset querySetCell(dirqry, "Name", fileList[i].getName()) />
+			</cfif>
+		</cfloop>
 		<cfset var orig_dirqry = dirqry>
 		<cfset var etags= []> <!--- intialize etag array to hold etags of all the file parts after upload --->
 		<cfset var etag = "">
@@ -452,10 +462,15 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 					<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 				</cfif>
 			</cfloop>
-			<cfdirectory action="list" directory="#assetdir#" name="dirqry">
-			<cfquery name="dirqry" dbtype="query">
-				SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
-			</cfquery>
+			<!--- ************* Get listing of the file parts  ******************* --->
+			<cfset fileList = createObject("java","java.io.File").init("#assetdir#").listFiles() />
+			<cfset var dirqry  = queryNew("Name") />
+			<cfloop from="1" to="#arrayLen(fileList)#" index="i">
+				 <cfif refindnocase('.[0-9]$',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
+				 	 <cfset queryAddRow(dirqry) />
+				  	<cfset querySetCell(dirqry, "Name", fileList[i].getName()) />
+				</cfif>
+			</cfloop>
 		</cfloop>
 		<!--- If all parts could not be uploaded even after 2 re-tries then throw error --->
 		<cfif dirqry.recordcount NEQ 0>
