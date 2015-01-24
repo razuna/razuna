@@ -295,6 +295,8 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
 
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<!--- Encode filename --->
+		<cfset arguments.fileKey = urlEncodedFormat(arguments.fileKey,'utf-8')>
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
 			<!--- Try finding content type by looking at mime types defined at server --->
@@ -310,7 +312,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)> 
 		<!--- Send the file to amazon. The "X-amz-acl" controls the access properties of the file --->
-		<cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#" timeout="#arguments.HTTPtimeout#">
+		<cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#" timeout="#arguments.HTTPtimeout#" throwonerror="true">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			<cfhttpparam type="header" name="Content-MD5" value="#md5hash#">
 			<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
@@ -340,6 +342,9 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var versionID = "">
 		<cfset var binaryFileData = "">
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<!--- Encode filename --->
+		<cfset arguments.fileKey = urlEncodedFormat(arguments.fileKey,'utf-8')>
+
 		<cfset var filename = listlast(arguments.filekey,'\/')>
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
@@ -352,7 +357,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)>
-		<cfhttp method="POST" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploads" timeout="#arguments.HTTPtimeout#">
+		<cfhttp method="POST" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploads" timeout="#arguments.HTTPtimeout#" throwonerror="true">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
@@ -427,7 +432,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 				<cfset var cs = "PUT\n#md5hash#\n#arguments.contentType#\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#">
 				<!--- Create a proper signature --->
 				<cfset var signature = createSignature(cs)>
-				 <cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
+				 <cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#" throwonerror="true">
 					<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 					<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
 					<cfhttpparam type="header" name="Date" value="#dateTimeString#">
@@ -463,7 +468,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 			<cfset var cs = "DELETE\n\n\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#">
 			<!--- Create a proper signature --->
 			<cfset var signature = createSignature(cs)>
-			 <cfhttp method="DELETE" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
+			 <cfhttp method="DELETE" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#" throwonerror="true">
 				<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 				<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			</cfhttp>
@@ -543,7 +548,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)>
-		<cfhttp method="POST" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
+		<cfhttp method="POST" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#" throwonerror="true">
 			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 			<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
