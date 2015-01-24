@@ -764,6 +764,7 @@
 				</cfif>	
 			</cfloop>
 
+			<cfset var starttime = gettickcount()> <!--- start download time counter --->
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Copy file to the outgoing folder --->
@@ -817,6 +818,13 @@
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="#ttd#" />
+			<cfset var endtime = gettickcount()>
+			<cfset var timediff = (endtime - starttime)/1000>
+			<cfif application.downloadspeed EQ 0>
+				<cfset application.downloadspeed = arguments.thestruct.filesize/timediff>
+			</cfif>
+			<!--- Calculate average download speed --->
+			<cfset application.downloadspeed = (application.downloadspeed + arguments.thestruct.filesize/timediff)/2>
 		</cfif>
 	</cfloop>
 	<!--- Return --->
@@ -1087,6 +1095,7 @@
 
 			<!--- convert the filename without space and foreign chars --->
 			<cfinvoke component="global" method="cleanfilename" returnvariable="arguments.thestruct.thefinalname" thename="#arguments.thestruct.thefinalname#">
+			<cfset var starttime = gettickcount()> <!--- start download time counter --->
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1155,6 +1164,15 @@
 				<!--- Wait for the thread above until the file is downloaded fully --->
 				<cfthread action="join" name="#thethreadid#" />
 			</cfif>
+
+			<cfset var endtime = gettickcount()>
+			<cfset var timediff = (endtime - starttime)/1000>
+			<cfif application.downloadspeed EQ 0>
+				<cfset application.downloadspeed = arguments.thestruct.filesize/timediff>
+			</cfif>
+			<!--- Calculate average download speed --->
+			<cfset application.downloadspeed = (application.downloadspeed + arguments.thestruct.filesize/timediff)/2>
+
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
 			<!--- <cfif theart EQ "versions">
 				<cfset var name = qry.av_link_title>
@@ -1389,6 +1407,7 @@
 
 			<!--- Create uuid for thread --->
 			<cfset var wvt = createuuid("")>
+			<cfset var starttime = gettickcount()> <!--- start download time counter --->
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1442,6 +1461,14 @@
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="#wvt#" />
+
+			<cfset var endtime = gettickcount()>
+			<cfset var timediff = (endtime - starttime)/1000>
+			<cfif application.downloadspeed EQ 0>
+				<cfset application.downloadspeed = arguments.thestruct.filesize/timediff>
+			</cfif>
+			<!--- Calculate average download speed --->
+			<cfset application.downloadspeed = (application.downloadspeed + arguments.thestruct.filesize/timediff)/2>
 		</cfif>
 	</cfloop>
 	<!--- Return --->
@@ -1637,7 +1664,7 @@
 
 			<!--- convert the filename without space and foreign chars --->
 			<cfinvoke component="global" method="cleanfilename" returnvariable="arguments.thestruct.thenewname" thename="#arguments.thestruct.thenewname#">
-
+			<cfset var starttime = gettickcount()> <!--- start download time counter --->
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1696,6 +1723,14 @@
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="download#theart##theaudid#" />
+
+			<cfset var endtime = gettickcount()>
+			<cfset var timediff = (endtime - starttime)/1000>
+			<cfif application.downloadspeed EQ 0>
+				<cfset application.downloadspeed = arguments.thestruct.filesize/timediff>
+			</cfif>
+			<!--- Calculate average download speed --->
+			<cfset application.downloadspeed = (application.downloadspeed + arguments.thestruct.filesize/timediff)/2>
 		</cfif>
 	</cfloop>
 	<!--- Return --->
@@ -1787,6 +1822,7 @@
 	<cfparam default="" name="arguments.thestruct.newpath" >
 	<cfparam default="true" name="arguments.thestruct.skipduplicates">
 	<cfparam default="true" name="arguments.thestruct.localupload">
+	<cfparam name="application.downloadspeed" default="0">
 	<cftry>
 
 		<cfset var res = structnew()>
@@ -1806,48 +1842,95 @@
 		<!--- Read Basket --->
 		<cfinvoke method="readbasket" returnvariable="thebasket">
 		<cfset var filectr = 0>
+		<!--- Get total size of all assets in cart --->
+		<cfquery name="totsize" dbtype="query">
+			SELECT sum(cart_size) basketsize FROM thebasket
+		</cfquery>
+		<!--- Size of all assets in basket in MB --->
+		<cfset var basketsize = totsize.basketsize/1000000>
+		<cfset var resctr = 0>
+		<!--- Add buffer time to upload in ms to account for minor variations --->
+		<!--- Calculate amount of time it will take to upload 5mb chunks based on measured upload speed of client--->
+		<cfif application.downloadspeed NEQ 0>
+			<!--- Calculate how long it will take to download 5mb based on download speed in ms --->
+			<cfset var mb5time = (5/application.downloadspeed)*1000>
+		<cfelse>
+			<cfset var mb5time = 5000>
+		</cfif>
+
 		<!--- Loop trough the basket --->
 		<cfloop query="thebasket">
 			<!--- Set the asset id into a var --->
 			<cfset arguments.thestruct.theid = cart_product_id>
-			<!--- Get the files according to the extension --->
-			<cfswitch expression="#cart_file_type#">
-				<!--- Images --->
-				<cfcase value="img">
-					<cfset res.message  = 'Copying image "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-					<!--- Write Image --->
-					<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
-				</cfcase>
-				<!--- Videos --->
-				<cfcase value="vid">
-					<!--- Write Video --->
-					<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
-					<cfset res.message  = 'Copying video "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-				</cfcase>
-				<!--- Audios --->
-				<cfcase value="aud">
-					<cfset res.message  = 'Copying audio "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-					<!--- Write Audio --->
-					<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
-				</cfcase>
-				<!--- All other files --->
-				<cfdefaultcase>
-					<cfset res.message  = 'Copying file "#filename#"'>
-					<cfoutput>#serializeJSON(res)#</cfoutput>
-					<cfflush>
-					<!--- Write file --->
-					<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
-				</cfdefaultcase>
-			</cfswitch>
-			<cfset filectr = filectr + 1>
-			<cfset res.progress = int((filectr/thebasket.recordcount)*100)>
+			<cfset var tt = createuuid('')>
+			<cfset arguments.thestruct.filesize = cart_size/1000000>
+			<cfthread action="run" intstruct = "#arguments.thestruct#" cart_file_type = "#cart_file_type#" name="#tt#">
+				<!--- Get the files according to the extension --->
+				<cfswitch expression="#cart_file_type#">
+					<!--- Images --->
+					<cfcase value="img">
+						<!--- Write Image --->
+						<cfinvoke method="writeimages" thestruct="#intstruct#">
+					</cfcase>
+					<!--- Videos --->
+					<cfcase value="vid">
+						<!--- Write Video --->
+						<cfinvoke method="writevideos" thestruct="#intstruct#">
+					</cfcase>
+					<!--- Audios --->
+					<cfcase value="aud">
+						<!--- Write Audio --->
+						<cfinvoke method="writeaudios" thestruct="#intstruct#">
+					</cfcase>
+					<!--- All other files --->
+					<cfdefaultcase>
+						<!--- Write file --->
+						<cfinvoke method="writefiles" thestruct="#intstruct#">
+					</cfdefaultcase>
+				</cfswitch>
+			</cfthread>
+			<cfset res.message  = 'Copying "#filename#" #repeatString("  ",250)#'>
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
+			<cfset var thethread=cfthread["#tt#"]> 
+			<!--- Get file size in MB --->
+			<!--- Calculate size of progress bar in % that the file will take up --->
+			<cfset var chunksize =  (arguments.thestruct.filesize/basketsize)*100>
+			<!--- <cfset console("chunksize = #chunksize#")> --->
+			<!--- Divide progress bar into parts based on uploading 5mb chunks at a time --->
+			<cfif application.downloadspeed NEQ 0>
+				<cfset var numparts = chunksize/(ceiling(arguments.thestruct.filesize/5))>
+			<cfelse>
+				<cfset var numparts =  chunksize/basketsize>
+			</cfif>
+			<cfset var chunkctr = 0>
+			<!--- <Cfset console("numparts = #numparts#")> --->
+			<!--- Update progress bar on page  --->
+			<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
+				<cfset sleep(mb5time) > 
+				<cfif chunkctr EQ 0>
+					<cfset chunkctr = chunkctr + resctr + numparts>
+				<cfelse>
+					<cfset chunkctr = chunkctr + numparts>
+				</cfif>
+				<cfif chunkctr gt (resctr + chunksize)>
+					<!--- <cfset console("chunk ctr greater")> --->
+					<cfset chunkctr = resctr + chunksize>
+				</cfif>
+				<!--- <cfset console("chunk counter % = #chunkctr#")> --->
+				<cfset res.progress = "#chunkctr#">
+				<cfset res.message = "">
+				<cfoutput>#serializeJSON(res)#</cfoutput>
+				<cfflush>
+			</cfloop>
+			<cfset resctr = resctr + chunksize>
+			<cfset res.progress = "#resctr#">
+			<cfset res.message = "">
+			<!--- <cfset console("res counter % = #resctr#")> --->
+			<cfoutput>#serializeJSON(res)#</cfoutput>
+			<cfflush>
 		</cfloop>
+		<cfset res.progress = "100">
 		<cfset res.message  = '-------------- DONE -------------- '>
 		<cfoutput>#serializeJSON(res)#</cfoutput>
 		<cfflush>

@@ -763,7 +763,10 @@
 	                    }   
 	                    // If request has completed
 	                   if (xhr.readyState==4)
+	                   {
 	                    	$("#upload_aws").prop("disabled",false);
+	                    	$("#upload_local").prop("disabled",false);
+	                    }
 	                }
 	                catch (e)
 	                {
@@ -780,8 +783,11 @@
 	            	// Disable aws upload button to prevent users from hitting it again and initiating multiple requests
 	            	$("##upload_aws").prop("disabled",true);
 	            }
-	            else
+	            else 
+	            {
 			$("###theaction#").prop("value", "c.basket_upload2local");
+			$("##upload_local").prop("disabled",true);
+		}
 		</cfoutput>
 	            // Get values
 		var items = formserialize("thebasket");
