@@ -7,37 +7,37 @@ Refer to https://docs.google.com/a/razuna.com/document/d/1hHLI4vNgE3cjxgPAnp0VC5
 --->
 
 <!--- SET API KEY --->
-<cfset apikey_admin = "9AACE5A4C5C04D87A6E6CB42F54ED912"> <!--- Admin --->
-<cfset apikey_sysadmin = "C18990BD569A4C448ACA3D5CA185E4B2"> <!--- SYS Admin --->
-<cfset apikey_user_perm = "170C2A450D374703A225B26C469CF2CD"> <!--- User with permission --->
-<cfset apikey_user_noperm = "D65706752CFD4D9E91B0926DE58C6616"> <!--- User without permission --->
+<cfset apikey_admin = "41059B3955904132976F2D09A2D51BA9"> <!--- Admin --->
+<cfset apikey_sysadmin = "CEF2908E595B46749D5ABF0309DF35C8"> <!--- SYS Admin --->
+<cfset apikey_user_perm = "3034110E76D04DFB83A88E7EEA2FA6CB"> <!--- User with permission --->
+<cfset apikey_user_noperm = "431F16F7EA3D4B8B81AA27F1C55A3CF8"> <!--- User without permission --->
 
 <!--- SET URL OF API --->
 <cfset apiurl = "http://razunabd.local:8080/razuna/global/api2/">
 
 <!--- Group ID --->
-<cfset grpid = "6F6B0D39-A95F-4904-A9D6E254A9BA4263">
+<cfset grpid = "AB2DB4AB-7DDF-4B63-ADAF94B7B0327DD8">
 
 <!--- ASSET ID --->
-<cfset assetid = "BDA9E906503D4B88881254101E1E7938">
+<cfset assetid = "D224E5A79CD343E38A4F2B673C755B71">
 <cfset assettype = "img">
 
 <!--- FOLDERID --->
-<cfset destination_folderid  = "09BEC2A0DCAD43DC9385C3E717E7B736">
-<cfset original_folderid = "E686529185494864B4EDBA3BCFF910D1">
+<cfset destination_folderid  = "C8C01EDAABA445A7ACA84BFF44FC1C46">
+<cfset original_folderid = "B28DD92DE56947F285815E787E9A169F">
 <cfset foldername  = "Test_Folder">
 
 <!--- COLLECTIONID --->
-<cfset collection_folderid = "427BB557EBC14A02BE7009591AB5E440">
-<cfset collectionid = "D0CAE5C5296340DFACBE946D8D98318E">
+<cfset collection_folderid = "F76D3E27EC6D40FDAA864E263A2DEA69">
+<cfset collectionid = "81216F9F0B474CF682CF6B0CE4436498">
 <!--- PDF document --->
-<cfset fileid = "50AF6049EB7143EA89DB89D8CD8FD19D">
+<cfset fileid = "90F1FFAA89AF400CA6A18E5B4F9D08C6">
 
 <!--- Label --->
-<cfset labelid = "18CA6512B5D94F8094B0CABB9013EA0F">
+<cfset labelid = "020C6CB35CBE48C58EF1E078A7A3517B">
 
 <!--- SEARCH TEXT --->
-<cfset searchfor = "sync*">
+<cfset searchfor = "i*">
 <!--- ----------------------------------------------------------------------------- --->
 <!--- NOTHING ELSE FOR YOU TO DO HERE --->
 <!--- ----------------------------------------------------------------------------- --->
