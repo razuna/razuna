@@ -200,14 +200,16 @@
 	<cffunction name="doimport" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- Check if file exists if not show error message --->
-		<cfif !FileExists("#GetTempdirectory()#/#session.importfilename#")>
+		<cfif NOT isdefined("session.importfilename") OR !FileExists("#GetTempdirectory()#/#session.importfilename#")>
+			<cfinvoke component="defaults" method="trans" transid="file_absent" returnvariable="file_absent" />
 			<!--- Feedback --->
-			<cfoutput><h2>The file is not readable. Please upload it again!</h2><br><br></cfoutput>
+			<cfoutput><h2>#file_absent#</h2><br><br></cfoutput>
 			<cfflush>
 			<cfabort>
 		</cfif>
 		<!--- Feedback --->
-		<cfoutput><strong>Starting the import</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="start_import" returnvariable="start_import" />
+		<cfoutput><strong>#start_import#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- CSV and XML --->
 		<cfif listlast(session.importfilename,".") EQ "csv">
@@ -222,24 +224,28 @@
 				<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#session.importfilename#")>
 				<cfset arguments.thestruct.theimport = SpreadsheetQueryread(spreadsheet=thexls,sheet=0,headerrow=1)>
 			<cfcatch>
-				<cfoutput>We could not read the excel file properly. Please convert it into a CSV and try again. <br/>You can save an excel file as CSV using the 'File>Save As' feature in excel.</cfoutput>
+				<cfinvoke component="defaults" method="trans" transid="excel_no_read" returnvariable="excel_no_read" />
+				<cfoutput>#excel_no_read#</cfoutput>
 				<cfflush>
 				<cfabort>
 			</cfcatch>
 			</cftry>
 		</cfif>
 		<!--- Feedback --->
-		<cfoutput>We could read your file. Continuing...<br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="file_read" returnvariable="file_read" />
+		<cfoutput>#file_read#<br><br></cfoutput>
 		<cfflush>
 		<!--- Do the import --->
 		<cfinvoke method="doimporttables" thestruct="#arguments.thestruct#" />
 		<!--- Feedback --->
-		<cfoutput>Cleaning up...<br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="clean_up" returnvariable="clean_up" />
+		<cfoutput>#clean_up#<br><br></cfoutput>
 		<cfflush>
 		<!--- Remove the file --->
 		<cffile action="delete" file="#GetTempdirectory()#/#session.importfilename#" />
 		<!--- Feedback --->
-		<cfoutput><strong style="color:green;">Import successfully done!</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="import_success" returnvariable="import_success" />
+		<cfoutput><strong style="color:green;">#import_success#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>
@@ -255,16 +261,18 @@
 	
 	<!---Import: Loop over tables ---------------------------------------------------------------------->
 	<cffunction name="doimporttables" output="false">
-		<cfargument name="thestruct" type="struct">		
+		<cfargument name="thestruct" type="struct">
 		<!--- Is a header template there --->
 		<cfif arguments.thestruct.impp_template EQ "">
+			<cfinvoke component="defaults" method="trans" transid="no_template" returnvariable="no_template" />
 			<!--- Feedback --->
-			<cfoutput>No template chosen. We assume the first row has headers!<br><br></cfoutput>
+			<cfoutput>#no_template#<br><br></cfoutput>
 			<cfflush>
 		<!--- If a template has been chosen --->
 		<cfelse>
+			<cfinvoke component="defaults" method="trans" transid="applying_template" returnvariable="applying_template" />
 			<!--- Feedback --->
-			<cfoutput>Applying your chosen template to the records!<br><br></cfoutput>
+			<cfoutput>#applying_template#<br><br></cfoutput>
 			<cfflush>
 			<!--- get template values --->
 			<cfset arguments.thestruct.template = gettemplatedetail(arguments.thestruct.impp_template)>
@@ -327,7 +335,8 @@
 		<cfset var c_theiptccredit = "iptccredit" />
 		<cfset var c_thecopynotice = "copynotice" />
 		<!--- Feedback --->
-		<cfoutput><strong>Import to images...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="import_images" returnvariable="import_images" />
+		<cfoutput><strong>#import_images#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- If template --->
 		<cfif arguments.thestruct.impp_template NEQ "">
@@ -347,7 +356,8 @@
 				</cfif>
 
 				<cfif NOT isdefined("#c_thisid#") >
-					<cfoutput><strong><font color="##CD5C5C">The 'ID' key column is missing in the file. Please ensure the 'ID' key column is present in the file or if using a import template make sure to define a mapping to a key column.</font></strong></cfoutput>
+					<cfinvoke component="defaults" method="trans" transid="id_missing" returnvariable="id_missing" />
+					<cfoutput><strong><font color="##CD5C5C">#id_missing#</font></strong></cfoutput>
 					<cfflush>
 					<cfabort>
 				</cfif> 
@@ -373,7 +383,8 @@
 				<!--- If record is found continue --->
 				<cfif found.recordcount NEQ 0>
 					<!--- Feedback --->
-					<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
+					<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+					<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
 					<cfflush>
 					<!--- Labels --->
 					<!--- If template --->
@@ -1153,7 +1164,8 @@
 				<!--- Show if error --->
 				<cfcatch type="any">
 					<!--- Feedback --->
-					<cfoutput>Following error occurred:<br /><cfdump var="#cfcatch#"><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
+					<cfinvoke component="defaults" method="trans" transid="error_occurred" returnvariable="error_occurred" />
+					<cfoutput>#error_occurred#:<br /><cfdump var="#cfcatch#"><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
 					<cfset cfcatch.custom_message = "Error in function import.doimportimages">
 					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfflush>
@@ -1182,7 +1194,8 @@
 		<cfset var c_thedescription = "description" />
 		<cfset var c_thelabels = "labels" />
 		<!--- Feedback --->
-		<cfoutput><strong>Import to videos...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="import_videos" returnvariable="import_videos" />
+		<cfoutput><strong>#import_videos#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- If template --->
 		<cfif arguments.thestruct.impp_template NEQ "">
@@ -1220,7 +1233,8 @@
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
+				<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+				<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
 				<!--- Labels --->
 				<!--- If template --->
@@ -1346,7 +1360,8 @@
 		<cfset var c_thedescription = "description" />
 		<cfset var c_thelabels = "labels" />
 		<!--- Feedback --->
-		<cfoutput><strong>Import to audios...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="import_audios" returnvariable="import_audios" />
+		<cfoutput><strong>#import_audios#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- If template --->
 		<cfif arguments.thestruct.impp_template NEQ "">
@@ -1384,7 +1399,8 @@
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
+				<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+				<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
 				<!--- Labels --->
 				<!--- If template --->
@@ -1517,7 +1533,8 @@
 		<cfset var c_thepdf_webstatement = "pdf_webstatement" />
 		<cfset var c_thepdf_rightsmarked = "pdf_rightsmarked" />	
 		<!--- Feedback --->
-		<cfoutput><strong>Import to documents...</strong><br><br></cfoutput>
+		<cfinvoke component="defaults" method="trans" transid="import_docs" returnvariable="import_docs" />
+		<cfoutput><strong>#import_docs#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- If template --->
 		<cfif arguments.thestruct.impp_template NEQ "">
@@ -1555,7 +1572,8 @@
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
+				<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+				<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
 				<!--- Labels --->
 				<!--- If template --->
