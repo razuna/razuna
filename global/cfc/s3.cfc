@@ -385,6 +385,10 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var thescriptfile = gettempdirectory() & "#thefilename##theext#">
 		<cfset arguments.theasset = replace(replace(arguments.theasset,"/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
+		<!--- If last char is a slash then remove it else windows will complain when calling HJSplit --->
+		<cfif right(assetdir,1) EQ '\' OR right(assetdir,1) EQ '/'>
+			<cfset assetdir = mid(assetdir, 1, len(assetdir)-1)>
+		</cfif>
 		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
 		<!--- If file > 100mb then use 10mb chunk sizes --->
 		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 5000000> 
@@ -399,7 +403,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		</cfif>
 		<!--- Write script file --->
 		<cffile action="write" file="#thescriptfile#" output="cd #session.libpath#" mode="777" addnewline="true">
-		<cffile action="append" file="#thescriptfile#" output="java HJSplit -s#chunksize# #arguments.theasset# #assetdir#" mode="777" addnewline="true">
+		<cffile action="append" file="#thescriptfile#" output='java HJSplit -s#chunksize# "#arguments.theasset#" "#assetdir#" ' mode="777" addnewline="true">
 		<cfexecute name="#thescriptfile#" timeout="30" variable="result" errorVariable="errorvar"/>
 		<cfif len(errorvar)>
 			<cfthrow message="Error occurred while executing HJSplit: #errorvar#">
@@ -417,7 +421,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset fileList = createObject("java","java.io.File").init("#assetdir#").listFiles() />
 		<cfset var dirqry  = queryNew("Name") />
 		<cfloop from="1" to="#arrayLen(fileList)#" index="i">
-			 <cfif refindnocase('.[0-9]$',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
+			 <cfif refindnocase('#filename#.[0-9]{3,}',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
 			 	 <cfset queryAddRow(dirqry) />
 			  	<cfset querySetCell(dirqry, "Name", fileList[i].getName()) />
 			</cfif>
@@ -466,7 +470,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 			<cfset fileList = createObject("java","java.io.File").init("#assetdir#").listFiles() />
 			<cfset var dirqry  = queryNew("Name") />
 			<cfloop from="1" to="#arrayLen(fileList)#" index="i">
-				 <cfif refindnocase('.[0-9]$',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
+				 <cfif refindnocase('#filename#.[0-9]{3,}',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
 				 	 <cfset queryAddRow(dirqry) />
 				  	<cfset querySetCell(dirqry, "Name", fileList[i].getName()) />
 				</cfif>

@@ -1590,7 +1590,7 @@
 				<!--- Upload Thumbnail --->
 				<cfinvoke component="amazon" method="Upload">
 					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.theext#"\>
-					<cfinvokeargument name="theasset" value="#attributes.intstruct.thethumbtconv#">
+					<cfinvokeargument name="theasset" value="#replace(attributes.intstruct.thethumbtconv,'"','','ALL')#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>

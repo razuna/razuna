@@ -5315,8 +5315,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfif arguments.thestruct.type EQ "vid">
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
-				SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-				vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+				SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbwidth)#">,
+				vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbheight)#">
 				WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
