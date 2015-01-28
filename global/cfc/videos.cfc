@@ -569,7 +569,7 @@
 				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#thescript#p.bat">
 			</cfif>
 			<!--- Write files --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -i #theasset# -vframes 1 -f image2 -vcodec mjpeg #theorg#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -i #theasset# -vf thumbnail -frames:v 1 -f image2 -vcodec mjpeg #theorg#" mode="777">
 			<!--- Execute --->
 			<cfthread name="#thescript#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />

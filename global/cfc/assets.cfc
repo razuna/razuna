@@ -5484,7 +5484,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif thetype EQ "vid">
 					<cfset arguments.thestruct.thumbname = arguments.thestruct.qry_existing.vid_name_image>
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
-					<cfset var theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
+					<cfset var theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vf thumbnail -frames:v 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
 				<cfelseif thetype EQ "img">
 					<cfif  isdefined("arguments.thestruct.qry_existing.img_extension") AND arguments.thestruct.qry_existing.img_extension eq 'gif'>
 						<cfset arguments.thestruct.thumbname = "thumb_#theid#.gif">
