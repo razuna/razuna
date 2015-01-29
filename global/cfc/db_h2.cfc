@@ -1611,6 +1611,7 @@
 			sched_start_time     timestamp,
 			sched_end_date       date,
 			sched_end_time       timestamp,
+			sched_run_time       timestamp,
 			host_id				 bigint,
 			sched_ftp_email       varchar(500),
 			sched_upl_template	 varchar(100),

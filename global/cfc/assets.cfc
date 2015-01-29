@@ -704,6 +704,12 @@
 	<cfparam name="arguments.thestruct.folderpath" default="">
 	<cfset var ts = dateformat(now(),"mm.dd.yyyy")>
 	<cfset var error = false>
+	<!--- Update runtime in database for task --->
+	<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+		UPDATE  #session.hostdbprefix#schedules
+		SET sched_run_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp"> 
+		WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
+	</cfquery>
 	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
 	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
 	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
@@ -756,9 +762,9 @@
 			<!--- <cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run"> --->
 				<!--- Get the file and lock it by name for 10 hours so no other process can access it again --->
-				<!--- <cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#"> --->
+				<cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#">
 					<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
-				<!--- </cflock> --->
+				</cflock>
 				<cfif isdefined("arguments.thestruct.sched_id")>
 					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<cfset var done = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=true)>
@@ -957,6 +963,12 @@
 		</cftry>
 		
 	</cfif>
+	<!--- Empty out runtime in database after done running --->
+	<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+		UPDATE  #session.hostdbprefix#schedules
+		SET sched_run_time = null
+		WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
+	</cfquery>
 	<!--- Close connection --->
 	<cfset ftpclose(o)>
 </cffunction>

@@ -626,7 +626,6 @@
 			AND ct.ct_u_h_host_id = h.host_id
 		</cfif>
 		</cfquery>
-		<cfset console(theuser)>
 		<!--- Do we have one domain --->
 		<cfif theuser.recordcount NEQ 0>
 			<!--- Set session hostid --->
