@@ -704,12 +704,14 @@
 	<cfparam name="arguments.thestruct.folderpath" default="">
 	<cfset var ts = dateformat(now(),"mm.dd.yyyy")>
 	<cfset var error = false>
-	<!--- Update runtime in database for task --->
-	<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
-		UPDATE  #session.hostdbprefix#schedules
-		SET sched_run_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp"> 
-		WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
-	</cfquery>
+	<cfif isdefined("arguments.thestruct.sched_id")>
+		<!--- Update runtime in database for task --->
+		<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+			UPDATE  #session.hostdbprefix#schedules
+			SET sched_run_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp"> 
+			WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
+		</cfquery>
+	</cfif>
 	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
 	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
 	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
@@ -963,12 +965,14 @@
 		</cftry>
 		
 	</cfif>
-	<!--- Empty out runtime in database after done running --->
-	<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
-		UPDATE  #session.hostdbprefix#schedules
-		SET sched_run_time = null
-		WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
-	</cfquery>
+	<cfif isdefined("arguments.thestruct.sched_id")>
+		<!--- Empty out runtime in database after done running --->
+		<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+			UPDATE  #session.hostdbprefix#schedules
+			SET sched_run_time = null
+			WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
+		</cfquery>
+	</cfif>
 	<!--- Close connection --->
 	<cfset ftpclose(o)>
 </cffunction>
@@ -1839,7 +1843,6 @@ This is the main function called directly by a single upload else from addassets
 			</cfcatch>
 		</cftry>
 	</cfif>
-
 	<!--- Query to get the settings --->
 	<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
