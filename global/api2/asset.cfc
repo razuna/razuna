@@ -80,8 +80,8 @@
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + i.host_id + '/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + i.host_id + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_thumb,
+						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+						'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_thumb,
 					</cfif>
 					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						(
@@ -161,8 +161,8 @@
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',v.host_id,'/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',v.host_id,'/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' + v.host_id + '/'+ v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' + v.host_id + '/'+ v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
+						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(v.host_id as varchar) + '/'+ v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
+						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(v.host_id as varchar) + '/'+ v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
 					</cfif>
 					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						(
@@ -232,7 +232,7 @@
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',a.host_id,'/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' + a.host_id + '/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
+						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(a.host_id as varchar) + '/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
 					</cfif>
 					'' AS local_url_thumb,
 					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
@@ -295,7 +295,7 @@
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',f.host_id,'/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' + f.host_id + '/'+ f.path_to_asset + '/' + f.file_name_org AS local_url_org,
+						'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/' +  cast(f.host_id as varchar) + '/'+ f.path_to_asset + '/' + f.file_name_org AS local_url_org,
 					</cfif>
 					'' AS local_url_thumb,
 					<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
@@ -729,7 +729,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + i.host_id + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
 				</cfif>
 				x.colorspace,
 				x.xres AS xdpi,
@@ -756,7 +756,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + i.host_id + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
 				</cfif>
 				x.colorspace,
 				x.xres AS xdpi,
@@ -782,7 +782,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',i.host_id,'/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_org,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + i.host_id + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(i.host_id as varchar) + '/'+ i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_org,
 				</cfif>
 				x.colorspace,
 				x.xres AS xdpi,
@@ -808,7 +808,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',vid_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + host_id + '/'+ path_to_asset + '/' + vid_name_org AS local_url_org
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(host_id as varchar) + '/'+ path_to_asset + '/' + vid_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -834,7 +834,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',vid_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/'+ host_id + '/' + path_to_asset + '/' + vid_name_org AS local_url_org
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/'+  cast(host_id as varchar) + '/' + path_to_asset + '/' + vid_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -860,7 +860,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',aud_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + host_id + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(host_id as varchar) + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -886,7 +886,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',aud_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/'+ host_id + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/'+  cast(host_id as varchar) + '/' + path_to_asset + '/' + aud_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,
@@ -912,7 +912,7 @@
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/',host_id,'/',path_to_asset,'/',file_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' + host_id + '/'+ path_to_asset + '/' + file_name_org AS local_url_org
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST##application.razuna.api.dynpath#/assets/' +  cast(host_id as varchar) + '/'+ path_to_asset + '/' + file_name_org AS local_url_org
 				</cfif>,
 				'' AS colorspace,
 				'' AS xdpi,

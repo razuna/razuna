@@ -1216,7 +1216,6 @@
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
 		<cfset cloud_url_org.newepoch = 0>
-		<cfparam name="session.thelang" default="1">
 		<cfparam name="arguments.thestruct.upl_template" default="0">		
 		<!--- Get Tools --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />

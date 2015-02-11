@@ -182,8 +182,15 @@
 		</cftry>
 
 
-		<!--- If less then 45 (1.7.1) --->
-		<cfif updatenumber.opt_value LT 45>
+		<!--- If less then 46 (1.7.1) --->
+		<cfif updatenumber.opt_value LT 46>
+			<!--- Add SCHED_RUN_TIME column to schedules table --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SCHED_RUN_TIME <cfif application.razuna.thedatabase NEQ "mssql">datetime<cfelse>timestamp</cfif>
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<!--- Add SAML columns to settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

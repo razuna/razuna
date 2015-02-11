@@ -139,13 +139,13 @@
 					   	success: function(){
 					   		$("##ftpuploadstatus").html('<div style="padding:10px;font-weight:bold;color:green;">#JSStringFormat(myFusebox.getApplicationData().defaults.trans("upload_success_email"))#</div>');
 					   		$("##ftpuploadstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-			   		   		<cfif pl_return.cfc.pl.loadform.active>
-			   		   			// This is for the metaform plugin
-			   					// close window
-			   					$('##thewindowcontent1').dialog('close');
-			   					// load metaform
-			   					$('##rightside').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
-			   		   		</cfif>
+			   		   // 		<cfif pl_return.cfc.pl.loadform.active>
+			   		   // 			// This is for the metaform plugin
+			   					// // close window
+			   					// $('##thewindowcontent1').dialog('close');
+			   					// // load metaform
+			   					// $('##rightside').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
+			   		   // 		</cfif>
 					   	}
 					});
 					return false;

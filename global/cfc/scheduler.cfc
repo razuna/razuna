@@ -634,19 +634,29 @@
 			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
 		<!--- FTP --->
 		<cfelseif doit.qry_detail.sched_method EQ "ftp">
-			<!-- Params -->
-			<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
-			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
-			<cfset session.ftp_pass = doit.qry_detail.sched_ftp_pass>
-			<cfset session.ftp_passive = doit.qry_detail.sched_ftp_passive>
-			<cfset x.filesonly = true> <!--- For scheduled upload we only upload files in folder and ignore any subfolders --->
-			<cfset x.folderpath   = doit.qry_detail.sched_ftp_folder> <!--- Set path to folder --->
-			<!-- CFC: Get FTP directory for adding to the system -->
-			<cfinvoke component="ftp" method="getdirectory" thestruct="#x#" returnvariable="thefiles" />
-			<cfif isdefined("thefiles.ftplist.name")>
-				<cfset x.thefile = valuelist(thefiles.ftplist.name) />
-				<!-- CFC: Add to system -->
-				<cfinvoke component="assets" method="addassetftpthread" thestruct="#x#" />
+			<cfset var runtimeqry = "">
+			<!--- Get last run time --->
+			<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+				SELECT SCHED_RUN_TIME
+				FROM #session.hostdbprefix#schedules
+				WHERE sched_id = <cfqueryparam value="#x.sched_id#" cfsqltype="cf_sql_varchar"> 
+			</cfquery>
+			<!--- Run the task only if its not already running or if the last run time is > 24 hrs --->
+			<cfif runtimeqry.sched_run_time EQ '' OR (isdate(runtimeqry.sched_run_time) AND datediff("h",runtimeqry.sched_run_time,now()) GT 24)>
+				<!-- Params -->
+				<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
+				<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
+				<cfset session.ftp_pass = doit.qry_detail.sched_ftp_pass>
+				<cfset session.ftp_passive = doit.qry_detail.sched_ftp_passive>
+				<cfset x.filesonly = true> <!--- For scheduled upload we only upload files in folder and ignore any subfolders --->
+				<cfset x.folderpath   = doit.qry_detail.sched_ftp_folder> <!--- Set path to folder --->
+				<!-- CFC: Get FTP directory for adding to the system -->
+				<cfinvoke component="ftp" method="getdirectory" thestruct="#x#" returnvariable="thefiles" />
+				<cfif isdefined("thefiles.ftplist.name") AND thefiles.ftplist.name NEQ ''>
+					<cfset x.thefile = valuelist(thefiles.ftplist.name) />
+					<!-- CFC: Add to system -->
+					<cfinvoke component="assets" method="addassetftpthread" thestruct="#x#" />
+				</cfif>
 			</cfif>
 		<!--- MAIL --->
 		<cfelseif doit.qry_detail.sched_method EQ "mail">

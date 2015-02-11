@@ -33,7 +33,9 @@
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var qry = "">
+		<cfset var qry_col = "">
 		<cfset var thexml ="">
+		<cfset var colfolder = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Get collection folder in which collection resides --->
@@ -61,7 +63,8 @@
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct
 				WHERE ct.col_id_r = <cfqueryparam value="#arguments.collectionid#" cfsqltype="CF_SQL_VARCHAR">
 				AND ct.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-				</cfquery>
+				</cfquery>					
+				
 				<!--- If above qry return records --->
 				<cfif qry_col.recordcount NEQ 0>
 					<!--- Query the files --->
@@ -216,7 +219,7 @@
 					a.aud_extension extension,
 					'0' extension_thumb, 
 					'dummy' as video_image,
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.aud_size as varchar(100)), '0')</cfif> AS size,
+					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size,
 					0 AS width,
 					0 AS height,
 					a.aud_name_org filename_org, 
@@ -252,6 +255,8 @@
 						WHEN (ct.col_file_format = '' OR ct.col_file_format = 'audio') THEN 
 							<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 								concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org)
+							<cfelseif application.razuna.api.thedatabase EQ "mssql">
+								'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + a.path_to_asset + '/' + a.aud_name_org
 							</cfif>
 						ELSE 
 							<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
@@ -334,7 +339,7 @@
 					<cfset thexml = querynew("responsecode,totalassetscount,calledwith")>
 					<cfset queryaddrow(thexml,1)>
 					<cfset querysetcell(thexml,"responsecode","1")>
-					<cfset querysetcell(thexml,"totalassetscount",qry.recordcount)>
+					<cfset querysetcell(thexml,"totalassetscount",0)>
 					<cfset querysetcell(thexml,"calledwith","c-#arguments.collectionid#")>
 				</cfif>
 			<!--- No access --->

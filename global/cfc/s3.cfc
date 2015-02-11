@@ -289,12 +289,14 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="fileKey" type="string" required="yes">
 		<cfargument name="theasset" type="string" required="yes">
 		<cfargument name="contentType" type="string" required="no" default="">
-		<cfargument name="HTTPtimeout" type="numeric" required="no" default="300">
+		<cfargument name="HTTPtimeout" type="numeric" required="no" default="86400">
 		<cfargument name="cacheControl" type="numeric" required="false" default="86400">
 		<cfargument name="acl" type="string" required="no" default="public-read">
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
 
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
+		<!--- Encode filename --->
+		<cfset arguments.fileKey = urlEncodedFormat(arguments.fileKey,'utf-8')>
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
 			<!--- Try finding content type by looking at mime types defined at server --->
@@ -333,7 +335,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfargument name="theasset" type="string" required="yes">
 		<cfargument name="theassetsize" type="string" required="yes" hint="in kb">
 		<cfargument name="contentType" type="string" required="no" default="">
-		<cfargument name="HTTPtimeout" type="numeric" required="no" default="300">
+		<cfargument name="HTTPtimeout" type="numeric" required="no" default="86400">
 		<cfargument name="cacheControl" type="boolean" required="false" default="86400">
 		<cfargument name="acl" type="string" required="no" default="public-read">
 		<cfargument name="storageClass" type="string" required="no" default="STANDARD">
@@ -341,6 +343,10 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var binaryFileData = "">
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
 		<cfset var filename = listlast(arguments.filekey,'\/')>
+
+		<!--- Encode filename --->
+		<cfset arguments.fileKey = urlEncodedFormat(arguments.fileKey,'utf-8')>
+		
 		<!--- If content type not defined then find content type --->
 		<cfif arguments.contenttype EQ "">
 			<cfset arguments.contenttype = getPageContext().getServletContext().getMimeType("#arguments.theasset#")>
@@ -379,12 +385,16 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cfset var thescriptfile = gettempdirectory() & "#thefilename##theext#">
 		<cfset arguments.theasset = replace(replace(arguments.theasset,"/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 		<cfset var assetdir = replace(arguments.theasset,listlast(arguments.theasset, '\/'),'')>
+		<!--- If last char is a slash then remove it else windows will complain when calling HJSplit --->
+		<cfif right(assetdir,1) EQ '\' OR right(assetdir,1) EQ '/'>
+			<cfset assetdir = mid(assetdir, 1, len(assetdir)-1)>
+		</cfif>
 		<cfset var chunksize = 5200> <!--- 5.2 mb chunk size by default, AWS requires chunk size to be 5120 kb at minimum --->
 		<!--- If file > 100mb then use 10mb chunk sizes --->
-		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 500000> 
+		<cfif arguments.theassetsize GT 100000 AND arguments.theassetsize LTE 5000000> 
 			<cfset var chunksize = 10000> 
-		<!--- If file > 500mb then use 100mb chunk sizes --->
-		<cfelseif arguments.theassetsize GT 500000> 
+		<!--- If file > 5gb then use 100mb chunk sizes --->
+		<cfelseif arguments.theassetsize GT 5000000> 
 			<cfset var chunksize = 100000> 
 		</cfif>
 		<!--- If chunks are more than 10,000 then increase chunksize as AWS does not accept more than 10,000 parts --->
@@ -393,7 +403,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		</cfif>
 		<!--- Write script file --->
 		<cffile action="write" file="#thescriptfile#" output="cd #session.libpath#" mode="777" addnewline="true">
-		<cffile action="append" file="#thescriptfile#" output="java HJSplit -s#chunksize# #arguments.theasset# #assetdir#" mode="777" addnewline="true">
+		<cffile action="append" file="#thescriptfile#" output='java HJSplit -s#chunksize# "#arguments.theasset#" "#assetdir#" ' mode="777" addnewline="true">
 		<cfexecute name="#thescriptfile#" timeout="30" variable="result" errorVariable="errorvar"/>
 		<cfif len(errorvar)>
 			<cfthrow message="Error occurred while executing HJSplit: #errorvar#">
@@ -402,11 +412,24 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 		<cffile action="delete" file="#thescriptfile#">
 
 		<!--- ************* Get listing of the file parts  ******************* --->
-		<cfset var dirqry ="">
-		<cfdirectory action="list" directory="#assetdir#" name="dirqry">
+		
+		<!--- There seems to be a bug in cfdirectory with files containing . in their names as the filters don't work in those cases so we will use our own code instead --->
+		<!--- <cfdirectory action="list" directory="#assetdir#" name="dirqry">
 		<cfquery name="dirqry" dbtype="query">
-			SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
-		</cfquery>
+			SELECT name FROM dirqry WHERE lower(name) LIKE '%#lcase(filename)#.%' ORDER BY name ASC
+		</cfquery> --->
+		<cfset fileList = createObject("java","java.io.File").init("#assetdir#").listFiles() />
+		<cfset var dirqry  = queryNew("Name") />
+		<cfloop from="1" to="#arrayLen(fileList)#" index="i">
+			 <cfif refindnocase('#filename#.[0-9]{3,}',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
+			 	 <cfset queryAddRow(dirqry) />
+			  	<cfset querySetCell(dirqry, "Name", fileList[i].getName()) />
+			</cfif>
+		</cfloop>
+		<!--- Sort by name --->
+		<cfquery name="dirqry" dbtype="query">
+			SELECT name FROM dirqry ORDER BY name ASC
+		</cfquery> 
 		<cfset var orig_dirqry = dirqry>
 		<cfset var etags= []> <!--- intialize etag array to hold etags of all the file parts after upload --->
 		<cfset var etag = "">
@@ -427,6 +450,7 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 				<cfset var cs = "PUT\n#md5hash#\n#arguments.contentType#\n#dateTimeString#\n/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#">
 				<!--- Create a proper signature --->
 				<cfset var signature = createSignature(cs)>
+				<!--- Do not use throwonerror attribute as parts with upload errors will be re-tried for upload automatically --->
 				 <cfhttp method="PUT" url="#variables.awsURL#/#arguments.bucketName##arguments.fileKey#?partNumber=#partnum#&uploadId=#uploadID#" timeout="#arguments.HTTPtimeout#">
 					<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
 					<cfhttpparam type="header" name="Content-Type" value="#arguments.contentType#">
@@ -447,10 +471,19 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 					<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 				</cfif>
 			</cfloop>
-			<cfdirectory action="list" directory="#assetdir#" name="dirqry">
+			<!--- ************* Get listing of the file parts  ******************* --->
+			<cfset fileList = createObject("java","java.io.File").init("#assetdir#").listFiles() />
+			<cfset var dirqry  = queryNew("Name") />
+			<cfloop from="1" to="#arrayLen(fileList)#" index="i">
+				 <cfif refindnocase('#filename#.[0-9]{3,}',fileList[i].getName()) > <!--- Only accept filenames ending with .[0-9] notation which are the chunks --->
+				 	 <cfset queryAddRow(dirqry) />
+				  	<cfset querySetCell(dirqry, "Name", fileList[i].getName()) />
+				</cfif>
+			</cfloop>
+			<!--- Sort by name --->
 			<cfquery name="dirqry" dbtype="query">
-				SELECT name FROM dirqry WHERE name LIKE '%#filename#.%' ORDER BY name ASC
-			</cfquery>
+				SELECT name FROM dirqry ORDER BY name ASC
+			</cfquery> 
 		</cfloop>
 		<!--- If all parts could not be uploaded even after 2 re-tries then throw error --->
 		<cfif dirqry.recordcount NEQ 0>

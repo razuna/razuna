@@ -141,7 +141,7 @@
 			<cfset themb=NumberFormat(Round(themb * 10) / 10,"90.0")>
 		</cfif>
 	
-		<cfreturn themb>
+		<cfreturn NumberFormat(themb,'_.__')>
 		<!--- if we ever do something else
 		var bytes = 1;
 		var kb = 1024;

@@ -704,6 +704,14 @@
 	<cfparam name="arguments.thestruct.folderpath" default="">
 	<cfset var ts = dateformat(now(),"mm.dd.yyyy")>
 	<cfset var error = false>
+	<cfif isdefined("arguments.thestruct.sched_id")>
+		<!--- Update runtime in database for task --->
+		<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+			UPDATE  #session.hostdbprefix#schedules
+			SET sched_run_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp"> 
+			WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
+		</cfquery>
+	</cfif>
 	<cfset arguments.thestruct.donedir = "#arguments.thestruct.folderpath#/DONE_#ts#">
 	<cfset arguments.thestruct.errordir = "#arguments.thestruct.folderpath#/ERRORS_#ts#">
 	<!--- Create required DONE AND ERROR folders for process. All files imported successfully will be moved into DONE and ones that did not will be in the ERROR folder --->
@@ -756,9 +764,9 @@
 			<!--- <cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#" action="run"> --->
 				<!--- Get the file and lock it by name for 10 hours so no other process can access it again --->
-				<!--- <cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#"> --->
+				<cflock type="exclusive" timeout="36000" name="#arguments.thestruct.thefilename#">
 					<cfset var getfile = Ftpgetfile(ftpdata=o,remotefile="#arguments.thestruct.remote_file#",localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#",failifexists=false,passive=arguments.thestruct.ftp_passive,stoponerror=true)>
-				<!--- </cflock> --->
+				</cflock>
 				<cfif isdefined("arguments.thestruct.sched_id")>
 					<cfif fileexists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<cfset var done = ftprename(ftpdata=o, oldfile="#arguments.thestruct.remote_file#", newfile="#arguments.thestruct.donedir#/#arguments.thestruct.thefilename#", stoponerror=true)>
@@ -957,6 +965,14 @@
 		</cftry>
 		
 	</cfif>
+	<cfif isdefined("arguments.thestruct.sched_id")>
+		<!--- Empty out runtime in database after done running --->
+		<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
+			UPDATE  #session.hostdbprefix#schedules
+			SET sched_run_time = null
+			WHERE sched_id = <cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="cf_sql_varchar"> 
+		</cfquery>
+	</cfif>
 	<!--- Close connection --->
 	<cfset ftpclose(o)>
 </cffunction>
@@ -1146,9 +1162,6 @@
 				<cfif len(thefile.serverFileExt) GT 9>
 					<cfset thefile.serverFileExt = "txt">
 				</cfif>
-				<cfif thefile.serverFileExt  eq 'zip'>
-					<cfset var iszip = true>
-				</cfif>
 			</cfif>
 			<!--- Rename the file so that we can remove any spaces --->
 			<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
@@ -1235,16 +1248,6 @@
 					<cfset var thefiletype = fileType.type_type>
 				<cfelse>
 					<cfset var thefiletype = "other">
-				</cfif>
-				<!--- If this is a zip file then get tempid from temp table for zip file as the tempid is changed from original after extraction --->
-				<cfif isdefined("iszip")>
-					<cfquery datasource="#application.razuna.datasource#" name="gettempid">
-					SELECT tempid
-					FROM  #session.hostdbprefix#assets_temp
-					WHERE lower(filename) = <cfqueryparam value="#lcase(arguments.thestruct.thefilename)#" cfsqltype="cf_sql_varchar">
-					ORDER BY DATE_ADD DESC
-					</cfquery>
-					<cfset arguments.thestruct.tempid = gettempid.tempid>
 				</cfif>
 
 				<!--- Return Message --->
@@ -1840,7 +1843,6 @@ This is the main function called directly by a single upload else from addassets
 			</cfcatch>
 		</cftry>
 	</cfif>
-
 	<!--- Query to get the settings --->
 	<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
@@ -4070,6 +4072,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- EXTRACT A COMPRESSED FILE (ZIP) ------------------------------------------------------------>
 <cffunction name="extractFromZip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">
+	<cfset var ziptempid = arguments.thestruct.tempid>
 	<cftry>
 		<!--- Check if archive is a Razuna Versions archive in which cases already existing files are versioned. User must be admin to use this feature  --->
 		<cfif arguments.thestruct.qryfile.filename contains 'RazunaVersions' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
@@ -4284,7 +4287,11 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<cfset arguments.thestruct.thefiletype = "other">
 				</cfif>
-				<cfset arguments.thestruct.tempid = createuuid("")>
+				<cfif fileNameExt.theext EQ 'zip'>
+					<cfset arguments.thestruct.tempid = ziptempid>
+				<cfelse>
+					<cfset arguments.thestruct.tempid = createuuid("")>
+				</cfif>
 				<cfset arguments.thestruct.thefilename = newFileName>
 				<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
 				<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
@@ -4300,7 +4307,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<cfset var md5here = 0>
 				</cfif>
-				<!--- If file does not exsist continue else send user an eMail --->
+				<!--- If file does not exist continue else send user an eMail --->
 				<cfif md5here EQ 0>
 					<!--- Check for the name which now contains the directory --->
 					<cfset var thedirlen = listLen(name, FileSeparator()) - 1>
@@ -4363,28 +4370,30 @@ This is the main function called directly by a single upload else from addassets
 						<!--- <cfset arguments.thestruct.fidr = 0> --->
 					</cfif>
 					<!--- Add to temp db --->
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#assets_temp
-					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,thesize,file_id,host_id,md5hash)
-					VALUES(
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
-					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-					<cfif isnumeric(file.fileSize)>
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
-					<cfelse>
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
+					<cfif fileNameExt.theext NEQ 'zip'>
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#assets_temp
+						(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,thesize,file_id,host_id,md5hash)
+						VALUES(
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
+						<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+						<cfif isnumeric(file.fileSize)>
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
+						<cfelse>
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
+						</cfif>
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+						)
+						</cfquery>
 					</cfif>
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-					)
-					</cfquery>
 					<!--- Return IDs in a variable --->
 					<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
 					<!--- For each file we need query for the file --->
@@ -5321,8 +5330,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfif arguments.thestruct.type EQ "vid">
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
-				SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbwidth#">,
-				vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thethumbheight#">
+				SET vid_preview_width = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbwidth)#">,
+				vid_preview_heigth = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#trim(thethumbheight)#">
 				WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -5490,7 +5499,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif thetype EQ "vid">
 					<cfset arguments.thestruct.thumbname = arguments.thestruct.qry_existing.vid_name_image>
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
-					<cfset var theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
+					<cfset var theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vf thumbnail -frames:v 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
 				<cfelseif thetype EQ "img">
 					<cfif  isdefined("arguments.thestruct.qry_existing.img_extension") AND arguments.thestruct.qry_existing.img_extension eq 'gif'>
 						<cfset arguments.thestruct.thumbname = "thumb_#theid#.gif">
@@ -6068,8 +6077,6 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Thread --->
 					<!--- Let's move file on file system --->
 					<!--- <cfthread name="#tt#" action="run" intstruct="#arguments.thestruct#"> --->
-						<cfset consoleoutput(true)>
-						<cfset console("copy:" & filepath & " to " & "#path_to_file#/#filename#")>
 						<cffile action="copy" source="#filepath#" destination="#path_to_file#/#filename#" mode="775">
 					<!--- </cfthread> --->
 					<!--- Wait for thread to finish --->

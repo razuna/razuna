@@ -87,7 +87,7 @@
 		<!--- This is for basket or direct downloads --->
 		<cfif attributes.download EQ "T">
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
-			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
+			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="false">
 		<cfelse>
 			<!--- Get file --->
 			<cfif application.razuna.storage EQ "nirvanix">
@@ -109,7 +109,7 @@
 		<!--- This is for basket or direct downloads --->
 		<cfif attributes.download EQ "T">
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
-			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
+			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="false">
 		<cfelse>
 			<!--- Decide on original or preview --->
 			<cfif attributes.v EQ "o">
@@ -127,7 +127,7 @@
 		<!--- This is for basket or direct downloads --->
 		<cfif attributes.download EQ "T">
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
-			<cfcontent type="application/force-download" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
+			<cfcontent type="application/force-download" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="false">
 		<cfelse>
 			<!--- Different file location for assets stored on lan --->
 			<cfif qry_binary.qfile.link_kind EQ "lan">

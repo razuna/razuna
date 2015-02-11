@@ -188,15 +188,28 @@
 	<cffunction name="deletefolder" access="public" output="true">
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<!--- AmazonS3List method in OpenBD ver 3.1 has a bug where for large files (~1>gb) it throws an errors trying to parse the file size e.g. AmazonS3: For input string: "2336399667". So we will not use that method but use another one instead. 
+		Bug is fixed in latest OpenBD build. --->
 		<!--- Get keys --->
-		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
-		<!--- Loop over the keys and delete them --->
+		<!--- <cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
+
+		 <!--- Loop over the keys and delete them --->
 		<cfloop query="thekeys">
 			<cfif size NEQ 0>
 				<cfset i = AmazonS3getinfo(application.razuna.s3ds,arguments.awsbucket,key)>
 				<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,i.key)>
 			</cfif>
+		</cfloop> 
+		 --->
+
+		<cfset var singleobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation =application.razuna.awslocation)>
+		<cfset var thekeys= singleobj.getbucket(arguments.awsbucket,arguments.folderpath)>
+
+		<!--- Loop over the keys and delete them --->
+		<cfloop array = "#thekeys#" index='struct'>
+				<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,struct["key"])>
 		</cfloop>
+
 		<!--- Finally remove folder which is empty now --->
 		<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,arguments.folderpath)>
 		<!--- Return --->

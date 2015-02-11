@@ -161,6 +161,7 @@
 			<cfquery dbtype="query" name="thexml">
 			SELECT *
 			FROM qry, q
+			ORDER BY #session.sortby#
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
@@ -394,6 +395,8 @@
 				<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 					AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
 				</cfif>
+				GROUP BY i.img_id, i.img_filename, i.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename), i.img_group, i.expiry_date
+				<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 				UNION ALL
 				<!--- Get Aliases --->
 				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id, 
@@ -575,8 +578,8 @@
 				<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 					AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
 				</cfif>
-				GROUP BY i.img_id, i.img_filename, ct.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename)
-				<cfif arguments.istruct.ui>, i.img_group, i.is_available, i.link_kind, i.link_path_url</cfif>
+				GROUP BY i.img_id, i.img_filename, ct.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename), i.img_group, i.expiry_date
+				<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 				<cfset q_start = q_end + 1>
 		    		<cfset q_end = q_end + 990>
 			</cfloop>
@@ -821,8 +824,8 @@
 				<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 					AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
 				</cfif>
-				GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
-					<cfif arguments.vstruct.ui>, v.vid_group, v.is_available, v.link_kind, v.link_path_url</cfif>
+				GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename), v.vid_group, v.expiry_date
+					<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 				UNION ALL
 				<!--- Get Aliases --->
 				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id, 
@@ -1007,8 +1010,8 @@
 				<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 					AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
 				</cfif>
-				GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
-					<cfif arguments.vstruct.ui>, v.vid_group, v.is_available, v.link_kind, v.link_path_url</cfif>
+				GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename), v.vid_group, v.expiry_date
+					<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 				<cfset q_start = q_end + 1>
 		    		<cfset q_end = q_end + 990>
 		    </cfloop>
@@ -1249,7 +1252,7 @@
 				<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
 					AND a.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#">
 				</cfif>
-				GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name)<cfif arguments.astruct.ui>, a.aud_group, a.is_available, a.link_kind, a.link_path_url</cfif>
+				GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 				UNION ALL
 				<!--- Get Aliases --->
 				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
@@ -1430,7 +1433,7 @@
 				<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
 					AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#">
 				</cfif>
-				GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name)<cfif arguments.astruct.ui>, a.aud_group, a.is_available, a.link_kind, a.link_path_url</cfif>
+				GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 			<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 			</cfloop>
@@ -1680,7 +1683,7 @@
 				</cfif>
 				GROUP BY f.file_id, f.file_name, f.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 				f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
-				f.hashtag, fo.folder_name, lower(f.file_name)
+				f.hashtag, fo.folder_name, lower(f.file_name), f.expiry_date
 				UNION ALL
 				<!--- Get Aliases --->
 				SELECT 
@@ -1870,7 +1873,7 @@
 				</cfif>
 				GROUP BY f.file_id, f.file_name, ct.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 				f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
-				f.hashtag, fo.folder_name, lower(f.file_name)
+				f.hashtag, fo.folder_name, lower(f.file_name), f.expiry_date
 				<cfset q_start = q_end + 1>
 		    		<cfset q_end = q_end + 990>
 			</cfloop>
