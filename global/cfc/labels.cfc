@@ -1113,12 +1113,14 @@
 	</cffunction>
 	
 	<!--- ADMIN: Remove label --->
-	<cffunction name="admin_remove" output="false" access="public">
+	<cffunction name="admin_remove" output="true" access="public">
 		<cfargument name="id" type="string">
+		<!--- Var --->
+		<cfset var thelabelist = "">
 		<!--- Get all child labels for parent label --->
-		<cfinvoke method="getchildlabels" parentid="#arguments.id#" level="0" returnVariable="llist" />
+		<cfinvoke method="getchildlabels" label_id="#arguments.id#" level="0" returnvariable="thelabelist" />
 		<!--- Append parent label to list --->
-		<cfset llist = listappend(llist,id)>
+		<cfset var llist = listappend(thelabelist,id)>
 		<!--- DB labels --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#labels
@@ -1264,50 +1266,37 @@
 		<cfreturn llist />
 	</cffunction>
 	
-	<cffunction name="getchildlabels" access="public" returntype="string" hint="Returns all children labels for a given label">
-	    <cfargument name="parentid" type="string" required="yes" default=0 hint="labels_id of parent label for which to get children">
-	    <cfargument name="level" type="numeric" required="no" default=0>
-	    <!--- Get the cachetoken for here --->
-	    <cfset variables.cachetoken = getcachetoken("labels")>
-	    <!--- scoping the variables that need to have their values kept private
-	    to a particular instance of the function call... --->
-	    <cfset var checkforkids = ""><!--- used to hold temporary check for children --->
-	    <cfset var objnav = ""><!--- used to hold temporary subqueries --->
-	   
-	    <!--- On our initial call to this function, we will purge the sublabellist  --->
-	    <cfif arguments.level eq 0>
-	        <cfset variables.sublabellist = "">
-	    </cfif>
-	    <!--- retrieve children of our current parent label --->
-	    <cfquery name="objnav" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
-	        SELECT /* #variables.cachetoken#getchildlabelsobjnav */ label_id, label_text
-	        FROM #session.hostdbprefix#labels 
-	        WHERE label_id_r = <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
-	        AND label_id <> <cfqueryparam value="#arguments.parentid#" cfsqltype="cf_sql_varchar">
-	    </cfquery>
-	    <!--- loop through this parent's children... --->
-	    <cfloop query="objnav">
-	        <!--- check for children. if there are any, call this function recursively --->
-	        <cfquery name="checkforkids" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getchildlabelscheckforkids*/ label_id, label_text
-			FROM  #session.hostdbprefix#labels 
-			WHERE label_id_r  = <cfqueryparam value="#objnav.label_id#" cfsqltype="cf_sql_varchar">
-			AND label_id <> <cfqueryparam value="#objnav.label_id#" cfsqltype="cf_sql_varchar">
-	        </cfquery>
-	        <cfif checkforkids.recordcount gt 0><!--- this child has kids too! add it to the sublabellist, then make the recursive call... --->
-				<cfset variables.sublabellist = listappend(variables.sublabellist, objnav.label_id) >
-				<cfset getchildlabels(parentid = objnav.label_id, level = arguments.level + 1) >
-	        <cfelse><!--- this child is childless...just add it to the sublabellist... --->
-				<cfset variables.sublabellist = listappend(variables.sublabellist, objnav.label_id)  >
-	        </cfif>
-	    </cfloop>
-	  <!---   <cfif listlen(variables.sublabellist) GTE 5000>
-	    	<cfthrow message="Too many children returned > 5000. This typically happens due to a circular reference in parent-child relationships for label. Please check the relationships and try again.">
-	    </cfif> --->
-	    <!--- return final variable to the caller... --->
-	    <cfif arguments.level eq 0>
-	        <cfreturn variables.sublabellist>
-	    </cfif>
+	<cffunction name="getchildlabels" access="public" hint="Returns all children labels for a given label">
+		<cfargument name="label_id" type="string" required="yes">
+		<!--- Local scope list --->
+		<cfset var thelist = "">
+		<!--- var --->
+		<cfset var checkforkids = "">
+		<!--- Get the cachetoken for here --->
+		<cfset var cachetoken = getcachetoken("labels")>
+		<!--- check for children. if there are any, call this function recursively --->
+		<cfquery name="checkforkids" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#getchildlabelscheckforkids*/ label_id as child_id
+		FROM  #session.hostdbprefix#labels 
+		WHERE label_id_r = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar">
+		AND label_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Loop over kids records --->
+		<cfif checkforkids.recordcount NEQ 0>
+			<!--- Add the found record to sublabellist --->
+			<cfset thelist = listappend(thelist, valuelist(checkforkids.child_id))>
+			<!--- Loop over the childrenlist --->
+			<cfloop query="checkforkids">
+				<!--- Call function again --->
+				<cfinvoke method="getchildlabels" label_id="#child_id#" returnvariable="childrenlist" />
+				<!--- Take the returned ids and append them to our local list --->
+				<cfif childrenlist NEQ "">
+					<cfset thelist = listappend(thelist, childrenlist)>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thelist />
 	</cffunction>
 	
 	<!--- Get the all labels for show --->
