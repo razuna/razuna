@@ -1266,8 +1266,10 @@
 		<cfreturn llist />
 	</cffunction>
 	
+	<!--- Rcursive function to find all label children --->
 	<cffunction name="getchildlabels" access="public" hint="Returns all children labels for a given label">
-		<cfargument name="label_id" type="string" required="yes">
+		<cfargument name="label_id" type="string" required="true">
+		<cfargument name="label_list" type="string" required="false" default="">
 		<!--- Local scope list --->
 		<cfset var thelist = "">
 		<!--- var --->
@@ -1285,13 +1287,16 @@
 		<cfif checkforkids.recordcount NEQ 0>
 			<!--- Add the found record to sublabellist --->
 			<cfset thelist = listappend(thelist, valuelist(checkforkids.child_id))>
+			<cfset arguments.label_list = listappend(arguments.label_list, valuelist(checkforkids.child_id))>
 			<!--- Loop over the childrenlist --->
 			<cfloop query="checkforkids">
-				<!--- Call function again --->
-				<cfinvoke method="getchildlabels" label_id="#child_id#" returnvariable="childrenlist" />
-				<!--- Take the returned ids and append them to our local list --->
-				<cfif childrenlist NEQ "">
-					<cfset thelist = listappend(thelist, childrenlist)>
+				<cfif listfindnocase(arguments.label_list, child_id) EQ 0>
+					<!--- Call function again --->
+					<cfinvoke method="getchildlabels" label_id="#child_id#" label_list="#thelist#" returnvariable="childrenlist" />
+					<!--- Take the returned ids and append them to our local list --->
+					<cfif childrenlist NEQ "">
+						<cfset thelist = listappend(thelist, childrenlist)>
+					</cfif>
 				</cfif>
 			</cfloop>
 		</cfif>
