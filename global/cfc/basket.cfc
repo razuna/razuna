@@ -414,6 +414,7 @@
 	<cfparam default="" name="arguments.thestruct.artofaudio">
 	<cfparam default="false" name="arguments.thestruct.noemail">
 	<cfparam default="false" name="arguments.thestruct.skipduplicates">
+	<cfparam name="application.downloadspeed" default="0">
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
 	<cfinvoke component="defaults" method="trans" transid="download_basket_output" returnvariable="download_basket_output" />
@@ -461,8 +462,15 @@
 	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
 	<!--- Read Basket --->
 	<cfinvoke method="readbasket" returnvariable="thebasket">
+	<!--- Get total size of all assets in cart --->
+	<cfquery name="totsize" dbtype="query">
+		SELECT sum(cart_size) basketsize FROM thebasket
+	</cfquery>
+	<!--- Size of all assets in basket in MB --->
+	<cfset var basketsize = totsize.basketsize/1000000>
 	<!--- Loop trough the basket --->
 	<cfloop query="thebasket">
+		<cfset arguments.thestruct.filesize = cart_size/1000000>
 		<!--- Set the asset id into a var --->
 		<cfset arguments.thestruct.theid = cart_product_id>
 		<!--- Get the files according to the extension --->
