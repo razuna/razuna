@@ -84,10 +84,10 @@
 <cffunction name="xmpwritethread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over the file_id (important when working on more then one image) --->
-	<cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" />
-	<!--- <cfthread intstruct="#arguments.thestruct#">
+	<!--- <cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" /> --->
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="xmpwrite" thestruct="#attributes.intstruct#" />
-	</cfthread> --->
+	</cfthread>
 </cffunction>
 
 <!--- Write the XMP XML to the filesystem --->
