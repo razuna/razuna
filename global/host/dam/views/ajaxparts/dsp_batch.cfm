@@ -139,8 +139,8 @@
 			</div>
 			
 		</div>
-		<div id="dialog" title="Warning!">
-		  <p>#myFusebox.getApplicationData().defaults.trans("batch_replace_warning")#</p>
+		<div id="dialog" title="Warning!" style="display:none;">
+			<p>#myFusebox.getApplicationData().defaults.trans("batch_replace_warning")#</p>
 		</div>
 		<!--- Submit Button --->
 		<div style="float:right;padding:10px;">#myFusebox.getApplicationData().defaults.trans("batch_desc_1")# <input type="radio" name="batch_replace" value="true" onclick="$('##dialog').dialog();"/> #myFusebox.getApplicationData().defaults.trans("batch_desc_2")# <input type="radio" name="batch_replace" value="false" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("batch_desc_3")#. <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("batch_recs")#" class="button"></div>
