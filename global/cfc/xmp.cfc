@@ -84,10 +84,10 @@
 <cffunction name="xmpwritethread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over the file_id (important when working on more then one image) --->
-	<!--- <cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" /> --->
-	<cfthread intstruct="#arguments.thestruct#">
+	<cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" />
+	<!--- <cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="xmpwrite" thestruct="#attributes.intstruct#" />
-	</cfthread>
+	</cfthread> --->
 </cffunction>
 
 <!--- Write the XMP XML to the filesystem --->
@@ -148,10 +148,9 @@
 		x.subjectcode, x.creator, x.title, x.authorsposition, x.captionwriter, x.ciadrextadr, x.category, x.supplementalcategories, x.urgency,
   		x.description, x.ciadrcity, x.ciadrctry, x.location as thelocation, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre,
   		x.instructions, x.source, x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated,
-  		x.city, x.ciadrregion, x.country, x.countrycode, x.scene, x.state, x.credit, x.rights, x.colorspace, d.img_keywords, d.img_description
+  		x.city, x.ciadrregion, x.country, x.countrycode, x.scene, x.state, x.credit, x.rights, x.colorspace
 		FROM #session.hostdbprefix#images i 
 		LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id AND x.host_id = i.host_id
-		LEFT JOIN #session.hostdbprefix#images_text d ON d.img_id_r = i.img_id AND d.host_id = i.host_id
 		WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -183,17 +182,25 @@
 			<!--- Because we have many languages sometimes we put together the keywords and description here --->
 			<cfif structkeyexists(arguments.thestruct,"langcount")>
 				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-					<cfparam name="arguments.thestruct.keywords_#langindex#" default="">
-					<cfparam name="arguments.thestruct.desc_#langindex#" default="">
-					<cfset thiskeywords = "arguments.thestruct.keywords_#langindex#">
-					<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & evaluate(thiskeywords)>
-					<cfif langindex LT langcount>
-						<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", ">
-					</cfif>
-					<cfset thisdesc = "arguments.thestruct.desc_#langindex#">
-					<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & evaluate(thisdesc)>
-					<cfif langindex LT langcount>
-						<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", ">
+					<cfparam name="arguments.thestruct.img_keywords_#langindex#" default="">
+					<cfparam name="arguments.thestruct.img_desc_#langindex#" default="">
+					<cfset thiskeywords = "arguments.thestruct.img_keywords_#langindex#">
+					<cfset thisdesc = "arguments.thestruct.img_desc_#langindex#">
+					<!--- If lang count is greater than 1 --->
+					<cfif arguments.thestruct.langcount GT 1>
+						<cfif arguments.thestruct.img_keywords EQ "">
+							<cfset arguments.thestruct.img_keywords = evaluate(thiskeywords)>
+						<cfelse>
+							<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & evaluate(thiskeywords)>
+						</cfif>
+						<cfif arguments.thestruct.img_desc EQ "">
+							<cfset arguments.thestruct.img_desc = evaluate(thisdesc)>
+						<cfelse>
+							<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & evaluate(thisdesc)>
+						</cfif>
+					<cfelse>
+						<cfset arguments.thestruct.img_keywords = evaluate(thiskeywords)>
+						<cfset arguments.thestruct.img_desc = evaluate(thisdesc)>
 					</cfif>
 				</cfloop>
 			</cfif>
@@ -201,12 +208,6 @@
 		<cfelse>
 			<!--- Check if replace or append and then add to existing values --->
 			<cfif !arguments.thestruct.batch_replace>
-				<cfif qryfilenameorg.img_description NEQ "">
-					<cfset arguments.thestruct.img_desc = qryfilenameorg.img_description & " " & arguments.thestruct.img_desc>
-				</cfif>
-				<cfif qryfilenameorg.img_keywords NEQ "">
-					<cfset arguments.thestruct.img_keywords = qryfilenameorg.img_keywords & " " & arguments.thestruct.img_keywords>
-				</cfif>
 				<cfif qryfilenameorg.subjectcode NEQ "">
 					<cfset arguments.thestruct.iptc_content_subject_code = qryfilenameorg.subjectcode & " " & arguments.thestruct.iptc_content_subject_code>
 				</cfif>
@@ -296,14 +297,30 @@
 						<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 					</cfif>
 					<cfset thiskeywords="arguments.thestruct.img_keywords_#langindex#">
-					<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & evaluate(thiskeywords)>
-					<cfif langindex LT langcount>
-						<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", ">
-					</cfif>
 					<cfset thisdesc="arguments.thestruct.img_desc_#langindex#">
-					<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & evaluate(thisdesc)>
-					<cfif langindex LT langcount>
-						<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", ">
+					<!--- If users chooses to append values --->
+					<cfif !arguments.thestruct.batch_replace>
+						<cfquery datasource="#application.razuna.datasource#" name="qyry_desc_keys">
+						SELECT img_keywords, img_description, lang_id_r
+						FROM #session.hostdbprefix#images_text d
+						WHERE img_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+						AND lang_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#langindex#">
+						</cfquery>
+						<cfif arguments.thestruct.langcount GT 1>
+							<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & qyry_desc_keys.img_keywords>
+							<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & qyry_desc_keys.img_description>
+						<cfelse>
+							<cfset arguments.thestruct.img_keywords = qyry_desc_keys.img_keywords>
+							<cfset arguments.thestruct.img_desc = qyry_desc_keys.img_description>
+						</cfif>
+					<cfelse>
+						<cfif arguments.thestruct.langcount GT 1>
+							<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & evaluate(thiskeywords)>
+							<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & evaluate(thisdesc)>
+						<cfelse>
+							<cfset arguments.thestruct.img_keywords = evaluate(thiskeywords)>
+							<cfset arguments.thestruct.img_desc = evaluate(thisdesc)>
+						</cfif>
 					</cfif>
 				</cfloop>
 			</cfif>
