@@ -4903,6 +4903,12 @@
 					)
 					</cfquery>
 				</cfif>
+				<!--- Call XMP to write metadata --->
+				<cfset arguments.thestruct.file_id = theid>
+				<cfset arguments.thestruct.img_keywords = form["#fkeys#"]>
+				<cfset arguments.thestruct.img_desc = form["#fdesc#"]>
+				<cfset arguments.thestruct.batch_replace = false>
+				<cfinvoke component="xmp" method="xmpwritethread" thestruct="#arguments.thestruct#" />
 				<!--- Store the id in a temp var --->
 				<cfset var imgid = theid>
 				<cfset arguments.thestruct.theid = theid>
