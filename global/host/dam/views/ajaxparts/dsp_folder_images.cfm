@@ -282,17 +282,17 @@
 							<!--- Icons --->
 							<div style="padding-top:5px;width:130px;white-space:nowrap;">
 								<div style="float:left;">
-									<input type="checkbox" name="file_id" value="#img_id#-aud" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#img_id#-aud") NEQ 0> checked="checked"</cfif>>
+									<input type="checkbox" name="file_id" value="#img_id#-img" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#img_id#-img") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
 									<div id="iconbar_img_#img_id#" style="display:inline">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#img_id#&kind=aud&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#img_id#-aud&thetype=#img_id#-img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#img_id#&kind=img&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_basket_part AND cs.button_basket AND (isadmin OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#img_id#-img&thetype=#img_id#-img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email AND (isadmin OR cs.btn_email_slct EQ "" OR listfind(cs.btn_email_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_email_slct,session.thegroupofuser) NEQ "")>
-											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#img_id#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#img_id#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',700,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
 										<cfif cs.show_favorites_part>
-											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=aud');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=img');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_favorite")#');return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 									<cfif attributes.folderaccess NEQ "R">
