@@ -3,6 +3,9 @@ Please write all SQL changes in here too
 ------- 1.7.1 changes start -------
 ALTER TABLE raz1_schedules add SCHED_RUN_TIME timestamp;
 ALTER TABLE raz1_settings_2 add SET2_RENDITION_SEARCH varchar(1) DEFAULT 'f'
+ALTER TABLE raz1_images change IMG_UPC_NUMBER IMG_UPC_NUMBER varchar(20)
+
+
 ------- 1.7.1 changes end -------
 
 alter table raz1_settings_2 add SET2_SAML_XMLPATH_EMAIL varchar(100);

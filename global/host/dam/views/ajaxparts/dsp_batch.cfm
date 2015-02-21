@@ -66,12 +66,10 @@
 							<td class="td2" width="100%"><textarea name="<cfif what EQ "doc">file<cfelseif what EQ "vid">vid<cfelseif what EQ "img">img<cfelseif what EQ "aud">aud<cfelseif what EQ "all">all</cfif>_keywords_#lang_id#" class="text" rows="2" cols="50"<cfif attributes.what EQ "img"> onchange="javascript:document.form#attributes.file_id#.iptc_content_keywords_#lang_id#.value = document.form#attributes.file_id#.img_keywords_#lang_id#.value"</cfif>></textarea></td>
 						</tr>
 					</cfloop>
-				</table>
-				<!--- Expiry date field --->
-				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<!--- Expiry date field --->
 					<tr>
-						<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("expiry_date")#</strong></td>
-						<td width="100%"><input name="expiry_date" id="expiry_date"> <span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("expiry_date_remove")#</span></td>
+						<td class="td2" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("expiry_date")#</strong></td>
+						<td class="td2" width="100%"><input name="expiry_date" id="expiry_date"> <span class="smallfont ltgrey">#myFusebox.getApplicationData().defaults.trans("expiry_date_remove")#</span></td>
 					</tr>
 				</table>
 			</div>
@@ -139,8 +137,8 @@
 			</div>
 			
 		</div>
-		<div id="dialog" title="Warning!">
-		  <p>#myFusebox.getApplicationData().defaults.trans("batch_replace_warning")#</p>
+		<div id="dialog" title="Warning!" style="display:none;">
+			<p>#myFusebox.getApplicationData().defaults.trans("batch_replace_warning")#</p>
 		</div>
 		<!--- Submit Button --->
 		<div style="float:right;padding:10px;">#myFusebox.getApplicationData().defaults.trans("batch_desc_1")# <input type="radio" name="batch_replace" value="true" onclick="$('##dialog').dialog();"/> #myFusebox.getApplicationData().defaults.trans("batch_desc_2")# <input type="radio" name="batch_replace" value="false" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("batch_desc_3")#. <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("batch_recs")#" class="button"></div>

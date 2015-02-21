@@ -80,7 +80,7 @@
 		<!--- Add or append --->
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("add_append")#</div>
-		<div style="float:left;width:300px;">#myFusebox.getApplicationData().defaults.trans("replace_append_decision")#<br /><input type="radio" name="imp_write" value="replace" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("replace")# <input type="radio" name="imp_write" value="add" /> #myFusebox.getApplicationData().defaults.trans("append")#</div>
+		<div style="float:left;width:300px;">#myFusebox.getApplicationData().defaults.trans("replace_append_decision")#<br /><input type="radio" name="imp_write" value="replace" /> #myFusebox.getApplicationData().defaults.trans("replace")# <input type="radio" name="imp_write" value="add" checked="checked" /> #myFusebox.getApplicationData().defaults.trans("append")#</div>
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<!--- Upload file --->
 		<div style="float:left;width:150px;font-weight:bold;padding-top:7px;">#myFusebox.getApplicationData().defaults.trans("upload_file")#</div>

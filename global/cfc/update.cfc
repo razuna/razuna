@@ -183,7 +183,14 @@
 
 
 		<!--- If less then 46 (1.7.1) --->
-		<cfif updatenumber.opt_value LT 46>
+		<cfif updatenumber.opt_value LT 47>
+			<!--- Change lenght of IMG_UPC_NUMBER --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_images change <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IMG_UPC_NUMBER #thevarchar#(20)<cfelse>change IMG_UPC_NUMBER IMG_UPC_NUMBER #thevarchar#(20)</cfif>
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<!--- Add SCHED_RUN_TIME column to schedules table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

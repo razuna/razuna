@@ -79,7 +79,7 @@
 				$('##slide_on').css('display','');
 				$('##explorer').css({'display':'none'});
 				$('##apDiv3').css({'margin-left':'0px','border':'none'});
-				$('##apDiv4').css({'left':'10px','width':'97%'});
+				$('##apDiv4').css({'left':'10px','margin-left':'0px', 'width':'97%'});
 			}
 			else {
 				$('##leftchooser').css('display','');
@@ -87,7 +87,7 @@
 				$('##slide_on').css('display','none');
 				$('##explorer').css({'display':''});
 				$('##apDiv3').css({'margin-left':'13px','border-right':'1px dotted grey'});
-				$('##apDiv4').css({'left':'280px','width':'75%'});
+				$('##apDiv4').css({'left':'280px','width':'75%','margin-left':'280px'});
 			}
 		}
 	</script>
