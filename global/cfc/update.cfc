@@ -187,7 +187,7 @@
 			<!--- Change lenght of IMG_UPC_NUMBER --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE raz1_images change <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IMG_UPC_NUMBER #thevarchar#(20)<cfelse>change IMG_UPC_NUMBER IMG_UPC_NUMBER #thevarchar#(20)</cfif>
+				ALTER TABLE raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IMG_UPC_NUMBER #thevarchar#(20)<cfelse>change IMG_UPC_NUMBER IMG_UPC_NUMBER #thevarchar#(20)</cfif>
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
