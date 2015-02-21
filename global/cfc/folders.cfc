@@ -4465,9 +4465,9 @@
 					<cfelseif session.type EQ "movefile">
 						<cfif session.thefolderorg NEQ folder_id>
 							<cfif arguments.thestruct.kind EQ "search">
-								<a href="##" onclick="$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').html('The file(s) are being moved now.<br />Note: For a large batch of files this can take some time until it reflects in the system!<br />You can close this window.');});" style="white-space:normal;">
+								<a href="##" onclick="$('##div_choosefolder_status_#session.tmpid#').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The file(s) are being moved now.<br />Note: For a large batch of files this can take some time until it reflects in the system!<br />You can close this window.');});" style="white-space:normal;">
 							<cfelse>
-								<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').html('The file(s) are being moved now.<br />Note: For a large batch of files this can take some time until it reflects in the system!<br />You can close this window.');});" style="white-space:normal;">
+								<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The file(s) are being moved now.<br />Note: For a large batch of files this can take some time until it reflects in the system!<br />You can close this window.');});" style="white-space:normal;">
 							</cfif>
 						</cfif>
 					<!--- movefolder --->
@@ -4566,14 +4566,14 @@
 						<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);" style="white-space:normal;">
 					<!--- From Smart Folder --->
 					<cfelseif session.type EQ "sf_download">
-						<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;" style="white-space:normal;">
+						<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status_#session.tmpid#').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;" style="white-space:normal;">
 					<!--- Alias --->
 					<cfelseif session.type EQ "alias">
 						<cfif session.thefolderorg NEQ folder_id>
 							<cfif arguments.thestruct.kind EQ "search">
-								<a href="##" onclick="$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select it from the list above!<br />You can close this window.');});">
+								<a href="##" onclick="$('##div_choosefolder_status_#session.tmpid#').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select it from the list above!<br />You can close this window.');});">
 							<cfelse>
-								<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status_#session.tmpid#_#session.tmpid#').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select it from the list above!<br />You can close this window.');});">
+								<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select it from the list above!<br />You can close this window.');});">
 							</cfif>
 						</cfif>
 					</cfif>
@@ -5875,6 +5875,7 @@
 	<!--- Set the sessions --->
 	<cfset session.file_id = l>
 	<cfset session.thefileid = l>
+	<cfset session.editids = l>
 </cffunction>
 
 <!--- Store selection --->
@@ -5900,6 +5901,7 @@
 		</cfloop>
 		<cfset session.thefileid = list_file_ids>
 		<cfset session.file_id = list_file_ids>
+		<cfset session.editids = list_file_ids>
 	</cfif>
 </cffunction>
 
