@@ -140,8 +140,8 @@
 	<!--- Loop --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 		<!--- Params --->
-		<cfset arguments.thestruct.file_id = i>
-		<cfset arguments.thestruct.newid = i>
+		<cfset arguments.thestruct.file_id = listfirst(i, "-")>
+		<cfset arguments.thestruct.newid = arguments.thestruct.file_id>
 		<!--- Get the original filename --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryfilenameorg">
 		SELECT i.img_filename_org, i.folder_id_r, i.img_extension, i.link_kind, i.link_path_url, i.lucene_key, i.path_to_asset,
@@ -307,16 +307,32 @@
 						AND lang_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#langindex#">
 						</cfquery>
 						<cfif arguments.thestruct.langcount GT 1>
-							<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & qyry_desc_keys.img_keywords>
-							<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & qyry_desc_keys.img_description>
+							<cfif arguments.thestruct.img_keywords EQ "">
+								<cfset arguments.thestruct.img_keywords = qyry_desc_keys.img_keywords>
+							<cfelse>
+								<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & qyry_desc_keys.img_keywords>
+							</cfif>
+							<cfif arguments.thestruct.img_desc EQ "">
+								<cfset arguments.thestruct.img_desc = qyry_desc_keys.img_description>
+							<cfelse>
+								<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & qyry_desc_keys.img_description>
+							</cfif>
 						<cfelse>
 							<cfset arguments.thestruct.img_keywords = qyry_desc_keys.img_keywords>
 							<cfset arguments.thestruct.img_desc = qyry_desc_keys.img_description>
 						</cfif>
 					<cfelse>
 						<cfif arguments.thestruct.langcount GT 1>
-							<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & evaluate(thiskeywords)>
-							<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & evaluate(thisdesc)>
+							<cfif arguments.thestruct.img_keywords EQ "">
+								<cfset arguments.thestruct.img_keywords = evaluate(thiskeywords)>
+							<cfelse>
+								<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", " & evaluate(thiskeywords)>
+							</cfif>
+							<cfif arguments.thestruct.img_desc EQ "">
+								<cfset arguments.thestruct.img_desc = evaluate(thisdesc)>
+							<cfelse>
+								<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", " & evaluate(thisdesc)>
+							</cfif>
 						<cfelse>
 							<cfset arguments.thestruct.img_keywords = evaluate(thiskeywords)>
 							<cfset arguments.thestruct.img_desc = evaluate(thisdesc)>
