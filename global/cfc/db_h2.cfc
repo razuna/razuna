@@ -1179,7 +1179,7 @@
 		  CLOUD_URL_EXP		  BIGINT,
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
-		  IMG_UPC_NUMBER      VARCHAR(15),
+		  IMG_UPC_NUMBER      VARCHAR(20),
 		  EXPIRY_DATE DATE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_FK_HOSTID FOREIGN KEY (HOST_ID)
