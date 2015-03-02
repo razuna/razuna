@@ -3524,7 +3524,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Switch to create correct arguments to pass for executables --->
 		<cfswitch expression="#arguments.thestruct.qryfile.extension#">
 			<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
-			<cfcase value="psd,eps,ai,png,tif,tiff">
+			<cfcase value="psd,eps,ai,png,tif,tiff,gif">
 				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# -density 300 #arguments.thestruct.thesource#[0] #theImgConvertParams# -background white -flatten #Arguments.thestruct.destination#">
 			</cfcase>
 			<!--- For RAW images we take dcraw --->

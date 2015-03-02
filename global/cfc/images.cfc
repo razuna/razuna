@@ -1126,6 +1126,7 @@
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset var thetempids = "">
 	<cfset var md5hash = "">
+	<cfset var forTransparentImages = " -background white -flatten ">
 	<cfparam name="arguments.thestruct.xres" default="">
 	<cfparam name="arguments.thestruct.yres" default="">
 	<cfparam name="arguments.thestruct.upl_template" default="0">
@@ -1355,10 +1356,10 @@
 		</cfif>
 		<!--- Check if colorspace attribute for sRGB is set to 'T' in settings. If so it will override the colorspace parameter passed. --->
 		<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
-			<cfset var csarguments = "-colorspace sRGB">
+			<cfset var csarguments = "-set colorspace sRGB">
 		<!--- Check is colorspace parameter is passed --->
 		<cfelseif structKeyExists(arguments.thestruct,"colorspace") AND arguments.thestruct.colorspace NEQ "">
-			<cfset var csarguments = "-colorspace #arguments.thestruct.colorspace# ">
+			<cfset var csarguments = "-set colorspace #arguments.thestruct.colorspace# ">
 		<cfelse>
 			<cfset var csarguments = "">	
 		</cfif>	
@@ -1378,10 +1379,18 @@
 				</cfif>
 				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha#-resize #newImgWidth#x#newImgHeight#  -density #arguments.thestruct.xres#x#arguments.thestruct.yres# -units pixelsperinch #theflatten##theformatconv#">
 			<cfelse>
-				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
+				<cfif  theformat NEQ 'eps'>
+					<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #forTransparentImages##theformatconv#">
+				<cfelse>
+					<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resize #newImgWidth#x#newImgHeight#  #theflatten##theformatconv#">
+				</cfif>
 			</cfif>
 		<cfelse>
-			<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
+			<cfif theformat NEQ 'eps'>
+				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resample #thedpi# #forTransparentImages##theformatconv#">
+			<cfelse>
+				<cfset var theimarguments = "#densitySettings# #theoriginalasset# #csarguments# #alpha# -resample #thedpi# #theflatten##theformatconv#">
+			</cfif>
 		</cfif>
 		<cfset var resizeargs = "400x"> <!--- Set default preview size to 400x --->
 		<cfset var thumb_width = arguments.thestruct.qry_settings_image.set2_img_thumb_width>
@@ -1404,7 +1413,11 @@
 				<cfset var theimargumentsthumb = "#densitySettings# #theoriginalasset# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#"> 
 			</cfif>
 		<cfelse>
-			<cfset var theimargumentsthumb = "#densitySettings# #theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
+			<cfif  theformat NEQ 'eps'>
+				<cfset var theimargumentsthumb = "#densitySettings# #theformatconv# #csarguments# -resize #resizeargs# #forTransparentImages##thethumbtconv#">
+			<cfelse>
+				<cfset var theimargumentsthumb = "#densitySettings# #theformatconv# #csarguments# -resize #resizeargs# #theflatten##thethumbtconv#">
+			</cfif>
 		</cfif>
 
 		<!--- Create script files --->
