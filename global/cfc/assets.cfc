@@ -2270,10 +2270,10 @@ This is the main function called directly by a single upload else from addassets
 		<!--- RAZ-2907 Call the component for Bulk upload versions --->
 		<cfif structKeyExists(arguments.thestruct,'extjs') AND arguments.thestruct.extjs EQ "T">
 			<!--- Call versions component to do the old versions thingy --->
-			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#">
+			<cfinvoke component="versions" method="upload_old_versions" thestruct="#arguments.thestruct#" />
 		<cfelse>	
-		<!--- Call versions component to do the versions thingy --->
-		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
+			<!--- Call versions component to do the versions thingy --->
+			<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#" />
 		</cfif>
 	<!--- This is for normal adding --->
 	<cfelse>
