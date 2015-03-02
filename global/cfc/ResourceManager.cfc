@@ -91,7 +91,8 @@
 		
 		<cfif result neq ''>
 			<!--- Replace single quotes with html equivalent to prevent javascript from breaking --->
-			<cfreturn replace(result,"'","&##39;","ALL") />
+			<!--- <cfreturn replace(result,"'","&##39;","ALL") /> --->
+			<cfreturn result />
 		<cfelse>
 			<!--- Fall back --->
 			<cfset currentLocale = variables.getLocaleFallBack(currentLocale) />
