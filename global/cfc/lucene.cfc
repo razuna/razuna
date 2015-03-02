@@ -241,26 +241,38 @@
 		<!--- Loop over the recordset --->
 		<cfset consoleoutput(true)>
 		<cfloop query="qry">
-			<cfset console("Start indexing: #arguments.hostid# -  #theid# - #now()#")>
+			<cfset console("Start indexing: #arguments.hostid# - Type: #cat# - ID: #theid# - #now()#")>
 			<!--- Create tt for thread --->
 			<!--- <cfset tt = createUUID("")> --->
 			<!--- Put vars into struct --->
 			<cfset arguments.theid = theid>
 			<cfset arguments.cat = cat>
-			<!--- <cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low"> --->
+			<!--- <cfthread name="#tt#" action="run" intstruct="#arguments#" priority="low">
 				<cfinvoke method="index_update_thread">
-					<cfinvokeargument name="thestruct" value="#arguments#" />
-					<cfinvokeargument name="assetid" value="#arguments.theid#" />
-					<cfinvokeargument name="category" value="#arguments.cat#" />
-					<cfinvokeargument name="dsn" value="#arguments.dsn#" />
-					<cfinvokeargument name="online" value="#arguments.online#" />
-					<cfinvokeargument name="notfile" value="#arguments.notfile#" />
-					<cfinvokeargument name="prefix" value="#arguments.prefix#" />
-					<cfinvokeargument name="hostid" value="#arguments.hostid#" />
-					<cfinvokeargument name="storage" value="#arguments.storage#" />
-					<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
+					<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
+					<cfinvokeargument name="assetid" value="#attributes.intstruct.theid#" />
+					<cfinvokeargument name="category" value="#attributes.intstruct.cat#" />
+					<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
+					<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
+					<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+					<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
+					<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
+					<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
+					<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
 				</cfinvoke>
-			<!--- </cfthread> --->
+			</cfthread> --->
+			<cfinvoke method="index_update_thread">
+				<cfinvokeargument name="thestruct" value="#arguments#" />
+				<cfinvokeargument name="assetid" value="#arguments.theid#" />
+				<cfinvokeargument name="category" value="#arguments.cat#" />
+				<cfinvokeargument name="dsn" value="#arguments.dsn#" />
+				<cfinvokeargument name="online" value="#arguments.online#" />
+				<cfinvokeargument name="notfile" value="#arguments.notfile#" />
+				<cfinvokeargument name="prefix" value="#arguments.prefix#" />
+				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+				<cfinvokeargument name="storage" value="#arguments.storage#" />
+				<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
+			</cfinvoke>
 			<!--- Wait and join thread --->
 			<!--- <cfthread name="#tt#" action="join" /> --->
 			<cfset console("DONE indexing: #arguments.hostid# - #theid# - #now()#")>
@@ -298,6 +310,7 @@
 		<cfset var thedesc = "">
 		<cfset var thekeys = "">
 		<cftry>
+			<cfset consoleoutput(true)>
 			<!--- FOR FILES --->
 			<cfif arguments.category EQ "doc">
 				<!--- Query Record --->
@@ -500,7 +513,7 @@
 					<cfset var thekeys = REReplaceNoCase(thekeys_1, theregchars, " ", "ALL") & " " & thekeys>
 				</cfloop>
 				<!--- Add labels to the query --->
-				<cfquery dbtype="query" name="qry_all">
+				<cfquery dbtype="query" name="arguments.qry_all">
 				SELECT 
 				id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thedesc#' as description, '#thekeys#' as keywords,
 				theext, rawmetadata, thecategory, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, 
@@ -511,7 +524,7 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-				<cfloop query="qry_all">
+				<cfloop query="arguments.qry_all">
 					<cfscript>
 						args = {
 						collection : arguments.hostid,
@@ -752,9 +765,9 @@
 			AND host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="cf_sql_numeric">
 			</cfquery>
 			<cfcatch type="any">
-				<!--- <cfset consoleoutput(true)>
+				<cfset consoleoutput(true)>
 				<cfset console("Error in function lucene.index_update_thread")>
-				<cfset console(cfcatch)> --->
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 	</cffunction>
@@ -1083,7 +1096,7 @@
 		<cfargument name="assetid" required="true">
 		<!--- Param --->
 		<cfset var qry = "">
-		<cfset recs2index = 2000><!---  enter number of files to be indexed on one go --->
+		<cfset recs2index = 2000><!---  enter number of files to be indexed in one go --->
 		<!--- Select 2000 newest files that need to be indexed --->
 		<cfquery datasource="#arguments.dsn#" name="qry">
 		SELECT <cfif arguments.thedatabase EQ "mssql"> TOP #recs2index#</cfif>* FROM (
