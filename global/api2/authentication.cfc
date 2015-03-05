@@ -78,7 +78,7 @@
 			<cfset application.razuna.api.hostname[#arguments.api_key#] = pre.host_name>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
-			<cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations','en')>
+			<cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations')>
 			<cfset session.hostdbprefix = pre.host_shard_group>
 			<cfset session.hostid = qry.hostid>
 			<cfset session.theuserid = qry.user_id>

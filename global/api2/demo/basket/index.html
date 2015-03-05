@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Basket API test</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<script type="text/javascript" src="../../../js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="../../../js/jquery.cookie-1.4.1.min.js"></script>
+</head>
+
+
+<!-- Functions for Basket -->
+<script type="text/javascript">
+
+	// Check for existance of basket id in cookie if not create one
+	if ( ! $.cookie('basket_id') ) {
+		$.cookie('basket_id', uid());
+	}
+
+	function addToBasket(asset_id) {
+		// basket id
+		var basket_id = $.cookie('basket_id');
+		// Ajax
+		$.ajax({
+			type: "POST",
+			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=addToBasket',
+			data: { basket_id: basket_id, asset_id: asset_id },
+			success: function(data){
+				// data is json
+				var ret = JSON.parse(data);
+				// Alert
+				alert(ret.message);
+				// Refresh page to show basket
+				location.reload();
+			},
+			error: function(data){
+				alert('ERROR: ' + data);
+			}
+		});
+	}
+
+	function showBasket() {
+		// basket id
+		var basket_id = $.cookie('basket_id');
+		// Ajax
+		$.ajax({
+			type: "POST",
+			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=showBasket',
+			data: { basket_id: basket_id },
+			success: function(data){
+				// data is json
+				var ret = JSON.parse(data);
+				// Loop over array and append to page
+				$.each(ret.DATA, function (index, value) {
+					$('#basket').append(value + ' - <a href="##" onclick="deleteAssetInBasket(\'' + value + '\')">Remove</a>' + '<br>');
+				});
+			},
+			error: function(data){
+				alert('ERROR: ' + data);
+			}
+		});
+	}
+
+	function downloadBasket() {
+		// basket id
+		var basket_id = $.cookie('basket_id');
+		// Ajax
+		$.ajax({
+			type: "POST",
+			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=downloadBasket',
+			data: { basket_id: basket_id },
+			success: function(data){
+				// data is json
+				var ret = JSON.parse(data);
+				
+			},
+			error: function(data){
+				alert('ERROR: ' + data);
+			}
+		});
+	}
+
+	function deleteBasket() {
+		// basket id
+		var basket_id = $.cookie('basket_id');
+		// Ajax
+		$.ajax({
+			type: "POST",
+			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=deleteBasket',
+			data: { basket_id: basket_id },
+			success: function(data){
+				// Alert
+				alert('All items in your basket have been removed.');
+				// Refresh page to show basket
+				location.reload();
+			},
+			error: function(data){
+				alert('ERROR: ' + data);
+			}
+		});
+	}
+
+	function deleteAssetInBasket(asset_id) {
+		// basket id
+		var basket_id = $.cookie('basket_id');
+		// Ajax
+		$.ajax({
+			type: "POST",
+			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=deleteItemInBasket',
+			data: { basket_id: basket_id, asset_id: asset_id },
+			success: function(data){
+				// data is json
+				var ret = JSON.parse(data);
+				// Alert
+				alert('File(s) in basket have been removed.');
+				// Refresh page to show basket
+				location.reload();
+			},
+			error: function(data){
+				alert('ERROR: ' + data);
+			}
+		});
+	}
+
+
+	// Create random number
+	function uid() {
+		var result='';
+		for(var i=0; i<32; i++)
+			result += Math.floor(Math.random()*16).toString(16).toUpperCase();
+		return result;
+	}
+
+	// Popluate span widh basket id
+	function load() {
+		$('#basketid').html( $.cookie('basket_id') );
+	}
+
+</script>
+
+
+<body onload="load();showBasket();">
+
+<h2>Basket Id: <span id="basketid"></span></h2>
+
+<p><a href="##" onclick="addToBasket('108')">Image ONE</a></p>
+<p><a href="##" onclick="addToBasket('109')">Image TWO</a></p>
+<p><a href="##" onclick="addToBasket('110')">Image THREE</a></p>
+
+<h2>Your basket contains the following files</h2>
+
+<div id="basket"></div>
+
+<p><a href="##" onclick="deleteBasket()">Empty basket</a></p>
+
+<p style="padding-top:30px;"><a href="##" onclick="downloadBasket()">Download basket</a></p>
+
+</body>
+</html>
