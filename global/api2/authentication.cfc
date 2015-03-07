@@ -78,7 +78,7 @@
 			<cfset application.razuna.api.hostname[#arguments.api_key#] = pre.host_name>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
-			<cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations','en')>
+			<cfset application.razuna.trans = createObject("component","global.cfc.ResourceManager").init('translations')>
 			<cfset session.hostdbprefix = pre.host_shard_group>
 			<cfset session.hostid = qry.hostid>
 			<cfset session.theuserid = qry.user_id>
@@ -226,6 +226,38 @@
 		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+
+	<!--- Get path to assets --->
+	<cffunction name="getAssetsPath" output="false" returntype="string">
+		<cfargument name="api_key" required="true">
+		<!--- Temp --->
+		<cfset var qry = "" />
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		SELECT set2_path_to_assets
+		FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+		WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry.set2_path_to_assets />
+	</cffunction>
+
+	<!--- Get path to assets --->
+	<cffunction name="getThumbExt" output="false" returntype="string">
+		<cfargument name="api_key" required="true">
+		<!--- Temp --->
+		<cfset var qry = "" />
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		SELECT set2_img_format
+		FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+		WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry.set2_img_format />
 	</cffunction>
 
 	<!--- Update Search --->

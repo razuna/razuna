@@ -47,7 +47,6 @@
 		<cfargument name="values" hint="Array of values to substitute for $1, $2 etc in the resource string" type="array" required="false" default="#arrayNew(1)#" />
 		<cfargument name="locale" hint="Resource Locale" type="string" required="false" default="#this.getLocaleCode()#" />
 		
-		
 		<!--- LOCALS --->
 		<cfset var resource = '' />
 		<cfset var resourceBundle = structNew() />
@@ -96,7 +95,7 @@
 		<cfelse>
 			<!--- Fall back --->
 			<cfset currentLocale = variables.getLocaleFallBack(currentLocale) />
-	
+
 			<cfif currentLocale eq ''>
 				<cfthrow type="com.bealearts.util.Internationalisation.RESOURCE_NOT_FOUND" message="Resource not found" detail="Resource key '#arguments.key#' in Resource Bundle '#arguments.resourceBundleName#' in locale or fall back locale not found for '#currentLocale#'" />
 			</cfif>
