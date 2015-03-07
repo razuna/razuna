@@ -221,15 +221,15 @@
 		</cfif>
 		<!--- Buttons --->
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
-			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
+			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR attributes.folderaccess EQ "X") AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
 				<input type="button" name="movefolder" value="#myFusebox.getApplicationData().defaults.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("move_folder")#',600,1);"> 
 				<cfif qry_folder.folder_is_collection NEQ "T" AND application.razuna.storage NEQ 'amazon'>
 					<input type="button" name="copyfolder" value="#myFusebox.getApplicationData().defaults.trans("copy_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=copyfolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("copy_folder")#',600,1);">
 				</cfif>   
 			</cfif>
 			<cfif attributes.isdetail EQ "T">
-				<cfif cs.show_trash_icon AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
-					<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+				<cfif cs.show_trash_icon AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "" OR attributes.folderaccess EQ "X")>
+					<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR attributes.folderaccess EQ "X")>
 						<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
 					<cfelseif qry_folder.folder_name NEQ "my folder" AND qry_folder.folder_owner EQ session.theuserid>
 						<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
