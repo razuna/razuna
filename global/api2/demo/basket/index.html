@@ -11,6 +11,9 @@
 <!-- Functions for Basket -->
 <script type="text/javascript">
 
+	// Set API KEY
+	$.cookie('api_key', '7F13C747F96A4CAEA055E42213B35312');
+
 	// Check for existance of basket id in cookie if not create one
 	if ( ! $.cookie('basket_id') ) {
 		$.cookie('basket_id', uid());
@@ -19,11 +22,12 @@
 	function addToBasket(asset_id) {
 		// basket id
 		var basket_id = $.cookie('basket_id');
+		var api_key = $.cookie('api_key');
 		// Ajax
 		$.ajax({
 			type: "POST",
 			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=addToBasket',
-			data: { basket_id: basket_id, asset_id: asset_id },
+			data: { api_key: api_key, basket_id: basket_id, asset_id: asset_id },
 			success: function(data){
 				// data is json
 				var ret = JSON.parse(data);
@@ -41,17 +45,18 @@
 	function showBasket() {
 		// basket id
 		var basket_id = $.cookie('basket_id');
+		var api_key = $.cookie('api_key');
 		// Ajax
 		$.ajax({
 			type: "POST",
 			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=showBasket',
-			data: { basket_id: basket_id },
+			data: { api_key: api_key, basket_id: basket_id },
 			success: function(data){
 				// data is json
 				var ret = JSON.parse(data);
 				// Loop over array and append to page
 				$.each(ret.DATA, function (index, value) {
-					$('#basket').append(value + ' - <a href="##" onclick="deleteAssetInBasket(\'' + value + '\')">Remove</a>' + '<br>');
+					$('#basket').append(value[0] + ' - <a href="##" onclick="deleteAssetInBasket(\'' + value[0] + '\',\'' + value[1] + '\')">Remove</a>' + '<br>');
 				});
 			},
 			error: function(data){
@@ -63,15 +68,43 @@
 	function downloadBasket() {
 		// basket id
 		var basket_id = $.cookie('basket_id');
+		var api_key = $.cookie('api_key');
 		// Ajax
 		$.ajax({
 			type: "POST",
 			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=downloadBasket',
-			data: { basket_id: basket_id },
+			data: { api_key: api_key, basket_id: basket_id },
 			success: function(data){
 				// data is json
 				var ret = JSON.parse(data);
-				
+				// console.log(ret.message);
+				checkForBasket(ret.message);
+			},
+			error: function(data){
+				alert('ERROR: ' + data);
+			}
+		});
+	}
+
+	function checkForBasket(zip_file) {
+		// basket id
+		var basket_id = $.cookie('basket_id');
+		var api_key = $.cookie('api_key');
+		// Ajax
+		$.ajax({
+			type: "POST",
+			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=checkForBasket',
+			data: { api_key: api_key, zip_file: zip_file },
+			success: function(data){
+				// data is json
+				var ret = JSON.parse(data);
+				console.log(ret.message);
+				if ( ret.message ) {
+					$('#basketDownload').html('Here is your download: ' + '<a href="http://razunabd.local:8080/global/tmp/' + zip_file + '">' + zip_file + '</a>');
+				}
+				else {
+					$('#basketDownload').html('Basket not yet available. Trying again...');
+				}
 			},
 			error: function(data){
 				alert('ERROR: ' + data);
@@ -82,11 +115,12 @@
 	function deleteBasket() {
 		// basket id
 		var basket_id = $.cookie('basket_id');
+		var api_key = $.cookie('api_key');
 		// Ajax
 		$.ajax({
 			type: "POST",
 			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=deleteBasket',
-			data: { basket_id: basket_id },
+			data: { api_key: api_key, basket_id: basket_id },
 			success: function(data){
 				// Alert
 				alert('All items in your basket have been removed.');
@@ -99,14 +133,15 @@
 		});
 	}
 
-	function deleteAssetInBasket(asset_id) {
+	function deleteAssetInBasket(asset_id, asset_type) {
 		// basket id
 		var basket_id = $.cookie('basket_id');
+		var api_key = $.cookie('api_key');
 		// Ajax
 		$.ajax({
 			type: "POST",
 			url: 'http://razunabd.local:8080/global/api2/basket.cfc?method=deleteItemInBasket',
-			data: { basket_id: basket_id, asset_id: asset_id },
+			data: { api_key: api_key, basket_id: basket_id, asset_id: asset_id, asset_type: asset_type },
 			success: function(data){
 				// data is json
 				var ret = JSON.parse(data);
@@ -142,9 +177,10 @@
 
 <h2>Basket Id: <span id="basketid"></span></h2>
 
-<p><a href="##" onclick="addToBasket('108')">Image ONE</a></p>
-<p><a href="##" onclick="addToBasket('109')">Image TWO</a></p>
-<p><a href="##" onclick="addToBasket('110')">Image THREE</a></p>
+<p><a href="##" onclick="addToBasket('801820BA47F74FE9B653850309D1C8F0')">File PDF</a></p>
+<p><a href="##" onclick="addToBasket('7285B5435A744C3499C3B5CC3F1BC49B')">Video</a></p>
+<p><a href="##" onclick="addToBasket('EF818922C2AD47D2BB18D69AF4362CB4')">Audio</a></p>
+<p><a href="##" onclick="addToBasket('A4BDD4E591BC434A8DF607F97EB8F411')">Image</a></p>
 
 <h2>Your basket contains the following files</h2>
 
@@ -153,6 +189,10 @@
 <p><a href="##" onclick="deleteBasket()">Empty basket</a></p>
 
 <p style="padding-top:30px;"><a href="##" onclick="downloadBasket()">Download basket</a></p>
+
+<p style="padding-top:30px;"><a href="##" onclick="checkForBasket()">Check for basket</a></p>
+
+<div id="basketDownload"></div>
 
 </body>
 </html>

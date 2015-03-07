@@ -228,6 +228,38 @@
 		<cfreturn />
 	</cffunction>
 
+	<!--- Get path to assets --->
+	<cffunction name="getAssetsPath" output="false" returntype="string">
+		<cfargument name="api_key" required="true">
+		<!--- Temp --->
+		<cfset var qry = "" />
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		SELECT set2_path_to_assets
+		FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+		WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry.set2_path_to_assets />
+	</cffunction>
+
+	<!--- Get path to assets --->
+	<cffunction name="getThumbExt" output="false" returntype="string">
+		<cfargument name="api_key" required="true">
+		<!--- Temp --->
+		<cfset var qry = "" />
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+		SELECT set2_img_format
+		FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+		WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+		AND host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry.set2_img_format />
+	</cffunction>
+
 	<!--- Update Search --->
 	<cffunction name="updateSearch" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
