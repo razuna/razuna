@@ -639,7 +639,7 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
-		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
+		<cfset var cachetoken = getcachetoken(arguments.vstruct.api_key,"search")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_vid" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -1072,7 +1072,7 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
-		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
+		<cfset var cachetoken = getcachetoken(arguments.astruct.api_key,"search")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_aud" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -1495,7 +1495,7 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
-		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
+		<cfset var cachetoken = getcachetoken(arguments.fstruct.api_key,"search")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_doc" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
