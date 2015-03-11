@@ -211,13 +211,15 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
+		<!--- Get cache --->
+		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_img">
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry_img" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
 				<cfif q_start NEQ 1>
 					UNION ALL
 				</cfif>
-				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id, 
+				SELECT /* #cachetoken#search_images_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
 				fo.folder_name,
@@ -399,7 +401,7 @@
 				<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 				UNION ALL
 				<!--- Get Aliases --->
-				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id, 
+				SELECT /* #cachetoken#search_images_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id, 
 				i.img_filename filename, 
 				ct.folder_id_r folder_id, 
 				fo.folder_name,
@@ -637,13 +639,14 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
+		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_vid">
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry_vid" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
 				<cfif q_start NEQ 1>
 					UNION ALL
 				</cfif>
-				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id, 
+				SELECT /* #cachetoken#search_videos_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id, 
 				v.vid_filename as filename, 
 				v.folder_id_r as folder_id, 
 				fo.folder_name,
@@ -828,7 +831,7 @@
 					<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 				UNION ALL
 				<!--- Get Aliases --->
-				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id, 
+				SELECT /* #cachetoken#search_videos_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id, 
 				v.vid_filename as filename, 
 				ct.folder_id_r as folder_id, 
 				fo.folder_name,
@@ -1069,13 +1072,14 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
+		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_aud">
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry_aud" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
 				<cfif q_start NEQ 1>
 					UNION ALL
 				</cfif>
-				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
+				SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
 				fo.folder_name,
@@ -1255,7 +1259,7 @@
 				GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 				UNION ALL
 				<!--- Get Aliases --->
-				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
+				SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
 				a.aud_name filename, 
 				ct.folder_id_r folder_id, 
 				fo.folder_name,
@@ -1491,13 +1495,14 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 		</cfif>
+		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry_doc">
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry_doc" cachedwithin="1" region="razcache">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
 				<cfif q_start NEQ 1>
 					UNION ALL
 				</cfif>
-				SELECT 
+				SELECT /* #cachetoken#search_files_api */ 
 					<cfif application.razuna.api.thedatabase EQ "oracle">
 						to_char(NVL(f.file_id, 0))
 					<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
@@ -1686,7 +1691,7 @@
 				f.hashtag, fo.folder_name, lower(f.file_name), f.expiry_date
 				UNION ALL
 				<!--- Get Aliases --->
-				SELECT 
+				SELECT /* #cachetoken#search_files_api */ 
 					<cfif application.razuna.api.thedatabase EQ "oracle">
 						to_char(NVL(f.file_id, 0))
 					<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
