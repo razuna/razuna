@@ -77,9 +77,11 @@
 
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export, set2_saml_xmlpath_email,set2_saml_xmlpath_password, set2_saml_httpredirect, set2_rendition_search
+	SELECT /* #cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check,set2_custom_file_ext, set2_email_from, set2_colorspace_rgb, set2_upc_enabled, set2_rendition_metadata, set2_new_user_email_sub, set2_new_user_email_body, set2_meta_export, set2_saml_xmlpath_email,set2_saml_xmlpath_password, set2_saml_httpredirect, set2_rendition_search
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -3095,9 +3097,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <cffunction name="get_notifications" returntype="query" hint="Get notificaiton settings">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
 	<!--- Update db --->
-	<cfquery dataSource="#application.razuna.datasource#" name="notification_qry">
-	SELECT 
+	<cfquery dataSource="#application.razuna.datasource#" name="notification_qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#get_notifications */
 		set2_folder_subscribe_email_sub,
 		set2_folder_subscribe_email_body,
 		set2_folder_subscribe_meta,
@@ -3129,7 +3133,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset var cf_fields = "">
 	<cfset var img_fields = "'dummy' dummy1"> <!--- Include dummy columns to prevent query throwing errors when no columns are selected --->
 	<cfset var doc_fields = "' dummy' dummy2">
-	<cfinvoke component="global.cfc.settings" method="getimgmeta_map" returnvariable="meta_img">
+	<cfinvoke method="getimgmeta_map" returnvariable="meta_img">
 	<cfloop list ="#arguments.metafields#" index="i">
 		<cfif i contains 'cf_'>
 			<cfset cf_fields = cf_fields & "," & gettoken(i,2,'_')>
@@ -3145,7 +3149,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Extract data for asset for specified fields --->
 	<cfset var img_data = querynew(#img_fields#)>
 	<cfquery dataSource="#application.razuna.datasource#" name="img_data">
-		SELECT #preservesinglequotes(img_fields)# FROM #session.hostdbprefix#xmp
+		SELECT #preservesinglequotes(img_fields)# 
+		FROM #session.hostdbprefix#xmp
 		WHERE id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -3167,7 +3172,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Add custom fields to data set --->
 	<cfloop list="#cf_fields#" index="cf">
 		<cfquery dataSource="#application.razuna.datasource#" name="cf_col">
-			SELECT  ct.cf_text FROM  #session.hostdbprefix#custom_fields_text ct
+			SELECT ct.cf_text FROM  #session.hostdbprefix#custom_fields_text ct
 			WHERE ct.cf_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf#" >
 			AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		</cfquery>

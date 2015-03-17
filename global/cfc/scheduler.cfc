@@ -734,11 +734,13 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("general")>
 	<!--- Only run this code between 1am - 2am. This will give people time to correct any mistakes they migth have made before we delete the entries.  --->
 	<cfif hour(now()) EQ '1'>
 		<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
-		<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
-			SELECT  f.folder_id,u.user_id
+		<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access" cachedwithin="1" region="razcache">
+			SELECT /* #cachetoken#folder_subscribe_task */ f.folder_id, u.user_id
 			FROM #session.hostdbprefix#folders f 
 			INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
 			INNER JOIN users u ON u.user_id = fs.user_id
@@ -760,35 +762,41 @@
 			AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 		</cfloop>
+		<!--- if we had to delete users, flush the cache --->
+		<cfif getusers_wo_access.recordcount NEQ 0>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("general")>
+		</cfif>
 	</cfif>
 
 	<!--- Get User subscribed folders --->
-	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
-		SELECT fs.*, fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
-		LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
-		WHERE 
-		<!--- H2 or MSSQL --->
-		<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
-			DATEADD(HOUR, mail_interval_in_hours, last_mail_notification_time)
-		<!--- MYSQL --->
-		<cfelseif application.razuna.thedatabase EQ "mysql">
-			DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
-		<!--- Oracle, DB2 ?? --->	
-		</cfif>
-		< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#qGetUserSubscriptions */ fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, 
+	fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
+	LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
+	WHERE 
+	<!--- H2 or MSSQL --->
+	<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
+		DATEADD(HOUR, mail_interval_in_hours, last_mail_notification_time)
+	<!--- MYSQL --->
+	<cfelseif application.razuna.thedatabase EQ "mysql">
+		DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
+	<!--- Oracle, DB2 ?? --->	
+	</cfif>
+	< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 	</cfquery>
 	<!--- Date Format --->
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
 	<!--- Get Assets Log of Subscribed folders --->
 	<cfoutput query="qGetUserSubscriptions">
-		<cfinvoke component="folders" method="init" returnvariable="foldersObj" />
+		<!--- <cfinvoke component="folders" method="init" returnvariable="foldersObj" /> --->
 		<!--- Get Sub-folders of Folder subscribe --->
-		<cfinvoke component="#foldersObj#" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
+		<cfinvoke component="folders" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
 		<!--- Get UPC setting --->
 		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
-		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
-			SELECT l.*, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets" cachedwithin="#CreateTimeSpan(0,0,55,0)#">
+			SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
 			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
@@ -799,7 +807,8 @@
 			</cfif>
   
 			FROM (
-				SELECT * FROM #session.hostdbprefix#log_assets 
+				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc
+				FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
 				) l
@@ -822,7 +831,7 @@
 		<cfset var datacols= "">
 		<cfset var fields= "">
 		<!--- Get metafields --->
-		<cfinvoke component="global.cfc.settings" method="get_notifications" returnvariable="fields">
+		<cfinvoke component="settings" method="get_notifications" returnvariable="fields">
 		
 		<!--- Get Email subject --->
 		<cfif fields.set2_folder_subscribe_email_sub NEQ "">
@@ -841,7 +850,7 @@
 		<!--- Email if assets are updated in Subscribed folders --->
 		<cfif qGetUpdatedAssets.recordcount>
 			<!--- Get columns --->
-			<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" returnvariable="datacols">
+			<cfinvoke component="settings" method="getmeta_asset" assetid="#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" returnvariable="datacols">
 			<!--- Mail content --->
 			<cfsavecontent variable="mail" >
 				#email_intro#<br>
@@ -1015,7 +1024,7 @@
 							</cfif>
 						</cfif>
 						</td>
-						<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" returnvariable="data">
+						<cfinvoke component="settings" method="getmeta_asset" assetid= "#qGetUpdatedAssets.asset_id_r#" metafields="#fields.set2_folder_subscribe_meta#" returnvariable="data">
 						<cfloop list="#datacols.columnlist#" index="col">
 							<td>#data["#col#"][1]#</td>
 						</cfloop>
@@ -1034,11 +1043,13 @@
 			
 		</cfif>
 		<!--- Update Folder Subscribe --->
-		<cfquery datasource="#application.razuna.datasource#" name="update">
-			UPDATE #session.hostdbprefix#folder_subscribe 
-			SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
-			WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#folder_subscribe 
+		SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+		WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("general")>
 	</cfoutput>
 </cffunction>
 
