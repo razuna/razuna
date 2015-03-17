@@ -10742,7 +10742,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" /> 
 		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" returnvariable="thetask" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" />
 	</fuseaction>
 
 	<!-- Lucene index for hosted -->
