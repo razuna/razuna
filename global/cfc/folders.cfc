@@ -3395,6 +3395,8 @@
 <cffunction name="recfolder" output="false" access="public" returntype="string">
 	<cfargument name="thelist" required="yes" hint="list of parent folder-ids">
 	<cfargument name="thelevel" required="false" hint="the level">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("folders")>
 	<!--- function internal vars --->
 	<cfset var local_query = 0>
 	<cfset var local_list = "">
@@ -3403,13 +3405,11 @@
 		<cfset arguments.thelist = "-1">
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="local_query">
-	SELECT folder_id, folder_level
+	<cfquery datasource="#application.razuna.datasource#" name="local_query" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#recfolder */ folder_id, folder_level
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
 	AND folder_id != folder_id_r
-	<!--- AND folder_level <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-	AND folder_level <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thelevel#" cfsqltype="cf_sql_numeric"> --->
 	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -7966,62 +7966,68 @@
 	<cfargument name="thestruct" type="struct" required="true">
 	<cfparam name="arguments.thestruct.asset_keywords" default="F" >
 	<cfparam name="arguments.thestruct.asset_description" default="F" >
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("general")>
 	<!--- Subscribe details --->
-	<cfquery datasource="#application.razuna.datasource#" name="qfoldersubscribe">
-		SELECT * 
-		FROM #session.hostdbprefix#folder_subscribe
-		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
-		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+	<cfquery datasource="#application.razuna.datasource#" name="qfoldersubscribe" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#subscribe */ fs_id
+	FROM #session.hostdbprefix#folder_subscribe
+	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+	AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 	</cfquery>
 	<!--- If folder subscribe details already exists then delete else insert/update --->
 	<cfif arguments.thestruct.emailnotify EQ 'no'>
 		<!--- Delete Subscribe details --->
 		<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#folder_subscribe
-			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
-			AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+		DELETE FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+		AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 		</cfquery>
 	<cfelse>
 		<cfif qfoldersubscribe.recordcount NEQ 0>
 			<!--- Update Subscribe details --->
 			<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#folder_subscribe
-				SET 
-				fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
-				mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
-				last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				auto_entry  = 'false',
-				asset_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
-				asset_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
-				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
-				AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
+			UPDATE #session.hostdbprefix#folder_subscribe
+			SET 
+			fs_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+			mail_interval_in_hours = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+			last_mail_notification_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			auto_entry  = 'false',
+			asset_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
+			asset_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">
+			AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
 			</cfquery>
 		<cfelse>
 			<!--- Insert Subscribe details --->
 			<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#folder_subscribe
-				(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time, asset_keywords, asset_description)
-				VALUES(
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
-					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
-				)
+			INSERT INTO #session.hostdbprefix#folder_subscribe
+			(fs_id, host_id, folder_id, user_id, mail_interval_in_hours, last_mail_notification_time, asset_keywords, asset_description)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.emailinterval#">,
+				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_keywords#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.asset_description#">
+			)
 			</cfquery>
 		</cfif>
 	</cfif>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("general")>
 </cffunction>
 
 <!--- GET SUBSCRIBE FOLDER RECORD --->
 <cffunction name="getsubscribefolder" output="false" access="public" returntype="query">
 	<cfargument name="folder_id" required="yes" type="string">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("general")>
 	<!--- Subscribe folder details --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_folder">
-	SELECT * 
+	<cfquery datasource="#application.razuna.datasource#" name="qry_folder" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getsubscribefolder */ mail_interval_in_hours, asset_keywords, asset_description
 	FROM #session.hostdbprefix#folder_subscribe
 	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#">
 	AND user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theUserID#">
@@ -8040,6 +8046,8 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 		</cfquery> 
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
