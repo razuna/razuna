@@ -2094,7 +2094,7 @@
 <!--- Add to query --->
 <cffunction name="add_to_query" >
 	<cfargument name="thestruct" type="struct">
-	<cfset StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
+	<cfset var StrEscUtils = createObject("java", "org.apache.commons.lang.StringEscapeUtils")><!---  Create object whose methods will be used to escape HTML characters --->
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
 	<cfif structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount NEQ 0>
 		<!--- Add row local query --->
@@ -2176,15 +2176,15 @@
 						</cfif>
 						<!--- Add custom fields --->
 						<cfloop query="arguments.thestruct.qry_cfields">
-          							<cfif idx eq "#cf_text#:#cf_id#">
-	          							<cfquery name="qcf" dbtype="query">
-									SELECT cf_value
-									FROM arguments.thestruct.qry_cf
-									WHERE cf_text = '#cf_text#'
+  							<cfif idx eq "#cf_text#:#cf_id#">
+      							<cfquery name="qcf" dbtype="query">
+								SELECT cf_value
+								FROM arguments.thestruct.qry_cf
+								WHERE cf_text = '#cf_text#'
 								</cfquery>
-	          							<cfset QuerySetCell(arguments.thestruct.tq, "#cf_text#:#cf_id#", "#StrEscUtils.unescapeHTML(qcf.cf_value)#")>
-          							</cfif>
-          						</cfloop>
+      							<cfset QuerySetCell(arguments.thestruct.tq, "#cf_text#:#cf_id#", "#StrEscUtils.unescapeHTML(qcf.cf_value)#")>
+  							</cfif>
+  						</cfloop>
 					</cfloop>
 				</cfif>
 			</cfif>	
