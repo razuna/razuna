@@ -105,6 +105,9 @@
 					<li><a href="##wl" onclick="loadcontent('wl','#myself#c.wl_host');">#myFusebox.getApplicationData().defaults.trans("white_labelling")#</a></li>
 				</cfif>
 			</cfif>
+			<cfif isadmin>
+				<li><a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');">Indexing</a></li>
+			</cfif>
 		</ul>
 		
 		<!--- Users --->
@@ -230,6 +233,10 @@
 				</cfif>
 			</h4>
 		</div>
+		<!--- Indexing --->
+		<cfif isadmin>
+			<div id="indexing"></div>
+		</cfif>
 	</div>
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->
 	<!--- Activate the Tabs --->
