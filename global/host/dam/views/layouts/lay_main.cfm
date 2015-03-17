@@ -227,8 +227,6 @@
   })();
 </script>
 </cfif>
-<script type="text/javascript" src="#dynpath#/global/js/instantclick-3-1-0.min.js" data-no-instant></script>
-<script data-no-instant>InstantClick.init();</script>
 </body>
 </html>
 </cfoutput>
