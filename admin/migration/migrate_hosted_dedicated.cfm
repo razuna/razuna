@@ -1,5 +1,7 @@
 <cfabort>
 
+<!--- Make sure to add the host_id to the host table in order to avoid foreign key issues! --->
+
 <!---  --->
 <!--- VARIABLES --->
 <!---  --->
@@ -35,8 +37,6 @@
 <!--- --------------------------------------------------------------------------------------- --->
 <!--- INTERNAL STUFF --->
 <!--- --------------------------------------------------------------------------------------- --->
-
-<!--- DODO: ct_groups_users !!! --->
 
 <!--- List of tables that need to be fetched and value to be transfered --->
 <cfset fetch_tables = "raz1_additional_versions,raz1_comments,raz1_custom_fields,raz1_custom_fields_text,raz1_custom_fields_values,raz1_files,raz1_files_desc,raz1_files_xmp,raz1_folders,raz1_folders_desc,raz1_folders_groups,raz1_images,raz1_images_text,raz1_labels,raz1_share_options,raz1_users_favorites,raz1_versions,raz1_videos,raz1_videos_text,raz1_xmp">
