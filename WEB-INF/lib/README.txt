@@ -1,12 +1,13 @@
 OpenBlueDragon WEB-INF/lib README
-  $Id: README.txt 2053 2012-05-02 14:20:11Z alan $
+  $Id: README.txt 2404 2013-09-22 21:51:40Z alan $
 
-Apache Tika 1.1
-The bundled Apache Compress is an older version so this has been removed from 
-this JAR file
+_____________________________________________________________________
+Apache Tika 1.4
 
+Provides most of the functionality for the CFSEARCH auto indexing of various
+document types.
 
-
+_____________________________________________________________________
 This is the standard directory used by J2EE web applications for locating Java
 library files. All ".jar" libraries found in this directory are automatically
 added to the web application's classpath by the web container.
@@ -29,27 +30,33 @@ OpenBlueDragon requires the following libraries:
    wsdl4j.jar
    xalan.jar
 
+_____________________________________________________________________
 The following libraries are required if your webapp uses the CFCHART tag:
 
    jcommon-1.0.0.jar
    jfreechart-1.0.1.jar
 
+_____________________________________________________________________
 The following libraries are required if your webapp uses the CFSEARCH tag:
 
-   lucene-analyzers-3.6.0.jar
-   lucene-core-3.6.0.jar
-   lucene-highlighter-3.6.0.jar
+   lucene-analyzers-4.4.0.jar
+   lucene-core-4.4.0.jar
+   lucene-highlighter-4.4.0.jar
+   lucene-queryparser-common-4.4.0.jar
    
+_____________________________________________________________________
 The following library is for the HtmlGetPrintableText() function
    jericho-html-3.1.jar
 
+_____________________________________________________________________
 The following library is for the CFJAVASCRIPT tag
    yuicompressor-2.4.2.jar
 
+_____________________________________________________________________
 The following libraries contain JDBC drivers; you can remove them before deploying
 your web application if they're not needed:
 
-   mysql-connector-java-5.1.12-bin.jar (MySQL)
+   mysql-connector-java-5.1.26-bin.jar (MySQL)
    postgresql-8.4-701.jdbc4.jar (PostgreSQL)
    h2-1.2.128.jar (H2 Database)
    ojdbc14.jar (Oracle 10g)

@@ -1,0 +1,1091 @@
+OpenBD Release Notes
+__________________________________
+
+$Date: 2013-07-28 21:19:27 +0000 (Sun, 28 Jul 2013) $
+__________________________________
+
+- fixed cfscript function returnformat="" bug
+- Upgraded javolution jar to 5.5.1
+- Updated MongoFSGridPut() for updated ID support
+- Updated MongoFSGridGet() min parameters
+- yield() on the Profiler
+- added functions:
+  - invoke(c,m,a)
+  - setHttpStatus(sc,st)
+  - setHttpValue(n,v)
+  - htmlBody(t,p)
+  - htmlHead(t,p)
+- fixed try/catch unwrap exception bug
+- reverted fix for "no ResultSet available" for SQLite
+- added functions:
+  - Pause(ms)/sleep(ms)
+  - CreateDateTime() added ms parameter
+  - CreateTime() added ms, epoch parameter
+  - Millisecond(dt)
+  - QueryToArray(qry)
+  - encodeForHtmlAttribute(s)
+  - encodeForJavascript(s)
+  - encodeForFilename(s,d)
+  - Hmac(m,k,a,e)
+  - urlFromStruct(s,e)
+- fixed #515: cfquery credentials do not override those defined in datasource
+- added ip/xip to the Profiler() data
+- fixed ImageNew() with no or blank src
+- fix for thread safety in session storage 
+- fixed bug in validation of interface methods implemented by cfc 
+- added <%= ... %> optional parsing supported (bluedragon.xml: server.system.cfoutputshorthand) 
+- fixed #510: setLocale and onRequestStart scoping
+- fixed #512: CFHTTP send PUT request with a file as multipart/form-data content type
+- fixed #509: cfdirectory/directorylist sort issue
+- fixed #513: cfstylesheet SRC support for comma-separated list
+- fixed "no ResultSet available" issue when querying SQLite db
+- fixed cfquery result recordcount for insert statements
+- fixed support for dynamic keys in implicit structs
+- fixed DirectoryList() omission of directories when applying filter
+- fixed htmlEditFormat handling of html encoded characters like &eacute;
+- reduced logging verbosity
+- fixed encoding of null in serializejson function
+- fixed: JavaScript Bridge: array .length support
+- fixed: dataBin was not properly set under certain calls
+- fixed NPE when using MongoRegister with a mongouri
+- added: ProfilerOn()/ProfilerOff()/ProfilerAdd()
+
+--- Stable Release 3.0 [3rd March 2013]
+- fixed CFMODULE dynamic bug for NAME="" attribute
+- added cron.1min to cron functionality
+- fixed the onApplicationStart() loading update
+- fixed exception handling edge case
+- OnSessionStart()/OnApplicationStart() update 
+- Database Connection Pooling Refactor
+  - Reduced memory overhead
+  - added function DataSourceActivePoolStats()
+  - per-page pooling feature added
+    - connectionperpage flag added to query XML block
+    - added connectionperpage to DataSourceCreate() 
+- added support for mongouri schemes in MongoRegister()
+- fixed #506: MongoDB's MongoDeregister() and MongoRegister() problem
+- Updated mongo-2.10.1.jar  [/WEB-INF/lib/ updated]
+- DeserializeJSon() - strictmode supports deep query detection
+- fixed CFFILE UPLOAD/FileUpload() error when destination is full path to file
+- fixed XmlParse() documentation bug
+- fixed AmazonSQS custom regions [/WEB-INF/lib/ updated]
+- added: <formurlmaintaincase>false</formurlmaintaincase> feature
+- fixed #498: IsJSON throws exception on complex datatypes
+- Support for URL in FileRead()
+- fixed #502: ImageNew can not read an URL as specified by function
+- Support for multi-regions in Amazon S3, SQS and SimpleDB
+- Removed AmazonSQSSetHost() function
+- Updated MongoCollectionIndexEnsure() function
+- Removed MongoCollectionIndexCreate() deprecated API call
+- Updated MongoGridFSGet() to support inline returns
+- Memcached set() error resolved if too big
+- Trim column names in http() for CSV reading
+- Added MongoCollectionAggregate()
+- Updated mongo.jar [/WEB-INF/lib/ updated]
+- MongoSessionManager more tolerant of outages
+- fixed #471: output="yes" [/WEB-INF/lib/ updated]
+- FTP functions added [/WEB-INF/lib/ updated]
+  - FtpClose()
+  - FtpOpen()
+  - FtpCmd()
+  - FtpCreateDir()
+  - FtpExists()
+  - FtpExistsDir()
+  - FtpExistsFile()
+  - FtpGetCurrentDir()
+  - FtpGetCurrentUrl()
+  - FtpGetFile()
+  - FtpList()
+  - FtpPutFile()
+  - FtpRemove()
+  - FtpRemoveDir()
+  - FtpRename()
+  - FtpSetCurrentDir()
+  - FtpSite()
+- fixed bug when passing a CFFUNCTION argument value as an argument to a constructor
+- fixed #485: Unexpected behaviour from structKeyExists if a null value from database is involved
+- fixed the session loading order
+- http() returns the structure instead of a boolean
+- added QueryEach() / {}.each()
+- fixed #373: added support for CLIENTCERT/CLIENTCERTPASSWORD in CFHTTP/Http()
+- fixed support for component return type in cfscript declared function
+- automatically treat application/json as string in CFHTTP result
+- fixed bug recently introduced in 4.2.1 CFHTTP gzip support
+- fixed YSOD on bad charset value in CFHTTP. Blank values are now ignored.
+- added Http() function
+- upgraded to 4.2.1 of HttpComponents for CFHTTP
+- added StructEach() / StructFilter() / {}.each()
+- added ArrayEach() / ArrayFilter() / ArrayFindAll() / [].each()
+- added <CFLOOP ARRAY="" ITEM="" INDEX=""> combination support
+- GetFileInfo() throws exception on missing file
+- fixed MongoDB embedded $regex
+- added AttributeCollection to <CFSCHEDULE>
+- added: "for ( row in query )" cfscript looping
+- fixed #475: FTP: folder names with spaces are not listed properly
+- added defaultlist attribute to <CFQUERYPARAM> / QueryRun / QueryOfQueryRun()
+- fixed <CFSEARCH> to use English analyzer when language is English
+- fixed combining of tokens in <CFINDEX> custom body
+- component{} script support
+- fixed #483: Adding support for customtagpaths to the <CFAPPLICATION> tag
+- fixed encoding of Mongo _id 
+- fixed #482: returnformat='json'
+- Collapsing content in the dump/error pages
+- added the 'default' caching engine for CacheGet/CachePut
+- fixed #481: FORM scope is empty in cfc used as rest with multiform data
+- Updated plugins SalesForce/Vision
+- Updated CFLOCK manual
+- Fixed <CFFUNCTION JSONCASE=""> bug
+- Fixed Mongo Date Conversion from local to UTC
+- Fixed MongoQuery Conversion
+- Cache CFFUNCTION fixed
+- OpenBD Archived introduced
+  - MappingCreateArchive()
+  - MappingAdd()
+- this.sessionstorage enabled to use Mongo/Memcache
+- Cache Functions Refactored
+  - Added Storage Engines
+  - Support for CFFUNCTION caching
+  - Mongo / Memcache / CouchBase support
+- CFMLBug monitoring
+- SalesForce Plugin added to core [/WEB-INF/lib/ updated]
+- JSON Encoding Defaults
+  - Set how dates and case are defaults via bluedragon.xml
+  - Control case via CFFUNCTION for remote calls
+  - Control it through the client side variables
+- Active threads named with Request URI
+- Updated MongoDB functions:
+  - fixed parameter name in MongoIsValid()
+  - Return _id for the MongoCollectionInsert()
+  - Auto close of connections after idle period
+- fixed datasource security detection
+- Updated SpreadSheetQueryRead() / SpreadSheetGetCellValue() evaluates formula's
+- fixed #461: [COMPAT] AttributeCollection does not work with CFLAP
+- fixed #409: [COMPAT] GetComponentMetaData function not implemented
+- fixed #470: CFDIRECTORY doesn't honour SORT attribute
+- fixed #471: output="yes" no longer evaluates to output="true" for onRequest
+- added support for ternary operator in cfscript
+- fixed #460:	Allow vars in loops in cfscript
+- fixed #467: ArraySlice index error
+- updated Apache Compress removing from Tika [/WEB-INF/lib/ updates]
+- removed overhead associated with FileUpload()
+- added docx xlsx pptx odt to CFINDEX 
+- fixed CFINDEX query attribute
+- fixed CFFTP big size
+- fixed CFFUNCTION default output
+- fixed ScopeMisMatch after cfscript exception
+- upgraded Apache Lucene to 3.6.0 [/WEB-INF/lib/ updates]
+- search WORD/EXCEL fix [/WEB-INF/lib/ updates]
+- fixed query cache name collision
+- Set the Locale to UK for Cookie setting
+- Increased cookie NEVER to 20 years
+- updated JSoup1.6.2 [/WEB-INF/lib/ updated]
+- fixed datasource connection pooling for maxConnections
+- updated the CFAJAXPROXY to only encode params it needs to
+- fixed NPE when TYPE is missing from cfscript param statement
+- fix #454: <input type=checkbox> setForm()
+- fix #454: <select> Option tag not sending 1 with setForm()
+- fixed CFSCRIPT language=java error
+- added AmazonS3Read() overwrite attribute
+- added MongoDB GridFS functions
+  - MongoGridFSSave()
+  - MongoGridFSRemove()
+  - MongoGridFSFindOne()
+  - MongoGridFSFind()
+  - MongoGridFSGet()
+- CFVIDEOPLAYER upgraded FlowPlayer to 3.2.8
+- [Desktop] Fixed 'Export to WAR' feature
+- upgraded Mongo.jar [/WEB-INF/lib/ updated]
+- fixed: CFINDEX query type can take in both string and query object
+- fixed: CFDIRECTORY recurse=true; directory + name paths
+- added: delimiter to CreateUUID() 
+- updated aw20org.jar [/WEB-INF/lib/ updated]
+- added serialization support for java
+- fixed subtle try/catch exception edge case
+- fixed MongoCollectionIndexCreate() unique bug
+- IpGetMXRecords() removed trailing period
+- added attributes to HtmlCodeFormat()
+- fixed #435: CFDIRECTORY with listinfo only has the file names and leaves off the relative path
+- fixed DataSource server validation; added "openbdnocheck" to URL string 
+- [Desktop] Updates
+  - Added ContextPath
+  - Auto Startup on Windows flag
+  - Auto Server Startup on GUI startup
+  - JVM Memory updated
+  - Perm Gen Memory Live Statistics
+  - Flag to leave target WEB-INF/ untouched
+  - Settings persisted
+  - Minimize to System Tray
+  - WebApp root history
+  - Start-Server Console tab now in focus
+  - Small UI bugs ironed out 
+- updated CFAJAXPROXY to correct CFC path issue
+- fixed #436: Windows install serviceDelete error
+- fixed #433: Default log file location
+- fixed #430: GetNumericdate() throws error
+- fixed #431: automatically trim whitespace from columnnames
+- fixed #431: missing number fields in spreadsheet after SpreadsheetRemoveColumn
+- new Zip/ZipList/Unzip functions
+- CFZIP now leverages Apache Compress library fixing issues with foreign characters
+- fixed #429: ValueList function doesn't work on queries created by CFDIRECTORY with listinfo="Name"
+- fixed #428: cfquery.currentRow is default 0
+- fixed #425: ImagePaste() returns error: attribute passed in was not of type image
+- fixed #416: cfscript, language=javascript, internal server error
+- fixed #412: CFQuery fails to validate JDBC hoststring where multiple hosts are specified
+- added Bouncy Castle distribution [/WEB-INF/lib/ updated]
+- DebuggerPlugin respects the <ipaddresses> list to control access
+- removed the need for file:// in the plugin jar list
+- updated log4j JAR [/WEB-INF/lib/ updated]
+- fixed #263: Bug with variablename validation with CFPARAM and ISVALID()
+- fixed #407: Single instance (custom OpenBD install) fails to pick up plugins
+- fixed #405: The tag cfhtmlhead throws a bad template error
+
+--- Stable Release 2.0.2 [1st January 2012]
+- fixed #202: Web Services error on Single-instance installations
+- added StructListNew()
+- fixed #403: Default params in CFC methods in CFSCRIPT loses values
+- fixed #245: unnamed function argument not found
+- fixed #52: support for typed array TYPE in CFARGUMENT
+- added function SocketConnect() / SocketServerStart() / SocketServerStop() / SocketServerGetClients()
+- added function SpreadSheetQueryRead()/SpreadSheetQueryWrite()
+- added function GetApplicationMetaData()
+- added support for 'this.datasource' in Application.cfc / CFAPPLICATION
+- updated CFHTTP file/path downloads straight to file, using no memory
+- added "runonce" flag to CFINCLUDE/RenderInclude()
+- fixed SpreadSheetNew() XLSX [/WEB-INF/lib/ updated]
+- updated AmazonRegisterDataSource() to support multiple regions
+- added QueryAddRow() function to turn a struct into a row
+- fixed QueryRun() list=true bug
+- fixed QuotedValue() list bug
+- fixed 399: CFCOOKIE does not support argument collection
+- fixed 105: Application.cfc, this.customTagPaths supported
+
+--- Stable Release 2.0.1 [1st December 2011]
+- fixed CFSEARCH results for emptying collections
+- ImageResize tweaked for better scaling results
+- rewrote the SearchEngineFriendlyURLFilter 
+- updated OpenBD Desktop to remove core plugins
+- fixed #397: OpenBD Desktop Shadow Folder not working as expected
+- updated Ready2Run Jetty for Windows Service
+- cfinvoke supports attributeCollection
+- fixed CFDIRECTORY/DirectoryList() to match other engines
+- remove run-once scheduled tasks from schedule engine
+- upgraded to Apache Lucene 3.5 [/WEB-INF/lib/ updated]
+- fixed CFINDEX atttributecollection bug
+- added defaultreturn param for ValueList()/QuotedValueList()
+- fixed #368: Enabled SearchEngineFriendlyURLFilter by default
+- fixed #386: SearchEngineFriendlyURLFilter fails on templates with multiple dots
+- fixed #390: CFC method with returntype="void" doesn't throw error when method returns
+- fixed #391: Get Directory From Path Error
+- fixed #393: CFMAIL TAG difference in behaviour with attributes
+
+--- Stable Release 2.0 [11th November 2011]
+- upgraded to 2.7.0 final release of Mongo driver
+- fixed #382: CFLOOP missing CHARSET attribute
+- added MongoXXX() integration to MongoDB
+- CronTagPlugin promoted to core engine
+- LoginPlugin promoted to core engine [/WEB-INF/lib/ updated]
+- upgraded MySQL JAR 5.1.18
+- added DirectoryDelete() with recurse
+- DirectoryList() matching CFDIRECTORY for function
+- AmazonS3Read/AmazonS3Write can read/write objects as well as file
+- fixed FileMove() to take in file and/or directory
+- added CFSCRIPT language='javascript'
+- fixed isArray() for inner XML documents
+- fixed exception handling [/WEB-INF/lib/openbdplugin-debugger.jar updated]
+- fixed #36: CFSCHEDULE action=pause/resume not supported
+- fixed #175: Feature Request: Ability to pause scheduler so no scheduled tasks run
+- fixed #381: GetDirectoryfrompath() removing trail slash
+- upgraded YUI Compressor JAR
+- CFAJAXPROXY now supports complex object passing
+- fixed CFHTTP gzip encoding
+- CFSMTP plugin integrated to core branch [/WEB-INF/lib/ updated]
+- SpreadSheet plugin integrated to core branch [/WEB-INF/lib/ updated]
+- fixed #376: Update PDFbox to support PDF 1.3+
+- refactored internal rendering engine 
+- fixed #379: Collections not being registered properly anymore
+- improved CFLOG; recreate missing directories/files
+- improved CFAJAXPROXY handling
+- fixed CFSCRIPT exception handling [edge case]
+- fixed #313: javacast to String[] for Object parameter
+- fixed npe when array index is non-existant variable
+- fixed ImageRead()/ImageWrite() functions
+- fixed CFSTYLESHEET/CFJAVASCRIPT recreate missing directory
+- updated fileXXX() functions to support native
+- fixed CollectionFactory on startup for Search
+- added: flush() method for CFSCRIPT usage
+- fixed #377: Single quotes aren't escaped when using functions inside CFQUERY
+- upgraded Apache Lucene to 3.4.0
+- Added extra attributes to CollectionSearch()
+- better handling for invalid emails in CFMAIL
+- added #203: Feature Request: DateTimeFormat()
+- fixed #229: Added CollectionStatus() for a single collection 
+- fixed #375:	Add statusCode attribute to CFLOCATION
+- added GetHttpStatusLabel() function
+- added toBoolean() function
+- added QueryRenameColumn() function
+- fixed Lucene search query, reset it back to 0
+- Fixed CollectionCreate()/CFINDEX on Linux
+- fixed ysod on bad function parameter count
+- Search Refactored
+   - performance/memory improvements
+   - added CollectionCreate()
+   - added CollectionList()
+   - added CollectionDelete()
+   - added CollectionListCategory()
+   - added CollectionIndexCustom()
+   - added CollectionIndexPath()
+   - added CollectionIndexFile()
+   - added CollectionIndexWeb()
+   - added CollectionIndexDelete()
+   - added CollectionIndexPurge()
+   - added support for indexing: MP3/JPG/TIFF files
+   - added support for limitless custom attributes
+- fixed whitespace tab issue in JSON
+- upgraded Jackson JSON parser to 1.8.3
+- fixed #365: UDFs when copied into other scopes do not work without named arguments
+- upgraded Apache Lucene to 3.3.0
+- added fixEOL() function
+- added JSONDATE encoding support
+   - CFFUNCTION added for JSONDATE="LONG|CFML|JSON|HTTP"
+   - SerializeJSON() new attribute to support encoding
+- added named-param support for throw()
+- fixed #364: Inconsistent pass by value behaviour with arrays
+- fixed #313: javacast support for string[]
+- fixed #146: javacast support for java classes
+- fixed #40: javacast support for BigDecimal, short, char and byte types
+- added #363: Add GetMailUndeliveredDirectory()
+- added 'catchemail' to outgoing email to redirect all mail to a mailbox
+- added <rewritebluedragonxml> flag to stop bluedragon.xml from updating
+- fixed #315: Enhancement: CFJAVASCRIPT support a PATH attribute
+- added html() function
+- refactored string functions
+- fixed #360: CFSTYLESHEET hash clash or incorrect hash wrong files to load
+- fixed #361: Bug with multiple Application.cfc files; same application name
+- added AmazonSQSSetHost()
+- added AmazonSDBGetAttributes() support for consistentRead
+- fixed #359: ImageDrawText() has incorrect code for new Font(fontstr,size,style)
+- added #347: CFDBInfo support
+- added StructEquals() function
+- added #222: Add support for fall through on tag based CFSWITCH
+- fixed #348: Function with returntype="void" and output="true" has a 
+  WDDX packet not the output
+- fixed #355: isValid - invalid type 'component' specified
+- fixed #351: Syntax error for chained functions with new Component
+- fixed #353: ArgumentCollection doesn't work for variables as functions
+- fixed #354: Cannot modify array returned from string.split()
+- fixed #352:	"local variable [varname] cannot be declared twice"
+- fixed TAB issue in DeserializeJSon()
+- [GAE] Fixed the GoogleFileIO problem
+- added format= support to ImageGetBlob()
+- added tiff support to ImageRead()
+- fixed bug with ImageCrop()
+- fixed #284: additional fix when using implicit struct/arrays
+- [GAE] #312:	googleQuery where clause with single character
+- fixed #303:	CreateTime() uses incorrect default date
+- added #296: <CFPROCPARAM list="true|false" />
+- updated DeserializeJSON()
+   - switched to Jackson JSON parsing library
+   - added 'file' parameter to function
+- [Desktop] Allow for web.xml to be in the shadow folder
+- reduced memory footprint on cfSession
+- fixed #284: CFLOOP list reference issue
+- fixed #339: Internal Server Error in Debug output
+- fixed #344: Error in SpreadsheetFormatColumn(s)
+- fixed SpreadSheetAddInfo() function on blank XLS files
+- fixed #343: Problem in SpreadSheetInfo() function
+- fixed #342: Compatibility issue : generateSecretKey()
+- fixed #340: VFS functions - Case sensitive for s3://
+- added <div id='openbddebug'> to Debugger output
+- fixed #337: CFDIRECTORY ACTION is case sensitive
+- fixed #338: DateConvert() displays 24 instead of 00 for midnight
+- Amazon Updates
+   - added checked S3 connection and FileNotFound Exception
+   - update amazon S3 classes avoid using generic Exception
+   - encode and fix signed url
+- fixed #246: REEscape update
+- fixed #302: CFFORM preserveData only preserves type="text"
+- fixed #260: Update ParseDatetime() to handle HTTP time strings
+- fixed #155: Allow ability to loop over Java byte array
+- fixed #335: XmlValidate() outputs the error message, line and 
+  column numbers in different order
+- [GAE] Fixed the FileUpload()
+- fixed #331: FileRead function not work with files opened in binary mode
+- [Desktop] Bundled the official plugins; optional on/off
+- [Desktop] Added the ability to customize extensions
+- [Desktop] Bundled the manual and admin console
+- fixed #325: XSLT processor throws error
+- added Logger() function
+- fixed #329: Misspelled Image Function: ImageSetantialisaing()
+- fixed DeSerializeJSon() on blank strings
+- fixed #272 enhancement: add linedelimiter parameter to Csvwrite()
+- fixed directorylist() bug with s3 url on linux
+- updated documentation for CFCACHECONTENT
+- fixed #320: Pass by ref on Xpath no longer functions
+- added 'customdata' to the CFMAIL callback
+- fixed looping around the dates
+- [GAE] added cfcomponent.cfc to the WAR
+- [STD] Updated the MySQL driver to 5,1,15
+- [Desktop] Added in Google Proxy option
+- [GAE] fixed GoogleKey()
+- added CFMAIL callback for onMailSend()/onMailFail()
+- [STD] added function: getMailSpoolDirectory()
+- [Desktop] create default index.cfm for GAE deployment
+- [GAE] fixed remote CFC processing
+- [Desktop] fixed #317: Missing servlet mappings in WEB-XML
+- fixed #139: TagContext order in cfcatch is in opposite direction
+- fixed XALAN memory leak for XmlSearch()
+- added support for PRIORITY attribute in CFMAIL
+- added new ReEscape function
+- fixed #292: added CFINTERFACE support
+- fixed #186: ParseDateTime support for unix style date/time
+- fixed #294: LSisDate performance
+- fixed #307: BinaryEncode & BinaryDecode with Hex or UU algorithm
+- fixed #188: CFMX incompatability - session timeouts
+- fixed #286: DeSerializeJSON does not handle null values correctly.
+- fixed #293: Using SetProfilestring with a file not yet created fails
+- fixed #288: CFCOOKIE Invalid expires date format with non english locale
+- fixed #141: CFIMAGE Fails Silently When srcfile Doesn't Exist 
+- fixed #132: CFIMAGE nameconflict="makeunique" not working
+- fixed #304: CFPOP auto generation of ATTACHMENTPATH directory
+- fixed #306: CFPOP GENERATEUNIQUEFILENAMES attribute support for booleans
+- src maintenance for Google App Engine Merge
+- support for CFZIP action=ZIP/UNZIP and FILE pseudonyms
+- fixed #298: returntype for CFTRANSACTION
+- fixed #297: bug in compare/comparenocase
+- fixed CFHTTPPARAM
+- fixed deserializejson when input is a string
+- fixed onSessionEnd missing application scope
+- added 'attributeCollection' support to core functions
+- changed 'image' to 'name' in ImageXX() functions
+- added flag to keep function/cffunction vars scoped
+- fixed AmazonGetSignedURL() call
+- fixed #290: cfscript switch support of unquoted negative numbers
+- fixed potential NPE introduced in extended function support 
+- added Image function support
+   - ImageNew()
+   - ImageRead()
+   - ImageWrite()
+   - ImageWriteBase64()
+   - ImageReadBase64()
+   - IsImage()
+   - ImageGetExifMetaData()
+   - ImageGetExitTag()
+   - ImageInfo()
+   - ImageGetWidth()
+   - ImageGetHeight()
+   - ImageGetBufferedImage()
+   - ImageBlob()
+   - ImageCrop()
+   - ImageBlur()
+   - ImageSharpen()
+   - ImageNegative()
+   - ImageGrayScale()
+   - ImageFlip()
+   - ImagePaste()
+   - ImageResize()
+   - ImageRotate()
+   - ImageAddBorder()
+   - ImageClearRect()
+   - ImageDrawRect()
+   - ImageDrawRoundRect()
+   - ImageDrawArc()
+   - ImageDrawBeveledRect()
+   - ImageDrawLine()
+   - ImageDrawLines()
+   - ImageDrawPoint()
+   - ImageDrawOval()
+   - ImageDrawText()
+   - ImageDrawingColor()
+   - ImageSetBackgroundColor()
+   - ImageSetAntialisasing()
+   - ImageXORDrawingMode()
+   - ImageReflection()
+   - ImageContrastBrightness()
+   - toDataURI()
+- added support for PUBDATE in CFFEED
+- extended function support in CFSCRIPT
+- Amazon Updates
+   - added AmazonS3GetInfo()
+   - updated AmazonS3List() to return sub-directories
+   - updated AmazonS3Write() to support meta-data and storage class
+- strict mode added for ArrayPassingByReference flag
+- CFSCRIPT::java added export of methods 
+- CFSCRIPT::java added import support
+- added attributeCollection/docs support for:
+   - CFABORT
+   - CFASSOCIATE
+   - CFCHARTDATA
+   - CFCOL
+   - CFCONTENT
+   - CFDIRECTORY
+   - CFDUMP
+   - CFERROR
+   - CFEXECUTE
+   - CFFILE
+   - CFFLUSH
+   - CFHEADER
+   - CFHTMLBODY
+   - CFHTMLHEAD
+   - CFHTTP
+   - CFHTTPPARAM
+   - CFINCLUDE
+   - CFLOCATION
+   - CFLOCK
+   - CFLOG
+   - CFMAIL
+   - CFMAILPART
+   - CFMAILPARAM
+   - CFOUTPUT
+   - CFPAUSE
+   - CFRETHROW
+   - CFSAVECONTENT
+   - CFTIMER
+   - CFTHROW
+   - CFWDDX
+   - CFIMAGE
+   - CFZIP
+   - CFFEED
+- added CFSAVECONTENT TRIM="true|false" attribute
+- added underlying attributeCollection support for tags 
+
+--- Stable Release 1.4 [27th October 2010]
+- fixed #282: dateformat bug introduced in fix for #234
+- fixed #151: "fullname" key not included in cfc metadata
+- added <CFSCRIPT lang="java">
+- added system functions
+   - SystemMemory()
+   - SystemFileCacheInfo()
+   - SystemFileCacheList()
+   - SystemFileCacheFlush() 
+   - SessionCount( [appname] )
+- fixed #147: LSDateFormat handling of nulls
+- fixed #234: DateFormat handling of mask containing single quote
+- fixed #236: ListSort with numeric sort of dates
+- fixed need for init function in component when using 'new' operator
+- added hooks for custom languages <CFSCRIPT lang="">
+- Upgraded Lucene to 3.0.2
+- added FileUpload()/FileUploadAll()
+- added CFFILE ACTION=UPLOADALL
+- added network functions
+   - IPResolveDomain()
+   - IPReverseLookup()
+   - IPGetMXRecords()
+   - IPAsInteger()
+   - IPInRange()
+   - IPNetworkAddress()
+   - IPBroadcastAddress()
+   - IPGetLowAddress()
+   - IPGetHighAddress()
+   - IPToCIDR()
+   - IPGetCount()
+- fixed #276: SerializeJson should not escape simple quote
+- fixed #41: issue with argumentCollection and named arguments
+- fixed #154: CFFTP ignores timeout values
+- fixed #97: server.coldfusion.productversion should use comma as 
+  separator as opposed to a period
+- fixed #227: CFDIRECTORY silently fails trying to create directory
+- fixed #267: CFTEXTAREA does not accept text using Safari
+- fixed #269: CFDIRECTORY action="list" attribute "filter" fails when 
+  bracket characters in filter string
+- fixed #279: CFDIRECTORY bug with "type"
+- fixed #281: CFDIRECTORY listInfo additional support
+- fixed #280: QueryDeleteRow() fails if only one row is in Query
+- fixed #278: XMLValidate() result messages are of an incomplete format
+- added ApplicationList()/ApplicationCount()/ApplicationRemove()
+- added DataLoad()/DataSave() functions for serialization
+- updated onApplicationStart() loading times for diff apps at once
+- updated the CFSCHEDULE to calculate the starttime faster
+- fixed #273: NPE when passing array with undefined elements to a function
+- improved CFQUERY background=true; for higher volume queries
+- fixed Application.cfc form-upload problem onMissingTemplate()
+- added QueryRequestMetrics() to track how much per-request querys
+- fixed the H2 database URL parsing
+- fixed "Response committed, cannot add header" in redirects
+- added more detail to the [server] properties
+- updated the database pooling manager for quick failures
+- fixed increasing timeout issue with SQL Server datasources
+- added Console()/ConsoleOutput() debugging functions
+- added support for CFMAIL useSSL and useTLS attributes
+- added support for Eucalyptus Walrus cloud storage
+- added Amazon S3 functions
+   - AmazonS3Read() 
+   - AmazonS3Write() 
+   - AmazonS3Delete() 
+   - AmazonS3Rename() 
+   - AmazonS3SetAcl() 
+   - AmazonS3ListBuckets() 
+   - AmazonS3List() 
+   - AmazonS3GetUrl()
+- rewritten Amazon S3 access library (removed JetS3)
+- fixed #150: CFSELECT queryPositon attribute
+- fixed <cfreturn> bug when inside a CFOUTPUT inside a CFC 
+- fixed base component.cfc to include init() method
+- added support for arrays in for...in loops in cfscript
+- fixed #254: Can't flush cfquery cache
+- fixed #255: MySQL results are "undefined class" instead of "null"
+- improved CFDUMP; add OUTPUT and ABORT support
+- added WriteDump()
+- fixed ARGUMENTCOLLECTION bug inside CFINVOKE with arguments
+- updated Amazon Function support
+   - added AmazonRegisterDatasource()
+   - renamed Amazon functions to be consistent
+   - rejigged functions to support named-parameter calling 
+- cookie updates: SetCookie() added; httponly flag support
+- renamed functions to: CSVRead()/CSVWrite() 
+- added WriteLog()/DataSourceInfo()
+- added support for core functions to have named/params
+- fixed tag parser for catching <#cf tags
+- added NOCFML tag
+- improved initial cfml parsing speed
+- fixed isValid("integer",xx) bug
+- fixed NA#3332: Indexing a query with categories using CFINDEX
+- fixed thread/lock treated as reserved word
+- added support for transaction in cfscript
+- added style="document-wrapped" to CFCOMPONENT
+- fixed #241: use of "import" as variable name or function name in CFC 
+  throws error
+- fixed transaction treated as reserved word
+- fixed Application.cfc onMissingTemplate() "application" scope missing
+- added support for lock and thread in cfscript
+- fixed multiple attribute support for cfscript param operator
+- added support for dynamic values in abort, exit and throw operators
+- fixed issue passing SessionHeader back to Salesforce web service
+- added support for exit, param and rethrow, throw operators in cfscript
+- fixed handling of missing cfscript endtag error
+- fixed NA#3327: cfimap does not support download of non-ascii named attachments
+
+--- Stable Release 1.3 [27th April 2010]
+- fixed NPE due to recent parser update
+- added support for abort operator in cfscript
+- Moved out the CFSMTP tag into its own plugin implementation
+- Added per-file caching support to imported components
+- Added type= attribute into the javascript block
+- fixed NPE in debugging switch statements in cfscript
+- Added support for PATH attribute to CFIMPORT
+- Added import statement support to cfscript
+- added: Server.cfc onServerStart() support
+- fixed #217: Retain file date after CFFILE copy/move
+- fixed NA#3319: With scheduled tasks, seconds field of start/end time is ignored
+- fixed NPE in cfschedule engine
+- fixed NA#3318: Interval scheduled tasks with end time near midnight not
+  processed properly
+- added support for 'new' operator
+- fixed #215: Unexpected behavior using java.util.collections shuffle
+- added qualifier parameter to readcsv function
+- added ReadCSV(); Updated ToCSV()
+- fixed NA#3315: cfschedule requestTimeout value of 0 or less 
+  not handled properly
+- fixed NA#3314: scheduled task with start/end time of 2am 
+  not handled properly
+- updated CreateObject(); defaults to 'component' if only 1 param
+- various core memory usage optimizations
+- made the following improvements to the CFDOCUMENT tag:
+   - default headers/footers to align left to match commercial BD and CF
+   - support 'srcFile' attribute with relative paths
+   - support 'src' attribute with relative URLs
+   - support attributes 'backgroundVisible', 'author', 'title', 'subject' 
+     and 'keywords'
+   - improve error reporting when PDF generation fails
+   - support encryption even if 'ownerpassword', 'userpassword' and 
+     'permissions' aren't set
+   - fix bug with 'name' attribute being ignored
+   - support 'mimetype' attribute value of 'text/plain'
+   - support 'permissions' attribute value of 'AllowFillIn'
+   - if 'permissions' attribute is not present then default to no permissions
+   - support 'encryption' attribute value of '40-bit' and '128-bit'
+   - support <body> tags 'bgcolor' attribute in HTML that's being converted 
+     to PDF
+   - support some HTML tags in header and footer sections
+   - return an error for permissions that are not valid with 40-bit encryption
+   - fix bug with totalpagecount and multiple sections
+   - add support for totalsectionpagecount and currentsectionpagenumber
+- improved fix for NA#3308: cfcache action="FLUSH" doesn't flush cached 
+  files with another server url part
+- added GetTagStack()
+- fixed NA#3308: cfcache action="FLUSH" doesn't flush cached files with
+  another server url part
+- fixed NA#2814: secondary fix for *.*.* wildcards
+- fixed support for more complex values in implicit struct/array creation
+- fixed NA#3309: CFQUERYBATCH throws exception if spool directory doesn't exist
+- fixed support for CFTRY block with CFFINALLY but no CFCATCH
+- support 'finally' in cfscript
+- added CFFINALLY support to CFTRY..CFCATCH
+- fixed #199: JsStringFormat() encoding unicode safe
+- added isInstanceOf() function (issue #123)
+- fixed #209: support for string based keys in implicit struct creation
+- fixed issue with validation of local variables
+- fixed #208 Custom Tag in <cfthread>
+- cfchart now supports date/time values and will use DateAxis if date/time
+	data is detected for series
+- added support for 'include' operator
+- added renderInclude() function
+- cfstylesheet supports INLINE/HEAD/FOOTER
+- fixed support of local variable declaration without initial value
+- updated CFMAIL/CFCHART/QueryServer/QuerySlowLog for VFS
+- expanded support for specifying absolute paths as $/a/b/... (see #204)
+- updated CFLOG/CFTRACE to utilise VFS
+- fixed NA#3262: cfdirectory - ISE if the 'action' attribute is a
+  variable and no 'name' attribute
+- fixed #204: The VFS broke portable absolute paths such as
+  $/usr/webapps/work on Windows
+- fixed #168: Plugin Manager Infinite Loop Failure - Bombs Tomcat
+- updated webservices/cfjavascript/cfstylesheet to utilise VFS
+- update fix for bug NA#3288 to allow tasks to run on the end date but not after
+- added support for operator support in <cfif>/<cfelseif>
+- refix of NA#1450: Invoking CFC methods with PACKAGE access with CFINVOKE
+- refix of NA#1751: CFINCLUDing file that was just created does not work
+- fixed DataSourceDelete() bug
+- fixed NA#3301: timeout attribute not honored by <cfftp> tag
+- fixed problem with creation of collections due to GAEVFS
+  [FileUtils.getCanonicalPath()]
+- GAE support (phase 1 of 2) added use of GAEVFS in key areas
+  (merged from OpenBD-Google branch).
+- fixed bug with ANTLR parser try/catching of java exceptions
+- fixed bug with ANTLR parser incorrectly identifying assignment
+  statement as implicit struct
+- fixed #196: OpenBD won't run on ServletExec 6.0
+  (and possibly some other Servlet/JSP Engine brands)
+- fixed bug in implicit struct/array creation with non-primary expression values
+- added support for implicit struct/array creation
+- added support for operators: +=, -=, %=, /=, *=, &=, ++, --,
+  %, ==, !=, <, >,<=, >=, !, ||, &&
+- new ANTLR based parser for cfscript/expression engine
+- fixed NA#3288: scheduled task - daily task with enddate
+  in the past continues to run
+- fixed NA#3292: scheduled tasks - do not delete the task from bluedragon.xml
+  once enddate is reached
+- fixed NA#3284: Errors with Date Functions when no day value is provided
+- fixed #181: Added ListCompact()
+- fixed #164: SerializeJSon() key case
+- fixed #121: conversion error when "E-"
+- fixed #185: HtmlCleanUp() not bubbling up all errors
+- fixed #190: Treating as a number "-."
+- fixed #143: HtmlEditFormat() double encoding
+- fixed #192: deserializeJSON() mistreating stringed-numbers
+- fixed #162: isJSON() for simple strings
+- isValid('email') now less strict
+- added JSONP support to remote calling CFC's
+- update CFSCHEDULE engine to make sure only one instance
+- update CFMAIL mail sending code to match latest BD 7.1 code
+- fixed NA#3285: CFMAIL sometimes fails to send an email
+- fixed CFMAIL setting Message-ID now persists
+- added: ThrowObject() / Throw()
+- added: QueryDeleteColumn()/QueryColumnArray()
+- added: QueryIsEmpty()/QueryRowStruct()/QueryColumnList()
+- added #187: Include Java Exception Classes in CFCATCH
+- added DataSourceCreate()/DataSourceDelete()/DataSourceIsValid()
+- fixed #180: Improve handling of IllegalAccessException when invoking methods
+- fixed #178: cfc output missing from response when it throws an exception
+- expanded the fix for NA#3260 to include newly written files
+  (not just appending to existing files)
+- fixed NA#3260: CFFILE leaks descriptors when appending to a file
+- ported NA#3282: output missing when cfc function throws an Exception
+- fixed NA#3219: xmlParse() does not resolve SYSTEM ENTITY
+- fixed NA#3281: <CFINCLUDE page="a.cfc?method=b"> fails on Jetty
+- fixed onRequestStart() / onApplicationStart() return values
+- fixed #172: Expired daily scheduled task runs
+- improved #157: CFJAVASCRIPT: Positional/Unique names
+- fixed NA#3172: CFDIRECTORY - sort attribute won't work without column name
+- added QueryRun()/QueryOfQueryRun()
+- added ArrayRest()/ArraySlice()/ArrayReverse()
+- added ArrayConcat()/ArrayValueCount()/ArrayValueCountNoCase()/ListSwap()
+- added htmlHead()/htmlBody()
+- added ReMatch()/ReMatchNoCase()
+- added ListIndexExists()
+- added ArrayIndexExists()
+- added CFHTMLBODY with POSITION attribute; optional endtag
+- improved CFHTMLHEAD with POSITION attribute; optional endtag
+- added ListTrim()
+- added ArrayLast()/ArrayFirst()/ArrayGet()
+- added ArrayFind()/ArrayContains() functions
+- added ArrayFindNoCase()/ArrayContainsNoCase() functions
+- added HashBinary() function
+- updated SQL Server drivers
+- fixed NA#3275: SearchEngineFriendlyURLFilter may sometimes match a request
+  to the wrong alias
+
+--- Stable Release 1.2 [27th October 2009]
+- added location() function
+- added ToCSV() / ToHTML() functions for query output
+- fixed NA#3226: arguments scope does not like being duplicated more than once
+- updated text-mining to be Apache POI3.5 compliant
+- fixed handling of utf-8 strings in HtmlTidy function
+- fixed NA#3272: QoQ ordering on numeric strings
+- fixed NA#3268: A cfimage resize produces poor quality image
+- mass StringBuffer replacement
+- pluginManager now auto-discovers plugins
+- added HtmlSourceFormat() for printing formatted HTML
+- added HtmlTidy() for cleaning HTML content
+- fixed encoded filename for CFSMTP
+- separate error log for background queries
+- added full support for Nirvanix Cloud Storage API
+- fixed Amazon S3 handler
+- improve error message when CFIMAGE tag fails to modify contrast/brightness.
+- fixed #126: SES Filter and Query String Blanked Out When PathInfo is Present
+- added "server.query.slowlog" tracking
+- added AmazonSimpleDB SetDBStruct() method
+- fixed isValid() for email causing high cpu usage
+- fixed NA#3249: cfimage - transparent .gif files have black backgrounds after edited
+- fixed #133: compilation error when accessing web service where cfc resides
+  in a directory path that includes '-' in a directory name
+- fixed #136: POST to remote CFC method throws error and returns SOAP instead
+  of simple values
+- fixed CFIMAGE FONTCOLOR support
+- removed CFGRAPHDATA from getSupportedTags() output
+- added core Amazon SimpleQueueService support functions
+- fixed CFAJAXPROXY callback function
+- fixed #135 (NA#3241): cfexecute - java.io.exception: error=24, too many open files
+- fixed NA#3240: cfindex doesn't provide good title and summary
+- fixed NA#3238: url variables with the same name are appended rather
+  than overwritten
+- fixed NA#3237/NA#3236: issues with '+' operator in QoQ when both
+  operands are query columns
+- updated Amazon SimpleDB support
+- fixed NA#3231: scheduled tasks don't run at correct time
+- fixed support of CFDUMP TOP for CFCs
+- fixed CFAJAXPROXY NullPointerException/JS problem
+- fixed DeserializeJSon() to preserve leading zero's in numbers as strings
+- fixed #115: nesting of CFINVOKE within CFINVOKEARGUMENT
+- fixed#6: further fix for <cfdump> for cfquery now printing the params passed
+- fixed #124: getTempFile does not create the file
+- updated fix for NA#3217: sql inserts from a function does not
+  escape single quotes
+- further fix for #43/#44 when values are equal but underlying
+  element types are string/numeric
+- added support for CFDOCUMENTITEM and CFDOCUMENTSECTION
+- fixed NA#3217: sql inserts from a function does not escape single quotes
+- CFHTTP: disable preemptive authentication, allowing for support of
+  digest authentication
+- support compilation using Java 6
+- add irc support
+- CFDOCUMENT fix: avoid potential NPE if font directory does not exist
+- fixed #114: CFDOCUMENT drops html entities from PDF
+- fixed #113: SerializeJSON() handling of nulls
+- fixed minor issue with defaulting of CFDOCUMENT font directories
+- fixed #111: improved font support for unicode characters in CFDOCUMENT
+- fixed CFFEED ACTION=CREATE publisheddate / duplicate title
+- added "server.system.resourcepath" to specify a different path
+  for the web resources (cfvideoplayer etc) (supports $)
+- updated fix NA#3071
+- fixed #109: getRealPath Null
+- fixed CacheGet(.); throws exception instead of returning null
+- fix NA#3071: NPE when deserializing CFC with CFSCRIPT in
+  pseudo-constructor
+- fixed CFTHREAD/CFJOIN name="" bug when using CreateUUiD()
+- fixed NA#3209: value "component" for CFFUNCTION RETURNTYPE
+  and CFARGUMENT TYPE
+
+--- Stable Release 1.1 [27th April 2009]
+- allow CFC function name to override built-in function name
+- renamed error file to include date in the filename
+- logging errors to a standard static named "bderror-latest.html"
+- updated JavaMail to 1.4.1
+- fixed #81: fileExists relative path bug
+- added #93: Add StructValueArray function
+- fixed #103:	CFHTTP resolve URLs hangs the server
+- CFJAVASCRIPT can now support inline javascript optimizing
+- fixed #102: cfdirectory chokes on empty sort attribute
+- CFDOCUMENT ignores bad font files in font directories
+- support lookup of webservice jars in servlet container classpath
+- fixed NA#3206: improve tolerance of CFCACHE file deletion by
+  third party processes
+- upgraded xhtmlrenderer library to version 8 final release
+- fixed #100: </> tag causes StringIndexOutOfBoundsException
+- fixed #74: StructInsert throws error on inserting a key in the
+  argument collection
+- fixed #96: file attribute validation in CFMP3
+- fixed #99: NumberFormat support for java.math.BigDecimal
+- fixed #98: CFDIRECTORY issue with filter applied to recursive listing
+- improve performance of CFIMAP list action
+- fixed NA#3198: With BD/Java, CFIMAP fails with attachments that
+  have no content
+- add support for PNG images to CFIMAGE tag
+- fixed image lookup issue in CFDOCUMENT for non-SRC/SRCFILE based documents
+- fixed NA#3192: The ArrayToList function ignores the delimiter parameter
+- fixed #92: structcopy of request scope is case sensitive
+- initial CFDOCUMENT implementation
+- fixed NA#3187: timeformat errors on March 8, 2009 during hour
+  between 2am and 2:59 am
+- updated CFJAVASCRIPT/CFSTYLESHEET for better temporary file handling
+- fixed #90: cfhttp does not properly handle URL queries that have
+  encoded characters.
+- added FileSeparator() helper function
+- added CFAJAXPROXY CFC=""
+- fixed NA#3118: lsdateformat - Invalid date error when formatting
+  a floating point number
+- fixed NA#3137: isValid won't validate an email address with a
+  single quote before @
+- log error message to mail.log when BD fails to delete/move an email
+  from the spool directory
+- fixed #67: getCurrentTemplate() and onRequestStart processing
+  (CFMX incompability)
+- fixed NA#3180: cfschedule tag doesn't support proxyUser and proxyPassword
+- fixed NA#3177: Some structure functions don't work with the cookie scope
+- avoid error message in bluedragon.log when no Java custom tags are
+  defined in bluedragon.xml
+- fixed NA#3142: xmlformat - ASCII chars not being replaced with unicode
+  escape sequence
+- added CFSTYLESHEET
+- added <CFAPPLICATION securejson="" securejsonprefix=""> support
+- added <CFFUNCTION returntype="json|wddx|plain"> support
+- improve debugging of database connections that have been active too long
+- fixed NA#3174: per request connections leaks connections
+- improved the delivery agent
+- fixed #78: CFIMAGE grayscale action - incorrect error message
+- added CFJAVASCRIPT
+- fixed NA#3164: bluedragon.xml should have encrypted datasource passwords
+- fixed #8: spaces in APPLICATION for client cookies
+- added CFVIDEOPLAYER
+- added new web resource delivery agent
+- fixed NA#3166: cfldap doesn't use separator value for display
+- fixed NA#3165: cftransaction ignores isolation attribute value
+- fixed NA#3163: runtimeError - need to limit the number of runtimeErrors
+  being stored in rtelogs
+- support disabling of legacy server side form validation
+
+--- Stable Release 1.0.1 [21st January 2009]
+- make sure cfpop closes connection when exception occurs
+- fixed NA#3162: cfftp actions exists and existsFile always use passive mode
+- fixed NA#3158: allow "default" to used as a named argument in cfscript
+- fixed #79: QoQ min doesn't work with Date
+- added support for ArrayIsDefined() function
+- added new function ArrayTrim() function
+- fixed NA#3156: CFPOP fails to read email that has invalid characters in addresses
+- added CFFEED ACTION="CREATE"
+- fixed NA#3152: can't add empty string to column of type int or decimal
+- fixed NA#3151: custom fields return empty when indexing pdf files
+- enchancement CFSMTP 'application' attribute to get at proper scope
+- enchancement CFSMTP ip address now available on callback CFC's
+- fixed CFSMTP logging
+- added a better fix for #65
+- fixed #73: arrayLen on binary variable fails
+- added new function HtmlGetPrintableText()
+- added JMX MBeans for cfEngines
+- added JMX functions
+- fixed #70: added support for CF_SQL_TIMESTAMP in QueryNew
+- admin console password issue. Now defaults to 'admin'
+- added jTDS and Microsoft SQL Server driver jars
+- fixed #68: LSDateformat now handles blank string
+- added support for admin to check the mail spool
+
+--- Stable Release 1.0 [2nd December 2008]
+- added: toBase62() / fromBase62() functions
+- fix error reporting issue introduced in fix for #3128
+- fixed #53: cfassociate bug with custom tag nested more than 2
+  levels deep within itself
+- add support for this.mappings
+- added: 'SystemReloadConfig()' function for reloading the bluedragon.xml file
+- fixed #65: ClassCastException when accessing a web service that modifies
+  the url variables in Application.cfc
+- fixed#6: <cfdump> for cfquery now printing the params passed
+- fixed#15: <cfdump> only output the styles once
+- added: LISTINFO parameter to <cfdirectory>
+- fixed#30: Add TYPE to the <cfdirectory>
+- added 'cfcachecontent'/'filecache' to the CacheStats()/CacheDeleteAll() methods
+- added IsJSON() / DeSerializeJSON() / SerializeJSON()
+- new DirectoryCreate() DirectoryList() DirectoryDelete()
+- added FileXXX functions; VFS support
+- map cfthread.ERROR metadata variable to cfthread.EXCEPTION for CF compatibilty
+- fixed NA#3136: cfqueryparam - cf_sql_timestamp is inserting inaccurate milliseconds
+- added CFLOOP FILE=X [CHARACTERS=Y]
+- added CFLOOP ARRAY=X
+- added H2 Embedded Database
+- added CFSMTP
+- added Amazon SimpleDB support for CFQUERY + functions
+- added CacheGetAll() function to retrieve all active caches in the engine
+- fixed NA#3130: Default error handler does not handle Bad File Exceptions
+- fixed NA#3128: Internal Server Error occurs when catching a rethrown exception
+  within a function and Debug Output is enabled
+- don't record rethrown exceptions twice in debug output
+- fixed #64 and #NA3134: cfquery without name attribute throws error
+- fixed #61: support cfloop'ing over strings that can be converted to dates
+- upgraded Lucene to 2.4.0
+- fixed #60: Error when invoking UDF with optional arguments
+- fixed NA#3100: simple variables need to be passed by value to CFC methods
+- fixed NA#3119: CFMAPPING RELATIVEPATH attribute does not
+  honor IIS virtual directories
+- fixed #58: Unexpected exception passing String[] to java method
+- fix for MySQL column aliases not being honoured without
+  using useOldAliasMetadataBehavior
+- add support for result variable that specifies the ID of an inserted row
+- fixed #55: Double close bug in cfexecute
+- fixed NA#3112: cfExecute fails with "too many open files" error
+- fix incrementing of newconnections datasource counter
+- fixed NA#2779: No error thrown for a non-empty directory with
+  <cfdirectory action="delete"> without recurse="true"
+- fixed NA#2769: DateDiff function returns unexpected results for dates
+  spanning daylight savings time.
+- fixed NA#3090: client.lastvisit always reports the current time
+- fixed NA#3114: can't invoke CFC private functions within CFTHREAD
+- improve checking for required attributes with CFFILE tag
+- fixed #49: namespaces not honored in cffunction
+- no longer apply DST to cfwddx datetime offset output
+- fixed NA#2890: CFREGISTRY fails to create key under branch that doesn't exist
+- fix bug with CFEXECUTE output and error output
+- fixed NA#3105: cfwddx datetime is not converting to local time
+- fixed NA#2969: remote CFC method call now honours xml return type
+- added in Memcached support
+- added in new abstracted cache implementation
+- fixed NA#3101: Web Service Name cannot be used in cfinvoke tag
+- fixed NA#2934: Exception not thrown when web service cffunction
+  is missing returnType
+- fixed NA#2976: cffile upload nameconflict makeunique fails if multiple files
+  uploaded in same millisecond
+- fixed potential NPE in query batch log if spool directory is not valid
+- fixed reference to OpenBlueDragon.jar for Web services handling
+- deep copy attributes passed to cfthread
+- fixed #38: support cfexecute errorvariable and errorfile
+- fixed #22: support cfthread and thread scope, and full scope access in
+  cfthread body
+- fixed NA#3071: CFC serialization to a file
+- fixed #35: CFEXECUTE arguments passed as an array are split on space
+- support same api as CF8 for cfthread
+- fixed #24: support cfthread action
+- added support for sleep() function
+- fixed NA#3082: constructing java.util.HashMap or java.util.Hashtable
+  from CF struct
+- added support for "Generate UUID as CFTOKEN value" option
+- fixed NA#3079: built-in function initialization error
+- fixed NA#3078: "is-type-of" for CFC in custom tag path (without package)
+- fixed NA#3076: CFCACHE does not flush on file modification
+- added following functionality to CFIMAGE: ability to crop, rotate, add border,
+  adjust brightness and contrast, and apply gray scale filter.
+- fixed #32: cfhttpparam type 'file' is ignored when a file is PUT with cfhttp
+- fixed NA#3073: evaluation of CFLOOP ITEM variable as indirect reference
+- upgraded Lucene to 2.3.2
+- support for OnMissingMethod
+- new fix for NA#2978
+- fixed internal server error when username/password is passed to cfhttp
+- refactored QoQ preparedData
+- add PADDING='' attribute to CFQUERYPARAM for padding out numbers
+- refactored CFQUERY to support different implementations
+- fixed NA#3060: issue with trim() on loop index
+- add MonthAsString locale parameter support
+- fixed #18: MonthAsString doesn't output month in current locale
+- fixed #9: cfdump styles updated for xhtml 1.0 compliance
+- fixed NA#3056: SearchEngineFriendlyURLFilter causes duplicate query
+  string parameters
+- fixed potential NPE in mail sending when backup server used
+- fixed NA#3054: Support setting mail host in message-id
+- fixed NA#3045: expandPath results wrong with Apache mod_rewrite.
+- include hostname in file cache key
+- fixed NA#3052: missing <tempdirectory> causes NullPointerException
+- updated coldfusion productname and version variables
+- fixed NA#3051: avoid potential file not found on cfcache file expiry
+- fixed NA#3022: CFCACHE issue with pages containing iso-8859-15 chars
+- fixed NA#3024: xmlParse and CFXML strip the <!DOCTYPE ..> element
+- fixed NA#3028: numberformat issue with mask "09"
+- fixed NA#2999: support string operators on java object operands
+- fixed NA#3031: cfdump of getFunctionList causes internal server error
+- fixed NA#3036: added support for addAll java method for CFARRAY
+- fixed NA#3037: CFTRANSACTION end tag not required for rollback or commit
+- fixed NA#3039: StructKeyExists returns true when value is null
+- fixed NA#3038: Function stored in local variable can't be invoked
+- fixed NA#3040: cfargument type="string" doesn't support java object
+- fixed NA#3042: CFEXIT METHOD="LOOP" within CFELSE or CFELSEIF
+- updated fix for NA#2638 (again): NPE caused by serializing childless xml nodes
+- fixed NA#3046: application scope only times out when session scope enabled
+- fixed NA#3047: Issue with calling of a java method in inner class that extends
+  another inner class that implements a public interface
+- fixed NA#3048: Java Map put() method converts key to string
+- first public release (5/3/08)

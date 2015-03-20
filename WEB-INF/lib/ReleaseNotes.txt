@@ -1,9 +1,104 @@
 OpenBD Release Notes
 __________________________________
 
-$Date: 2013-07-28 21:19:27 +0000 (Sun, 28 Jul 2013) $
+$Date: 2015-03-11 18:09:26 +0000 (Wed, 11 Mar 2015) $
 __________________________________
 
+- fixed #534: cfzip extract appending to file instead of overwriting
+- fixed #291: support for file attribute as a synonym for zipfile in cfzip tag
+- fixed AmazonS3xx() functions to normalize keys
+- fixed journal to work with MXUnit 
+- fixed journal issue - some script statements missing parent tag 
+- fixed http() multipart upload bug
+- fixed AmazonS3GetInfo()/AmazonS3GetUrl() for key's that start with /
+- added "server.cfmail.ratedelay" to limit the speed of email delivery
+- At least Java 7 version support
+- Apache Lucene library updated 5.0 [/WEB-INF/lib/ updated]
+- fixed #532: QueryAddColumn fails to add array 
+- H2 Embedded Database engine updated [/WEB-INF/lib/ updated]
+- updated DataSourceCreate(); removed requirement for username/password
+- fixed #526: XmlParse(ExpandPath("./out.xml")) fails
+- fixed #527: Stored Proc fails in MS SQL Server when variable named with @
+- added retry logic to AmazonS3Read()
+- fixed fullpath for virtual files
+- fixed AmazonKeyRegister() default storage class  
+- added Request Journal
+  - update for end tag position
+  - added tag/file depth tracking
+  - added hash for each file used
+  - directory watcher for maximum size
+  - added JournalRead()
+  - added JournalReadSession()
+  - added JournalReadToDataSource()
+  - added support for variable state saving
+- updated Amazon functionality [/WEB-INF/lib/ updated]
+  - AmazonElasticTranscoder support
+    - added: AmazonETPipelineDelete()
+    - added: AmazonETPipelineCreate()
+    - added: AmazonETPipelineList()
+    - added: AmazonETPipelineRead()
+    - added: AmazonETPipelineUpdateStatus()
+    - added: AmazonETPresetsList()
+    - added: AmazonETJobCreate()
+    - added: AmazonETJobCancel()
+    - added: AmazonETJobRead()
+    - added: AmazonETJobList()
+- code refactor: reduced incoming request overhead
+- updated Amazon functionality [/WEB-INF/lib/ updated]
+  - AmazonS3Write() supports:
+    - background loading; cfc callback
+    - retry logic
+    - auto delete on successful upload
+    - multipart uploads for large files (background mode only)
+    - set the ACL of the uploaded object
+    - Server Side Encryption AES256 enabled
+    - Custom Headers support
+  - AmazonS3Read() - Server Side Encryption AES256 enabled
+  - AmazonS3Rename() updated
+  - AmazonS3SetAcl() new canned ACL added (logdelivery)
+  - added: AmazonS3Copy()
+  - added: AmazonS3BucketCreate()
+  - added: AmazonS3BucketExists() 
+  - added: AmazonS3BucketDelete() 
+  - added: AmazonS3BucketSetAcl()
+  - added: AmazonS3BucketRequesterPays()
+  - added: AmazonS3ChangeStorageClass()
+- Jackson JSON library updated 2.4 [/WEB-INF/lib/ updated]
+- Apache Http library updated 4.3 [/WEB-INF/lib/ updated]
+- updated encrypt/decrypt documentation
+- fixed Mongo Session Management
+- added httpDump()
+- updated HashBinary() docs
+- fixed bug with S3Write when attempting to create a folder
+- fixed internal server error when using the debugger
+- updated markdown() function to use markdown4j
+- added markdown() [/WEB-INF/lib/ updated]
+- fixed AmazonS3Write()
+- aw2.0 Org updated 1.0.8 [/WEB-INF/lib/ updated]
+
+--- Stable Release 3.1 [30th March 2014]
+- fixed #418: Add NULL values to Csvwrite()
+- fixed #505: cacheGet cachePut does not support native java objects
+- fixed #503: GenerateSecretKey function crashes with DES and no keysize
+- fixed #491: HTTP Proxy System Properties are ignored
+- fixed #474: Manual documentation for queryAddColumn()
+- fixed #520: amazonS3write no longer working as expected
+- Mongo Driver updated 2.12 [/WEB-INF/lib/ updated]
+- aw2.0 Org updated 1.0.8 [/WEB-INF/lib/ updated]
+- fixed CFCAPTCHA
+- fixed SimpleDB INSERT 403 error 
+- fixed #189: bug in application.cfc loginstorage="session" 
+- Mongo connection pooling for multiple datasources on same server
+- removed nirvanix API [service closed October 2013]
+- additional data types for <CFQUERYPARAM>
+- fix for Java 7 compatibility in the QuerySort method.
+- Support for bluedragon.xml to be loaded via http on startup
+- Java7 compatibility [/WEB-INF/lib/ updated]
+  - Apache Tika 1.4 upgraded
+  - Apache Lucene 4.4.0 upgraded 
+  - MySQL Driver 5.1.26 upgraded
+- fixed overriding of hostname verifier in CFHTTP
+- fixed argument count for CreateTime(epoch="")
 - fixed cfscript function returnformat="" bug
 - Upgraded javolution jar to 5.5.1
 - Updated MongoFSGridPut() for updated ID support

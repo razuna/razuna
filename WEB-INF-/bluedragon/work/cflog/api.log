@@ -1,0 +1,6 @@
+09/03/15 11:19.19: error; UsersnitaiDocumentsworkspacerazunaglobalapi; Thread[/global/api2/basket.cfc,5,main]; Event Name: onCFCRequest
+09/03/15 11:19.19: error; UsersnitaiDocumentsworkspacerazunaglobalapi; Thread[/global/api2/basket.cfc,5,main]; Message: Event Handler Exception
+09/03/15 11:19.19: error; UsersnitaiDocumentsworkspacerazunaglobalapi; Thread[/global/api2/basket.cfc,5,main]; Root Cause Message: Value not provided for required argument ZIP_FILE of function checkForBasket()
+09/03/15 11:19.20: error; UsersnitaiDocumentsworkspacerazunaglobalapi; Thread[/global/api2/basket.cfc,5,main]; Event Name: onCFCRequest
+09/03/15 11:19.20: error; UsersnitaiDocumentsworkspacerazunaglobalapi; Thread[/global/api2/basket.cfc,5,main]; Message: Event Handler Exception
+09/03/15 11:19.20: error; UsersnitaiDocumentsworkspacerazunaglobalapi; Thread[/global/api2/basket.cfc,5,main]; Root Cause Message: Value not provided for required argument ZIP_FILE of function checkForBasket()

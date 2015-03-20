@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+	<display-name>OpenBD WebApp</display-name>
+
+	<!-- Configuration of this filter in order to support search engine friendly 
+		URLs like http://127.0.0.1/bdj2eeregr/index.cfm/path/info. -->
+	<filter>
+		<filter-name>SearchEngineFriendlyURLFilter</filter-name>
+		<filter-class>com.newatlanta.filters.SearchEngineFriendlyURLFilter</filter-class>
+		<init-param>
+			<param-name>extensions</param-name>
+			<param-value>cfml,cfm</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SearchEngineFriendlyURLFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<servlet>
+		<servlet-name>cfmServlet</servlet-name>
+		<servlet-class>com.naryx.tagfusion.cfm.cfServlet</servlet-class>
+		<init-param>
+			<param-name>BLUEDRAGON_WORKING_DIRECTORY</param-name>
+			<param-value>/WEB-INF/bluedragon/work</param-value>
+		</init-param>
+		<init-param>
+			<param-name>BLUEDRAGON_XML</param-name>
+			<param-value>/WEB-INF/bluedragon/bluedragon.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>cfcServlet</servlet-name>
+		<servlet-class>com.naryx.tagfusion.cfm.cfcServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>cfchartServlet</servlet-name>
+		<servlet-class>com.naryx.tagfusion.cfm.cfchartServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>cfResourceServlet</servlet-name>
+		<servlet-class>com.naryx.tagfusion.cfm.cfResourceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>cfchartServlet</servlet-name>
+		<url-pattern>*.cfchart</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>cfResourceServlet</servlet-name>
+		<url-pattern>*.cfres</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>cfmServlet</servlet-name>
+		<url-pattern>*.cfm</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>cfcServlet</servlet-name>
+		<url-pattern>*.cfc</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>240</session-timeout>
+	</session-config>
+	<listener>
+		<listener-class>com.naryx.tagfusion.cfm.application.cfHttpSessionListener</listener-class>
+	</listener>
+	<mime-mapping>
+		<extension>jpeg</extension>
+		<mime-type>image/jpeg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>pdf</extension>
+		<mime-type>application/pdf</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>swf</extension>
+		<mime-type>application/x-shockwave-flash</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>gif</extension>
+		<mime-type>image/gif</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>txt</extension>
+		<mime-type>text/plain</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>svg</extension>
+		<mime-type>image/svg+xml</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>html</extension>
+		<mime-type>text/html</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>xml</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>htm</extension>
+		<mime-type>text/html</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>jpg</extension>
+		<mime-type>image/jpeg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>css</extension>
+		<mime-type>text/css</mime-type>
+	</mime-mapping>
+	<welcome-file-list>
+		<welcome-file>index.cfm</welcome-file>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+	</welcome-file-list>
+</web-app>

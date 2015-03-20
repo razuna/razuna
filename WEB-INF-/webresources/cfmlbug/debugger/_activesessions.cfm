@@ -1,0 +1,1 @@
+<cfoutput>#SerializeJSON( DebuggerGetSessions(), true, true )#</cfoutput>
