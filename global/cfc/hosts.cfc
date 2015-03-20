@@ -285,12 +285,12 @@
 				interval="3600"
 			>
 			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
-			<cftry>
+			<!--- <cftry>
 				<!--- Create collection --->
 				<cfset CollectionCreate(collection=hostid.id,relative=true,path="/WEB-INF/collections/#hostid.id#")>
 				<cfset CollectionIndexcustom( collection=#hostid.id#, key="delete", body="#createuuid()#", title="#createuuid()#")>
 				<cfcatch type="any"></cfcatch>
-			</cftry>
+			</cftry> --->
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)

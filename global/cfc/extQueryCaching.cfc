@@ -207,4 +207,13 @@
 	<cfinvoke method="resetcachetoken" type="logs" />
 </cffunction>
 
+<!--- Taskserver --->
+<cffunction name="getTaskServer" output="false" access="public" returntype="struct">
+	<cfset var ts = "">
+	<!--- Query settings --->
+	<cfinvoke component="settings" method="prefs_taskserver" returnvariable="ts" />
+	<!--- Return --->
+	<cfreturn ts />
+</cffunction>
+
 </cfcomponent>

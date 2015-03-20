@@ -2465,21 +2465,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfcatch></cfcatch>
 	</cftry>
 	
-	<!--- If this is for ISP we do a general scheduler task for indexing files --->
-	<cfif arguments.thestruct.conf_isp>
-		<!--- Save scheduled event in CFML scheduling engine --->
-		<cfschedule action="update"
-			task="GlobalIndex" 
-			operation="HTTPRequest"
-			url="#session.thehttp##cgi.http_host#/#cgi.context_path#/admin/lucene.cfm"
-			startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-			startTime="00:01 AM"
-			endTime="23:59 PM"
-			interval="300"
-		>
-	<cfelse>
-		<cfschedule action="delete" task="GlobalIndex" />
-	</cfif>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings","true")>
 	<!--- Return --->

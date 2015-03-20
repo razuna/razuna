@@ -711,22 +711,6 @@
 					<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
 				</cfif>
 			</cfif>
-		<!--- Rebuild search index --->	
-		<cfelseif doit.qry_detail.sched_method EQ "rebuild">
-			<!-- CFC: Log start -->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Started rebuilding" />
-			<!-- CFC: Call indexing -->
-			<cfthread action="run" x="#x#" priority="low"> 
-				<cfinvoke component="lucene" method="index_update" thestruct="#attributes.x#" assetid="all" />
-			</cfthread>
-		<!--- Rebuild search index --->
-		<cfelseif doit.qry_detail.sched_method EQ "indexing">
-			<!-- CFC: Log start -->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Started indexing" />
-			<!-- CFC: Call indexing -->
-			<cfthread action="run" x="#x#" priority="low"> 
-				<cfinvoke component="lucene" method="index_update" thestruct="#attributes.x#" />
-			</cfthread>
 		</cfif>
 	</cfif>
 	<cfreturn doit>

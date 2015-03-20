@@ -182,8 +182,8 @@
 		</cftry>
 
 
-		<!--- If less then 46 (1.7.1) --->
-		<cfif updatenumber.opt_value LT 47>
+		<!--- If less then 48 (1.7.5) --->
+		<cfif updatenumber.opt_value LT 48>
 			<!--- Change lenght of IMG_UPC_NUMBER --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -205,6 +205,25 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
+			<!--- Add taskserver default values --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_location">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="custom">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+			)
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_taskserver_local_url">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+			)
+			</cfquery>
 		</cfif>
 
 		<!--- If less then 43 (1.7) --->

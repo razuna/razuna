@@ -33,26 +33,8 @@
 				<cfif !attributes.cv AND attributes.share EQ "F">
 					<!--- Select --->
 					<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-						<!--- <div style="float:left;">
-							<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
-						</div> --->
 						<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 					</a>
-					<!--- Download Folder --->
-					<!--- <cfif cs.icon_download_folder>
-						<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=labels&label_id=','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop').toggle();return false;">
-							<div style="float:left;padding-right:15px;text-decoration:underline;">Download all assets in this search</div>
-						</a>
-					</cfif> --->
-					<!--- Search --->
-					<!--- <cfif attributes.folder_id NEQ 0 AND structkeyexists(attributes,"share") AND attributes.share NEQ "T">
-						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-							<!--- <div style="float:left;">
-								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" style="padding-left:2px;" />
-							</div> --->
-							<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("search_again")#</div>
-						</a>
-					</cfif> --->
 				</cfif>
 			</div>
 		</td>
@@ -68,16 +50,16 @@
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
-			<cfif qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
+			<cfif qry_files.searchcount GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+			<cfif qry_files.searchcount GT session.rowmaxpage AND NOT shownextrecord GTE qry_files.searchcount> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
 				<a href="##" onclick="backforth(#newoffset#);">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
-			<cfif qry_filecount.thetotal GT session.rowmaxpage>
+			<cfif qry_files.searchcount GT session.rowmaxpage>
 				<span style="padding-left:10px;">
-					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
+					<cfset thepage = ceiling(qry_files.searchcount / session.rowmaxpage)>
 					#myFusebox.getApplicationData().defaults.trans("page")#: 
 						<select id="thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
 							<cfloop from="1" to="#thepage#" index="i">
@@ -103,7 +85,7 @@
 		</td>
 		<!--- Change the amount of images shown --->
 		<td align="right" width="1%" nowrap="true">
-			<cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25>
+			<cfif qry_files.searchcount GT session.rowmaxpage OR qry_files.searchcount GT 25>
 				<select name="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerowmaxsearch('selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 					<option value="0">#myFusebox.getApplicationData().defaults.trans("show_how_many")#</option>
 					<option value="0">---</option>
@@ -127,10 +109,6 @@
 </div>
 <!--- action with selection --->
 <div id="folderselectionsearchform#attributes.thetype#" class="actiondropdown">
-	<!--- Select all link --->
-	<!--- <div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#">
-		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">#myFusebox.getApplicationData().defaults.trans('deselect_all')#</a>
-	</div> --->
 	<!--- Actions with selection icons --->
 	<cfif cs.show_basket_part AND  cs.button_basket AND (cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="sendtobasket('searchform#attributes.thetype#', 'search');">

@@ -1730,16 +1730,6 @@
 	<!--- If very first upload then add a index task to run once --->
 
 	<cfif session.firstasset>
-		<cfif application.razuna.isp>
-			<cfschedule action="update"
-				task="RazLuceneIndexUpdate_#session.hostid#" 
-				operation="HTTPRequest"
-				url="#session.thehttp##cgi.http_host#/index.cfm?fa=c.w_lucene_update_index&host_id=#session.hostid#"
-				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-				startTime="#LSTimeFormat(dateadd('n',5,now()),'HH:mm tt')#"
-				interval="once"
-			>
-		</cfif>
 		<cfset session.firstasset = false>
 	</cfif>
 
@@ -2409,11 +2399,8 @@ This is the main function called directly by a single upload else from addassets
 		host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">, 
 		file_meta = <cfqueryparam value="#file_meta#" cfsqltype="cf_sql_varchar">,
 		path_to_asset =  <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
-		hashtag =  <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
-		<cfif application.razuna.storage NEQ "local">
-			,
-			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">
-		</cfif>
+		hashtag =  <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">,
+		lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">
 		WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Get sharing options for folder so it can be applied to the asset --->
@@ -2757,11 +2744,8 @@ This is the main function called directly by a single upload else from addassets
 				img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
 			</cfif>
-			<!--- For cloud --->
-			<cfif application.razuna.storage NEQ "local" AND arguments.thestruct.qryfile.link_kind EQ "">
-				,
-				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-			</cfif>
+			,
+			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
@@ -4008,10 +3992,8 @@ This is the main function called directly by a single upload else from addassets
 			,
 			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 		</cfif>
-		<cfif application.razuna.storage NEQ "local">
-			,
-			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-		</cfif>
+		,
+		lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 			,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
@@ -4865,10 +4847,8 @@ This is the main function called directly by a single upload else from addassets
 		aud_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
 		host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">,
 		path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
-		<cfif application.razuna.storage NEQ "local">
-			, lucene_key = <cfqueryparam value="#arguments.thestruct.theorgfile#" cfsqltype="cf_sql_varchar">
-		</cfif>
+		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">,
+		lucene_key = <cfqueryparam value="#arguments.thestruct.theorgfile#" cfsqltype="cf_sql_varchar">
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Check the audio from UPC or NOT --->
