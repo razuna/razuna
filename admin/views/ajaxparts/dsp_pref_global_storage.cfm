@@ -121,6 +121,10 @@
 			<td><input type="text" name="conf_aka_token" id="conf_aka_token" style="width:300px;" value="#gprefs.conf_aka_token#" /></td>
 		</tr>
 	</table>
+	<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
+		<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
+	</div>
+	<div style="clear:both;"></div>
 	<script type="text/javascript">
 		function valaws(){
 			// Get values

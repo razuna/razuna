@@ -731,6 +731,8 @@
 
 	<!-- Load preferences -->
 	<fuseaction name="prefs_global_main">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_taskserver()" returnvariable="qry_taskserver" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_main" />
 	</fuseaction>

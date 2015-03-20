@@ -584,6 +584,28 @@
 		)
 		</cfquery>
 	</cfif>
+	<!--- Save task server settings --->
+	<!--- Loop over struct --->
+	<cfloop collection="#arguments.thestruct#" item="ts">
+		<!--- Filter only taskserver --->
+		<cfif ts CONTAINS "taskserver">
+			<!--- First remove all values in DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM options
+			WHERE opt_id = <cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES (
+				<cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.thestruct[ts]#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+		</cfif>
+	</cfloop>
 	<!--- Reset cache --->
 	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
@@ -2613,6 +2635,27 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfquery>
 	<!--- Return --->
 	<cfreturn q.opt_value />
+</cffunction>
+
+<!--- Get taskserver --->
+<cffunction name="prefs_taskserver" output="false" returntype="struct">
+	<!--- Cache --->
+	<cfset variables.cachetoken = getcachetoken("settings")>
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #variables.cachetoken#prefs_taskserver */ opt_id, opt_value
+	FROM options
+	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver%">
+	</cfquery>
+	<!--- Return it as a struct --->
+	<cfset var s = structnew()>
+	<cfloop query="q">
+		<cfset s[opt_id] = opt_value>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn s />
 </cffunction>
 
 <!--- Get options --->
