@@ -423,11 +423,11 @@
 			(
 				SELECT count(ct.ct_label_id)
 				FROM ct_labels ct
-				LEFT JOIN #session.hostdbprefix#images i ON ct.ct_id_r = i.img_id AND ct.ct_type =<cfqueryparam value="img" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #session.hostdbprefix#audios a ON ct.ct_id_r = a.aud_id AND ct.ct_type =<cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #session.hostdbprefix#videos v ON ct.ct_id_r = v.vid_id AND ct.ct_type =<cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #session.hostdbprefix#files fi ON ct.ct_id_r = fi.file_id  AND ct.ct_type =<cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
-				LEFT JOIN #session.hostdbprefix#folders fo ON ct.ct_id_r = fo.folder_id  AND ct.ct_type =<cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#images i ON ct.ct_id_r = i.img_id AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar"/> AND (i.img_group IS NULL OR i.img_group = '')
+				LEFT JOIN #session.hostdbprefix#audios a ON ct.ct_id_r = a.aud_id AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar"/> AND (a.aud_group IS NULL OR a.aud_group = '')
+				LEFT JOIN #session.hostdbprefix#videos v ON ct.ct_id_r = v.vid_id AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar"/> AND (v.vid_group IS NULL OR v.vid_group = '')
+				LEFT JOIN #session.hostdbprefix#files fi ON ct.ct_id_r = fi.file_id  AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar"/>
+				LEFT JOIN #session.hostdbprefix#folders fo ON ct.ct_id_r = fo.folder_id  AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar"/>
 				LEFT JOIN #session.hostdbprefix#collections c ON ct.ct_id_r = c.col_id  AND ct.ct_type =<cfqueryparam value="collection" cfsqltype="cf_sql_varchar"/>
 				WHERE ct.ct_label_id = l.label_id
 				<!--- Exclude assets in trash --->
@@ -765,6 +765,7 @@
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			AND i.folder_id_r = f.folder_id
+			AND (i.img_group IS NULL OR i.img_group = '')
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND i.img_id NOT IN (
 				SELECT TOP #min# mssql_i.img_id
@@ -900,6 +901,7 @@
 			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 			AND v.folder_id_r = f.folder_id
+			AND (v.vid_group IS NULL OR v.vid_group = '')
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND v.vid_id NOT IN (
 					SELECT TOP #min# mssql_v.vid_id
@@ -966,6 +968,7 @@
 			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 			AND a.folder_id_r = f.folder_id
+			AND (a.aud_group IS NULL OR a.aud_group = '')
 			<cfif application.razuna.thedatabase EQ "mssql">
 				AND a.aud_id NOT IN (
 					SELECT TOP #min# mssql_a.aud_id
