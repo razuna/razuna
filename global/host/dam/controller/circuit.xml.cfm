@@ -10618,8 +10618,6 @@
 
 	<!-- Get indexing page -->
 	<fuseaction name="indexing">
-		<!-- CFC: Get lock file status -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="statusOfLockFile()" returnvariable="qry_status_lock_file" />
 		<!-- CFC: Get index status -->
 		<invoke object="myFusebox.getApplicationData().lucene" methodcall="statusOfIndex()" returnvariable="qry_status" />
 		<!-- Show -->

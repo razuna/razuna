@@ -25,11 +25,6 @@
 --->
 <cfoutput>
 	<h2>Current indexing status</h2>
-	<cfif qry_status_lock_file>
-		<p><strong>System Status:</strong> The system is currently indexing files! To see an updated list please <a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');"><strong>refresh this page</strong></a>.</p>
-	<cfelse>
-		<p><strong>System Status:</strong> Your files are waiting to be indexed.</p>
-	</cfif>
 	<p></p>
 	<p>Here is a list of files and their index status. The system is set to automatically index files. You can <a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');"><strong>refresh this page again</strong></a> to get the current index status.</p>
 	<table border="1" cellpadding="0" cellspacing="0" width="400" class="tablepanel">
@@ -44,11 +39,8 @@
 			</tr>
 		</cfloop>
 	</table>
-	<h3>Please note</h3>
-	<cfif application.razuna.isp>
-		<p>Files are being indexed every couple of minutes. Due to the large amount of data it can take some time until files are being indexed and available for searching.</p>
-	<cfelse>
-		<p>Files are being indexed every couple of minutes. Due to the large amount of data it can take some time until files are being indexed and available for searching. If you feel there is an error with this, please report this to your local Administrator.</p>
-	</cfif>
-
+	<h3>Rebuild Search Index</h3>
+	<p>If you think that your search index is out of sync you can issue a complete rebuild of your search index. Please note that this can take some time, depending on the size of your library.</p>
+	<p></p>
+	<p><a href="##" onclick="_rebuildIndex();">Rebuild Search Index</a></p>
 </cfoutput>

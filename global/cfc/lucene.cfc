@@ -31,40 +31,38 @@
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
-		<cfset consoleoutput(true)>
-<cfset console(arguments.thestruct)>
 		<cftry>
-			
-		
-		<!--- DOCS: Make sure there is a value in lucene key --->
-		<cfif arguments.category EQ "doc">
-			<cfset var _lucene_key = arguments.thestruct.qrydetail.lucene_key />
-			<cfif arguments.thestruct.qrydetail.lucene_key EQ "">
-				<cfset var _lucene_key = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.file_name_org#" />
+			<!--- DOCS: Make sure there is a value in lucene key --->
+			<cfif arguments.category EQ "doc">
+				<cfset var _lucene_key = arguments.thestruct.qrydetail.lucene_key />
+				<cfif arguments.thestruct.qrydetail.lucene_key EQ "">
+					<cfset var _lucene_key = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.file_name_org#" />
+				</cfif>
+				<!--- Add to lucene delete table --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO lucene
+				(id, type, host_id)
+				VALUES (
+					<cfqueryparam value="#_lucene_key#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
 			</cfif>
 			<!--- Add to lucene delete table --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO lucene
-			(id, type)
+			(id, type, host_id)
 			VALUES (
-				<cfqueryparam value="#_lucene_key#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">
+				<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			)
 			</cfquery>
-		</cfif>
-		<!--- Add to lucene delete table --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO lucene
-		(id, type)
-		VALUES (
-			<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">
-		)
-		</cfquery>
-		<cfcatch type="any">
-			<cfset consoleoutput(true)>
-			<cfset console(cfcatch)>
-		</cfcatch>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
 		</cftry>
 		<!--- Return --->
 		<cfreturn />
@@ -165,22 +163,10 @@
 	</cffunction>
 	
 	<!--- For status of lock file --->
-	<cffunction name="statusOfLockFile" access="public" output="false">
-		<!--- Var --->
-		<cfset var exists = false> 
-		<!--- If on hosted it is a different lock file name --->
-		<cfif application.razuna.isp>
-			<cfset var lockfile = "lucene.lock">
-		<cfelse>
-			<cfset var lockfile = "lucene_#session.hostid#.lock">
-		</cfif>
-		<!--- Check if lucene.lock file exists --->
-		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
-		<cfif fileExists(lockfilepath)>
-			<cfset var exists = true> 
-		</cfif>
+	<cffunction name="rebuildIndex" access="public" output="false">
+		
 		<!--- Return --->
-		<cfreturn exists />
+		<cfreturn  />
 	</cffunction>
 
 </cfcomponent>

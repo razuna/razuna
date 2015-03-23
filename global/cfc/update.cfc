@@ -196,7 +196,7 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SCHED_RUN_TIME <cfif application.razuna.thedatabase NEQ "mssql">datetime<cfelse>timestamp</cfif>
 				</cfquery>
-				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				<cfcatch type="any"><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<!--- Add SAML columns to settings_2 table --->
 			<cftry>
@@ -205,25 +205,49 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
-			<!--- Add taskserver default values --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO options
-			(opt_id, opt_value, rec_uuid)
-			VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_location">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="custom">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
-			)
-			</cfquery>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO options
-			(opt_id, opt_value, rec_uuid)
-			VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_taskserver_local_url">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
-			)
-			</cfquery>
+			<!--- Taskserver default values --->
+			<cftry>
+				<!--- Add taskserver default values --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_location">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="local">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_local_url">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_secret">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Lucene db --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE lucene (
+					id #thevarchar#(500) DEFAULT NULL,
+					type #thevarchar#(10) DEFAULT NULL,
+					host_id #theint#() DEFAULT NULL
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If less then 43 (1.7) --->

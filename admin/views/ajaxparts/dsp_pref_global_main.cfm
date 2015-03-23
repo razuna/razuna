@@ -104,14 +104,20 @@
 						Please enter the servers <strong>full address</strong> location, e.g. http://searchserver.domain.com:8080.
 						<br />
 						<input type="text" name="taskserver_remote_url" style="width:300px;" value="#qry_taskserver.taskserver_remote_url#">
-						<br />
-						Secure Token (this is the same value )
-						<br />
-						<input type="text" name="taskserver_secure_token" style="width:300px;" value="#qry_taskserver.taskserver_secure_token#">
-						<br />
 					</td>
 				</tr>
-
+				<tr>
+					<td colspan="2">&nbsp;</th>
+				</tr>
+				<tr>
+					<th class="textbold" colspan="2">Secret Key</th>
+				</tr>
+				<tr>
+					<td colspan="2">Secret key that identifies connections coming from this server.</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="text" name="taskserver_secret" style="width:300px;" value="#qry_taskserver.taskserver_secret#"></td>
+				</tr>
 			
 			</table>
 			<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
