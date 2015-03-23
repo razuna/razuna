@@ -68,13 +68,17 @@
 								<cfif structKeyExists(attributes,"ad_server_name") AND attributes.ad_server_name NEQ "" AND structKeyExists(attributes,"ad_server_username") AND attributes.ad_server_username NEQ "" AND structKeyExists(attributes,"ad_server_password") AND attributes.ad_server_password NEQ "" AND structKeyExists(attributes,"ad_server_start") AND attributes.ad_server_start NEQ "">
 								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ADServer")#</option>
 								</cfif>
-								<option>---</option>
+								<cfif !application.razuna.isp>
+									<option>---</option>
+								</cfif>
 								<!--- Indexing --->
 								<cfif !application.razuna.isp>
 									<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								</cfif>
 								<!--- Indexing Full --->
-								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
+								<cfif !application.razuna.isp OR Request.securityobj.CheckSystemAdminUser()>
+									<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
+								</cfif>
 							</select>
 						</td>
 						<td>

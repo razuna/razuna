@@ -82,29 +82,29 @@
 	</cffunction>
 	
 	<cffunction name="index_update_firsttime" access="public" output="false" returntype="void">
-			<cfargument name="host_id" required="true">
-			<cfset var hosts =querynew("")>
-			<!--- Query hosts --->
-			<cfquery datasource="#application.razuna.datasource#" name="hosts">
-			SELECT host_id, host_shard_group, host_name
-			FROM hosts
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
-			AND ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
-			<cfif cgi.http_host CONTAINS "razuna.com">
-				AND host_type != 0
-			</cfif>
-			</cfquery>
-			<cfif hosts.recordcount NEQ 0>
-				<cfset console("*********RUNNING ONE TIME INDEXING TASK FOR NEW HOST #hosts.host_name#*************")>
-				<cfset console(hosts)>
-				<cfinvoke method="index_update">
-					<cfinvokeargument name="hostid" value="#arguments.host_id#" />
-					<cfinvokeargument name="prefix" value="#hosts.host_shard_group#" />
-					<cfinvokeargument name="hosted" value="true" />
-					<cfinvokeargument name="assetid" value="all" />
-				</cfinvoke>
-			</cfif>
-	</cffunction>
+		<cfargument name="host_id" required="true">
+		<cfset var hosts =querynew("")>
+		<!--- Query hosts --->
+		<cfquery datasource="#application.razuna.datasource#" name="hosts">
+		SELECT host_id, host_shard_group, host_name
+		FROM hosts
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
+		AND ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
+		<cfif cgi.http_host CONTAINS "razuna.com">
+			AND host_type != 0
+		</cfif>
+		</cfquery>
+		<cfif hosts.recordcount NEQ 0>
+			<cfset console("*********RUNNING ONE TIME INDEXING TASK FOR NEW HOST #hosts.host_name#*************")>
+			<cfset console(hosts)>
+			<cfinvoke method="index_update">
+				<cfinvokeargument name="hostid" value="#arguments.host_id#" />
+				<cfinvokeargument name="prefix" value="#hosts.host_shard_group#" />
+				<cfinvokeargument name="hosted" value="true" />
+				<cfinvokeargument name="assetid" value="all" />
+			</cfinvoke>
+		</cfif>
+</cffunction>
 
 	<!--- INDEX: Update --->
 	<cffunction name="index_update_hosted" access="public" output="false" returntype="void">
@@ -1169,5 +1169,58 @@
 		<cfreturn qry />
 	</cffunction>
 	
+	<!--- For status --->
+	<cffunction name="statusOfIndex" access="public" output="false">
+		<!--- Get the cachetoken for here --->
+		<cfset var cache_img = getcachetoken("images")>
+		<cfset var cache_vid = getcachetoken("videos")>
+		<cfset var cache_aud = getcachetoken("audios")>
+		<cfset var cache_doc = getcachetoken("files")>
+		<!--- Var --->
+		<cfset var qry = "" />
+		<!--- Query how many files are not indexed --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #cache_img#statusOfIndex */ count(img_id) as count, 'Images' as type
+		FROM #session.hostdbprefix#images
+		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UNION ALL
+		SELECT /* #cache_vid#statusOfIndex */ count(vid_id) as count, 'Videos' as type
+		FROM #session.hostdbprefix#videos
+		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UNION ALL
+		SELECT /* #cache_doc#statusOfIndex */ count(file_id) as count, 'Documents' as type
+		FROM #session.hostdbprefix#files
+		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UNION ALL
+		SELECT /* #cache_aud#statusOfIndex */ count(aud_id) as count, 'Audios' as type
+		FROM #session.hostdbprefix#audios a
+		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
 	
+	<!--- For status of lock file --->
+	<cffunction name="statusOfLockFile" access="public" output="false">
+		<!--- Var --->
+		<cfset var exists = false> 
+		<!--- If on hosted it is a different lock file name --->
+		<cfif application.razuna.isp>
+			<cfset var lockfile = "lucene.lock">
+		<cfelse>
+			<cfset var lockfile = "lucene_#session.hostid#.lock">
+		</cfif>
+		<!--- Check if lucene.lock file exists --->
+		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfif fileExists(lockfilepath)>
+			<cfset var exists = true> 
+		</cfif>
+		<!--- Return --->
+		<cfreturn exists />
+	</cffunction>
+
 </cfcomponent>

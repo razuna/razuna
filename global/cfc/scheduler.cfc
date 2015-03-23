@@ -807,7 +807,7 @@
 			</cfif>
   
 			FROM (
-				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc
+				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc, log_user, folder_id
 				FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">

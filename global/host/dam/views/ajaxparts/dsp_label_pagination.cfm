@@ -251,7 +251,7 @@
 		function changesortby(theselect){
 			// Get selected option
 			var thesortby = $('##' + theselect + ' option:selected').val();
-			loadcontent('#thediv#','#myself##thefa#&label_id=#attributes.label_id#&label_kind=#attributes.label_kind#&_=#attributes._#&sortby=' + thesortby);
+			loadcontent('#thediv#','#myself##thefa#&label_id=#attributes.label_id#&label_kind=#attributes.label_kind#&sortby=' + thesortby);
 		}
 	</script>
 

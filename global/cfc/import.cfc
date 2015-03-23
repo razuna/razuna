@@ -546,40 +546,108 @@
 						<cfset c_thecopynotice = gettemplatevalue(arguments.thestruct.impp_template,"copynotice")>
 					</cfif>
 					<!--- Write arguments for passing to XMP module --->
-					<cfset arguments.thestruct.xmp_document_title = evaluate(c_thetitle)>
-					<cfset arguments.thestruct.xmp_author = evaluate(c_thecreator)>
-					<cfset arguments.thestruct.xmp_author_title = evaluate(c_theauthorstitle)>
-					<cfset arguments.thestruct.xmp_description = evaluate(c_thedescription)>
-					<cfset arguments.thestruct.xmp_description_writer = evaluate(c_thedescwriter)>
-					<cfset arguments.thestruct.xmp_copyright_status = evaluate(c_thecopystatus)>
-					<cfset arguments.thestruct.xmp_copyright_notice = evaluate(c_theiptcinstructions)>
-					<cfset arguments.thestruct.xmp_copyright_info_url = evaluate(c_thecopyurl)>
-					<cfset arguments.thestruct.xmp_category = evaluate(c_thecategory)>
-					<cfset arguments.thestruct.xmp_supplemental_categories = evaluate(c_thecategorysub)>
-					<cfset arguments.thestruct.iptc_contact_address = evaluate(c_theiptcaddress)>
-					<cfset arguments.thestruct.iptc_contact_city = evaluate(c_theiptccity)>
-					<cfset arguments.thestruct.iptc_contact_state_province = evaluate(c_theiptclocation)>
-					<cfset arguments.thestruct.iptc_contact_postal_code = evaluate(c_theiptczip)>
-					<cfset arguments.thestruct.iptc_contact_country = evaluate(c_theiptccountry)>
-					<cfset arguments.thestruct.iptc_contact_phones = evaluate(c_theiptcphone)>
-					<cfset arguments.thestruct.iptc_contact_emails = evaluate(c_theiptcemail)>
-					<cfset arguments.thestruct.iptc_contact_websites = evaluate(c_theiptcwebsite)>
-					<cfset arguments.thestruct.iptc_content_headline = evaluate(c_theiptcheadline)>
-					<cfset arguments.thestruct.iptc_content_subject_code = evaluate(c_theiptcsubjectcode)>
-					<cfset arguments.thestruct.iptc_date_created = evaluate(c_theiptcdatecreated)>
-					<cfset arguments.thestruct.iptc_intellectual_genre = evaluate(c_theiptcintelgenre)>
-					<cfset arguments.thestruct.iptc_scene = evaluate(c_theiptcscene)>
-					<cfset arguments.thestruct.iptc_image_location = evaluate(c_theiptclocation)>
-					<cfset arguments.thestruct.iptc_image_city = evaluate(c_theiptcimagecity)>
-					<cfset arguments.thestruct.iptc_image_country = evaluate(c_theiptcimagecountrycode)>
-					<cfset arguments.thestruct.iptc_image_state_province = evaluate(c_theiptcimagestate)>
-					<cfset arguments.thestruct.iptc_iso_country_code = evaluate(c_theiptcimagecountry)>
-					<cfset arguments.thestruct.iptc_status_job_identifier = evaluate(c_theiptccredit)>
-					<cfset arguments.thestruct.iptc_status_instruction = evaluate(c_thecopynotice)>
-					<cfset arguments.thestruct.iptc_status_provider = evaluate(c_thecopystatus)>
-					<cfset arguments.thestruct.iptc_status_source = evaluate(c_theiptcsubjectcode)>
-					<cfset arguments.thestruct.iptc_status_rights_usage_terms = evaluate(c_theiptcinstructions)>
-					<cfset arguments.thestruct.xmp_origin_urgency = evaluate(c_theurgency)>
+					<cfif c_thetitle NEQ "">
+						<cfset arguments.thestruct.xmp_document_title = evaluate(c_thetitle)>
+					</cfif>
+					<cfif c_thecreator NEQ "">
+						<cfset arguments.thestruct.xmp_author = evaluate(c_thecreator)>
+					</cfif>
+					<cfif c_theauthorstitle NEQ "">
+						<cfset arguments.thestruct.xmp_author_title = evaluate(c_theauthorstitle)>
+					</cfif>
+					<cfif c_thedescription NEQ "">
+						<cfset arguments.thestruct.xmp_description = evaluate(c_thedescription)>
+					</cfif>
+					<cfif c_thedescwriter NEQ "">
+						<cfset arguments.thestruct.xmp_description_writer = evaluate(c_thedescwriter)>
+					</cfif>
+					<cfif c_thecopystatus NEQ "">
+						<cfset arguments.thestruct.xmp_copyright_status = evaluate(c_thecopystatus)>
+					</cfif>
+					<cfif c_theiptcinstructions NEQ "">
+						<cfset arguments.thestruct.xmp_copyright_notice = evaluate(c_theiptcinstructions)>
+					</cfif>
+					<cfif c_thecopyurl NEQ "">
+						<cfset arguments.thestruct.xmp_copyright_info_url = evaluate(c_thecopyurl)>
+					</cfif>
+					<cfif c_thecategory NEQ "">
+						<cfset arguments.thestruct.xmp_category = evaluate(c_thecategory)>
+					</cfif>
+					<cfif c_thecategorysub NEQ "">
+						<cfset arguments.thestruct.xmp_supplemental_categories = evaluate(c_thecategorysub)>
+					</cfif>
+					<cfif c_theiptcaddress NEQ "">
+						<cfset arguments.thestruct.iptc_contact_address = evaluate(c_theiptcaddress)>
+					</cfif>
+					<cfif c_theiptccity NEQ "">
+						<cfset arguments.thestruct.iptc_contact_city = evaluate(c_theiptccity)>
+					</cfif>
+					<cfif c_theiptclocation NEQ "">
+						<cfset arguments.thestruct.iptc_contact_state_province = evaluate(c_theiptclocation)>
+					</cfif>
+					<cfif c_theiptczip NEQ "">
+						<cfset arguments.thestruct.iptc_contact_postal_code = evaluate(c_theiptczip)>
+					</cfif>
+					<cfif c_theiptccountry NEQ "">
+						<cfset arguments.thestruct.iptc_contact_country = evaluate(c_theiptccountry)>
+					</cfif>
+					<cfif c_theiptcphone NEQ "">
+						<cfset arguments.thestruct.iptc_contact_phones = evaluate(c_theiptcphone)>
+					</cfif>
+					<cfif c_theiptcemail NEQ "">
+						<cfset arguments.thestruct.iptc_contact_emails = evaluate(c_theiptcemail)>
+					</cfif>
+					<cfif c_theiptcwebsite NEQ "">
+						<cfset arguments.thestruct.iptc_contact_websites = evaluate(c_theiptcwebsite)>
+					</cfif>
+					<cfif c_theiptcheadline NEQ "">
+						<cfset arguments.thestruct.iptc_content_headline = evaluate(c_theiptcheadline)>
+					</cfif>
+					<cfif c_theiptcsubjectcode NEQ "">
+						<cfset arguments.thestruct.iptc_content_subject_code = evaluate(c_theiptcsubjectcode)>
+					</cfif>
+					<cfif c_theiptcdatecreated NEQ "">
+						<cfset arguments.thestruct.iptc_date_created = evaluate(c_theiptcdatecreated)>
+					</cfif>
+					<cfif c_theiptcintelgenre NEQ "">
+						<cfset arguments.thestruct.iptc_intellectual_genre = evaluate(c_theiptcintelgenre)>
+					</cfif>
+					<cfif c_theiptcscene NEQ "">
+						<cfset arguments.thestruct.iptc_scene = evaluate(c_theiptcscene)>
+					</cfif>
+					<cfif c_theiptclocation NEQ "">
+						<cfset arguments.thestruct.iptc_image_location = evaluate(c_theiptclocation)>
+					</cfif>
+					<cfif c_theiptcimagecity NEQ "">
+						<cfset arguments.thestruct.iptc_image_city = evaluate(c_theiptcimagecity)>
+					</cfif>
+					<cfif c_theiptcimagecountrycode NEQ "">
+						<cfset arguments.thestruct.iptc_image_country = evaluate(c_theiptcimagecountrycode)>
+					</cfif>
+					<cfif c_theiptcimagestate NEQ "">
+						<cfset arguments.thestruct.iptc_image_state_province = evaluate(c_theiptcimagestate)>
+					</cfif>
+					<cfif c_theiptcimagecountry NEQ "">
+						<cfset arguments.thestruct.iptc_iso_country_code = evaluate(c_theiptcimagecountry)>
+					</cfif>
+					<cfif c_theiptccredit NEQ "">
+						<cfset arguments.thestruct.iptc_status_job_identifier = evaluate(c_theiptccredit)>
+					</cfif>
+					<cfif c_thecopynotice NEQ "">
+						<cfset arguments.thestruct.iptc_status_instruction = evaluate(c_thecopynotice)>
+					</cfif>
+					<cfif c_thecopystatus NEQ "">
+						<cfset arguments.thestruct.iptc_status_provider = evaluate(c_thecopystatus)>
+					</cfif>
+					<cfif c_theiptcsubjectcode NEQ "">
+						<cfset arguments.thestruct.iptc_status_source = evaluate(c_theiptcsubjectcode)>
+					</cfif>
+					<cfif c_theiptcinstructions NEQ "">
+						<cfset arguments.thestruct.iptc_status_rights_usage_terms = evaluate(c_theiptcinstructions)>
+					</cfif>
+					<cfif c_theurgency NEQ "">
+						<cfset arguments.thestruct.xmp_origin_urgency = evaluate(c_theurgency)>
+					</cfif>
 					<!--- if no record found in xmp table do an insert --->
 					<cfif xmphere.recordcount EQ 0>
 						<cfquery dataSource="#application.razuna.datasource#">
@@ -614,9 +682,20 @@
 				<cfcatch type="any">
 					<!--- Feedback --->
 					<cfinvoke component="defaults" method="trans" transid="error_occurred" returnvariable="error_occurred" />
-					<cfoutput>#error_occurred#:<br /><cfdump var="#cfcatch#"><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
-					<cfset cfcatch.custom_message = "Error in function import.doimportimages">
-					<cfset errobj.logerrors(cfcatch,false)/>
+					<cfoutput>
+						#error_occurred#:
+						<br />
+						<span style="font-weight:bold;color:red;">
+							#cfcatch.message#
+							<br />
+							#cfcatch.detail#
+						</span>
+						<br />
+						In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+						<br><br>
+					</cfoutput>
+					<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
+					<cfset errobj.logerrors(cfcatch,false)/> --->
 					<cfflush>
 				</cfcatch>
 			</cftry>
@@ -681,110 +760,132 @@
 			</cftry>
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
-				<!--- Feedback --->
-				<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
-				<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
-				<cfflush>
-				<!--- Labels --->
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
-				</cfif>
-				<cfif c_thelabels NEQ "">
-					<cfset tlabel = evaluate(c_thelabels)>
-				<cfelse>
-					<cfset tlabel = "">
-				</cfif>
-				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" thestruct="#arguments.thestruct#" />
-				<!--- Import Custom Fields --->
-				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.vid_id#" thecurrentRow="#currentRow#" />
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
-				</cfif>
-				<!--- Images: main table --->
-				<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#videos
-					SET 
-					vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
-					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					<cfif arguments.thestruct.expwhat NEQ "all">
-						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cftry>
+					<!--- Feedback --->
+					<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+					<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
+					<cfflush>
+					<!--- Labels --->
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
 					</cfif>
-					</cfquery>
-				</cfif>
-				<!--- Keywords & Descriptions --->
-				<!--- Check if record is here --->
-				<cfquery dataSource="#application.razuna.datasource#" name="khere">
-				SELECT it.vid_id_r, i.vid_id, it.vid_keywords, it.vid_description
-				FROM #session.hostdbprefix#videos i JOIN #session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r
-				WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND i.vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
-				</cfquery>
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
-				</cfif>
-				<!--- record not found, so do an insert --->
-				<cfif khere.vid_id_r EQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#videos_text
-					(id_inc,vid_id_r,lang_id_r,vid_keywords,vid_description,host_id)
-					VALUES(
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">,
-						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif c_thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
-						<cfelse>
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
-						<cfelse>
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
-						</cfif>
-						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					)
-					</cfquery>
-				<cfelse>
-					<!--- If append --->
-					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif c_thekeywords NEQ "">
-							<cfset tkeywords = khere.vid_keywords & " " & evaluate(c_thekeywords)>
-						<cfelse>
-							<cfset tkeywords = khere.vid_keywords>
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfset tdescription = khere.vid_description & " " & evaluate(c_thedescription)>
-						<cfelse>
-							<cfset tdescription = khere.vid_description>
-						</cfif>
+					<cfif c_thelabels NEQ "">
+						<cfset tlabel = evaluate(c_thelabels)>
 					<cfelse>
-						<cfif c_thekeywords NEQ "">
-							<cfset tkeywords = evaluate(c_thekeywords)>
-						<cfelse>
-							<cfset tkeywords = "">
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfset tdescription = evaluate(c_thedescription)>
-						<cfelse>
-							<cfset tdescription = "">
-						</cfif>
+						<cfset tlabel = "">
 					</cfif>
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#videos_text
-					SET 
-					vid_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-					vid_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
-					WHERE vid_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" thestruct="#arguments.thestruct#" />
+					<!--- Import Custom Fields --->
+					<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.vid_id#" thecurrentRow="#currentRow#" />
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					</cfif>
+					<!--- Images: main table --->
+					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#videos
+						SET 
+						vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						<cfif arguments.thestruct.expwhat NEQ "all">
+							AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+						</cfif>
+						</cfquery>
+					</cfif>
+					<!--- Keywords & Descriptions --->
+					<!--- Check if record is here --->
+					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					SELECT it.vid_id_r, i.vid_id, it.vid_keywords, it.vid_description
+					FROM #session.hostdbprefix#videos i JOIN #session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND i.vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
 					</cfquery>
-				</cfif>
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+						<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					</cfif>
+					<!--- record not found, so do an insert --->
+					<cfif khere.vid_id_r EQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#videos_text
+						(id_inc,vid_id_r,lang_id_r,vid_keywords,vid_description,host_id)
+						VALUES(
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">,
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
+							<cfif c_thekeywords NEQ "">
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
+							<cfelse>
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
+							<cfelse>
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
+							</cfif>
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						)
+						</cfquery>
+					<cfelse>
+						<!--- If append --->
+						<cfif arguments.thestruct.imp_write EQ "add">
+							<cfif c_thekeywords NEQ "">
+								<cfset tkeywords = khere.vid_keywords & " " & evaluate(c_thekeywords)>
+							<cfelse>
+								<cfset tkeywords = khere.vid_keywords>
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfset tdescription = khere.vid_description & " " & evaluate(c_thedescription)>
+							<cfelse>
+								<cfset tdescription = khere.vid_description>
+							</cfif>
+						<cfelse>
+							<cfif c_thekeywords NEQ "">
+								<cfset tkeywords = evaluate(c_thekeywords)>
+							<cfelse>
+								<cfset tkeywords = "">
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfset tdescription = evaluate(c_thedescription)>
+							<cfelse>
+								<cfset tdescription = "">
+							</cfif>
+						</cfif>
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#videos_text
+						SET 
+						vid_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
+						vid_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+						WHERE vid_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						</cfquery>
+					</cfif>
+					<!--- Show if error --->
+					<cfcatch type="any">
+						<!--- Feedback --->
+						<cfinvoke component="defaults" method="trans" transid="error_occurred" returnvariable="error_occurred" />
+						<cfoutput>
+							#error_occurred#:
+							<br />
+							<span style="font-weight:bold;color:red;">
+								#cfcatch.message#
+								<br />
+								#cfcatch.detail#
+							</span>
+							<br />
+							In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+							<br><br>
+						</cfoutput>
+						<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
+						<cfset errobj.logerrors(cfcatch,false)/> --->
+						<cfflush>
+					</cfcatch>
+				</cftry>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
@@ -847,110 +948,132 @@
 			</cftry>
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
-				<!--- Feedback --->
-				<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
-				<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
-				<cfflush>
-				<!--- Labels --->
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
-				</cfif>
-				<cfif c_thelabels NEQ "">
-					<cfset tlabel = evaluate(c_thelabels)>
-				<cfelse>
-					<cfset tlabel = "">
-				</cfif>
-				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" thestruct="#arguments.thestruct#" />
-				<!--- Import Custom Fields --->
-				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.aud_id#" thecurrentRow="#currentRow#" />
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
-				</cfif>
-				<!--- Images: main table --->
-				<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#audios
-					SET 
-					aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
-					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					<cfif arguments.thestruct.expwhat NEQ "all">
-						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cftry>
+					<!--- Feedback --->
+					<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+					<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
+					<cfflush>
+					<!--- Labels --->
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
 					</cfif>
-					</cfquery>
-				</cfif>
-				<!--- Keywords & Descriptions --->
-				<!--- Check if record is here --->
-				<cfquery dataSource="#application.razuna.datasource#" name="khere">
-				SELECT it.aud_id_r, i.aud_id, it.aud_keywords, it.aud_description
-				FROM #session.hostdbprefix#audios i JOIN #session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r
-				WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND i.aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
-				</cfquery>
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
-				</cfif>
-				<!--- record not found, so do an insert --->
-				<cfif khere.aud_id_r EQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#audios_text
-					(id_inc,aud_id_r,lang_id_r,aud_keywords,aud_description,host_id)
-					VALUES(
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">,
-						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif c_thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
-						<cfelse>
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
-						<cfelse>
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
-						</cfif>
-						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					)
-					</cfquery>
-				<cfelse>
-					<!--- If append --->
-					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif c_thekeywords NEQ "">
-							<cfset tkeywords = khere.aud_keywords & " " & evaluate(c_thekeywords)>
-						<cfelse>
-							<cfset tkeywords = khere.aud_keywords>
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfset tdescription = khere.aud_description & " " & evaluate(c_thedescription)>
-						<cfelse>
-							<cfset tdescription = khere.aud_description>
-						</cfif>
+					<cfif c_thelabels NEQ "">
+						<cfset tlabel = evaluate(c_thelabels)>
 					<cfelse>
-						<cfif c_thekeywords NEQ "">
-							<cfset tkeywords = evaluate(c_thekeywords)>
-						<cfelse>
-							<cfset tkeywords = "">
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfset tdescription = evaluate(c_thedescription)>
-						<cfelse>
-							<cfset tdescription = "">
-						</cfif>
+						<cfset tlabel = "">
 					</cfif>
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#audios_text
-					SET 
-					aud_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-					aud_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
-					WHERE aud_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" thestruct="#arguments.thestruct#" />
+					<!--- Import Custom Fields --->
+					<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.aud_id#" thecurrentRow="#currentRow#" />
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					</cfif>
+					<!--- Images: main table --->
+					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#audios
+						SET 
+						aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						<cfif arguments.thestruct.expwhat NEQ "all">
+							AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+						</cfif>
+						</cfquery>
+					</cfif>
+					<!--- Keywords & Descriptions --->
+					<!--- Check if record is here --->
+					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					SELECT it.aud_id_r, i.aud_id, it.aud_keywords, it.aud_description
+					FROM #session.hostdbprefix#audios i JOIN #session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND i.aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
 					</cfquery>
-				</cfif>
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+						<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					</cfif>
+					<!--- record not found, so do an insert --->
+					<cfif khere.aud_id_r EQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#audios_text
+						(id_inc,aud_id_r,lang_id_r,aud_keywords,aud_description,host_id)
+						VALUES(
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">,
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
+							<cfif c_thekeywords NEQ "">
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
+							<cfelse>
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
+							<cfelse>
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
+							</cfif>
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						)
+						</cfquery>
+					<cfelse>
+						<!--- If append --->
+						<cfif arguments.thestruct.imp_write EQ "add">
+							<cfif c_thekeywords NEQ "">
+								<cfset tkeywords = khere.aud_keywords & " " & evaluate(c_thekeywords)>
+							<cfelse>
+								<cfset tkeywords = khere.aud_keywords>
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfset tdescription = khere.aud_description & " " & evaluate(c_thedescription)>
+							<cfelse>
+								<cfset tdescription = khere.aud_description>
+							</cfif>
+						<cfelse>
+							<cfif c_thekeywords NEQ "">
+								<cfset tkeywords = evaluate(c_thekeywords)>
+							<cfelse>
+								<cfset tkeywords = "">
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfset tdescription = evaluate(c_thedescription)>
+							<cfelse>
+								<cfset tdescription = "">
+							</cfif>
+						</cfif>
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#audios_text
+						SET 
+						aud_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
+						aud_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+						WHERE aud_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						</cfquery>
+					</cfif>
+					<!--- Show if error --->
+					<cfcatch type="any">
+						<!--- Feedback --->
+						<cfinvoke component="defaults" method="trans" transid="error_occurred" returnvariable="error_occurred" />
+						<cfoutput>
+							#error_occurred#:
+							<br />
+							<span style="font-weight:bold;color:red;">
+								#cfcatch.message#
+								<br />
+								#cfcatch.detail#
+							</span>
+							<br />
+							In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+							<br><br>
+						</cfoutput>
+						<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
+						<cfset errobj.logerrors(cfcatch,false)/> --->
+						<cfflush>
+					</cfcatch>
+				</cftry>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
@@ -1020,246 +1143,268 @@
 			</cftry>
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
-				<!--- Feedback --->
-				<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
-				<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
-				<cfflush>
-				<!--- Labels --->
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
-				</cfif>
-				<cfif c_thelabels NEQ "">
-					<cfset tlabel = evaluate(c_thelabels)>
-				<cfelse>
-					<cfset tlabel = "">
-				</cfif>
-				<!--- Import Labels --->
-				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" thestruct="#arguments.thestruct#" />
-				<!--- Import Custom Fields --->
-				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.file_id#" thecurrentRow="#currentRow#" />
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
-				</cfif>
-				<!--- Images: main table --->
-				<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#files
-					SET 
-					file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
-					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					<cfif arguments.thestruct.expwhat NEQ "all">
-						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cftry>
+					<!--- Feedback --->
+					<cfinvoke component="defaults" method="trans" transid="importing" returnvariable="importing" />
+					<cfoutput>#importing# ID: #evaluate(c_thisid)#<br><br></cfoutput>
+					<cfflush>
+					<!--- Labels --->
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
 					</cfif>
-					</cfquery>
-				</cfif>
-				<!--- Keywords & Descriptions --->
-				<!--- Check if record is here --->
-				<cfquery dataSource="#application.razuna.datasource#" name="khere">
-				SELECT it.file_id_r, i.file_id, it.file_keywords, it.file_desc
-				FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r
-				WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
-				</cfquery>
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
-				</cfif>
-				<!--- record not found, so do an insert --->
-				<cfif khere.file_id_r EQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#files_desc
-					(id_inc,file_id_r,lang_id_r,file_keywords,file_desc,host_id)
-					VALUES(
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
-						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif c_thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
-						<cfelse>
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
-						<cfelse>
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
-						</cfif>
-						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					)
-					</cfquery>
-				<cfelse>
-					<!--- If append --->
-					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif c_thekeywords NEQ "">
-							<cfset tkeywords = khere.file_keywords & " " & evaluate(c_thekeywords)>
-						<cfelse>
-							<cfset tkeywords = khere.file_keywords>
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfset tdescription = khere.file_desc & " " & evaluate(c_thedescription)>
-						<cfelse>
-							<cfset tdescription = khere.file_desc>
-						</cfif>
+					<cfif c_thelabels NEQ "">
+						<cfset tlabel = evaluate(c_thelabels)>
 					<cfelse>
-						<cfif c_thekeywords NEQ "">
-							<cfset tkeywords = evaluate(c_thekeywords)>
-						<cfelse>
-							<cfset tkeywords = "">
-						</cfif>
-						<cfif c_thedescription NEQ "">
-							<cfset tdescription = evaluate(c_thedescription)>
-						<cfelse>
-							<cfset tdescription = "">
-						</cfif>
+						<cfset tlabel = "">
 					</cfif>
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#files_desc
-					SET 
-					file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-					file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
-					WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<!--- Import Labels --->
+					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" thestruct="#arguments.thestruct#" />
+					<!--- Import Custom Fields --->
+					<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.file_id#" thecurrentRow="#currentRow#" />
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					</cfif>
+					<!--- Images: main table --->
+					<cfif isdefined("#c_thefilename#") AND evaluate(c_thefilename) NEQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#files
+						SET 
+						file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+						is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						<cfif arguments.thestruct.expwhat NEQ "all">
+							AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+						</cfif>
+						</cfquery>
+					</cfif>
+					<!--- Keywords & Descriptions --->
+					<!--- Check if record is here --->
+					<cfquery dataSource="#application.razuna.datasource#" name="khere">
+					SELECT it.file_id_r, i.file_id, it.file_keywords, it.file_desc
+					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 					</cfquery>
-				</cfif>
-				<!--- Files: XMP --->
-				<!--- Check if record is here --->
-				<cfquery dataSource="#application.razuna.datasource#" name="xmphere">
-				SELECT it.asset_id_r, i.file_id, it.author, it.rights, it.authorsposition, it.captionwriter, it.webstatement, it.rightsmarked
-				FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_xmp it ON i.file_id = it.asset_id_r
-				WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
-				</cfquery>
-				<!--- If template --->
-				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset c_thepdf_author = gettemplatevalue(arguments.thestruct.impp_template,"pdf_author")>
-					<cfset c_thepdf_rights = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rights")>
-					<cfset c_thepdf_authorsposition = gettemplatevalue(arguments.thestruct.impp_template,"pdf_authorsposition")>
-					<cfset c_thepdf_captionwriter = gettemplatevalue(arguments.thestruct.impp_template,"pdf_captionwriter")>
-					<cfset c_thepdf_webstatement = gettemplatevalue(arguments.thestruct.impp_template,"pdf_webstatement")>
-					<cfset c_thepdf_rightsmarked = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rightsmarked")>
-				</cfif>
-				<!--- record not found, so do an insert --->
-				<cfif xmphere.asset_id_r EQ "">
-					<cfquery dataSource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#files_xmp
-					(author, rights, authorsposition, captionwriter, webstatement, rightsmarked, asset_id_r, host_id)
-					VALUES(
-						<cfif c_thepdf_author NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_author)#">,
-						<cfelse>
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-						</cfif>
-						<cfif c_thepdf_rights NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rights)#">,
-						<cfelse>
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-						</cfif>
-						<cfif c_thepdf_authorsposition NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_authorsposition)#">,
-						<cfelse>
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-						</cfif>
-				  	  	<cfif c_thepdf_captionwriter NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_captionwriter)#">,
-						<cfelse>
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-						</cfif>
-				  	  	<cfif c_thepdf_webstatement NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_webstatement)#">,
-						<cfelse>
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-						</cfif>
-				  	  	<cfif c_thepdf_rightsmarked NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rightsmarked)#">,
-						<cfelse>
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-						</cfif>
-				  	  	<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
-				  	  	<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#"> 	
-				  	)
-					</cfquery>
-				<cfelse>
-					<!--- If append --->
-					<cfif arguments.thestruct.imp_write EQ "add">	
-						<cfif c_thepdf_author NEQ "">
-							<cfset tpdf_author = xmphere.author & " " & evaluate(c_thepdf_author)>
-						<cfelse>
-							<cfset tpdf_author = xmphere.author>
-						</cfif>
-						<cfif c_thepdf_rights NEQ "">
-							<cfset tpdf_rights = xmphere.rights & " " & evaluate(c_thepdf_rights)>
-						<cfelse>
-							<cfset tpdf_rights = xmphere.rights>
-						</cfif>
-						<cfif c_thepdf_authorsposition NEQ "">
-							<cfset tpdf_authorsposition = xmphere.authorsposition & " " & evaluate(c_thepdf_authorsposition)>
-						<cfelse>
-							<cfset tpdf_authorsposition = xmphere.authorsposition>
-						</cfif>
-						<cfif c_thepdf_captionwriter NEQ "">
-							<cfset tpdf_captionwriter = xmphere.captionwriter & " " & evaluate(c_thepdf_captionwriter)>
-						<cfelse>
-							<cfset tpdf_captionwriter = xmphere.captionwriter>
-						</cfif>
-						<cfif c_thepdf_webstatement NEQ "">
-							<cfset tpdf_webstatement = xmphere.webstatement & " " & evaluate(c_thepdf_webstatement)>
-						<cfelse>
-							<cfset tpdf_webstatement = xmphere.webstatement>
-						</cfif>
-						<cfif c_thepdf_rightsmarked NEQ "">
-							<cfset tpdf_rightsmarked = xmphere.rightsmarked & " " & evaluate(c_thepdf_rightsmarked)>
-						<cfelse>
-							<cfset tpdf_rightsmarked = xmphere.rightsmarked>
-						</cfif>
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+						<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					</cfif>
+					<!--- record not found, so do an insert --->
+					<cfif khere.file_id_r EQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#files_desc
+						(id_inc,file_id_r,lang_id_r,file_keywords,file_desc,host_id)
+						VALUES(
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
+							<cfif c_thekeywords NEQ "">
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
+							<cfelse>
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
+							<cfelse>
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
+							</cfif>
+							<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						)
+						</cfquery>
 					<cfelse>
-						<cfif c_thepdf_author NEQ "">
-							<cfset tpdf_author = evaluate(c_thepdf_author)>
+						<!--- If append --->
+						<cfif arguments.thestruct.imp_write EQ "add">
+							<cfif c_thekeywords NEQ "">
+								<cfset tkeywords = khere.file_keywords & " " & evaluate(c_thekeywords)>
+							<cfelse>
+								<cfset tkeywords = khere.file_keywords>
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfset tdescription = khere.file_desc & " " & evaluate(c_thedescription)>
+							<cfelse>
+								<cfset tdescription = khere.file_desc>
+							</cfif>
 						<cfelse>
-							<cfset tpdf_author = "">
+							<cfif c_thekeywords NEQ "">
+								<cfset tkeywords = evaluate(c_thekeywords)>
+							<cfelse>
+								<cfset tkeywords = "">
+							</cfif>
+							<cfif c_thedescription NEQ "">
+								<cfset tdescription = evaluate(c_thedescription)>
+							<cfelse>
+								<cfset tdescription = "">
+							</cfif>
 						</cfif>
-						<cfif c_thepdf_rights NEQ "">
-							<cfset tpdf_rights = evaluate(c_thepdf_rights)>
-						<cfelse>
-							<cfset tpdf_rights = "">
-						</cfif>
-						<cfif c_thepdf_authorsposition NEQ "">
-							<cfset tpdf_authorsposition = evaluate(c_thepdf_authorsposition)>
-						<cfelse>
-							<cfset tpdf_authorsposition = "">
-						</cfif>
-						<cfif c_thepdf_captionwriter NEQ "">
-							<cfset tpdf_captionwriter = evaluate(c_thepdf_captionwriter)>
-						<cfelse>
-							<cfset tpdf_captionwriter = "">
-						</cfif>
-						<cfif c_thepdf_webstatement NEQ "">
-							<cfset tpdf_webstatement = evaluate(c_thepdf_webstatement)>
-						<cfelse>
-							<cfset tpdf_webstatement = "">
-						</cfif>
-						<cfif c_thepdf_rightsmarked NEQ "">
-							<cfset tpdf_rightsmarked = evaluate(c_thepdf_rightsmarked)>
-						<cfelse>
-							<cfset tpdf_rightsmarked = "">
-						</cfif>
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#files_desc
+						SET 
+						file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
+						file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+						WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						</cfquery>
 					</cfif>
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#files_xmp
-					SET 
-					author = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_author#">,
-  				  	rights = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rights#">,
-				  	authorsposition = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_authorsposition#">,
-				  	captionwriter = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_captionwriter#">,
-				  	webstatement = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_webstatement#">,
-				  	rightsmarked = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rightsmarked#">
-					WHERE asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<!--- Files: XMP --->
+					<!--- Check if record is here --->
+					<cfquery dataSource="#application.razuna.datasource#" name="xmphere">
+					SELECT it.asset_id_r, i.file_id, it.author, it.rights, it.authorsposition, it.captionwriter, it.webstatement, it.rightsmarked
+					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_xmp it ON i.file_id = it.asset_id_r
+					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 					</cfquery>
-				</cfif>
+					<!--- If template --->
+					<cfif arguments.thestruct.impp_template NEQ "">
+						<cfset c_thepdf_author = gettemplatevalue(arguments.thestruct.impp_template,"pdf_author")>
+						<cfset c_thepdf_rights = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rights")>
+						<cfset c_thepdf_authorsposition = gettemplatevalue(arguments.thestruct.impp_template,"pdf_authorsposition")>
+						<cfset c_thepdf_captionwriter = gettemplatevalue(arguments.thestruct.impp_template,"pdf_captionwriter")>
+						<cfset c_thepdf_webstatement = gettemplatevalue(arguments.thestruct.impp_template,"pdf_webstatement")>
+						<cfset c_thepdf_rightsmarked = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rightsmarked")>
+					</cfif>
+					<!--- record not found, so do an insert --->
+					<cfif xmphere.asset_id_r EQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#files_xmp
+						(author, rights, authorsposition, captionwriter, webstatement, rightsmarked, asset_id_r, host_id)
+						VALUES(
+							<cfif c_thepdf_author NEQ "">
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_author)#">,
+							<cfelse>
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+							</cfif>
+							<cfif c_thepdf_rights NEQ "">
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rights)#">,
+							<cfelse>
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+							</cfif>
+							<cfif c_thepdf_authorsposition NEQ "">
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_authorsposition)#">,
+							<cfelse>
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+							</cfif>
+					  	  	<cfif c_thepdf_captionwriter NEQ "">
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_captionwriter)#">,
+							<cfelse>
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+							</cfif>
+					  	  	<cfif c_thepdf_webstatement NEQ "">
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_webstatement)#">,
+							<cfelse>
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+							</cfif>
+					  	  	<cfif c_thepdf_rightsmarked NEQ "">
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rightsmarked)#">,
+							<cfelse>
+								<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+							</cfif>
+					  	  	<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
+					  	  	<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#"> 	
+					  	)
+						</cfquery>
+					<cfelse>
+						<!--- If append --->
+						<cfif arguments.thestruct.imp_write EQ "add">	
+							<cfif c_thepdf_author NEQ "">
+								<cfset tpdf_author = xmphere.author & " " & evaluate(c_thepdf_author)>
+							<cfelse>
+								<cfset tpdf_author = xmphere.author>
+							</cfif>
+							<cfif c_thepdf_rights NEQ "">
+								<cfset tpdf_rights = xmphere.rights & " " & evaluate(c_thepdf_rights)>
+							<cfelse>
+								<cfset tpdf_rights = xmphere.rights>
+							</cfif>
+							<cfif c_thepdf_authorsposition NEQ "">
+								<cfset tpdf_authorsposition = xmphere.authorsposition & " " & evaluate(c_thepdf_authorsposition)>
+							<cfelse>
+								<cfset tpdf_authorsposition = xmphere.authorsposition>
+							</cfif>
+							<cfif c_thepdf_captionwriter NEQ "">
+								<cfset tpdf_captionwriter = xmphere.captionwriter & " " & evaluate(c_thepdf_captionwriter)>
+							<cfelse>
+								<cfset tpdf_captionwriter = xmphere.captionwriter>
+							</cfif>
+							<cfif c_thepdf_webstatement NEQ "">
+								<cfset tpdf_webstatement = xmphere.webstatement & " " & evaluate(c_thepdf_webstatement)>
+							<cfelse>
+								<cfset tpdf_webstatement = xmphere.webstatement>
+							</cfif>
+							<cfif c_thepdf_rightsmarked NEQ "">
+								<cfset tpdf_rightsmarked = xmphere.rightsmarked & " " & evaluate(c_thepdf_rightsmarked)>
+							<cfelse>
+								<cfset tpdf_rightsmarked = xmphere.rightsmarked>
+							</cfif>
+						<cfelse>
+							<cfif c_thepdf_author NEQ "">
+								<cfset tpdf_author = evaluate(c_thepdf_author)>
+							<cfelse>
+								<cfset tpdf_author = "">
+							</cfif>
+							<cfif c_thepdf_rights NEQ "">
+								<cfset tpdf_rights = evaluate(c_thepdf_rights)>
+							<cfelse>
+								<cfset tpdf_rights = "">
+							</cfif>
+							<cfif c_thepdf_authorsposition NEQ "">
+								<cfset tpdf_authorsposition = evaluate(c_thepdf_authorsposition)>
+							<cfelse>
+								<cfset tpdf_authorsposition = "">
+							</cfif>
+							<cfif c_thepdf_captionwriter NEQ "">
+								<cfset tpdf_captionwriter = evaluate(c_thepdf_captionwriter)>
+							<cfelse>
+								<cfset tpdf_captionwriter = "">
+							</cfif>
+							<cfif c_thepdf_webstatement NEQ "">
+								<cfset tpdf_webstatement = evaluate(c_thepdf_webstatement)>
+							<cfelse>
+								<cfset tpdf_webstatement = "">
+							</cfif>
+							<cfif c_thepdf_rightsmarked NEQ "">
+								<cfset tpdf_rightsmarked = evaluate(c_thepdf_rightsmarked)>
+							<cfelse>
+								<cfset tpdf_rightsmarked = "">
+							</cfif>
+						</cfif>
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#files_xmp
+						SET 
+						author = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_author#">,
+	  				  	rights = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rights#">,
+					  	authorsposition = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_authorsposition#">,
+					  	captionwriter = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_captionwriter#">,
+					  	webstatement = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_webstatement#">,
+					  	rightsmarked = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rightsmarked#">
+						WHERE asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						</cfquery>
+					</cfif>
+					<!--- Show if error --->
+					<cfcatch type="any">
+						<!--- Feedback --->
+						<cfinvoke component="defaults" method="trans" transid="error_occurred" returnvariable="error_occurred" />
+						<cfoutput>
+							#error_occurred#:
+							<br />
+							<span style="font-weight:bold;color:red;">
+								#cfcatch.message#
+								<br />
+								#cfcatch.detail#
+							</span>
+							<br />
+							In other words, the field was most likely not defined in your import file. The rest of the values have still imported successfully, but you might want to add the field to your import file the next time.
+							<br><br>
+						</cfoutput>
+						<!--- <cfset cfcatch.custom_message = "Error in function import.doimportimages">
+						<cfset errobj.logerrors(cfcatch,false)/> --->
+						<cfflush>
+					</cfcatch>
+				</cftry>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->

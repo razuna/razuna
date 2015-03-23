@@ -47,15 +47,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css?_v=#attributes.cachetag#" />
+<link rel="prefetch prerender stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css?_v=#attributes.cachetag#" />
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-migrate-1.2.1.min.js?_v=#attributes.cachetag#"></script>
@@ -78,11 +78,11 @@
 <script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/sets/html/set.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
 <cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
-	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
+	<link rel="prefetch prerender SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
 <cfelse>
-	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+	<link rel="prefetch prerender SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 </cfif>
-<link rel="apple-touch-icon" href="#dynpath#/global/host/dam/images/razuna_icon_114.png" />
+<link rel="prefetch prerender apple-touch-icon" href="#dynpath#/global/host/dam/images/razuna_icon_114.png" />
 <!--- tooltip styling --->
 <style>
 ##demotip {
