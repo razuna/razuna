@@ -1440,6 +1440,13 @@
 			FROM #session.hostdbprefix#labels
 			WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(i)#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- Make sure that records exists --->
+			AND (
+				EXISTS (select 1 from #session.hostdbprefix#audios where aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				OR EXISTS (select 1 from #session.hostdbprefix#images where img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				OR EXISTS (select 1 from #session.hostdbprefix#videos where vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+				OR EXISTS (select 1 from #session.hostdbprefix#files where file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">)
+			)
 			</cfquery>
 			<!--- If not we add it or else we simply update the ct db --->
 			<cfif labhere.recordcount EQ 0>
