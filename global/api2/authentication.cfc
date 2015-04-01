@@ -284,20 +284,16 @@
 			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api">
 				<cfinvokeargument name="assetid" value="#arguments.assetid#" />
 				<cfinvokeargument name="dsn" value="#application.razuna.api.dsn#" />
-				<cfinvokeargument name="storage" value="#application.razuna.api.storage#" />
 				<cfinvokeargument name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" />
 				<cfinvokeargument name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" />
-				<cfinvokeargument name="thedatabase" value="#application.razuna.api.thedatabase#" />
 			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="index_update_api" type="url" />
 				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
 				<cfhttpparam name="dsn" value="#application.razuna.api.dsn#" type="url" />
-				<cfhttpparam name="storage" value="#application.razuna.api.storage#" type="url" />
 				<cfhttpparam name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" type="url" />
 				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />	
-				<cfhttpparam name="thedatabase" value="#application.razuna.api.thedatabase#" type="url" />
 			</cfhttp>
 		</cfif>
 	</cffunction>

@@ -2625,12 +2625,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Get taskserver --->
 <cffunction name="prefs_taskserver" output="false" returntype="struct">
 	<!--- Cache --->
-	<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset var cachetoken = getcachetoken("settings")>
 	<!--- Param --->
 	<cfset var q = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#prefs_taskserver */ opt_id, opt_value
+	SELECT /* #cachetoken#prefs_taskserver */ opt_id, opt_value
 	FROM options
 	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver%">
 	</cfquery>

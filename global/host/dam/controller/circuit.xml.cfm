@@ -10618,8 +10618,10 @@
 
 	<!-- Get indexing page -->
 	<fuseaction name="indexing">
+		<!-- Reset param -->
+		<set name="attributes.reset" value="false" overwrite="false" />
 		<!-- CFC: Get index status -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="statusOfIndex()" returnvariable="qry_status" />
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="statusOfIndex(attributes.reset)" returnvariable="qry_status" />
 		<!-- Show -->
 		<do action="ajax.indexing" />
 	</fuseaction>

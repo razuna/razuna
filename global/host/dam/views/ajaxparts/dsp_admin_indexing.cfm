@@ -25,7 +25,6 @@
 --->
 <cfoutput>
 	<h2>Current indexing status</h2>
-	<p></p>
 	<p>Here is a list of files and their index status. The system is set to automatically index files. You can <a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');"><strong>refresh this page again</strong></a> to get the current index status.</p>
 	<table border="1" cellpadding="0" cellspacing="0" width="400" class="tablepanel">
 		<tr>
@@ -39,8 +38,10 @@
 			</tr>
 		</cfloop>
 	</table>
-	<h3>Rebuild Search Index</h3>
-	<p>If you think that your search index is out of sync you can issue a complete rebuild of your search index. Please note that this can take some time, depending on the size of your library.</p>
-	<p></p>
-	<p><a href="##" onclick="_rebuildIndex();">Rebuild Search Index</a></p>
+	<p>
+		<em>Files are being indexed every couple of minutes. Due to the large amount of data it can take some time until files are being indexed and available for searching. If you feel there is an error with this, please report this to <cfif application.razuna.isp><a href="mailto:support@razuna.com">support@razuna.com</a><cfelse>your Administrator</cfif>.</em>
+	</p>
+	<h3>Re-Index</h3>
+	<p>You can re-index all files by clicking on the link below. However, please note, that this causes that all files will be removed from the search index and searches will not work until all files are indexed again. Please do this only when you are instructed to do so and no one works with the system.</p>
+	<p><a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing&reset=true');">Yes, re-index all files</a></p>
 </cfoutput>

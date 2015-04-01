@@ -76,11 +76,21 @@
 		<cfargument name="startrow" type="numeric">
 		<cfargument name="maxrows" type="numeric">
 		<cfargument name="folderid" type="string">
+		<!--- Param --->
+		<cfset var _taskserver = "" />
+		<!--- Query settings --->
+		<cfinvoke component="settings" method="prefs_taskserver" returnvariable="_taskserver" />
+		<!--- Taskserver URL according to settings --->
+		<cfif _taskserver.taskserver_location EQ "remote">
+			<cfset var _url = _taskserver.taskserver_remote_url />
+		<cfelse>
+			<cfset var _url = _taskserver.taskserver_local_url />
+		</cfif>
 		<!--- Search in task server --->
 		<!--- URL and secret key should come from db --->
-		<cfhttp url="http://taskserver.local:8090/api/search.cfc" method="post" charset="utf-8">
+		<cfhttp url="#_url#/api/search.cfc" method="post" charset="utf-8">
 			<cfhttpparam name="method" value="search" type="formfield" />
-			<cfhttpparam name="secret" value="108" type="formfield" />
+			<cfhttpparam name="secret" value="#_taskserver.taskserver_secret#" type="formfield" />
 			<cfhttpparam name="collection" value="#arguments.hostid#" type="formfield" />
 			<cfhttpparam name="criteria" value="#arguments.criteria#" type="formfield" />
 			<cfhttpparam name="category" value="#arguments.category#" type="formfield" />
@@ -92,9 +102,11 @@
 		<cfset _json = deserializeJSON(cfhttp.filecontent) />
 		<!--- If we don't have an error --->
 		<cfif _json.success>
+			<cfset console(_json)>
 			<!--- Return --->
 			<cfreturn _json.results>
 		<cfelse>
+			<cfset console(_json.error)>
 			<cfdump var="#_json.error#" label="ERROR" />
 		</cfif>
 	</cffunction>
@@ -104,31 +116,21 @@
 	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="dsn" type="string" required="true">
-		<cfargument name="storage" type="string" required="true">
-		<cfargument name="thedatabase" type="string" required="true">
 		<cfargument name="prefix" type="string" required="true">
 		<cfargument name="hostid" type="string" required="true">
-		<cfargument name="hosted" type="string" required="false" default="false">
 		<!--- Call to update asset --->
-		<cfinvoke method="index_update">
-			<cfinvokeargument name="assetid" value="#arguments.assetid#">
-			<cfinvokeargument name="dsn" value="#arguments.dsn#">
-			<cfinvokeargument name="prefix" value="#arguments.prefix#">
-			<cfinvokeargument name="hostid" value="#arguments.hostid#">
-			<cfinvokeargument name="storage" value="#arguments.storage#">
-			<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#">
-			<cfinvokeargument name="hosted" value="#arguments.hosted#">
-			<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai">
-				<cfinvokeargument name="notfile" value="f">
-			</cfif>
-		</cfinvoke>
+		<cfset rebuildIndex(assetid=arguments.assetid, dsn=arguments.dsn, prefix=arguments.prefix, hostid=arguments.hostid ) />
+		<!--- Return --->
 		<cfreturn />
 	</cffunction>
 
-	
-	
 	<!--- For status --->
 	<cffunction name="statusOfIndex" access="public" output="false">
+		<cfargument name="reset" required="true">
+		<!--- If the user wants to reset index --->
+		<cfif arguments.reset>
+			<cfset rebuildIndex(assetid='all', dsn=application.razuna.datasource, prefix=session.hostdbprefix, hostid=session.hostid ) />
+		</cfif>
 		<!--- Get the cachetoken for here --->
 		<cfset var cache_img = getcachetoken("images")>
 		<cfset var cache_vid = getcachetoken("videos")>
@@ -162,9 +164,53 @@
 		<cfreturn qry />
 	</cffunction>
 	
-	<!--- For status of lock file --->
+	<!--- Rebuild Index --->
 	<cffunction name="rebuildIndex" access="public" output="false">
-		
+		<cfargument name="assetid" type="string" required="true">
+		<cfargument name="dsn" type="string" required="true">
+		<cfargument name="prefix" type="string" required="true">
+		<cfargument name="hostid" type="string" required="true">
+		<!--- Set records to non indexed --->
+		<cfquery datasource="#arguments.dsn#">
+		UPDATE #arguments.prefix#images
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid NEQ "all">
+			AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
+		</cfif>
+		</cfquery>
+		<cfquery datasource="#arguments.dsn#">
+		UPDATE #arguments.prefix#videos
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid NEQ "all">
+			AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
+		</cfif>
+		</cfquery>
+		<cfquery datasource="#arguments.dsn#">
+		UPDATE #arguments.prefix#audios
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid NEQ "all">
+			AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
+		</cfif>
+		</cfquery>
+		<cfquery datasource="#arguments.dsn#">
+		UPDATE #arguments.prefix#files
+		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid NEQ "all">
+			AND doc_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
+		</cfif>
+		</cfquery>
+		<!--- Set hostid session (needed in resetcachetoken) --->
+		<cfset session.hostid = arguments.hostid>
+		<!--- Flush Caches --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("search")>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
