@@ -471,6 +471,16 @@
 		  KEY group_id (group_id)
 		) #this.tableoptions#
 		</cfquery>
+
+		<!--- api_basket --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#api_basket (
+		basket_id 	varchar(100) DEFAULT NULL,
+		asset_id 	varchar(100) DEFAULT NULL,
+		date_added 	timestamp NULL DEFAULT NULL,
+		asset_type 	varchar(10) DEFAULT 'org'	
+		) #this.tableoptions#
+		</cfquery>
 	
 
 		<!---  --->
