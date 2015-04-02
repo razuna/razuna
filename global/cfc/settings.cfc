@@ -606,6 +606,8 @@
 			</cfquery>
 		</cfif>
 	</cfloop>
+	<!--- Update options --->
+	<cfset set_options_global(opt_id="conf_storage", opt_value=arguments.thestruct.conf_storage)>
 	<!--- Reset cache --->
 	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
@@ -1366,6 +1368,10 @@
 	UPDATE razuna_config
 	SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 	</cfquery>
+	<!--- Update Options --->
+	<cfset set_options_global(opt_id="conf_db_type", opt_value=qry.conf_database)>
+	<cfset set_options_global(opt_id="conf_storage", opt_value=qry.conf_storage)>
+	<cfset set_options_global(opt_id="conf_db_prefix", opt_value="raz1_")>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>
 	<cfset application.razuna.thedatabase = qry.conf_database>
@@ -2641,6 +2647,31 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfloop>
 	<!--- Return --->
 	<cfreturn s />
+</cffunction>
+
+<!--- Save options --->
+<cffunction name="set_options_global" output="false" returntype="void">
+	<cfargument name="opt_id" type="string">
+	<cfargument name="opt_value" type="string">
+	<!--- First remove entry --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM options
+	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.opt_id)#">
+	</cfquery>
+	<!--- Save to DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO options
+	(opt_id, opt_value, rec_uuid)
+	VALUES(
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.opt_id)#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.opt_value#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">
+	)
+	</cfquery>
+	<!--- Flush --->
+	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<!--- Return --->
+	<cfreturn />
 </cffunction>
 
 <!--- Prepare to pass to indexingDbInfo --->

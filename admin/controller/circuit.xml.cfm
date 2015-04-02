@@ -493,6 +493,10 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
+		<!-- Insert into options -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_type', opt_value=session.firsttime.database)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_prefix', opt_value=attributes.host_db_prefix)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_storage', opt_value='local')" />
 		<!-- Add Razuna Client db connection -->
 		<set name="session.firsttime.database" value="razuna_client" />
 		<set name="session.firsttime.database_type" value="mysql" />
