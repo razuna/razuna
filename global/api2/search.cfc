@@ -45,8 +45,8 @@
 		<cfargument name="cs" type="any" required="false" default="" hint="custom metadata fields">
 		<cfargument name="dbdirect" type="string" required="false" default="false">
 		<cfargument name="available" type="string" required="false" default="1">
-		<cfargument name="offset" type="number" required="false" default="0" hint="New since 1.7.5">
-		<cfargument name="rowmaxpage" type="number" required="false" default="25" hint="New since 1.7.5">
+		<cfargument name="startrow" type="number" required="false" default="0" hint="New since 1.7.5">
+		<cfargument name="maxrows" type="number" required="false" default="25" hint="New since 1.7.5">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var thexml ="">
@@ -190,7 +190,7 @@
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.istruct.dbdirect>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.offset, maxrows=arguments.istruct.rowmaxpage, folderid=arguments.istruct.folderid)>
+			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid)>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneimg.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -602,7 +602,7 @@
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.vstruct.dbdirect>
 			<!--- Search in Lucene --->
-			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.offset, maxrows=arguments.vstruct.rowmaxpage, folderid=arguments.vstruct.folderid)>
+			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid)>
 			<!--- If lucene returns no records --->
 			<cfif qrylucenevid.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -1017,7 +1017,7 @@
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.astruct.dbdirect>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.offset, maxrows=arguments.astruct.rowmaxpage, folderid=arguments.astruct.folderid)>
+			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid)>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneaud.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -1422,7 +1422,7 @@
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.fstruct.dbdirect>
 			<!--- Search in Lucene --->
-			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.offset, maxrows=arguments.fstruct.rowmaxpage, folderid=arguments.fstruct.folderid)>
+			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid)>
 			<!--- If lucene returns no records --->
 			<cfif qrylucenedoc.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->

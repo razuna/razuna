@@ -98,17 +98,34 @@
 			<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="formfield" />
 			<cfhttpparam name="folderid" value="#arguments.folderid#" type="formfield" />
 		</cfhttp>
-		<!--- Grab results and serialize --->
-		<cfset _json = deserializeJSON(cfhttp.filecontent) />
-		<!--- If we don't have an error --->
-		<cfif _json.success>
-			<cfset console(_json)>
-			<!--- Return --->
-			<cfreturn _json.results>
+		<!--- if statuscode is not 200 --->
+		<cfif cfhttp.statuscode CONTAINS "200">
+			<!--- Grab results and serialize --->
+			<cfset _json = deserializeJSON(cfhttp.filecontent) />
+			<!--- If we don't have an error --->
+			<cfif _json.success>
+				<!--- Log --->
+				<!--- <cfset console(_json)> --->
+				<!--- Return --->
+				<cfreturn _json.results>
+			<cfelse>
+				<!--- <cfset console(_json.error)> --->
+				<cfoutput>
+					<h2>An error occured</h2>
+					<p>Please report the below error to your Administrator.</p>
+				</cfoutput>
+				<cfdump var="#_json.error#" label="ERROR" />
+				<cfabort>
+			</cfif>
 		<cfelse>
-			<cfset console(_json.error)>
-			<cfdump var="#_json.error#" label="ERROR" />
+			<cfoutput>
+				<h2>A connection error to the search server occured</h2>
+				<p>Please report the below error to your Administrator.</p>
+			</cfoutput>
+			<cfdump var="#cfhttp#" label="ERROR" />
+			<cfabort>
 		</cfif>
+		
 	</cffunction>
 
 	

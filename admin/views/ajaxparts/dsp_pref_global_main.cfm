@@ -86,9 +86,8 @@
 				<tr>
 					<td align="center" valign="top"></td>
 					<td>
-						Please enter the servers <strong>full address</strong> location, e.g. http://searchserver.domain.com:8080.
-						<br />
-						<input type="text" name="taskserver_local_url" style="width:300px;" value="#qry_taskserver.taskserver_local_url#">
+						This means it runs on the same install as Razuna and lives as its own web application. This is the default installation.
+						<input type="hidden" name="taskserver_local_url" value="#qry_taskserver.taskserver_local_url#">
 					</td>
 				</tr>
 				<tr>
