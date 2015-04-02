@@ -273,6 +273,8 @@
 					<true>
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+						<!-- CFC: Add the datasource for the searchserver -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 					</true>
 				</if>
 			</true>
@@ -327,6 +329,8 @@
 						<set name="session.firsttime.database_type" value="h2" />
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+						<!-- CFC: Add the datasource for the searchserver -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 					</true>
 				</if>
 				<!-- Show -->
@@ -361,6 +365,8 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 		<!-- CFC: Check if there is a DB Connection -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
+		<!-- CFC: Add the datasource for the searchserver -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 		<!-- Show -->
 		<do action="ajax.first_time_database_check" />
 	</fuseaction>
@@ -1430,6 +1436,22 @@
 	<fuseaction name="w_ftp_notifications_task">
 		<!-- CFC: Run task -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task()"/>
+	</fuseaction>
+
+	<!-- Search Server DB Connection -->
+	<fuseaction name="prefs_indexing_db">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options()" returnvariable="qry_options" />
+		<!-- Show -->
+		<do action="ajax.prefs_indexing_db" />
+	</fuseaction>
+
+	<!-- Search Server DB Connection submit -->
+	<fuseaction name="prefs_indexing_db_submit">
+		<!-- Set H@ db path -->
+		<set name="attributes.db_path" value="#expandpath('..')#db" />
+		<!-- CFC: Save values and call remote server -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfo(attributes)" />
 	</fuseaction>
 
 </circuit>

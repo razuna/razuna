@@ -2643,6 +2643,93 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn s />
 </cffunction>
 
+<!--- Prepare to pass to indexingDbInfo --->
+<cffunction name="indexingDbInfoPrepare" output="false">
+	<!--- Put struct together --->
+	<cfset var s = structNew()>
+	<cfset s.db_type = session.firsttime.database>
+	<cfset s.db_name = session.firsttime.db_name>
+	<cfset s.db_server = session.firsttime.db_server>
+	<cfset s.db_port = session.firsttime.db_port>
+	<cfset s.db_schema = session.firsttime.db_schema>
+	<cfset s.db_user = session.firsttime.db_user>
+	<cfset s.db_pass = session.firsttime.db_pass>
+	<!--- Pass to function --->
+	<cfset indexingDbInfo(thestruct=s)>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Submit db info to search server --->
+<cffunction name="indexingDbInfo" output="false">
+	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Param --->
+	<cfset var _taskserver = "" />
+	<cfset var _status = structNew() />
+	<cfset _status.result = true />
+	<cfset _status.error = "" />
+	<!--- Query settings --->
+	<cfset var _taskserver = prefs_taskserver()>
+	<!--- Taskserver URL according to settings --->
+	<cfif _taskserver.taskserver_location EQ "remote">
+		<cfset var _url = _taskserver.taskserver_remote_url />
+	<cfelse>
+		<cfset var _url = _taskserver.taskserver_local_url />
+	</cfif>
+	<!--- if this is for the H2 db --->
+	<cfif arguments.thestruct.db_type EQ "h2">
+		<cfset arguments.thestruct.db_name = "razuna">
+		<cfset arguments.thestruct.db_server = "">
+		<cfset arguments.thestruct.db_port = "0">
+		<cfset arguments.thestruct.db_schema = "razuna">
+		<cfset arguments.thestruct.db_user = "razuna">
+		<cfset arguments.thestruct.db_pass = "razunabd">
+	<cfelse>
+		<cfset arguments.thestruct.db_path = "">
+	</cfif>
+	<!--- Call API to insert db connection --->
+	<cfhttp url="#_url#/api/db.cfc" method="post" charset="utf-8">
+		<cfhttpparam name="method" value="setup" type="formfield" />
+		<cfhttpparam name="db_type" value="#arguments.thestruct.db_type#" type="formfield" />
+		<cfhttpparam name="db_name" value="#arguments.thestruct.db_name#" type="formfield" />
+		<cfhttpparam name="db_server" value="#arguments.thestruct.db_server#" type="formfield" />
+		<cfhttpparam name="db_port" value="#arguments.thestruct.db_port#" type="formfield" />
+		<cfhttpparam name="db_schema" value="#arguments.thestruct.db_schema#" type="formfield" />
+		<cfhttpparam name="db_user" value="#arguments.thestruct.db_user#" type="formfield" />
+		<cfhttpparam name="db_pass" value="#arguments.thestruct.db_pass#" type="formfield" />
+		<cfhttpparam name="db_path" value="#arguments.thestruct.db_path#" type="formfield" />
+	</cfhttp>
+	<!--- Deal with the return --->
+	<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
+		<cfset consoleoutput(true)>
+		<cfset console("#now()# ---------------------- Error adding a search server connection")>
+		<cfset console(cfhttp)>
+	<cfelse>
+		<cfloop collection="#arguments.thestruct#" item="f">
+			<cfif f CONTAINS "db_">
+				<!--- First remove all values in DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				DELETE FROM options
+				WHERE opt_id = <cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+				<!--- Insert --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES (
+					<cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#arguments.thestruct[f]#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfif>
+		</cfloop>
+		<!--- Flush --->
+		<cfset resetcachetoken("settings","true")>
+	</cfif>
+	<cfreturn />
+</cffunction>
+
 <!--- Get options --->
 <cffunction name="get_options_one_host" output="false" returntype="string">
 	<cfargument name="id" type="string" required="true">

@@ -117,7 +117,18 @@
 				<tr>
 					<td colspan="2"><input type="text" name="taskserver_secret" style="width:300px;" value="#qry_taskserver.taskserver_secret#"></td>
 				</tr>
-			
+				<tr>
+					<td colspan="2">&nbsp;</th>
+				</tr>
+				<tr>
+					<th class="textbold" colspan="2">Search Server Database Connection</th>
+				</tr>
+				<tr>
+					<td colspan="2">The search server is its own application. However, it shares the same database connection as Razuna. If you are upgrading Razuna or feel that the connection is not properly established you can configure the database connection with the link below.</th>
+				</tr>
+				<tr>
+					<td colspan="2"><a href="##" onclick="showwindow('#myself#c.prefs_indexing_db','Database Connection',550,1);">Configure Search Server Database Connection</a></td>
+				</tr>
 			</table>
 			<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
 				<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
