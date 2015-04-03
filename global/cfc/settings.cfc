@@ -1368,10 +1368,6 @@
 	UPDATE razuna_config
 	SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 	</cfquery>
-	<!--- Update Options --->
-	<cfset set_options_global(opt_id="conf_db_type", opt_value=qry.conf_database)>
-	<cfset set_options_global(opt_id="conf_storage", opt_value=qry.conf_storage)>
-	<cfset set_options_global(opt_id="conf_db_prefix", opt_value="raz1_")>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>
 	<cfset application.razuna.thedatabase = qry.conf_database>
@@ -1390,6 +1386,10 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<!--- Update Options (after above as we use the application scope) --->
+	<cfset set_options_global(opt_id="conf_db_type", opt_value=qry.conf_database)>
+	<cfset set_options_global(opt_id="conf_storage", opt_value=qry.conf_storage)>
+	<cfset set_options_global(opt_id="conf_db_prefix", opt_value="raz1_")>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
