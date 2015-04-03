@@ -248,6 +248,18 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
+			<!--- API Basket --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE api_basket (
+					basket_id #thevarchar#(100) DEFAULT NULL,
+					asset_id #thevarchar#(100) DEFAULT NULL,
+					date_added #thetimestamp#,
+					asset_type #thevarchar#(10) DEFAULT 'org'
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If less then 43 (1.7) --->
