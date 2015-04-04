@@ -100,23 +100,34 @@
 		</cfhttp>
 		<!--- if statuscode is not 200 --->
 		<cfif cfhttp.statuscode CONTAINS "200">
-			<!--- Grab results and serialize --->
-			<cfset _json = deserializeJSON(cfhttp.filecontent) />
-			<!--- If we don't have an error --->
-			<cfif _json.success>
-				<!--- Log --->
-				<!--- <cfset console(_json)> --->
-				<!--- Return --->
-				<cfreturn _json.results>
-			<cfelse>
-				<!--- <cfset console(_json.error)> --->
-				<cfoutput>
-					<h2>An error occured</h2>
-					<p>Please report the below error to your Administrator.</p>
-				</cfoutput>
-				<cfdump var="#_json.error#" label="ERROR" />
-				<cfabort>
-			</cfif>
+			<cftry>
+				<!--- Grab results and serialize --->
+				<cfset _json = deserializeJSON(cfhttp.filecontent) />
+				<!--- If we don't have an error --->
+				<cfif _json.success>
+					<!--- Log --->
+					<!--- <cfset console(_json)> --->
+					<!--- Return --->
+					<cfreturn _json.results>
+				<cfelse>
+					<!--- <cfset console(_json.error)> --->
+					<cfoutput>
+						<h2>An error occured</h2>
+						<p>Please report the below error to your Administrator.</p>
+					</cfoutput>
+					<cfdump var="#_json.error#" label="ERROR" />
+					<cfabort>
+				</cfif>
+				<cfcatch type="any">
+					<cfoutput>
+						<h2>An error occured</h2>
+						<p>Please report the below error to your Administrator.</p>
+					</cfoutput>
+					<cfdump var="#cfcatch#" label="ERROR">
+					<cfabort>
+				</cfcatch>
+			</cftry>
+			
 		<cfelse>
 			<cfoutput>
 				<h2>A connection error to the search server occured</h2>
