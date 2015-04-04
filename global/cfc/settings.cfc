@@ -2748,14 +2748,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<!--- First remove all values in DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM options
-				WHERE opt_id = <cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">
+				WHERE lower(opt_id) = <cfqueryparam value="ss_#lcase(f)#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- Insert --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO options
 				(opt_id, opt_value, rec_uuid)
 				VALUES (
-					<cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="ss_#lcase(f)#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#arguments.thestruct[f]#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
@@ -2786,7 +2786,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Get value --->
 		<cfset var thevalue = get_options_one(theid)>
 		<!--- Add to query --->
-		<cfset queryAddRow(query=q, data=[{ opt_id='#theid#', opt_value='#thevalue#' }])>
+		<cfset queryAddRow(query=q, data=[{ opt_id='#lcase(theid)#', opt_value='#thevalue#' }])>
 	</cfif>
 	<!--- Return --->
 	<cfreturn q.opt_value />
