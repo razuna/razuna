@@ -30,13 +30,13 @@
 		Please select your database from the below selection:
 	</p>
 	<p>
-		<input type="radio" id="db_type" name="db_type" value="h2" onclick="db_info(false)" checked="checked"> Razuna uses the internal database
+		<input type="radio" id="db_type" name="db_type" value="h2" onclick="db_info(false)"<cfif qry_options.ss_db_type EQ "" OR qry_options.ss_db_type EQ "h2"> checked="checked"</cfif>> Razuna uses the internal database
 	</p>
 	<p>
-		<input type="radio" id="db_type" name="db_type" value="mysql" onclick="db_info(true)"> Razuna uses MySQL
+		<input type="radio" id="db_type" name="db_type" value="mysql" onclick="db_info(true)"<cfif qry_options.ss_db_type EQ "mysql"> checked="checked"</cfif>> Razuna uses MySQL
 	</p>
 	<p>
-		<input type="radio" id="db_type" name="db_type" value="mssql" onclick="db_info(true)"> Razuna uses MS SQL
+		<input type="radio" id="db_type" name="db_type" value="mssql" onclick="db_info(true)"<cfif qry_options.ss_db_type EQ "mssql"> checked="checked"</cfif>> Razuna uses MS SQL
 	</p>
 	<div id="ss_db" style="display:none;">
 		<h3>Enter the database credentials:</h3>

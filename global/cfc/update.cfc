@@ -230,6 +230,15 @@
 				INSERT INTO options
 				(opt_id, opt_value, rec_uuid)
 				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_remote_url">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="http://localhost:8090">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_secret">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
@@ -243,7 +252,7 @@
 				CREATE TABLE lucene (
 					id #thevarchar#(500) DEFAULT NULL,
 					type #thevarchar#(10) DEFAULT NULL,
-					host_id #theint#() DEFAULT NULL
+					host_id #theint# DEFAULT NULL
 				) #tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>

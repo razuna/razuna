@@ -2496,6 +2496,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_main_static = "">
 	<cfset s.wl_thecss = "">
 	<cfset s.wl_show_updates = false>
+	<cfset s.ss_db_name = "">
+	<cfset s.ss_db_server = "">
+	<cfset s.ss_db_port = "">
+	<cfset s.ss_db_schema = "">
+	<cfset s.ss_db_user = "">
+	<cfset s.ss_db_pass = "">
+	<cfset s.ss_db_type = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_options */ opt_id, opt_value
