@@ -48,6 +48,11 @@
 		<cfparam default="0" name="session.customaccess">
 		<cfparam default="0" name="session.search.search_file_ids">
 		
+		<!--- If there is a change then reset offset --->
+		<cfif structKeyExists(arguments.thestruct, "rowmaxpagechange")>
+			<cfset session.offset = 0>
+		</cfif>
+
 		<!--- Only applicable for files --->
 		<cfparam default="" name="arguments.thestruct.doctype">
 		<cfparam default="False" name="arguments.thestruct.avoidpagination">
@@ -223,7 +228,7 @@
 		</cfif>
 
 		<!--- Log Result --->
-		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.searchcount,searchfrom='img')>
+		<cfset log_search(theuserid=session.theuserid,searchfor=arguments.thestruct.searchtext,foundtotal=qry.searchcount,searchfrom='img')>
 		
 		<!--- Return --->
 		<cfreturn qry />
@@ -613,6 +618,7 @@
 						AND permfolder IS NOT NULL
 					</cfif>
 					AND kind IS NOT NULL
+					<!---
 					<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 						AND RowNum >
 							CASE WHEN 
@@ -639,7 +645,8 @@
 								THEN #arguments.thestruct.mysqloffset+session.rowmaxpage#
 								ELSE #session.rowmaxpage#
 								END
-					</cfif>		 
+					</cfif>
+					--->		 
 				<!--- MySql OR H2 --->
 				<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 					) as t 
@@ -649,7 +656,6 @@
 					</cfif>
 					AND kind IS NOT NULL
 					ORDER BY #arguments.thestruct.sortby#
-					LIMIT #arguments.thestruct.mysqloffset#,#session.rowmaxpage#
 				</cfif>
 			</cfquery>
 		<!--- Return --->
@@ -980,6 +986,7 @@
 					AND permfolder IS NOT NULL
 				</cfif>
 				AND kind IS NOT NULL
+				<!---
 				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 					AND RowNum >
 						CASE WHEN 
@@ -1006,7 +1013,8 @@
 							THEN #arguments.thestruct.mysqloffset+session.rowmaxpage#
 							ELSE #session.rowmaxpage#
 							END
-				</cfif>		 
+				</cfif>		
+				---> 
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t 
@@ -1016,7 +1024,6 @@
 				</cfif>
 				AND kind IS NOT NULL
 				ORDER BY #arguments.thestruct.sortby#
-				LIMIT #arguments.thestruct.mysqloffset#,#session.rowmaxpage#
 			</cfif>
 
 		</cfquery>
@@ -1311,13 +1318,15 @@
 
 			<cfif application.razuna.thedatabase EQ "mssql">
 				) sorted_inline_view
-				) select * 
+				) 
+				select * 
 				FROM myresult
 				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
 				AND kind IS NOT NULL
+				<!---
 				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 					AND RowNum >
 						CASE WHEN 
@@ -1344,7 +1353,8 @@
 							THEN #arguments.thestruct.mysqloffset+session.rowmaxpage#
 							ELSE #session.rowmaxpage#
 							END
-				</cfif>		 
+				</cfif>
+				--->
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t 
@@ -1354,7 +1364,6 @@
 				</cfif>
 				AND kind IS NOT NULL
 				ORDER BY #arguments.thestruct.sortby#
-				LIMIT #arguments.thestruct.mysqloffset#,#session.rowmaxpage#
 			</cfif>
 
 		</cfquery>
@@ -1679,13 +1688,15 @@
 
 			<cfif application.razuna.thedatabase EQ "mssql">
 				) sorted_inline_view
-				) select * 
+				) 
+				select * 
 				FROM myresult
 				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
 				AND kind IS NOT NULL
+				<!---
 				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 					AND RowNum >
 						CASE WHEN 
@@ -1712,7 +1723,8 @@
 							THEN #arguments.thestruct.mysqloffset+session.rowmaxpage#
 							ELSE #session.rowmaxpage#
 							END
-				</cfif>		 
+				</cfif>
+				--->
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t 
@@ -1722,7 +1734,6 @@
 				</cfif>
 				AND kind IS NOT NULL
 				ORDER BY #arguments.thestruct.sortby#
-				LIMIT #arguments.thestruct.mysqloffset#,#session.rowmaxpage#
 			</cfif>
 
 		</cfquery>

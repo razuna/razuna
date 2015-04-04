@@ -171,7 +171,7 @@
 		// Get selected option
 		var thesortby = $('##' + theselect + ' option:selected').val();
 		<cfif !structKeyExists(attributes,'search_upc')>
-			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
 		<cfelse>
@@ -192,7 +192,7 @@
 			// Get selected option
 			var themax = $('##' + theselect + ' option:selected').val();
 			<cfif !structKeyExists(attributes,'search_upc')>
-				$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+				$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, rowmaxpagechange: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 					$("##bodyoverlay").remove();
 				});
 			<cfelse>	
@@ -209,7 +209,7 @@
 		// Get selected option
 		var themax = $('##' + theselect + ' option:selected').val();
 		<cfif !structKeyExists(attributes,'search_upc')>
-			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
 		<cfelse>
@@ -228,7 +228,7 @@
 			{ offset: theoffset, 
 				fcall: true, 
 				share: "#attributes.share#",
-			<cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }
+			<cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }
 			, function(){
 				$("##bodyoverlay").remove();
 			});
