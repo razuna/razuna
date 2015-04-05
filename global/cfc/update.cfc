@@ -269,6 +269,28 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
+			<!--- Remove search collections on this server --->
+			<cfset var search_collections = collectionList()>
+			<!--- Loop over list and remove  --->
+			<cftry>
+				<cfloop query="search_collections">
+					<cfset collectionDelete(collection="#name#")>
+				</cfloop>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Remove all scheduled tasks for indexing --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="qry_sched">
+				SELECT sched_id
+				FROM raz1_schedules
+				WHERE ( lower(sched_method) = 'indexing' OR lower(sched_method) = 'rebuild' )
+				</cfquery>
+				<!--- Loop over indexing tasks and remove --->
+				<cfloop query="qry_sched">
+					<cfschedule action="delete" task="RazScheduledUploadEvent[#sched_id#]">
+				</cfloop>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If less then 43 (1.7) --->
