@@ -274,7 +274,7 @@
 			<!--- Loop over list and remove  --->
 			<cftry>
 				<cfloop query="search_collections">
-					<cfset collectionDelete(collection="#name#")>
+					<cfset collectionDelete(name)>
 				</cfloop>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
@@ -287,7 +287,13 @@
 				</cfquery>
 				<!--- Loop over indexing tasks and remove --->
 				<cfloop query="qry_sched">
+					<!--- Remove from tasks --->
 					<cfschedule action="delete" task="RazScheduledUploadEvent[#sched_id#]">
+					<!--- Remove in DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM raz1_schedules
+					WHERE sched_id = '#sched_id#'
+					</cfquery>
 				</cfloop>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
