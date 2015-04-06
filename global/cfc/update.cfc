@@ -291,6 +291,26 @@
 				</cfloop>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
+			<!--- Reset all files to be re-indexed --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_images
+				SET is_indexed = '0'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_videos
+				SET is_indexed = '0'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_audios
+				SET is_indexed = '0'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_files
+				SET is_indexed = '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 		</cfif>
 
 		<!--- If less then 43 (1.7) --->
