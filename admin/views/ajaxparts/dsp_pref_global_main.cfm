@@ -66,7 +66,7 @@
 					<td colspan="2">
 						<h2>Indexing and Search</h2>
 						<p>Razuna features a dedicates Indexing and Search application. This application comes bundled with Razuna and lives as a web application on the same server as Razuna. However, you might wish to install this application on another server (this can improve performance as it does not use the same server resources as the main Razuna server). If you choose to do so, please edit the settings below.</p>
-						<p style="color:green;">In order to switch to a dedicated Index and Search Server please <a href="http://wiki.razuna.com/display/ecp/Index+and+Search+Server" target="_blank">read our instructions FIRST!</a></p>
+						<p style="color:green;">In order to switch to a dedicated Index and Search Server please <a href="http://wiki.razuna.com/display/ecp/Installing+the+Search+Server" target="_blank">read our instructions FIRST!</a></p>
 					</td>
 				</tr>
 				<tr>
