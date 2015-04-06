@@ -273,6 +273,8 @@
 					<true>
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+						<!-- CFC: Add the datasource for the searchserver -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 					</true>
 				</if>
 			</true>
@@ -327,6 +329,8 @@
 						<set name="session.firsttime.database_type" value="h2" />
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+						<!-- CFC: Add the datasource for the searchserver -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 					</true>
 				</if>
 				<!-- Show -->
@@ -361,6 +365,8 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 		<!-- CFC: Check if there is a DB Connection -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
+		<!-- CFC: Add the datasource for the searchserver -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 		<!-- Show -->
 		<do action="ajax.first_time_database_check" />
 	</fuseaction>
@@ -487,6 +493,10 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
+		<!-- Insert into options -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_type', opt_value=session.firsttime.database)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_prefix', opt_value=attributes.host_db_prefix)" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_storage', opt_value='local')" />
 		<!-- Add Razuna Client db connection -->
 		<set name="session.firsttime.database" value="razuna_client" />
 		<set name="session.firsttime.database_type" value="mysql" />
@@ -731,6 +741,8 @@
 
 	<!-- Load preferences -->
 	<fuseaction name="prefs_global_main">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_taskserver()" returnvariable="qry_taskserver" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_main" />
 	</fuseaction>
@@ -1424,17 +1436,26 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
 	</fuseaction>
 
-	<!-- Run Lucene rebuild index task -->
-	<fuseaction name="w_lucene_update_index">
-		<set name="attributes.host_id" value="#url.host_id#" />
-		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_firsttime(attributes.host_id)"/>
-	</fuseaction>
-
 	<!-- Schedule FTP task -->
 	<fuseaction name="w_ftp_notifications_task">
 		<!-- CFC: Run task -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task()"/>
+	</fuseaction>
+
+	<!-- Search Server DB Connection -->
+	<fuseaction name="prefs_indexing_db">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options()" returnvariable="qry_options" />
+		<!-- Show -->
+		<do action="ajax.prefs_indexing_db" />
+	</fuseaction>
+
+	<!-- Search Server DB Connection submit -->
+	<fuseaction name="prefs_indexing_db_submit">
+		<!-- Set H@ db path -->
+		<set name="attributes.db_path" value="#expandpath('..')#db" />
+		<!-- CFC: Save values and call remote server -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfo(attributes)" />
 	</fuseaction>
 
 </circuit>

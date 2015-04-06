@@ -425,9 +425,21 @@
 
 		<!--- folder_subscribe_groups --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		  CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups (
-		  folder_id varchar(100) DEFAULT NULL,
-		  group_id varchar(100) DEFAULT NULL
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups 
+		(
+			folder_id 		varchar(100) DEFAULT NULL,
+			group_id 		varchar(100) DEFAULT NULL
+		) 
+		</cfquery>
+
+		<!--- Lucene --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#lucene 
+		(
+			id 				varchar(500) DEFAULT NULL,
+			type 			varchar(10) DEFAULT NULL,
+			host_id 		bigint DEFAULT NULL,
+			PRIMARY KEY (id)
 		) 
 		</cfquery>
 
@@ -585,6 +597,22 @@
 			VALUES('customfield_seq', 0)
 			</cfquery>
 			 --->
+			 <!--- Options --->
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_location', 'local', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_local_url', '/searchserver', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_secret', '#createuuid("")#', '#createuuid()#')
+			</cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO users

@@ -472,7 +472,7 @@
 		) #this.tableoptions#
 		</cfquery>
 
-		<!--- api_basket --->
+<!--- api_basket --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#api_basket (
 		basket_id 	varchar(100) DEFAULT NULL,
@@ -480,6 +480,17 @@
 		date_added 	timestamp NULL DEFAULT NULL,
 		asset_type 	varchar(10) DEFAULT 'org'	
 		) #this.tableoptions#
+		</cfquery>
+
+<!--- Lucene --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#lucene 
+		(
+			id 				varchar(500) DEFAULT NULL,
+			type 			varchar(10) DEFAULT NULL,
+			host_id 		int DEFAULT NULL,
+			PRIMARY KEY (id)
+		) 
 		</cfquery>
 	
 
@@ -631,6 +642,22 @@
 			VALUES('customfield_seq', 0)
 			</cfquery>
 			 --->
+			 <!--- Options --->
+			 <cfquery datasource="#arguments.thestruct.dsn#">
+			 INSERT INTO #arguments.thestruct.theschema#.options
+			 (opt_id, opt_value, rec_uuid)
+			 VALUES ('taskserver_location', 'local', '#createuuid()#')
+			 </cfquery>
+			 <cfquery datasource="#arguments.thestruct.dsn#">
+			 INSERT INTO #arguments.thestruct.theschema#.options
+			 (opt_id, opt_value, rec_uuid)
+			 VALUES ('taskserver_local_url', '/searchserver', '#createuuid()#')
+			 </cfquery>
+			 <cfquery datasource="#arguments.thestruct.dsn#">
+			 INSERT INTO #arguments.thestruct.theschema#.options
+			 (opt_id, opt_value, rec_uuid)
+			 VALUES ('taskserver_secret', '#createuuid("")#', '#createuuid()#')
+			 </cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO #arguments.thestruct.theschema#.users

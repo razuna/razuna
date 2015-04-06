@@ -342,6 +342,7 @@
 	<!--- Set datasource in bd_config --->
 	<cffunction name="setdatasource" access="public" output="false">
 		<!--- Param --->
+		<cfset var status = true>
 		<cfparam name="theconnectstring" default="">
 		<cfparam name="hoststring" default="">
 		<cfparam name="verificationQuery" default="">
@@ -379,9 +380,12 @@
 				<cfinvokeargument name="hoststring" value="#hoststring#">
 				<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
 			</cfinvoke>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<!--- Param --->
+				<cfset var status = false>
+			</cfcatch>
 		</cftry>
-		<cfreturn />
+		<cfreturn status />
 	</cffunction>
 
 <!--- Send Feedback ---------------------------------------------------------------------->

@@ -261,12 +261,12 @@
 	</cffunction>
 
 	<!--- Update Search --->
-	<cffunction name="updateSearch" output="false" returntype="void">
+	<cffunction name="updateSearchIndex" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
 		<cfargument name="api_key" required="true">
 		<!--- Thread --->
 		<cfthread action="run" intstruct="#arguments#">
-			<cfinvoke method="updateSearch_Thread">
+			<cfinvoke method="updateSearchIndexThread">
 				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
 				<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
 			</cfinvoke>
@@ -276,7 +276,7 @@
 	</cffunction>
 
 	<!--- Update Search --->
-	<cffunction name="updateSearch_Thread" output="false" returntype="void">
+	<cffunction name="updateSearchIndexThread" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
 		<cfargument name="api_key" required="true">
 		<!--- Call Lucene --->
@@ -284,20 +284,16 @@
 			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api">
 				<cfinvokeargument name="assetid" value="#arguments.assetid#" />
 				<cfinvokeargument name="dsn" value="#application.razuna.api.dsn#" />
-				<cfinvokeargument name="storage" value="#application.razuna.api.storage#" />
 				<cfinvokeargument name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" />
 				<cfinvokeargument name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" />
-				<cfinvokeargument name="thedatabase" value="#application.razuna.api.thedatabase#" />
 			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="index_update_api" type="url" />
 				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
 				<cfhttpparam name="dsn" value="#application.razuna.api.dsn#" type="url" />
-				<cfhttpparam name="storage" value="#application.razuna.api.storage#" type="url" />
 				<cfhttpparam name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" type="url" />
 				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />	
-				<cfhttpparam name="thedatabase" value="#application.razuna.api.thedatabase#" type="url" />
 			</cfhttp>
 		</cfif>
 	</cffunction>
@@ -307,12 +303,18 @@
 		<cfargument name="criteria" required="true">
 		<cfargument name="category" required="true">
 		<cfargument name="hostid" required="true">
+		<cfargument name="startrow" required="true" type="numeric">
+		<cfargument name="maxrows" required="true" type="numeric">
+		<cfargument name="folderid" required="true" type="string">
 		<!--- Call Lucene --->
 		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
 			<cfinvoke component="#application.razuna.api.lucene#" method="search" returnvariable="qrylucene"> 
 				<cfinvokeargument name="criteria" value="#arguments.criteria#" />
 				<cfinvokeargument name="category" value="#arguments.category#" />
 				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+				<cfinvokeargument name="startrow" value="#arguments.startrow#" />
+				<cfinvokeargument name="maxrows" value="#arguments.maxrows#" />
+				<cfinvokeargument name="folderid" value="#arguments.folderid#" />
 			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
@@ -320,6 +322,9 @@
 				<cfhttpparam name="criteria" value="#arguments.criteria#" type="url" />
 				<cfhttpparam name="category" value="#arguments.category#" type="url" />
 				<cfhttpparam name="hostid" value="#arguments.hostid#" type="url" />
+				<cfhttpparam name="startrow" value="#arguments.startrow#" type="url" />
+				<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="url" />
+				<cfhttpparam name="folderid" value="#arguments.folderid#" type="url" />
 			</cfhttp>
 			<!--- Set the return --->
 			<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="qrylucene" />
@@ -327,6 +332,77 @@
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>
+
+	<!--- Combine searches for API --->
+	<cffunction name="search_combine_api" access="Public" output="false">
+		<cfargument name="qdoc" required="true" type="query">
+		<cfargument name="qimg" required="true" type="query">
+		<cfargument name="qvid" required="true" type="query">
+		<cfargument name="qaud" required="true" type="query">
+		<!--- Param --->
+		<cfset var qry = structnew()>
+		<!--- Set sortby variable --->
+		<cfset var sortby = session.sortby>
+		<!--- Set the order by --->
+		<cfif session.sortby EQ "name">
+			<cfset var sortby = "filename_forsort">
+		<cfelseif session.sortby EQ "sizedesc">
+			<cfset var sortby = "size DESC">
+		<cfelseif session.sortby EQ "sizeasc">
+			<cfset var sortby = "size ASC">
+		<cfelseif session.sortby EQ "dateadd">
+			<cfset var sortby = "date_create DESC">
+		<cfelseif session.sortby EQ "datechanged">
+			<cfset var sortby = "date_change DESC">
+		<cfelse>
+			<cfset var sortby = "filename_forsort">
+		</cfif>
+		<!--- Union the 4 query results into one --->
+		<cfquery name="qry.qall" dbtype="query">
+		SELECT *
+		FROM arguments.qdoc
+		WHERE id IS NOT NULL
+		UNION ALL
+		SELECT *
+		FROM arguments.qimg
+		WHERE id IS NOT NULL
+		UNION ALL
+		SELECT *
+		FROM arguments.qvid
+		WHERE id IS NOT NULL
+		UNION ALL
+		SELECT *
+		FROM arguments.qaud
+		WHERE id IS NOT NULL
+		ORDER BY #sortby#
+		</cfquery>
+		<!--- Set each query result into struct --->
+		<cfset qry.qdoc = arguments.qdoc>
+		<cfset qry.qimg = arguments.qimg>
+		<cfset qry.qvid = arguments.qvid>
+		<cfset qry.qaud = arguments.qaud>
+		<!--- If recordcount is empty then 0 the cnt --->
+		<cfset var qdocc = arguments.qdoc.cnt>
+		<cfset var qimgc = arguments.qimg.cnt>
+		<cfset var qvidc = arguments.qvid.cnt>
+		<cfset var qaudc = arguments.qaud.cnt>
+		<cfif !isnumeric(arguments.qdoc.cnt)>
+			<cfset var qdocc = 0>
+		</cfif>
+		<cfif !isnumeric(arguments.qimg.cnt)>
+			<cfset var qimgc = 0>
+		</cfif>
+		<cfif !isnumeric(arguments.qvid.cnt)>
+			<cfset var qvidc = 0>
+		</cfif>
+		<cfif !isnumeric(arguments.qaud.cnt)>
+			<cfset var qaudc = 0>
+		</cfif>
+		<!--- Calculate the total found files together --->
+		<cfset qry.thetotal = qdocc + qimgc + qvidc + qaudc>
+		<!--- Return --->
+		<cfreturn qry>
+	</cffunction>  
 
 	<!--- Check for desktop user --->
 	<cffunction name="checkDesktop" access="public" output="no">
