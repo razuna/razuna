@@ -10509,18 +10509,6 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" />
 	</fuseaction>
 
-	<!-- Lucene index for hosted -->
-	<fuseaction name="req_index_update_hosted">
-		<!-- Params -->
-		<set name="attributes.thepath" value="#thispath#" />
-		<!-- Action: Get asset path -->
-		<do action="assetpath" />
-		<!-- Action: Storage -->
-		<do action="storage" />
-		<!-- CFC: update -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_hosted(thestruct=attributes)" />
-	</fuseaction>
-
 	<!-- Metadata export template -->
 	<fuseaction name="admin_export_template">
 		<!-- Param -->

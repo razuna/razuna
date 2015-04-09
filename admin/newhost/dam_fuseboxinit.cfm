@@ -58,8 +58,6 @@
 	<cfset session.thehttp = "http://">
 </cfif>
 
-<cfif attributes.fa NEQ "c.req_index_update_hosted">
-
 <cfif application.razuna.isp>
 <!--- Parse the subdomain name --->
 <cfset thename = cgi.http_host>
@@ -116,11 +114,6 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 		</script>
 		<cfabort> 
 	</cfif>
-</cfif>
-
-<cfelse>
-	<cfset session.hostid = 0>
-	<cfset session.hostdbprefix = "raz1_">
 </cfif>
 
 ')#</cfoutput>
