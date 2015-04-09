@@ -1,1 +1,0 @@
-<h3>Hello! Welcome to BlueDragon from a simple custom CFML tag.</h3>
