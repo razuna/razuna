@@ -269,10 +269,11 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
-			<!--- Remove search collections on this server --->
-			<cfset var search_collections = collectionList()>
 			<!--- Loop over list and remove  --->
 			<cftry>
+				<!--- Remove search collections on this server --->
+				<cfset var search_collections = collectionList()>
+				<!--- Loop over collections found --->
 				<cfloop query="search_collections">
 					<cfset collectionDelete(name)>
 				</cfloop>
