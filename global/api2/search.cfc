@@ -577,7 +577,6 @@
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 			ORDER BY #session.sortby#
 		</cfquery>
-		<cfdump var="#qry_img#"><cfabort>
 		<!--- Add the amount of assets to the query --->
 		<cfif qry_img.recordcount NEQ 0>
 			<cfset QuerySetcell(qry_img, "cnt", qryluceneimg.searchcount)>
