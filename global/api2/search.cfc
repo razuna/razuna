@@ -271,7 +271,7 @@
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
 			lower(i.img_filename) filename_forsort,
-			'0' as cnt
+			'#qryluceneimg.searchcount#' as cnt
 			<!--- for UI --->
 			<cfif arguments.istruct.ui>
 				,
@@ -454,7 +454,7 @@
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
 			lower(i.img_filename) filename_forsort,
-			'0' as cnt
+			'#qryluceneimg.searchcount#' as cnt
 			<!--- for UI --->
 			<cfif arguments.istruct.ui>
 				,
@@ -577,17 +577,6 @@
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 			ORDER BY #session.sortby#
 		</cfquery>
-		<!--- Add the amount of assets to the query --->
-		<cfif qry_img.recordcount NEQ 0>
-			<cfset QuerySetcell(qry_img, "cnt", qryluceneimg.searchcount)>
-		</cfif>
-		<!--- <cfset QueryAddcolumn(qry_img, "cnt", "integer", amount)> --->
-		<!--- If no records in query returned then a null row is inserted by the QueryAddColumn above so filter it out --->
-		<cfquery name="qry_img" dbtype="query">
-		SELECT * 
-		FROM qry_img 
-		WHERE id IS NOT NULL
-		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_img />
 	</cffunction>
@@ -686,7 +675,7 @@
 		'' AS unit,
 		v.hashtag AS md5hash,
 		lower(v.vid_filename) filename_forsort,
-		'0' as cnt
+		'#qrylucenevid.searchcount#' as cnt
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
@@ -872,7 +861,7 @@
 		'' AS unit,
 		v.hashtag AS md5hash,
 		lower(v.vid_filename) filename_forsort,
-		'0' as cnt
+		'#qrylucenevid.searchcount#' as cnt
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
@@ -994,15 +983,6 @@
 			<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 			ORDER BY #session.sortby# 
 		</cfquery>
-		<!--- Add the amount of assets to the query --->
-		<cfif qry_vid.recordcount NEQ 0>
-			<cfset QuerySetcell(qry_vid, "cnt", qrylucenevid.searchcount)>
-		</cfif>
-		<cfquery name="qry_vid" dbtype="query">
-		SELECT * 
-		FROM qry_vid 
-		WHERE id IS NOT NULL
-		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_vid />
 	</cffunction>
@@ -1096,7 +1076,7 @@
 		'' AS unit,
 		a.hashtag AS md5hash,
 		lower(a.aud_name) filename_forsort,
-		'0' as cnt
+		'#qryluceneaud.searchcount#' as cnt
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
@@ -1277,7 +1257,7 @@
 		'' AS unit,
 		a.hashtag AS md5hash,
 		lower(a.aud_name) filename_forsort,
-		'0' as cnt
+		'#qryluceneaud.searchcount#' as cnt
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
@@ -1399,15 +1379,6 @@
 		GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 		ORDER BY #session.sortby#
 		</cfquery>
-		<!--- Add the amount of assets to the query --->
-		<cfif qry_aud.recordcount NEQ 0>
-			<cfset QuerySetcell(qry_aud, "cnt", qryluceneaud.searchcount)>
-		</cfif>
-		<cfquery name="qry_aud" dbtype="query">
-			SELECT * 
-			FROM qry_aud 
-			WHERE id IS NOT NULL
-		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_aud />
 	</cffunction>
@@ -1508,7 +1479,7 @@
 		'' AS unit,
 		f.hashtag AS md5hash,
 		lower(f.file_name) filename_forsort,
-		'0' as cnt
+		'#qrylucenedoc.searchcount#' as cnt
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
@@ -1698,7 +1669,7 @@
 		'' AS unit,
 		f.hashtag AS md5hash,
 		lower(f.file_name) filename_forsort,
-		'0' as cnt
+		'#qrylucenedoc.searchcount#' as cnt
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
@@ -1850,15 +1821,6 @@
 			</cfswitch>
 			</cfquery>
 		</cfif>
-		<!--- Add the amount of assets to the query --->
-		<cfif qry_doc.recordcount NEQ 0>
-			<cfset QuerySetcell(qry_doc, "cnt", qrylucenedoc.searchcount)>
-		</cfif>
-		<cfquery name="qry_doc" dbtype="query">
-		SELECT * 
-		FROM qry_doc 
-		WHERE id IS NOT NULL
-		</cfquery>
 		<!--- Return --->
 		<cfreturn qry_doc />
 	</cffunction>
