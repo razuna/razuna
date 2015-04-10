@@ -319,7 +319,7 @@
 			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
 			WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
 			<cfif !arguments.istruct.dbdirect>
-				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreeimg.categorytree)#'</cfif>)
+				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg">,'#categorytree#'</cfloop></cfif>)
 			<cfelse>
 				<cfif thesearchfor NEQ "">
 					AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -503,7 +503,7 @@
 			LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = i.host_id
 			WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
 			<cfif !arguments.istruct.dbdirect>
-				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreeimg.categorytree)#'</cfif>)
+				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg">,'#categorytree#'</cfloop></cfif>)
 			<cfelse>
 				<cfif thesearchfor NEQ "">
 					AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -577,6 +577,7 @@
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 			ORDER BY #session.sortby#
 		</cfquery>
+		<cfdump var="#qry_img#"><cfabort>
 		<!--- Add the amount of assets to the query --->
 		<cfif qry_img.recordcount NEQ 0>
 			<cfset QuerySetcell(qry_img, "cnt", qryluceneimg.searchcount)>
@@ -733,7 +734,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
 		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
 		<cfif !arguments.vstruct.dbdirect>
-			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreevid.categorytree)#'</cfif>)
+			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
 				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -920,7 +921,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = v.host_id
 		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
 		<cfif !arguments.vstruct.dbdirect>
-			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreevid.categorytree)#'</cfif>)
+			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
 				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -1143,7 +1144,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 		WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
 		<cfif !arguments.astruct.dbdirect>
-			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreeaud.categorytree)#'</cfif>)
+			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
 				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -1325,7 +1326,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = a.host_id
 		WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
 		<cfif !arguments.astruct.dbdirect>
-			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreeaud.categorytree)#'</cfif>)
+			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
 				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -1557,7 +1558,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
 		WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
 		<cfif !arguments.fstruct.dbdirect>
-			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreedoc.categorytree)#'</cfif>)
+			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
 				AND lower(f.file_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
@@ -1748,7 +1749,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = ct.folder_id_r AND fo.host_id = f.host_id
 		WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
 		<cfif !arguments.fstruct.dbdirect>
-			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0','#valuelist(cattreedoc.categorytree)#'</cfif>)
+			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
 				AND lower(f.file_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
