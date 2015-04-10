@@ -1453,7 +1453,7 @@
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
 	<cfset application.razuna.dropbox.url_oauth = "https://www.dropbox.com/1">
 	<cfset application.razuna.dropbox.url_api = "https://api.dropbox.com/1">
-	<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+	<cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
 		<cfset application.razuna.api.thehttp = "https://">
 	<cfelse>
 		<cfset application.razuna.api.thehttp = "http://">
