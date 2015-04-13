@@ -45,8 +45,8 @@
 		<cfargument name="cs" type="any" required="false" default="" hint="custom metadata fields">
 		<cfargument name="dbdirect" type="string" required="false" default="false">
 		<cfargument name="available" type="string" required="false" default="1">
-		<cfargument name="startrow" type="number" required="false" default="0" hint="New since 1.7.5">
-		<cfargument name="maxrows" type="number" required="false" default="25" hint="New since 1.7.5">
+		<cfargument name="startrow" type="string" required="false" default="0" hint="New since 1.7.5">
+		<cfargument name="maxrows" type="string" required="false" default="25" hint="New since 1.7.5">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var thexml ="">
