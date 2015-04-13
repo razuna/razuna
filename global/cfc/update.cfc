@@ -222,7 +222,7 @@
 				(opt_id, opt_value, rec_uuid)
 				VALUES(
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_local_url">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="razuna-searchserver">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
 				)
 				</cfquery>
