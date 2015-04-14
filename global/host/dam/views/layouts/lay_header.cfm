@@ -111,10 +111,12 @@
 				</form>
 				<!--- UPC Search Popup window --->
 				<div id="popup_upcsearch" style="display:none;">
-					<tr>
-						<td width="1%" nowrap="true" style="font-weight:bold;"><strong>#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</strong></br></br>
-						<textarea name="search_upc" id="search_upc" cols="42"></textarea></td>
-					</tr>
+					<table>
+						<tr>
+							<td width="1%" nowrap="true" style="font-weight:bold;"><strong>#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</strong><br><br>
+							<textarea name="search_upc" id="search_upc" cols="42"></textarea></td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		<!--- </cfcachecontent> --->
