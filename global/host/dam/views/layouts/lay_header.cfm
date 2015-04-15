@@ -226,6 +226,9 @@
 				width:400,
 				modal: true,
 				buttons: {
+				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
+					$( this ).dialog( "close" );
+				},
 				"#myFusebox.getApplicationData().defaults.trans("header_upc_search")#": function() {
 					if($('##search_upc').val() == ""){
 						alert("#myFusebox.getApplicationData().defaults.trans('upc_num_check')#");
@@ -233,10 +236,6 @@
 						$( this ).dialog( "close" );
 						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","));	
 					}
-					
-				},
-				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
-					$( this ).dialog( "close" );
 				}
 			}
 		});
