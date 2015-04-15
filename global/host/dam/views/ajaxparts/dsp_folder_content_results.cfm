@@ -30,7 +30,13 @@
 </cfif>
 <cfoutput>
 	<cfset uniqueid = createuuid()>
-	<cfif qry_files.searchcount LTE session.rowmaxpage>
+	<!--- Set count for UPC or not --->
+	<cfif structKeyExists(qry_files,"searchcount")>
+		<cfset _count = qry_files.searchcount>
+	<cfelse>
+		<cfset _count = qry_filecount.thetotal>
+	</cfif>
+	<cfif _count LTE session.rowmaxpage>
 		<cfset session.offset = 0>
 	</cfif>
 	<!--- Div decider for below --->
@@ -41,7 +47,7 @@
 	</cfif>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
-	<cfif qry_files.searchcount EQ 0>
+	<cfif _count EQ 0>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
@@ -58,7 +64,12 @@
 		<form name="searchform#attributes.thetype#" id="searchform#attributes.thetype#" action="#self#">
 		<input type="hidden" name="thetype" value="all">
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
-		<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.listid)#">
+		<!--- Set count for UPC or not --->
+		<cfif structKeyExists(qry_files,"listid")>
+			<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.listid)#">
+		<cfelse>
+			<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.qall.listid)#">
+		</cfif>
 		<input type="hidden" name="editids" id="editids" value="#session.search.edit_ids#">
 		<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -101,10 +112,16 @@
 	
 		<!--- Thumbnail --->
 		<cfset mysqloffset = session.offset * session.rowmaxpage>
+		<!--- If we come from UPC we have another query object (duh?) --->
+		<cfif isQuery(qry_files.qall)>
+			<cfset the_query = qry_files.qall>
+		<cfelse>
+			<cfset the_query = qry_files>
+		</cfif>
 		<cfif session.view EQ "">
 			<tr>
 				<td style="border:0px;">
-				<cfoutput query="qry_files">
+				<cfoutput query="the_query">
 					<cfif groupid NEQ "">
 						<cfset theid = groupid>
 					<cfelse>

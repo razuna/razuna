@@ -113,7 +113,7 @@
 				<div id="popup_upcsearch" style="display:none;">
 					<tr>
 						<td width="1%" nowrap="true" style="font-weight:bold;"><strong>#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</strong></br></br>
-						<textarea name="search_upc" id="search_upc" cols="42"></textarea></td>
+						<textarea name="search_upc" id="search_upc" style="width:350px;height:75px"></textarea></td>
 					</tr>
 				</div>
 			</div>
@@ -222,7 +222,8 @@
 		function upcsearch(){
 			$( "##popup_upcsearch" ).dialog({
 				resizable: false,
-				height:200,
+				height:250,
+				width:400,
 				modal: true,
 				buttons: {
 				"#myFusebox.getApplicationData().defaults.trans("header_upc_search")#": function() {

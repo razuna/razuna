@@ -25,6 +25,12 @@
 --->
 <cfoutput>
 <cfset thefa = "c.folder_content_results">
+<!--- Set count for UPC or not --->
+<cfif structKeyExists(qry_files,"searchcount")>
+	<cfset _count = qry_files.searchcount>
+<cfelse>
+	<cfset _count = qry_filecount.thetotal>
+</cfif>
 <table border="0" width="100%" cellspacing="0" cellpadding="0" class="gridno">
 	<tr>
 		<!--- Icons and drop down menu --->
@@ -50,16 +56,16 @@
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
-			<cfif qry_files.searchcount GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-			<cfif qry_files.searchcount GT session.rowmaxpage AND NOT shownextrecord GTE qry_files.searchcount> | 
+			<cfif _count GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+			<cfif _count GT session.rowmaxpage AND NOT shownextrecord GTE _count> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
 				<a href="##" onclick="backforth(#newoffset#);">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
-			<cfif qry_files.searchcount GT session.rowmaxpage>
+			<cfif _count GT session.rowmaxpage>
 				<span style="padding-left:10px;">
-					<cfset thepage = ceiling(qry_files.searchcount / session.rowmaxpage)>
+					<cfset thepage = ceiling(_count / session.rowmaxpage)>
 					#myFusebox.getApplicationData().defaults.trans("page")#: 
 						<select id="thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
 							<cfloop from="1" to="#thepage#" index="i">
@@ -85,7 +91,7 @@
 		</td>
 		<!--- Change the amount of images shown --->
 		<td align="right" width="1%" nowrap="true">
-			<cfif qry_files.searchcount GT session.rowmaxpage OR qry_files.searchcount GT 25>
+			<cfif _count GT session.rowmaxpage OR _count GT 25>
 				<select name="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerowmaxsearch('selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 					<option value="0">#myFusebox.getApplicationData().defaults.trans("show_how_many")#</option>
 					<option value="0">---</option>
