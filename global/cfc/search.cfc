@@ -227,8 +227,16 @@
 			<cfset QuerySetCell(qry,"searchcount",0)>
 		</cfif>
 
+		<!--- Set var --->
+		<cfset var _foundtotal = qry.searchcount>
+
+		<!--- If nothing found make foundtotal a number --->
+		<cfif qry.recordcount EQ 0>
+			<cfset var _foundtotal = 0>
+		</cfif>
+
 		<!--- Log Result --->
-		<cfset log_search(theuserid=session.theuserid,searchfor=arguments.thestruct.searchtext,foundtotal=qry.searchcount,searchfrom='img')>
+		<cfset log_search(theuserid=session.theuserid,searchfor=arguments.thestruct.searchtext,foundtotal=_foundtotal,searchfrom='img')>
 		
 		<!--- Return --->
 		<cfreturn qry />

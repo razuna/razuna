@@ -228,7 +228,7 @@
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 		<cfif arguments.assetid NEQ "all">
-			AND doc_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
+			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
 		</cfquery>
 		<!--- Set hostid session (needed in resetcachetoken) --->
