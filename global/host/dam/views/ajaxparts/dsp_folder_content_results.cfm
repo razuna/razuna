@@ -113,7 +113,7 @@
 		<!--- Thumbnail --->
 		<cfset mysqloffset = session.offset * session.rowmaxpage>
 		<!--- If we come from UPC we have another query object (duh?) --->
-		<cfif isQuery(qry_files.qall)>
+		<cfif structKeyExists(qry_files,"qall") AND isQuery(qry_files.qall)>
 			<cfset the_query = qry_files.qall>
 		<cfelse>
 			<cfset the_query = qry_files>
