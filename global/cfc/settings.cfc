@@ -1387,9 +1387,9 @@
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
 	<!--- Update Options (after above as we use the application scope) --->
-	<cfset set_options_global(opt_id="conf_db_type", opt_value=qry.conf_database)>
+	<!--- <cfset set_options_global(opt_id="conf_db_type", opt_value=qry.conf_database)>
 	<cfset set_options_global(opt_id="conf_storage", opt_value=qry.conf_storage)>
-	<cfset set_options_global(opt_id="conf_db_prefix", opt_value="raz1_")>
+	<cfset set_options_global(opt_id="conf_db_prefix", opt_value="raz1_")> --->
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -2683,6 +2683,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 <!--- Prepare to pass to indexingDbInfo --->
 <cffunction name="indexingDbInfoPrepare" output="false">
+	<cfargument name="db_path" type="string" required="true">
 	<!--- Put struct together --->
 	<cfset var s = structNew()>
 	<cfset s.db_type = session.firsttime.database>
@@ -2692,6 +2693,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.db_schema = session.firsttime.db_schema>
 	<cfset s.db_user = session.firsttime.db_user>
 	<cfset s.db_pass = session.firsttime.db_pass>
+	<cfset s.db_path = arguments.db_path>
 	<!--- Pass to function --->
 	<cfset indexingDbInfo(thestruct=s)>
 	<!--- Return --->

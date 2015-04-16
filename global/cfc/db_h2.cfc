@@ -434,9 +434,9 @@
 
 		<!--- Lucene --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#lucene 
+		CREATE TABLE lucene 
 		(
-			id 				varchar(500) DEFAULT NULL,
+			id 				varchar(100) DEFAULT NULL,
 			type 			varchar(10) DEFAULT NULL,
 			host_id 		bigint DEFAULT NULL,
 			PRIMARY KEY (id)
@@ -445,7 +445,7 @@
 
 		<!--- api_basket --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE TABLE #arguments.thestruct.host_db_prefix#api_basket (
+		CREATE TABLE api_basket (
 		basket_id 	varchar(100) DEFAULT NULL,
 		asset_id 	varchar(100) DEFAULT NULL,
 		date_added 	timestamp NULL DEFAULT NULL,
@@ -606,7 +606,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
-			VALUES ('taskserver_local_url', '/searchserver', '#createuuid()#')
+			VALUES ('taskserver_local_url', 'http://localhost:8080/razuna-searchserver', '#createuuid()#')
 			</cfquery>
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
