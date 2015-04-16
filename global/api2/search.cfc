@@ -271,7 +271,9 @@
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
 			lower(i.img_filename) filename_forsort,
-			'#qryluceneimg.searchcount#' as cnt
+			'#qryluceneimg.searchcount#' as cnt,
+			i.img_create_time date_create,
+			i.img_change_time date_change
 			<!--- for UI --->
 			<cfif arguments.istruct.ui>
 				,
@@ -279,8 +281,6 @@
 				i.folder_id_r,
 				i.thumb_extension ext,
 				i.is_available,
-				i.img_create_time date_create,
-				i.img_change_time date_change,
 				i.link_kind, 
 				i.link_path_url,
 				'0' as vwidth, 
@@ -454,7 +454,9 @@
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
 			lower(i.img_filename) filename_forsort,
-			'#qryluceneimg.searchcount#' as cnt
+			'#qryluceneimg.searchcount#' as cnt,
+			i.img_create_time date_create,
+			i.img_change_time date_change
 			<!--- for UI --->
 			<cfif arguments.istruct.ui>
 				,
@@ -462,8 +464,6 @@
 				i.folder_id_r,
 				i.thumb_extension ext,
 				i.is_available,
-				i.img_create_time date_create,
-				i.img_change_time date_change,
 				i.link_kind, 
 				i.link_path_url,
 				'0' as vwidth, 
@@ -675,7 +675,9 @@
 		'' AS unit,
 		v.hashtag AS md5hash,
 		lower(v.vid_filename) filename_forsort,
-		'#qrylucenevid.searchcount#' as cnt
+		'#qrylucenevid.searchcount#' as cnt,
+		v.vid_create_time date_create,
+		v.vid_change_time date_change
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
@@ -683,8 +685,6 @@
 			v.folder_id_r,
 			v.vid_extension ext,
 			v.is_available,
-			v.vid_create_time date_create,
-			v.vid_change_time date_change,
 			v.link_kind, 
 			v.link_path_url,
 			CAST(v.vid_width AS CHAR) as vwidth, 
@@ -861,7 +861,9 @@
 		'' AS unit,
 		v.hashtag AS md5hash,
 		lower(v.vid_filename) filename_forsort,
-		'#qrylucenevid.searchcount#' as cnt
+		'#qrylucenevid.searchcount#' as cnt,
+		v.vid_create_time date_create,
+		v.vid_change_time date_change
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
@@ -869,8 +871,6 @@
 			v.folder_id_r,
 			v.vid_extension ext,
 			v.is_available,
-			v.vid_create_time date_create,
-			v.vid_change_time date_change,
 			v.link_kind, 
 			v.link_path_url,
 			CAST(v.vid_width AS CHAR) as vwidth, 
@@ -1076,7 +1076,9 @@
 		'' AS unit,
 		a.hashtag AS md5hash,
 		lower(a.aud_name) filename_forsort,
-		'#qryluceneaud.searchcount#' as cnt
+		'#qryluceneaud.searchcount#' as cnt,
+		a.aud_create_time date_create,
+		a.aud_change_time date_change
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
@@ -1084,8 +1086,6 @@
 			a.folder_id_r,
 			a.aud_extension ext,
 			a.is_available,
-			a.aud_create_time date_create,
-			a.aud_change_time date_change,
 			a.link_kind, 
 			a.link_path_url,
 			'0' as vwidth, 
@@ -1257,7 +1257,9 @@
 		'' AS unit,
 		a.hashtag AS md5hash,
 		lower(a.aud_name) filename_forsort,
-		'#qryluceneaud.searchcount#' as cnt
+		'#qryluceneaud.searchcount#' as cnt,
+		a.aud_create_time date_create,
+		a.aud_change_time date_change
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
@@ -1265,8 +1267,6 @@
 			a.folder_id_r,
 			a.aud_extension ext,
 			a.is_available,
-			a.aud_create_time date_create,
-			a.aud_change_time date_change,
 			a.link_kind, 
 			a.link_path_url,
 			'0' as vwidth, 
@@ -1479,7 +1479,9 @@
 		'' AS unit,
 		f.hashtag AS md5hash,
 		lower(f.file_name) filename_forsort,
-		'#qrylucenedoc.searchcount#' as cnt
+		'#qrylucenedoc.searchcount#' as cnt,
+		f.file_create_time date_create,
+		f.file_change_time date_change
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
@@ -1487,8 +1489,6 @@
 			f.folder_id_r,
 			f.file_extension ext,
 			f.is_available,
-			f.file_create_time date_create,
-			f.file_change_time date_change,
 			f.link_kind, 
 			f.link_path_url,
 			'0' as vwidth, 
@@ -1669,7 +1669,9 @@
 		'' AS unit,
 		f.hashtag AS md5hash,
 		lower(f.file_name) filename_forsort,
-		'#qrylucenedoc.searchcount#' as cnt
+		'#qrylucenedoc.searchcount#' as cnt,
+		f.file_create_time date_create,
+		f.file_change_time date_change
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
@@ -1677,8 +1679,6 @@
 			f.folder_id_r,
 			f.file_extension ext,
 			f.is_available,
-			f.file_create_time date_create,
-			f.file_change_time date_change,
 			f.link_kind, 
 			f.link_path_url,
 			'0' as vwidth, 
