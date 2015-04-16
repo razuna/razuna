@@ -273,8 +273,6 @@
 					<true>
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
-						<!-- CFC: Add the datasource for the searchserver -->
-						<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 					</true>
 				</if>
 			</true>
@@ -329,8 +327,6 @@
 						<set name="session.firsttime.database_type" value="h2" />
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
-						<!-- CFC: Add the datasource for the searchserver -->
-						<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 					</true>
 				</if>
 				<!-- Show -->
@@ -365,8 +361,6 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 		<!-- CFC: Check if there is a DB Connection -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
-		<!-- CFC: Add the datasource for the searchserver -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare()" />
 		<!-- Show -->
 		<do action="ajax.first_time_database_check" />
 	</fuseaction>
@@ -412,8 +406,8 @@
 	<!-- db setup restore from system -->
 	<fuseaction name="first_time_database_restore_system">
 		<!-- Params for backup -->
-		<set name="application.razuna.thedatabase" value="#session.firsttime.database#" />
-		<set name="application.razuna.datasource" value="#session.firsttime.database#" />
+		<set name="application.razuna.thedatabase" value="#session.firsttime.database_type#" />
+		<set name="application.razuna.datasource" value="#session.firsttime.database_type#" />
 		<set name="application.razuna.theschema" value="#session.firsttime.db_schema#" />
 		<!-- Params for creating DB -->
 		<set name="session.firsttime.path_assets" value="" />
@@ -455,13 +449,14 @@
 	<!-- final include -->
 	<fuseaction name="first_time_final_include">
 		<!-- Params -->
+		<set name="session.firsttime.database" value="#session.firsttime.database_type#" />
 		<set name="application.razuna.theschema" value="#session.firsttime.db_schema#" />
-		<set name="application.razuna.thedatabase" value="#session.firsttime.database#" />
-		<set name="application.razuna.datasource" value="#session.firsttime.database#" />
-		<set name="attributes.dsn" value="#session.firsttime.database#" />
+		<set name="application.razuna.thedatabase" value="#session.firsttime.database_type#" />
+		<set name="application.razuna.datasource" value="#session.firsttime.database_type#" />
+		<set name="attributes.dsn" value="#session.firsttime.database_type#" />
 		<set name="attributes.theschema" value="#session.firsttime.db_schema#" />
 		<set name="attributes.host_db_prefix" value="raz1_" />
-		<set name="attributes.database" value="#session.firsttime.database#" />
+		<set name="attributes.database" value="#session.firsttime.database_type#" />
 		<set name="attributes.host_lang" value="1" />
 		<set name="attributes.langs_selected" value="1_English" />
 		<set name="attributes.pathhere" value="#thispath#" />
@@ -478,13 +473,14 @@
 		<set name="attributes.mp4box" value="#session.firsttime.path_mp4box#" />
 		<set name="attributes.ghostscript" value="#session.firsttime.path_ghostscript#" />
 		<!-- Update the global config file with the new datasource -->
-		<set name="attributes.conf_database" value="#session.firsttime.database#" />
+		<set name="attributes.conf_database" value="#session.firsttime.database_type#" />
 		<set name="attributes.conf_schema" value="#session.firsttime.db_schema#" />
-		<set name="attributes.conf_datasource" value="#session.firsttime.database#" />
+		<set name="attributes.conf_datasource" value="#session.firsttime.database_type#" />
+		<set name="attributes.conf_storage" value="local" />
 		<!-- Save general settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(attributes)" />
 		<!-- Remove all data in the db, in case it is here -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb()" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb(thedatabase=session.firsttime.database_type)" />
 		<!-- Setup & create host & add host -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="setupdb(attributes)" />
 		<!-- Save tools settings -->
@@ -493,11 +489,11 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
-		<!-- Insert into options -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_type', opt_value=session.firsttime.database)" />
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_prefix', opt_value=attributes.host_db_prefix)" />
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_storage', opt_value='local')" />
-		<!-- Add Razuna Client db connection -->
+		<!-- Set H2 db path -->
+		<set name="attributes.db_path" value="#expandpath('..')#db" />
+		<!-- Setup search server -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare(db_path=attributes.db_path)" />
+		<!-- Set vars for razuna_client datasource -->
 		<set name="session.firsttime.database" value="razuna_client" />
 		<set name="session.firsttime.database_type" value="mysql" />
 		<set name="session.firsttime.db_name" value="razuna_clients" />
@@ -1452,7 +1448,7 @@
 
 	<!-- Search Server DB Connection submit -->
 	<fuseaction name="prefs_indexing_db_submit">
-		<!-- Set H@ db path -->
+		<!-- Set H2 db path -->
 		<set name="attributes.db_path" value="#expandpath('..')#db" />
 		<!-- CFC: Save values and call remote server -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfo(attributes)" />
