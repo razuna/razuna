@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+  <system>
+    <buffersize>0</buffersize>
+    <password>admin</password>
+    <licensekey></licensekey>
+    <assert>true</assert>
+    <missingtemplatehandler></missingtemplatehandler>
+    <tempdirectory>/WEB-INF/bluedragon/work/temp</tempdirectory>
+    <lastfile>/Users/nitai/Documents/workspace/razuna/WEB-INF/bluedragon/bluedragon.xml.bak.1</lastfile>
+    <runtimelogging>true</runtimelogging>
+    <deniedips></deniedips>
+    <defaultcharset>UTF-8</defaultcharset>
+    <component-cfc>/WEB-INF/bluedragon/component.cfc</component-cfc>
+    <scriptsrc>/bluedragon/scripts</scriptsrc>
+    <resourcepath>/WEB-INF/resources</resourcepath>
+    <servercfc>/WEB-INF/Server.cfc</servercfc>
+    <debug>false</debug>
+    <legacyformvalidation>false</legacyformvalidation>
+    <scriptprotect>false</scriptprotect>
+    <nativelibdir>/WEB-INF/bin</nativelibdir>
+    <errorhandler></errorhandler>
+    <lastupdated>21/Apr/2010 13:27.07</lastupdated>
+    <whitespacecomp>true</whitespacecomp>
+    <allowedips></allowedips>
+  </system>
+  <cfmappings>
+    <mapping name="/fusebox5">
+      <directory>/global/fusebox5</directory>
+      <name>/fusebox5</name>
+      <displayname>/fusebox5</displayname>
+    </mapping>
+  </cfmappings>
+  <file>
+    <maxfiles>1000</maxfiles>
+    <trustcache>false</trustcache>
+  </file>
+  <javacustomtags>
+    <classes>/WEB-INF/classes</classes>
+  </javacustomtags>
+  <cfchart>
+    <cachesize>1000</cachesize>
+    <storage>file</storage>
+  </cfchart>
+  <fonts>
+    <dirs></dirs>
+  </fonts>
+  <cfquery>
+    <cache>true</cache>
+    <datasource name="oracle">
+      <displayname>oracle</displayname>
+      <password></password>
+      <connectionretries>0</connectionretries>
+      <sqldelete>true</sqldelete>
+      <sqlupdate>true</sqlupdate>
+      <username>razuna</username>
+      <drivername>oracle.jdbc.OracleDriver</drivername>
+      <sqlstoredprocedures>true</sqlstoredprocedures>
+      <perrequestconnections>false</perrequestconnections>
+      <sqlinsert>true</sqlinsert>
+      <sqlselect>true</sqlselect>
+      <connectiontimeout>120</connectiontimeout>
+      <port>1521</port>
+      <server>127.0.0.1</server>
+      <databasename>orcl</databasename>
+      <description></description>
+      <connectstring></connectstring>
+      <initstring></initstring>
+      <logintimeout>120</logintimeout>
+      <hoststring>jdbc:oracle:thin:@127.0.0.1:1521:orcl</hoststring>
+      <maxconnections>24</maxconnections>
+      <name>oracle</name>
+    </datasource>
+    <datasource name="mysql">
+      <displayname>mysql</displayname>
+      <password></password>
+      <connectionretries>0</connectionretries>
+      <sqldelete>true</sqldelete>
+      <sqlupdate>true</sqlupdate>
+      <username>razuna</username>
+      <drivername>com.mysql.jdbc.Driver</drivername>
+      <sqlstoredprocedures>true</sqlstoredprocedures>
+      <perrequestconnections>false</perrequestconnections>
+      <sqlinsert>true</sqlinsert>
+      <sqlselect>true</sqlselect>
+      <connectiontimeout>120</connectiontimeout>
+      <port>3306</port>
+      <server>127.0.0.1</server>
+      <databasename>razuna</databasename>
+      <description></description>
+      <connectstring>noDatetimeStringSync=true&amp;zeroDateTimeBehavior=convertToNull</connectstring>
+      <initstring></initstring>
+      <logintimeout>120</logintimeout>
+      <hoststring>jdbc:mysql://127.0.0.1:3306/razuna?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;noDatetimeStringSync=true&amp;zeroDateTimeBehavior=convertToNull</hoststring>
+      <maxconnections>50</maxconnections>
+      <name>mysql</name>
+    </datasource>
+    <datasource name="psql">
+      <displayname>psql</displayname>
+      <password></password>
+      <connectionretries>0</connectionretries>
+      <sqldelete>true</sqldelete>
+      <sqlupdate>true</sqlupdate>
+      <username>razuna</username>
+      <drivername>org.postgresql.Driver</drivername>
+      <sqlstoredprocedures>true</sqlstoredprocedures>
+      <perrequestconnections>false</perrequestconnections>
+      <sqlinsert>true</sqlinsert>
+      <sqlselect>true</sqlselect>
+      <connectiontimeout>120</connectiontimeout>
+      <port>5432</port>
+      <server>127.0.0.1</server>
+      <databasename>postgres</databasename>
+      <description></description>
+      <connectstring></connectstring>
+      <initstring></initstring>
+      <logintimeout>120</logintimeout>
+      <hoststring>jdbc:postgresql://127.0.0.1:5432/postgres</hoststring>
+      <maxconnections>24</maxconnections>
+      <name>psql</name>
+    </datasource>
+    <dbdrivers>
+      <driver name="other">
+        <datasourceconfigpage>other.cfm</datasourceconfigpage>
+        <version></version>
+        <name>other</name>
+        <driverdescription>Other JDBC Driver</driverdescription>
+        <drivername></drivername>
+        <jdbctype></jdbctype>
+        <provider></provider>
+        <defaultport></defaultport>
+      </driver>
+      <driver name="microsoft sql server (jtds)">
+        <datasourceconfigpage>sqlserver-jtds.cfm</datasourceconfigpage>
+        <version>1.2.2</version>
+        <name>microsoft sql server (jtds)</name>
+        <driverdescription>Microsoft SQL Server (jTDS)</driverdescription>
+        <drivername>net.sourceforge.jtds.jdbc.Driver</drivername>
+        <jdbctype>4</jdbctype>
+        <provider>jTDS</provider>
+        <defaultport>1433</defaultport>
+      </driver>
+      <driver name="h2 embedded (h2)">
+        <datasourceconfigpage>h2-embedded.cfm</datasourceconfigpage>
+        <version></version>
+        <name>h2 embedded (h2)</name>
+        <driverdescription>H2 Embedded (H2)</driverdescription>
+        <drivername>org.h2.Driver</drivername>
+        <jdbctype>4</jdbctype>
+        <provider>H2</provider>
+        <defaultport></defaultport>
+      </driver>
+      <driver name="oracle (oracle)">
+        <datasourceconfigpage>oracle.cfm</datasourceconfigpage>
+        <version>10.2.0.4</version>
+        <name>oracle (oracle)</name>
+        <driverdescription>Oracle (Oracle)</driverdescription>
+        <drivername>oracle.jdbc.OracleDriver</drivername>
+        <jdbctype>4</jdbctype>
+        <provider>Oracle</provider>
+        <defaultport>1521</defaultport>
+      </driver>
+      <driver name="microsoft sql server 2005 (microsoft)">
+        <datasourceconfigpage>sqlserver2005-ms.cfm</datasourceconfigpage>
+        <version>1.2</version>
+        <name>microsoft sql server 2005 (microsoft)</name>
+        <driverdescription>Microsoft SQL Server 2005 (Microsoft)</driverdescription>
+        <drivername>com.microsoft.sqlserver.jdbc.SQLServerDriver</drivername>
+        <jdbctype>4</jdbctype>
+        <provider>Microsoft</provider>
+        <defaultport>1433</defaultport>
+      </driver>
+      <driver name="mysql 4/5">
+        <datasourceconfigpage>mysql5.cfm</datasourceconfigpage>
+        <version>5.1.6</version>
+        <name>mysql 4/5</name>
+        <driverdescription>MySQL 4/5 (MySQL)</driverdescription>
+        <drivername>com.mysql.jdbc.Driver</drivername>
+        <jdbctype>4</jdbctype>
+        <provider>MySQL</provider>
+        <defaultport>3306</defaultport>
+      </driver>
+      <driver name="postgresql (postgresql)">
+        <datasourceconfigpage>postgresql.cfm</datasourceconfigpage>
+        <version>8.3-603</version>
+        <name>postgresql (postgresql)</name>
+        <driverdescription>PostgreSQL (PostgreSQL)</driverdescription>
+        <drivername>org.postgresql.Driver</drivername>
+        <jdbctype>4</jdbctype>
+        <provider>PostgreSQL</provider>
+        <defaultport>5432</defaultport>
+      </driver>
+    </dbdrivers>
+    <datasource name="mssql">
+      <displayname>mssql</displayname>
+      <password></password>
+      <connectionretries>0</connectionretries>
+      <sqldelete>true</sqldelete>
+      <sqlupdate>true</sqlupdate>
+      <username>razuna</username>
+      <drivername>net.sourceforge.jtds.jdbc.Driver</drivername>
+      <sqlstoredprocedures>true</sqlstoredprocedures>
+      <perrequestconnections>false</perrequestconnections>
+      <sqlinsert>true</sqlinsert>
+      <sqlselect>true</sqlselect>
+      <connectiontimeout>120</connectiontimeout>
+      <port>1433</port>
+      <server>127.0.0.1</server>
+      <databasename>razuna</databasename>
+      <description></description>
+      <connectstring></connectstring>
+      <logintimeout>120</logintimeout>
+      <initstring></initstring>
+      <hoststring>jdbc:jtds:sqlserver://127.0.0.1:1433/razuna</hoststring>
+      <maxconnections>24</maxconnections>
+      <name>mssql</name>
+    </datasource>
+    <cachecount>1000</cachecount>
+  </cfquery>
+  <debugoutput>
+    <enabled>false</enabled>
+    <executiontimes>
+      <show>false</show>
+      <highlight>250</highlight>
+    </executiontimes>
+    <exceptions>
+      <show>false</show>
+    </exceptions>
+    <tracepoints>
+      <show>false</show>
+    </tracepoints>
+    <database>
+      <show>false</show>
+    </database>
+    <timer>
+      <show>false</show>
+    </timer>
+    <variables>
+      <url>true</url>
+      <form>true</form>
+      <cookie>false</cookie>
+      <cgi>true</cgi>
+      <client>false</client>
+      <server>true</server>
+      <request>true</request>
+      <session>false</session>
+      <application>true</application>
+      <local>true</local>
+      <cffile>true</cffile>
+      <show>true</show>
+      <variables>false</variables>
+    </variables>
+    <ipaddresses></ipaddresses>
+  </debugoutput>
+  <cfapplication>
+    <j2eesession>true</j2eesession>
+    <clientglobalupdatesdisabled>true</clientglobalupdatesdisabled>
+    <applicationtimeout>#CreateTimeSpan(2,0,0,0)#</applicationtimeout>
+    <clientpurgeenabled>true</clientpurgeenabled>
+    <sessiontimeout>#CreateTimeSpan(0,0,20,0)#</sessiontimeout>
+    <cf5clientdata>false</cf5clientdata>
+    <clientexpiry>90</clientexpiry>
+    <enabled>true</enabled>
+    <clientstorage>cookie</clientstorage>
+  </cfapplication>
+  <openbdadminapi>
+    <version>1.2</version>
+    <lastupdated>22/Mar/2010 19:19:51</lastupdated>
+  </openbdadminapi>
+  <cfmail>
+    <interval>30</interval>
+    <smtpserver>localhost:25</smtpserver>
+    <threads>2</threads>
+    <domain></domain>
+    <timeout>60</timeout>
+    <charset>UTF-8</charset>
+    <smtpport>25</smtpport>
+  </cfmail>
+  <cfcachecontent>
+    <datasource></datasource>
+    <total>1000</total>
+  </cfcachecontent>
+  <cfmlcustomtags>
+    <mapping name="cf">
+      <directory></directory>
+      <name>cf</name>
+    </mapping>
+  </cfmlcustomtags>
+</server>
