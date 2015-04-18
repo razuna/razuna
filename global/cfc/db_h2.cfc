@@ -613,6 +613,11 @@
 			(opt_id, opt_value, rec_uuid)
 			VALUES ('taskserver_secret', '#createuuid("")#', '#createuuid()#')
 			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_remote_url', 'http://localhost:8090/razuna-searchserver', '#createuuid()#')
+			</cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO users
