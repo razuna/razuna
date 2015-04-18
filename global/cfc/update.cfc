@@ -207,6 +207,34 @@
 			</cftry>
 			<!--- Taskserver default values --->
 			<cftry>
+				<!--- Populate options table --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="conf_db_prefix">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="conf_db_type">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.thedatabase#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="conf_storage">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.storage#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
 				<!--- Add taskserver default values --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO options
