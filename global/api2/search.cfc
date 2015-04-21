@@ -271,7 +271,7 @@
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
 			lower(i.img_filename) filename_forsort,
-			'#qryluceneimg.searchcount#' as cnt,
+			<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'#qryluceneimg.searchcount#'</cfif> as cnt,
 			i.img_create_time date_create,
 			i.img_change_time date_change
 			<!--- for UI --->
@@ -454,7 +454,7 @@
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
 			lower(i.img_filename) filename_forsort,
-			'#qryluceneimg.searchcount#' as cnt,
+			<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'#qryluceneimg.searchcount#'</cfif> as cnt,
 			i.img_create_time date_create,
 			i.img_change_time date_change
 			<!--- for UI --->
@@ -675,7 +675,7 @@
 		'' AS unit,
 		v.hashtag AS md5hash,
 		lower(v.vid_filename) filename_forsort,
-		'#qrylucenevid.searchcount#' as cnt,
+		<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'#qrylucenevid.searchcount#'</cfif> as cnt,
 		v.vid_create_time date_create,
 		v.vid_change_time date_change
 		<!--- for UI --->
@@ -861,7 +861,7 @@
 		'' AS unit,
 		v.hashtag AS md5hash,
 		lower(v.vid_filename) filename_forsort,
-		'#qrylucenevid.searchcount#' as cnt,
+		<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'#qrylucenevid.searchcount#'</cfif> as cnt,
 		v.vid_create_time date_create,
 		v.vid_change_time date_change
 		<!--- for UI --->
@@ -1076,7 +1076,7 @@
 		'' AS unit,
 		a.hashtag AS md5hash,
 		lower(a.aud_name) filename_forsort,
-		'#qryluceneaud.searchcount#' as cnt,
+		<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'#qryluceneaud.searchcount#'</cfif> as cnt,
 		a.aud_create_time date_create,
 		a.aud_change_time date_change
 		<!--- for UI --->
@@ -1257,7 +1257,7 @@
 		'' AS unit,
 		a.hashtag AS md5hash,
 		lower(a.aud_name) filename_forsort,
-		'#qryluceneaud.searchcount#' as cnt,
+		<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'#qryluceneaud.searchcount#'</cfif> as cnt,
 		a.aud_create_time date_create,
 		a.aud_change_time date_change
 		<!--- for UI --->
@@ -1479,7 +1479,7 @@
 		'' AS unit,
 		f.hashtag AS md5hash,
 		lower(f.file_name) filename_forsort,
-		'#qrylucenedoc.searchcount#' as cnt,
+		<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'#qrylucenedoc.searchcount#'</cfif> as cnt,
 		f.file_create_time date_create,
 		f.file_change_time date_change
 		<!--- for UI --->
@@ -1669,7 +1669,7 @@
 		'' AS unit,
 		f.hashtag AS md5hash,
 		lower(f.file_name) filename_forsort,
-		'#qrylucenedoc.searchcount#' as cnt,
+		<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'#qrylucenedoc.searchcount#'</cfif> as cnt,
 		f.file_create_time date_create,
 		f.file_change_time date_change
 		<!--- for UI --->
