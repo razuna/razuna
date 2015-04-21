@@ -103,10 +103,10 @@
 		<cfelse>
 			<!--- RAZ-2810 Customise email message --->
 			<cfset transvalues = arraynew()>
-			<cfset transvalues[1] = "#arguments.thestruct.thefilename#">
+			<cfset transvalues[1] = "#thefilename#">
 			<cfinvoke component="defaults" method="trans" transid="file_already_exist_subject" values="#transvalues#" returnvariable="file_already_exist_sub" />
 			<cfinvoke component="defaults" method="trans" transid="file_already_exist_message" values="#transvalues#" returnvariable="file_already_exist_msg" />
-			<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#" isdup = "yes"  filename="#arguments.thestruct.thefilename#" md5hash="#md5hash#">
+			<cfinvoke component="email" method="send_email" subject="#file_already_exist_sub#" themessage="#file_already_exist_msg#" isdup = "yes"  filename="#thefilename#" md5hash="#md5hash#">
 		</cfif>
 	</cfthread>
 	<!--- Wait --->
