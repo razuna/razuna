@@ -6217,6 +6217,8 @@
 			<cfset var thedatechange = "file_change_time">
 			<cfset var thehashtag = "hashtag">
 		</cfif>
+		<!--- Set default sortby --->
+		<cfset var sortby = "filename_forsort">
 		<!--- Set the order by --->
 		<cfif session.sortby EQ "name">
 			<cfset var sortby = "filename_forsort">
