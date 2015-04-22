@@ -493,10 +493,6 @@
 		<set name="attributes.db_path" value="#expandpath('..')#db" />
 		<!-- Setup search server -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare(db_path=attributes.db_path)" />
-		<!-- Insert into options -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_type',opt_value=session.firsttime.database_type)" />
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_db_prefix',opt_value='raz1_')" />
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_options_global(opt_id='conf_storage',opt_value='local')" />
 		<!-- Set vars for razuna_client datasource -->
 		<set name="session.firsttime.database" value="razuna_client" />
 		<set name="session.firsttime.database_type" value="mysql" />

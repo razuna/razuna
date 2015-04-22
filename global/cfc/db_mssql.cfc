@@ -616,6 +616,21 @@
 		(opt_id, opt_value, rec_uuid)
 		VALUES ('taskserver_remote_url', 'http://localhost:8090/razuna-searchserver', '#createuuid()#')
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.options
+		(opt_id, opt_value, rec_uuid)
+		VALUES ('conf_db_prefix', 'raz1_', '#createuuid()#')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.options
+		(opt_id, opt_value, rec_uuid)
+		VALUES ('conf_storage', 'local', '#createuuid()#')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.options
+		(opt_id, opt_value, rec_uuid)
+		VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+		</cfquery>
 		<!--- USERS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.users
