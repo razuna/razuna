@@ -619,7 +619,8 @@
 				GROUP BY i.img_id, i.img_filename, ct.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash, i.img_upc_number, i.expiry_date
 				<cfif application.razuna.thedatabase EQ "mssql">
 					) sorted_inline_view
-					) select *  
+					) myresult 
+					select *  
 			    	from myresult 
 					WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -987,7 +988,8 @@
 		GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash, v.vid_upc_number, v.expiry_date
 			<cfif application.razuna.thedatabase EQ "mssql">
 				) sorted_inline_view
-				) select * 
+				) myresult
+				select * 
 				FROM myresult
 				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -1326,7 +1328,7 @@
 
 			<cfif application.razuna.thedatabase EQ "mssql">
 				) sorted_inline_view
-				) 
+				) myresult
 				select * 
 				FROM myresult
 				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
@@ -1696,7 +1698,7 @@
 
 			<cfif application.razuna.thedatabase EQ "mssql">
 				) sorted_inline_view
-				) 
+				) myresult
 				select * 
 				FROM myresult
 				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
