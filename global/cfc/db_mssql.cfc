@@ -1073,6 +1073,9 @@
 		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('mpg', 'vid', 'video', 'mpeg')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('mpeg', 'vid', 'video', 'mpeg')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('mp4', 'vid', 'video', 'mp4v-es')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">

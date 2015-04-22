@@ -841,6 +841,7 @@
 			INSERT INTO file_types VALUES ('3gp', 'vid', 'video', '3gpp');
 			INSERT INTO file_types VALUES ('rm', 'vid', 'application', 'vnd.rn-realmedia');
 			INSERT INTO file_types VALUES ('mpg', 'vid', 'video', 'mpeg');
+			INSERT INTO file_types VALUES ('mpeg', 'vid', 'video', 'mpeg');
 			INSERT INTO file_types VALUES ('mp4', 'vid', 'video', 'mp4v-es');
 			INSERT INTO file_types VALUES ('wmv', 'vid', 'video', 'x-ms-wmv');
 			INSERT INTO file_types VALUES ('vob', 'vid', 'video', 'mpeg');
