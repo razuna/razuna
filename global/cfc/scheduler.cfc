@@ -779,7 +779,7 @@
 		<!--- Get UPC setting --->
 		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
-		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets" cachedwithin="#CreateTimeSpan(0,0,55,0)#">
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
 			SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
 			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
@@ -810,13 +810,12 @@
 			</cfif>
 			ORDER BY l.log_timestamp DESC
 		</cfquery>
-
+		
 		<cfset var data= "">
 		<cfset var datacols= "">
 		<cfset var fields= "">
 		<!--- Get metafields --->
 		<cfinvoke component="settings" method="get_notifications" returnvariable="fields">
-		
 		<!--- Get Email subject --->
 		<cfif fields.set2_folder_subscribe_email_sub NEQ "">
 			<cfset email_subject = "#fields.set2_folder_subscribe_email_sub#">
@@ -830,7 +829,6 @@
 			<cfinvoke component="defaults" method="trans" transid="subscribe_email_content" returnvariable="email_intro">
 		</cfif>
 		
-
 		<!--- Email if assets are updated in Subscribed folders --->
 		<cfif qGetUpdatedAssets.recordcount>
 			<!--- Get columns --->
@@ -1017,14 +1015,12 @@
 				</cfloop>
 				</table>
 			</cfsavecontent>
-
 			<!--- Set user id --->
 			<cfset arguments.thestruct.user_id = qGetUserSubscriptions.user_Id>
 			<!--- Get user details --->
 			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
 			<!--- Send the email --->
 			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" userid="#usersdetail.user_id#"/>
-			
 		</cfif>
 		<!--- Update Folder Subscribe --->
 		<cfquery datasource="#application.razuna.datasource#">
