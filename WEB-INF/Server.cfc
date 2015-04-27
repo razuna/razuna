@@ -45,6 +45,26 @@
     )>
     --->
     <cfset console("---DONE: Cache Setup---")>
+
+    <cftry>
+      <cfset console("------------ENABLING CRON------------------")>
+      <cfset cronEnable(true) />
+      <cfcatch type="any">
+        <cfset consoleoutput(true)>
+        <cfset console("------------ Cron error !!!!!!!!!!!!!!!!!!!!!!!!!")>
+        <cfset console(cfcatch)>
+      </cfcatch>
+    </cftry>
+    <cftry>
+      <cfset console("------------ENABLING CRON DIRECTORY------------------")>
+       <cfset CronSetDirectory("/cron") />
+      <cfcatch type="any">
+        <cfset consoleoutput(true)>
+        <cfset console("------------ Cron error !!!!!!!!!!!!!!!!!!!!!!!!!")>
+        <cfset console(cfcatch)>
+      </cfcatch>
+    </cftry>
+
     <cfset console("---------------FINISHED---------------------")>
 
   </cffunction>
