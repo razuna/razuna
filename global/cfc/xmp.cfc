@@ -1660,6 +1660,8 @@
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="arguments.thestruct.exportname" default="#randRange(1,10000)#">
 	<cfinvoke component="defaults" method="trans" transid="download_metadata_output" returnvariable="download_metadata_output" />
+	<!--- See that we have the rendition variable defined --->
+	<cfparam name="arguments.thestruct.include_renditions" default="false">
 	<!--- Set local var --->
 	<cfset var qry = "">
 	<!--- Feedback --->
@@ -1703,7 +1705,7 @@
 		</cfif>
 		<cfset arguments.thestruct.meta_fields="#listremoveduplicates(arguments.thestruct.meta_fields)#">
 	<cfelse>
-		<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,create_date,change_date,expiry_date,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+		<cfset arguments.thestruct.meta_fields = "id,type,file_kind,filename,file_url,foldername,folder_id,create_date,change_date,expiry_date,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	</cfif>
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
@@ -1872,6 +1874,14 @@
 <!--- Loop to get files --->
 <cffunction name="loopfiles" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Local vars --->
+	<cfset var qry_rend = "">
+	<cfset var qry_image = "">
+	<cfset var qry_video = "">
+	<cfset var qry_audio = "">
+	<cfset var qry_doc = "">
+	<cfset var foldername = "">
+	<cfset arguments.thestruct.file_kind = "original">
 	<!--- Get the files according to the extension --->
 	<cfswitch expression="#arguments.thestruct.filetype#">
 		<!--- Images --->
@@ -1901,6 +1911,10 @@
 			<cfif (structKeyExists(arguments.thestruct,"img_columns") AND arguments.thestruct.img_columns NEQ "") OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
 				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
 			</cfif>
+			<!--- Get renditions and add to query --->
+			<cfif arguments.thestruct.include_renditions>
+				<cfset _get_renditions(type='img', thestruct=arguments.thestruct)>
+			</cfif>
 		</cfcase>
 		<!--- Videos --->
 		<cfcase value="vid">
@@ -1925,6 +1939,10 @@
 			<!--- Add Values to total query --->
 			<cfif structKeyExists(arguments.thestruct,"vid_columns") AND arguments.thestruct.vid_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
 				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>
+			<!--- Get renditions and add to query --->
+			<cfif arguments.thestruct.include_renditions>
+				<cfset _get_renditions(type='vid', thestruct=arguments.thestruct)>
 			</cfif>
 		</cfcase>
 		<!--- Audios --->
@@ -1962,7 +1980,11 @@
 			<!--- Add Values to total query --->
 			<cfif structKeyExists(arguments.thestruct,"aud_columns") AND arguments.thestruct.aud_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
 				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
-			</cfif>	
+			</cfif>
+			<!--- Get renditions and add to query --->
+			<cfif arguments.thestruct.include_renditions>
+				<cfset _get_renditions(type='aud', thestruct=arguments.thestruct)>
+			</cfif>
 		</cfcase>
 		<!--- All other files --->
 		<cfdefaultcase>
@@ -2196,6 +2218,8 @@
 		<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
 		<!--- Add type --->
 		<cfset QuerySetCell(arguments.thestruct.tq, "type", arguments.thestruct.filetype)>
+		<!--- Add file_kind --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "file_kind", arguments.thestruct.file_kind)>
 		<!--- Add filename --->
 		<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
 		<!--- Add file_url --->
@@ -2215,44 +2239,44 @@
 			<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
 		</cfif>
 	
-	<!--- Add custom fields --->
-	<cfloop query="arguments.thestruct.qry_cfields">
-		<!--- Replace foreign chars in column names --->
-		<cfset var cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id#">
-		<cfset var qcf = "">
-		<!--- Query the query first to see if there is already a column with this custom field there. If not then add column else set cell --->
-		<cfquery name="qcf" dbtype="query">
-		SELECT *
-		FROM arguments.thestruct.tq
-		WHERE id = '#arguments.thestruct.file_id#'
-		</cfquery>
-		<!--- Check if the above query returns the custom text column in the columnlist --->
-		<cfset var qhas = ListFindNoCase(qcf.columnlist, cfcolumn)>
-		<cfif qhas EQ 0>
-			<!--- Add new column with value --->
-			<cfset MyArray = ArrayNew(1)>
-			<cfset MyArray[1] = "">
-			<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
-			<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
-		</cfif>
-	</cfloop>
-	<!--- Add custom fields values --->
-	<cfloop query="arguments.thestruct.qry_cf">
-		<!--- Replace foreign chars in column names --->
-		<cfset var cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id_r#">
-		<cfset arguments.thestruct.qry_cf.cf_value =StrEscUtils.unescapeHTML(arguments.thestruct.qry_cf.cf_value)>
-		<!--- Set Cell --->
-		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
-	</cfloop>
-	<!--- Add keywords and description --->
-	<cfif arguments.thestruct.qry_text.recordcount NEQ 0>
-		<cfloop query="arguments.thestruct.qry_text">
-			<cfif tid EQ arguments.thestruct.file_id>
-			<cfset QuerySetCell(arguments.thestruct.tq, "keywords", keywords)>
-			<cfset QuerySetCell(arguments.thestruct.tq, "description", description)>
+		<!--- Add custom fields --->
+		<cfloop query="arguments.thestruct.qry_cfields">
+			<!--- Replace foreign chars in column names --->
+			<cfset var cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id#">
+			<cfset var qcf = "">
+			<!--- Query the query first to see if there is already a column with this custom field there. If not then add column else set cell --->
+			<cfquery name="qcf" dbtype="query">
+			SELECT *
+			FROM arguments.thestruct.tq
+			WHERE id = '#arguments.thestruct.file_id#'
+			</cfquery>
+			<!--- Check if the above query returns the custom text column in the columnlist --->
+			<cfset var qhas = ListFindNoCase(qcf.columnlist, cfcolumn)>
+			<cfif qhas EQ 0>
+				<!--- Add new column with value --->
+				<cfset MyArray = ArrayNew(1)>
+				<cfset MyArray[1] = "">
+				<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
+				<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
 			</cfif>
 		</cfloop>
-	</cfif>
+		<!--- Add custom fields values --->
+		<cfloop query="arguments.thestruct.qry_cf">
+			<!--- Replace foreign chars in column names --->
+			<cfset var cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id_r#">
+			<cfset arguments.thestruct.qry_cf.cf_value =StrEscUtils.unescapeHTML(arguments.thestruct.qry_cf.cf_value)>
+			<!--- Set Cell --->
+			<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
+		</cfloop>
+		<!--- Add keywords and description --->
+		<cfif arguments.thestruct.qry_text.recordcount NEQ 0>
+			<cfloop query="arguments.thestruct.qry_text">
+				<cfif tid EQ arguments.thestruct.file_id>
+				<cfset QuerySetCell(arguments.thestruct.tq, "keywords", keywords)>
+				<cfset QuerySetCell(arguments.thestruct.tq, "description", description)>
+				</cfif>
+			</cfloop>
+		</cfif>
 	</cfif>
 	<!--- Add XMP --->
 	<!--- RAZ-2831 : Add metadata to Export file --->
@@ -2656,6 +2680,141 @@
 		</cfcatch>
 	</cftry>
 	
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Import custom metadata into custom fields --->
+<cffunction name="_get_renditions" output="false">
+	<cfargument name="type" type="string" required="true">
+	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Local vars --->
+	<cfset var qry_rend = "">
+	<cfset var qry_image = "">
+	<cfset var qry_video = "">
+	<cfset var qry_audio = "">
+	<cfset var qry_doc = "">
+	<cfset var foldername = "">
+	<cfset arguments.thestruct.file_kind = "rendition">
+	<!--- According to type --->
+	<cfif arguments.type EQ "img">
+		<cfset var db = "images">
+		<cfset var id = "img_id">
+		<cfset var group = "img_group">
+	<cfelseif arguments.type EQ "vid">
+		<cfset var db = "videos">
+		<cfset var id = "vid_id">
+		<cfset var group = "vid_group">
+	<cfelseif arguments.type EQ "aud">
+		<cfset var db = "audios">
+		<cfset var id = "aud_id">
+		<cfset var group = "aud_group">
+	</cfif>
+	<!--- Get all the renditions for the file --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_rend">
+	SELECT #id# as fileid
+	FROM #session.hostdbprefix##db#
+	WHERE #group# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+	</cfquery>
+	<!--- We got all the renditions. Now loop over them and get values --->
+	<cfloop query="qry_rend">
+		<cfset arguments.thestruct.file_id = fileid>
+		<!--- Set query --->
+		<cfset arguments.thestruct.qry = querynew("id")>
+		<cfset QueryAddRow(arguments.thestruct.qry,1)>
+		<cfset QuerySetCell(arguments.thestruct.qry, "id", arguments.thestruct.file_id)>
+		<!--- IMAGES --->
+		<cfif arguments.type EQ "img">
+			<!--- Get asset detail --->
+			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r, img_create_time, img_change_time, img_size" returnVariable="qry_image" />
+			<cfset arguments.thestruct.filename = qry_image.img_filename>
+			<cfset arguments.thestruct.folder_id_r = qry_image.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
+			<!--- Get Labels --->
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<!--- Get Custom Fields --->
+			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
+			<!--- Get keywords and description --->
+			<cfinvoke component="images" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
+			<!--- Get XMP values --->
+			<cfinvoke method="readxmpdb" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_xmp" />
+			<!--- The file_url --->
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
+			</cfif>
+			<!--- Add Values to total query --->
+			<cfif (structKeyExists(arguments.thestruct,"img_columns") AND arguments.thestruct.img_columns NEQ "") OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>
+		<!--- VIDEOS --->
+		<cfelseif arguments.type EQ "vid">
+			<!--- Get asset detail --->
+			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org, v.folder_id_r, v.vid_create_time, v.vid_change_time, v.vid_size" returnVariable="qry_video" />
+			<cfset arguments.thestruct.filename = qry_video.vid_filename>
+			<cfset arguments.thestruct.folder_id_r = qry_video.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
+			<!--- Get Labels --->
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<!--- Get Custom Fields --->
+			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
+			<!--- Get keywords and description --->
+			<cfinvoke component="videos" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
+			</cfif>
+			<!--- Add Values to total query --->
+			<cfif structKeyExists(arguments.thestruct,"vid_columns") AND arguments.thestruct.vid_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>
+		<!--- AUDIOS --->
+		<cfelseif arguments.type EQ "aud">
+			<!--- Get asset detail --->
+			<cfinvoke component="audios" method="detail" thestruct="#arguments.thestruct#" returnVariable="qry_audio" />
+			<cfset arguments.thestruct.filename = qry_audio.detail.aud_name>
+			<cfset arguments.thestruct.folder_id_r = qry_audio.detail.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
+			<cftry>
+				<cfset var audarray = ArrayNew(1)>
+				<cfset audarray[1] = qry_audio.desc.aud_keywords>
+				<cfset QueryAddcolumn(qry_audio.desc, "keywords", "varchar", audarray)>
+				<cfset audarray[1] = qry_audio.desc.aud_description>
+				<cfset QueryAddcolumn(qry_audio.desc, "description", "varchar", audarray)>
+				<cfcatch type="any">
+					<cfset QuerySetCell(qry_audio.desc, "keywords", qry_audio.desc.aud_keywords)>
+					<cfset QuerySetCell(qry_audio.desc, "description", qry_audio.desc.aud_description)>
+				</cfcatch>
+			</cftry>
+			<cfset arguments.thestruct.qry_text = qry_audio.desc>
+			<!--- Get Labels --->
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<!--- Get Custom Fields --->
+			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
+			<!--- Get keywords and description --->
+			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
+			</cfif>
+			<!--- Add Values to total query --->
+			<cfif structKeyExists(arguments.thestruct,"aud_columns") AND arguments.thestruct.aud_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
+				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
+			</cfif>
+		</cfif>
+
+	</cfloop>
+
+
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

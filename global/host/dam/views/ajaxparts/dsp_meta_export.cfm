@@ -38,7 +38,12 @@
 			<input type="hidden" name="expwhat" id="expwhat" value="" />
 		</cfif>
 	</div> 
-	<div style="float:right;"><select id="export_format"><option value="">#myFusebox.getApplicationData().defaults.trans("choose_format")#</option><option value="csv" selected="selected">CSV</option><option value="xls">XLS</option><option value="xlsx">XLSX</option></select><span style="padding-right:7px;"></span><input type="button" value="#myFusebox.getApplicationData().defaults.trans("export")#" onclick="exportfile()" />
+	<div style="float:right;">
+		<select id="export_format"><option value="">#myFusebox.getApplicationData().defaults.trans("choose_format")#</option><option value="csv" selected="selected">CSV</option><option value="xls">XLS</option><option value="xlsx">XLSX</option></select><span style="padding-right:7px;"></span><input type="button" value="#myFusebox.getApplicationData().defaults.trans("export")#" onclick="exportfile()" />
+	</div>
+	<div style="clear:both;"></div>
+	<div style="padding-top:10px;float:right;">
+		<input type="checkbox" name="include_renditions" id="include_renditions" value="true" /> include renditions in export
 	</div>
 </div>
 <script type="text/javascript">
@@ -47,9 +52,11 @@
 		var format = $('##export_format option:selected').val();
 		// what to export
 		var exp = $('##expwhat option:selected').val();
+		// Renditions
+		var rend = $('##include_renditions:checked').val() ? true : false;
 		// Only if select is a format
 		if (format != ''){
-			window.open('#myself#c.meta_export_do&what=#attributes.what#&folder_id=#attributes.folder_id#&format=' + format + '&expwhat=' + exp + '&_v=#createuuid()#')
+			window.open('#myself#c.meta_export_do&what=#attributes.what#&folder_id=#attributes.folder_id#&format=' + format + '&expwhat=' + exp + '&_v=#createuuid()#&include_renditions=' + rend)
 		}
 	}
 </script>
