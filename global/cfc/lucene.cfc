@@ -159,31 +159,26 @@
 		<cfif arguments.reset>
 			<cfset rebuildIndex(assetid='all', dsn=application.razuna.datasource, prefix=session.hostdbprefix, hostid=session.hostid ) />
 		</cfif>
-		<!--- Get the cachetoken for here --->
-		<cfset var cache_img = getcachetoken("images")>
-		<cfset var cache_vid = getcachetoken("videos")>
-		<cfset var cache_aud = getcachetoken("audios")>
-		<cfset var cache_doc = getcachetoken("files")>
 		<!--- Var --->
 		<cfset var qry = "" />
 		<!--- Query how many files are not indexed --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #cache_img#statusOfIndex */ count(img_id) as count, 'Images' as type
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT count(img_id) as count, 'Images' as type
 		FROM #session.hostdbprefix#images
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT /* #cache_vid#statusOfIndex */ count(vid_id) as count, 'Videos' as type
+		SELECT count(vid_id) as count, 'Videos' as type
 		FROM #session.hostdbprefix#videos
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT /* #cache_doc#statusOfIndex */ count(file_id) as count, 'Documents' as type
+		SELECT count(file_id) as count, 'Documents' as type
 		FROM #session.hostdbprefix#files
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT /* #cache_aud#statusOfIndex */ count(aud_id) as count, 'Audios' as type
+		SELECT count(aud_id) as count, 'Audios' as type
 		FROM #session.hostdbprefix#audios a
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
