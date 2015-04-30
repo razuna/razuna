@@ -167,21 +167,25 @@
 		FROM #session.hostdbprefix#images
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(vid_id) as count, 'Videos' as type
 		FROM #session.hostdbprefix#videos
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(file_id) as count, 'Documents' as type
 		FROM #session.hostdbprefix#files
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		UNION ALL
 		SELECT count(aud_id) as count, 'Audios' as type
 		FROM #session.hostdbprefix#audios a
 		WHERE is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -198,6 +202,7 @@
 		UPDATE #arguments.prefix#images
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
@@ -206,6 +211,7 @@
 		UPDATE #arguments.prefix#videos
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
@@ -214,6 +220,7 @@
 		UPDATE #arguments.prefix#audios
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
@@ -222,6 +229,7 @@
 		UPDATE #arguments.prefix#files
 		SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.assetid NEQ "all">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 		</cfif>
