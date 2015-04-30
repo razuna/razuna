@@ -327,7 +327,6 @@
 			</cfif>
 			AND (i.img_group IS NULL OR i.img_group = '')
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			AND i.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.istruct.available#">
 			<!--- Check permissions --->
 			AND CASE
 				<!--- Check if admin --->
@@ -511,7 +510,6 @@
 			</cfif>
 			AND (i.img_group IS NULL OR i.img_group = '')
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-			AND i.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.istruct.available#">
 			<!--- Check permissions --->
 			AND CASE
 				<!--- Check if admin --->
@@ -730,7 +728,6 @@
 		</cfif>
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND v.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.vstruct.available#">
 		<!--- Check Permissions --->
 		AND CASE
 			<!--- Check if admin --->
@@ -917,7 +914,6 @@
 		</cfif>
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND v.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.vstruct.available#">
 		<!--- Check Permissions --->
 		AND CASE
 			<!--- Check if admin --->
@@ -1132,7 +1128,6 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND a.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.astruct.available#">
 		<!--- Check Permissions --->
 		AND CASE
 			<!--- Check if admin --->
@@ -1314,7 +1309,6 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND a.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.astruct.available#">
 		<!--- Check Permissions --->
 		AND CASE
 			<!--- Check if admin --->
@@ -1535,7 +1529,6 @@
 			</cfif>
 		</cfif>
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND f.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fstruct.available#">
 		<!--- Check Permissions --->
 		AND CASE
 			<!--- Check if admin --->
@@ -1726,7 +1719,6 @@
 			</cfif>
 		</cfif>
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND f.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fstruct.available#">
 		<!--- Check Permissions --->
 		AND CASE
 			<!--- Check if admin --->
