@@ -197,6 +197,22 @@
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="prefix" type="string" required="true">
 		<cfargument name="hostid" type="string" required="true">
+		<!--- Param --->
+		<cfset var _taskserver = "" />
+		<!--- Query settings --->
+		<cfinvoke component="settings" method="prefs_taskserver" returnvariable="_taskserver" />
+		<!--- Taskserver URL according to settings --->
+		<cfif _taskserver.taskserver_location EQ "remote">
+			<cfset var _url = _taskserver.taskserver_remote_url />
+		<cfelse>
+			<cfset var _url = _taskserver.taskserver_local_url />
+		</cfif>
+		<!--- Call search server to rebuild collection --->
+		<cfhttp url="#_url#/api/collection.cfc" method="post" charset="utf-8">
+			<cfhttpparam name="method" value="rebuildCollection" type="formfield" />
+			<cfhttpparam name="secret" value="#_taskserver.taskserver_secret#" type="formfield" />
+			<cfhttpparam name="collection" value="#arguments.hostid#" type="formfield" />
+		</cfhttp>
 		<!--- Set records to non indexed --->
 		<cfquery datasource="#arguments.dsn#">
 		UPDATE #arguments.prefix#images
