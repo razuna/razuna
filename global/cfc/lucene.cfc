@@ -211,7 +211,7 @@
 		<cfhttp url="#_url#/api/collection.cfc" method="post" charset="utf-8">
 			<cfhttpparam name="method" value="rebuildCollection" type="formfield" />
 			<cfhttpparam name="secret" value="#_taskserver.taskserver_secret#" type="formfield" />
-			<cfhttpparam name="collection" value="#arguments.hostid#" type="formfield" />
+			<cfhttpparam name="hostid" value="#arguments.hostid#" type="formfield" />
 		</cfhttp>
 		<!--- Set records to non indexed --->
 		<cfquery datasource="#arguments.dsn#">
