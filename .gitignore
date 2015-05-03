@@ -1,2 +1,6 @@
 global/host/dam/views/layouts/custom
 bluedragon.xml
+*.db
+admin/parsed/
+WEB-INF/bluedragon/
+raz1/

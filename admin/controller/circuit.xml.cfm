@@ -28,7 +28,7 @@
 				<set name="session.hostid" value="1" />
 				<xfa name="submitform" value="c.firsttimerun" />
 				<set name="attributes.thepath" value="#thispath#" />
-				
+
 				<!-- CFC: Check -->
 				<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangsadmin(attributes.thepath)" returnvariable="xml_langs" />
 				<do action="v.firsttime" />
@@ -41,7 +41,7 @@
 			</false>
 		</if>
 	</fuseaction>
-	<!-- 
+	<!--
 	GLOBAL Fuseaction for storage
 	 -->
 	 <fuseaction name="storage">
@@ -222,24 +222,24 @@
 		<set name="session.thedomainid" value="" />
 		<do action="login" />
 	</fuseaction>
-	
-	<!-- 
+
+	<!--
 	GLOBAL Fuseaction for Languages
 	 -->
 	 <fuseaction name="languages">
 		<!-- Get languages -->
 		<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangs()" returnvariable="qry_langs" />
 	</fuseaction>
-	
+
 	<!-- Get Path to Assets -->
 	<fuseaction name="assetpath">
 		<invoke object="myFusebox.getApplicationData().settings" method="assetpath" returnvariable="attributes.assetpath" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- START: FIRSTTIME -->
 	<!--  -->
-	
+
 	<!-- database -->
 	<fuseaction name="first_time_database">
 		<!-- Set sessions -->
@@ -477,12 +477,12 @@
 		<set name="attributes.conf_schema" value="#session.firsttime.db_schema#" />
 		<set name="attributes.conf_datasource" value="#session.firsttime.database_type#" />
 		<set name="attributes.conf_storage" value="local" />
-		<!-- Save general settings -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(attributes)" />
 		<!-- Remove all data in the db, in case it is here -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb(thedatabase=session.firsttime.database_type)" />
 		<!-- Setup & create host & add host -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="setupdb(attributes)" />
+		<!-- Save general settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(attributes)" />
 		<!-- Save tools settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_tools(attributes)" />
 		<!-- CFC: Set internal firsttime value to false -->
@@ -505,7 +505,7 @@
 		<!-- CFC: Add the datasource -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 	</fuseaction>
-	
+
 	<!-- Call firsttime run -->
 	<fuseaction name="firsttimerun">
 		<!-- Add default values for the demo host -->
@@ -724,8 +724,8 @@
 		<!-- Relocate to index page -->
 		<do action="ajax.redirector" />
 	</fuseaction>
-	
-	
+
+
 
 	<!--  -->
 	<!-- END: PREFERENCES -->
@@ -1058,7 +1058,7 @@
 	<!-- Send email to selected users -->
 	<fuseaction name="send_useremails">
 		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
-	</fuseaction>	
+	</fuseaction>
 
 	<!-- Check for the email -->
 	<fuseaction name="checkemail">
@@ -1217,7 +1217,7 @@
 		<!-- Show -->
 		<do action="ajax.hosts_languages" />
 	</fuseaction>
-	
+
 
 	<!--  -->
 	<!-- END: HOSTS -->
@@ -1264,7 +1264,7 @@
 	<!--  -->
 	<!-- START: Update function -->
 	<!--  -->
-	
+
 	<!-- Check for update -->
 	<fuseaction name="update">
 		<!-- Param -->
@@ -1302,15 +1302,15 @@
 		<!-- Show -->
 		<do action="v.update" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- END: Update function -->
 	<!--  -->
-	
+
 	<!--
 		END: SERVE TO BROWSER (CALLS FROM EXTERNAL URL)
 	-->
-	
+
 	<!-- Random Password -->
 	<fuseaction name="randompass">
 		<!-- CFC: Random Password -->
@@ -1318,11 +1318,11 @@
 		<!-- Show -->
 		<do action="ajax.randompass" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- START: Rendering Farm -->
 	<!--  -->
-	
+
 	<!-- Load -->
 	<fuseaction name="prefs_renf">
 		<!-- Global -->
@@ -1361,7 +1361,7 @@
 	<!--  -->
 	<!-- START: White Label -->
 	<!--  -->
-	
+
 	<!-- Load -->
 	<fuseaction name="pref_global_wl">
 		<!-- Params -->
@@ -1417,7 +1417,7 @@
 	</fuseaction>
 
 	<fuseaction name="debug">
-		<do action="v.debug" />	
+		<do action="v.debug" />
 	</fuseaction>
 
 	<!-- Run Folder subscribe schedule tasks -->
