@@ -1575,6 +1575,9 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Permissions of this Collection (we do this here at the end since other function also call the permissions) -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- Custom Fields -->
+		<set name="attributes.file_id" value="#attributes.col_id#" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- Show -->
 		<do action="ajax.collection_detail" />
 	</fuseaction>
@@ -1603,6 +1606,12 @@
 	</fuseaction>
 	<!-- Update Collection -->
 	<fuseaction name="collection_update">
+		<!-- Check if there are custom fields to be saved -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<do action="custom_fields_save" />
+			</true>
+		</if>
 		<!-- CFC: Update -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="update(attributes)" />
 	</fuseaction>
