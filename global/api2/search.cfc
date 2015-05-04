@@ -47,6 +47,7 @@
 		<cfargument name="available" type="string" required="false" default="1">
 		<cfargument name="startrow" type="string" required="false" default="0" hint="New since 1.7.5">
 		<cfargument name="maxrows" type="string" required="false" default="25" hint="New since 1.7.5">
+		<cfargument name="showrenditions" type="string" required="false" default="false" hint="New since 1.7.5">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var thexml ="">
@@ -273,7 +274,11 @@
 			lower(i.img_filename) filename_forsort,
 			<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'#qryluceneimg.searchcount#'</cfif> as cnt,
 			i.img_create_time date_create,
-			i.img_change_time date_change
+			i.img_change_time date_change,
+			CASE 
+				WHEN (i.img_group is null OR i.img_group='') THEN 'original'
+				ELSE 'rendition'
+			END as file_type
 			<!--- for UI --->
 			<cfif arguments.istruct.ui>
 				,
@@ -325,7 +330,10 @@
 					AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 				</cfif>
 			</cfif>
-			AND (i.img_group IS NULL OR i.img_group = '')
+			<!--- Include/exclude renditions --->
+			<cfif !arguments.istruct.showrenditions>
+				AND (i.img_group IS NULL OR i.img_group = '')
+			</cfif>
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			<!--- Check permissions --->
 			AND CASE
@@ -455,7 +463,8 @@
 			lower(i.img_filename) filename_forsort,
 			<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'#qryluceneimg.searchcount#'</cfif> as cnt,
 			i.img_create_time date_create,
-			i.img_change_time date_change
+			i.img_change_time date_change,
+			'original' AS file_type
 			<!--- for UI --->
 			<cfif arguments.istruct.ui>
 				,
@@ -675,7 +684,11 @@
 		lower(v.vid_filename) filename_forsort,
 		<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'#qrylucenevid.searchcount#'</cfif> as cnt,
 		v.vid_create_time date_create,
-		v.vid_change_time date_change
+		v.vid_change_time date_change,
+		CASE 
+			WHEN (v.vid_group is null OR v.vid_group='') THEN 'original'
+			ELSE 'rendition'
+		END as file_type
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
@@ -726,7 +739,9 @@
 				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
-		AND (v.vid_group IS NULL OR v.vid_group = '')
+		<cfif !arguments.vstruct.showrenditions>
+			AND (v.vid_group IS NULL OR v.vid_group = '')
+		</cfif>
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
 		AND CASE
@@ -860,7 +875,8 @@
 		lower(v.vid_filename) filename_forsort,
 		<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'#qrylucenevid.searchcount#'</cfif> as cnt,
 		v.vid_create_time date_create,
-		v.vid_change_time date_change
+		v.vid_change_time date_change,
+		'original' as file_type
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
@@ -912,7 +928,9 @@
 				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
-		AND (v.vid_group IS NULL OR v.vid_group = '')
+		<cfif !arguments.vstruct.showrenditions>
+			AND (v.vid_group IS NULL OR v.vid_group = '')
+		</cfif>
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
 		AND CASE
@@ -1074,7 +1092,11 @@
 		lower(a.aud_name) filename_forsort,
 		<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'#qryluceneaud.searchcount#'</cfif> as cnt,
 		a.aud_create_time date_create,
-		a.aud_change_time date_change
+		a.aud_change_time date_change,
+		CASE 
+			WHEN (a.aud_group is null OR a.aud_group='') THEN 'original'
+			ELSE 'rendition'
+		END as file_type
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
@@ -1125,8 +1147,9 @@
 				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
-		AND (a.aud_group IS NULL OR a.aud_group = '')
-
+		<cfif !arguments.astruct.showrenditions>
+			AND (a.aud_group IS NULL OR a.aud_group = '')
+		</cfif>
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
 		AND CASE
@@ -1254,7 +1277,8 @@
 		lower(a.aud_name) filename_forsort,
 		<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'#qryluceneaud.searchcount#'</cfif> as cnt,
 		a.aud_create_time date_create,
-		a.aud_change_time date_change
+		a.aud_change_time date_change,
+		'original' as file_type
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
@@ -1306,8 +1330,9 @@
 				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
-		AND (a.aud_group IS NULL OR a.aud_group = '')
-
+		<cfif !arguments.astruct.showrenditions>
+			AND (a.aud_group IS NULL OR a.aud_group = '')
+		</cfif>
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
 		AND CASE
@@ -1475,7 +1500,8 @@
 		lower(f.file_name) filename_forsort,
 		<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'#qrylucenedoc.searchcount#'</cfif> as cnt,
 		f.file_create_time date_create,
-		f.file_change_time date_change
+		f.file_change_time date_change,
+		'' as file_type
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
@@ -1664,7 +1690,8 @@
 		lower(f.file_name) filename_forsort,
 		<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'#qrylucenedoc.searchcount#'</cfif> as cnt,
 		f.file_create_time date_create,
-		f.file_change_time date_change
+		f.file_change_time date_change,
+		'' as file_type
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
