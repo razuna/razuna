@@ -88,6 +88,8 @@
 				<cfif qry_aliases.recordcount NEQ 0>
 					<li><a href="##alias" onclick="loadcontent('alias','#myself#c.usage_alias&id=#attributes.file_id#&folder_id=#attributes.folder_id#');">Alias</a></li>
 				</cfif>
+				<!--- Collections --->
+				<li><a href="##ass_col" onclick="loadcontent('ass_col','#myself#c.usage_collection&id=#attributes.file_id#&folder_id=#attributes.folder_id#');">Associated Collections</a></li>
 				<!--- Plugin being shows with add_tab_detail_wx  --->
 				<cfif structKeyExists(plwx,"pview")>
 					<cfloop list="#plwx.pview#" delimiters="," index="i">
@@ -345,6 +347,7 @@
 			<div id="shareoptions"></div>
 			<div id="history"></div>
 			<div id="alias"></div>
+			<div id="ass_col"></div>
 			<!--- Plugin being shows with add_tab_detail_wx  --->
 			<cfif structKeyExists(plwx,"pcfc")>
 				<cfloop list="#plwx.pcfc#" delimiters="," index="i">

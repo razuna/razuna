@@ -3243,6 +3243,14 @@
 		<do action="ajax.usage_alias" />
 	</fuseaction>
 
+	<!-- Show file usage in collection -->
+	<fuseaction name="usage_collection">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="getUsage(attributes.id)" returnvariable="qry_usage" />
+		<!-- Show -->
+		<do action="ajax.usage_collection" />
+	</fuseaction>
+
 	<!--
 		END: WORKING WITH ASSETS
 	 -->

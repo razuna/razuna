@@ -2010,4 +2010,21 @@
 	<cfreturn ishere>
 </cffunction>
 
+<!--- Get where this file is being using --->
+<cffunction name="getUsage" output="false">
+	<cfargument name="id" required="yes" type="string">
+	<!--- Var --->
+	<cfset var qry = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT t.col_name, f.col_id_r, c.folder_id_r
+	FROM #session.hostdbprefix#collections_ct_files f, #session.hostdbprefix#collections_text t, #session.hostdbprefix#collections c
+	WHERE f.file_id_r = <cfqueryparam value="#arguments.id#" cfsqltype="CF_SQL_VARCHAR">
+	AND f.col_id_r = t.col_id_r
+	AND t.col_id_r = c.col_id
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />	
+</cffunction>
+
 </cfcomponent>

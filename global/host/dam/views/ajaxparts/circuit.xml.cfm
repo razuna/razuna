@@ -296,6 +296,10 @@
 	<fuseaction name="usage_alias">
   		<include template="dsp_usage_alias" />
 	</fuseaction>
+	<!-- Assets: Show collection usage -->
+	<fuseaction name="usage_collection">
+  		<include template="dsp_usage_collection" />
+	</fuseaction>
 	
 	
 	<!-- Files: Detail -->
