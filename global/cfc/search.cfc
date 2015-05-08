@@ -93,6 +93,29 @@
 			<cfset var lucene_startrow = arguments.thestruct.mysqloffset />
 		</cfif>
 
+		
+		<!--- Only if we have dates --->
+		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
+			<!--- If search text is * --->
+			<cfif arguments.thestruct.searchtext EQ "*">
+				<cfset arguments.thestruct.searchtext = "">
+			<cfelse>
+				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " AND ">
+			</cfif>
+			<!--- Set the create time string --->
+			<cfset arguments.thestruct.searchtext = 'create_time:("#arguments.thestruct.on_year##arguments.thestruct.on_month##arguments.thestruct.on_day#")'>
+		</cfif>
+		<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
+			<!--- If search text is * --->
+			<cfif arguments.thestruct.searchtext EQ "*">
+				<cfset arguments.thestruct.searchtext = "">
+			<cfelse>
+				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " AND ">
+			</cfif>
+			<!--- Set the change time string --->
+			<cfset arguments.thestruct.searchtext = '#arguments.thestruct.searchtext# AND change_time:("#arguments.thestruct.change_year##arguments.thestruct.change_month##arguments.thestruct.change_day#")'>	
+		</cfif>
+
 		<!--- Search in Lucene  --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" returnvariable="qry_lucene">
 
@@ -303,7 +326,7 @@
 		<!--- Get the cachetoken for here --->
 		<cfset var cachetoken = getcachetoken("search")>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			<!--- MSSQL --->
 			<cfif application.razuna.thedatabase EQ "mssql">
 				with myresult as (
@@ -395,49 +418,6 @@
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
 				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 				WHERE i.img_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-				<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-					AND i.img_id in (
-						select img_id from #session.hostdbprefix#images where 1=1 
-							<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, i.img_create_time) = #session.search.on_year#
-									AND DATEPART(mm, i.img_create_time) = #session.search.on_month#
-									AND DATEPART(dd, i.img_create_time) = #session.search.on_day#)
-								<cfelse>
-									AND i.img_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-								</cfif>
-							</cfif>
-							<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, i.img_change_time) = #session.search.change_year#
-									AND DATEPART(mm, i.img_change_time) = #session.search.change_month#
-									AND DATEPART(dd, i.img_change_time) = #session.search.change_day#)
-								<cfelse>
-									AND i.img_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-								</cfif>
-							</cfif>
-						
-					) 
-				</cfif>
-				<!--- Only if we have dates --->
-				<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, i.img_create_time) = #arguments.thestruct.on_year#
-						AND DATEPART(mm, i.img_create_time) = #arguments.thestruct.on_month#
-						AND DATEPART(dd, i.img_create_time) = #arguments.thestruct.on_day#)
-					<cfelse>
-						AND i.img_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-					</cfif>
-				</cfif>
-				<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, i.img_change_time) = #arguments.thestruct.change_year#
-						AND DATEPART(mm, i.img_change_time) = #arguments.thestruct.change_month#
-						AND DATEPART(dd, i.img_change_time) = #arguments.thestruct.change_day#)
-					<cfelse>
-						AND i.img_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-					</cfif>
-				</cfif>
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -547,49 +527,6 @@
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND i.host_id = fo.host_id
 				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 				WHERE i.img_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-				<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-					AND i.img_id in (
-						select img_id from #session.hostdbprefix#images where 1=1 
-							<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, i.img_create_time) = #session.search.on_year#
-									AND DATEPART(mm, i.img_create_time) = #session.search.on_month#
-									AND DATEPART(dd, i.img_create_time) = #session.search.on_day#)
-								<cfelse>
-									AND i.img_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-								</cfif>
-							</cfif>
-							<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, i.img_change_time) = #session.search.change_year#
-									AND DATEPART(mm, i.img_change_time) = #session.search.change_month#
-									AND DATEPART(dd, i.img_change_time) = #session.search.change_day#)
-								<cfelse>
-									AND i.img_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-								</cfif>
-							</cfif>
-						
-					) 
-				</cfif>
-				<!--- Only if we have dates --->
-				<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, i.img_create_time) = #arguments.thestruct.on_year#
-						AND DATEPART(mm, i.img_create_time) = #arguments.thestruct.on_month#
-						AND DATEPART(dd, i.img_create_time) = #arguments.thestruct.on_day#)
-					<cfelse>
-						AND i.img_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-					</cfif>
-				</cfif>
-				<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, i.img_change_time) = #arguments.thestruct.change_year#
-						AND DATEPART(mm, i.img_change_time) = #arguments.thestruct.change_month#
-						AND DATEPART(dd, i.img_change_time) = #arguments.thestruct.change_day#)
-					<cfelse>
-						AND i.img_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-					</cfif>
-				</cfif>
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -763,48 +700,6 @@
 			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 			WHERE v.vid_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-			<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-				AND v.vid_id in (
-					select vid_id from #session.hostdbprefix#videos where 1=1 
-						<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, v.vid_create_time) = #session.search.on_year#
-								AND DATEPART(mm, v.vid_create_time) = #session.search.on_month#
-								AND DATEPART(dd, v.vid_create_time) = #session.search.on_day#)
-							<cfelse>
-								AND v.vid_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-							</cfif>
-						</cfif>
-						<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, v.vid_change_time) = #session.search.change_year#
-								AND DATEPART(mm, v.vid_change_time) = #session.search.change_month#
-								AND DATEPART(dd, v.vid_change_time) = #session.search.change_day#)
-							<cfelse>
-								AND v.vid_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-							</cfif>
-						</cfif>
-				) 
-			</cfif>
-			<!--- Only if we have dates --->
-			<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, v.vid_create_time) = #arguments.thestruct.on_year#
-					AND DATEPART(mm, v.vid_create_time) = #arguments.thestruct.on_month#
-					AND DATEPART(dd, v.vid_create_time) = #arguments.thestruct.on_day#)
-				<cfelse>
-					AND v.vid_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-				</cfif>
-			</cfif>
-			<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, v.vid_change_time) = #arguments.thestruct.change_year#
-					AND DATEPART(mm, v.vid_change_time) = #arguments.thestruct.change_month#
-					AND DATEPART(dd, v.vid_change_time) = #arguments.thestruct.change_day#)
-				<cfelse>
-					AND v.vid_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-				</cfif>
-			</cfif>
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 				AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -911,48 +806,6 @@
 			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND v.host_id = fo.host_id
 			WHERE v.vid_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-			<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-				AND v.vid_id in (
-					select vid_id from #session.hostdbprefix#videos where 1=1 
-						<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, v.vid_create_time) = #session.search.on_year#
-								AND DATEPART(mm, v.vid_create_time) = #session.search.on_month#
-								AND DATEPART(dd, v.vid_create_time) = #session.search.on_day#)
-							<cfelse>
-								AND v.vid_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-							</cfif>
-						</cfif>
-						<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, v.vid_change_time) = #session.search.change_year#
-								AND DATEPART(mm, v.vid_change_time) = #session.search.change_month#
-								AND DATEPART(dd, v.vid_change_time) = #session.search.change_day#)
-							<cfelse>
-								AND v.vid_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-							</cfif>
-						</cfif>
-				) 
-			</cfif>
-			<!--- Only if we have dates --->
-			<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, v.vid_create_time) = #arguments.thestruct.on_year#
-					AND DATEPART(mm, v.vid_create_time) = #arguments.thestruct.on_month#
-					AND DATEPART(dd, v.vid_create_time) = #arguments.thestruct.on_day#)
-				<cfelse>
-					AND v.vid_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-				</cfif>
-			</cfif>
-			<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, v.vid_change_time) = #arguments.thestruct.change_year#
-					AND DATEPART(mm, v.vid_change_time) = #arguments.thestruct.change_month#
-					AND DATEPART(dd, v.vid_change_time) = #arguments.thestruct.change_day#)
-				<cfelse>
-					AND v.vid_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-				</cfif>
-			</cfif>
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 				AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -1119,49 +972,6 @@
 			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 			WHERE f.file_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-			<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-				AND f.file_id in (
-					select file_id from #session.hostdbprefix#files where 1=1 
-						<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, f.file_create_time) = #session.search.on_year#
-								AND DATEPART(mm, f.file_create_time) = #session.search.on_month#
-								AND DATEPART(dd, f.file_create_time) = #session.search.on_day#)
-							<cfelse>
-								AND f.file_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-							</cfif>
-						</cfif>
-						<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, f.file_change_time) = #session.search.change_year#
-								AND DATEPART(mm, f.file_change_time) = #session.search.change_month#
-								AND DATEPART(dd, f.file_change_time) = #session.search.change_day#)
-							<cfelse>
-								AND f.file_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-							</cfif>
-						</cfif>
-					
-				) 
-			</cfif>
-			<!--- Only if we have dates --->
-			<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, f.file_create_time) = #arguments.thestruct.on_year#
-					AND DATEPART(mm, f.file_create_time) = #arguments.thestruct.on_month#
-					AND DATEPART(dd, f.file_create_time) = #arguments.thestruct.on_day#)
-				<cfelse>
-					AND f.file_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-				</cfif>
-			</cfif>
-			<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, f.file_change_time) = #arguments.thestruct.change_year#
-					AND DATEPART(mm, f.file_change_time) = #arguments.thestruct.change_month#
-					AND DATEPART(dd, f.file_change_time) = #arguments.thestruct.change_day#)
-				<cfelse>
-					AND f.file_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-				</cfif>
-			</cfif>
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 				AND f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -1251,49 +1061,6 @@
 			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 			WHERE f.file_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-			<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-				AND f.file_id in (
-					select file_id from #session.hostdbprefix#files where 1=1 
-						<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, f.file_create_time) = #session.search.on_year#
-								AND DATEPART(mm, f.file_create_time) = #session.search.on_month#
-								AND DATEPART(dd, f.file_create_time) = #session.search.on_day#)
-							<cfelse>
-								AND f.file_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-							</cfif>
-						</cfif>
-						<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-							<cfif application.razuna.thedatabase EQ "mssql">
-								AND (DATEPART(yy, f.file_change_time) = #session.search.change_year#
-								AND DATEPART(mm, f.file_change_time) = #session.search.change_month#
-								AND DATEPART(dd, f.file_change_time) = #session.search.change_day#)
-							<cfelse>
-								AND f.file_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-							</cfif>
-						</cfif>
-					
-				) 
-			</cfif>
-			<!--- Only if we have dates --->
-			<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, f.file_create_time) = #arguments.thestruct.on_year#
-					AND DATEPART(mm, f.file_create_time) = #arguments.thestruct.on_month#
-					AND DATEPART(dd, f.file_create_time) = #arguments.thestruct.on_day#)
-				<cfelse>
-					AND f.file_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-				</cfif>
-			</cfif>
-			<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-				<cfif application.razuna.thedatabase EQ "mssql">
-					AND (DATEPART(yy, f.file_change_time) = #arguments.thestruct.change_year#
-					AND DATEPART(mm, f.file_change_time) = #arguments.thestruct.change_month#
-					AND DATEPART(dd, f.file_change_time) = #arguments.thestruct.change_day#)
-				<cfelse>
-					AND f.file_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-				</cfif>
-			</cfif>
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 				AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -1461,48 +1228,6 @@
 				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
 				WHERE a.aud_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-				<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-					AND a.aud_id in (
-						select aud_id from #session.hostdbprefix#audios where 1=1 
-							<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, a.aud_create_time) = #session.search.on_year#
-									AND DATEPART(mm, a.aud_create_time) = #session.search.on_month#
-									AND DATEPART(dd, a.aud_create_time) = #session.search.on_day#)
-								<cfelse>
-									AND a.aud_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-								</cfif>
-							</cfif>
-							<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, a.aud_change_time) = #session.search.change_year#
-									AND DATEPART(mm, a.aud_change_time) = #session.search.change_month#
-									AND DATEPART(dd, a.aud_change_time) = #session.search.change_day#)
-								<cfelse>
-									AND a.aud_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-								</cfif>
-							</cfif>
-					) 
-				</cfif>
-				<!--- Only if we have dates --->
-				<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, a.aud_create_time) = #arguments.thestruct.on_year#
-						AND DATEPART(mm, a.aud_create_time) = #arguments.thestruct.on_month#
-						AND DATEPART(dd, a.aud_create_time) = #arguments.thestruct.on_day#)
-					<cfelse>
-						AND a.aud_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-					</cfif>
-				</cfif>
-				<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, a.aud_change_time) = #arguments.thestruct.change_year#
-						AND DATEPART(mm, a.aud_change_time) = #arguments.thestruct.change_month#
-						AND DATEPART(dd, a.aud_change_time) = #arguments.thestruct.change_day#)
-					<cfelse>
-						AND a.aud_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-					</cfif>
-				</cfif>
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -1608,48 +1333,6 @@
 				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND a.host_id = fo.host_id
 				WHERE a.aud_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
-				<cfif arguments.thestruct.newsearch EQ 'F' AND ( (session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ '') OR (session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ '') )>
-					AND a.aud_id in (
-						select aud_id from #session.hostdbprefix#audios where 1=1 
-							<cfif session.search.on_year NEQ '' AND session.search.on_month NEQ '' AND session.search.on_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, a.aud_create_time) = #session.search.on_year#
-									AND DATEPART(mm, a.aud_create_time) = #session.search.on_month#
-									AND DATEPART(dd, a.aud_create_time) = #session.search.on_day#)
-								<cfelse>
-									AND a.aud_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
-								</cfif>
-							</cfif>
-							<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
-								<cfif application.razuna.thedatabase EQ "mssql">
-									AND (DATEPART(yy, a.aud_change_time) = #session.search.change_year#
-									AND DATEPART(mm, a.aud_change_time) = #session.search.change_month#
-									AND DATEPART(dd, a.aud_change_time) = #session.search.change_day#)
-								<cfelse>
-									AND a.aud_change_time LIKE '#session.search.change_year#-#session.search.change_month#-#session.search.change_day#%'
-								</cfif>
-							</cfif>
-					) 
-				</cfif>
-				<!--- Only if we have dates --->
-				<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, a.aud_create_time) = #arguments.thestruct.on_year#
-						AND DATEPART(mm, a.aud_create_time) = #arguments.thestruct.on_month#
-						AND DATEPART(dd, a.aud_create_time) = #arguments.thestruct.on_day#)
-					<cfelse>
-						AND a.aud_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
-					</cfif>
-				</cfif>
-				<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
-					<cfif application.razuna.thedatabase EQ "mssql">
-						AND (DATEPART(yy, a.aud_change_time) = #arguments.thestruct.change_year#
-						AND DATEPART(mm, a.aud_change_time) = #arguments.thestruct.change_month#
-						AND DATEPART(dd, a.aud_change_time) = #arguments.thestruct.change_day#)
-					<cfelse>
-						AND a.aud_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
-					</cfif>
-				</cfif>
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
