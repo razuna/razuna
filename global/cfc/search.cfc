@@ -27,6 +27,7 @@
 	
 	<cffunction name="newSearch" output="true">
 		<cfargument name="thestruct" type="struct">
+
 		<!--- Default params --->
 		<cfset var qry = "">
 		<cfset var qry_lucene = "">
@@ -44,6 +45,7 @@
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="t" name="arguments.thestruct.newsearch">
+		<cfparam default="" name="arguments.thestruct.search_type">
 		<cfparam default="0" name="session.thegroupofuser">
 		<cfparam default="0" name="session.customaccess">
 		<cfparam default="0" name="session.search.search_file_ids">
@@ -92,7 +94,6 @@
 		<cfelse>
 			<cfset var lucene_startrow = arguments.thestruct.mysqloffset />
 		</cfif>
-
 		
 		<!--- Only if we have dates --->
 		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
@@ -100,24 +101,24 @@
 			<cfif arguments.thestruct.searchtext EQ "*">
 				<cfset arguments.thestruct.searchtext = "">
 			<cfelse>
-				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " AND ">
+				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " ">
 			</cfif>
 			<!--- Set the create time string --->
-			<cfset arguments.thestruct.searchtext = 'create_time:("#arguments.thestruct.on_year##arguments.thestruct.on_month##arguments.thestruct.on_day#")'>
+			<cfset arguments.thestruct.searchtext = '#arguments.thestruct.searchtext#create_time:("#arguments.thestruct.on_year##arguments.thestruct.on_month##arguments.thestruct.on_day#")'>
 		</cfif>
 		<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
 			<!--- If search text is * --->
 			<cfif arguments.thestruct.searchtext EQ "*">
 				<cfset arguments.thestruct.searchtext = "">
 			<cfelse>
-				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " AND ">
+				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " ">
 			</cfif>
 			<!--- Set the change time string --->
-			<cfset arguments.thestruct.searchtext = '#arguments.thestruct.searchtext# AND change_time:("#arguments.thestruct.change_year##arguments.thestruct.change_month##arguments.thestruct.change_day#")'>	
+			<cfset arguments.thestruct.searchtext = '#arguments.thestruct.searchtext#change_time:("#arguments.thestruct.change_year##arguments.thestruct.change_month##arguments.thestruct.change_day#")'>	
 		</cfif>
 
 		<!--- Search in Lucene  --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" returnvariable="qry_lucene">
+		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" returnvariable="qry_lucene">
 
 		<cfif qry_lucene.recordcount NEQ "0">
 			<!--- Get all ids --->

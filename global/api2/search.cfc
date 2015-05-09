@@ -190,6 +190,15 @@
 		<cfset var thesearchfor = arguments.istruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.istruct.dbdirect>
+			<!--- Add dates to lucene search --->
+			<cfif arguments.istruct.datecreate NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.istruct.datecreate, "-", "", "ALL")#)">
+			</cfif>
+			<cfif arguments.istruct.datechange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.istruct.datechange, "-", "", "ALL")#)">
+			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid)>
 			<!--- If lucene returns no records --->
@@ -362,34 +371,36 @@
 				ELSE 'locked' 
 			        END = 'unlocked'
 			<!--- Only if we have dates --->
-			<cfif arguments.istruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
-					AND (DATEPART(yy, i.img_create_time) = idate.the_create_year
-					AND DATEPART(mm, i.img_create_time) = idate.the_create_month
-					AND DATEPART(dd, i.img_create_time) = idate.the_create_day)
-				<cfelse>
-					AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreate#%">
+			<cfif arguments.istruct.dbdirect>
+				<cfif arguments.istruct.datecreate NEQ "">
+					<cfif application.razuna.api.thedatabase EQ "mssql">
+						AND (DATEPART(yy, i.img_create_time) = idate.the_create_year
+						AND DATEPART(mm, i.img_create_time) = idate.the_create_month
+						AND DATEPART(dd, i.img_create_time) = idate.the_create_day)
+					<cfelse>
+						AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreate#%">
+					</cfif>
 				</cfif>
-			</cfif>
-			<cfif arguments.istruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
-					AND (DATEPART(yy, i.img_change_time) = idate.the_change_year
-					AND DATEPART(mm, i.img_change_time) = idate.the_change_month
-					AND DATEPART(dd, i.img_change_time) = idate.the_change_day)
-				<cfelse>
-					AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechange#%">
+				<cfif arguments.istruct.datechange NEQ "">
+					<cfif application.razuna.api.thedatabase EQ "mssql">
+						AND (DATEPART(yy, i.img_change_time) = idate.the_change_year
+						AND DATEPART(mm, i.img_change_time) = idate.the_change_month
+						AND DATEPART(dd, i.img_change_time) = idate.the_change_day)
+					<cfelse>
+						AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechange#%">
+					</cfif>
 				</cfif>
-			</cfif>
-			<cfif arguments.istruct.datecreateparam NEQ "">
-				AND i.img_create_time #arguments.istruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestart#">
-				<cfif arguments.istruct.datecreateparam EQ "between">
-					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestop#">
+				<cfif arguments.istruct.datecreateparam NEQ "">
+					AND i.img_create_time #arguments.istruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestart#">
+					<cfif arguments.istruct.datecreateparam EQ "between">
+						AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestop#">
+					</cfif>
 				</cfif>
-			</cfif>
-			<cfif arguments.istruct.datechangeparam NEQ "">
-				AND i.img_change_time #arguments.istruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestart#">
-				<cfif arguments.istruct.datechangeparam EQ "between">
-					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestop#">
+				<cfif arguments.istruct.datechangeparam NEQ "">
+					AND i.img_change_time #arguments.istruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestart#">
+					<cfif arguments.istruct.datechangeparam EQ "between">
+						AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestop#">
+					</cfif>
 				</cfif>
 			</cfif>
 			<!--- If we have a folderid --->
@@ -546,34 +557,36 @@
 				ELSE 'locked' 
 			        END = 'unlocked'
 			<!--- Only if we have dates --->
-			<cfif arguments.istruct.datecreate NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
-					AND (DATEPART(yy, i.img_create_time) = idate.the_create_year
-					AND DATEPART(mm, i.img_create_time) = idate.the_create_month
-					AND DATEPART(dd, i.img_create_time) = idate.the_create_day)
-				<cfelse>
-					AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreate#%">
+			<cfif arguments.istruct.dbdirect>
+				<cfif arguments.istruct.datecreate NEQ "">
+					<cfif application.razuna.api.thedatabase EQ "mssql">
+						AND (DATEPART(yy, i.img_create_time) = idate.the_create_year
+						AND DATEPART(mm, i.img_create_time) = idate.the_create_month
+						AND DATEPART(dd, i.img_create_time) = idate.the_create_day)
+					<cfelse>
+						AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreate#%">
+					</cfif>
 				</cfif>
-			</cfif>
-			<cfif arguments.istruct.datechange NEQ "">
-				<cfif application.razuna.api.thedatabase EQ "mssql">
-					AND (DATEPART(yy, i.img_change_time) = idate.the_change_year
-					AND DATEPART(mm, i.img_change_time) = idate.the_change_month
-					AND DATEPART(dd, i.img_change_time) = idate.the_change_day)
-				<cfelse>
-					AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechange#%">
+				<cfif arguments.istruct.datechange NEQ "">
+					<cfif application.razuna.api.thedatabase EQ "mssql">
+						AND (DATEPART(yy, i.img_change_time) = idate.the_change_year
+						AND DATEPART(mm, i.img_change_time) = idate.the_change_month
+						AND DATEPART(dd, i.img_change_time) = idate.the_change_day)
+					<cfelse>
+						AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechange#%">
+					</cfif>
 				</cfif>
-			</cfif>
-			<cfif arguments.istruct.datecreateparam NEQ "">
-				AND i.img_create_time #arguments.istruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestart#">
-				<cfif arguments.istruct.datecreateparam EQ "between">
-					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestop#">
+				<cfif arguments.istruct.datecreateparam NEQ "">
+					AND i.img_create_time #arguments.istruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestart#">
+					<cfif arguments.istruct.datecreateparam EQ "between">
+						AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datecreatestop#">
+					</cfif>
 				</cfif>
-			</cfif>
-			<cfif arguments.istruct.datechangeparam NEQ "">
-				AND i.img_change_time #arguments.istruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestart#">
-				<cfif arguments.istruct.datechangeparam EQ "between">
-					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestop#">
+				<cfif arguments.istruct.datechangeparam NEQ "">
+					AND i.img_change_time #arguments.istruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestart#">
+					<cfif arguments.istruct.datechangeparam EQ "between">
+						AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.datechangestop#">
+					</cfif>
 				</cfif>
 			</cfif>
 			<!--- If we have a folderid --->
@@ -597,6 +610,15 @@
 		<cfset var thesearchfor = arguments.vstruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.vstruct.dbdirect>
+			<!--- Add dates to lucene search --->
+			<cfif arguments.vstruct.datecreate NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.vstruct.datecreate, "-", "", "ALL")#)">
+			</cfif>
+			<cfif arguments.vstruct.datechange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.vstruct.datechange, "-", "", "ALL")#)">
+			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid)>
 			<!--- If lucene returns no records --->
@@ -770,34 +792,36 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif arguments.vstruct.datecreate NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
-				AND DATEPART(mm, v.vid_create_time) = vdate.the_create_month
-				AND DATEPART(dd, v.vid_create_time) = vdate.the_create_day)
-			<cfelse>
-				AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreate#%">
+		<cfif !arguments.istruct.dbdirect>
+			<cfif arguments.vstruct.datecreate NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
+					AND DATEPART(mm, v.vid_create_time) = vdate.the_create_month
+					AND DATEPART(dd, v.vid_create_time) = vdate.the_create_day)
+				<cfelse>
+					AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreate#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.vstruct.datechange NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, v.vid_change_time) = vdate.the_change_year
-				AND DATEPART(mm, v.vid_change_time) = vdate.the_change_month
-				AND DATEPART(dd, v.vid_change_time) = vdate.the_change_day)
-			<cfelse>
-				AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechange#%">
+			<cfif arguments.vstruct.datechange NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, v.vid_change_time) = vdate.the_change_year
+					AND DATEPART(mm, v.vid_change_time) = vdate.the_change_month
+					AND DATEPART(dd, v.vid_change_time) = vdate.the_change_day)
+				<cfelse>
+					AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechange#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.vstruct.datecreateparam NEQ "">
-			AND v.vid_create_time #arguments.vstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestart#">
-			<cfif arguments.vstruct.datecreateparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestop#">
+			<cfif arguments.vstruct.datecreateparam NEQ "">
+				AND v.vid_create_time #arguments.vstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestart#">
+				<cfif arguments.vstruct.datecreateparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestop#">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.vstruct.datechangeparam NEQ "">
-			AND v.vid_change_time #arguments.vstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestart#">
-			<cfif arguments.vstruct.datechangeparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestop#">
+			<cfif arguments.vstruct.datechangeparam NEQ "">
+				AND v.vid_change_time #arguments.vstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestart#">
+				<cfif arguments.vstruct.datechangeparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestop#">
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
@@ -959,34 +983,36 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif arguments.vstruct.datecreate NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
-				AND DATEPART(mm, v.vid_create_time) = vdate.the_create_month
-				AND DATEPART(dd, v.vid_create_time) = vdate.the_create_day)
-			<cfelse>
-				AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreate#%">
+		<cfif !arguments.istruct.dbdirect>
+			<cfif arguments.vstruct.datecreate NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
+					AND DATEPART(mm, v.vid_create_time) = vdate.the_create_month
+					AND DATEPART(dd, v.vid_create_time) = vdate.the_create_day)
+				<cfelse>
+					AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreate#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.vstruct.datechange NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, v.vid_change_time) = vdate.the_change_year
-				AND DATEPART(mm, v.vid_change_time) = vdate.the_change_month
-				AND DATEPART(dd, v.vid_change_time) = vdate.the_change_day)
-			<cfelse>
-				AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechange#%">
+			<cfif arguments.vstruct.datechange NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, v.vid_change_time) = vdate.the_change_year
+					AND DATEPART(mm, v.vid_change_time) = vdate.the_change_month
+					AND DATEPART(dd, v.vid_change_time) = vdate.the_change_day)
+				<cfelse>
+					AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechange#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.vstruct.datecreateparam NEQ "">
-			AND v.vid_create_time #arguments.vstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestart#">
-			<cfif arguments.vstruct.datecreateparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestop#">
+			<cfif arguments.vstruct.datecreateparam NEQ "">
+				AND v.vid_create_time #arguments.vstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestart#">
+				<cfif arguments.vstruct.datecreateparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datecreatestop#">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.vstruct.datechangeparam NEQ "">
-			AND v.vid_change_time #arguments.vstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestart#">
-			<cfif arguments.vstruct.datechangeparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestop#">
+			<cfif arguments.vstruct.datechangeparam NEQ "">
+				AND v.vid_change_time #arguments.vstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestart#">
+				<cfif arguments.vstruct.datechangeparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.datechangestop#">
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
@@ -1010,6 +1036,15 @@
 		<cfset var thesearchfor = arguments.astruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.astruct.dbdirect>
+			<!--- Add dates to lucene search --->
+			<cfif arguments.astruct.datecreate NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.astruct.datecreate, "-", "", "ALL")#)">
+			</cfif>
+			<cfif arguments.astruct.datechange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.astruct.datechange, "-", "", "ALL")#)">
+			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid)>
 			<!--- If lucene returns no records --->
@@ -1178,34 +1213,36 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif arguments.astruct.datecreate NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
-				AND DATEPART(mm, a.aud_create_time) = adate.the_create_month
-				AND DATEPART(dd, a.aud_create_time) = adate.the_create_day)
-			<cfelse>
-				AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreate#%">
+		<cfif !arguments.istruct.dbdirect>
+			<cfif arguments.astruct.datecreate NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
+					AND DATEPART(mm, a.aud_create_time) = adate.the_create_month
+					AND DATEPART(dd, a.aud_create_time) = adate.the_create_day)
+				<cfelse>
+					AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreate#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.astruct.datechange NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, a.aud_change_time) = adate.the_change_year
-				AND DATEPART(mm, a.aud_change_time) = adate.the_change_month
-				AND DATEPART(dd, a.aud_change_time) = adate.the_change_day)
-			<cfelse>
-				AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechange#%">
+			<cfif arguments.astruct.datechange NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, a.aud_change_time) = adate.the_change_year
+					AND DATEPART(mm, a.aud_change_time) = adate.the_change_month
+					AND DATEPART(dd, a.aud_change_time) = adate.the_change_day)
+				<cfelse>
+					AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechange#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.astruct.datecreateparam NEQ "">
-			AND a.aud_create_time #arguments.astruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestart#">
-			<cfif arguments.astruct.datecreateparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestop#">
+			<cfif arguments.astruct.datecreateparam NEQ "">
+				AND a.aud_create_time #arguments.astruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestart#">
+				<cfif arguments.astruct.datecreateparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestop#">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.astruct.datechangeparam NEQ "">
-			AND a.aud_change_time #arguments.astruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestart#">
-			<cfif arguments.astruct.datechangeparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestop#">
+			<cfif arguments.astruct.datechangeparam NEQ "">
+				AND a.aud_change_time #arguments.astruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestart#">
+				<cfif arguments.astruct.datechangeparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestop#">
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
@@ -1361,34 +1398,36 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif arguments.astruct.datecreate NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
-				AND DATEPART(mm, a.aud_create_time) = adate.the_create_month
-				AND DATEPART(dd, a.aud_create_time) = adate.the_create_day)
-			<cfelse>
-				AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreate#%">
+		<cfif !arguments.istruct.dbdirect>
+			<cfif arguments.astruct.datecreate NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
+					AND DATEPART(mm, a.aud_create_time) = adate.the_create_month
+					AND DATEPART(dd, a.aud_create_time) = adate.the_create_day)
+				<cfelse>
+					AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreate#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.astruct.datechange NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, a.aud_change_time) = adate.the_change_year
-				AND DATEPART(mm, a.aud_change_time) = adate.the_change_month
-				AND DATEPART(dd, a.aud_change_time) = adate.the_change_day)
-			<cfelse>
-				AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechange#%">
+			<cfif arguments.astruct.datechange NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, a.aud_change_time) = adate.the_change_year
+					AND DATEPART(mm, a.aud_change_time) = adate.the_change_month
+					AND DATEPART(dd, a.aud_change_time) = adate.the_change_day)
+				<cfelse>
+					AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechange#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.astruct.datecreateparam NEQ "">
-			AND a.aud_create_time #arguments.astruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestart#">
-			<cfif arguments.astruct.datecreateparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestop#">
+			<cfif arguments.astruct.datecreateparam NEQ "">
+				AND a.aud_create_time #arguments.astruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestart#">
+				<cfif arguments.astruct.datecreateparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datecreatestop#">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.astruct.datechangeparam NEQ "">
-			AND a.aud_change_time #arguments.astruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestart#">
-			<cfif arguments.astruct.datechangeparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestop#">
+			<cfif arguments.astruct.datechangeparam NEQ "">
+				AND a.aud_change_time #arguments.astruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestart#">
+				<cfif arguments.astruct.datechangeparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.datechangestop#">
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
@@ -1411,6 +1450,15 @@
 		<cfset var thesearchfor = arguments.fstruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.fstruct.dbdirect>
+			<!--- Add dates to lucene search --->
+			<cfif arguments.fstruct.datecreate NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.fstruct.datecreate, "-", "", "ALL")#)">
+			</cfif>
+			<cfif arguments.fstruct.datechange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.fstruct.datechange, "-", "", "ALL")#)">
+			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid)>
 			<!--- If lucene returns no records --->
@@ -1582,34 +1630,35 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif arguments.fstruct.datecreate NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
-				AND DATEPART(mm, f.file_create_time) = fdate.the_create_month
-				AND DATEPART(dd, f.file_create_time) = fdate.the_create_day)
-			<cfelse>
-				AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreate#%">
+			<cfif arguments.fstruct.datecreate NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
+					AND DATEPART(mm, f.file_create_time) = fdate.the_create_month
+					AND DATEPART(dd, f.file_create_time) = fdate.the_create_day)
+				<cfelse>
+					AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreate#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.fstruct.datechange NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, f.file_change_time) = fdate.the_change_year
-				AND DATEPART(mm, f.file_change_time) = fdate.the_change_month
-				AND DATEPART(dd, f.file_change_time) = fdate.the_change_day)
-			<cfelse>
-				AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechange#%">
+			<cfif arguments.fstruct.datechange NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, f.file_change_time) = fdate.the_change_year
+					AND DATEPART(mm, f.file_change_time) = fdate.the_change_month
+					AND DATEPART(dd, f.file_change_time) = fdate.the_change_day)
+				<cfelse>
+					AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechange#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.fstruct.datecreateparam NEQ "">
-			AND f.file_create_time #arguments.fstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestart#">
-			<cfif arguments.fstruct.datecreateparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestop#">
+			<cfif arguments.fstruct.datecreateparam NEQ "">
+				AND f.file_create_time #arguments.fstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestart#">
+				<cfif arguments.fstruct.datecreateparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestop#">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.fstruct.datechangeparam NEQ "">
-			AND f.file_change_time #arguments.fstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestart#">
-			<cfif arguments.fstruct.datechangeparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestop#">
+			<cfif arguments.fstruct.datechangeparam NEQ "">
+				AND f.file_change_time #arguments.fstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestart#">
+				<cfif arguments.fstruct.datechangeparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestop#">
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
@@ -1773,34 +1822,36 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif arguments.fstruct.datecreate NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
-				AND DATEPART(mm, f.file_create_time) = fdate.the_create_month
-				AND DATEPART(dd, f.file_create_time) = fdate.the_create_day)
-			<cfelse>
-				AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreate#%">
+		<cfif !arguments.istruct.dbdirect>
+			<cfif arguments.fstruct.datecreate NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
+					AND DATEPART(mm, f.file_create_time) = fdate.the_create_month
+					AND DATEPART(dd, f.file_create_time) = fdate.the_create_day)
+				<cfelse>
+					AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreate#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.fstruct.datechange NEQ "">
-			<cfif application.razuna.api.thedatabase EQ "mssql">
-				AND (DATEPART(yy, f.file_change_time) = fdate.the_change_year
-				AND DATEPART(mm, f.file_change_time) = fdate.the_change_month
-				AND DATEPART(dd, f.file_change_time) = fdate.the_change_day)
-			<cfelse>
-				AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechange#%">
+			<cfif arguments.fstruct.datechange NEQ "">
+				<cfif application.razuna.api.thedatabase EQ "mssql">
+					AND (DATEPART(yy, f.file_change_time) = fdate.the_change_year
+					AND DATEPART(mm, f.file_change_time) = fdate.the_change_month
+					AND DATEPART(dd, f.file_change_time) = fdate.the_change_day)
+				<cfelse>
+					AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechange#%">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.fstruct.datecreateparam NEQ "">
-			AND f.file_create_time #arguments.fstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestart#">
-			<cfif arguments.fstruct.datecreateparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestop#">
+			<cfif arguments.fstruct.datecreateparam NEQ "">
+				AND f.file_create_time #arguments.fstruct.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestart#">
+				<cfif arguments.fstruct.datecreateparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datecreatestop#">
+				</cfif>
 			</cfif>
-		</cfif>
-		<cfif arguments.fstruct.datechangeparam NEQ "">
-			AND f.file_change_time #arguments.fstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestart#">
-			<cfif arguments.fstruct.datechangeparam EQ "between">
-				AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestop#">
+			<cfif arguments.fstruct.datechangeparam NEQ "">
+				AND f.file_change_time #arguments.fstruct.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestart#">
+				<cfif arguments.fstruct.datechangeparam EQ "between">
+					AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.datechangestop#">
+				</cfif>
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->

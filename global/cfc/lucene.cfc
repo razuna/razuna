@@ -76,6 +76,7 @@
 		<cfargument name="startrow" type="numeric">
 		<cfargument name="maxrows" type="numeric">
 		<cfargument name="folderid" type="string">
+		<cfargument name="search_type" type="string">
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->
@@ -97,6 +98,7 @@
 			<cfhttpparam name="startrow" value="#arguments.startrow#" type="formfield" />
 			<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="formfield" />
 			<cfhttpparam name="folderid" value="#arguments.folderid#" type="formfield" />
+			<cfhttpparam name="search_type" value="#arguments.search_type#" type="formfield" />
 		</cfhttp>
 		<!--- if statuscode is not 200 --->
 		<cfif cfhttp.statuscode CONTAINS "200">
