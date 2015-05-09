@@ -1286,6 +1286,8 @@ function searchadv_files(theform, thefa, folderid) {
 function searchadv_videos(theform, thefa, folderid) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1328,6 +1330,8 @@ function searchadv_images(theform, thefa, folderid) {
 	var searchtext = subadvfields(theform);
 	// Put together the extend metadata
 	var searchtext = subadvfieldsimg(theform, searchtext);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1368,6 +1372,8 @@ function searchadv_images(theform, thefa, folderid) {
 function searchadv_audios(theform, thefa, folderid) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1408,6 +1414,8 @@ function searchadv_audios(theform, thefa, folderid) {
 function searchadv_all(theform, thefa) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1539,7 +1547,7 @@ function subadvfieldsdoc(theform,searchtext){
 	else {
 		var searchtext = searchtext + rightsmarked;
 	}
-	return encodeURIComponent(searchtext);
+	return searchtext;
 }
 function subadvfieldsimg(theform,searchtext){
 	// Get values
@@ -1810,7 +1818,7 @@ function subadvfieldsimg(theform,searchtext){
 	else {
 		var searchtext = searchtext + rights;
 	}	
-	return encodeURIComponent(searchtext);
+	return searchtext;
 }
 // Focus tree
 function razunatreefocus(folderid){

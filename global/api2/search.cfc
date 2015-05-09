@@ -200,7 +200,7 @@
 				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.istruct.datechange, "-", "", "ALL")#)">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid)>
+			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid, showrenditions=arguments.showrenditions)>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneimg.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -338,10 +338,6 @@
 				<cfif thesearchfor NEQ "">
 					AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 				</cfif>
-			</cfif>
-			<!--- Include/exclude renditions --->
-			<cfif !arguments.istruct.showrenditions>
-				AND (i.img_group IS NULL OR i.img_group = '')
 			</cfif>
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			<!--- Check permissions --->
@@ -761,9 +757,6 @@
 				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
-		<cfif !arguments.vstruct.showrenditions>
-			AND (v.vid_group IS NULL OR v.vid_group = '')
-		</cfif>
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
 		AND CASE
@@ -951,9 +944,6 @@
 			<cfif thesearchfor NEQ "">
 				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
-		</cfif>
-		<cfif !arguments.vstruct.showrenditions>
-			AND (v.vid_group IS NULL OR v.vid_group = '')
 		</cfif>
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
@@ -1182,9 +1172,6 @@
 				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
-		<cfif !arguments.astruct.showrenditions>
-			AND (a.aud_group IS NULL OR a.aud_group = '')
-		</cfif>
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->
 		AND CASE
@@ -1366,9 +1353,6 @@
 			<cfif thesearchfor NEQ "">
 				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
-		</cfif>
-		<cfif !arguments.astruct.showrenditions>
-			AND (a.aud_group IS NULL OR a.aud_group = '')
 		</cfif>
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Check Permissions --->

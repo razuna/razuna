@@ -126,7 +126,7 @@
 	function subadvfields(theform){
 		// Get values
 		var searchtext = '';
-		var searchfor = document.forms[theform].searchfor.value;
+		// var searchfor = document.forms[theform].searchfor.value;
 		var keywords = document.forms[theform].keywords.value;
 		var description = document.forms[theform].description.value;
 		var filename = document.forms[theform].filename.value;
@@ -162,7 +162,7 @@
 
 		// Put together the search
 		if (labels == null) var labels = '';
-		if (searchfor != '') var searchfor = searchfor;
+		// if (searchfor != '') var searchfor = searchfor;
 		if (keywords != '') var keywords = 'keywords:(' + replacespaces(keywords) +')';
 		if (description != '') var description = 'description:(' + replacespaces(description) +')';
 		var filename;
@@ -193,7 +193,7 @@
 		}
 		</cfoutput></cfloop>
 		// Create the searchtext
-		var searchtext = searchfor;
+		// var searchtext = searchfor;
 		if (searchtext != '' && keywords != '') {
 			var searchtext = searchtext + ' ' + andor + ' ' + keywords;
 		}
@@ -245,7 +245,7 @@
 			}
 		}
 		</cfoutput></cfloop>
-		return encodeURIComponent(searchtext);
+		return searchtext;
 	}
 	// when saving subscribe only
 	function savesubscribe(theid){

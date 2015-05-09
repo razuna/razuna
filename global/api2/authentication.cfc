@@ -306,6 +306,13 @@
 		<cfargument name="startrow" required="true" type="numeric">
 		<cfargument name="maxrows" required="true" type="numeric">
 		<cfargument name="folderid" required="true" type="string">
+		<cfargument name="showrenditions" required="true" type="string">
+		<!--- Renditions param is boolean convert it here --->
+		<cfif !arguments.showrenditions>
+			<cfset var _rendition = "t">
+		<cfelse>
+			<cfset var _rendition = "f">
+		</cfif>
 		<!--- Call Lucene --->
 		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
 			<cfinvoke component="#application.razuna.api.lucene#" method="search" returnvariable="qrylucene"> 
@@ -315,6 +322,7 @@
 				<cfinvokeargument name="startrow" value="#arguments.startrow#" />
 				<cfinvokeargument name="maxrows" value="#arguments.maxrows#" />
 				<cfinvokeargument name="folderid" value="#arguments.folderid#" />
+				<cfinvokeargument name="search_rendition" value="#_rendition#" />
 			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
@@ -325,6 +333,7 @@
 				<cfhttpparam name="startrow" value="#arguments.startrow#" type="url" />
 				<cfhttpparam name="maxrows" value="#arguments.maxrows#" type="url" />
 				<cfhttpparam name="folderid" value="#arguments.folderid#" type="url" />
+				<cfhttpparam name="search_rendition" value="#_rendition#" type="url" />
 			</cfhttp>
 			<!--- Set the return --->
 			<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="qrylucene" />

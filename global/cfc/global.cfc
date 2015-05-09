@@ -1573,7 +1573,8 @@ Comment:<br>
 			UPDATE #session.hostdbprefix##thedb#
 			SET 
 			#d1# = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-			#d2# = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+			#d2# = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE #theid# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			</cfquery>
 		</cfif>

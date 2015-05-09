@@ -24,11 +24,13 @@
 *
 --->
 <cfoutput>
-	<tr>
+	<input type="hidden" name="thetype" value="#myvar.thetype#">
+	<!--- <tr>
 		<td>#myFusebox.getApplicationData().defaults.trans("search_term")#</td>
-		<td><input type="hidden" name="thetype" value="#myvar.thetype#">
-			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
-	</tr>
+		<td>
+			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold">
+		</td>
+	</tr> --->
 	<!--- If the search selection is on we search with folder ids --->
 	<cfif cs.search_selection AND attributes.folder_id EQ 0>
 		<td></td>

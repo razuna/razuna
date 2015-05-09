@@ -45,11 +45,12 @@
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="t" name="arguments.thestruct.newsearch">
+		<!--- if advanced search this contains "adv" --->
 		<cfparam default="" name="arguments.thestruct.search_type">
 		<cfparam default="0" name="session.thegroupofuser">
 		<cfparam default="0" name="session.customaccess">
 		<cfparam default="0" name="session.search.search_file_ids">
-		
+
 		<!--- If there is a change then reset offset --->
 		<cfif structKeyExists(arguments.thestruct, "rowmaxpagechange")>
 			<cfset session.offset = 0>
@@ -112,14 +113,16 @@
 				<cfset arguments.thestruct.searchtext = "">
 			<cfelse>
 				<cfset arguments.thestruct.searchtext = arguments.thestruct.searchtext & " ">
-			</cfif>
+			</cfif>arguments.thestruct.prefs
 			<!--- Set the change time string --->
 			<cfset arguments.thestruct.searchtext = '#arguments.thestruct.searchtext#change_time:("#arguments.thestruct.change_year##arguments.thestruct.change_month##arguments.thestruct.change_day#")'>	
 		</cfif>
 
 		<!--- Search in Lucene  --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" returnvariable="qry_lucene">
+		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
 
+		<!--- Do we search in all results or only in originals --->
+		<!--- If arguments.thestruct.prefs = f we show all files --->
 		<cfif qry_lucene.recordcount NEQ "0">
 			<!--- Get all ids --->
 			<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" returnvariable="qry_idstype">
