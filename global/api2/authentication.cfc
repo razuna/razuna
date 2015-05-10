@@ -51,7 +51,7 @@
 		SELECT  /* #theapikey##thehostid#checkdb */  u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 		FROM users u INNER JOIN ct_users_hosts ct ON u.user_id = ct.ct_u_h_user_id
 		LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id <!--- Left join on groups since users that are non admin can now also access the API and they may not be part of any groups --->
-		WHERE user_api_key =<cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
+		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar">
 		<cfif thehostid NEQ "">
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
 		</cfif> 
