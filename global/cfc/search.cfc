@@ -118,6 +118,11 @@
 			<cfset arguments.thestruct.searchtext = '#arguments.thestruct.searchtext#change_time:("#arguments.thestruct.change_year##arguments.thestruct.change_month##arguments.thestruct.change_day#")'>	
 		</cfif>
 
+		<!--- Get all the folders the user is allowed to access but not if we are admin or list_recfolders has records --->
+		<cfif ( arguments.thestruct.list_recfolders EQ "0" OR arguments.thestruct.list_recfolders EQ "" ) AND NOT ( Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() )>
+			<cfinvoke component="users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.thestruct.list_recfolders">
+		</cfif>
+
 		<!--- Search in Lucene  --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
 
@@ -126,8 +131,14 @@
 		<cfif qry_lucene.recordcount NEQ "0">
 			<!--- Get all ids --->
 			<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" returnvariable="qry_idstype">
+			<!--- Group type together --->
+			<cfquery dbtype="query" name="grptype">
+			SELECT category
+			FROM qry_idstype
+			GROUP BY category
+			</cfquery>
 			<!--- We got all the types. Now search in each table --->
-			<cfloop query="qry_idstype">
+			<cfloop query="grptype">
 				<cfif category EQ "img">
 					<cfinvoke method="_imgSearch" thestruct="#arguments.thestruct#" qry_idstype="#qry_idstype#" returnvariable="qry_img" />
 					<!--- Set list --->
@@ -357,33 +368,6 @@
 				fo.folder_name,
 				'' as labels,
 				i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-				<!--- Check if this folder belongs to a user and lock/unlock --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					'unlocked' as perm,
-				<cfelse>
-					CASE
-						<!--- Check permission on this folder --->
-						WHEN EXISTS(
-							SELECT fg.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg
-							WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg.folder_id_r = i.folder_id_r
-							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							) THEN 'unlocked'
-						<!--- When folder is shared for everyone --->
-						WHEN EXISTS(
-							SELECT fg2.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg2
-							WHERE fg2.grp_id_r = '0'
-							AND fg2.folder_id_r = i.folder_id_r
-							AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							) THEN 'unlocked'
-						WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-						ELSE 'locked'
-					END as perm,
-				</cfif>
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
@@ -426,11 +410,6 @@
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 				</cfif>
-				<!--- Exclude related images if rendition setting is set to hide--->
-				<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-					AND (i.img_group IS NULL OR i.img_group = '') 
-				</cfif>
-				
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -465,33 +444,6 @@
 				fo.folder_name,
 				'' as labels,
 				i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-				<!--- Check if this folder belongs to a user and lock/unlock --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					'unlocked' as perm,
-				<cfelse>
-					CASE
-						<!--- Check permission on this folder --->
-						WHEN EXISTS(
-							SELECT fg.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg
-							WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg.folder_id_r = ct.folder_id_r
-							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							) THEN 'unlocked'
-						<!--- When folder is shared for everyone --->
-						WHEN EXISTS(
-							SELECT fg2.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg2
-							WHERE fg2.grp_id_r = '0'
-							AND fg2.folder_id_r = ct.folder_id_r
-							AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							) THEN 'unlocked'
-						WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-						ELSE 'locked'
-					END as perm,
-				</cfif>
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
@@ -535,10 +487,6 @@
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 				</cfif>
-				<!--- Exclude related images if rendition setting is set to hide--->
-				<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-					AND (i.img_group IS NULL OR i.img_group = '') 
-				</cfif>
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -557,11 +505,10 @@
 					)  
 					select *  
 			    	from myresult 
-					WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+					WHERE kind IS NOT NULL
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND permfolder IS NOT NULL
 					</cfif>
-					AND kind IS NOT NULL
 					<!---
 					<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 						AND RowNum >
@@ -594,11 +541,10 @@
 				<!--- MySql OR H2 --->
 				<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 					) as t 
-					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+					WHERE kind IS NOT NULL
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND permfolder IS NOT NULL
 					</cfif>
-					AND kind IS NOT NULL
 					ORDER BY #arguments.thestruct.sortby#
 				</cfif>
 			</cfquery>
@@ -641,33 +587,6 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-			<!--- Check if this folder belongs to a user and lock/unlock --->
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-				'unlocked' as perm,
-			<cfelse>
-				CASE
-					<!--- Check permission on this folder --->
-					WHEN EXISTS(
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg
-						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg.folder_id_r = v.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-						) THEN 'unlocked'
-					<!--- When folder is shared for everyone --->
-					WHEN EXISTS(
-						SELECT fg2.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg2
-						WHERE fg2.grp_id_r = '0'
-						AND fg2.folder_id_r = v.folder_id_r
-						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						) THEN 'unlocked'
-					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-					ELSE 'locked'
-				END as perm,
-			</cfif>
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
@@ -708,10 +627,6 @@
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 				AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 			</cfif>
-			<!--- Exclude related images if rendition setting is set to hide--->
-			<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-				AND (v.vid_group IS NULL OR v.vid_group = '')
-			</cfif>
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -746,33 +661,6 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-			<!--- Check if this folder belongs to a user and lock/unlock --->
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-				'unlocked' as perm,
-			<cfelse>
-				CASE
-					<!--- Check permission on this folder --->
-					WHEN EXISTS(
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg
-						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg.folder_id_r = ct.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-						) THEN 'unlocked'
-					<!--- When folder is shared for everyone --->
-					WHEN EXISTS(
-						SELECT fg2.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg2
-						WHERE fg2.grp_id_r = '0'
-						AND fg2.folder_id_r = ct.folder_id_r
-						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						) THEN 'unlocked'
-					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-					ELSE 'locked'
-				END as perm,
-			</cfif>
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
@@ -814,10 +702,6 @@
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 				AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 			</cfif>
-			<!--- Exclude related images if rendition setting is set to hide--->
-			<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-				AND (v.vid_group IS NULL OR v.vid_group = '') 
-			</cfif>
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -836,11 +720,10 @@
 				) 
 				select * 
 				FROM myresult
-				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+				WHERE kind IS NOT NULL
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				AND kind IS NOT NULL
 				<!---
 				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 					AND RowNum >
@@ -873,11 +756,10 @@
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t 
-				WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+				WHERE kind IS NOT NULL
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				AND kind IS NOT NULL
 				ORDER BY #arguments.thestruct.sortby#
 			</cfif>
 
@@ -912,32 +794,6 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-				'unlocked' as perm,
-			<cfelse>
-				CASE
-					<!--- Check permission on this folder --->
-					WHEN EXISTS(
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg
-						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg.folder_id_r = f.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-						) THEN 'unlocked'
-					<!--- When folder is shared for everyone --->
-					WHEN EXISTS(
-						SELECT fg2.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg2
-						WHERE fg2.grp_id_r = '0'
-						AND fg2.folder_id_r = f.folder_id_r
-						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						) THEN 'unlocked'
-					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-					ELSE 'locked'
-				END as perm,
-			</cfif>
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
@@ -1000,32 +856,6 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-				'unlocked' as perm,
-			<cfelse>
-				CASE
-					<!--- Check permission on this folder --->
-					WHEN EXISTS(
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg
-						WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg.folder_id_r = ct.folder_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-						) THEN 'unlocked'
-					<!--- When folder is shared for everyone --->
-					WHEN EXISTS(
-						SELECT fg2.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg2
-						WHERE fg2.grp_id_r = '0'
-						AND fg2.folder_id_r = ct.folder_id_r
-						AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						) THEN 'unlocked'
-					WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-					ELSE 'locked'
-				END as perm,
-			</cfif>
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
@@ -1084,11 +914,10 @@
 				) 
 				select * 
 				FROM myresult
-				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+				WHERE kind IS NOT NULL
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				AND kind IS NOT NULL
 				<!---
 				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 					AND RowNum >
@@ -1121,11 +950,10 @@
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t 
-				WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+				WHERE kind IS NOT NULL
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				AND kind IS NOT NULL
 				ORDER BY #arguments.thestruct.sortby#
 			</cfif>
 
@@ -1169,33 +997,6 @@
 				fo.folder_name,
 				'' as labels,
 				'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-				<!--- Check if this folder belongs to a user and lock/unlock --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					'unlocked' as perm,
-				<cfelse>
-					CASE
-						<!--- Check permission on this folder --->
-						WHEN EXISTS(
-							SELECT fg.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg
-							WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg.folder_id_r = a.folder_id_r
-							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							) THEN 'unlocked'
-						<!--- When folder is shared for everyone --->
-						WHEN EXISTS(
-							SELECT fg2.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg2
-							WHERE fg2.grp_id_r = '0'
-							AND fg2.folder_id_r = a.folder_id_r
-							AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							) THEN 'unlocked'
-						WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-						ELSE 'locked'
-					END as perm,
-				</cfif>
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
@@ -1236,10 +1037,6 @@
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 				</cfif>
-				<!--- Exclude related images if rendition setting is set to hide--->
-				<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-					AND (a.aud_group IS NULL OR a.aud_group = '') 
-				</cfif>
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -1273,33 +1070,6 @@
 				fo.folder_name,
 				'' as labels,
 				'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-				<!--- Check if this folder belongs to a user and lock/unlock --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					'unlocked' as perm,
-				<cfelse>
-					CASE
-						<!--- Check permission on this folder --->
-						WHEN EXISTS(
-							SELECT fg.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg
-							WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg.folder_id_r = ct.folder_id_r
-							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							) THEN 'unlocked'
-						<!--- When folder is shared for everyone --->
-						WHEN EXISTS(
-							SELECT fg2.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg2
-							WHERE fg2.grp_id_r = '0'
-							AND fg2.folder_id_r = ct.folder_id_r
-							AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							) THEN 'unlocked'
-						WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
-						ELSE 'locked'
-					END as perm,
-				</cfif>
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
@@ -1341,10 +1111,6 @@
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND ct.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 				</cfif>
-				<!--- Exclude related images if rendition setting is set to hide--->
-				<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-					AND (a.aud_group IS NULL OR a.aud_group = '') 
-				</cfif>
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -1364,11 +1130,10 @@
 				) 
 				select * 
 				FROM myresult
-				WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+				WHERE kind IS NOT NULL
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				AND kind IS NOT NULL
 				<!---
 				<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
 					AND RowNum >
@@ -1401,11 +1166,10 @@
 			<!--- MySql OR H2 --->
 			<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				) as t 
-				WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+				WHERE kind IS NOT NULL
 				<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 					AND permfolder IS NOT NULL
 				</cfif>
-				AND kind IS NOT NULL
 				ORDER BY #arguments.thestruct.sortby#
 			</cfif>
 
@@ -1680,10 +1444,6 @@
 						<cfset currentListPos = currentListPos+1> 
 					</cfloop>
 					)
-					<!--- Exclude related images if rendition setting is set to hide--->
-					<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-						AND (i.img_group IS NULL OR i.img_group = '') 
-					</cfif>
 					 <!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 					AND CASE 
 					<!--- Check if admin user --->
@@ -1894,10 +1654,6 @@
 							<cfset currentListPos = currentListPos+1> 
 						</cfloop>
 						)
-						<!--- Exclude related images if rendition setting is set to hide--->
-						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-							AND (v.vid_group IS NULL OR v.vid_group = '') 
-						</cfif>
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 						AND CASE 
 						<!--- Check if admin user --->
@@ -2012,10 +1768,6 @@
 							<cfset currentListPos = currentListPos+1> 
 						</cfloop>
 						)
-						<!--- Exclude related images if rendition setting is set to hide--->
-						<cfif arguments.thestruct.prefs.set2_rendition_search EQ 't'>
-							AND (a.aud_group IS NULL OR a.aud_group = '') 
-						</cfif>
 						<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 						AND CASE 
 						<!--- Check if admin user --->
