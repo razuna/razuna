@@ -182,8 +182,8 @@
 		</cftry>
 
 
-		<!--- If less then 48 (1.7.5) --->
-		<cfif updatenumber.opt_value LT 48>
+		<!--- If less then 49 (1.7.5) --->
+		<cfif updatenumber.opt_value LT 49>
 			<!--- Change lenght of IMG_UPC_NUMBER --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -293,6 +293,19 @@
 					asset_id #thevarchar#(100) DEFAULT NULL,
 					date_added #thetimestamp#,
 					asset_type #thevarchar#(10) DEFAULT 'org'
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- FOLDER NAME --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_folders_name (
+					folder_id_r #thevarchar#(100) DEFAULT NULL,
+					rec_uuid #thevarchar#(100) DEFAULT NULL,
+					folder_name #thevarchar#(500) DEFAULT NULL,
+					lang_id_r #theint# DEFAULT NULL,
+					host_id #theint# DEFAULT NULL
 				) #tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>

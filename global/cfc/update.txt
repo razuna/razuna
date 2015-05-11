@@ -128,3 +128,16 @@ ALTER TABLE raz1_settings_2 add SET2_ASSET_EXPIRY_META  varchar(2000);
 ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_EMAIL_SUB varchar(50);
 ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_EMAIL_BODY  varchar(2000);
 ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_META  varchar(2000);
+
+CREATE TABLE `raz1_folders_name` (
+  `folder_id_r` varchar(100) DEFAULT NULL,
+  `folder_name` varchar(200) DEFAULT NULL,
+  `lang_id_r` int(11) DEFAULT NULL,
+  `host_id` int(11) DEFAULT NULL,
+  `rec_uuid` varchar(100) DEFAULT NULL,
+  KEY `index1` (`folder_id_r`),
+  KEY `index2` (`folder_name`),
+  KEY `index3` (`lang_id_r`),
+  KEY `index4` (`host_id`),
+  CONSTRAINT `folder_name_idx` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`HOST_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

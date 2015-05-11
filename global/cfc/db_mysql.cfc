@@ -1527,6 +1527,24 @@
 		)
 		#this.tableoptions#
 		</cfquery>
+
+		<!--- FOLDERS NAME --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_name
+		(
+		  FOLDER_ID_R  VARCHAR(100),
+		  LANG_ID_R    INT,
+		  FOLDER_NAME  VARCHAR(500),
+		  HOST_ID	   INT,
+		  rec_uuid	   VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
+		  KEY #arguments.thestruct.host_db_prefix#fnd_hostid (HOST_ID),
+		  KEY #arguments.thestruct.host_db_prefix#fnd_fidr (folder_id_r),
+		  KEY #arguments.thestruct.host_db_prefix#fnd_lang (LANG_ID_R),
+		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
+		)
+		#this.tableoptions#
+		</cfquery>
 		
 		<!--- FOLDERS GROUPS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">

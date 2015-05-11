@@ -253,6 +253,29 @@
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
+<!--- GET THE FOLDER NAMES --->
+<cffunction name="getfoldernames" output="false">
+	<cfargument name="folder_id" required="yes" type="string">
+	<cfset var qry = "">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getfoldernames */ lang_id_r, folder_name
+	FROM #session.hostdbprefix#folders_name
+	WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- If record doesn't exists (for old one we return the default folder query) --->
+	<cfif qry.recordcount EQ 0>
+		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getfoldernames */ '1' AS lang_id_r, folder_name
+		FROM #session.hostdbprefix#folders
+		WHERE folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+	</cfif>
+	<cfreturn qry>
+</cffunction>
+
+<!--- ------------------------------------------------------------------------------------- --->
 <!--- GET THE GROUPS FOR THIS FOLDER --->
 <cffunction hint="GET THE GROUPS FOR THIS FOLDER" name="getfoldergroups" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
@@ -333,6 +356,10 @@
 	<!--- If this is NOT a link to a folder --->
 	<cfif arguments.thestruct.link_path EQ "">
 		<cftry>
+			<!--- Check if folder_name_1 exists if so we need to put it into folder_name and save it all with the new translation --->
+			<cfif structKeyExists(arguments.thestruct, "folder_name_1")>
+				<cfset arguments.thestruct.folder_name = arguments.thestruct.folder_name_1>
+			</cfif>
 			<!--- Increase folder level --->
 			<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
 			<!--- Check for the same name --->
@@ -1258,8 +1285,26 @@
 	<!--- Insert the DESCRIPTION (only if not from CFC files.extractZip coming) --->
 	<cfif StructIsEmpty(arguments.thefolderparam)>
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+			<!--- Foldername --->
+			<cfif structkeyexists(arguments.thestruct, "folder_name_#langindex#")>
+				<cfset var thisfolder="arguments.thestruct.folder_name_" & "#langindex#">
+				<cfif thisfolder CONTAINS langindex AND evaluate(thisfolder) NEQ "">
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#folders_name
+					(folder_id_r, lang_id_r, folder_name, host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#evaluate(thisfolder)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				</cfif>
+			</cfif>
+			<!--- Description --->
 			<cfset var thisfield="arguments.thestruct.folder_desc_" & "#langindex#">
-			<cfif #thisfield# CONTAINS "#langindex#">
+			<cfif thisfield CONTAINS langindex>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#folders_desc
 				(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
@@ -2344,6 +2389,8 @@
 	<!--- Param --->
 	<cfset arguments.thestruct.grpno = "T">
 	<cfparam name="arguments.thestruct.in_search_selection" default="false" />
+	<!--- Put first folder name into folder_name --->
+	<cfset arguments.thestruct.folder_name = arguments.thestruct.folder_name_1>
 	<!--- Check for the same name --->
 	<cfquery datasource="#variables.dsn#" name="samefolder">
 	SELECT folder_name
@@ -2373,8 +2420,43 @@
 		</cfquery>
 		<!--- Update the Desc --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+			<!--- Folder --->
+			<cfset var thisfolder = "arguments.thestruct.folder_name_" & "#langindex#">
+			<cfif thisfolder CONTAINS langindex AND evaluate(thisfolder) NEQ "">
+				<!--- Check if description in this language exists --->
+				<cfquery datasource="#variables.dsn#" name="langFolder">
+				SELECT folder_id_r
+				FROM #session.hostdbprefix#folders_name
+				WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Update existing or insert new description --->
+				<cfif langFolder.recordCount GT 0>
+					<cfquery datasource="#variables.dsn#">
+					UPDATE #session.hostdbprefix#folders_name
+					SET folder_name = <cfqueryparam value="#evaluate(thisfolder)#" cfsqltype="cf_sql_varchar">
+					WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				<cfelse>
+					<cfquery datasource="#variables.dsn#">
+					INSERT INTO #session.hostdbprefix#folders_name
+					(folder_id_r, lang_id_r, folder_name, host_id, rec_uuid)
+					VALUES (
+					<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#evaluate(thisfolder)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				</cfif>
+			</cfif>
+			<!--- Description --->
 			<cfset var thisfield="arguments.thestruct.folder_desc_" & "#langindex#">
-			<cfif #thisfield# CONTAINS "#langindex#">
+			<cfif thisfield CONTAINS langindex>
 				<!--- Check if description in this language exists --->
 				<cfquery datasource="#variables.dsn#" name="langDesc">
 				SELECT folder_id_r
@@ -4212,7 +4294,8 @@
 	<cfargument name="thestruct" type="struct" required="true">
 	<cfargument name="id" type="string" required="true">
 	<cfargument name="col" type="string" required="true">
-	
+	<!--- Check how many languages are enabled --->
+	<cfinvoke component="defaults" method="getlangs" returnvariable="qry_lang">
 	<!--- If col is T or the id contains col- --->
 	<cfif arguments.col EQ "T" or arguments.id CONTAINS "col-">
 		<cfset var iscol = "T">
@@ -4238,8 +4321,30 @@
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, in_trash,link_path, username, perm, subhere, permfolder
 	FROM (
-		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash,f.link_path, 
+		SELECT f.folder_id, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash,f.link_path, 
 		<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
+		<!--- Folder name --->
+		<cfif qry_lang.recordcount EQ 1>
+			f.folder_name,
+		<cfelse>
+			CASE
+				WHEN EXISTS (
+					SELECT folder_name
+					FROM #session.hostdbprefix#folders_name
+					WHERE folder_id_r = f.folder_id
+					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				) THEN (
+					SELECT folder_name
+					FROM #session.hostdbprefix#folders_name
+					WHERE folder_id_r = f.folder_id
+					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				) ELSE (
+					f.folder_name
+				)
+			END AS folder_name,
+		</cfif>
 		<!--- Permission follow but not for sysadmin and admin --->
 		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
 			CASE
@@ -4450,10 +4555,12 @@
 	<!--- Tree for the Explorer --->
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qry">
-		<cfif qry.in_trash EQ 'F'>
-		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="loadcontent('rightside','index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch" title="<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">Folder of (#username#)</cfif></cfif></cfif>"><ins>&nbsp;</ins>#folder_name#<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">*<cfif folder_name EQ "my folder"> (#username#)</cfif></cfif></cfif></cfif>
-		</a></li>
-		</cfif>
+			<cfif qry.in_trash EQ 'F'>
+				<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>>
+					<a href="##" onclick="loadcontent('rightside','index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch" title="<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">Folder of (#username#)</cfif></cfif></cfif>"><ins>&nbsp;</ins>#folder_name#<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">*<cfif folder_name EQ "my folder"> (#username#)</cfif></cfif></cfif></cfif>
+					</a>
+				</li>
+			</cfif>
 		</cfoutput>
 	<!--- If we come from a move action --->
 	<cfelse>

@@ -2642,6 +2642,8 @@
 		</if>
 		<!-- CFC: Load descriptions -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolderdesc(attributes.folder_id)" returnvariable="qry_folder_desc" />
+		<!-- CFC: Load names -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldernames(attributes.folder_id)" returnvariable="qry_folder_name" />
 		<!-- CFC: Load groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="thestruct" value="#attributes#" />

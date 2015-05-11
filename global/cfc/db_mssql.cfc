@@ -1459,7 +1459,20 @@
 		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
-		
+		</cfquery>
+
+		<!--- FOLDERS NAME --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders_name
+		(
+		  FOLDER_ID_R  VARCHAR(100),
+		  LANG_ID_R    INT,
+		  FOLDER_NAME  NVARCHAR(max),
+		  HOST_ID	   INT,
+		  rec_uuid	   VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
+		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
+		)
 		</cfquery>
 		
 		<!--- FOLDERS GROUPS --->
