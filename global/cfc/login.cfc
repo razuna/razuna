@@ -424,9 +424,11 @@
 
 	<!--- FUNCTION: SEND PASSWORD TO USER --->
 	<cffunction name="sendpassword" displayname="sendpassword" hint="Sends password to user" access="public" output="true" returntype="Any">
+		<!--- Vars --->
 		<cfargument name="email" required="yes" type="string">
+		<cfset var themessage = "">
 		<!--- create structure to store results in --->
-		<cfset thepass=structNew()>
+		<cfset thepass = structNew()>
 		<!--- RAZ-2810 Customise email message --->
 		<cfinvoke component="defaults" method="trans" transid="password_for_razuna" returnvariable="password_for_razuna_subject" />
 		<cfinvoke component="defaults" method="trans" transid="user_account_expired" returnvariable="user_account_expired_content" />
@@ -477,17 +479,20 @@
 					WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryuser.user_id#">
 					</cfquery>
 				</cfif>
-				<!--- send email --->
-				<cfmail from="do-not-reply@razuna.com" to="#qryuser.user_email#" subject="#password_for_razuna_subject#" type="text/plain">Hello #qryuser.user_first_name# #qryuser.user_last_name#
-	<cfif thepass.expired EQ 'T'>
-		#user_account_expired_content#
-	<cfelse>	
-		#user_lost_password_content#
-		
-		#user_login_name#: #qryuser.user_login_name#
-		#user_login_password#: #randompassword#
-	</cfif>
-				</cfmail>
+				<!--- Message --->
+				<cfsavecontent variable="themessage"><cfoutput>
+Hello #qryuser.user_first_name# #qryuser.user_last_name#
+<cfif thepass.expired EQ 'T'>
+#user_account_expired_content#
+<cfelse>	
+#user_lost_password_content#
+
+#user_login_name#: #qryuser.user_login_name#
+#user_login_password#: #randompassword#
+</cfif>
+				</cfoutput></cfsavecontent>
+				<!--- Send eMail --->
+				<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="#password_for_razuna_subject#" themessage="#themessage#">
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("users","true")>
 			</cfif>
