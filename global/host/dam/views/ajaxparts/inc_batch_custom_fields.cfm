@@ -43,9 +43,11 @@
 					<cfelseif cf_type EQ "textarea">
 						<textarea name="cf_#cf_id#" style="width:310px;height:60px;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif cf_edit NEQ "true" AND (NOT listfind(cf_edit,session.theuserid) AND NOT listfind(cf_edit,session.thegroupofuser))> disabled="disabled"</cfif>></textarea>
 					<!--- Select --->
-					<cfelseif cf_type EQ "select">
-						<select name="cf_#cf_id#" style="width:300px;"<cfif cf_edit NEQ "true" AND (NOT listfind(cf_edit,session.theuserid,",") AND NOT listfind(cf_edit,session.thegroupofuser,","))> disabled="disabled"</cfif>>
-							<option value=""></option>
+					<cfelseif cf_type EQ "select" OR cf_type EQ "select_multi">
+						<select name="cf_#cf_id#" style="width:300px;"<cfif cf_edit NEQ "true" AND (NOT listfind(cf_edit,session.theuserid,",") AND NOT listfind(cf_edit,session.thegroupofuser,","))> disabled="disabled"</cfif><cfif cf_type EQ "select_multi"> multiple="multiple"</cfif>>
+							<cfif cf_type NEQ "select_multi">
+								<option value=""></option>
+							</cfif>
 							<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
 								<option value="#i#">#i#</option>
 							</cfloop>

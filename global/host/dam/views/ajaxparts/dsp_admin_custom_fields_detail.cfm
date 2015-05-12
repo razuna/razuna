@@ -80,6 +80,7 @@
 									<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
 									<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
 									<option value="select"<cfif qry_field.cf_type EQ "select"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("select")#</option>
+									<option value="select_multi"<cfif qry_field.cf_type EQ "select_multi"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("select")# (Multiple)</option>
 								</select>
 							</td>
 						</tr>

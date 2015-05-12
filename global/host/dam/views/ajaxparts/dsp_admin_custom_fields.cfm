@@ -80,6 +80,7 @@
 										<option value="textarea">#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
 										<option value="radio">#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
 										<option value="select">#myFusebox.getApplicationData().defaults.trans("select")#</option>
+										<option value="select_multi">#myFusebox.getApplicationData().defaults.trans("select")# (Multiple)</option>
 									</select>
 								</td>
 							</tr>

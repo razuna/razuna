@@ -38,7 +38,7 @@
 			<cfset custom_fields = listappend(custom_fields,"#cs.customfield_all_metadata#",',')>
 			<tr>
 				<cfif !structKeyExists(variables,"cf_inline")>
-					<td width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
+					<td valign="top" width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
 					<td>
 				<cfelse>
 					<td>
@@ -111,7 +111,7 @@
 						</cfif>
 						<textarea name="cf_#cf_id#" id="cf_textarea_#listlast(cf_id,'-')#" <cfif listFindNoCase(custom_fields,'#qry_cf.cf_id#',',')> onchange="document.form#attributes.file_id#.cf_meta_textarea_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_textarea_#listlast(cf_id,'-')#.value;" </cfif> style="width:400px;height:50px;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>#cf_value#</textarea>
 					<!--- Select --->
-					<cfelseif cf_type EQ "select">
+					<cfelseif cf_type EQ "select" OR cf_type EQ "select_multi">
 						<!--- Variable --->
 						<cfset allowed = false>
 						<!--- Check for Groups --->
@@ -131,10 +131,16 @@
 						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
-						<select name="cf_#cf_id#" id="cf_select_#listlast(cf_id,'-')#" <cfif listFindNoCase(custom_fields,'#qry_cf.cf_id#',',')> onchange="document.form#attributes.file_id#.cf_meta_select_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_select_#listlast(cf_id,'-')#.value;" </cfif> style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
-							<option value=""></option>
+						<select name="cf_#cf_id#" id="cf_select_#listlast(cf_id,'-')#" <cfif listFindNoCase(custom_fields,'#qry_cf.cf_id#',',')> onchange="document.form#attributes.file_id#.cf_meta_select_#listlast(cf_id,'-')#.value = document.form#attributes.file_id#.cf_select_#listlast(cf_id,'-')#.value;" </cfif> style="width:300px;"<cfif !allowed> disabled="disabled"</cfif><cfif cf_type EQ "select_multi"> multiple="multiple"</cfif>>
+							<cfif cf_type NEQ "select_multi">
+								<option value=""></option>
+							</cfif>
 							<cfloop list="#ltrim(ListSort(replace(cf_select_list,', ',',','ALL'), 'text', 'asc', ','))#" index="i">
-								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
+								<cfif cf_type NEQ "select_multi">
+									<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
+								<cfelse>
+									<option value="#i#"<cfif ListFindnocase(cf_value, i, ",")> selected="selected"</cfif>>#i#</option>
+								</cfif>
 							</cfloop>
 						</select>
 					</cfif>
