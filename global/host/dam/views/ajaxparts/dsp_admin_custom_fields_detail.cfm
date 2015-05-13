@@ -55,7 +55,7 @@
 						<tr>
 							<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_for")#</td>
 							<td width="100%">
-								<select name="cf_show" style="width:150px;">
+								<select name="cf_show" style="width:190px;">
 									<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
 									<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_images")#</option>
 									<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_videos")#</option>
@@ -75,7 +75,7 @@
 						<tr>
 							<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</td>
 							<td width="100%">
-								<select name="cf_type" style="width:150px;">
+								<select name="cf_type" style="width:160px;">
 									<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("text")#</option>
 									<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
 									<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
@@ -100,7 +100,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
+				<td colspan="2" style="padding-top:15px;">
 					#myFusebox.getApplicationData().defaults.trans("groups_users_edit")#<br />
 					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="cf_edit" id="cf_edit_#attributes.cf_id#" multiple="multiple">
 						<option value=""></option>
@@ -118,9 +118,23 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
+				<td colspan="2" style="padding-top:15px;">
 					#myFusebox.getApplicationData().defaults.trans("xmp_parse_path")# <br/>
 					<input type="text" name="cf_xmp_path" size="30" value="#qry_field.cf_xmp_path#" style="width:490px;">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="padding-top:15px;">
+					Show this custom field only for files which have the following labels:
+					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:500px;" name="cf_labels" id="cf_labels" multiple="multiple">
+						<option value=""></option>
+						<cfloop query="attributes.thelabelsqry">
+							<option value="#label_id#"<cfif ListFind(qry_cflabels, label_id) NEQ 0> selected="selected"</cfif>>#label_path#</option>
+							<option value="#label_id#">#label_path#</option>
+						</cfloop>
+					</select>
+					<br />
+					<em>(If left empty the field will show for all files)</em>
 				</td>
 			</tr>
 		</table>

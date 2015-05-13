@@ -4246,7 +4246,7 @@
 			</true>
 		</if>
 		<!-- CFC: Check for custom fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(thestruct=attributes, listLabels=qry_labels)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
@@ -7384,6 +7384,10 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- CFC: Get fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getdetail(attributes)" returnvariable="qry_field" />
+		<!-- Get labels -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="getLabelsFromCrossTable(recordid=attributes.cf_id, type='cf')" returnvariable="qry_cflabels" />
+		<!-- Get Labels -->
+		<do action="labels" />
 		<!-- Show -->
 		<do action="ajax.custom_fields_detail" />
 	</fuseaction>

@@ -36,7 +36,7 @@
 				<td>#myFusebox.getApplicationData().defaults.trans("link_desc")#</td>
 			</tr>
 			<tr>
-				<td colspan="2" style="padding-top:15px;"><hr></td>
+				<td colspan="2" style="padding-top:15px;"><hr /></td>
 			</tr>
 			<tr>
 				<td nowrap="true" style="padding-top:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_asset_store")#</strong></td>

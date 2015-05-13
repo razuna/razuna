@@ -142,7 +142,7 @@
 										<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("show_assets_subfolders")#</div>
 									</a>
 								</p>
-								<p><hr></p>
+								<p><hr /></p>
 							</cfif>
 							<!--- Exporting icons --->
 							<cfif cs.icon_print>
@@ -175,7 +175,7 @@
 									</a>
 								</p>
 							</cfif>
-							<p><hr></p>
+							<p><hr /></p>
 							<!--- Export Metadata --->
 							<cfif cs.icon_metadata_export  AND (isadmin OR  cs.icon_metadata_export_slct EQ "" OR listfind(cs.icon_metadata_export_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_metadata_export_slct,session.thegroupofuser) NEQ "")>
 								<p>
@@ -200,7 +200,7 @@
 							</cfif>
 							<!--- Download Folder --->
 							<cfif attributes.folderaccess NEQ "R" AND cs.icon_download_folder>
-								<p><hr></p>
+								<p><hr /></p>
 								<p>
 									<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
 										<div style="float:left;padding-right:5px;">

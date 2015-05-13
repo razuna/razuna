@@ -25,12 +25,12 @@
 --->
 <cfoutput>
 	<p>#myFusebox.getApplicationData().defaults.trans("header_wl_news")#</p>
-	<hr>
+	<hr />
 	<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss")#</strong><br />
 	#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss_desc")#<br />
 	<input type="text" style="width:600px" name="wl_news_rss" value="#attributes.rss#" /> <input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#"><br />
 	<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
-	<hr>
+	<hr />
 	<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_news_section")#</strong><br />
 	#myFusebox.getApplicationData().defaults.trans("header_wl_news_section_desc")#<br />
 	<p><input type="button" name="createnew" value="#myFusebox.getApplicationData().defaults.trans("header_wl_news_new")#" onclick="showwindow('#myself#c.wl_news_edit&add=true','News record',750,1);"></p>

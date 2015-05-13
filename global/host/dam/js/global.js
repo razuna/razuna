@@ -16,12 +16,12 @@ function showwindow(theurl,thetitle,thew,thewin) {
 		autoOpen: false,
 		width: thew,
 		height: 'auto',
-		position: 'top',
+		position: 'top'
 		//minHeight: 600,
-		overlay: {
-			backgroundColor: '#000',
-			opacity: 0.5
-		}
+		// overlay: {
+		// 	backgroundColor: '#000',
+		// 	opacity: 0.5
+		// }
 	});
 	// Open window
 	$('#thewindowcontent' + thewin).dialog('open');

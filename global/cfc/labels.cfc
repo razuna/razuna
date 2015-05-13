@@ -292,7 +292,7 @@
 	</cffunction>
 	
 	<!--- Get label of record --->
-	<cffunction name="getlabels" output="false" access="public">
+	<cffunction name="getlabels" output="false" access="public" returntype="string">
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
 		<cfargument name="checkUPC" type="string" required="false" default="false" > 
@@ -1424,6 +1424,57 @@
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry/>
+	</cffunction>
+
+	<!--- Save labels for ant type --->
+	<cffunction name="saveToLabelsCrossTable" output="false" access="public">
+		<cfargument name="labelid" type="string" required="true">
+		<cfargument name="type" type="string" required="true">
+		<cfargument name="recordid" type="string" required="true">
+		<!--- Remove all labels for this record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM ct_labels
+		WHERE ct_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.recordid#">
+		AND ct_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.type#">
+		</cfquery>
+		<!--- Loop over labelid --->
+		<cfloop list="#arguments.labelid#" index="l" delimiters=",">
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO ct_labels
+			(
+				ct_label_id,
+				ct_id_r,
+				ct_type,
+				rec_uuid
+			)
+			VALUES
+			(
+				<cfqueryparam value="#l#" cfsqltype="cf_sql_varchar" />,
+				<cfqueryparam value="#arguments.recordid#" cfsqltype="cf_sql_varchar" />,
+				<cfqueryparam value="#arguments.type#" cfsqltype="cf_sql_varchar" />,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+		</cfloop>
+	</cffunction>
+
+	<!--- Save labels for ant type --->
+	<cffunction name="getLabelsFromCrossTable" access="public" returntype="string">
+		<cfargument name="type" type="string" required="true">
+		<cfargument name="recordid" type="string" required="true">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Get Labels --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT ct_label_id
+		FROM ct_labels
+		WHERE ct_id_r = <cfqueryparam value="#arguments.recordid#" cfsqltype="cf_sql_varchar" />
+		AND ct_type = <cfqueryparam value="#arguments.type#" cfsqltype="cf_sql_varchar" />
+		</cfquery>
+		<!--- Convert to list --->
+		<cfset var qry = valuelist(qry.ct_label_id) />
+		<!--- Return --->
+		<cfreturn qry />
 	</cffunction>
 	
 </cfcomponent>

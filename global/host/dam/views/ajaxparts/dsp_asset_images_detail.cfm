@@ -169,7 +169,7 @@
 							<!--- Labels --->
 							<cfif cs.tab_labels>
 								<tr>
-									<td style="font-weight:bold;" valign="top">#myFusebox.getApplicationData().defaults.trans("labels")#</td>
+									<td style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 									<td width="100%" colspan="5">
 										<cfif attributes.folderaccess EQ "R">
 											<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>

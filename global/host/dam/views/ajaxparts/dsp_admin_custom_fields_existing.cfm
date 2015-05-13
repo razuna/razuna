@@ -55,7 +55,13 @@
 						<tr>
 							<td nowrap="true"><img src="#dynpath#/global/host/dam/images/arrow-out.png" border="0"></td>
 							<td width="100%"><a href="##" onclick="showwindow('#myself#c.custom_fields_detail&cf_id=#cf_id#','#cf_text#',680,1);return false">#cf_text#</a><br /><em>(ID: #cf_id#)</em></td>
-							<td width="1%" nowrap="true">#cf_type#</td>
+							<td width="1%" nowrap="true">
+								<cfif cf_type EQ "select_multi">
+									Select (multiple)
+								<cfelse>
+									#cf_type#
+								</cfif>
+							</td>
 							<td width="1%" nowrap="true">
 								<cfif cf_show EQ "vid">
 									#myFusebox.getApplicationData().defaults.trans("search_for_videos")#

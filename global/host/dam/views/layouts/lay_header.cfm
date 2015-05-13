@@ -88,7 +88,7 @@
 							<p><a href="##" onclick="selectsearchtype('doc','#myFusebox.getApplicationData().defaults.trans("search_for_documents")#');"><div id="markdoc" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
 							<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 							<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
-							<p><hr></p>
+							<p><hr /></p>
 							<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">#myFusebox.getApplicationData().defaults.trans('help_with_search')#</a></cfif></p>
 						</div>
 					</cfif>
@@ -137,12 +137,12 @@
 						<img width="20" height="20" border="0" src="/razuna/global/host/dam/images/active_directory_user.png">
 					</cfif>
 				</p>
-				<p><hr></p>
+				<p><hr /></p>
 				<!--- Administration. Show if user is admin or if user has access to some admin features --->
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Help --->
 				<p>
@@ -159,18 +159,18 @@
 						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("doc_wiki")#</a>
 					</cfif>
 				</p>
-				<p><hr></p>
+				<p><hr /></p>
 				<!--- Account --->
 				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
 					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Languages --->
 				<cfif qry_langs.recordcount NEQ 1>
 					<cfloop query="qry_langs">
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Feedback --->
 				<cfif w EQ 100>
@@ -181,7 +181,7 @@
 							<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
 						</cfif>
 					</p>
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>

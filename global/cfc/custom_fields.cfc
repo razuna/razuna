@@ -110,10 +110,15 @@
 
 <!--- Get fields for the detail view of assets --->
 <cffunction name="getfields" output="false" access="public">
-	<cfargument name="thestruct" type="struct">
-	<cfparam name="arguments.thestruct.cf_show" default="">
+	<cfargument name="thestruct" type="struct" required="true">
+	<cfargument name="listLabels" type="string" required="false">
 	<!--- Param --->
+	<cfparam name="arguments.thestruct.cf_show" default="">
 	<cfset var list="">
+	<cfset var qry = "">
+	<!--- Get the cachetoken for here --->
+	<cfset var cachetoken = getcachetoken("general")>
+	<!--- For session fileid --->
 	<cfif StructKeyExists(session,"thefileid") AND session.thefileid NEQ "" AND session.thefileid NEQ "0" >
 		<cfset list="all">
 		<cfloop list="#session.thefileid#" index="assets">
@@ -122,12 +127,9 @@
 			</cfif>
 		</cfloop>
 	</cfif>
-	<!--- Get the cachetoken for here --->
-	<cfset variables.cachetoken = getcachetoken("general")>
-	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form, c.cf_show
+	SELECT /* #cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value, c.cf_in_form, c.cf_show
 	FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 	LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 	WHERE c.cf_id = ct.cf_id_r
@@ -365,6 +367,7 @@
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.cf_in_form" default="true" />
 		<cfparam name="arguments.thestruct.cf_group" default="" />
+		<cfparam name="arguments.thestruct.cf_labels" default="" />
 		<!--- If no group is selected --->
 		<cfif !structKeyExists(arguments.thestruct,"cf_edit")>
 			<cfset arguments.thestruct.cf_edit = "true">
@@ -389,7 +392,7 @@
 		<!--- Add text to related db --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 			<cfparam name="arguments.thestruct.cf_text_#langindex#" default="">
-			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
+			<cfset thetext = "arguments.thestruct.cf_text_" & "#langindex#">
 			<cfif thetext CONTAINS "#langindex#">
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#custom_fields_text
@@ -399,6 +402,10 @@
 				</cfquery>
 			</cfif>
 		</cfloop>
+		<!--- Save to label cross table but only if labels are here --->
+		<cfif arguments.thestruct.cf_labels NEQ "">
+			<cfinvoke component="labels" method="saveToLabelsCrossTable" recordid="#arguments.thestruct.cf_id#" type="cf" labelid="#arguments.thestruct.cf_labels#">
+		</cfif>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
