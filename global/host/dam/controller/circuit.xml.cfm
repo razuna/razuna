@@ -3933,7 +3933,7 @@
 			</true>
 		</if>
 		<!-- CFC: Check for custom fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(thestruct=attributes, listLabels=qry_labels)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
@@ -4036,8 +4036,6 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaliasaccess(attributes.file_id)" returnvariable="attributes.folderaccess" />
 			</true>
 		</if>
-		<!-- CFC: Check for custom fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Get languages -->
@@ -4048,6 +4046,8 @@
 		<do action="labels" />
 		<!-- Get labels for this record -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'vid')" returnvariable="qry_labels" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(thestruct=attributes, listLabels=qry_labels)" returnvariable="qry_cf" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- RAZ-2207 Get the groups of this user -->
@@ -4452,7 +4452,7 @@
 			</true>
 		</if>
 		<!-- CFC: Check for custom fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(thestruct=attributes, listLabels=qry_labels)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->

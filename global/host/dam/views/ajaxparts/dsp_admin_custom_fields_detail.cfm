@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div style="height:350px;">
+	<div style="height:450px;">
 		<!--- Add a new field --->
 		<form name="form_cf_detail" id="form_cf_detail" method="post" action="#self#" onsubmit="customfieldupdate();return false;">
 		<input type="hidden" name="#theaction#" value="c.custom_field_update">
@@ -130,7 +130,6 @@
 						<option value=""></option>
 						<cfloop query="attributes.thelabelsqry">
 							<option value="#label_id#"<cfif ListFind(qry_cflabels, label_id) NEQ 0> selected="selected"</cfif>>#label_path#</option>
-							<option value="#label_id#">#label_path#</option>
 						</cfloop>
 					</select>
 					<br />
