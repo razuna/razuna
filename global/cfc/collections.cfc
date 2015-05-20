@@ -2022,6 +2022,7 @@
 	WHERE f.file_id_r = <cfqueryparam value="#arguments.id#" cfsqltype="CF_SQL_VARCHAR">
 	AND f.col_id_r = t.col_id_r
 	AND t.col_id_r = c.col_id
+	AND t.lang_id_r = 1
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry />	
