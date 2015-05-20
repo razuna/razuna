@@ -111,7 +111,7 @@
 <!--- Get fields for the detail view of assets --->
 <cffunction name="getfields" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="true">
-	<cfargument name="listLabels" type="string" required="false">
+	<cfargument name="listLabels" type="string" required="false" default="">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.cf_show" default="">
 	<cfset var list="">
