@@ -306,7 +306,7 @@
 		<cfargument name="startrow" required="true" type="numeric">
 		<cfargument name="maxrows" required="true" type="numeric">
 		<cfargument name="folderid" required="true" type="string">
-		<cfargument name="showrenditions" required="true" type="string">
+		<cfargument name="showrenditions" required="false" default="false" type="string">
 		<!--- Renditions param is boolean convert it here --->
 		<cfif !arguments.showrenditions>
 			<cfset var _rendition = "t">
