@@ -1618,6 +1618,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
+		<cfif !arguments.istruct.dbdirect>
 			<cfif arguments.fstruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
