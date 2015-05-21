@@ -789,7 +789,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif !arguments.istruct.dbdirect>
+		<cfif !arguments.vstruct.dbdirect>
 			<cfif arguments.vstruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
@@ -977,7 +977,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif !arguments.istruct.dbdirect>
+		<cfif !arguments.vstruct.dbdirect>
 			<cfif arguments.vstruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, v.vid_create_time) = vdate.the_create_year
@@ -1204,7 +1204,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif !arguments.istruct.dbdirect>
+		<cfif !arguments.astruct.dbdirect>
 			<cfif arguments.astruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
@@ -1386,7 +1386,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif !arguments.istruct.dbdirect>
+		<cfif !arguments.astruct.dbdirect>
 			<cfif arguments.astruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, a.aud_create_time) = adate.the_create_year
@@ -1618,7 +1618,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif !arguments.istruct.dbdirect>
+		<cfif !arguments.fstruct.dbdirect>
 			<cfif arguments.fstruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
@@ -1811,7 +1811,7 @@
 			ELSE 'locked'
 		END = 'unlocked'
 		<!--- Only if we have dates --->
-		<cfif !arguments.istruct.dbdirect>
+		<cfif !arguments.fstruct.dbdirect>
 			<cfif arguments.fstruct.datecreate NEQ "">
 				<cfif application.razuna.api.thedatabase EQ "mssql">
 					AND (DATEPART(yy, f.file_create_time) = fdate.the_create_year
