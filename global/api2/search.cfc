@@ -405,7 +405,7 @@
 			</cfif>
 			<!--- If we have a folderid --->
 			<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
-				AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
+				AND i.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#" list="true">)
 			</cfif>
 			GROUP BY i.img_id, i.img_filename, i.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename), i.img_group, i.expiry_date
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
@@ -591,7 +591,7 @@
 			</cfif>
 			<!--- If we have a folderid --->
 			<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
-				AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
+				AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#" list="true">)
 			</cfif>
 			GROUP BY i.img_id, i.img_filename, ct.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename), i.img_group, i.expiry_date
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
@@ -750,7 +750,7 @@
 				</cfloop>
 			</cfif>
 		</cfif>
-        		FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v 
+        FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v 
 		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
 		WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
@@ -823,7 +823,7 @@
 		</cfif>
 		<!--- If we have a folderid --->
 		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
-			AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
+			AND v.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#" list="true">)
 		</cfif>
 		GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename), v.vid_group, v.expiry_date
 			<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
@@ -1011,7 +1011,7 @@
 		</cfif>
 		<!--- If we have a folderid --->
 		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
-			AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
+			AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#" list="true">)
 		</cfif>
 		GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename), v.vid_group, v.expiry_date
 			<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
@@ -1238,7 +1238,7 @@
 		</cfif>
 		<!--- If we have a folderid --->
 		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
-			AND a.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#">
+			AND a.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#" list="true">)
 		</cfif>
 		GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 		UNION ALL
@@ -1420,7 +1420,7 @@
 		</cfif>
 		<!--- If we have a folderid --->
 		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
-			AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#">
+			AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#" list="true">)
 		</cfif>
 		GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 		ORDER BY #session.sortby#
@@ -1652,7 +1652,7 @@
 		</cfif>
 		<!--- If we have a folderid --->
 		<cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
-			AND f.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.folderid#">
+			AND f.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.folderid#" list="true">)
 		</cfif>
 		GROUP BY f.file_id, f.file_name, f.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 		f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
@@ -1845,7 +1845,7 @@
 		</cfif>
 		<!--- If we have a folderid --->
 		<cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
-			AND ct.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.folderid#">
+			AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.folderid#" list="true">)
 		</cfif>
 		GROUP BY f.file_id, f.file_name, ct.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 		f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
