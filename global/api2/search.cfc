@@ -204,7 +204,7 @@
 				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.istruct.datechange, "-", "", "ALL")#)">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid, showrenditions=arguments.showrenditions)>
+			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid, showrenditions=arguments.istruct.showrenditions)>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneimg.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -620,7 +620,7 @@
 				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.vstruct.datechange, "-", "", "ALL")#)">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid)>
+			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid, showrenditions=arguments.vstruct.showrenditions)>
 			<!--- If lucene returns no records --->
 			<cfif qrylucenevid.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -1040,7 +1040,7 @@
 				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.astruct.datechange, "-", "", "ALL")#)">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid)>
+			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid, showrenditions=arguments.astruct.showrenditions)>
 			<!--- If lucene returns no records --->
 			<cfif qryluceneaud.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
