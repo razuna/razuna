@@ -28,7 +28,7 @@
 	<cfif cgi.http_user_agent CONTAINS "Trident" AND cgi.http_user_agent CONTAINS "11.">
 		<div id="outer">
 			<div id="loginform">
-				<h2>It looks like you are running IE 11. Unfortunately, IE 11 does not work with Razuna. <br /><br/>Please use <a href="http://getfirefox.com">Firefox</a> to access this site. Thank you.</h2>
+				<h2>It looks like you are running IE 11. Unfortunately, IE 11 does not work with Razuna. <br /><br/>Please use another version of IE or another browser to access this site. Thank you.</h2>
 			</div>
 		</div>
 	<cfelse>
