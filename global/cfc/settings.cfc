@@ -592,14 +592,14 @@
 			<!--- First remove all values in DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM options
-			WHERE opt_id = <cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">
+			WHERE lower(opt_id) = <cfqueryparam value="#lcase(ts)#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
 			VALUES (
-				<cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#lcase(ts)#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.thestruct[ts]#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
