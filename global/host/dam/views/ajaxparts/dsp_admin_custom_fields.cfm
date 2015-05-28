@@ -65,6 +65,7 @@
 										<option value="doc">#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 										<option value="aud">#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
 										<option value="users">#myFusebox.getApplicationData().defaults.trans("users")#</option>
+										<option value="col">Collections</option>
 									</select>
 								</td>
 							</tr>

@@ -1577,6 +1577,7 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Custom Fields -->
 		<set name="attributes.file_id" value="#attributes.col_id#" />
+		<set name="attributes.cf_show" value="col" />
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- Show -->
 		<do action="ajax.collection_detail" />

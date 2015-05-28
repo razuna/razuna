@@ -138,8 +138,8 @@
 		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		<cfif list NEQ "">
 			AND lower(c.cf_show) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#list#" list="true" >)
-		<cfelseif arguments.thestruct.cf_show EQ "users">
-			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
+		<cfelseif arguments.thestruct.cf_show EQ "users" OR arguments.thestruct.cf_show EQ "col">
+			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 		<cfelse>
 			AND (
 				lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
@@ -162,8 +162,8 @@
 		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		<cfif list NEQ "">
 			AND lower(c.cf_show) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#list#" list="true" >)
-		<cfelseif arguments.thestruct.cf_show EQ "users">
-			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
+		<cfelseif arguments.thestruct.cf_show EQ "users" OR arguments.thestruct.cf_show EQ "col">
+			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 		<cfelse>
 			AND (
 				lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">

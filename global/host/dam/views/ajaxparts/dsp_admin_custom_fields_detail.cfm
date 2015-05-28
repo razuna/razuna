@@ -62,6 +62,7 @@
 									<option value="aud"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
 									<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 									<option value="users"<cfif qry_field.cf_show EQ "users"> selected="true"</cfif>>Users</option>
+									<option value="col"<cfif qry_field.cf_show EQ "col"> selected="true"</cfif>>Collections</option>
 								</select>
 							</td>
 						</tr>
