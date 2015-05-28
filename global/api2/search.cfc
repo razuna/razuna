@@ -47,7 +47,7 @@
 		<cfargument name="available" type="string" required="false" default="1">
 		<cfargument name="startrow" type="string" required="false" default="0" hint="New since 1.7.5">
 		<cfargument name="maxrows" type="string" required="false" default="25" hint="New since 1.7.5">
-		<cfargument name="showrenditions" type="string" required="false" default="false" hint="New since 1.7.5">
+		<cfargument name="showrenditions" type="string" required="false" default="true" hint="New since 1.7.5">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var thexml ="">
@@ -1448,7 +1448,7 @@
 				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.fstruct.datechange, "-", "", "ALL")#)">
 			</cfif>
 			<!--- Search in Lucene --->
-			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid)>
+			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid, showrenditions=arguments.fstruct.showrenditions)>
 			<!--- If lucene returns no records --->
 			<cfif qrylucenedoc.recordcount NEQ 0>
 				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->

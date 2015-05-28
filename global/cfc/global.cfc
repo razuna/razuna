@@ -1544,6 +1544,7 @@ Comment:<br>
 				<cfset var theid = "img_id">
 				<cfset var d1 = "img_change_date">
 				<cfset var d2 = "img_change_time">
+				<cfset var grp = "img_group">
 				<!--- Flush --->
 				<cfset resetcachetoken("images")>
 			<cfelseif arguments.type EQ "vid">
@@ -1551,6 +1552,7 @@ Comment:<br>
 				<cfset var theid = "vid_id">
 				<cfset var d1 = "vid_change_date">
 				<cfset var d2 = "vid_change_time">
+				<cfset var grp = "vid_group">
 				<!--- Flush --->
 				<cfset resetcachetoken("videos")>
 			<cfelseif arguments.type EQ "aud">
@@ -1558,6 +1560,7 @@ Comment:<br>
 				<cfset var theid = "aud_id">
 				<cfset var d1 = "aud_change_date">
 				<cfset var d2 = "aud_change_time">
+				<cfset var grp = "aud_group">
 				<!--- Flush --->
 				<cfset resetcachetoken("audios")>
 			<cfelseif arguments.type EQ "doc">
@@ -1565,6 +1568,7 @@ Comment:<br>
 				<cfset var theid = "file_id">
 				<cfset var d1 = "file_change_date">
 				<cfset var d2 = "file_change_time">
+				<cfset var grp = "">
 				<!--- Flush --->
 				<cfset resetcachetoken("files")>
 			</cfif>
@@ -1576,6 +1580,9 @@ Comment:<br>
 			#d2# = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE #theid# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			<cfif grp NEQ "">
+				OR #grp# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			</cfif>
 			</cfquery>
 		</cfif>
 	</cffunction>
