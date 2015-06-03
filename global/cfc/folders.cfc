@@ -356,9 +356,12 @@
 	<!--- If this is NOT a link to a folder --->
 	<cfif arguments.thestruct.link_path EQ "">
 		<cftry>
-			<!--- Check if folder_name_1 exists if so we need to put it into folder_name and save it all with the new translation --->
-			<cfif structKeyExists(arguments.thestruct, "folder_name_1")>
-				<cfset arguments.thestruct.folder_name = arguments.thestruct.folder_name_1>
+			<!--- Get the first lang at position 1 (it is always sorted) --->
+			<cfset var _lang = ListGetat(arguments.thestruct.langcount, 1)>
+			<!--- Check that field exists if so we need to put it into folder_name and save it all with the new translation --->
+			<cfif structKeyExists(arguments.thestruct, "folder_name_#_lang#")>
+				<cfset var _folder = "folder_name_#_lang#">
+				<cfset arguments.thestruct.folder_name = arguments.thestruct[_folder]>
 			</cfif>
 			<!--- Increase folder level --->
 			<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
@@ -2389,8 +2392,11 @@
 	<!--- Param --->
 	<cfset arguments.thestruct.grpno = "T">
 	<cfparam name="arguments.thestruct.in_search_selection" default="false" />
+	<!--- Get the first lang at position 1 (it is always sorted) --->
+	<cfset var _lang = ListGetat(arguments.thestruct.langcount, 1)>
 	<!--- Put first folder name into folder_name --->
-	<cfset arguments.thestruct.folder_name = arguments.thestruct.folder_name_1>
+	<cfset var _folder = "folder_name_#_lang#">
+	<cfset arguments.thestruct.folder_name = arguments.thestruct[_folder]>
 	<!--- Check for the same name --->
 	<cfquery datasource="#variables.dsn#" name="samefolder">
 	SELECT folder_name
