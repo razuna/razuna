@@ -1577,16 +1577,15 @@
 <!--- THREAD : TRASH THIS FOLDER ALL SUBFOLDER AND FILES WITHIN --->
 <cffunction name="trash_folder_thread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Var --->
+	<cfset var get_folder = "" />
+	<cfset var _folderids = "" />
+	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="get_folder">
-	SELECT * FROM #session.hostdbprefix#folders  
+	SELECT folder_level, folder_id_r
+	FROM #session.hostdbprefix#folders  
 	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
-	<!--- Update the in_trash --->
-	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-	UPDATE #session.hostdbprefix#folders SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T"> 
-	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">	
 	</cfquery>
 	<!--- Set the parent folder id --->
 	<cfif get_folder.folder_level EQ 1>
@@ -1594,7 +1593,102 @@
 	<cfelse>
 		<cfset var parent_folder_id_r = get_folder.folder_id_r>
 	</cfif>
+	<!--- Call to get the recursive folder ids --->
+	<cfinvoke method="recfolder" returnvariable="_folderids">
+		<cfinvokeargument name="thelist" value="#arguments.thestruct.folder_id#">
+	</cfinvoke>
+	<!--- Set the in_trash for folders --->
+	<cfset _updateFolderInTrash(folder_ids=_folderids)>
+	<!--- Get all files in the folders --->
+	<cfset var _qry_files = _getFilesInFolder(folder_ids=_folderids)>
+	<!--- Set the in_trash for files --->
+	<cfset _updateFilesInTrash(qry_files=_qry_files, in_trash='T', is_indexed='1')>
+	<!--- Return --->
 	<cfreturn parent_folder_id_r />
+</cffunction>
+
+<!--- Set in_trash for files --->
+<cffunction name="_updateFilesInTrash" access="remote" output="false">
+	<cfargument name="qry_files" required="yes" type="query">
+	<cfargument name="in_trash" required="yes" type="string">
+	<cfargument name="is_indexed" required="yes" type="string">
+	<!--- Loop over files list and update --->
+	<cfloop query="arguments.qry_files">
+		<cfif type EQ "img">
+			<cfset var _db = "images">
+			<cfset var _id = "img_id">
+		<cfelseif type EQ "vid">
+			<cfset var _db = "videos" />
+			<cfset var _id = "vid_id" />
+		<cfelseif type EQ "aud">
+			<cfset var _db = "audios" />
+			<cfset var _id = "aud_id" />
+		<cfelseif type EQ "doc">
+			<cfset var _db = "files" />
+			<cfset var _id = "file_id" />
+		</cfif>
+		<!--- Update record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix##_db#
+		SET 
+		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.in_trash#">,
+		is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.is_indexed#">
+		WHERE #_id# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("audios")>
+	<cfset resetcachetoken("search")>
+</cffunction>
+
+<!--- Update folders with in_trash --->
+<cffunction name="_updateFolderInTrash" access="remote" output="false">
+	<cfargument name="folder_ids" required="yes" type="string">
+	<!--- Loop --->
+	<cfloop list="#arguments.folder_ids#" index="f">
+		<!--- Update the in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#folders 
+		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T"> 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#f#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">	
+		</cfquery>
+	</cfloop>
+</cffunction>
+
+<!--- Get foldername --->
+<cffunction name="_getFilesInFolder" access="remote" output="false" returntype="Query">
+	<cfargument name="folder_ids" required="yes" type="string">
+	<!--- Param --->
+	<cfset var qry = "">
+	<!--- Query --->
+	<cfquery name="qry" datasource="#application.razuna.datasource#">
+	SELECT img_id AS ID, 'img' as type
+	FROM #session.hostdbprefix#images
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_ids#" list="true">)
+	UNION ALL
+	SELECT vid_id AS ID, 'vid' as type
+	FROM #session.hostdbprefix#videos
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_ids#" list="true">)
+	UNION ALL
+	SELECT aud_id AS ID, 'aud' as type
+	FROM #session.hostdbprefix#audios
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_ids#" list="true">)
+	UNION ALL
+	SELECT file_id AS ID, 'doc' as type
+	FROM #session.hostdbprefix#files
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_ids#" list="true">)
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
 </cffunction>
 
 <!--- Get All Folder Trash --->
@@ -2226,6 +2320,10 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 	</cfloop>
+	<!--- Get all files in the folders --->
+	<cfset var _qry_files = _getFilesInFolder(folder_ids=folderids)>
+	<!--- Set the in_trash for files --->
+	<cfset _updateFilesInTrash(qry_files=_qry_files, in_trash='F', is_indexed='0')>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("labels")>

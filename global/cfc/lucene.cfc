@@ -31,7 +31,7 @@
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
-		<cftry>
+		<!--- <cftry>
 			<!--- DOCS: Make sure there is a value in lucene key --->
 			<cfif arguments.category EQ "doc">
 				<cfset var _lucene_key = arguments.thestruct.qrydetail.lucene_key />
@@ -63,7 +63,7 @@
 				<cfset consoleoutput(true)>
 				<cfset console(cfcatch)>
 			</cfcatch>
-		</cftry>
+		</cftry> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

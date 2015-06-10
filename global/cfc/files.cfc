@@ -638,7 +638,9 @@
 					<!--- Update in_trash --->
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#files 
-					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+					SET
+					in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
