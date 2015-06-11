@@ -31,24 +31,7 @@
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
-		<!--- <cftry>
-			<!--- DOCS: Make sure there is a value in lucene key --->
-			<cfif arguments.category EQ "doc">
-				<cfset var _lucene_key = arguments.thestruct.qrydetail.lucene_key />
-				<cfif arguments.thestruct.qrydetail.lucene_key EQ "">
-					<cfset var _lucene_key = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.file_name_org#" />
-				</cfif>
-				<!--- Add to lucene delete table --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO lucene
-				(id, type, host_id)
-				VALUES (
-					<cfqueryparam value="#_lucene_key#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#arguments.category#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-				</cfquery>
-			</cfif>
+		<cftry>
 			<!--- Add to lucene delete table --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO lucene
@@ -63,7 +46,7 @@
 				<cfset consoleoutput(true)>
 				<cfset console(cfcatch)>
 			</cfcatch>
-		</cftry> --->
+		</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
