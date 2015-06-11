@@ -248,7 +248,7 @@
 			<!--- Call internal function to update dates --->
 			<cfset updateDate(type=thetype,fileid=theid)>
 			<!--- Call Lucene update --->
-			<cfset updateSearch(type=thetype,fileid=theid)>
+			<!--- <cfset updateSearch(type=thetype,fileid=theid)> --->
 			<!--- Now call workflow --->
 			<cfset executeWorkflow(workflow="on_file_edit",fileid=theid,thetype=thetype,folderid=session.fid)>
 		</cfloop>
