@@ -45,7 +45,7 @@
 		<cfargument name="cs" type="any" required="false" default="" hint="custom metadata fields">
 		<cfargument name="dbdirect" type="string" required="false" default="false">
 		<cfargument name="available" type="string" required="false" default="1">
-		<cfargument name="startrow" type="string" required="false" default="0" hint="New since 1.7.5">
+		<cfargument name="startrow" type="string" required="false" default="1" hint="New since 1.7.5">
 		<cfargument name="maxrows" type="string" required="false" default="25" hint="New since 1.7.5">
 		<cfargument name="showrenditions" type="string" required="false" default="true" hint="New since 1.7.5">
 		<!--- Check key --->
@@ -75,6 +75,10 @@
 			<!--- Get all the folders the user is allowed to access but not if folderid has records --->
 			<cfif ( arguments.folderid EQ "0" ) AND ( listfind(session.thegroupofuser, '1') EQ 0 OR listfind(session.thegroupofuser, '2') EQ 0 )>
 				<cfinvoke component="global.cfc.users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.folderid">
+			</cfif>
+			<!--- If startrow is 0 set it to 1 --->
+			<cfif arguments.startrow EQ "0">
+				<cfset arguments.startrow = "1">
 			</cfif>
 			<!--- Images --->
 			<cfif arguments.show EQ "ALL" OR arguments.show EQ "img">
