@@ -1420,6 +1420,20 @@
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 				)
 				</cfquery>
+				<!--- Create empty records in the text table --->
+				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+					<!--- Insert --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#videos_text
+					(id_inc, vid_id_r, lang_id_r, host_id)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+				</cfloop>
 				<!--- Add the TEXTS to the DB. We have to hide this is if we are coming from FCK --->
 				<cfif structkeyexists(arguments.thestruct,"langcount")>
 					<cfloop list="#arguments.thestruct.langcount#" index="langindex">
@@ -1432,21 +1446,16 @@
 							<cfset var keywords="arguments.thestruct.file_keywords_" & "#langindex#">
 							<cfset var title="arguments.thestruct.file_title_" & "#langindex#">
 						</cfif>
-						<cfif desc CONTAINS "#langindex#">
+						<cfif desc CONTAINS langindex>
 							<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
 							<cfif IsDefined(desc) and IsDefined(keywords) and IsDefined(title)>
 								<cfquery datasource="#application.razuna.datasource#">
-									INSERT INTO #session.hostdbprefix#videos_text
-									(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, vid_title, host_id)
-									VALUES(
-									<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-									<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
-									<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-									<cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
-									<cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
-									<cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">,
-									<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									)
+								UPDATE #session.hostdbprefix#videos_text
+								SET
+								vid_description = <cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
+								vid_keywords = <cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">, 
+								vid_title = <cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">
+								WHERE vid_id_r = <cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">
 								</cfquery>
 							</cfif>
 						</cfif>
@@ -1494,6 +1503,20 @@
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 					)
 				</cfquery>
+				<!--- Create empty records in the text table --->
+				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+					<!--- Insert --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#files_desc
+					(id_inc, file_id_r, lang_id_r, host_id)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+				</cfloop>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("files")>
 			</cfif>
