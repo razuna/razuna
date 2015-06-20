@@ -5385,6 +5385,7 @@
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
 	<cfset var qry = "">
+	<cfset var qRet = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
@@ -5421,6 +5422,7 @@
 	<cfelse>
 		'unlocked' AS perm
 	</cfif>
+	, '0' as filecount
 	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
 	WHERE 
 	<cfif arguments.folder_id gt 0>
@@ -5450,7 +5452,6 @@
 	<cfif structkeyexists(arguments,"folder_name") AND arguments.folder_name NEQ ''>
    	 	AND f.folder_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_name#%">
 	</cfif>
-
 	ORDER BY lower(folder_name)
 	</cfquery>
 	<!--- Query to get unlocked folders only --->
@@ -5459,6 +5460,13 @@
 	FROM qry
 	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	</cfquery>
+	<!--- Loop over folders and get the total count of each folder --->
+	<cfloop query="qRet">
+		<!--- Get total count of this folder --->
+		<cfset var _filecount = filetotalcount(folder_id=qRet.folder_id)>
+		<!--- Add count to final query --->
+		<cfset querySetCell(qRet, "filecount", _filecount.thetotal)>
+	</cfloop>
 	<cfreturn qret>
 </cffunction>
 
@@ -5550,9 +5558,11 @@
 		FROM #arguments.prefix#folders f
 		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<!---
 		<cfif arguments.fromshare>
 			AND f.folder_id != <cfqueryparam value="#qryshared.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
 		</cfif>
+		--->
 		</cfquery>
 		<!--- QoQ do not do it if system or admin meaning return all folders --->
 		<cfif checkperm AND (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser())>

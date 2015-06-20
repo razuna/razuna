@@ -8302,7 +8302,7 @@
 						<set name="attributes.folder_id" value="#url.folder_id#" />
 						<!-- CFC: Get Breadcrumb -->
 						<invoke object="myFusebox.getApplicationData().folders" method="getbreadcrumb" returnvariable="qry_breadcrumb">
-							<argument name="folder_id_r" value="#url.folder_id_r#" />
+							<argument name="folder_id_r" value="#url.folder_id#" />
 							<argument name="fromshare" value="true" />
 						</invoke>
 					</true>
@@ -9093,7 +9093,7 @@
 						<set name="attributes.folder_id" value="#url.folder_id#" />
 						<!-- CFC: Get Breadcrumb -->
 						<invoke object="myFusebox.getApplicationData().folders" method="getbreadcrumb" returnvariable="qry_breadcrumb">
-							<argument name="folder_id_r" value="#url.folder_id_r#" />
+							<argument name="folder_id_r" value="#url.folder_id#" />
 							<argument name="fromshare" value="true" />
 						</invoke>
 					</true>
