@@ -5499,9 +5499,10 @@
 			WHERE folder_id = <cfqueryparam value="#session.fid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- Check the permission settings of a widget --->
-			<cfif structKeyExists(session,"wid")>
+			<cfif structKeyExists(session,"widget_id")>
 				<cfset s = structnew()>
-				<cfset s.widget_id = session.wid>
+				<cfset s.widget_id = session.widget_id>
+				<cfset s.external = "t">
 				<!--- This return the permission in widget_permission / g = folder permissions --->
 				<cfinvoke component="widgets" method="detail" thestruct="#s#" returnvariable="qry_widget" />
 				<!--- if widget is set to check on folder permission then true else false --->
