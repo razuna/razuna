@@ -5456,16 +5456,16 @@
 	</cfquery>
 	<!--- Query to get unlocked folders only --->
 	<cfquery dbtype="query" name="qRet">
-	SELECT *
+	SELECT *, folder_id as count_folder_id
 	FROM qry
 	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	</cfquery>
 	<!--- Loop over folders and get the total count of each folder --->
 	<cfloop query="qRet">
 		<!--- Get total count of this folder --->
-		<cfset var _filecount = filetotalcount(folder_id=qRet.folder_id)>
+		<cfset var _filecount = filetotalcount(folder_id=count_folder_id)>
 		<!--- Add count to final query --->
-		<cfset querySetCell(qRet, "filecount", _filecount.thetotal)>
+		<cfset querySetCell(qRet, "filecount", _filecount.thetotal, currentRow)>
 	</cfloop>
 	<cfreturn qret>
 </cffunction>
