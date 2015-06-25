@@ -2368,29 +2368,29 @@ This is the main function called directly by a single upload else from addassets
 			<cfif structkeyexists(arguments.thestruct,"langcount")>
 				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 					<!--- Update keywords and descriptions for api --->
-					<cfif structkeyexists(arguments.thestruct,"api_key") AND arguments.thestruct.api_key NEQ ''>
-					<cfquery datasource="#application.razuna.api.dsn#">
+					<!--- <cfif structkeyexists(arguments.thestruct,"api_key") AND arguments.thestruct.api_key NEQ ''> --->
+						<cfquery datasource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#files_desc
 						SET 
 						file_desc = <cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
 						file_keywords = <cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">	
 						WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
-					</cfquery>
-					<cfelse>
-					<!--- Insert Keywords and Descriptions --->
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#files_desc
-					(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
-					values(
-					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					)
-					</cfquery>
-					</cfif>
+						</cfquery>
+					<!--- <cfelse>
+						<!--- Insert Keywords and Descriptions --->
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#files_desc
+						(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
+						values(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+						<cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+						</cfquery>
+					</cfif> --->
 				</cfloop>
 			</cfif>
 		</cfif>
