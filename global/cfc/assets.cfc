@@ -1888,10 +1888,10 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var returnid = 1>
 			<cfset arguments.thestruct.thefile = zipnameorg>
 		<cfelse>	
-		<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
-		<cfinvoke method="extractFromZip" thestruct="#arguments.thestruct#">
-		<cfset var returnid = 1>
-		<cfset arguments.thestruct.thefile = zipnameorg>
+			<cfset var zipnameorg = arguments.thestruct.qryfile.filename>
+			<cfinvoke method="extractFromZip" thestruct="#arguments.thestruct#">
+			<cfset var returnid = 1>
+			<cfset arguments.thestruct.thefile = zipnameorg>
 		</cfif>
 	<cfelse>
 		<!--- Get and set file type and MIME content --->
@@ -4098,6 +4098,10 @@ This is the main function called directly by a single upload else from addassets
 		DELETE FROM #session.hostdbprefix#files
 		WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#files_desc
+		WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+		</cfquery>
 		<!--- Params --->
 		<cfparam default="0" name="arguments.thestruct.upl_template">
 		<cfset var thetemp = Createuuid("")>
@@ -4540,7 +4544,6 @@ This is the main function called directly by a single upload else from addassets
 							</cfif>
 						</cfif>
 					</cfif>
-
 					<!--- Create inserts --->
 					<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 					<!--- Now start the file mumbo jumbo --->
