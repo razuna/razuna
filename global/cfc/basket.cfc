@@ -592,7 +592,17 @@
 		<cfloop list="#arguments.thestruct.langs#" index="langindex">
 			<cfset var thedesc = evaluate("arguments.thestruct.file_desc_#langindex#")>
 			<cfset var thekey = evaluate("arguments.thestruct.file_keywords_#langindex#")>
-			<cfquery datasource="#application.razuna.datasource#">
+			<!--- Query of record exists --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT file_id_r
+			FROM #session.hostdbprefix#files_desc
+			WHERE file_id_r = <cfqueryparam value="#getfileid.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- If record does not exists do an insert --->
+			<cfif qry.recordcount EQ 0>
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#files_desc
 				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
 				VALUES(
@@ -603,7 +613,18 @@
 				<cfqueryparam value="#thekey#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				)
-			</cfquery>
+				</cfquery>
+			<!--- Else we do an update --->
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files_desc
+				SET
+				file_desc = <cfqueryparam value="#thedesc#" cfsqltype="cf_sql_varchar">,
+				file_keywords = <cfqueryparam value="#thekey#" cfsqltype="cf_sql_varchar">
+				WHERE file_id_r = <cfqueryparam value="#getfileid.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+				</cfquery>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<cfreturn>
