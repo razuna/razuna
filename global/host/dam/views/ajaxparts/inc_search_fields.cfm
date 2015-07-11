@@ -117,7 +117,8 @@
 							<cfif cf_type NEQ "select_multi">
 								<option value="" selected="selected"></option>
 							</cfif>
-							<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
+							<!--- #ltrim(ListSort(cf_select_list, 'text', 'asc', ','))# --->
+							<cfloop list="#ltrim(ListSort(replace(cf_select_list,', ',',','ALL'), 'text', 'asc', ','))#" index="i">
 								<option value="#i#">#i#</option>
 							</cfloop>
 						</select>
