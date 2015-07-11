@@ -1507,7 +1507,7 @@
 			<!--- Flush Cache --->
 			<cfset variables.cachetoken = resetcachetoken("folders")>
 			<!--- The rest goes in a thread since it can run in the background --->
-			<cfthread intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<!--- Call to get the recursive folder ids --->
 				<cfinvoke method="recfolder" returnvariable="folderids">
 					<cfinvokeargument name="thelist" value="#attributes.intstruct.folder_id#">
@@ -2091,7 +2091,7 @@
 <cffunction name="trashfiles_remove" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfset arguments.thestruct.ids = arguments.thestruct.id>
-	<cfthread instruct="#arguments.thestruct#">
+	<cfthread instruct="#arguments.thestruct#" priority="high">
 		<cfloop list="#attributes.instruct.ids#" index="i" delimiters=",">
 			<!--- get images --->
 			<cfif i CONTAINS "-img">
