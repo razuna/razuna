@@ -73,7 +73,7 @@
 			<!--- Set the sortby session --->
 			<cfset session.sortby = sortby>
 			<!--- Get all the folders the user is allowed to access but not if folderid has records --->
-			<cfif ( arguments.folderid EQ "0" ) AND ( listfind(session.thegroupofuser, '1') EQ 0 OR listfind(session.thegroupofuser, '2') EQ 0 )>
+			<cfif arguments.folderid EQ "0" AND ( listfind(session.thegroupofuser, '1') EQ 0 AND listfind(session.thegroupofuser, '2') EQ 0 )>
 				<cfinvoke component="global.cfc.users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.folderid">
 			</cfif>
 			<!--- If startrow is 0 set it to 1 --->
