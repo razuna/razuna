@@ -25,7 +25,7 @@
 --->
 <cfcomponent output="false" extends="authentication">
 	
-	<!--- Retrieve assets from a folder --->
+	<!--- Search --->
 	<cffunction name="searchassets" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="searchfor" type="string" required="true">
@@ -33,6 +33,8 @@
 		<cfargument name="doctype" type="string" required="false" default="">
 		<cfargument name="datecreate" type="string" required="false" default="">
 		<cfargument name="datechange" type="string" required="false" default="">
+		<cfargument name="datecreaterange" type="string" required="false" default="">
+		<cfargument name="datechangerange" type="string" required="false" default="">
 		<cfargument name="folderid" type="string" required="false" default="0">
 		<cfargument name="datecreateparam" type="string" required="false" default="">
 		<cfargument name="datecreatestart" type="string" required="false" default="">
@@ -198,14 +200,30 @@
 		<cfset var thesearchfor = arguments.istruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.istruct.dbdirect>
+			<!--- if searchfor is empty or * --->
+			<cfif thesearchfor EQ "" OR thesearchfor EQ "*">
+				<cfset var thesearchfor = "">
+				<cfset var _add_and = "">
+			<cfelse>
+				<cfset var _add_and = "AND">
+			</cfif>
 			<!--- Add dates to lucene search --->
 			<cfif arguments.istruct.datecreate NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.istruct.datecreate, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:(#replace(arguments.istruct.datecreate, "-", "", "ALL")#)">
 			</cfif>
 			<cfif arguments.istruct.datechange NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.istruct.datechange, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:(#replace(arguments.istruct.datechange, "-", "", "ALL")#)">
+			</cfif>
+			<!--- Add date ranges to search --->
+			<cfif arguments.istruct.datecreaterange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:[#replace(arguments.istruct.datecreaterange, "-", "", "ALL")#]">
+			</cfif>
+			<cfif arguments.istruct.datechangerange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.istruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qryluceneimg = search(criteria=thesearchfor, category="img", hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#", startrow=arguments.istruct.startrow, maxrows=arguments.istruct.maxrows, folderid=arguments.istruct.folderid, showrenditions=arguments.istruct.showrenditions)>
@@ -634,14 +652,30 @@
 		<cfset var thesearchfor = arguments.vstruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.vstruct.dbdirect>
+			<!--- if searchfor is empty or * --->
+			<cfif thesearchfor EQ "" OR thesearchfor EQ "*">
+				<cfset var thesearchfor = "">
+				<cfset var _add_and = "">
+			<cfelse>
+				<cfset var _add_and = "AND">
+			</cfif>
 			<!--- Add dates to lucene search --->
 			<cfif arguments.vstruct.datecreate NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.vstruct.datecreate, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:(#replace(arguments.vstruct.datecreate, "-", "", "ALL")#)">
 			</cfif>
 			<cfif arguments.vstruct.datechange NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.vstruct.datechange, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:(#replace(arguments.vstruct.datechange, "-", "", "ALL")#)">
+			</cfif>
+			<!--- Add date ranges to search --->
+			<cfif arguments.vstruct.datecreaterange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:[#replace(arguments.vstruct.datecreaterange, "-", "", "ALL")#]">
+			</cfif>
+			<cfif arguments.vstruct.datechangerange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.vstruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qrylucenevid = search(criteria=thesearchfor, category="vid", hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#", startrow=arguments.vstruct.startrow, maxrows=arguments.vstruct.maxrows, folderid=arguments.vstruct.folderid, showrenditions=arguments.vstruct.showrenditions)>
@@ -1054,14 +1088,30 @@
 		<cfset var thesearchfor = arguments.astruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.astruct.dbdirect>
+			<!--- if searchfor is empty or * --->
+			<cfif thesearchfor EQ "" OR thesearchfor EQ "*">
+				<cfset var thesearchfor = "">
+				<cfset var _add_and = "">
+			<cfelse>
+				<cfset var _add_and = "AND">
+			</cfif>
 			<!--- Add dates to lucene search --->
 			<cfif arguments.astruct.datecreate NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.astruct.datecreate, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:(#replace(arguments.astruct.datecreate, "-", "", "ALL")#)">
 			</cfif>
 			<cfif arguments.astruct.datechange NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.astruct.datechange, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:(#replace(arguments.astruct.datechange, "-", "", "ALL")#)">
+			</cfif>
+			<!--- Add date ranges to search --->
+			<cfif arguments.astruct.datecreaterange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:[#replace(arguments.astruct.datecreaterange, "-", "", "ALL")#]">
+			</cfif>
+			<cfif arguments.astruct.datechangerange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.astruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qryluceneaud = search(criteria=thesearchfor, category="aud", hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#", startrow=arguments.astruct.startrow, maxrows=arguments.astruct.maxrows, folderid=arguments.astruct.folderid, showrenditions=arguments.astruct.showrenditions)>
@@ -1462,14 +1512,30 @@
 		<cfset var thesearchfor = arguments.fstruct.searchfor>
 		<!--- Check if we have to search in lucene or not --->
 		<cfif !arguments.fstruct.dbdirect>
+			<!--- if searchfor is empty or * --->
+			<cfif thesearchfor EQ "" OR thesearchfor EQ "*">
+				<cfset var thesearchfor = "">
+				<cfset var _add_and = "">
+			<cfelse>
+				<cfset var _add_and = "AND">
+			</cfif>
 			<!--- Add dates to lucene search --->
 			<cfif arguments.fstruct.datecreate NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND create_time:(#replace(arguments.fstruct.datecreate, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:(#replace(arguments.fstruct.datecreate, "-", "", "ALL")#)">
 			</cfif>
 			<cfif arguments.fstruct.datechange NEQ "">
 				<!--- Set the create time string --->
-				<cfset thesearchfor = "#thesearchfor# AND change_time:(#replace(arguments.fstruct.datechange, "-", "", "ALL")#)">
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:(#replace(arguments.fstruct.datechange, "-", "", "ALL")#)">
+			</cfif>
+			<!--- Add date ranges to search --->
+			<cfif arguments.fstruct.datecreaterange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# create_time:[#replace(arguments.fstruct.datecreaterange, "-", "", "ALL")#]">
+			</cfif>
+			<cfif arguments.fstruct.datechangerange NEQ "">
+				<!--- Set the create time string --->
+				<cfset thesearchfor = "#thesearchfor# #_add_and# change_time:[#replace(arguments.fstruct.datechangerange, "-", "", "ALL")#]">
 			</cfif>
 			<!--- Search in Lucene --->
 			<cfset var qrylucenedoc = search(criteria=thesearchfor, category="doc", hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#", startrow=arguments.fstruct.startrow, maxrows=arguments.fstruct.maxrows, folderid=arguments.fstruct.folderid, showrenditions=arguments.fstruct.showrenditions)>
