@@ -39,7 +39,19 @@
 					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" style="max-height:50px;max-width:100px;">
 					 	</a>
 					 <cfelse>
-					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" style="max-height:50px;max-width:100px;"></a>
+					 	<!--- Validate cloud_url (in case there is a different filename SMSB or converting from local to S3) --->
+					 	<cfhttp url="#cloud_url#" />
+					 	<cfif cfhttp.statuscode CONTAINS "200">
+					 		<cfset new_cloud_url = cloud_url>
+					 	<cfelse>
+					 		<!--- Put URL together according to AWS location --->
+					 		<cfset _awslocation = "s3">
+					 		<cfif application.razuna.awslocation NEQ "us-east">
+						 		<cfset _awslocation = application.razuna.awslocation>
+					 		</cfif>
+						 	<cfset new_cloud_url = "https://#qry_storage.set2_aws_bucket#.#_awslocation#.amazonaws.com/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#">
+					 	</cfif>
+					 	<a href="#new_cloud_url#" target="_blank"><img src="#new_cloud_url#" style="max-height:50px;max-width:100px;"></a>
 					 </cfif>
 				</td>
 				<td width="10"></td>
