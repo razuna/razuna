@@ -153,6 +153,10 @@
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfparam name="arguments.thestruct.actionforfile" default="copy">
+	<!--- If user wants to remove the file we simply move it out of the dir --->
+	<cfif arguments.thestruct.upload_server_remove_files>
+		<cfset arguments.thestruct.actionforfile = "move">
+	</cfif>
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
 		<cfset var md5hash = "">

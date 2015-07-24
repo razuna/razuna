@@ -2865,6 +2865,8 @@
 		<xfa name="submitassetserver" value="c.asset_upload_server" />
 		<!-- Get settings -->
 		<!-- <do action="asset_get_settings" /> -->
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
@@ -2880,6 +2882,7 @@
 		<set name="attributes.langcount" value="1" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.asset_add_server_content" value="false" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->

@@ -1947,6 +1947,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.tab_add_from_email = true>
 	<cfset v.tab_add_from_ftp = true>
 	<cfset v.tab_add_from_link = true>
+	<cfset v.upload_server_remove_files = false>
 	<cfset v.tab_images = true>
 	<cfset v.tab_videos = true>
 	<cfset v.tab_audios = true>
@@ -2205,6 +2206,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.req_description = true>
 			<cfelseif custom_id EQ "req_keywords" AND custom_value>
 				<cfset v.req_keywords = true>
+			<cfelseif custom_id EQ "upload_server_remove_files" AND custom_value>
+				<cfset v.upload_server_remove_files = true>
 			<cfelseif custom_id EQ "images_metadata">
 				<cfset v.images_metadata = custom_value>
 			<cfelseif custom_id EQ "videos_metadata">
