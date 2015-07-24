@@ -2712,9 +2712,13 @@
 	</cfif>
 	<!--- Get all the renditions for the file --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_rend">
-	SELECT #id# as fileid
+	SELECT #id# as fileid, folder_id_r, '' as thefilename, '' as thefileurl, '' as thefiletype
 	FROM #session.hostdbprefix##db#
 	WHERE #group# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+	UNION
+	SELECT av_id as fileid, folder_id_r, av_link_title as thefilename, av_link_url as thefileurl, 'rend' as thefiletype
+	FROM #session.hostdbprefix#additional_versions
+	WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
 	</cfquery>
 	<!--- We got all the renditions. Now loop over them and get values --->
 	<cfloop query="qry_rend">
@@ -2729,6 +2733,11 @@
 			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r, img_create_time, img_change_time, img_size" returnVariable="qry_image" />
 			<cfset arguments.thestruct.filename = qry_image.img_filename>
 			<cfset arguments.thestruct.folder_id_r = qry_image.folder_id_r>
+			<!--- If this is an additional_versions --->
+			<cfif thefiletype EQ "rend">
+				<cfset arguments.thestruct.filename = thefilename>
+				<cfset arguments.thestruct.folder_id_r = folder_id_r>
+			</cfif>
 			<!--- Get foldername --->
 			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
 			<cfset arguments.thestruct.foldername = foldername>
@@ -2743,6 +2752,10 @@
 			<!--- The file_url --->
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
+				<!--- If this is an additional_versions --->
+				<cfif thefiletype EQ "rend">
+					<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid##thefileurl#">
+				</cfif>
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
 			</cfif>
@@ -2756,6 +2769,11 @@
 			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org, v.folder_id_r, v.vid_create_time, v.vid_change_time, v.vid_size" returnVariable="qry_video" />
 			<cfset arguments.thestruct.filename = qry_video.vid_filename>
 			<cfset arguments.thestruct.folder_id_r = qry_video.folder_id_r>
+			<!--- If this is an additional_versions --->
+			<cfif thefiletype EQ "rend">
+				<cfset arguments.thestruct.filename = thefilename>
+				<cfset arguments.thestruct.folder_id_r = folder_id_r>
+			</cfif>
 			<!--- Get foldername --->
 			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
 			<cfset arguments.thestruct.foldername = foldername>
@@ -2767,6 +2785,10 @@
 			<cfinvoke component="videos" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
+				<!--- If this is an additional_versions --->
+				<cfif thefiletype EQ "rend">
+					<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid##thefileurl#">
+				</cfif>
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
 			</cfif>
@@ -2780,6 +2802,11 @@
 			<cfinvoke component="audios" method="detail" thestruct="#arguments.thestruct#" returnVariable="qry_audio" />
 			<cfset arguments.thestruct.filename = qry_audio.detail.aud_name>
 			<cfset arguments.thestruct.folder_id_r = qry_audio.detail.folder_id_r>
+			<!--- If this is an additional_versions --->
+			<cfif thefiletype EQ "rend">
+				<cfset arguments.thestruct.filename = thefilename>
+				<cfset arguments.thestruct.folder_id_r = folder_id_r>
+			</cfif>
 			<!--- Get foldername --->
 			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
 			<cfset arguments.thestruct.foldername = foldername>
@@ -2803,6 +2830,10 @@
 			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
+				<!--- If this is an additional_versions --->
+				<cfif thefiletype EQ "rend">
+					<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid##thefileurl#">
+				</cfif>
 			<cfelse>
 				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
 			</cfif>
