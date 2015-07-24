@@ -1279,6 +1279,15 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('mxf', 'vid', 'video', 'mxf')
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('dpx', 'img', 'image', 'dpx')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('exr', 'img', 'image', 'exr')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('webp', 'img', 'image', 'webp')
+		</cfquery>
 	</cffunction>
 	
 	<!--- Create Host Remote --->

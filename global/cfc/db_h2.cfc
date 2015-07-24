@@ -922,6 +922,9 @@
 			INSERT INTO file_types VALUES ('x3f', 'img', 'image', 'x3f');
 			INSERT INTO file_types VALUES ('jp2', 'img', 'image', 'jp2');
 			INSERT INTO file_types VALUES ('mxf', 'vid', 'video', 'mxf');
+			INSERT INTO file_types VALUES ('dpx', 'img', 'image', 'dpx');
+			INSERT INTO file_types VALUES ('exr', 'img', 'image', 'exr');
+			INSERT INTO file_types VALUES ('webp', 'img', 'image', 'webp');
 			</cfquery>
 		</cfif>
 		<!--- <cfquery datasource="#arguments.thestruct.dsn#" name="test">
