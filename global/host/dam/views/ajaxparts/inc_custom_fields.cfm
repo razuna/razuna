@@ -137,6 +137,165 @@
 								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
 							</cfloop>
 						</select>
+					<!--- Select-search --->
+					<cfelseif cf_type EQ "select-search">
+						<!--- Variable --->
+						<cfset allowed = false>
+						<!--- Check for Groups --->
+						<cfloop list="#session.thegroupofuser#" index="i">
+							<cfif listfind(cf_edit,i)>
+								<cfset allowed = true>
+								<cfbreak>
+							</cfif>
+						</cfloop>
+						<!--- Check for users --->
+						<cfloop list="#session.theuserid#" index="i">
+							<cfif listfind(cf_edit,i)>
+								<cfset allowed = true>
+								<cfbreak>
+							</cfif>
+						</cfloop>
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
+							<cfset allowed = true>
+						</cfif>
+						<select name="cf_#cf_id#" id="cf_select_#listlast(cf_id,'-')#" style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
+							<option value=""></option>
+							<cfloop list="#ltrim(ListSort(REReplace(cf_select_list, ",(?![^()]+\))\s?" ,';','ALL'), 'text', 'asc', ';'))#" index="i" delimiters=";">
+								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
+							</cfloop>
+						</select>
+						<cfoutput>
+							<!--- JS --->
+							<script language="JavaScript" type="text/javascript">
+								
+								$("td select[name='cf_"+"<cfoutput>#cf_id#</cfoutput>"+"']").ready(function(event){
+									//J'écoute les changements
+									(function(self){
+										var prefix = "<cfoutput>#session.hostdbprefix#</cfoutput>";
+										var select = $("td select[name='cf_"+"<cfoutput>#cf_id#</cfoutput>"+"']");
+										select.chosen({add_contains: true});		
+
+										var chosen = select.next(".chosen-container");
+										//Sur entrŽe
+										chosen.find("input").on("keyup", function(ev){	
+											//J'ajoute ˆ la liste							
+											if(ev.keyCode === 13 && chosen.find(".chosen-results .active-result").length === 0){
+												//Je mets ˆ jour ma liste
+												var currentValue = $(this).val();
+												select.append('<option value="'+currentValue+'">'+currentValue+'</option>');								
+												select.trigger("chosen:updated");
+												//Je met ˆ jour le serveur
+												var values = [];
+												$.each(select.find("option"), function(index, item){
+													if($(item).html().length > 0)
+														values.push($(item).html())
+												})
+												$.get(
+													"../../global/api2/J2S.cfc?method=updateCustomField&select_list=" + values.join(",") + "&cf_id=" + "#qry_cf.cf_id#" + "&prefix=" + prefix + "&user_id=#session.theuserid#", 
+														// NITA Modif ajout du user id
+													function(result){}
+												);
+												//Je trigger l'event ˆ nouveau
+												$(this).val(currentValue).trigger("keyup");
+												
+											}
+											else {
+												chosen.find(".chosen-results .no-results").append(". Press enter to add");
+											}
+										})
+									})(this);
+								});
+							</script>
+						</cfoutput>	
+					<!--- select-category --->
+					<cfelseif cf_type EQ "select-category">
+						<!--- Variable --->
+						<cfset allowed = false>
+						<!--- Check for Groups --->
+						<cfloop list="#session.thegroupofuser#" index="i">
+							<cfif listfind(cf_edit,i)>
+								<cfset allowed = true>
+								<cfbreak>
+							</cfif>
+						</cfloop>
+						<!--- Check for users --->
+						<cfloop list="#session.theuserid#" index="i">
+							<cfif listfind(cf_edit,i)>
+								<cfset allowed = true>
+								<cfbreak>
+							</cfif>
+						</cfloop>
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
+							<cfset allowed = true>
+						</cfif>
+						<select name="cf_#cf_id#" type="category" id="cf_select_category_#listlast(cf_id,'-')#" value="#cf_value#" style="width:300px;" <cfif !allowed> disabled="disabled"</cfif>>
+							<cfset x = ["mars","earth", "venus", "jupiter"]>
+							<option value=""></option>
+							<cfloop list="#ltrim(replace(cf_select_list,', ',',','ALL'))#" index="i">
+								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
+							</cfloop>						
+						</select>						
+					<!--- select-category --->
+					<cfelseif cf_type EQ "select-sub-category">
+						<!--- Variable --->
+						<cfset allowed = false>
+						<!--- Check for Groups --->
+						<cfloop list="#session.thegroupofuser#" index="i">
+							<cfif listfind(cf_edit,i)>
+								<cfset allowed = true>
+								<cfbreak>
+							</cfif>
+						</cfloop>
+						<!--- Check for users --->
+						<cfloop list="#session.theuserid#" index="i">
+							<cfif listfind(cf_edit,i)>
+								<cfset allowed = true>
+								<cfbreak>
+							</cfif>
+						</cfloop>
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
+							<cfset allowed = true>
+						</cfif>
+						<select name="cf_#cf_id#" type="sub-category" id="cf_select_sub_category_#listlast(cf_id,'-')#" value="#cf_value#" style="width:300px;" <cfif !allowed> disabled="disabled"</cfif>>
+							<cfset list = "#cf_select_list#"> 
+							<cfset category = listToArray(list, ";", true)>							
+							<cfloop array=#category# index="i" delimiters=";" item="name">								
+								<cfset category[#i#] = "#ltrim(ListSort(REReplace(name, ",(?![^()]+\))\s?" ,';','ALL'), 'text', 'asc', ';'))#" />
+							</cfloop>
+							<option value=""></option>
+							<cfif cf_value NEQ null>
+								<cfloop array=#category# index="i" item="cat">
+									<cfset categories=listToArray(#cat#, ";", true) >								
+									<cfif ArrayContains(categories,cf_value)>
+										<cfloop array=#categories# index="name">
+											<option value="#name#" <cfif name EQ "#cf_value#"> selected="selected"</cfif>>#name#</option>
+										</cfloop>
+									</cfif>
+								</cfloop>
+							</cfif>
+						</select>
+						<cfoutput>
+							<!--- JS --->
+							<script language="JavaScript" type="text/javascript">
+								var id = "<cfoutput>#cf_id#</cfoutput>";
+								var category = $(document).find("select[type=category]");
+								var subCategory = $("select[name='cf_"+id+"']");	
+
+								//La catŽgorie parente change, je charge la sous-catŽgorie
+								category.change(function(event){
+									subCategory.val("");
+									subCategory.empty();
+									subCategory.append("<option value=''></option>");
+									var #toScript(category, "values")#
+									var list = event.srcElement.selectedIndex ? values[event.srcElement.selectedIndex-1] : values.join(";");
+									if(list){
+										for(var i = 0 ; i < list.split(";").length ; i++){
+											subCategory.append("<option value="+list.split(";")[i]+">"+list.split(";")[i]+"</option>")
+										}
+									}
+								});
+							</script>
+						</cfoutput>	
 					</cfif>
 				</td>
 			</tr>
