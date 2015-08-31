@@ -61,7 +61,9 @@
 						// Remove loader
 						// $("#bodyoverlay").remove();
 						// Reload Explorer
-						if (noreload != true) $('#explorer').load('index.cfm?fa=c.explorer');
+						if (noreload != true) {
+							$('#explorer').load('index.cfm?fa=c.explorer&_r=<cfoutput>#createuuid()#</cfoutput>');
+						}
 					}
 					else{
 						$('#linkbutton').css('display','none');
