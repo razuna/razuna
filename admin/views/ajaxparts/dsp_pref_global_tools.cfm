@@ -122,6 +122,10 @@
 			<div id="checkghostscript" style="display:none;"></div></td>
 		</tr>
 	</table>
+	<div style="text-align:right;padding-top:5px;padding-bottom:10px;float:right;">
+		<input type="submit" name="save" value="#defaultsObj.trans("save")#" class="button" /> 
+	</div>
+	<div style="clear:both;"></div>
 </cfoutput>
 <script language="javascript">
 	// Check paths

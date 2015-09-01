@@ -425,10 +425,32 @@
 
 		<!--- folder_subscribe_groups --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		  CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups (
-		  folder_id varchar(100) DEFAULT NULL,
-		  group_id varchar(100) DEFAULT NULL
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folder_subscribe_groups 
+		(
+			folder_id 		varchar(100) DEFAULT NULL,
+			group_id 		varchar(100) DEFAULT NULL
 		) 
+		</cfquery>
+
+		<!--- Lucene --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE lucene 
+		(
+			id 				varchar(100) DEFAULT NULL,
+			type 			varchar(10) DEFAULT NULL,
+			host_id 		bigint DEFAULT NULL,
+			PRIMARY KEY (id)
+		) 
+		</cfquery>
+
+		<!--- api_basket --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE api_basket (
+		basket_id 	varchar(100) DEFAULT NULL,
+		asset_id 	varchar(100) DEFAULT NULL,
+		date_added 	timestamp NULL DEFAULT NULL,
+		asset_type 	varchar(10) DEFAULT 'org'	
+		)
 		</cfquery>
 
 		<!---  --->
@@ -575,6 +597,42 @@
 			VALUES('customfield_seq', 0)
 			</cfquery>
 			 --->
+			 <!--- Options --->
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_location', 'local', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_local_url', 'http://localhost:8080/razuna-searchserver', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_secret', '#createuuid("")#', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('taskserver_remote_url', 'http://localhost:8090/razuna-searchserver', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('conf_db_prefix', 'raz1_', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('conf_storage', 'local', '#createuuid()#')
+			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES ('conf_db_type', '#session.firsttime.database_type#', '#createuuid()#')
+			</cfquery>
 			<!--- USERS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO users
@@ -798,6 +856,7 @@
 			INSERT INTO file_types VALUES ('3gp', 'vid', 'video', '3gpp');
 			INSERT INTO file_types VALUES ('rm', 'vid', 'application', 'vnd.rn-realmedia');
 			INSERT INTO file_types VALUES ('mpg', 'vid', 'video', 'mpeg');
+			INSERT INTO file_types VALUES ('mpeg', 'vid', 'video', 'mpeg');
 			INSERT INTO file_types VALUES ('mp4', 'vid', 'video', 'mp4v-es');
 			INSERT INTO file_types VALUES ('wmv', 'vid', 'video', 'x-ms-wmv');
 			INSERT INTO file_types VALUES ('vob', 'vid', 'video', 'mpeg');
@@ -861,7 +920,11 @@
 			INSERT INTO file_types VALUES ('r3d', 'img', 'image', 'r3d');
 			INSERT INTO file_types VALUES ('rwz', 'img', 'image', 'rwz');
 			INSERT INTO file_types VALUES ('x3f', 'img', 'image', 'x3f');
+			INSERT INTO file_types VALUES ('jp2', 'img', 'image', 'jp2');
 			INSERT INTO file_types VALUES ('mxf', 'vid', 'video', 'mxf');
+			INSERT INTO file_types VALUES ('dpx', 'img', 'image', 'dpx');
+			INSERT INTO file_types VALUES ('exr', 'img', 'image', 'exr');
+			INSERT INTO file_types VALUES ('webp', 'img', 'image', 'webp');
 			</cfquery>
 		</cfif>
 		<!--- <cfquery datasource="#arguments.thestruct.dsn#" name="test">
@@ -1044,6 +1107,21 @@
 		  rec_uuid			VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDER_DESC_FK_HOSTID FOREIGN KEY (HOST_ID)
+		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
+		)
+		</cfquery>
+
+		<!--- FOLDERS NAMES --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#folders_name
+		(
+		  FOLDER_ID_R		VARCHAR(100),
+		  LANG_ID_R			BIGINT,
+		  FOLDER_name		VARCHAR(1000),
+		  HOST_ID			BIGINT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
+		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDER_NAME_FK_HOSTID FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>

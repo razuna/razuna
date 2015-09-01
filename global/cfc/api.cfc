@@ -524,20 +524,4 @@
 		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" />
 	</cffunction>
 
-	<!--- Update Search Index --->
-	<cffunction name="updateSearch" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" />
-		<cfargument name="type" type="string" required="true" hint="Type of asset" />
-		<!--- Call function --->
-		<cfinvoke component="lucene" method="index_update_api">
-			<cfinvokeargument name="assetid" value="#arguments.fileid#" />
-			<cfinvokeargument name="assetcategory" value="#arguments.type#" />
-			<cfinvokeargument name="dsn" value="#getDatasource()#" />
-			<cfinvokeargument name="storage" value="#getStorage()#" />
-			<cfinvokeargument name="thedatabase" value="#getDatabase()#" />
-			<cfinvokeargument name="prefix" value="#getHostPrefix()#" />
-			<cfinvokeargument name="hostid" value="#getHostID()#" />
-		</cfinvoke>
-	</cffunction>
-
 </cfcomponent>

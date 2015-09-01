@@ -584,6 +584,30 @@
 		)
 		</cfquery>
 	</cfif>
+	<!--- Save task server settings --->
+	<!--- Loop over struct --->
+	<cfloop collection="#arguments.thestruct#" item="ts">
+		<!--- Filter only taskserver --->
+		<cfif ts CONTAINS "taskserver">
+			<!--- First remove all values in DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM options
+			WHERE lower(opt_id) = <cfqueryparam value="#lcase(ts)#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES (
+				<cfqueryparam value="#lcase(ts)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.thestruct[ts]#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+		</cfif>
+	</cfloop>
+	<!--- Update options --->
+	<cfset set_options_global(opt_id="conf_storage", opt_value=arguments.thestruct.conf_storage)>
 	<!--- Reset cache --->
 	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
@@ -1362,6 +1386,10 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<!--- Update Options (after above as we use the application scope) --->
+	<!--- <cfset set_options_global(opt_id="conf_db_type", opt_value=qry.conf_database)>
+	<cfset set_options_global(opt_id="conf_storage", opt_value=qry.conf_storage)>
+	<cfset set_options_global(opt_id="conf_db_prefix", opt_value="raz1_")> --->
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1425,7 +1453,7 @@
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
 	<cfset application.razuna.dropbox.url_oauth = "https://www.dropbox.com/1">
 	<cfset application.razuna.dropbox.url_api = "https://api.dropbox.com/1">
-	<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+	<cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
 		<cfset application.razuna.api.thehttp = "https://">
 	<cfelse>
 		<cfset application.razuna.api.thehttp = "http://">
@@ -1919,6 +1947,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.tab_add_from_email = true>
 	<cfset v.tab_add_from_ftp = true>
 	<cfset v.tab_add_from_link = true>
+	<cfset v.upload_server_remove_files = false>
 	<cfset v.tab_images = true>
 	<cfset v.tab_videos = true>
 	<cfset v.tab_audios = true>
@@ -2177,6 +2206,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<cfset v.req_description = true>
 			<cfelseif custom_id EQ "req_keywords" AND custom_value>
 				<cfset v.req_keywords = true>
+			<cfelseif custom_id EQ "upload_server_remove_files" AND custom_value>
+				<cfset v.upload_server_remove_files = true>
 			<cfelseif custom_id EQ "images_metadata">
 				<cfset v.images_metadata = custom_value>
 			<cfelseif custom_id EQ "videos_metadata">
@@ -2443,21 +2474,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfcatch></cfcatch>
 	</cftry>
 	
-	<!--- If this is for ISP we do a general scheduler task for indexing files --->
-	<cfif arguments.thestruct.conf_isp>
-		<!--- Save scheduled event in CFML scheduling engine --->
-		<cfschedule action="update"
-			task="GlobalIndex" 
-			operation="HTTPRequest"
-			url="#session.thehttp##cgi.http_host#/#cgi.context_path#/admin/lucene.cfm"
-			startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-			startTime="00:01 AM"
-			endTime="23:59 PM"
-			interval="300"
-		>
-	<cfelse>
-		<cfschedule action="delete" task="GlobalIndex" />
-	</cfif>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings","true")>
 	<!--- Return --->
@@ -2483,6 +2499,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_main_static = "">
 	<cfset s.wl_thecss = "">
 	<cfset s.wl_show_updates = false>
+	<cfset s.ss_db_name = "">
+	<cfset s.ss_db_server = "">
+	<cfset s.ss_db_port = "">
+	<cfset s.ss_db_schema = "">
+	<cfset s.ss_db_user = "">
+	<cfset s.ss_db_pass = "">
+	<cfset s.ss_db_type = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_options */ opt_id, opt_value
@@ -2615,6 +2638,141 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q.opt_value />
 </cffunction>
 
+<!--- Get taskserver --->
+<cffunction name="prefs_taskserver" output="false" returntype="struct">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("settings")>
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
+	SELECT /* #cachetoken#prefs_taskserver */ opt_id, opt_value
+	FROM options
+	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver%">
+	</cfquery>
+	<!--- Return it as a struct --->
+	<cfset var s = structnew()>
+	<cfloop query="q">
+		<cfset s[opt_id] = opt_value>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn s />
+</cffunction>
+
+<!--- Save options --->
+<cffunction name="set_options_global" output="false" returntype="void">
+	<cfargument name="opt_id" type="string">
+	<cfargument name="opt_value" type="string">
+	<!--- First remove entry --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM options
+	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.opt_id)#">
+	</cfquery>
+	<!--- Save to DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO options
+	(opt_id, opt_value, rec_uuid)
+	VALUES(
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.opt_id)#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.opt_value#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">
+	)
+	</cfquery>
+	<!--- Flush --->
+	<cfset variables.cachetoken = resetcachetoken("settings","true")>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Prepare to pass to indexingDbInfo --->
+<cffunction name="indexingDbInfoPrepare" output="false">
+	<cfargument name="db_path" type="string" required="true">
+	<!--- Put struct together --->
+	<cfset var s = structNew()>
+	<cfset s.db_type = session.firsttime.database>
+	<cfset s.db_name = session.firsttime.db_name>
+	<cfset s.db_server = session.firsttime.db_server>
+	<cfset s.db_port = session.firsttime.db_port>
+	<cfset s.db_schema = session.firsttime.db_schema>
+	<cfset s.db_user = session.firsttime.db_user>
+	<cfset s.db_pass = session.firsttime.db_pass>
+	<cfset s.db_path = arguments.db_path>
+	<!--- Pass to function --->
+	<cfset indexingDbInfo(thestruct=s)>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Submit db info to search server --->
+<cffunction name="indexingDbInfo" output="false">
+	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Param --->
+	<cfset var _taskserver = "" />
+	<cfset var _status = structNew() />
+	<cfset _status.result = true />
+	<cfset _status.error = "" />
+	<!--- Query settings --->
+	<cfset var _taskserver = prefs_taskserver()>
+	<!--- Taskserver URL according to settings --->
+	<cfif _taskserver.taskserver_location EQ "remote">
+		<cfset var _url = _taskserver.taskserver_remote_url />
+	<cfelse>
+		<cfset var _url = _taskserver.taskserver_local_url />
+	</cfif>
+	<!--- if this is for the H2 db --->
+	<cfif arguments.thestruct.db_type EQ "h2">
+		<cfset arguments.thestruct.db_name = "razuna">
+		<cfset arguments.thestruct.db_server = "">
+		<cfset arguments.thestruct.db_port = "0">
+		<cfset arguments.thestruct.db_schema = "razuna">
+		<cfset arguments.thestruct.db_user = "razuna">
+		<cfset arguments.thestruct.db_pass = "razunabd">
+	<cfelse>
+		<cfset arguments.thestruct.db_path = "">
+	</cfif>
+	<!--- Call API to insert db connection --->
+	<cfhttp url="#_url#/api/db.cfc" method="post" charset="utf-8">
+		<cfhttpparam name="method" value="setup" type="formfield" />
+		<cfhttpparam name="db_type" value="#arguments.thestruct.db_type#" type="formfield" />
+		<cfhttpparam name="db_name" value="#arguments.thestruct.db_name#" type="formfield" />
+		<cfhttpparam name="db_server" value="#arguments.thestruct.db_server#" type="formfield" />
+		<cfhttpparam name="db_port" value="#arguments.thestruct.db_port#" type="formfield" />
+		<cfhttpparam name="db_schema" value="#arguments.thestruct.db_schema#" type="formfield" />
+		<cfhttpparam name="db_user" value="#arguments.thestruct.db_user#" type="formfield" />
+		<cfhttpparam name="db_pass" value="#arguments.thestruct.db_pass#" type="formfield" />
+		<cfhttpparam name="db_path" value="#arguments.thestruct.db_path#" type="formfield" />
+	</cfhttp>
+	<!--- Deal with the return --->
+	<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
+		<cfset consoleoutput(true)>
+		<cfset console("#now()# ---------------------- Error adding a search server connection")>
+		<cfset console(cfhttp)>
+	<cfelse>
+		<cfloop collection="#arguments.thestruct#" item="f">
+			<cfif f CONTAINS "db_">
+				<!--- First remove all values in DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				DELETE FROM options
+				WHERE lower(opt_id) = <cfqueryparam value="ss_#lcase(f)#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+				<!--- Insert --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES (
+					<cfqueryparam value="ss_#lcase(f)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#arguments.thestruct[f]#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfif>
+		</cfloop>
+		<!--- Flush --->
+		<cfset resetcachetoken("settings","true")>
+	</cfif>
+	<cfreturn />
+</cffunction>
+
 <!--- Get options --->
 <cffunction name="get_options_one_host" output="false" returntype="string">
 	<cfargument name="id" type="string" required="true">
@@ -2633,7 +2791,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Get value --->
 		<cfset var thevalue = get_options_one(theid)>
 		<!--- Add to query --->
-		<cfset queryAddRow(query=q, data=[{ opt_id='#theid#', opt_value='#thevalue#' }])>
+		<cfset queryAddRow(query=q, data=[{ opt_id='#lcase(theid)#', opt_value='#thevalue#' }])>
 	</cfif>
 	<!--- Return --->
 	<cfreturn q.opt_value />

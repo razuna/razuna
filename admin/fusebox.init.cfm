@@ -49,7 +49,7 @@
 <cfparam name="session.thisapp" default="admin">
 
 <!--- Set HTTP or HTTPS --->
-<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+<cfif cgi.https EQ "on" OR cgi.http_x_https EQ "on" OR cgi.http_x_forwarded_proto EQ "https">
 	<cfset session.thehttp = "https://">
 <cfelse>
 	<cfset session.thehttp = "http://">

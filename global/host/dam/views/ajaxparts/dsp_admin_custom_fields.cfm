@@ -65,6 +65,7 @@
 										<option value="doc">#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 										<option value="aud">#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
 										<option value="users">#myFusebox.getApplicationData().defaults.trans("users")#</option>
+										<option value="col">Collections</option>
 									</select>
 								</td>
 							</tr>
@@ -80,6 +81,7 @@
 										<option value="textarea">#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
 										<option value="radio">#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
 										<option value="select">#myFusebox.getApplicationData().defaults.trans("select")#</option>
+										<option value="select_multi">#myFusebox.getApplicationData().defaults.trans("select")# (Multiple)</option>
 									</select>
 								</td>
 							</tr>

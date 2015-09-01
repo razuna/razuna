@@ -1,4 +1,0 @@
-db2jcc4.jar*
-h2-*.jar*
-ojdbc6.jar
-tools.jar

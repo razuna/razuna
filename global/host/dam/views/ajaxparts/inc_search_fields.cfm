@@ -24,11 +24,13 @@
 *
 --->
 <cfoutput>
-	<tr>
+	<input type="hidden" name="thetype" value="#myvar.thetype#">
+	<!--- <tr>
 		<td>#myFusebox.getApplicationData().defaults.trans("search_term")#</td>
-		<td><input type="hidden" name="thetype" value="#myvar.thetype#">
-			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
-	</tr>
+		<td>
+			<input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold">
+		</td>
+	</tr> --->
 	<!--- If the search selection is on we search with folder ids --->
 	<cfif cs.search_selection AND attributes.folder_id EQ 0>
 		<td></td>
@@ -55,7 +57,7 @@
 		<td><input type="text" name="description" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td valign="top">#myFusebox.getApplicationData().defaults.trans("labels")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 		<td>
 			<!--- Check the labels record count is less than 200 --->
 			<cfif attributes.thelabelsqry.recordcount LTE 200>
@@ -100,7 +102,7 @@
 	<cfloop query="qry_fields">
 		<cfif myvar.thetype EQ qry_fields.cf_show OR qry_fields.cf_show EQ 'all' OR myvar.thetype EQ 'all' AND qry_fields.cf_show NEQ 'users'>
 			<tr>
-				<td nowrap="true">#cf_text#</td>
+				<td nowrap="true" valign="top">#cf_text#</td>
 				<td>
 					<cfset cfid = replace(cf_id,"-","","all")>
 					<!--- For text --->
@@ -110,10 +112,13 @@
 					<cfelseif cf_type EQ "radio">
 						<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
 					<!--- Select --->
-					<cfelseif cf_type EQ "select">
-						<select name="cf#cfid#" style="width:300px;">
-							<option value="" selected="selected"></option>
-							<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
+					<cfelseif cf_type EQ "select" OR cf_type EQ "select_multi">
+						<select name="cf#cfid#" style="width:300px;"<cfif cf_type EQ "select_multi"> multiple="multiple"</cfif>>
+							<cfif cf_type NEQ "select_multi">
+								<option value="" selected="selected"></option>
+							</cfif>
+							<!--- #ltrim(ListSort(cf_select_list, 'text', 'asc', ','))# --->
+							<cfloop list="#ltrim(ListSort(replace(cf_select_list,', ',',','ALL'), 'text', 'asc', ','))#" index="i">
 								<option value="#i#">#i#</option>
 							</cfloop>
 						</select>

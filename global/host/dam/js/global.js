@@ -1,7 +1,16 @@
-// JQuery Settings
-// $.ajaxSetup({
-// 	cache: false
-// });
+// Hack for IE10. Only works in IE10 as 10 has conditional testing
+var isIE10 = false;
+/*@cc_on
+	if (/^10/.test(@_jscript_version)) {
+		isIE10 = true;
+	}
+@*/
+// JQuery Settings. Disable jquery cache if IE10 as it caches way too much
+if (isIE10) {
+	$.ajaxSetup({
+		cache: false
+	});
+}
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
@@ -15,12 +24,12 @@ function showwindow(theurl,thetitle,thew,thewin) {
 		autoOpen: false,
 		width: thew,
 		height: 'auto',
-		position: 'top',
+		position: 'top'
 		//minHeight: 600,
-		overlay: {
-			backgroundColor: '#000',
-			opacity: 0.5
-		}
+		// overlay: {
+		// 	backgroundColor: '#000',
+		// 	opacity: 0.5
+		// }
 	});
 	// Open window
 	$('#thewindowcontent' + thewin).dialog('open');
@@ -152,39 +161,39 @@ function FormInfo() {
 }
 // Copy the content from one select box top the second select box
 function deleteOption(object,index) {
-    object.options[index] = null;
+	object.options[index] = null;
 }
 function addOption(object,text,value) {
-    var defaultSelected = true;
-    var selected = true;
-    var optionName = new Option(text, value, defaultSelected, selected)
-    object.options[object.length] = optionName;
+	var defaultSelected = true;
+	var selected = true;
+	var optionName = new Option(text, value, defaultSelected, selected)
+	object.options[object.length] = optionName;
 }
 function copySelected(fromObject,toObject) {
-    for (var i=0, l=fromObject.options.length;i<l;i++) {
-        if (fromObject.options[i].selected)
-            addOption(toObject,fromObject.options[i].text,fromObject.options[i].value);
-    }
-    for (var i=fromObject.options.length-1;i>-1;i--) {
-        if (fromObject.options[i].selected)
-            deleteOption(fromObject,i);
-    }
+	for (var i=0, l=fromObject.options.length;i<l;i++) {
+		if (fromObject.options[i].selected)
+			addOption(toObject,fromObject.options[i].text,fromObject.options[i].value);
+	}
+	for (var i=fromObject.options.length-1;i>-1;i--) {
+		if (fromObject.options[i].selected)
+			deleteOption(fromObject,i);
+	}
 }
 function copyAll(fromObject,toObject) {
-    for (var i=0, l=fromObject.options.length;i<l;i++) {
-        addOption(toObject,fromObject.options[i].text,fromObject.options[i].value);
-    }
-    for (var i=fromObject.options.length-1;i>-1;i--) {
-        deleteOption(fromObject,i);
-    }
+	for (var i=0, l=fromObject.options.length;i<l;i++) {
+		addOption(toObject,fromObject.options[i].text,fromObject.options[i].value);
+	}
+	for (var i=fromObject.options.length-1;i>-1;i--) {
+		deleteOption(fromObject,i);
+	}
 }
 function populateHidden(fromObject,toObject) {
-    var output = '';
-    for (var i=0, l=fromObject.options.length;i<l;i++) {
-            output += escape(fromObject.options[i].value) + ',';
-    }
-    //alert(output);
-    toObject.value = output;
+	var output = '';
+	for (var i=0, l=fromObject.options.length;i<l;i++) {
+			output += escape(fromObject.options[i].value) + ',';
+	}
+	//alert(output);
+	toObject.value = output;
 }
 // Will convert the value given in the width and set it in the heigth
 function aspectheight(inp,out,theform){
@@ -264,11 +273,11 @@ function enablesub(myform,nostore) {
 function enablefromselectable(myform) {
 	var idsempty = false;
 	// Check state of selection box
-    var isclosed = $("#folderselection" + myform).is(':hidden');
-    // get how many are selected
-    var n = $("#" + myform + " .ui-selected input[name='file_id']").length;
-    // Open or close selection
-    if (n > 0 && isclosed) {
+	var isclosed = $("#folderselection" + myform).is(':hidden');
+	// get how many are selected
+	var n = $("#" + myform + " .ui-selected input[name='file_id']").length;
+	// Open or close selection
+	if (n > 0 && isclosed) {
 		$("#folderselection" + myform).slideToggle('slow');
 		$("#folderselectionb" + myform).slideToggle('slow');
 		
@@ -282,20 +291,20 @@ function enablefromselectable(myform) {
 	$("#selectstoreb" + myform).css("display","none");
 }
 function enablesubserver(myform) {
-    var valid = true;   
-    var checkBoxes = false;
-    var checkboxChecked = false;
-    
-    for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
-        myType = document.forms[myform].elements[i].type;
-        
+	var valid = true;   
+	var checkBoxes = false;
+	var checkboxChecked = false;
+	
+	for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
+		myType = document.forms[myform].elements[i].type;
+		
 	if (myType == 'checkbox') {
-            checkBoxes = true;
-            if (document.forms[myform].elements[i].checked) checkboxChecked = true;
-        }
-    }
+			checkBoxes = true;
+			if (document.forms[myform].elements[i].checked) checkboxChecked = true;
+		}
+	}
 
-    if (checkboxChecked == false) {
+	if (checkboxChecked == false) {
 	document.forms[myform].submitbutton.disabled = true;
 	}
 	if (checkboxChecked == true) {
@@ -303,25 +312,25 @@ function enablesubserver(myform) {
 	}
 }
 function validateValues() {
-    var valid = true;
-        
-    var checkBoxes = false;
-    var checkboxChecked = false;
-    
-    for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
-        myType = document.forms[myform].elements[i].type;
-        
-        if (myType == 'checkbox') {
-            checkBoxes = true;
-            if (document.forms[myform].elements[i].checked) checkboxChecked = true;
-        }
-        
-    }
+	var valid = true;
+		
+	var checkBoxes = false;
+	var checkboxChecked = false;
+	
+	for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
+		myType = document.forms[myform].elements[i].type;
+		
+		if (myType == 'checkbox') {
+			checkBoxes = true;
+			if (document.forms[myform].elements[i].checked) checkboxChecked = true;
+		}
+		
+	}
 
-    if (checkBoxes && !checkboxChecked) valid = false;
+	if (checkBoxes && !checkboxChecked) valid = false;
 
-    if (!valid)
-    return valid;    
+	if (!valid)
+	return valid;    
 }
 // If clicked in the document then close any dropdown menu with the class ddicon
 $(document).bind('click', function(e) {
@@ -329,7 +338,7 @@ $(document).bind('click', function(e) {
 	/* if($clicked.is('.ddselection_header') || $clicked.parents().is('.ddselection_header') || $clicked.is('.ddicon')) */
 	if($clicked.is('.ddicon') || $clicked.parents().is('.ddselection_header')) {
 		//alert('inside');
-    }
+	}
 	else {
 		//alert('outside');
 		$('.ddselection_header').hide();
@@ -346,17 +355,17 @@ function flash_footer(text){
 }
 // Global Tagit events
 function raztagit(thediv,fileid,thetype,raztags,perm){
-    var tags = $('#' + thediv);
-    tags.tagit({
+	var tags = $('#' + thediv);
+	tags.tagit({
 		singleField: true,
-        singleFieldNode: $('#' + thediv),
-        availableTags: raztags,
+		singleFieldNode: $('#' + thediv),
+		availableTags: raztags,
 		caseSensitive: false,
 		allowSpaces: true
 	});
 	// If user adds a new tag (but only if he is allowed to)
 	tags.tagit({
- 		onTagAdded: function(evt, tag) {
+		onTagAdded: function(evt, tag) {
 			var v = tags.tagit('tagLabel', tag);
 			loadcontent('div_forall','index.cfm?fa=c.label_update&id=' + fileid + '&type=' + thetype + '&thelab=' + encodeURIComponent(v));
 			if (perm == 't'){
@@ -367,10 +376,10 @@ function raztagit(thediv,fileid,thetype,raztags,perm){
 	// If user removed it from here
 	tags.tagit({
 		onTagRemoved: function(evt, tag) {
-        	var v = tags.tagit('tagLabel', tag);
-        	loadcontent('div_forall','index.cfm?fa=c.label_remove&id=' + fileid + '&type=' + thetype + '&thelab=' + encodeURIComponent(v));
+			var v = tags.tagit('tagLabel', tag);
+			loadcontent('div_forall','index.cfm?fa=c.label_remove&id=' + fileid + '&type=' + thetype + '&thelab=' + encodeURIComponent(v));
 			$.sticky('The label has been removed!');
-        }
+		}
 	});
 }
 
@@ -475,7 +484,7 @@ function storeids(theform){
 	// console.log($(this).val());
 	// });
 	for (var i = 0; i<document.forms[theform].elements.length; i++) {
-       if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
+	   if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
 			if (document.forms[theform].elements[i].checked) {
 				fileids += document.forms[theform].elements[i].value + ',';
 			}
@@ -796,35 +805,35 @@ function aspectwidth(inp,out,theform,theaspect){
 	document.forms[theform].elements[out].value = mynum;
 }
 function changeFormat(theform,inpheight,inpwidth,outheight,outwidth,ydpi,xdpi,inheight,inwidth,formatbox) {
-		    var formatbox = document.forms[theform].elements[formatbox];
-		    var selectedFormat = formatbox.options[formatbox.selectedIndex].value;
-		    if(selectedFormat == "inches") {
-		    	var heightinches = Math.round(inpheight.value / ydpi*100)/100;
-		    	document.forms[theform].elements[inheight].value = heightinches;
+			var formatbox = document.forms[theform].elements[formatbox];
+			var selectedFormat = formatbox.options[formatbox.selectedIndex].value;
+			if(selectedFormat == "inches") {
+				var heightinches = Math.round(inpheight.value / ydpi*100)/100;
+				document.forms[theform].elements[inheight].value = heightinches;
 
-		    	document.forms[theform].elements[outheight].style.display='none';
-		    	document.forms[theform].elements[inheight].style.display='';
+				document.forms[theform].elements[outheight].style.display='none';
+				document.forms[theform].elements[inheight].style.display='';
 
-		    	var widthinches = Math.round(inpwidth.value / xdpi*100)/100; 
-		    	document.forms[theform].elements[inwidth].value = widthinches;
+				var widthinches = Math.round(inpwidth.value / xdpi*100)/100; 
+				document.forms[theform].elements[inwidth].value = widthinches;
 
-		    	document.forms[theform].elements[outwidth].style.display='none';
-		    	document.forms[theform].elements[inwidth].style.display='';
-		    }
+				document.forms[theform].elements[outwidth].style.display='none';
+				document.forms[theform].elements[inwidth].style.display='';
+			}
 
-		    if(selectedFormat == "pixels") {
-		    	document.forms[theform].elements[outheight].style.display='';
-		    	document.forms[theform].elements[inheight].style.display='none';
+			if(selectedFormat == "pixels") {
+				document.forms[theform].elements[outheight].style.display='';
+				document.forms[theform].elements[inheight].style.display='none';
 
-		    	document.forms[theform].elements[outwidth].style.display='';
-		    	document.forms[theform].elements[inwidth].style.display='none';
-		    }
+				document.forms[theform].elements[outwidth].style.display='';
+				document.forms[theform].elements[inwidth].style.display='none';
+			}
 	   }
 function updatePixels(theform,height,width,outheight,outwidth,ydpi,xdpi) {
-   		var heightpixels = height.value * ydpi;
-   		document.forms[theform].elements[outheight].value = heightpixels;
-   		var widthpixels = width.value * xdpi;
-   		document.forms[theform].elements[outwidth].value = widthpixels;
+		var heightpixels = height.value * ydpi;
+		document.forms[theform].elements[outheight].value = heightpixels;
+		var widthpixels = width.value * xdpi;
+		document.forms[theform].elements[outwidth].value = widthpixels;
    }
    // Will convert the value given in the width and set it in the height
 function aspectheightin(inp,out,theform,theaspect){
@@ -894,7 +903,7 @@ function storevalues(){
 	$.ajax({
 		type: "POST",
 		url: url,
-	   	data: items
+		data: items
 	});
 }
 // Get Image Selection
@@ -902,51 +911,51 @@ function getimageselection(){
 	var artofimage = '';
 		// Loop trough the image selection
 		for (var i = 0; i<document.thebasket.elements.length; i++) {
-	       if ((document.thebasket.elements[i].name.indexOf('artofimage') > -1)) {
-	           if (document.thebasket.elements[i].checked) {
-	           	artofimage += document.thebasket.elements[i].value + ',';
-	           	}
-	      	}
-	   	}
+		   if ((document.thebasket.elements[i].name.indexOf('artofimage') > -1)) {
+			   if (document.thebasket.elements[i].checked) {
+				artofimage += document.thebasket.elements[i].value + ',';
+				}
+			}
+		}
 	return artofimage;
 }
 // Get Video Selection
 function getvideoselection(){
 	var artofvideo = '';
-	   	// Loop trough the video selection
+		// Loop trough the video selection
 		for (var i = 0; i<document.thebasket.elements.length; i++) {
-	       if ((document.thebasket.elements[i].name.indexOf('artofvideo') > -1)) {
-	           if (document.thebasket.elements[i].checked) {
-	           	artofvideo += document.thebasket.elements[i].value + ',';
-	           	}
-	      	}
-	   	}
+		   if ((document.thebasket.elements[i].name.indexOf('artofvideo') > -1)) {
+			   if (document.thebasket.elements[i].checked) {
+				artofvideo += document.thebasket.elements[i].value + ',';
+				}
+			}
+		}
 	return artofvideo;
 }
 // Get Audio Selection
 function getaudioselection(){
 	var artofaudio = '';
-	   	// Loop trough the audio selection
+		// Loop trough the audio selection
 		for (var i = 0; i<document.thebasket.elements.length; i++) {
-	       if ((document.thebasket.elements[i].name.indexOf('artofaudio') > -1)) {
-	           if (document.thebasket.elements[i].checked) {
-	           	artofaudio += document.thebasket.elements[i].value + ',';
-	           	}
-	      	}
-	   	}
+		   if ((document.thebasket.elements[i].name.indexOf('artofaudio') > -1)) {
+			   if (document.thebasket.elements[i].checked) {
+				artofaudio += document.thebasket.elements[i].value + ',';
+				}
+			}
+		}
 	return artofaudio;
 }
 // Get File Selection
 function getfileselection(){
 	var artoffile = '';
-	   	// Loop trough the file selection
+		// Loop trough the file selection
 		for (var i = 0; i<document.thebasket.elements.length; i++) {
-	       if ((document.thebasket.elements[i].name.indexOf('artoffile') > -1)) {
-	           if (document.thebasket.elements[i].checked) {
-	           	artoffile += document.thebasket.elements[i].value + ',';
-	           	}
-	      	}
-	   	}
+		   if ((document.thebasket.elements[i].name.indexOf('artoffile') > -1)) {
+			   if (document.thebasket.elements[i].checked) {
+				artoffile += document.thebasket.elements[i].value + ',';
+				}
+			}
+		}
 	return artoffile;
 }
 // Check selection for ID
@@ -1185,8 +1194,8 @@ function customfieldadd(){
 	$.ajax({
 		type: "POST",
 		url: url,
-	   	data: items,
-	   	success: reloadfields
+		data: items,
+		success: reloadfields
 	});
 	return false;
 }
@@ -1199,11 +1208,11 @@ function customfieldupdate(){
 	$.ajax({
 		type: "POST",
 		url: url,
-	   	data: items,
-	   	success: function(){
-	   		destroywindow(1);
-	   		reloadfields();
-	   	}
+		data: items,
+		success: function(){
+			destroywindow(1);
+			reloadfields();
+		}
 	});
 	return false;
 }
@@ -1275,7 +1284,7 @@ function searchadv_files(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "doc", folder_id: folderid, searchtext: searchtext, doctype: document.forms[theform].doctype.options[document.forms[theform].doctype.selectedIndex].value, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "doc", search_type: 'adv', folder_id: folderid, searchtext: searchtext, doctype: document.forms[theform].doctype.options[document.forms[theform].doctype.selectedIndex].value, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1285,6 +1294,8 @@ function searchadv_files(theform, thefa, folderid) {
 function searchadv_videos(theform, thefa, folderid) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1315,7 +1326,7 @@ function searchadv_videos(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "vid", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "vid", search_type: 'adv', folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1327,6 +1338,8 @@ function searchadv_images(theform, thefa, folderid) {
 	var searchtext = subadvfields(theform);
 	// Put together the extend metadata
 	var searchtext = subadvfieldsimg(theform, searchtext);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1357,7 +1370,7 @@ function searchadv_images(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "img", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "img", search_type: 'adv', folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1367,6 +1380,8 @@ function searchadv_images(theform, thefa, folderid) {
 function searchadv_audios(theform, thefa, folderid) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1397,7 +1412,7 @@ function searchadv_audios(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "aud", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "aud", search_type: 'adv', folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1407,6 +1422,8 @@ function searchadv_audios(theform, thefa, folderid) {
 function searchadv_all(theform, thefa) {
 	// Call subfunction to get fields
 	var searchtext = subadvfields(theform);
+	// Encode searchtext
+	var searchtext = encodeURIComponent(searchtext);
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// get the first postion
@@ -1443,7 +1460,7 @@ function searchadv_all(theform, thefa) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "all", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "all", search_type: 'adv', folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1538,7 +1555,7 @@ function subadvfieldsdoc(theform,searchtext){
 	else {
 		var searchtext = searchtext + rightsmarked;
 	}
-	return encodeURIComponent(searchtext);
+	return searchtext;
 }
 function subadvfieldsimg(theform,searchtext){
 	// Get values
@@ -1809,14 +1826,14 @@ function subadvfieldsimg(theform,searchtext){
 	else {
 		var searchtext = searchtext + rights;
 	}	
-	return encodeURIComponent(searchtext);
+	return searchtext;
 }
 // Focus tree
 function razunatreefocus(folderid){
 
 	try {
 		setTimeout(function() {
-	    	razunatreefocusdelay(folderid);
+			razunatreefocusdelay(folderid);
 		}, 1250)
 	}
 	catch(e) {};
@@ -1865,9 +1882,9 @@ function SetVideo(source, title) {
 	$('#videoPlayerDiv').dialog('open');
 	$('#videoPlayerDiv').dialog({
 		close: function(event, ui) {
-	   		$('#introRazVideo').attr('src','');
+			$('#introRazVideo').attr('src','');
 			$('#videoPlayerDiv').dialog('destroy');
-	   	}
+		}
 	});
 	// $('.ui-widget-overlay').click(function(){
 		
@@ -1879,7 +1896,7 @@ function SetVideo(source, title) {
 function loadfolderwithdelay(folderid){
 	try {
 		setTimeout(function() {
-	    	loadfolder(folderid);
+			loadfolder(folderid);
 		}, 1500)
 	}
 	catch(e) {};

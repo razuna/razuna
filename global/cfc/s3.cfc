@@ -36,6 +36,8 @@ Modified from original by Razuna to add suport for multipart uploads and getting
 	  		<cfset awsURL = "https://s3-us-west-2.amazonaws.com">
 	  	<cfelseif arguments.amzRegion EQ "eu">
 	  		<cfset awsURL ="https://s3-eu-west-1.amazonaws.com">
+	  	<cfelseif arguments.amzRegion EQ "eu-central-1">
+	  		<cfset awsURL ="https://s3.eu-central-1.amazonaws.com">
 	  	<cfelseif arguments.amzRegion EQ "ap-southeast-1">
 	  		<cfset awsURL ="https://s3-ap-southeast-1.amazonaws.com">
 	  	<cfelseif arguments.amzRegion EQ "ap-southeast-2">

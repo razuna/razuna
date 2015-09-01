@@ -54,6 +54,9 @@
 <div>
 	<div style="float:left;">
 		<input type="checkbox" name="zip_extract" value="1" checked="checked"> #myFusebox.getApplicationData().defaults.trans("header_zip_desc")#
+		<br />
+		<br />
+		<input type="radio" name="upload_server_remove_files" value="true"<cfif cs.upload_server_remove_files> checked="checked"</cfif> />Remove files on adding <input type="radio" name="upload_server_remove_files" value="false"<cfif !cs.upload_server_remove_files> checked="checked"</cfif> />Leave files on server
 	</div>
 	<!--- Load upload templates here --->
 	<cfif qry_templates.recordcount NEQ 0>

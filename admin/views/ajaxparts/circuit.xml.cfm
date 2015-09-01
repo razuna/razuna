@@ -323,5 +323,10 @@
 	<fuseaction name="wl_news_edit">
   		<include template="dsp_wl_news_edit" />
 	</fuseaction>
+
+	<!-- Search Server DB Connection -->
+	<fuseaction name="prefs_indexing_db">
+  		<include template="dsp_pref_global_indexing_db" />
+	</fuseaction>
 	
 </circuit>

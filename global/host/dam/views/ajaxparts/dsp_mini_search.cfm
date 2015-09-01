@@ -25,9 +25,9 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-	We've found <cfif #qry_filecount.thetotal# EQ "">0<cfelse>#qry_filecount.thetotal#</cfif> file(s).
+	We've found <cfif qry_files.searchcount EQ "">0<cfelse>#qry_files.searchcount#</cfif> file(s).
 	<br /><br />
-		<cfloop query="qry_files.qall">
+		<cfloop query="qry_files">
 			<div id="files">
 				<div id="filesthumbs">
 					<a href="##" onclick="slidefilesearch('#id#','#kind#');return false;">

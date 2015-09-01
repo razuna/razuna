@@ -199,60 +199,6 @@
 				<cfinvokeargument name="host_db_prefix_replace" value="#arguments.thestruct.host_db_prefix#">
 				<cfinvokeargument name="pathoneup" value="#arguments.thestruct.pathoneup#">
 			</cfinvoke> --->
-			<!--- NIRVANIX: Add child settings into settings_2 --->
-			<cfif application.razuna.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
-				<cfquery datasource="#variables.dsn#">
-				UPDATE #arguments.thestruct.host_db_prefix#settings_2
-				SET 
-				set2_nirvanix_name = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" cfsqltype="cf_sql_varchar">, 
-				set2_nirvanix_pass = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_pass#" cfsqltype="cf_sql_varchar">
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-			</cfif>
-			<!--- Add scheduled task for indexing but only for not isp setup --->
-			<cfif !application.razuna.isp>
-				<cfset var newschid = createuuid()>
-				<!--- Insert --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #arguments.thestruct.host_db_prefix#schedules 
-				(
-				 sched_id, 
-				 set2_id_r, 
-				 sched_user, 
-				 sched_method, 
-				 sched_name,
-				 sched_interval,
-				 host_id,
-				 sched_start_time,
-				 sched_end_time,
-				 sched_start_date
-				)
-				VALUES 
-				(
-				 <cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
-				 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-				 <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">, 
-				 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
-				 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
-				 <cfqueryparam value="120" cfsqltype="cf_sql_varchar">,
-				 <cfqueryparam cfsqltype="cf_sql_numeric" value="#hostid.id#">,
-				 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 00:01">,
-				 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 23:59">,
-				 <cfqueryparam cfsqltype="cf_sql_date" value="#LSDateFormat(now(), "yyyy-mm-dd")#">
-				)
-				</cfquery>
-				<!--- Save scheduled event in CFML scheduling engine --->
-				<cfschedule action="update"
-					task="RazScheduledUploadEvent[#newschid#]" 
-					operation="HTTPRequest"
-					url="#session.thehttp##cgi.http_host#/#cgi.context_path#/raz#hostid.id#/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
-					startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-					startTime="00:01 AM"
-					endTime="23:59 PM"
-					interval="120"
-				>
-			</cfif>
-			<!--- Add scheduled tasks --->
 			<cfset var taskpath =  "#session.thehttp##cgi.http_host##cgi.context_path#/admin">
 			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
@@ -285,12 +231,12 @@
 				interval="3600"
 			>
 			<!--- Write dummy record (this fixes issues with collection not written to lucene!!!) --->
-			<cftry>
+			<!--- <cftry>
 				<!--- Create collection --->
 				<cfset CollectionCreate(collection=hostid.id,relative=true,path="/WEB-INF/collections/#hostid.id#")>
 				<cfset CollectionIndexcustom( collection=#hostid.id#, key="delete", body="#createuuid()#", title="#createuuid()#")>
 				<cfcatch type="any"></cfcatch>
-			</cftry>
+			</cftry> --->
 			<!--- Insert label for asset expiry --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#labels (label_id,label_text, label_date,user_id,host_id,label_id_r,label_path)
@@ -944,7 +890,8 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Clear database: We have to go trough here since we don't initialize the DB CFC's directly --->
 <cffunction name="cleardb" output="true">
-	<cfinvoke component="db_#session.firsttime.database#" method="clearall" />
+	<cfargument name="thedatabase" required="true">
+	<cfinvoke component="db_#arguments.thedatabase#" method="clearall" />
 	<cfreturn />
 </cffunction>
 

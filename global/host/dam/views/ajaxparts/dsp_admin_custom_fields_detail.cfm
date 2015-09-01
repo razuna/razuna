@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div style="height:350px;">
+	<div style="height:450px;">
 		<!--- Add a new field --->
 		<form name="form_cf_detail" id="form_cf_detail" method="post" action="#self#" onsubmit="customfieldupdate();return false;">
 		<input type="hidden" name="#theaction#" value="c.custom_field_update">
@@ -55,13 +55,14 @@
 						<tr>
 							<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_for")#</td>
 							<td width="100%">
-								<select name="cf_show" style="width:150px;">
+								<select name="cf_show" style="width:190px;">
 									<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
 									<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_images")#</option>
 									<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_videos")#</option>
 									<option value="aud"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
 									<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 									<option value="users"<cfif qry_field.cf_show EQ "users"> selected="true"</cfif>>Users</option>
+									<option value="col"<cfif qry_field.cf_show EQ "col"> selected="true"</cfif>>Collections</option>
 								</select>
 							</td>
 						</tr>
@@ -75,11 +76,12 @@
 						<tr>
 							<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</td>
 							<td width="100%">
-								<select name="cf_type" style="width:150px;">
+								<select name="cf_type" style="width:160px;">
 									<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("text")#</option>
 									<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("textarea")#</option>
 									<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("radio_btn")#</option>
 									<option value="select"<cfif qry_field.cf_type EQ "select"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("select")#</option>
+									<option value="select_multi"<cfif qry_field.cf_type EQ "select_multi"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("select")# (Multiple)</option>
 								</select>
 							</td>
 						</tr>
@@ -99,7 +101,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
+				<td colspan="2" style="padding-top:15px;">
 					#myFusebox.getApplicationData().defaults.trans("groups_users_edit")#<br />
 					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans("choose_group_user")#" class="chzn-select" style="width:500px;" name="cf_edit" id="cf_edit_#attributes.cf_id#" multiple="multiple">
 						<option value=""></option>
@@ -117,9 +119,22 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
+				<td colspan="2" style="padding-top:15px;">
 					#myFusebox.getApplicationData().defaults.trans("xmp_parse_path")# <br/>
 					<input type="text" name="cf_xmp_path" size="30" value="#qry_field.cf_xmp_path#" style="width:490px;">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="padding-top:15px;">
+					Show this custom field only for files which have the following labels:
+					<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:500px;" name="cf_labels" id="cf_labels" multiple="multiple">
+						<option value=""></option>
+						<cfloop query="attributes.thelabelsqry">
+							<option value="#label_id#"<cfif ListFind(qry_cflabels, label_id) NEQ 0> selected="selected"</cfif>>#label_path#</option>
+						</cfloop>
+					</select>
+					<br />
+					<em>(If left empty the field will show for all files)</em>
 				</td>
 			</tr>
 		</table>

@@ -380,7 +380,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<cfthread intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
 			<!--- Flush Cache --->
@@ -568,7 +568,9 @@
 				<cfset local.root = "yes">
 				<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#images 
-					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+					SET
+					in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -675,7 +677,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<cfthread intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
 		</cfif>

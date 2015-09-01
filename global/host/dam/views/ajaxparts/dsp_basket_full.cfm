@@ -707,7 +707,7 @@
 		<div style="border:1px solid ##ccc; width:95%; height:20px; overflow:auto; background:##eee;">
 		    <div id="progressor" style="background:##07c; width:0%; height:100%;"></div>
 		</div>
-		<hr/>
+		<hr />
 	</cfif>
 </form>
 	

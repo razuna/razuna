@@ -25,12 +25,6 @@
 --->
 <cfoutput>
 	<h2>Current indexing status</h2>
-	<cfif qry_status_lock_file>
-		<p><strong>System Status:</strong> The system is currently indexing files! To see an updated list please <a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');"><strong>refresh this page</strong></a>.</p>
-	<cfelse>
-		<p><strong>System Status:</strong> Your files are waiting to be indexed.</p>
-	</cfif>
-	<p></p>
 	<p>Here is a list of files and their index status. The system is set to automatically index files. You can <a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');"><strong>refresh this page again</strong></a> to get the current index status.</p>
 	<table border="1" cellpadding="0" cellspacing="0" width="400" class="tablepanel">
 		<tr>
@@ -44,11 +38,10 @@
 			</tr>
 		</cfloop>
 	</table>
-	<h3>Please note</h3>
-	<cfif application.razuna.isp>
-		<p>Files are being indexed every couple of minutes. Due to the large amount of data it can take some time until files are being indexed and available for searching.</p>
-	<cfelse>
-		<p>Files are being indexed every couple of minutes. Due to the large amount of data it can take some time until files are being indexed and available for searching. If you feel there is an error with this, please report this to your local Administrator.</p>
-	</cfif>
-
+	<p>
+		<em>Files are being indexed every couple of minutes. Due to the large amount of data it can take some time until files are being indexed and available for searching. If you feel there is an error with this, please report this to <cfif application.razuna.isp><a href="mailto:support@razuna.com">support@razuna.com</a><cfelse>your Administrator</cfif>.</em>
+	</p>
+	<h3>Re-Index</h3>
+	<p>You can re-index all files by clicking on the link below. However, please note, that this causes that all files will be removed from the search index and searches will not work until all files are indexed again. Please do this only when you are instructed to do so and no one works with the system.</p>
+	<p><a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing&reset=true');">Yes, re-index all files</a></p>
 </cfoutput>

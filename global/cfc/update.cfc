@@ -182,8 +182,8 @@
 		</cftry>
 
 
-		<!--- If less then 46 (1.7.1) --->
-		<cfif updatenumber.opt_value LT 47>
+		<!--- If less then 49 (1.7.5) --->
+		<cfif updatenumber.opt_value LT 49>
 			<!--- Change lenght of IMG_UPC_NUMBER --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -196,12 +196,166 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SCHED_RUN_TIME <cfif application.razuna.thedatabase NEQ "mssql">datetime<cfelse>timestamp</cfif>
 				</cfquery>
-				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				<cfcatch type="any"><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
 			<!--- Add SAML columns to settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_RENDITION_SEARCH #thevarchar#(1) DEFAULT 'f'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Taskserver default values --->
+			<cftry>
+				<!--- Populate options table --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="conf_db_prefix">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="conf_db_type">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.thedatabase#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="conf_storage">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.storage#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<!--- Add taskserver default values --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_location">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="local">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_local_url">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="http://localhost:8080/razuna-searchserver">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_remote_url">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="http://localhost:8090">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO options
+				(opt_id, opt_value, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver_secret">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Lucene db --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE lucene (
+					id #thevarchar#(500) DEFAULT NULL,
+					type #thevarchar#(10) DEFAULT NULL,
+					host_id #theint# DEFAULT NULL
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- API Basket --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE api_basket (
+					basket_id #thevarchar#(100) DEFAULT NULL,
+					asset_id #thevarchar#(100) DEFAULT NULL,
+					date_added #thetimestamp#,
+					asset_type #thevarchar#(10) DEFAULT 'org'
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- FOLDER NAME --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_folders_name (
+					folder_id_r #thevarchar#(100) DEFAULT NULL,
+					rec_uuid #thevarchar#(100) DEFAULT NULL,
+					folder_name #thevarchar#(500) DEFAULT NULL,
+					lang_id_r #theint# DEFAULT NULL,
+					host_id #theint# DEFAULT NULL
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Loop over list and remove  --->
+			<cftry>
+				<!--- Remove search collections on this server --->
+				<cfset var search_collections = collectionList()>
+				<!--- Loop over collections found --->
+				<cfloop query="search_collections">
+					<cfset collectionDelete(name)>
+				</cfloop>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Remove all scheduled tasks for indexing --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="qry_sched">
+				SELECT sched_id
+				FROM raz1_schedules
+				WHERE ( lower(sched_method) = 'indexing' OR lower(sched_method) = 'rebuild' )
+				</cfquery>
+				<!--- Loop over indexing tasks and remove --->
+				<cfloop query="qry_sched">
+					<!--- Remove from tasks --->
+					<cfschedule action="delete" task="RazScheduledUploadEvent[#sched_id#]">
+					<!--- Remove in DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM raz1_schedules
+					WHERE sched_id = '#sched_id#'
+					</cfquery>
+				</cfloop>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Reset all files to be re-indexed --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_images
+				SET is_indexed = '0'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_videos
+				SET is_indexed = '0'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_audios
+				SET is_indexed = '0'
+				</cfquery>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE raz1_files
+				SET is_indexed = '0'
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
@@ -1862,67 +2016,6 @@
 				</cfcatch>
 			</cftry>
 
-			<!--- Add indexing to scheduler --->
-			<cfif !application.razuna.isp>
-				<!--- Query host table --->
-				<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
-				SELECT host_id, host_path, host_shard_group
-				FROM hosts
-				WHERE ( host_shard_group IS NOT NULL OR host_shard_group <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '' )
-				</cfquery>
-				<!--- Loop over hosts --->
-				<cfloop query="qry_hosts">
-					<!--- Check schedules table for existing record --->
-					<cfquery datasource="#application.razuna.datasource#" name="qry_exists">
-					SELECT sched_id
-					FROM #host_shard_group#schedules
-					WHERE sched_method = <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
-					</cfquery>
-					<!--- If record is found then no need to insert --->
-					<cfif qry_exists.recordcount EQ 0>
-						<cfset var newschid = createuuid()>
-						<!--- Insert --->
-						<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO #host_shard_group#schedules 
-						(sched_id, 
-						 set2_id_r, 
-						 sched_user, 
-						 sched_method, 
-						 sched_name,
-						 sched_interval,
-						 host_id,
-						 sched_start_time,
-						 sched_end_time,
-						 sched_start_date
-						)
-						VALUES 
-						(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
-						 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-						 <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">, 
-						 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
-						 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
-						 <cfqueryparam value="120" cfsqltype="cf_sql_varchar">,
-						 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">,
-						 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 00:01">,
-						 <cfqueryparam cfsqltype="cf_sql_timestamp" value="#LSDateFormat(now(), "yyyy-mm-dd")# 23:59">,
-						 <cfqueryparam cfsqltype="cf_sql_date" value="#LSDateFormat(now(), "yyyy-mm-dd")#">
-						 )
-						</cfquery>
-						<!--- Save scheduled event in CFML scheduling engine --->
-						<cfschedule action="update"
-							task="RazScheduledUploadEvent[#newschid#]" 
-							operation="HTTPRequest"
-							url="#session.thehttp##cgi.http_host#/#cgi.context_path#/raz1/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
-							startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-							startTime="00:01 AM"
-							endTime="23:59 PM"
-							interval="120"
-						>
-					</cfif>
-				</cfloop>
-			</cfif>
-			
 			<!--- Add to internal table --->
 			<cftry>
 				<cfquery dataSource="razuna_default">

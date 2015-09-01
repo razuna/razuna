@@ -111,7 +111,8 @@
 					x.xres AS xdpi,
 					x.yres AS ydpi,
 					x.resunit AS unit,
-					i.hashtag AS md5hash
+					i.hashtag AS md5hash,
+					i.expiry_date
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
@@ -148,6 +149,7 @@
 					v.vid_create_time dateadd,
 					v.vid_change_time datechange,
 					v.hashtag AS md5hash,
+					v.expiry_date,
 					(
 						SELECT 
 							CASE 
@@ -220,6 +222,7 @@
 					a.aud_create_time dateadd,
 					a.aud_change_time datechange,
 					a.hashtag AS md5hash,
+					a.expiry_date,
 					(
 						SELECT 
 							CASE 
@@ -292,6 +295,7 @@
 					f.file_change_time datechange,
 					'false' as subassets,
 					f.hashtag AS md5hash,
+					f.expiry_date,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/',f.host_id,'/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">

@@ -33,7 +33,7 @@
 		<cfargument name="thestruct" type="struct">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getwidgets */ widget_id, widget_name, widget_description
 		FROM #session.hostdbprefix#widgets
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -53,7 +53,7 @@
 		<cfparam name="arguments.thestruct.external" default="f">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailwidget */ widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, widget_dl_thumb
 		FROM #session.hostdbprefix#widgets
 		WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">

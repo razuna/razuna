@@ -28,7 +28,7 @@
 				<set name="session.hostid" value="1" />
 				<xfa name="submitform" value="c.firsttimerun" />
 				<set name="attributes.thepath" value="#thispath#" />
-				
+
 				<!-- CFC: Check -->
 				<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangsadmin(attributes.thepath)" returnvariable="xml_langs" />
 				<do action="v.firsttime" />
@@ -41,7 +41,7 @@
 			</false>
 		</if>
 	</fuseaction>
-	<!-- 
+	<!--
 	GLOBAL Fuseaction for storage
 	 -->
 	 <fuseaction name="storage">
@@ -222,24 +222,24 @@
 		<set name="session.thedomainid" value="" />
 		<do action="login" />
 	</fuseaction>
-	
-	<!-- 
+
+	<!--
 	GLOBAL Fuseaction for Languages
 	 -->
 	 <fuseaction name="languages">
 		<!-- Get languages -->
 		<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangs()" returnvariable="qry_langs" />
 	</fuseaction>
-	
+
 	<!-- Get Path to Assets -->
 	<fuseaction name="assetpath">
 		<invoke object="myFusebox.getApplicationData().settings" method="assetpath" returnvariable="attributes.assetpath" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- START: FIRSTTIME -->
 	<!--  -->
-	
+
 	<!-- database -->
 	<fuseaction name="first_time_database">
 		<!-- Set sessions -->
@@ -406,8 +406,8 @@
 	<!-- db setup restore from system -->
 	<fuseaction name="first_time_database_restore_system">
 		<!-- Params for backup -->
-		<set name="application.razuna.thedatabase" value="#session.firsttime.database#" />
-		<set name="application.razuna.datasource" value="#session.firsttime.database#" />
+		<set name="application.razuna.thedatabase" value="#session.firsttime.database_type#" />
+		<set name="application.razuna.datasource" value="#session.firsttime.database_type#" />
 		<set name="application.razuna.theschema" value="#session.firsttime.db_schema#" />
 		<!-- Params for creating DB -->
 		<set name="session.firsttime.path_assets" value="" />
@@ -449,13 +449,14 @@
 	<!-- final include -->
 	<fuseaction name="first_time_final_include">
 		<!-- Params -->
+		<set name="session.firsttime.database" value="#session.firsttime.database_type#" />
 		<set name="application.razuna.theschema" value="#session.firsttime.db_schema#" />
-		<set name="application.razuna.thedatabase" value="#session.firsttime.database#" />
-		<set name="application.razuna.datasource" value="#session.firsttime.database#" />
-		<set name="attributes.dsn" value="#session.firsttime.database#" />
+		<set name="application.razuna.thedatabase" value="#session.firsttime.database_type#" />
+		<set name="application.razuna.datasource" value="#session.firsttime.database_type#" />
+		<set name="attributes.dsn" value="#session.firsttime.database_type#" />
 		<set name="attributes.theschema" value="#session.firsttime.db_schema#" />
 		<set name="attributes.host_db_prefix" value="raz1_" />
-		<set name="attributes.database" value="#session.firsttime.database#" />
+		<set name="attributes.database" value="#session.firsttime.database_type#" />
 		<set name="attributes.host_lang" value="1" />
 		<set name="attributes.langs_selected" value="1_English" />
 		<set name="attributes.pathhere" value="#thispath#" />
@@ -472,22 +473,27 @@
 		<set name="attributes.mp4box" value="#session.firsttime.path_mp4box#" />
 		<set name="attributes.ghostscript" value="#session.firsttime.path_ghostscript#" />
 		<!-- Update the global config file with the new datasource -->
-		<set name="attributes.conf_database" value="#session.firsttime.database#" />
+		<set name="attributes.conf_database" value="#session.firsttime.database_type#" />
 		<set name="attributes.conf_schema" value="#session.firsttime.db_schema#" />
-		<set name="attributes.conf_datasource" value="#session.firsttime.database#" />
-		<!-- Save general settings -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(attributes)" />
+		<set name="attributes.conf_datasource" value="#session.firsttime.database_type#" />
+		<set name="attributes.conf_storage" value="local" />
 		<!-- Remove all data in the db, in case it is here -->
-		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb()" />
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="cleardb(thedatabase=session.firsttime.database_type)" />
 		<!-- Setup & create host & add host -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="setupdb(attributes)" />
+		<!-- Save general settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_global(attributes)" />
 		<!-- Save tools settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_tools(attributes)" />
 		<!-- CFC: Set internal firsttime value to false -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
-		<!-- Add Razuna Client db connection -->
+		<!-- Set H2 db path -->
+		<set name="attributes.db_path" value="#expandpath('..')#db" />
+		<!-- Setup search server -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfoPrepare(db_path=attributes.db_path)" />
+		<!-- Set vars for razuna_client datasource -->
 		<set name="session.firsttime.database" value="razuna_client" />
 		<set name="session.firsttime.database_type" value="mysql" />
 		<set name="session.firsttime.db_name" value="razuna_clients" />
@@ -499,7 +505,7 @@
 		<!-- CFC: Add the datasource -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 	</fuseaction>
-	
+
 	<!-- Call firsttime run -->
 	<fuseaction name="firsttimerun">
 		<!-- Add default values for the demo host -->
@@ -718,8 +724,8 @@
 		<!-- Relocate to index page -->
 		<do action="ajax.redirector" />
 	</fuseaction>
-	
-	
+
+
 
 	<!--  -->
 	<!-- END: PREFERENCES -->
@@ -731,6 +737,8 @@
 
 	<!-- Load preferences -->
 	<fuseaction name="prefs_global_main">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_taskserver()" returnvariable="qry_taskserver" />
 		<!-- Show -->
 		<do action="ajax.prefs_global_main" />
 	</fuseaction>
@@ -1050,7 +1058,7 @@
 	<!-- Send email to selected users -->
 	<fuseaction name="send_useremails">
 		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
-	</fuseaction>	
+	</fuseaction>
 
 	<!-- Check for the email -->
 	<fuseaction name="checkemail">
@@ -1209,7 +1217,7 @@
 		<!-- Show -->
 		<do action="ajax.hosts_languages" />
 	</fuseaction>
-	
+
 
 	<!--  -->
 	<!-- END: HOSTS -->
@@ -1256,7 +1264,7 @@
 	<!--  -->
 	<!-- START: Update function -->
 	<!--  -->
-	
+
 	<!-- Check for update -->
 	<fuseaction name="update">
 		<!-- Param -->
@@ -1294,15 +1302,15 @@
 		<!-- Show -->
 		<do action="v.update" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- END: Update function -->
 	<!--  -->
-	
+
 	<!--
 		END: SERVE TO BROWSER (CALLS FROM EXTERNAL URL)
 	-->
-	
+
 	<!-- Random Password -->
 	<fuseaction name="randompass">
 		<!-- CFC: Random Password -->
@@ -1310,11 +1318,11 @@
 		<!-- Show -->
 		<do action="ajax.randompass" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- START: Rendering Farm -->
 	<!--  -->
-	
+
 	<!-- Load -->
 	<fuseaction name="prefs_renf">
 		<!-- Global -->
@@ -1353,7 +1361,7 @@
 	<!--  -->
 	<!-- START: White Label -->
 	<!--  -->
-	
+
 	<!-- Load -->
 	<fuseaction name="pref_global_wl">
 		<!-- Params -->
@@ -1409,7 +1417,7 @@
 	</fuseaction>
 
 	<fuseaction name="debug">
-		<do action="v.debug" />	
+		<do action="v.debug" />
 	</fuseaction>
 
 	<!-- Run Folder subscribe schedule tasks -->
@@ -1424,17 +1432,26 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="asset_expiry_task()"/>
 	</fuseaction>
 
-	<!-- Run Lucene rebuild index task -->
-	<fuseaction name="w_lucene_update_index">
-		<set name="attributes.host_id" value="#url.host_id#" />
-		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update_firsttime(attributes.host_id)"/>
-	</fuseaction>
-
 	<!-- Schedule FTP task -->
 	<fuseaction name="w_ftp_notifications_task">
 		<!-- CFC: Run task -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="ftp_notifications_task()"/>
+	</fuseaction>
+
+	<!-- Search Server DB Connection -->
+	<fuseaction name="prefs_indexing_db">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options()" returnvariable="qry_options" />
+		<!-- Show -->
+		<do action="ajax.prefs_indexing_db" />
+	</fuseaction>
+
+	<!-- Search Server DB Connection submit -->
+	<fuseaction name="prefs_indexing_db_submit">
+		<!-- Set H2 db path -->
+		<set name="attributes.db_path" value="#expandpath('..')#db" />
+		<!-- CFC: Save values and call remote server -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="indexingDbInfo(attributes)" />
 	</fuseaction>
 
 </circuit>

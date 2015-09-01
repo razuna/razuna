@@ -1,0 +1,29 @@
+#  Start installing all libraries for ffmpeg
+RUN apt-get -y remove ffmpeg x264 libx264-dev
+RUN apt-get -y install build-essential subversion git-core checkinstall texi2html libfaac-dev \
+libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libtheora-dev \
+libvorbis-dev libx11-dev libxfixes-dev libxvidcore-dev zlib1g-dev libavcodec-dev
+# YASM
+RUN apt-get -y install build-essential checkinstall
+RUN apt-get -y build-dep yasm
+RUN wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz -P /tmp
+RUN tar -C /tmp -xzvf /tmp/yasm-1.2.0.tar.gz
+RUN cd /tmp/yasm-1.2.0 && /tmp/yasm-1.2.0/configure && make && checkinstall --pakdir "$HOME/Desktop" --pkgname yasm --pkgversion 1.2.0 --backup=no --default
+# X264
+RUN git clone git://git.videolan.org/x264.git /tmp/x264
+RUN cd /tmp/x264 && ./configure --enable-static --disable-opencl && make && checkinstall --pkgname=x264 --default --pkgversion="3:$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes
+# LIBVPX
+RUN git clone http://git.chromium.org/webm/libvpx.git /tmp/libvpx
+RUN cd /tmp/libvpx && ./configure && make && checkinstall --pkgname=libvpx --pkgversion="`date +%Y%m%d%H%M`-git" --backup=no --default --deldoc=yes
+# LAME
+RUN apt-get -y remove libmp3lame-dev
+RUN wget http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz -P /tmp
+RUN tar -C /tmp -xzvf /tmp/lame-3.98.4.tar.gz
+RUN cd /tmp/lame-3.98.4 && ./configure --enable-nasm --disable-shared && make && checkinstall --pkgname=lame-ffmpeg --pkgversion="3.98.4" --backup=no --default --deldoc=yes
+# FFMPEG
+RUN git clone git://source.ffmpeg.org/ffmpeg /tmp/ffmpeg
+RUN cd /tmp/ffmpeg && git checkout release/2.5
+RUN cd /tmp/ffmpeg && ./configure --enable-gpl --enable-version3 --enable-nonfree --enable-postproc \
+--enable-libfaac --enable-libopencore-amrnb --enable-libopencore-amrwb \
+--enable-libtheora --enable-libvorbis --enable-libx264 --enable-libxvid \
+--enable-x11grab --enable-libvpx --enable-libmp3lame && make && checkinstall --pkgname=ffmpeg --pkgversion="5:$(./version.sh)" --backup=no --deldoc=yes --default && hash x264 ffmpeg ffplay ffprobe
