@@ -153,6 +153,7 @@
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfparam name="arguments.thestruct.actionforfile" default="copy">
+	<cfparam name="arguments.thestruct.upload_server_remove_files" default="false">
 	<!--- If user wants to remove the file we simply move it out of the dir --->
 	<cfif arguments.thestruct.upload_server_remove_files>
 		<cfset arguments.thestruct.actionforfile = "move">
