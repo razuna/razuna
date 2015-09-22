@@ -299,7 +299,7 @@
 			<!--- This is only needed if we come from a share which is a collection. We filter on the asset id in the collection --->
 			<cfif arguments.iscol EQ "T">
 				<cfquery dbtype="query" name="cattree">
-				SELECT categorytree
+				SELECT categorytree, category
 				FROM cattree
 				WHERE categorytree 
 				<cfif arguments.qry_lucene.recordcount EQ 0>
@@ -312,7 +312,7 @@
 			<!--- Search in a search --->
 			<cfif arguments.newsearch EQ "F">
 				<cfquery dbtype="query" name="cattree">
-				SELECT categorytree
+				SELECT categorytree, category
 				FROM cattree
 				WHERE categorytree 
 				<cfif session.search.search_file_ids EQ 0 OR session.search.search_file_ids EQ ''>

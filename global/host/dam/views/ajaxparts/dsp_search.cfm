@@ -59,16 +59,19 @@
 				<input type="hidden" name="from_sf" id="from_sf" value="#attributes.from_sf#">
 				<input type="hidden" name="sf_id" id="sf_id" value="#attributes.sf_id#">
 				<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
+				<!--- As of 1.8 we only search within --->
+				<input type="hidden" name="newsearch" id="s_newsearch" value="f">
+
 				<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 					<tr>
 						<th colspan="5">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
 					</tr>
 					<tr>
-						<td valign="top" width="1%" nowrap="nowrap">
+						<!--- <td valign="top" width="1%" nowrap="nowrap">
 							<div style="padding-top:13px;">
 								<input type="radio" id="s_newsearch" name="newsearch" value="t"<cfif attributes.newsearch EQ "t"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("new_search")#</a> <input type="radio" name="newsearch" id="s_newsearch" value="f"<cfif attributes.newsearch EQ "f"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_within")#</a>
 							</div>
-						</td>
+						</td> --->
 						<td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("file_name")#
 							<br />
@@ -86,11 +89,11 @@
 						</td>
 					</tr>
 					<tr>
-						<td valign="top" width="1%" nowrap="nowrap">
+						<!--- <td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">#myFusebox.getApplicationData().defaults.trans("help")#</a>)
 							<br />
 							<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:180px;" placeholder="#myFusebox.getApplicationData().defaults.trans("enter_search_term_2")#">
-						</td>
+						</td> --->
 						<td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("keywords")#
 							<br />
@@ -138,14 +141,6 @@
 					</tr>
 					<tr>
 						<td>
-							#myFusebox.getApplicationData().defaults.trans("match")#: 
-							<br /> 
-							<select name="andor" id="andor">
-								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_all")#</option>
-								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_any")#</option>
-							</select>
-						</td>
-						<td>
 							#myFusebox.getApplicationData().defaults.trans("search_for_type")#
 							<br />
 							<select name="thetype" id="s_type">
@@ -191,8 +186,17 @@
 					</tr>
 					<tr>
 						<td>
+							#myFusebox.getApplicationData().defaults.trans("match")#: 
+							<br /> 
+							<select name="andor" id="andor">
+								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_all")#</option>
+								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_any")#</option>
+							</select>
 							<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("user_search")#</button>
 						</td>
+						<!--- <td>
+							<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("user_search")#</button>
+						</td> --->
 					</tr>
 					<!--- Has to be here or else search mocks up --->
 					<div style="display:none;">
@@ -258,9 +262,9 @@
 		// Search submit
 		$("#form_searchsearch").submit(function(e){
 			// Get searchfor value
-			var searchfor = encodeURIComponent($('#insearchsearchfor').val());
+			// var searchfor = encodeURIComponent($('#insearchsearchfor').val());
 			// Call subfunction to get fields
-			var searchtext = subadvfields('form_searchsearch');
+			var searchtext = encodeURIComponent(subadvfields('form_searchsearch'));
 			// Only allow chars
 			var illegalChars = /(\*|\?)/;
 			// Parse the entry
@@ -278,7 +282,7 @@
 				// Show loading bar
 				$("body").append('<div id="bodyoverlay"><img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 				// Get values
-				var newsearch = $('#s_newsearch:checked').val();
+				var newsearch = $('#s_newsearch').val();
 				var thetype = $('#s_type option:selected').val();
 				var listaudid = $('#s_listaudid').val();
 				var listvidid = $('#s_listvidid').val();
@@ -302,7 +306,7 @@
 				var sf_id = $('#sf_id').val();
 				var folder_id = $('#folder_id').val();
 				// Post the search
-				$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: searchtext, newsearch: newsearch, folder_id: folder_id, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id }, function(){
+				$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: searchtext, newsearch: newsearch, folder_id: folder_id, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id }, function() {
 						$("#bodyoverlay").remove();
 					}
 				);
