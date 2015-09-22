@@ -2492,9 +2492,12 @@
 	<cfparam name="arguments.thestruct.in_search_selection" default="false" />
 	<!--- Get the first lang at position 1 (it is always sorted) --->
 	<cfset var _lang = ListGetat(arguments.thestruct.langcount, 1)>
-	<!--- Put first folder name into folder_name --->
-	<cfset var _folder = "folder_name_#_lang#">
-	<cfset arguments.thestruct.folder_name = arguments.thestruct[_folder]>
+	<!--- Put first folder name into folder_name (we wrap this is a try catch as when we come from private folder we only have folder_name) --->
+	<cftry>
+		<cfset var _folder = "folder_name_#_lang#">
+		<cfset arguments.thestruct.folder_name = arguments.thestruct[_folder]>
+		<cfcatch type="any"></cfcatch>
+	</cftry>
 	<!--- Check for the same name --->
 	<cfquery datasource="#variables.dsn#" name="samefolder">
 	SELECT folder_name
