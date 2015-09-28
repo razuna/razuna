@@ -54,7 +54,7 @@
 						</td>
 						<td>
 							<cfif qry_folder.folder_name EQ "My Folder">
-								<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
+								<input type="hidden" name="folder_name_1" id="folder_name" value="#qry_folder.folder_name#">
 								#qry_folder.folder_name#
 							<cfelse>
 								<input type="text" id="folder_name" name="folder_name_#thisid#" style="width:400px;" value="<cfloop query="qry_folder_name"><cfif thisid EQ lang_id_r>#folder_name#</cfif></cfloop>" <cfif qry_langs.recordcount EQ 1>onkeyup="samefoldernamecheck('#attributes.theid#');foldernamecheck_invalidchars('#attributes.theid#');"</cfif> autocomplete="off">
