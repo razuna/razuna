@@ -182,8 +182,33 @@
 		</cftry>
 
 
-		<!--- If less then 49 (1.7.5) --->
-		<cfif updatenumber.opt_value LT 49>
+		<!--- If less then 50 (1.8) --->
+		<cfif updatenumber.opt_value LT 50>
+			<!--- Add to basket --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_cart add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cart_order_artofimage #theclob#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_cart add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cart_order_artofvideo #theclob#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_cart add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cart_order_artofaudio #theclob#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE raz1_cart add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> cart_order_artoffile #theclob#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
 			<!--- Change lenght of IMG_UPC_NUMBER --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">

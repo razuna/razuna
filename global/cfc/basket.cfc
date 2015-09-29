@@ -114,7 +114,7 @@
 <cffunction name="readbasket" output="false" returnType="query">
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, 
+		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, c.cart_order_artofimage, c.cart_order_artofvideo, c.cart_order_artofaudio,
 			CASE 
 				WHEN c.cart_file_type = 'doc' 
 					THEN (
@@ -1784,7 +1784,8 @@
 	cart_order_message = <cfqueryparam value="#arguments.thestruct.cart_order_message#" cfsqltype="cf_sql_varchar">,
 	cart_order_done = <cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
 	cart_order_date = <cfqueryparam value="#now()#" cfsqltype="CF_SQL_TIMESTAMP">,
-	cart_order_user_r = <cfqueryparam value="#qry_user.share_order_user#" cfsqltype="CF_SQL_VARCHAR">
+	cart_order_user_r = <cfqueryparam value="#qry_user.share_order_user#" cfsqltype="CF_SQL_VARCHAR">,
+	cart_order_artofimage = <cfqueryparam value="#arguments.thestruct.artofimage#" cfsqltype="CF_SQL_VARCHAR">
 	WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<!--- Get date format --->

@@ -113,7 +113,7 @@
 								<input type="button" value="#myFusebox.getApplicationData().defaults.trans("download")#" onclick="$('##thebasket').submit();return false;" class="button">
 								<input type="button" value="#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;" class="button">
 							<cfelse>
-								<input type="button" value="Order the selected files below" onclick="showwindow('#myself#ajax.share_order','Order',500,1);return false;" class="button">
+								<input type="button" value="Order the selected files below" onclick="orderSelectedFiles();" class="button">
 							</cfif>
 						</div>	
 						<div style="float:right;">
@@ -146,7 +146,7 @@
 			<!--- Show order desc --->
 			<cfif qry_basket.cart_order_done NEQ "">
 				<tr>
-					<td colspan="4"><strong>This is a order from a user.</strong> Actually, this basket has just become your basket. Meaning, it will act as your very own basket. You can remove, add or modify the basket. You can choose what you want to do with this order with the "Actions for the basket". If you want to send the order to the user, simply choose the "eMail Basket" action.
+					<td colspan="4"><strong>This is an order from a user.</strong> Actually, all items below are the order of the customer. You can remove, add or modify the basket. You can choose what you want to do with this order with the button above, e.g. if you want to send the order to the user, simply choose the "eMail Basket" action.
 					<cfif qry_basket.cart_order_message NEQ "">
 						<br><br>
 						The user wrote the below message with this order:
@@ -157,7 +157,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="4">If you have finished processing the order you can change the status here: <a href="##" onclick="loadcontent('order_done','#myself#c.order_done&cart_id=#session.thecart#');">This order has been processed.</a><div id="order_done"></div></td>
+					<td colspan="4">If you have finished processing the order <a href="##" onclick="loadcontent('order_done','#myself#c.order_done&cart_id=#session.thecart#');">please click on here to close the order.</a><div id="order_done"></div></td>
 				</tr>
 			</cfif>
 			<tr>
@@ -165,6 +165,10 @@
 			</tr>
 			<cfloop query="qry_basket">
 				<cfset myid = cart_product_id>
+				<cfset order = cart_order_done>
+				<cfset artofimage = cart_order_artofimage>
+				<cfset artofvideo = cart_order_artofvideo>
+				<cfset artofaudio = cart_order_artofaudio>
 				<cfswitch expression="#cart_file_type#">
 					<!--- IMAGES --->
 					<cfcase value="img">
@@ -214,13 +218,13 @@
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
-													</td>
+														</td>
 													</tr>
 												</cfif>
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1" OR qry_theimage.share_dl_org EQ "T">
 													<tr>
-														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
+														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" onchange="checksel('#myid#','imgorg#myid#','img');" <cfif order EQ 0><cfif ListFindnocase( artofimage, "#myid#-original", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -247,7 +251,7 @@
 												<cfelse>
 													<cfif perm NEQ "R" OR qry_share_options CONTAINS "#myid#-thumb-1" OR qry_theimage.share_dl_thumb EQ "T">
 														<tr>
-															<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
+															<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" <cfif order EQ 0><cfif ListFindnocase( artofimage, "#myid#-thumb", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
 															<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)
 															<cfif show_netpath>
 																<!--- Format the netwrk path variable --->
@@ -278,7 +282,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-#img_id#-1">
 													<tr>
-														<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" /></td>
+														<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" <cfif ListFindnocase( artofimage, "#myid#-#img_id#", "," )>checked="checked"</cfif> /></td>
 														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel) [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -302,7 +306,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" /></td>
+													<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" <cfif ListFindnocase( artofimage, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel) 
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -372,7 +376,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1" OR qry_thevideo.share_dl_org EQ "T">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
+														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" onchange="checksel('#myid#','vid#myid#','vid');" <cfif order EQ 0><cfif ListFindnocase( artofvideo, "#myid#-video", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -402,7 +406,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-#vid_id#-1">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" /></td>
+														<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" <cfif ListFindnocase( artofvideo, "#myid#-#vid_id#", "," )>checked="checked"</cfif> /></td>
 														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel) [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -426,7 +430,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" /></td>
+													<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" <cfif ListFindnocase( artofvideo, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -488,7 +492,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1" OR qry_theaudio.share_dl_org EQ "T">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
+														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" onchange="checksel('#myid#','aud#myid#','aud');" <cfif order EQ 0><cfif ListFindnocase( artofaudio, "#myid#-audio", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -518,7 +522,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-#aud_id#-1">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" checked="checked" /></td>
+														<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" <cfif ListFindnocase( artofaudio, "#myid#-#aud_id#", "," )>checked="checked"</cfif> /></td>
 														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -542,7 +546,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" /></td>
+													<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" <cfif ListFindnocase( artofaudio, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -716,7 +720,20 @@
 
 <script language="JavaScript" type="text/javascript">
 
-  function resetLog()
+	// New function to first get all the selected files
+	function orderSelectedFiles() {
+		// Get the selections
+		var artimage = getimageselection();
+		var artvideo = getvideoselection();
+		var artaudio = getaudioselection();
+		var artfile = getfileselection();
+		// For URL
+		var items = '&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile;
+		// Show window
+		showwindow('index.cfm?fa=ajax.share_order' + items,'Order',500,1);
+	}
+
+  	function resetLog()
     {
          document.getElementById("divProgress").innerHTML = "";
          document.getElementById('progressor').style.width = 0 + "%";
