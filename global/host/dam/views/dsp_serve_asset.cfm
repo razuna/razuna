@@ -50,15 +50,19 @@
 		<cfelse>
 			<cfheader name="content-disposition" value='attachment; filename="#filenamefordownload#"' />
 		</cfif>
-	</cfif> 
+	</cfif>
+	<cfset remote = structnew()>
+	<cfset remote.type = "http">
+	<cfset remote.url = qry_binary.theurl>
 	<!--- Get file --->
-	<cfif application.razuna.storage NEQ "amazon">
+	<!--- <cfif application.razuna.storage NEQ "amazon">
 		<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
 	<cfelse>
 		<cfhttp url="#qry_binary.qfile.cloud_url#" getasbinary="yes" />
-	</cfif>
+	</cfif> --->
 	<!--- Serve the file --->
-	<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
+	<!--- <cfcontent type="application/force-download" variable="#cfhttp.FileContent#"> --->
+	<cfcontent remote="#remote#" />
 </cfif>
 <!--- Storage Decision --->
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
@@ -66,9 +70,9 @@
 <cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 
 <!--- Ignore content-length attribute for previews --->
-<cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
+<!--- <cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
 	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
-</cfif>
+</cfif> --->
 <!--- File is external --->
 <cfif qry_binary.qfile.link_kind EQ "url">
 	<!--- Get file --->
@@ -77,7 +81,7 @@
 	<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
 <cfelse>
 	<!--- Nirvanix --->
-	<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+	<cfif application.razuna.storage EQ "amazon">
 		<!--- Decide on original or preview --->
 		<cfif attributes.v EQ "o">
 			<cfset theurl = qry_binary.qfile.cloud_url_org>
@@ -89,14 +93,14 @@
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
 			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="false">
 		<cfelse>
-			<!--- Get file --->
-			<cfif application.razuna.storage EQ "nirvanix">
-				<cflocation url="#theurl#?disposition=attachment">
-			<cfelse>
-				<cflocation url="#theurl#">
-			</cfif>
+			<!--- Struct for remote --->
+			<cfset remote = structnew()>
+			<cfset remote.type = "http">
+			<cfset remote.url = theurl>
+			<!--- Serve file --->
+			<cfcontent remote="#remote#" />
 		</cfif>
-	<cfelseif application.razuna.storage EQ "akamai">
+	<!--- <cfelseif application.razuna.storage EQ "akamai">
 		<cfif attributes.type EQ "img">
 			<cfset akatype = attributes.akaimg>
 		<cfelseif attributes.type EQ "vid">
@@ -121,7 +125,7 @@
 			<cfhttp url="#theurl#" getasbinary="yes" />
 			<!--- Serve the file --->
 			<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
-		</cfif>
+		</cfif> --->
 	<!--- Local --->
 	<cfelse>
 		<!--- This is for basket or direct downloads --->
@@ -132,21 +136,16 @@
 			<!--- Different file location for assets stored on lan --->
 			<cfif qry_binary.qfile.link_kind EQ "lan">
 				<cfset thefileloc = "#replace(qry_binary.qfile.link_path_url,"\ "," ","ALL")#">
+				<!--- Serve the file --->
+				<cfcontent type="application/force-download" file="#thefileloc#" deletefile="false">
 			<cfelse>
-				<!--- Decide on original or preview --->
-				<cfif attributes.v EQ "o">
-					<cfif qry_binary.av>
-						<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#">
-					<cfelse>
-						<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/#qry_binary.qfile.filenameorg#">
-					</cfif>
-				<cfelse>
-					<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
-				</cfif>
+				<!--- Struct for remote --->
+				<cfset remote = structnew()>
+				<cfset remote.type = "http">
+				<cfset remote.url = qry_binary.theurl>
+				<!--- Serve file --->
+				<cfcontent remote="#remote#" />
 			</cfif>
-			<!--- <cffile action="readbinary" file="#thefileloc#" variable="readb"> --->
-			<!--- Serve the file --->
-			<cfcontent type="application/force-download" file="#thefileloc#" deletefile="false">
 		</cfif>
 	</cfif>
 </cfif>
