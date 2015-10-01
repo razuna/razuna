@@ -1282,7 +1282,7 @@
 			</cfif>	
 			<!--- Create the URL --->
 			<cfif application.razuna.storage EQ "local">
-				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid##qFile.path_to_asset#/#originalfilename#">
+				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid#/#qFile.path_to_asset#/#originalfilename#">
 			<cfelse>
 				<cfset qry.theurl = qFile.cloud_url_org>
 			</cfif>
