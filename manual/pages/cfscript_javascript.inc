@@ -126,44 +126,115 @@ As discussed the <code>$cf</code> is a global variable that lets you interact wi
 </thead>
 <tbody>
 	<tr>
-		<td>print(.)</td>
+		<td>print()</td>
 		<td>This is similar to <a href="./?/function/writeoutput">WriteOutput()</a> function letting you quickly output to the browser window.</td>
 	</tr>
 	<tr>
-		<td>console(.)</td>
+		<td>console()</td>
 		<td>This is similar to <a href="./?/function/console">Console()</a> function letting you quickly output to the debugging console.</td>
 	</tr>
 	<tr>
-		<td>load(.)</td>
+		<td>load()</td>
 		<td>Loads in an external file that has JavaScript defined in it.  This is like the JavaScript version of <a href="./?/function/renderinclude">renderInclude</a></td>
 	</tr>
 	<tr>
-		<td nowrap>$cf.tocfml(.)</td>
+		<td nowrap>$cf.tocfml()</td>
 		<td>This is convience method to let you set a JavaScript variable into the CFML world.</td>
 	</tr>
 	<tr>
-		<td>$cf.get(.)</td>
+		<td>$cf.get()</td>
 		<td>This lets you get at a complex CFML variable from inside JavaScript.</td>
 	</tr>
 	<tr>
-		<td nowrap>$cf.XXXXX(.)</td>
+		<td nowrap>$cf.XXXXX()</td>
 		<td>This is how you get at core CFML functions from inside JavaScript.  You can call any core CFML function using this technique.   You cannot (yet) call user defined functions using this technique.</td>
 	</tr>
 </tbody>
 </table>
 
+<h3>print</h3>
 <p>
-An example of calling out to a core CFML function from inside JavaScript
+Print is similar to <a href="./?/function/writeoutput">WriteOutput()</a> function letting you quickly output to the browser window.
 </p>
+<cfsavecontent variable="t" trim="true"><nocfml>
+<cfscript language="javascript">
+	print('JavaScript on OpenBD is fun');
+</cfscript>
+</nocfml>
+</cfsavecontent>
+<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre><br>
+
+<h3>console()</h3>
+<p>
+	This is similar to <a href="./?/function/console">Console()</a> function letting you quickly output to the debugging console.
+</p>
+<cfsavecontent variable="t" trim="true"><nocfml>
+<cfscript language="javascript">
+	console('This is output in the console');
+</cfscript>
+</nocfml>
+</cfsavecontent>
+<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre><br>
+
+<h3>$cf.tocfml()</h3>
+<p>
+	This is convience method to let you set a JavaScript variable into the CFML world.
+</p>
+<cfsavecontent variable="t" trim="true"><nocfml>
+<cfscript language="javascript">
+	jsvariable = 'Sharing variables between JS and CFML is easy';
+	$cf.tocfml('jsvariable');
+</cfscript>
+<cfoutput>
+	#jsvariable#
+</cfoutput>
+</nocfml>
+</cfsavecontent>
+<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre><br>
+
+<h3>$cf.get()</h3>
+<p>
+	This lets you get at a complex CFML variable from inside JavaScript.
+</p>
+<cfsavecontent variable="t" trim="true"><nocfml>
+<cfset myAwesomeVar = { name: "Marcus", isAwesome: true }>
+<cfscript language="javascript">
+	myVariableInJS = $cf.get('myAwesomeVar');
+	print( myVariableInJS.name );
+</cfscript>
+</nocfml>
+</cfsavecontent>
+<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre><br>
+
+<h3>load()</h3>
+<p>
+	Loads in an external file that has JavaScript defined in it. This is like the JavaScript version of <a href="./?/function/renderinclude">renderInclude</a>
+</p>
+<p>
+	This lets you place JS in separate files and load as needed, cutting down on code duplication and clutter.
+</p>
+<cfsavecontent variable="t" trim="true"><nocfml>
+<cfscript language="javascript">
+	// Absolute paths are necessary
+	load('C:\myjsfile.js');
+
+	// Here in conjunction with CFML expandPath() to load a file in the root directory of the application.
+	load($cf.expandPath('myjsfile.js'));
+</cfscript>
+</nocfml>
+</cfsavecontent>
+<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre><br>
+
+<h3>Core CFML function</h3>
 
 <cfsavecontent variable="t" trim="true"><nocfml>
 <cfscript language="javascript">
-var g = $cf.left( "alan", 2 );
+	var g = $cf.left( "alan", 2 );
 </cfscript>
 </nocfml>
 </cfsavecontent>
 
-<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre>
+<pre class="cfml"><cfoutput>#XmlFormat(t)#</cfoutput></pre><br>
 
 <h2>The future</h2>
 

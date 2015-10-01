@@ -20,21 +20,21 @@
 
 <cfscript>
 
-	api 				= new index();
-	pageName 		= cgi.QUERY_STRING;
+	api = new index();
+	pageName = cgi.QUERY_STRING;
 
 	if ( pageName.startsWith("/") ) {
-		pageName 	= LCase( pageName.substring(1) );
+		pageName = LCase( pageName.substring(1) );
 	}
 
-	part				= ListToArray( pageName, "/" );
+	part = ListToArray( pageName, "/" );
 
 	if ( arrayLen( part ) == 0 ) {
-		apidata 	= {};
+		apidata = {};
 	} else if ( arrayLen( part ) == 1 ) {
-		apidata 	= { "info.error" : "You need to pass through two paramters eg. /tag/cfparam" };
+		apidata = { "info.error" : "You need to pass through two paramters eg. /tag/cfparam" };
 	} else {
-		apidata 	= api.details( part[1] , part[2] );
+		apidata = api.details( part[1] , part[2] );
 	}
 
 </cfscript>

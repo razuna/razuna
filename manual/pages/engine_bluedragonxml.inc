@@ -14,12 +14,13 @@
     <a href="#scriptsrc" class="anc"><scriptsrc>/bluedragon/scripts/</scriptsrc></a>
     <a href="#debug" class="anc"><debug>true</debug></a>
     <a href="#scriptprotect" class="anc"><scriptprotect>true</scriptprotect></a>
+		<a href="#scriptprotectregex" class="anc"><scriptprotectregex>&lt;(\s*)(object|embed|script|applet|meta)</scriptprotectregex></a>
     <a href="#nativelibdir" class="anc"><nativelibdir>/WEB-INF/bin</nativelibdir></a>
     <a href="#errorhandler" class="anc"><errorhandler>/defaultErrorHandler.cfm</errorhandler></a>
     <a href="#whitespacecomp" class="anc"><whitespacecomp>false</whitespacecomp></a>
     <a href="#formurlcombined" class="anc"><formurlcombined>false</formurlcombined></a>
     <a href="#formurlmaintaincase" class="anc"><formurlmaintaincase>false</formurlmaintaincase></a>
-	<a href="#strictarraypassbyreference" class="anc"><strictarraypassbyreference>false</strictarraypassbyreference></a>
+    <a href="#strictarraypassbyreference" class="anc"><strictarraypassbyreference>false</strictarraypassbyreference></a>
     <a href="#legacyformvalidation" class="anc"><legacyformvalidation>true</legacyformvalidation></a>
     <a href="#functionscopedvariables" class="anc"><functionscopedvariables>false</functionscopedvariables></a>
     <a href="#rewritebluedragonxml" class="anc"><rewritebluedragonxml>true</rewritebluedragonxml></a>
@@ -276,6 +277,9 @@ detailed explanation.
 
 <a name="scriptprotect"></a><h3>scriptprotect</h3>
 <p>Set to "true" to enable protection of variables from cross-site scripting attacks.	 Accepts values "true/false"; the default is "false".</p>
+
+<a name="scriptprotectregex"></a><h3>scriptprotectregex</h3>
+<p>This is the regex pattern that will be used to detect the milicious scripts coming in through the URL, FORM, COOKIE and CGI scopes.</p>
 
 <a name="nativelibdir"></a><h3>nativelibdir</h3>
 <p>Specifies the location of native libraries required by BlueDragon.</p>
