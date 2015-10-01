@@ -1280,6 +1280,12 @@
 				<!--- Correct filename --->
 				<cfset qry.thefilename =  originalfilename >
 			</cfif>	
+			<!--- Create the URL --->
+			<cfif application.razuna.storage EQ "local">
+				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid##qFile.path_to_asset#/#originalfilename#">
+			<cfelse>
+				<cfset qry.theurl = qFile.cloud_url_org>
+			</cfif>
 		</cfif>
 		<!--- If name contains spaces then convert them to _ or else an incorrect name is being shown during download --->
 		<cfset qry.thefilename = replacenocase(qry.thefilename," ","_","all")>
