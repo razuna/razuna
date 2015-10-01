@@ -1206,8 +1206,10 @@
 				<!--- Correct filename for thumbnail or original --->
 				<cfif arguments.thestruct.v EQ "o">
 					<cfset qry.thefilename =  originalfilename>
+					<cfset qry.dlname =  qFile.filenameorg>
 				<cfelse>
 					<cfset qry.thefilename = thumbnailname>
+					<cfset qry.dlname =  thumbnailname>
 				</cfif>
 			<!--- Videos --->
 			<cfelseif arguments.thestruct.type EQ "vid">
@@ -1232,6 +1234,7 @@
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename =  originalfilename >
+				<cfset qry.dlname =  qFile.filenameorg>
 			<!--- Audios --->
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#">
@@ -1255,6 +1258,7 @@
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename = originalfilename >
+				<cfset qry.dlname =  qFile.filenameorg>
 			<!--- Documents --->
 			<cfelse>
 				<cfquery name="qFile" datasource="#variables.dsn#">
@@ -1279,10 +1283,11 @@
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename =  originalfilename >
+				<cfset qry.dlname =  qFile.filenameorg>
 			</cfif>	
 			<!--- Create the URL --->
 			<cfif application.razuna.storage EQ "local">
-				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid#/#qFile.path_to_asset#/#qry.thefilename#">
+				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid#/#qFile.path_to_asset#/#qry.dlname#">
 			<cfelse>
 				<cfset qry.theurl = qFile.cloud_url_org>
 			</cfif>
