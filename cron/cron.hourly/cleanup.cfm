@@ -36,27 +36,30 @@
 		<cfdirectory action="list" directory="#_full_path_outgoing#" name="_qry_outgoing">
 		<!--- Remove incoming dirs --->
 		<cfloop query="_qry_incoming">
-			<cfif type EQ "dir" AND datelastmodified LT _removetime_incoming AND directoryexists("#_full_path_incoming#/#name#")>
-				<cfset console("#now()# ---------------- Removing incoming: #_full_path_incoming#/#name#")>
-				<cfdirectory action="delete" directory="#_full_path_incoming#/#name#" recurse="true" mode="775">
-			</cfif>
-			<cfif type EQ "file" AND datelastmodified LT _removetime_incoming AND fileExists("#_full_path_incoming#/#name#")>
-				<cfset console("#now()# ---------------- Removing incoming: #_full_path_incoming#/#name#")>
-				<cffile action="delete" file="#_full_path_incoming#/#name#" />
+			<cfif directoryexists("#_full_path_incoming#/#name#")>
+				<cfif type EQ "dir" AND datelastmodified LT _removetime_incoming>
+					<cfset console("#now()# ---------------- Removing incoming: #_full_path_incoming#/#name#")>
+					<cfdirectory action="delete" directory="#_full_path_incoming#/#name#" recurse="true" mode="775">
+				</cfif>
+				<cfif type EQ "file" AND datelastmodified LT _removetime_incoming>
+					<cfset console("#now()# ---------------- Removing incoming: #_full_path_incoming#/#name#")>
+					<cffile action="delete" file="#_full_path_incoming#/#name#" />
+				</cfif>
 			</cfif>
 		</cfloop>
 		<!--- Remove outgoing dirs and files --->
 		<cfloop query="_qry_outgoing">
-			<cfif type EQ "dir" AND datelastmodified LT _removetime_outgoing AND directoryexists("#_full_path_outgoing#/#name#")>
-				<cfset console("#now()# ---------------- Removing outgoing: #_full_path_outgoing#/#name#")>
-				<cfdirectory action="delete" directory="#_full_path_outgoing#/#name#" recurse="true" mode="775">
-			</cfif>
-			<cfif type EQ "file" AND datelastmodified LT _removetime_outgoing AND fileExists("#_full_path_outgoing#/#name#")>
-				<cfset console("#now()# ---------------- Removing outgoing: #_full_path_outgoing#/#name#")>
-				<cffile action="delete" file="#_full_path_outgoing#/#name#" />
+			<cfif directoryexists("#_full_path_outgoing#/#name#")>
+				<cfif type EQ "dir" AND datelastmodified LT _removetime_outgoing>
+					<cfset console("#now()# ---------------- Removing outgoing: #_full_path_outgoing#/#name#")>
+					<cfdirectory action="delete" directory="#_full_path_outgoing#/#name#" recurse="true" mode="775">
+				</cfif>
+				<cfif type EQ "file" AND datelastmodified LT _removetime_outgoing>
+					<cfset console("#now()# ---------------- Removing outgoing: #_full_path_outgoing#/#name#")>
+					<cffile action="delete" file="#_full_path_outgoing#/#name#" />
+				</cfif>
 			</cfif>
 		</cfloop>
-
 	</cfloop>
 
 	<cfset console("#now()# ---------------- Finished clean up job!")>
