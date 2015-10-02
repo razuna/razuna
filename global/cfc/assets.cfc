@@ -1239,9 +1239,10 @@
 				<!--- Grab file --->
 				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 				<!--- Call the addasset function --->
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-				<!--- </cfthread> --->
+				<cfthread intstruct="#arguments.thestruct#" priority="high">
+					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
+					<!--- <cfinvoke method="addasset" thestruct="#arguments.thestruct#"> --->
+				</cfthread>
 				<!--- Get file type so we can return the type --->
 				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type
