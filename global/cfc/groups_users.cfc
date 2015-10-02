@@ -38,7 +38,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
-	SELECT groups.grp_id,groups.grp_name,groups.grp_host_id,groups.grp_mod_id,groups.grp_translation_key,groups.upc_size,groups.upc_folder_format
+	SELECT groups.grp_id, groups.grp_name, groups.grp_host_id, groups.grp_mod_id, groups.grp_translation_key, groups.upc_size, groups.upc_folder_format
 	FROM groups
 	WHERE (
 		groups.grp_host_id = <cfqueryparam value="#Arguments.host_id#" cfsqltype="cf_sql_numeric">

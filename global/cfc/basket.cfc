@@ -961,15 +961,22 @@
 
 			<!--- ************** UPC SPECIFIC CODE BEGINS **************** --->
 
-			 <!--- Check if UPC criterion is satisfied and needs to be enabled--->
+			<cfset var upcstruct = "">
+			<cfset var qry_upcgrp = "">
+			<cfset var qry_upc_download = "">
+
+			<!--- Check if UPC criterion is satisfied and needs to be enabled--->
 			<cfinvoke component="global" method="isUPC" returnvariable="upcstruct">
 				<cfinvokeargument name="folder_id" value="#qry.folder_id_r#"/>
 			</cfinvoke>
 			<!--- If UPC is enabled then rename rendition according to UPC naming convention --->
-			 <cfif upcstruct.upcenabled>
-			 	<cfset var fn_last_char = "">
+			<cfif upcstruct.upcenabled AND upcstruct.createupcfolder>
+				<cfset var fn_last_char = "">
 			 	<cfquery name="qry_upcgrp" dbtype="query">
-					SELECT * FROM arguments.thestruct.qry_GroupsOfUser WHERE upc_size <>'' AND upc_size is not null
+				SELECT grp_id 
+				FROM arguments.thestruct.qry_GroupsOfUser 
+				WHERE upc_size != '' 
+				AND upc_size is not null
 				</cfquery>
 				<cfif qry_upcgrp.recordcount gt 1>
 					<cfinvoke component="defaults" method="trans" transid="upc_user_multi_grps" returnvariable="upc_user_multi_grps" />
