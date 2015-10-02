@@ -877,7 +877,7 @@
 		<cfif arguments.thestruct.theid EQ theimgid>
 			<!--- set the correct img_id for related assets --->
 			<cfif theart NEQ "original" AND theart NEQ "thumb" AND theart NEQ "versions">
-				<cfset theimgid = theart>
+				<cfset var theimgid = theart>
 			</cfif>
 			<!--- Query the db --->
 			<cfif theart EQ "versions">
@@ -946,7 +946,7 @@
 			</cfif>
 			<!--- If thenewname variable contains /\ --->
 			<cfset var thenewname = replace(thenewname,"/","-","all")>
-			<cfset thenewname = replace(thenewname,"\","-","all")>
+			<cfset var thenewname = replace(thenewname,"\","-","all")>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset var thefname = listfirst(thefnamewithext, ".")>
@@ -991,17 +991,17 @@
 					<cfif find('.', thefilename)>
 							<cfset rendition_version = listlast(thefilename,'.')>
 							<cfif not isnumeric(rendition_version)>
-								<cfset rendition_version ="">
+								<cfset var rendition_version ="">
 							<cfelse>
-								<cfset rendition_version ="." & rendition_version>
+								<cfset var rendition_version ="." & rendition_version>
 							</cfif>
 							<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
 							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)> 
 							<cfif not isnumeric(fn_last_char)>
 								<cfset var fn_ischar = true>
 							<cfelse>
-								<cfset fn_ischar = false>
-								<cfset fn_last_char = "">
+								<cfset var fn_ischar = false>
+								<cfset var fn_last_char = "">
 							</cfif>
 					</cfif>
 
@@ -1010,14 +1010,14 @@
 					<cfset arguments.thestruct.thefinalname = replacenocase(replacenocase(arguments.thestruct.thefinalname,".#theext#","","ALL"),".jpg","ALL")>
 				</cfif>
 			</cfif>
-			
+
 			<!--- ************** UPC SPECIFIC CODE ENDS **************** --->
 
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" returnvariable="crumbs" />
 			<cfset var parentfoldersname = ''>
 			<cfloop list="#crumbs#" index="idx" delimiters=";">
-				<cfset parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
+				<cfset var parentfoldersname = parentfoldersname & '/' & listfirst('#idx#','|')>
 			</cfloop>
 			<cfif upcstruct.upcenabled AND upcstruct.createupcfolder>
 				<cfset arguments.thestruct.thedir = "#arguments.thestruct.newpath#/#parentfoldersname#/#upcinfo.upcmanufstr#">
@@ -1116,9 +1116,9 @@
 					<cfelse>
 						<cfset arguments.thestruct.thefinalname = arguments.thestruct.thefinalname & '_' & uniqueCount> 
 					</cfif>
-					<cfset uniqueCount = uniqueCount + 1>
+					<cfset var uniqueCount = uniqueCount + 1>
 				<cfelse>
-					<cfset fileNameOK = false>	
+					<cfset var fileNameOK = false>	
 				</cfif>	
 			</cfloop>
 

@@ -162,6 +162,7 @@
 		FROM localquery
 		WHERE  ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		AND ct_g_u_grp_id NOT LIKE '1,%'
+		AND ct_g_u_grp_id != '1'
 		<cfif isdefined("arguments.thestruct.sortby")>
 			ORDER  BY #arguments.thestruct.sortby# #arguments.thestruct.sortorder#
 		<cfelse>
@@ -679,15 +680,38 @@
 	<cfset var qry = "">
 	<!--- Query users --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active, u.user_expiry_date
-	FROM ct_users_hosts uh, users u LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id
+	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active, u.user_expiry_date,
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+			(
+				SELECT GROUP_CONCAT(DISTINCT ct_g_u_grp_id ORDER BY ct_g_u_grp_id SEPARATOR ',') AS grpid
+				FROM ct_groups_users
+				WHERE ct_g_u_user_id = u.user_id
+			) AS ct_g_u_grp_id
+		<cfelseif application.razuna.thedatabase EQ "mssql">
+			STUFF(
+				(
+					SELECT ', ' + ct_g_u_grp_id
+					FROM ct_groups_users
+					WHERE ct_g_u_user_id = u.user_id
+		          	FOR XML PATH ('')
+	          	)
+	          	, 1, 1, ''
+			) AS ct_g_u_grp_id
+		</cfif>
+	FROM ct_users_hosts uh, users u
 	WHERE (
 		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 		AND uh.ct_u_h_user_id = u.user_id
 		)
-	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
-	AND gu.ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '1'
 	GROUP BY u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active,u.user_expiry_date
+	</cfquery>
+	<!--- Filter out sys admins --->
+	<cfquery dbtype="query" name="qry">
+	SELECT *
+	FROM qry
+	WHERE user_id != '1'
+	AND ct_g_u_grp_id != '1'
+	AND ct_g_u_grp_id NOT LIKE '1,%'
 	</cfquery>
 	<!--- Add column to qry --->
 	<cfset var MyArray = ArrayNew(1)>
