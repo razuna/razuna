@@ -390,6 +390,8 @@
 					<cfset var thedb = "files_xmp">
 					<cfset var theidr = "asset_id_r">
 					<cfset var cachetoken = getcachetoken(arguments.api_key,"files")>
+				<cfelse>
+					<cfset var cachetoken = createuuid()>
 				</cfif>
 				<!--- Loop over the assetid --->
 				<cfquery datasource="#application.razuna.api.dsn#" name="qrymeta" cachedwithin="1" region="razcache">
