@@ -3,6 +3,7 @@
     
     Contributing Developers:
     Matt Woodward - matt@mattwoodward.com
+    Marcus Fernstrom - marcus@marcusfernstrom.com
 
     This file is part of the Open BlueDragon Administrator.
 
@@ -63,7 +64,15 @@
 	      <cfset session.auth.loggedIn = true />
 	      <cfset session.auth.password = args.password />
 	      
-	      <cflocation url="index.cfm" addtoken="false" />
+        <cfif structKeyExists( session, "targetUrl" )>
+          <cfif session.targetUrl contains "login.cfm">
+            <cflocation url="index.cfm" addtoken="false" />
+          <cfelse>
+            <cflocation url="#session.targetUrl#" addtoken="false">
+          </cfif>
+        <cfelse>
+	       <cflocation url="index.cfm" addtoken="false" />
+        </cfif>
 	  </cfif>
       </cfif>
     </cfcase>

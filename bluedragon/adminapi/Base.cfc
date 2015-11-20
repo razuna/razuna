@@ -4,6 +4,7 @@
     Contributing Developers:
     David C. Epler - dcepler@dcepler.net
     Matt Woodward - matt@mattwoodward.com
+    Marcus Fernstrom - marcus@marcusfernstrom.com
 
     This file is part of the Open BlueDragon Admin API.
 
@@ -78,7 +79,7 @@
     <cfreturn this />
   </cffunction>
   
-  <cffunction name="isUserLoggedIn" access="public" output="false" returntype="boolean" 
+  <cffunction name="isAdminUserLoggedIn" access="public" output="false" returntype="boolean" 
 	      hint="Returns a boolean indicating whether or not a user is logged in with the valid password">
     <cfset var loggedIn = false />
     
@@ -93,7 +94,7 @@
   
   <cffunction name="checkLoginStatus" access="package" output="false" returntype="void" 
 	      hint="Checks login status and throws a security exception if there is no valid logged in user">
-    <cfif !isUserLoggedIn()>
+    <cfif !isAdminUserLoggedIn()>
       <cfthrow message="#variables.msg.security.notLoggedIn#" type="bluedragon.adminapi.security" />
     </cfif>
   </cffunction>
@@ -106,12 +107,15 @@
 	      hint="Sets the server configuration and tells OpenBD to refresh its settings">
     <cfargument name="currentConfig" type="struct" required="true" 
 		hint="The configuration struct, which is a struct representation of bluedragon.xml" />
+	<cfargument name="ignorelogincheck" required="false" />
     
     <cfset var admin = {} />
     <cfset var xmlConfig = "" />
     <cfset var success = false />
     
-    <cfset checkLoginStatus() />
+    <cfif !StructKeyExists(arguments, "ignorelogincheck")>
+    	<cfset checkLoginStatus() />
+    </cfif>
     
     <cflock scope="Server" type="exclusive" timeout="5">
       <cfset admin.server = Duplicate(arguments.currentConfig) />
@@ -182,7 +186,7 @@
   
   <cffunction name="getIsMultiContextJetty" access="public" output="false" returntype="boolean"  
 	      hint="Returns a boolean indicating whether or not this is running on the multi-context Jetty build">
-    <cfif !isUserLoggedIn()>
+    <cfif !isAdminUserLoggedIn()>
       <cfthrow message="#variables.msg.security.notLoggedIn#" type="bluedragon.adminapi.security" />
     </cfif>
     

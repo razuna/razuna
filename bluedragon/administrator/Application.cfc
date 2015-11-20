@@ -1,8 +1,9 @@
 <!---
-	Copyright (C) 2008 - Open BlueDragon Project - http://www.openbluedragon.org
+	Copyright (C) 2008 - Open BlueDragon Project - http://openbd.org
 
 	Contributing Developers:
 	Matt Woodward - matt@mattwoodward.com
+	Marcus Fernstrom - marcus@marcusfernstrom.com
 
 	This file is part of the Open BlueDragon Administrator.
 
@@ -20,10 +21,10 @@
 	along with the Open BlueDragon Administrator.  If not, see 
 	<http://www.gnu.org/licenses/>.
 --->
-<cfcomponent displayname"Application" output="false" hint="Application.cfc for OpenBD administrator">
+<cfcomponent displayname="Application" output="false" hint="Application.cfc for OpenBD administrator">
 
 	<cfscript>
-		this.name = "OpenBDAdminConsole";
+		this.name = "OpenBDAdminConsole3.0";
 		this.sessionmanagement = true;
 		this.setclientcookies = true;
 		this.sessiontimeout = CreateTimeSpan(0,0,20,0);
@@ -46,12 +47,12 @@
 			Application.variableSettings = CreateObject("component", "bluedragon.adminapi.VariableSettings");
 			Application.webServices = CreateObject("component", "bluedragon.adminapi.WebServices");
 
-			Application.adminConsoleVersion = "3.0";
-			Application.adminConsoleBuildDate = LSDateFormat(createDate(2012,03,1)) & " " & LSTimeFormat(createTime(00,00,00));
+			Application.adminConsoleVersion = "2.0";
+			Application.adminConsoleBuildDate = LSDateFormat(createDate(2011,11,11)) & " " & LSTimeFormat(createTime(00,00,00));
 
 			// Need to make sure the basic security nodes exist in bluedragon.xml. Other potential missing nodes
 			// are handled as the related pages within the administrator are hit.
-			
+			Application.administrator.setInitialSecurity();
 
 			Application.inited = true;
 
@@ -62,8 +63,6 @@
 	<cffunction name="onRequestStart" access="public" output="false" returntype="boolean">
 		<cfargument name="thePage" type="string" required="true" />
 
-		<cfset Application.administrator.setInitialSecurity()>
-		
 		<!--- handle the allow/deny IP addresses --->
 		<cfset var allowedIPs = Application.administrator.getAllowedIPs() />
 		<cfset var allowedIP = "" />
@@ -138,7 +137,7 @@
 			</cfif>
 		</cfif>
 
-		<cfif !Application.administrator.isUserLoggedIn() && ListLast(CGI.SCRIPT_NAME, "/") != "login.cfm" &&
+		<cfif !Application.administrator.isAdminUserLoggedIn() && ListLast(CGI.SCRIPT_NAME, "/") != "login.cfm" &&
 				ListLast(CGI.SCRIPT_NAME, "/") != "_loginController.cfm">
 			<cfset contextPath = getPageContext().getRequest().getContextPath() />
 
@@ -146,6 +145,9 @@
 				<cfset contextPath = "" />
 			</cfif>
 
+			<cfif !getPageContext().getRequest().getRequestURI() contains "login.cfm">
+				<cfset session.targetUrl = getPageContext().getRequest().getRootURL().toString() & getPageContext().getRequest().getRequestURI()>
+			</cfif>
 			<cflocation url="#contextPath#/bluedragon/administrator/login.cfm" addtoken="false" />
 		</cfif>
 
