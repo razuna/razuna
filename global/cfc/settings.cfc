@@ -2704,7 +2704,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <!--- Submit db info to search server --->
-<cffunction name="indexingDbInfo" output="false">
+<cffunction name="indexingDbInfo" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
 	<!--- Param --->
 	<cfset var _taskserver = "" />
@@ -2747,6 +2747,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfset consoleoutput(true)>
 		<cfset console("#now()# ---------------------- Error adding a search server connection")>
 		<cfset console(cfhttp)>
+		<cfoutput>false</cfoutput>
 	<cfelse>
 		<cfloop collection="#arguments.thestruct#" item="f">
 			<cfif f CONTAINS "db_">
@@ -2769,6 +2770,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfloop>
 		<!--- Flush --->
 		<cfset resetcachetoken("settings","true")>
+		<cfoutput>true</cfoutput>
 	</cfif>
 	<cfreturn />
 </cffunction>

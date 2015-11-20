@@ -651,7 +651,7 @@
 			 <cfquery datasource="#arguments.thestruct.dsn#">
 			 INSERT INTO #arguments.thestruct.theschema#.options
 			 (opt_id, opt_value, rec_uuid)
-			 VALUES ('taskserver_local_url', 'http://localhost:8080/razuna-searchserver', '#createuuid()#')
+			 VALUES ('taskserver_local_url', '/razuna-searchserver', '#createuuid()#')
 			 </cfquery>
 			 <cfquery datasource="#arguments.thestruct.dsn#">
 			 INSERT INTO #arguments.thestruct.theschema#.options

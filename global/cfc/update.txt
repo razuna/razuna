@@ -26,14 +26,14 @@ INSERT INTO options
 (opt_id, opt_value, rec_uuid)
 VALUES(
   'taskserver_local_url',
-  'razuna-searchserver',
+  '/razuna-searchserver',
   '3CAFF268-12CA-45A2-B18ED027E359C2'
 );
 INSERT INTO options
 (opt_id, opt_value, rec_uuid)
 VALUES(
   'taskserver_remote_url',
-  'http://localhost:8090',
+  'http://localhost:8090/razuna-searchserver',
   '3CAFF268-12CA-45A2-B18ED027E359C'
 );
 INSERT INTO options
