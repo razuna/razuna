@@ -1,7 +1,8 @@
 Razuna - The open source alternative to Enterprise Digital Asset Management
 ===========================================================================
 
-## NOTE
+NOTE
+----
 
 As of Razuna 1.8 Java 8 is a required! Java 7 or 6 is no longer supported!
 
