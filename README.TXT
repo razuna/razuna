@@ -1,10 +1,14 @@
 Razuna - The open source alternative to Enterprise Digital Asset Management
 ===========================================================================
 
+## NOTE
+
+As of Razuna 1.8 Java 8 is a required! Java 7 or 6 is no longer supported!
+
 Installation
 ------------
 
-In order for Razuna to run, you need to have a J2EE Application server (Tomcat, JBoss, Jetty, etc.) running. 
+In order for Razuna to run, you need to have a J2EE Application server (Tomcat, JBoss, Jetty, etc.) running. Java 8 is required!
 
 Documentation
 -------------
