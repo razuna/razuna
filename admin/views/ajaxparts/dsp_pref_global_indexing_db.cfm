@@ -68,9 +68,14 @@
 		<br />
 		<input type="button" id="submitDbButton" value="Update Connection Info" onclick="submitDbInfo();" class="button">
 	</p>
+	<div id="dbstatus"></div>
 </cfoutput>
 
 <script type="text/javascript">
+	// Show db info when coming to the page
+	<cfif qry_options.ss_db_type EQ "mysql" OR qry_options.ss_db_type EQ "mssql">
+		db_info(true);
+	</cfif>
 	// Showing db info
 	function db_info(toshow) {
 		if (toshow) {
@@ -84,6 +89,7 @@
 	function submitDbInfo() {
 		// Hide button
 		$('#submitDbButton').attr('style','display:none');
+		$('#dbstatus').html('Please wait...');
 		// Grab values
 		var db_type = $('#db_type:checked').val();
 		var db_name = $('#db_name').val();
@@ -92,18 +98,34 @@
 		var db_schema = $('#db_schema').val();
 		var db_user = $('#db_user').val();
 		var db_pass = $('#db_pass').val();
-		// Submit
-		$.ajax({
-			type: "POST",
-			url: "index.cfm?fa=c.prefs_indexing_db_submit",
-		   	data: { db_type : db_type, db_name : db_name, db_server : db_server, db_port : db_port, db_schema : db_schema, db_user : db_user, db_pass : db_pass },
-		   	success: function() {
-		   		alert('The connection has been added successfully!');
-		   	},
-		   	error: function() {
-		   		alert('There is a connection error with your search server!');
-		   	}
+
+		$('#loaddummy').load('index.cfm?fa=c.prefs_indexing_db_submit', { db_type : db_type, db_name : db_name, db_server : db_server, db_port : db_port, db_schema : db_schema, db_user : db_user, db_pass : db_pass }, function(data){
+				if (data.indexOf('true') > -1) {
+					$('#dbstatus').html('<span style="color:green;font-weight:bold;">The connection has been added successfully!</span>');
+				}
+				else {
+					$('#dbstatus').html('<span style="color:red;font-weight:bold;">There is a connection error with your search server!</span>');
+					$('#submitDbButton').attr('style','display:""');
+				}
 		});
+
+		// Submit
+		// $.ajax({
+		// 	type: "POST",
+		// 	url: "index.cfm?fa=c.prefs_indexing_db_submit",
+		//    	data: { db_type : db_type, db_name : db_name, db_server : db_server, db_port : db_port, db_schema : db_schema, db_user : db_user, db_pass : db_pass },
+		//    	dataType: "text",
+		//    	success: function(data, textStatus, jqXHR) {
+		//    		console.log('SUCCESS',data); 
+		//    		console.log('textStatus',textStatus); 
+		//    		console.log('jqXHR',jqXHR); 
+		//    		alert('The connection has been added successfully!');
+		//    	},
+		//    	error: function(data) {
+		//    		console.log('ERROR', data); 
+		//    		alert('There is a connection error with your search server!');
+		//    	}
+		// });
 		return false;
 	}
 </script>
