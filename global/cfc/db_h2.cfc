@@ -606,7 +606,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
-			VALUES ('taskserver_local_url', '/razuna-searchserver', '#createuuid()#')
+			VALUES ('taskserver_local_url', 'http://localhost:8080/razuna-searchserver', '#createuuid()#')
 			</cfquery>
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO options
@@ -1052,6 +1052,10 @@
 		  cart_order_done 		varchar(1), 
 		  cart_order_date 		timestamp,
 		  cart_order_user_r 	VARCHAR(100),
+		  cart_order_artofimage	CLOB,
+		  cart_order_artofvideo	CLOB,
+		  cart_order_artofaudio	CLOB,
+		  cart_order_artoffile	CLOB,
 		  HOST_ID				BIGINT
 		)
 		</cfquery>
@@ -2478,6 +2482,8 @@
 	
 	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" hint="Sets the server configuration and tells OpenBD to refresh its settings">
 		<cfargument name="currentConfig" type="struct" required="true" hint="The configuration struct, which is a struct representation of bluedragon.xml" />
+			<!--- Initialize Var --->
+			<cfset admin = structnew()>
 			<cflock scope="Server" type="exclusive" timeout="5">
 				<cfset admin.server = duplicate(arguments.currentConfig) />
 				<cfset admin.server.openbdadminapi.lastupdated = DateFormat(now(), "dd/mmm/yyyy") & " " & TimeFormat(now(), "HH:mm:ss") />

@@ -604,7 +604,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.options
 		(opt_id, opt_value, rec_uuid)
-		VALUES ('taskserver_local_url', '/razuna-searchserver', '#createuuid()#')
+		VALUES ('taskserver_local_url', 'http://localhost:8080/razuna-searchserver', '#createuuid()#')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.options
@@ -1411,6 +1411,10 @@
 		  cart_order_done 		varchar(1), 
 		  cart_order_date 		DATETIME,
 		  cart_order_user_r 	VARCHAR(100),
+		  cart_order_artofimage	nvarchar(max),
+		  cart_order_artofvideo	nvarchar(max),
+		  cart_order_artofaudio	nvarchar(max),
+		  cart_order_artoffile	nvarchar(max),
 		  HOST_ID				INT
 		)
 		
