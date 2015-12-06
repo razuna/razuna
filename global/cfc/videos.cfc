@@ -819,6 +819,11 @@
 								OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 							)
 						) = 'X' THEN 'X'
+						WHEN (
+							SELECT folder_owner
+							FROM #session.hostdbprefix#folders f
+							WHERE f.folder_id = v.folder_id_r
+						) = '#Session.theUserID#' THEN 'X'
 					END as permfolder
 				</cfif>
 			FROM #session.hostdbprefix#videos v 
