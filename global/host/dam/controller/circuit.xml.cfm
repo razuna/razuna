@@ -6693,6 +6693,10 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getInSearchSelection()" returnvariable="qry_search_selection" />
 			</true>
 		</if>
+		<!-- CFC: Get Access Control Settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getaccesscontrol()" returnvariable="access_struct" />
+		<!-- CFC: Get Access Control for this user -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getuseraccesscontrols(access_struct)" returnvariable="tabaccess_struct" />
 		<!-- Show -->
 		<do action="ajax.users_detail" />
 	</fuseaction>
