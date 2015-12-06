@@ -165,7 +165,7 @@
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif structKeyExists(arguments,'avoid_link_path') AND arguments.avoid_link_path EQ 'yes'>
-		AND (f.link_path = '' OR f.link_path IS NULL)
+		AND (f.link_path != '/' OR f.link_path != '\' OR f.link_path IS NULL)
 	</cfif>
 	<!--- *** START SECURITY *** --->
 	<!--- filter user folders
@@ -4507,7 +4507,7 @@
 				</cfif>
 				<!--- RAZ-583 : exclude link folder from subfolder count --->
 				<cfif session.type NEQ ''>
-					AND (s1.link_path='' OR s1.link_path IS NULL)
+					AND (s1.link_path != '/' OR s1.link_path != '\' OR s1.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -4533,7 +4533,7 @@
 				</cfif>
 				<!--- RAZ-583 : exclude link folder from subfolder count --->
 				<cfif session.type NEQ ''>
-					AND (s2.link_path='' OR s2.link_path IS NULL)
+					AND (s2.link_path != '/' OR s2.link_path != '\' OR s2.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -4559,7 +4559,7 @@
 				</cfif>
 				<!--- RAZ-583 : exclude link folder from subfolder count --->
 				<cfif session.type NEQ ''>
-					AND (s3.link_path='' OR s3.link_path IS NULL)
+					AND (s3.link_path != '/' OR s3.link_path != '\' OR s3.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -4616,7 +4616,7 @@
 			AND
 			f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 		<cfelse>
-				f.folder_id = f.folder_id_r
+			f.folder_id = f.folder_id_r
 		</cfif>
 		<cfif iscol EQ "F">
 			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
@@ -4640,11 +4640,11 @@
 	</cfif>
 	<!--- RAZ-583 : exclude link folder from select --->
 	<cfif session.type NEQ ''>
-		AND (link_path='' OR link_path IS NULL)
+		AND (link_path != '/' OR link_path != '\' OR link_path IS NULL)
 	</cfif>
 	ORDER BY lower(folder_name)
 	</cfquery>
-	
+
 	<!--- Create the XML --->
 	<cfif theid EQ 0>
 		<!--- This is the ROOT level  --->
