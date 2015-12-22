@@ -1342,7 +1342,7 @@ Comment:<br>
 				<cfset thethumbid = replace(qry.img_filename_org,replace(qryorg.img_filename_org,"." & qryorg.img_extension,"") & "_","")>
 				<cfset var listsz = listlen(thethumbid,"_")>
 				<cfif listsz EQ 1> <!--- If original rendition --->
-					<cfset thethumbid = qry.img_group>
+					<cfset thethumbid = qry.img_id>
 				<cfelse><!--- If rendition of rendition --->
 					<cfset thethumbid = listGetAt(thethumbid,listsz-1,"_")>
 				</cfif>
