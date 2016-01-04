@@ -1172,7 +1172,7 @@
 			<!--- Set filename --->
 			<cfset qry.thefilename = qFile.thefilename>
 			<!--- Correct download URL --->
-			<cfif qFile.path_to_asset NEQ "http">
+			<cfif qFile.path_to_asset DOES NOT CONTAIN "http" OR qFile.path_to_asset DOES NOT CONTAIN "https">
 				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid##qFile.path_to_asset#">
 			<cfelse>
 				<cfset qry.theurl = qFile.cloud_url_org>
