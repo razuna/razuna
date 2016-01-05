@@ -36,7 +36,7 @@
 					<br />
 					<button type="button" class="awesome small green" onclick="window.open('#myself#c.serve_file&file_id=#aud_id#&type=aud','_blank');">#myFusebox.getApplicationData().defaults.trans("download")#</button>
 					<cfif attributes.s EQ "F">
-						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank" style="padding-left:20px;">
+						<a href="//#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank" style="padding-left:20px;">
 					<cfelse>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank" style="padding-left:20px;">
 					</cfif>
@@ -52,10 +52,10 @@
 					</cfif>
 					<!--- Direct link --->
 					<div id="divo#aud_id#" style="display:none;">
-						<input type="text" id="inputo#aud_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" />
+						<input type="text" id="inputo#aud_id#" style="width:100%;" value="//#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" />
 						<br />
 						<cfif application.razuna.storage EQ "local">
-							<input type="text" id="inputo#aud_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#aud_name_org#" />
+							<input type="text" id="inputo#aud_id#d" style="width:100%;" value="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#aud_name_org#" />
 						<cfelse>
 							<input type="text" id="inputo#aud_id#d" style="width:100%;" value="#cloud_url_org#" />
 						</cfif>
@@ -76,7 +76,7 @@
 					</div>
 					<!--- Embed Code --->
 					<div id="dive#aud_id#" style="display:none;">
-						<textarea id="inpute#aud_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
+						<textarea id="inpute#aud_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="//#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
 					</div>
 					<br />
 					<!--- Nirvanix --->

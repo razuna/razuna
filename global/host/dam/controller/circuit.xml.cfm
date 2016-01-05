@@ -13,6 +13,15 @@
 		to do all of its work:
 	-->
 	<fuseaction name="login">
+		<!-- Set HTTP or HTTPS -->
+		<if condition="cgi.https EQ 'on' OR cgi.http_x_https EQ 'on' OR cgi.http_x_forwarded_proto EQ 'https'">
+			<true>
+				<set name="session.thehttp" value="https://" />
+			</true>
+			<false>
+				<set name="session.thehttp" value="http://" />
+			</false>
+		</if>
 		<!-- XFA -->
 		<xfa name="submitform" value="c.dologin" />
 		<xfa name="forgotpass" value="c.forgotpass" />

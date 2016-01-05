@@ -103,15 +103,15 @@
 				<cfif av_type eq 'img'>
 					<td>
 						<cfif application.razuna.storage EQ 'local'>
-							<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
+							<cfset thumb_url = '//#cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
 						<cfelse>
 							<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
 						</cfif>
 						<cfif qry_av.assets.av_thumb_url NEQ ""><a href="#thumb_url#" target="_blank"><img src="#thumb_url#" height="50"></a></cfif>
 					</td>
 				</cfif>
-				<td valign="top" nowrap="nowrap" style="width:400px"><a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em></td>
-				<td valign="top" nowrap="nowrap" style="width:400px;text-decoration:underline;"><a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#myFusebox.getApplicationData().defaults.trans("click_to_view")#</a></td>
+				<td valign="top" nowrap="nowrap" style="width:400px"><a href="<cfif application.razuna.storage EQ "local">//#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em></td>
+				<td valign="top" nowrap="nowrap" style="width:400px;text-decoration:underline;"><a href="<cfif application.razuna.storage EQ "local">//#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#myFusebox.getApplicationData().defaults.trans("click_to_view")#</a></td>
 				<td valign="top"><a href="##" onclick="showwindow('#myself#c.av_edit&av_id=#av_id#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("edit")#',550,2);return false" style="text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("edit")#</a></td>
 				<td valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=av_link&id=#av_id#&loaddiv=moreversions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&iswin=two','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,2);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 			</tr>

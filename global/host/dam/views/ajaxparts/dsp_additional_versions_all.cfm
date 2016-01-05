@@ -33,7 +33,7 @@
 				<cfif av_type eq 'img' >
 					<td width="75" align="center">
 						<cfif application.razuna.storage EQ 'local'>
-							<cfset thumb_url = '#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
+							<cfset thumb_url = '//#cgi.http_host##dynpath#/assets/#session.hostid##qry_av.assets.av_thumb_url#'>
 						<cfelse>
 							<cfset thumb_url = '#qry_av.assets.av_thumb_url#'>
 						</cfif>
@@ -55,7 +55,7 @@
 					</cfif>
 					<div id="divavo#av_id#" style="display:none;">
 						<cfif application.razuna.storage EQ "local">
-							<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
+							<input type="text" id="inputavo#av_id#" style="width:100%;" value="//#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
 						<cfelse>
 							<input type="text" id="inputavo#av_id#" style="width:100%;" value="#av_link_url#" />
 						</cfif>		
