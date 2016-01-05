@@ -912,6 +912,7 @@
 			<cfelseif theart EQ "versions">
 				<cfset var theimgname = qry.av_link_title>
 				<cfset var theext = listlast(qry.path_to_asset,".")>
+				<cfset var theext = listfirst(theext,"?")>
 				<cfset var thefinalname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
 			<cfelse>
 				<cfset var theimgname = qry.img_filename_org>
@@ -1147,21 +1148,35 @@
 				<cfthread action="join" name="#thethreadid#" />
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
+				<!--- Var --->
+				<cfset var _download_http = false>
 				<!--- set asset path --->
 				<cfif theart EQ "versions">
-					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/img/#arguments.thestruct.qry.av_id#/#arguments.thestruct.theimgname#">
+					<!--- For versions which have http in their path --->
+					<cfif arguments.thestruct.qry.path_to_asset CONTAINS "http" OR arguments.thestruct.qry.path_to_asset CONTAINS "HTTPS">
+						<!--- Download file directly --->
+						<cfset arguments.thestruct.asset_path = arguments.thestruct.qry.path_to_asset>
+						<cfset var _download_http = true>
+					<cfelse>
+						<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/img/#arguments.thestruct.qry.av_id#/#arguments.thestruct.theimgname#">
+					</cfif>
 				<cfelse>
 					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#">
 				</cfif>
-				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-					<cfinvoke component="amazon" method="Download">
-						<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.thedir#/#attributes.intstruct.thefinalname#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-					</cfinvoke>
-				</cfthread>
-				<!--- Wait for the thread above until the file is downloaded fully --->
-				<cfthread action="join" name="#thethreadid#" />
+				<!--- Either http or s3 direct download --->
+				<cfif _download_http>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thedir#"></cfhttp>
+				<cfelse>
+					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="Download">
+							<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thedir#/#attributes.intstruct.thefinalname#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<!--- Wait for the thread above until the file is downloaded fully --->
+					<cfthread action="join" name="#thethreadid#" />
+				</cfif>
 			<!--- Akamai --->
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "thumb">
@@ -1299,6 +1314,7 @@
 				<cfset thenewname = "rend_" & thenewname>
 			<cfelseif theart EQ "versions">
 				<cfset var theext = listlast(qry.path_to_asset,".")>
+				<cfset var theext = listlast(theext,"?")>
 				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
 				<cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
@@ -1457,20 +1473,35 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
+				<!--- Var --->
+				<cfset var _download_http = false>
 				<!--- set asset path --->
 				<cfif theart EQ "versions">
-					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/vid/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
+					<!--- For versions which have http in their path --->
+					<cfif arguments.thestruct.qry.path_to_asset CONTAINS "http" OR arguments.thestruct.qry.path_to_asset CONTAINS "HTTPS">
+						<!--- Download file directly --->
+						<cfset arguments.thestruct.asset_path = arguments.thestruct.qry.path_to_asset>
+						<cfset var _download_http = true>
+					<cfelse>
+						<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/vid/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
+					</cfif>
 				<cfelse>
 					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.vid_name_org#">
 				</cfif>
-				<!--- Download file --->
-				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-					<cfinvoke component="amazon" method="Download">
-						<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-					</cfinvoke>
-				</cfthread>
+				<!--- Either http or s3 direct download --->
+				<cfif _download_http>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfthread name="#wvt#"></cfthread>
+				<cfelse>
+					<!--- Download file --->
+					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="Download">
+							<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+				</cfif>
 			<!--- Akamai --->
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
@@ -1562,7 +1593,8 @@
 				<cfset var thenewname = rep & "." & qry.aud_extension> 
 				<cfset var thenewname = "rend_" & thenewname>
 			<cfelseif theart EQ "versions">
-				<cfset theext = listlast(qry.path_to_asset,".")>
+				<cfset var theext = listlast(qry.path_to_asset,".")>
+				<cfset var theext = listlast(theext,"?")>
 				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
 				<cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
@@ -1714,20 +1746,35 @@
 				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
+				<!--- Var --->
+				<cfset var _download_http = false>
 				<!--- set asset path --->
 				<cfif theart EQ "versions">
-					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/aud/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
+					<!--- For versions which have http in their path --->
+					<cfif arguments.thestruct.qry.path_to_asset CONTAINS "http" OR arguments.thestruct.qry.path_to_asset CONTAINS "HTTPS">
+						<!--- Download file directly --->
+						<cfset arguments.thestruct.asset_path = arguments.thestruct.qry.path_to_asset>
+						<cfset var _download_http = true>
+					<cfelse>
+						<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/aud/#arguments.thestruct.qry.av_id#/#arguments.thestruct.qry.av_link_title#">
+					</cfif>
 				<cfelse>
 					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.aud_name_org#">
 				</cfif>
-				<!--- Download file --->
-				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-					<cfinvoke component="amazon" method="Download">
-						<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-					</cfinvoke>
-				</cfthread>
+				<!--- Either http or s3 direct download --->
+				<cfif _download_http>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfthread name="download#theart##theaudid#"></cfthread>
+				<cfelse>
+					<!--- Download file --->
+					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="Download">
+							<cfinvokeargument name="key" value="#attributes.intstruct.asset_path#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thedir#/#attributes.intstruct.thenewname#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+				</cfif>
 			<!--- Akamai --->
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
