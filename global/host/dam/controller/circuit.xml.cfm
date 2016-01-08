@@ -2525,9 +2525,15 @@
 				<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
 			</true>
 		</if>
+		<!-- The total of found records is within the query itself -->
+		<if condition="!structkeyexists(attributes,'search_simple')">
+			<true>
+				<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+				<set name="session.sortby" value="#attributes.sortby#" />
+			</true>
+		</if>
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" />
-		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
-		<set name="session.sortby" value="#attributes.sortby#" />
+		
 		<set name="attributes.issearch" value="false" overwrite="false" />
 		<if condition="!structkeyexists(attributes,'offset')">
 			<true>
