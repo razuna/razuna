@@ -162,7 +162,7 @@
 				<p><hr /></p>
 				<!--- Account --->
 				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
-					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
+					<p><a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
 					<p><hr /></p>
 				</cfif>
 				<!--- Languages --->
@@ -191,7 +191,7 @@
 			<!--- Account --->
 		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
 				<div style="float:left;padding-right:20px;">
-					<a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
+					<a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
 				</div>
 			</cfif>
 			<!--- Show basket link --->
