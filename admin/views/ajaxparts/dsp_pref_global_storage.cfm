@@ -98,6 +98,7 @@
 					<option value="ap-southeast-1"<cfif application.razuna.awslocation EQ "ap-southeast-1"> selected="selected"</cfif>>Asia Pacific (Singapore)</option>
 					<option value="ap-southeast-2"<cfif application.razuna.awslocation EQ "ap-southeast-2"> selected="selected"</cfif>>Asia Pacific (Sidney)</option>
 					<option value="ap-northeast-1"<cfif application.razuna.awslocation EQ "ap-northeast-1"> selected="selected"</cfif>>Asia Pacific (Tokyo)</option>
+					<option value="ap-northeast-2"<cfif application.razuna.awslocation EQ "ap-northeast-2"> selected="selected"</cfif>>Asia Pacific (Seoul)</option>
 					<option value="sa-east-1"<cfif application.razuna.awslocation EQ "sa-east-1"> selected="selected"</cfif>>South America (Sao Paulo)</option>
 				</select>
 			</td>

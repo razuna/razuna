@@ -43,6 +43,7 @@
 					<option value="eu-central-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "eu-central-1"> selected="selected"</cfif></cfloop>>EU (Frankfurt)</option>
 					<option value="ap-southeast-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-southeast-1"> selected="selected"</cfif></cfloop>>Asia Pacific (Singapore)</option>
 					<option value="ap-northeast-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-northeast-1"> selected="selected"</cfif></cfloop>>Asia Pacific (Tokyo)</option>
+					<option value="ap-northeast-2"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "ap-northeast-2"> selected="selected"</cfif></cfloop>>Asia Pacific (Seoul)</option>
 					<option value="sa-east-1"<cfloop query="qry_s3"><cfif set_id EQ "aws_bucket_location_#counter#" AND set_pref EQ "sa-east-1"> selected="selected"</cfif></cfloop>>South America (Sao Paulo)</option>
 				</select>
 			</div>
@@ -61,6 +62,7 @@
 		    		<option value="eu-central-1">EU (Frankfurt)</option>
 		    		<option value="ap-southeast-1">Asia Pacific (Singapore)</option>
 		    		<option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+		    		<option value="ap-northeast-2">Asia Pacific (Seoul)</option>
 		    		<option value="sa-east-1">South America (Sao Paulo)</option>
 		    	</select>
 		    </div>
