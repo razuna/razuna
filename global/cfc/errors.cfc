@@ -94,10 +94,10 @@
 		<!--- Flush Cache --->
 		<cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" />
 		<!--- eMail --->
-		<cfif cgi.http_host CONTAINS "razuna.com">
+		<!--- <cfif cgi.http_host CONTAINS "razuna.com">
 			<cfmail to="bugs@razuna.com" from="server@razuna.com" subject="Razuna Error: #cgi.server_name#" type="html">
 			#errortext#
 			</cfmail>
-		</cfif>
+		</cfif> --->
 	</cffunction>
 </cfcomponent>

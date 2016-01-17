@@ -42,6 +42,8 @@
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
+	<input type="hidden" name="file_id" id="folder_id" value="#attributes.file_id#">
+	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 	<input type="hidden" name="col_id" value="#attributes.col_id#">
 	<input type="hidden" name="assetids" value="#valuelist(qry_assets.cart_product_id)#">
 	<div id="col_detail#col_id#">
@@ -339,11 +341,11 @@
 						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</th>
 					</tr>
 					<tr>
-						<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
-						<td><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#" onkeyup="samecollectionnamecheck('#col_id#');" autocomplete="off"><div id="samecollectionname"></div></td>
+						<td width="130" nowrap="true">#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
+						<td width="320"><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#" onkeyup="samecollectionnamecheck('#col_id#');" autocomplete="off"><div id="samecollectionname"></div></td>
 					</tr>
 					<tr>
-						<td>ID</td>
+						<td width="130" nowrap="true">ID</td>
 						<td>#attributes.col_id#</td>
 					</tr>
 					<tr>
@@ -356,18 +358,18 @@
 						<cfset thisid = lang_id>
 
 						<tr>
-							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</td>
+							<td class="td2" valign="top" width="130" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</td>
 							<td class="td2" width="100%"><textarea name="col_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_desc#</cfif></cfloop></textarea></td>
 						</tr>
 						<tr>
-							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</td>
+							<td class="td2" valign="top" width="130" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</td>
 							<td class="td2" width="100%"><textarea name="col_keywords_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_keywords#</cfif></cfloop></textarea></td>
 						</tr>
 					</cfloop>
 					<!--- Labels --->
 					<cfif cs.tab_labels>
 						<tr>
-							<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
+							<td width="130" nowrap="true">#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 							<td width="100%" colspan="5">
 								<cfif attributes.thelabelsqry.recordcount lte 200>
 									<select data-placeholder="#myFusebox.getApplicationData().defaults.trans('choose_label')#" class="chzn-select" style="width:400px;" id="tags_col" onchange="razaddlabels('tags_col','#attributes.col_id#','collection','#myFusebox.getApplicationData().defaults.trans("change_saved")#');" multiple="multiple">
@@ -400,6 +402,21 @@
 								</div>
 								</cfif>
 							</td>
+						</tr>
+					</cfif>
+					<cfif cs.tab_custom_fields>
+						<!--- Custom Fields --->
+						<tr>
+							<td colspan="2" class="list"></td>
+						</tr>
+						<tr>
+							<th colspan="2">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</th>
+						</tr>
+						<tr>
+							<td colspan="2"><cfinclude template="inc_custom_fields.cfm"></td>
+						</tr>
+						<tr>
+							<td colspan="2" class="list"></td>
 						</tr>
 					</cfif>
 					<tr>

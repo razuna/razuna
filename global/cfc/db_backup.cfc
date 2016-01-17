@@ -115,6 +115,8 @@
 	
 	<cffunction name="bdsetConfig" access="private" output="false" returntype="void" hint="Sets the server configuration and tells OpenBD to refresh its settings">
 		<cfargument name="currentConfig" type="struct" required="true" hint="The configuration struct, which is a struct representation of bluedragon.xml" />
+			<!--- Initialize Var --->
+			<cfset admin = structnew()>
 			<cflock scope="Server" type="exclusive" timeout="5">
 				<cfset admin.server = duplicate(arguments.currentConfig) />
 				<cfset admin.server.openbdadminapi.lastupdated = DateFormat(now(), "dd/mmm/yyyy") & " " & TimeFormat(now(), "HH:mm:ss") />

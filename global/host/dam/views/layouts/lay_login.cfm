@@ -24,34 +24,43 @@
 *
 --->
 <cfoutput>
-	<!--- <div id="apDiv1"><span class="loginheader"><img src="#dynpath#/global/host/dam/images/logo.png" width="170" height="22" border="0" style="padding:7px 0px 0px 5px;"></span></div> --->
-	<!--- Show if Firebug is enabled --->
-	<div id="firebugalert" style="display:none;"></div>
-	<div id="outer">
-		<div id="loginform">
-			<cfif cgi.http_host CONTAINS "razuna.com">
-				<cfparam name="attributes.qry_news.news_title" default="" />
-				<cfparam name="attributes.qry_news.news_text" default="" />
-				<div style="text-align:center;">
-					<h2 style="color:red;">#attributes.qry_news.news_title#</h2>
-					#attributes.qry_news.news_text#
-				</div>
-			</cfif>
-			<!--- We apologize, but we are down for a emergency maintenance. <a href="http://twitter.com/razunahq" target="_blank">Follow us on Twitter</a> to get current status --->
-	    	#body#
-  		</div>
-	  	<div id="loginformfooter">
-	  		<cfif application.razuna.whitelabel>
-	  			#wl#
-	  		<cfelse>
-		  		Powered by <a href="http://razuna.com" target="_blank">Razuna</a> <cfif !application.razuna.isp>#version#<br />
-					Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
-				</cfif>
-				<br />
-				<a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
-			</cfif>
+	<!--- If user uses IE 11 show a warning --->
+	<cfif cgi.http_user_agent CONTAINS "Trident" AND cgi.http_user_agent CONTAINS "11.">
+		<div id="outer">
+			<div id="loginform">
+				<h2>It looks like you are running IE 11. Unfortunately, IE 11 does not work with Razuna. <br /><br/>Please use another version of IE or another browser to access this site. Thank you.</h2>
+			</div>
 		</div>
-	</div>
+	<cfelse>
+		<!--- <div id="apDiv1"><span class="loginheader"><img src="#dynpath#/global/host/dam/images/logo.png" width="170" height="22" border="0" style="padding:7px 0px 0px 5px;"></span></div> --->
+		<!--- Show if Firebug is enabled --->
+		<div id="firebugalert" style="display:none;"></div>
+		<div id="outer">
+			<div id="loginform">
+				<cfif cgi.http_host CONTAINS "razuna.com">
+					<cfparam name="attributes.qry_news.news_title" default="" />
+					<cfparam name="attributes.qry_news.news_text" default="" />
+					<div style="text-align:center;">
+						<h2 style="color:red;">#attributes.qry_news.news_title#</h2>
+						#attributes.qry_news.news_text#
+					</div>
+				</cfif>
+				<!--- We apologize, but we are down for a emergency maintenance. <a href="http://twitter.com/razunahq" target="_blank">Follow us on Twitter</a> to get current status --->
+		    	#body#
+	  		</div>
+		  	<div id="loginformfooter">
+		  		<cfif application.razuna.whitelabel>
+		  			#wl#
+		  		<cfelse>
+			  		Powered by <a href="http://razuna.com" target="_blank">Razuna</a> <cfif !application.razuna.isp>#version#<br />
+						Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
+					</cfif>
+					<br />
+					<a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
+				</cfif>
+			</div>
+		</div>
+	</cfif>
 </cfoutput>
 <!---
 <script language="JavaScript" type="text/javascript">

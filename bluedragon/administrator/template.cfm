@@ -1,5 +1,5 @@
 <!---
-    Copyright (C) 2008 - Open BlueDragon Project - http://www.openbluedragon.org
+    Copyright (C) 2008-2015 - Open BlueDragon Project - http://openbd.org/
     
     Contributing Developers:
     Matt Woodward - matt@mattwoodward.com
@@ -115,11 +115,8 @@
 		      <li><a href="http://www.openbd.org/manual" target="_blank">OpenBD Manual</a></li>
 		      <li><a href="http://www.openbd.org/manual/?/engine_bluedragonxml" target="_blank">OpenBD Configuration Reference</a></li>
 		      <li><a href="http://groups.google.com/group/openbd" target="_blank">OpenBD Google Group</a></li>
-                      <li><a href="http://www.openbd.org" target="_blank">OpenBD Web Site</a></li>
-		      <li><a href="http://wiki.openbd.org" target="_blank">OpenBD Wiki</a></li>
-		      <li><a href="http://openbdcookbook.org" target="_blank">OpenBD Cookbook</a></li>
-		      <li><a href="http://groups.google.com/group/cfml-conventional-wisdom" target="_blank">CFML Conventional Wisdom</a></li>
-		      <li><a href="http://code.google.com/p/openbluedragon-admin-app/" target="_blank">OpenBD Admin Console Project</a></li>
+              <li><a href="http://openbd.org" target="_blank">OpenBD Web Site</a></li>
+		      <li><a href="https://github.com/OpenBD/openbd-administrator" target="_blank">OpenBD Admin Console Project</a></li>
 		    </ul>
 		  </li>
 		  <li><a href="#contextPath#/bluedragon/administrator/_loginController.cfm?action=logout">Logout</a></li>
@@ -135,7 +132,7 @@
 
 	<footer>
 	  <div class="pull-left">
-	    Copyright &copy; 2008 - #Year(Now())# <a href="http://www.openbd.org" target="_blank">Open BlueDragon Project</a>
+	    Copyright &copy; 2008 - #Year(Now())# <a href="http://openbd.org" target="_blank">OpenBD Project</a>
 	  </div>
 	  <div class="pull-right">Version #Application.adminConsoleVersion# - #Application.adminConsoleBuildDate#</div>
 	</footer>

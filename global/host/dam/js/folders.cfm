@@ -61,7 +61,9 @@
 						// Remove loader
 						// $("#bodyoverlay").remove();
 						// Reload Explorer
-						if (noreload != true) $('#explorer').load('index.cfm?fa=c.explorer');
+						if (noreload != true) {
+							$('#explorer').load('index.cfm?fa=c.explorer&_r=<cfoutput>#createuuid()#</cfoutput>');
+						}
 					}
 					else{
 						$('#linkbutton').css('display','none');
@@ -126,7 +128,7 @@
 	function subadvfields(theform){
 		// Get values
 		var searchtext = '';
-		var searchfor = document.forms[theform].searchfor.value;
+		// var searchfor = document.forms[theform].searchfor.value;
 		var keywords = document.forms[theform].keywords.value;
 		var description = document.forms[theform].description.value;
 		var filename = document.forms[theform].filename.value;
@@ -147,8 +149,8 @@
 		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +');
-			<cfelseif cf_type EQ "select">
-				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join(' +');
+			<cfelseif cf_type EQ "select" OR cf_type EQ "select_multi">
+				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join('+');
 			<cfelseif cf_type EQ "radio">
 				var oRadio = document.forms[theform].elements['cf#cfid#'];
 				for(var i = 0; i < oRadio.length; i++){
@@ -162,7 +164,7 @@
 
 		// Put together the search
 		if (labels == null) var labels = '';
-		if (searchfor != '') var searchfor = searchfor;
+		// if (searchfor != '') var searchfor = searchfor;
 		if (keywords != '') var keywords = 'keywords:(' + replacespaces(keywords) +')';
 		if (description != '') var description = 'description:(' + replacespaces(description) +')';
 		var filename;
@@ -189,11 +191,11 @@
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 		if((thetype == '#qry_cf_fields.cf_show#' || '#qry_cf_fields.cf_show#' == 'all' || thetype == 'all') && '#qry_cf_fields.cf_show#' != 'users'){
-			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id#+' + value_#cfid# + ')';
+			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' + value_#cfid# + ')';
 		}
 		</cfoutput></cfloop>
 		// Create the searchtext
-		var searchtext = searchfor;
+		// var searchtext = searchfor;
 		if (searchtext != '' && keywords != '') {
 			var searchtext = searchtext + ' ' + andor + ' ' + keywords;
 		}
@@ -245,7 +247,7 @@
 			}
 		}
 		</cfoutput></cfloop>
-		return encodeURIComponent(searchtext);
+		return searchtext;
 	}
 	// when saving subscribe only
 	function savesubscribe(theid){

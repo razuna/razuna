@@ -37,7 +37,7 @@
 		<p style="color:red; font-weight:bolder;">#myFusebox.getApplicationData().defaults.trans("no_related_record")#</p>
 	</cfif>
 </cfoutput>
-<hr>
+<hr />
 <p align="right"><input type="radio" checked="checked" name="insert_type" value="replace"> replace or <input type="radio" name="insert_type" value="append"> append to existing records.&nbsp;   
 <input type="submit" name="submit" disabled="true" id="apply" value="Apply" onclick="completed();"></p>
 <script type="text/javascript">

@@ -83,7 +83,7 @@
 					<select class="thepagelist_assets"  onChange="loadcontent('assets', $('.thepagelist_assets :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>
-							<option value="#myself#c.trash_assets&offset=#newoffset#"<cfif (session.trash_offset + 1) EQ i> selected</cfif>>#i#</option>
+							<option value="#myself#c.trash_assets&offset=#loopoffset#"<cfif (session.trash_offset + 1) EQ i> selected</cfif>>#i#</option>
 						</cfloop>
 					</select>
 				</span>

@@ -1,0 +1,3 @@
+RUN wget http://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-9.69.tar.gz -P /tmp
+RUN tar -C /tmp -xzvf /tmp/Image-ExifTool-9.69.tar.gz
+RUN cd /tmp/Image-ExifTool-9.69 && perl Makefile.PL && make test && make install

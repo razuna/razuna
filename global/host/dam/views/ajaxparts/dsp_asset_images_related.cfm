@@ -35,18 +35,30 @@
 					 <cfset args.thumb_img_id= img_id>
 					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
 					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''> 
-					 	<a href="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" target="_blank">
-					 		<img src="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" style="max-height:50px;max-width:100px;">
+					 	<a href="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" target="_blank">
+					 		<img src="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" style="max-height:50px;max-width:100px;">
 					 	</a>
 					 <cfelse>
-					 	<a href="#cloud_url#" target="_blank"><img src="#cloud_url#" style="max-height:50px;max-width:100px;"></a>
+					 	<!--- Validate cloud_url (in case there is a different filename SMSB or converting from local to S3) --->
+					 	<cfhttp url="#cloud_url#" />
+					 	<cfif cfhttp.statuscode CONTAINS "200">
+					 		<cfset new_cloud_url = cloud_url>
+					 	<cfelse>
+					 		<!--- Put URL together according to AWS location --->
+					 		<cfset _awslocation = "s3">
+					 		<cfif application.razuna.awslocation NEQ "us-east">
+						 		<cfset _awslocation = application.razuna.awslocation>
+					 		</cfif>
+						 	<cfset new_cloud_url = "https://#qry_storage.set2_aws_bucket#.#_awslocation#.amazonaws.com/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#">
+					 	</cfif>
+					 	<a href="#new_cloud_url#" target="_blank"><img src="#new_cloud_url#" style="max-height:50px;max-width:100px;"></a>
 					 </cfif>
 				</td>
 				<td width="10"></td>
 				<td valign="top">
 					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)  [#img_filename#]<br />
 					<cfif attributes.s EQ "F">
-						<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
+						<a href="//#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 					<cfelse>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename_org#" target="_blank">
 					</cfif>
@@ -61,9 +73,9 @@
 						 | <a href="##" onclick="remren('#img_id#');return false;">#myFusebox.getApplicationData().defaults.trans("delete")#</a>
 					</cfif>
 					<div id="divo#img_id#" style="display:none;">
-						<input type="text" id="inputo#img_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />
+						<input type="text" id="inputo#img_id#" style="width:100%;" value="//#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />
 						<cfif application.razuna.storage EQ "local">
-							<input type="text" id="inputo#img_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#img_filename_org#" />
+							<input type="text" id="inputo#img_id#d" style="width:100%;" value="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#img_filename_org#" />
 						<cfelse>
 							<input type="text" id="inputo#img_id#d" style="width:100%;" value="#cloud_url_org#" />
 						</cfif>

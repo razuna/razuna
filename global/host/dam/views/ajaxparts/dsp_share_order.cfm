@@ -28,6 +28,10 @@
 	<input type="hidden" name="#theaction#" value="c.basket_order">
 	<input type="hidden" name="basketid" value="#session.thecart#">
 	<input type="hidden" name="fid" value="#session.fid#">
+	<input type="hidden" name="artofimage" value="#attributes.artofimage#">
+	<input type="hidden" name="artoffile" value="#attributes.artoffile#">
+	<input type="hidden" name="artofaudio" value="#attributes.artofaudio#">
+	<input type="hidden" name="artofvideo" value="#attributes.artofvideo#">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th>Order Assets</th>

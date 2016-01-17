@@ -121,7 +121,7 @@
 	<!--- Get cachetoken --->
 	<cfset variables.cachetoken = getcachetoken("users")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="0" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
 	0 AS thetotal, u.user_pass, (SELECT count(1) FROM users uu, ct_groups_users cg WHERE cg.ct_g_u_user_id = uu.user_id AND cg.ct_g_u_grp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="1"> AND uu.user_id <>'1') numsysadmin,
 		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
@@ -162,6 +162,7 @@
 		FROM localquery
 		WHERE  ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		AND ct_g_u_grp_id NOT LIKE '1,%'
+		AND ct_g_u_grp_id != '1'
 		<cfif isdefined("arguments.thestruct.sortby")>
 			ORDER  BY #arguments.thestruct.sortby# #arguments.thestruct.sortorder#
 		<cfelse>
@@ -679,15 +680,38 @@
 	<cfset var qry = "">
 	<!--- Query users --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active, u.user_expiry_date
-	FROM ct_users_hosts uh, users u LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id
+	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active, u.user_expiry_date,
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+			(
+				SELECT GROUP_CONCAT(DISTINCT ct_g_u_grp_id ORDER BY ct_g_u_grp_id SEPARATOR ',') AS grpid
+				FROM ct_groups_users
+				WHERE ct_g_u_user_id = u.user_id
+			) AS ct_g_u_grp_id
+		<cfelseif application.razuna.thedatabase EQ "mssql">
+			STUFF(
+				(
+					SELECT ', ' + ct_g_u_grp_id
+					FROM ct_groups_users
+					WHERE ct_g_u_user_id = u.user_id
+		          	FOR XML PATH ('')
+	          	)
+	          	, 1, 1, ''
+			) AS ct_g_u_grp_id
+		</cfif>
+	FROM ct_users_hosts uh, users u
 	WHERE (
 		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 		AND uh.ct_u_h_user_id = u.user_id
 		)
-	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
-	AND gu.ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '1'
 	GROUP BY u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active,u.user_expiry_date
+	</cfquery>
+	<!--- Filter out sys admins --->
+	<cfquery dbtype="query" name="qry">
+	SELECT *
+	FROM qry
+	WHERE user_id != '1'
+	AND ct_g_u_grp_id != '1'
+	AND ct_g_u_grp_id NOT LIKE '1,%'
 	</cfquery>
 	<!--- Add column to qry --->
 	<cfset var MyArray = ArrayNew(1)>
@@ -1076,6 +1100,60 @@
 		<!--- Send email to user --->
 		<cfinvoke method="emailinfo" user_id="#i#" userpass="" >
 	</cfloop>
+</cffunction>
+
+<!--- Get all the folders this user has access to based on the user id --->
+<cffunction name="getAllFolderOfUser" returntype="string">
+	<cfargument name="user_id" type="string">
+	<cfargument name="host_id" type="numeric">
+	<!--- Param --->
+	<cfset var qry_groups = "">
+	<cfset var qry_folders = "">
+	<cfset var qry_folders_user = "">
+	<cfset var result = "0">
+	<!--- Get cachetoken --->
+	<cfset var cache_user = getcachetoken("users")>
+	<cfset var cache_folders = getcachetoken("folders")>
+	<!--- Get groups of user --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_groups" cachedwithin="1" region="razcache">
+	SELECT /* #cache_user#getAllFolderOfUser */ ct_g_u_grp_id
+	FROM ct_groups_users 
+	WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.user_id#">
+	</cfquery>
+	<!--- Get all the folders for this group(s) --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_folders" cachedwithin="1" region="razcache">
+	SELECT /* #cache_folders#getAllFolderOfUser2 */ folder_id_r AS folderid
+	FROM #session.hostdbprefix#folders_groups 
+	WHERE grp_id_r IN (
+		<cfif qry_groups.recordcount EQ 0>
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		<cfelse>
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="0,#valuelist(qry_groups.ct_g_u_grp_id)#" list="true">
+		</cfif>
+	)
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
+	</cfquery>
+	<!--- Get all the folder the user owns --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_folders_user" cachedwithin="1" region="razcache">
+	SELECT /* #cache_folders#getAllFolderOfUser3 */ folder_id AS folderid
+	FROM #session.hostdbprefix#folders
+	WHERE folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.user_id#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
+	</cfquery>
+	<!--- Now UNION both queries --->
+	<cfquery dbtype="query" name="qry_union">
+	SELECT *
+	FROM qry_folders
+	UNION
+	SELECT *
+	FROM qry_folders_user
+	</cfquery>
+	<!--- We got the folders convert to a list --->
+	<cfif qry_union.recordcount NEQ 0>
+		<cfset var result = valuelist(qry_union.folderid)>
+	</cfif>
+	<!--- Return --->
+	<cfreturn result />
 </cffunction>
 
 </cfcomponent>

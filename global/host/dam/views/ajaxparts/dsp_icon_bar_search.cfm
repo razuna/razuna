@@ -25,6 +25,12 @@
 --->
 <cfoutput>
 <cfset thefa = "c.folder_content_results">
+<!--- Set count for UPC or not --->
+<cfif structKeyExists(qry_files,"searchcount")>
+	<cfset _count = qry_files.searchcount>
+<cfelse>
+	<cfset _count = qry_filecount.thetotal>
+</cfif>
 <table border="0" width="100%" cellspacing="0" cellpadding="0" class="gridno">
 	<tr>
 		<!--- Icons and drop down menu --->
@@ -33,26 +39,8 @@
 				<cfif !attributes.cv AND attributes.share EQ "F">
 					<!--- Select --->
 					<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-						<!--- <div style="float:left;">
-							<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
-						</div> --->
 						<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 					</a>
-					<!--- Download Folder --->
-					<!--- <cfif cs.icon_download_folder>
-						<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=labels&label_id=','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop').toggle();return false;">
-							<div style="float:left;padding-right:15px;text-decoration:underline;">Download all assets in this search</div>
-						</a>
-					</cfif> --->
-					<!--- Search --->
-					<!--- <cfif attributes.folder_id NEQ 0 AND structkeyexists(attributes,"share") AND attributes.share NEQ "T">
-						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-							<!--- <div style="float:left;">
-								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" style="padding-left:2px;" />
-							</div> --->
-							<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("search_again")#</div>
-						</a>
-					</cfif> --->
 				</cfif>
 			</div>
 		</td>
@@ -68,16 +56,16 @@
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
-			<cfif qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
+			<cfif _count GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+			<cfif _count GT session.rowmaxpage AND NOT shownextrecord GTE _count> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
 				<a href="##" onclick="backforth(#newoffset#);">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
-			<cfif qry_filecount.thetotal GT session.rowmaxpage>
+			<cfif _count GT session.rowmaxpage>
 				<span style="padding-left:10px;">
-					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
+					<cfset thepage = ceiling(_count / session.rowmaxpage)>
 					#myFusebox.getApplicationData().defaults.trans("page")#: 
 						<select id="thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
 							<cfloop from="1" to="#thepage#" index="i">
@@ -103,7 +91,7 @@
 		</td>
 		<!--- Change the amount of images shown --->
 		<td align="right" width="1%" nowrap="true">
-			<cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25>
+			<cfif _count GT session.rowmaxpage OR _count GT 25>
 				<select name="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerowmaxsearch('selectrowperpagesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 					<option value="0">#myFusebox.getApplicationData().defaults.trans("show_how_many")#</option>
 					<option value="0">---</option>
@@ -127,10 +115,6 @@
 </div>
 <!--- action with selection --->
 <div id="folderselectionsearchform#attributes.thetype#" class="actiondropdown">
-	<!--- Select all link --->
-	<!--- <div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#">
-		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">#myFusebox.getApplicationData().defaults.trans('deselect_all')#</a>
-	</div> --->
 	<!--- Actions with selection icons --->
 	<cfif cs.show_basket_part AND  cs.button_basket AND (cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="sendtobasket('searchform#attributes.thetype#', 'search');">
@@ -193,7 +177,7 @@
 		// Get selected option
 		var thesortby = $('##' + theselect + ' option:selected').val();
 		<cfif !structKeyExists(attributes,'search_upc')>
-			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { sortby: thesortby, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "sortby" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
 		<cfelse>
@@ -214,7 +198,7 @@
 			// Get selected option
 			var themax = $('##' + theselect + ' option:selected').val();
 			<cfif !structKeyExists(attributes,'search_upc')>
-				$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+				$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { rowmaxpage: themax, fcall: true, rowmaxpagechange: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "rowmaxpage" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 					$("##bodyoverlay").remove();
 				});
 			<cfelse>	
@@ -231,7 +215,7 @@
 		// Get selected option
 		var themax = $('##' + theselect + ' option:selected').val();
 		<cfif !structKeyExists(attributes,'search_upc')>
-			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+			$('###attributes.thediv#').load('#myself#<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">c.share_search<cfelse>c.search_simple</cfif>', { offset: themax, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
 				$("##bodyoverlay").remove();
 			});
 		<cfelse>
@@ -250,7 +234,7 @@
 			{ offset: theoffset, 
 				fcall: true, 
 				share: "#attributes.share#",
-			<cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }
+			<cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset" AND i NEQ "rowmaxpagechange">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }
 			, function(){
 				$("##bodyoverlay").remove();
 			});

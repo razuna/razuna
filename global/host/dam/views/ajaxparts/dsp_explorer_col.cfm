@@ -32,7 +32,7 @@
 		<div id="collectiontools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=T');$('##collectiontools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">Add Collection Folder</a></p>
-				<p><hr></p>
+				<p><hr /></p>
 			</cfif>
 			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer_col');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>

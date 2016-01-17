@@ -711,22 +711,6 @@
 					<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
 				</cfif>
 			</cfif>
-		<!--- Rebuild search index --->	
-		<cfelseif doit.qry_detail.sched_method EQ "rebuild">
-			<!-- CFC: Log start -->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Started rebuilding" />
-			<!-- CFC: Call indexing -->
-			<cfthread action="run" x="#x#" priority="low"> 
-				<cfinvoke component="lucene" method="index_update" thestruct="#attributes.x#" assetid="all" />
-			</cfthread>
-		<!--- Rebuild search index --->
-		<cfelseif doit.qry_detail.sched_method EQ "indexing">
-			<!-- CFC: Log start -->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Started indexing" />
-			<!-- CFC: Call indexing -->
-			<cfthread action="run" x="#x#" priority="low"> 
-				<cfinvoke component="lucene" method="index_update" thestruct="#attributes.x#" />
-			</cfthread>
 		</cfif>
 	</cfif>
 	<cfreturn doit>
@@ -795,8 +779,8 @@
 		<!--- Get UPC setting --->
 		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
-		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets" cachedwithin="#CreateTimeSpan(0,0,55,0)#">
-			SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
+		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
+			SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
 			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
 			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
 				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
@@ -807,7 +791,7 @@
 			</cfif>
   
 			FROM (
-				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc, log_user, folder_id
+				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc, log_user, folder_id, host_id
 				FROM #session.hostdbprefix#log_assets 
 				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
@@ -826,13 +810,12 @@
 			</cfif>
 			ORDER BY l.log_timestamp DESC
 		</cfquery>
-
+		
 		<cfset var data= "">
 		<cfset var datacols= "">
 		<cfset var fields= "">
 		<!--- Get metafields --->
 		<cfinvoke component="settings" method="get_notifications" returnvariable="fields">
-		
 		<!--- Get Email subject --->
 		<cfif fields.set2_folder_subscribe_email_sub NEQ "">
 			<cfset email_subject = "#fields.set2_folder_subscribe_email_sub#">
@@ -846,7 +829,6 @@
 			<cfinvoke component="defaults" method="trans" transid="subscribe_email_content" returnvariable="email_intro">
 		</cfif>
 		
-
 		<!--- Email if assets are updated in Subscribed folders --->
 		<cfif qGetUpdatedAssets.recordcount>
 			<!--- Get columns --->
@@ -890,12 +872,12 @@
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
 										<cfif img_asset_path NEQ "">
-											<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50" onerror = "this.src=''">
+											<img src= "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#img_asset_path#/thumb_#qGetUpdatedAssets.asset_id_r#.#img_thumb_ext#" height="50" onerror = "this.src=''">
 										</cfif>
 									</cfcase>
 									<cfcase value="vid">
 										<cfif vid_asset_path NEQ "">
-											<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_thumb#"  height="50" onerror = "this.src=''">
+											<img src="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#vid_asset_path#/#vid_thumb#"  height="50" onerror = "this.src=''">
 										</cfif>
 									</cfcase>
 								</cfswitch>
@@ -978,22 +960,22 @@
 								<cfswitch expression="#qGetUpdatedAssets.log_file_type#">
 									<cfcase value="img">
 										<cfif img_asset_path NEQ "">
-											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#img_asset_path#/#img_filenameorg#
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#img_asset_path#/#img_filenameorg#
 										</cfif>
 									</cfcase>
 									<cfcase value="doc">
 										<cfif file_asset_path NEQ "">
-											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#file_asset_path#/#file_filenameorg#
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#file_asset_path#/#file_filenameorg#
 										</cfif>
 									</cfcase>
 									<cfcase value="vid">
 										<cfif vid_asset_path NEQ "">
-											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#vid_asset_path#/#vid_filenameorg#
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#vid_asset_path#/#vid_filenameorg#
 										</cfif>
 									</cfcase>
 									<cfcase value="aud">
 										<cfif aud_asset_path NEQ "">
-											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#aud_asset_path#/#aud_filenameorg#
+											#session.thehttp##cgi.http_host##cgi.context_path#/assets/#host_id#/#aud_asset_path#/#aud_filenameorg#
 										</cfif>
 									</cfcase>
 								</cfswitch>
@@ -1033,14 +1015,12 @@
 				</cfloop>
 				</table>
 			</cfsavecontent>
-
 			<!--- Set user id --->
 			<cfset arguments.thestruct.user_id = qGetUserSubscriptions.user_Id>
 			<!--- Get user details --->
 			<cfinvoke component="users" method="details" thestruct="#arguments.thestruct#" returnvariable="usersdetail">
 			<!--- Send the email --->
 			<cfinvoke component="email" method="send_email" to="#usersdetail.user_email#" subject="#email_subject#" themessage="#mail#" userid="#usersdetail.user_id#"/>
-			
 		</cfif>
 		<!--- Update Folder Subscribe --->
 		<cfquery datasource="#application.razuna.datasource#">

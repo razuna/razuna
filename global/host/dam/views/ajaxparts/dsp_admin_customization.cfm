@@ -359,6 +359,12 @@
 							<br />
 							<div><input type="radio" name="tab_add_from_link" value="true"<cfif qry_customization.tab_add_from_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_link" value="false"<cfif !qry_customization.tab_add_from_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
+							<strong>Default for "Upload from Server"</strong>
+							<br />
+							Default setting for removing files after import
+							<br />
+							<div><input type="radio" name="upload_server_remove_files" value="true"<cfif qry_customization.upload_server_remove_files> checked="checked"</cfif> />Remove files on adding <input type="radio" name="upload_server_remove_files" value="false"<cfif !qry_customization.upload_server_remove_files> checked="checked"</cfif> />Leave files on server</div>
+							<br />
 						</td>
 					</tr>
 				</table>

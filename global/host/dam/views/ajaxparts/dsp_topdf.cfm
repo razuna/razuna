@@ -108,7 +108,9 @@ td{
 									<img src="#cloud_url#" width="128" height="128" border="0">
 								<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ 'INDD')>
 									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-									<cfif NOT FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#")>
+									<--- Get size of thumb --->
+									<cfset _size = getFileInfo("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#")>
+									<cfif NOT FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") OR _size.size EQ 0>
 										<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 									<cfelse>
 										<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">

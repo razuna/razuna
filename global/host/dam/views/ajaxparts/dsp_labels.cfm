@@ -40,7 +40,7 @@
 						<option value="#label_id#">#label_path#</option>
 					</cfloop>
 				</select></p>
-				<p><hr></p>
+				<p><hr /></p>
 			</cfif>
 			<p><a href="##" onclick="loadcontent('explorer','#myself#c.labels_list');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>

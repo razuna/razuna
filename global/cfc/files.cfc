@@ -414,7 +414,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<cfthread intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
 			<!--- Flush Cache --->
@@ -551,6 +551,11 @@
 									OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 								)
 							) = 'X' THEN 'X'
+							WHEN (
+								SELECT folder_owner
+								FROM #session.hostdbprefix#folders fo
+								WHERE fo.folder_id = f.folder_id_r
+							) = '#Session.theUserID#' THEN 'X'
 						END as permfolder
 					</cfif>
 				FROM 
@@ -638,7 +643,9 @@
 					<!--- Update in_trash --->
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#files 
-					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+					SET
+					in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
@@ -745,7 +752,7 @@
 				<cfset arguments.thestruct.qrydetail = thedetail>
 				<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 				<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-				<cfthread intstruct="#arguments.thestruct#">
+				<cfthread intstruct="#arguments.thestruct#" priority="low">
 					<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 				</cfthread>
 			</cfif>
@@ -1165,7 +1172,7 @@
 			<!--- Set filename --->
 			<cfset qry.thefilename = qFile.thefilename>
 			<!--- Correct download URL --->
-			<cfif qFile.path_to_asset NEQ "http">
+			<cfif qFile.path_to_asset DOES NOT CONTAIN "http" OR qFile.path_to_asset DOES NOT CONTAIN "https">
 				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid##qFile.path_to_asset#">
 			<cfelse>
 				<cfset qry.theurl = qFile.cloud_url_org>
@@ -1204,8 +1211,10 @@
 				<!--- Correct filename for thumbnail or original --->
 				<cfif arguments.thestruct.v EQ "o">
 					<cfset qry.thefilename =  originalfilename>
+					<cfset qry.dlname =  qFile.filenameorg>
 				<cfelse>
 					<cfset qry.thefilename = thumbnailname>
+					<cfset qry.dlname =  thumbnailname>
 				</cfif>
 			<!--- Videos --->
 			<cfelseif arguments.thestruct.type EQ "vid">
@@ -1230,6 +1239,7 @@
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename =  originalfilename >
+				<cfset qry.dlname =  qFile.filenameorg>
 			<!--- Audios --->
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#">
@@ -1253,6 +1263,7 @@
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename = originalfilename >
+				<cfset qry.dlname =  qFile.filenameorg>
 			<!--- Documents --->
 			<cfelse>
 				<cfquery name="qFile" datasource="#variables.dsn#">
@@ -1277,7 +1288,14 @@
 				</cfif>
 				<!--- Correct filename --->
 				<cfset qry.thefilename =  originalfilename >
+				<cfset qry.dlname =  qFile.filenameorg>
 			</cfif>	
+			<!--- Create the URL --->
+			<cfif application.razuna.storage EQ "local">
+				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid#/#qFile.path_to_asset#/#qry.dlname#">
+			<cfelse>
+				<cfset qry.theurl = qFile.cloud_url_org>
+			</cfif>
 		</cfif>
 		<!--- If name contains spaces then convert them to _ or else an incorrect name is being shown during download --->
 		<cfset qry.thefilename = replacenocase(qry.thefilename," ","_","all")>

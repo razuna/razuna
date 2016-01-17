@@ -169,7 +169,7 @@
 			<tr>
 				<td valign="top">
 					<!--- Since this can now be viewed by the user himself we only show selection for admins --->
-					<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+					<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR tabaccess_struct.groups_access>
 						<!--- We come from myinfo --->
 						<cfif attributes.myinfo>
 							<!--- If SysAdmin or Admin --->

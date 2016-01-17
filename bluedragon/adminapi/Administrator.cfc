@@ -42,14 +42,7 @@
     </cfif>
     
     <cfif doSetConfig>
-      <!--- need to log in briefly to be able to call setConfig() --->
-      <cfset session.auth.loggedIn = true />
-      <cfset session.auth.password = localConfig.system.password />
-      
-      <cfset setConfig(localConfig) />
-      
-      <!--- log right back out --->
-      <cfset StructDelete(session, "auth", false) />
+      <cfset setConfig(localConfig,true) />
     </cfif>
   </cffunction>
   

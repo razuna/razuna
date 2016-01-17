@@ -129,6 +129,9 @@
 									</cfif>
 								</div>
 							<strong>#folder_name#</strong></a>
+							<br />
+							<!--- Show total assets in folder --->
+							<em>(Contains #filecount# files)</em>
 						</div>
 					</cfloop>
 				</cfif>

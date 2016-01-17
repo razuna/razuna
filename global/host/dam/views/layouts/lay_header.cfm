@@ -88,7 +88,7 @@
 							<p><a href="##" onclick="selectsearchtype('doc','#myFusebox.getApplicationData().defaults.trans("search_for_documents")#');"><div id="markdoc" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
 							<p><a href="##" onclick="selectsearchtype('vid','#myFusebox.getApplicationData().defaults.trans("search_for_videos")#');"><div id="markvid" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 							<p><a href="##" onclick="selectsearchtype('aud','#myFusebox.getApplicationData().defaults.trans("search_for_audios")#');"><div id="markaud" class="markfolder" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
-							<p><hr></p>
+							<p><hr /></p>
 							<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">#myFusebox.getApplicationData().defaults.trans('help_with_search')#</a></cfif></p>
 						</div>
 					</cfif>
@@ -111,10 +111,12 @@
 				</form>
 				<!--- UPC Search Popup window --->
 				<div id="popup_upcsearch" style="display:none;">
-					<tr>
-						<td width="1%" nowrap="true" style="font-weight:bold;"><strong>#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</strong></br></br>
-						<textarea name="search_upc" id="search_upc" cols="42"></textarea></td>
-					</tr>
+					<table>
+						<tr>
+							<td width="1%" nowrap="true" style="font-weight:bold;"><strong>#myFusebox.getApplicationData().defaults.trans("cs_img_upc_number")#</strong><br><br>
+							<textarea name="search_upc" id="search_upc" style="width:350px;height:75px"></textarea></td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		<!--- </cfcachecontent> --->
@@ -135,12 +137,12 @@
 						<img width="20" height="20" border="0" src="/razuna/global/host/dam/images/active_directory_user.png">
 					</cfif>
 				</p>
-				<p><hr></p>
+				<p><hr /></p>
 				<!--- Administration. Show if user is admin or if user has access to some admin features --->
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Help --->
 				<p>
@@ -157,18 +159,18 @@
 						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("doc_wiki")#</a>
 					</cfif>
 				</p>
-				<p><hr></p>
+				<p><hr /></p>
 				<!--- Account --->
 				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
-					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
-					<p><hr></p>
+					<p><a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Languages --->
 				<cfif qry_langs.recordcount NEQ 1>
 					<cfloop query="qry_langs">
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Feedback --->
 				<cfif w EQ 100>
@@ -179,7 +181,7 @@
 							<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
 						</cfif>
 					</p>
-					<p><hr></p>
+					<p><hr /></p>
 				</cfif>
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
@@ -189,7 +191,7 @@
 			<!--- Account --->
 		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
 				<div style="float:left;padding-right:20px;">
-					<a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
+					<a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
 				</div>
 			</cfif>
 			<!--- Show basket link --->
@@ -222,9 +224,13 @@
 		function upcsearch(){
 			$( "##popup_upcsearch" ).dialog({
 				resizable: false,
-				height:200,
+				height:250,
+				width:400,
 				modal: true,
 				buttons: {
+				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
+					$( this ).dialog( "close" );
+				},
 				"#myFusebox.getApplicationData().defaults.trans("header_upc_search")#": function() {
 					if($('##search_upc').val() == ""){
 						alert("#myFusebox.getApplicationData().defaults.trans('upc_num_check')#");
@@ -232,10 +238,6 @@
 						$( this ).dialog( "close" );
 						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","));	
 					}
-					
-				},
-				"#myFusebox.getApplicationData().defaults.trans('cancel')#": function() {
-					$( this ).dialog( "close" );
 				}
 			}
 		});

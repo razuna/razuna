@@ -686,7 +686,7 @@
 		<cfset arguments.thestruct.qrydetail = thedetail>
 		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<cfthread intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#" priority="low">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 	</cfif>
@@ -819,6 +819,11 @@
 								OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 							)
 						) = 'X' THEN 'X'
+						WHEN (
+							SELECT folder_owner
+							FROM #session.hostdbprefix#folders f
+							WHERE f.folder_id = v.folder_id_r
+						) = '#Session.theUserID#' THEN 'X'
 					END as permfolder
 				</cfif>
 			FROM #session.hostdbprefix#videos v 
@@ -882,7 +887,9 @@
 				<!--- Update in_trash --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos 
-				SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				SET
+				in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -988,7 +995,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<cfthread intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
 		</cfif>

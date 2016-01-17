@@ -4,6 +4,50 @@ Please write all SQL changes in here too
 ALTER TABLE raz1_schedules add SCHED_RUN_TIME timestamp;
 ALTER TABLE raz1_settings_2 add SET2_RENDITION_SEARCH varchar(1) DEFAULT 'f'
 ALTER TABLE raz1_images change IMG_UPC_NUMBER IMG_UPC_NUMBER varchar(20)
+CREATE TABLE lucene (
+  id varchar(500) DEFAULT NULL,
+  type varchar(10) DEFAULT NULL,
+  host_id int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE api_basket (
+  basket_id varchar(100) DEFAULT NULL,
+  asset_id varchar(100) DEFAULT NULL,
+  date_added timestamp,
+  asset_type varchar(10) DEFAULT 'org'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO options
+(opt_id, opt_value, rec_uuid)
+VALUES(
+  'taskserver_location',
+  'local',
+  '3CAFF268-12CA-45A2-B18ED027E359C2C'
+);
+INSERT INTO options
+(opt_id, opt_value, rec_uuid)
+VALUES(
+  'taskserver_local_url',
+  '/razuna-searchserver',
+  '3CAFF268-12CA-45A2-B18ED027E359C2'
+);
+INSERT INTO options
+(opt_id, opt_value, rec_uuid)
+VALUES(
+  'taskserver_remote_url',
+  'http://localhost:8090/razuna-searchserver',
+  '3CAFF268-12CA-45A2-B18ED027E359C'
+);
+INSERT INTO options
+(opt_id, opt_value, rec_uuid)
+VALUES(
+  'taskserver_secret',
+  '3CAFF26812CA45A2B18ED027E359',
+  '3CAFF268-12CA-45A2-B18ED027E359'
+);
+
+Remove all search collection
+Remove all indexing and rebuild actions in schedules
+Reset all files to be indexed
+Put default values into options
 
 
 ------- 1.7.1 changes end -------
@@ -84,3 +128,16 @@ ALTER TABLE raz1_settings_2 add SET2_ASSET_EXPIRY_META  varchar(2000);
 ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_EMAIL_SUB varchar(50);
 ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_EMAIL_BODY  varchar(2000);
 ALTER TABLE raz1_settings_2 add SET2_DUPLICATES_META  varchar(2000);
+
+CREATE TABLE `raz1_folders_name` (
+  `folder_id_r` varchar(100) DEFAULT NULL,
+  `folder_name` varchar(200) DEFAULT NULL,
+  `lang_id_r` int(11) DEFAULT NULL,
+  `host_id` int(11) DEFAULT NULL,
+  `rec_uuid` varchar(100) DEFAULT NULL,
+  KEY `index1` (`folder_id_r`),
+  KEY `index2` (`folder_name`),
+  KEY `index3` (`lang_id_r`),
+  KEY `index4` (`host_id`),
+  CONSTRAINT `folder_name_idx` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`HOST_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

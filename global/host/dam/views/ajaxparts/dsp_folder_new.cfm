@@ -45,22 +45,30 @@
 		</cfif>
 		<div id="folder_new#attributes.theid#">
 			<table border="0" cellpadding="0" cellspacing="0" class="grid">
-				<tr>
-					<td><strong>#myFusebox.getApplicationData().defaults.trans("folder_name")#</strong></td>
-					<td>
-						<cfif qry_folder.folder_name EQ "My Folder">
-							<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
-							#qry_folder.folder_name#
-						<cfelse>
-							<div style="float:left;"><input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#" onkeyup="samefoldernamecheck('#attributes.theid#');foldernamecheck_invalidchars('#attributes.theid#');"  autocomplete="off"></div> <div id="samefoldername"></div><div id="invalidchars"></div>
-						</cfif>
-					</td>
-				</tr>
 				<cfloop query="qry_langs">
 					<cfset thisid = lang_id>
+					<!--- Folder Name --->
 					<tr>
-						<td valign="top" width="1%" nowrap="true" class="td2"><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("description")#</td>
-						<td width="100%" class="td2"><textarea name="folder_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_folder_desc"><cfif thisid EQ #lang_id_r#><cfif folder_desc NEQ "">#folder_desc#</cfif></cfif></cfloop></textarea></td>
+						<td valign="top" width="1%" nowrap="true" class="td2">
+							#myFusebox.getApplicationData().defaults.trans("folder_name")#<cfif qry_langs.recordcount NEQ 1> (#lang_name#)</cfif>
+						</td>
+						<td>
+							<cfif qry_folder.folder_name EQ "My Folder">
+								<input type="hidden" name="folder_name_1" id="folder_name" value="#qry_folder.folder_name#">
+								#qry_folder.folder_name#
+							<cfelse>
+								<input type="text" id="folder_name" name="folder_name_#thisid#" style="width:400px;" value="<cfloop query="qry_folder_name"><cfif thisid EQ lang_id_r>#folder_name#</cfif></cfloop>" <cfif qry_langs.recordcount EQ 1>onkeyup="samefoldernamecheck('#attributes.theid#');foldernamecheck_invalidchars('#attributes.theid#');"</cfif> autocomplete="off">
+								<cfif qry_langs.recordcount EQ 1>
+									<div id="samefoldername"></div>
+									<div id="invalidchars"></div>
+								</cfif>
+							</cfif>
+						</td>
+					</tr>
+					<!--- Description --->
+					<tr>
+						<td valign="top" width="1%" nowrap="true" class="td2">#myFusebox.getApplicationData().defaults.trans("description")#</td>
+						<td width="100%" class="td2"><textarea name="folder_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_folder_desc"><cfif thisid EQ lang_id_r><cfif folder_desc NEQ "">#folder_desc#</cfif></cfif></cfloop></textarea></td>
 					</tr>
 				</cfloop>
 				<!--- RAZ-2207 Check Group/Users Permissions --->

@@ -342,6 +342,7 @@
 	<!--- Set datasource in bd_config --->
 	<cffunction name="setdatasource" access="public" output="false">
 		<!--- Param --->
+		<cfset var status = true>
 		<cfparam name="theconnectstring" default="">
 		<cfparam name="hoststring" default="">
 		<cfparam name="verificationQuery" default="">
@@ -379,9 +380,12 @@
 				<cfinvokeargument name="hoststring" value="#hoststring#">
 				<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
 			</cfinvoke>
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<!--- Param --->
+				<cfset var status = false>
+			</cfcatch>
 		</cftry>
-		<cfreturn />
+		<cfreturn status />
 	</cffunction>
 
 <!--- Send Feedback ---------------------------------------------------------------------->
@@ -1338,7 +1342,7 @@ Comment:<br>
 				<cfset thethumbid = replace(qry.img_filename_org,replace(qryorg.img_filename_org,"." & qryorg.img_extension,"") & "_","")>
 				<cfset var listsz = listlen(thethumbid,"_")>
 				<cfif listsz EQ 1> <!--- If original rendition --->
-					<cfset thethumbid = qry.img_group>
+					<cfset thethumbid = qry.img_id>
 				<cfelse><!--- If rendition of rendition --->
 					<cfset thethumbid = listGetAt(thethumbid,listsz-1,"_")>
 				</cfif>
@@ -1540,6 +1544,7 @@ Comment:<br>
 				<cfset var theid = "img_id">
 				<cfset var d1 = "img_change_date">
 				<cfset var d2 = "img_change_time">
+				<cfset var grp = "img_group">
 				<!--- Flush --->
 				<cfset resetcachetoken("images")>
 			<cfelseif arguments.type EQ "vid">
@@ -1547,6 +1552,7 @@ Comment:<br>
 				<cfset var theid = "vid_id">
 				<cfset var d1 = "vid_change_date">
 				<cfset var d2 = "vid_change_time">
+				<cfset var grp = "vid_group">
 				<!--- Flush --->
 				<cfset resetcachetoken("videos")>
 			<cfelseif arguments.type EQ "aud">
@@ -1554,6 +1560,7 @@ Comment:<br>
 				<cfset var theid = "aud_id">
 				<cfset var d1 = "aud_change_date">
 				<cfset var d2 = "aud_change_time">
+				<cfset var grp = "aud_group">
 				<!--- Flush --->
 				<cfset resetcachetoken("audios")>
 			<cfelseif arguments.type EQ "doc">
@@ -1561,6 +1568,7 @@ Comment:<br>
 				<cfset var theid = "file_id">
 				<cfset var d1 = "file_change_date">
 				<cfset var d2 = "file_change_time">
+				<cfset var grp = "">
 				<!--- Flush --->
 				<cfset resetcachetoken("files")>
 			</cfif>
@@ -1569,8 +1577,12 @@ Comment:<br>
 			UPDATE #session.hostdbprefix##thedb#
 			SET 
 			#d1# = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-			#d2# = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+			#d2# = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE #theid# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			<cfif grp NEQ "">
+				OR #grp# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			</cfif>
 			</cfquery>
 		</cfif>
 	</cffunction>
@@ -1819,36 +1831,38 @@ Comment:<br>
 		<cfset upcstruct.createupcfolder = false>
 		<!--- Check if UPC enabled in settings --->
 		<cfquery datasource="#application.razuna.datasource#" name="is_upc_enabled">
-			SELECT set2_upc_enabled FROM #session.hostdbprefix#settings_2
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		SELECT set2_upc_enabled FROM #session.hostdbprefix#settings_2
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 
 		<!--- Check if folder has UPC label --->
 		<cfquery datasource="#application.razuna.datasource#" name="is_folder_upc_label">
-			SELECT 1 FROM #session.hostdbprefix#labels l, ct_labels c, #session.hostdbprefix#folders f
-			WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND (l.label_text = 'UPC' OR l.label_text = 'upc')
-			AND  c.ct_id_r =  f.folder_id
-			AND  c.ct_type = 'folder'
-			AND  c.ct_label_id  = l.label_id
-			AND f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		SELECT 1 FROM #session.hostdbprefix#labels l, ct_labels c, #session.hostdbprefix#folders f
+		WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND (l.label_text = 'UPC' OR l.label_text = 'upc')
+		AND  c.ct_id_r =  f.folder_id
+		AND  c.ct_type = 'folder'
+		AND  c.ct_label_id  = l.label_id
+		AND f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 
 		<!--- Check if user is part of a group for which UPC size is set--->
 		<cfquery datasource="#application.razuna.datasource#" name="grp_upc_size">
-			SELECT g.upc_size, g.grp_id, g.upc_folder_format FROM groups g, ct_groups_users u
-			WHERE g.grp_id = u.ct_g_u_grp_id
-			AND u.ct_g_u_user_id = '#session.theuserid#'
-			AND g.upc_size is not null
-			AND g.upc_size != ''
+		SELECT g.upc_size, g.grp_id, g.upc_folder_format FROM groups g, ct_groups_users u
+		WHERE g.grp_id = u.ct_g_u_grp_id
+		AND u.ct_g_u_user_id = '#session.theuserid#'
+		AND g.upc_size is not null
+		AND g.upc_size != ''
 		</cfquery>
 
-		 <cfif is_upc_enabled.set2_upc_enabled eq 'true' and  is_folder_upc_label.recordcount neq 0 and isnumeric(grp_upc_size.upc_size)>
-		 	<cfset upcstruct.upcenabled = true>
-		 	<cfset upcstruct.upcgrpsize = grp_upc_size.upc_size>
-		 	<cfset upcstruct.upcgrpid = grp_upc_size.grp_id>
-		 	<cfset upcstruct.createupcfolder = grp_upc_size.upc_folder_format>
-		 </cfif>
+		<cfif is_upc_enabled.set2_upc_enabled eq 'true' and  is_folder_upc_label.recordcount neq 0 and isnumeric(grp_upc_size.upc_size)>
+			<cfset upcstruct.upcenabled = true>
+			<cfset upcstruct.upcgrpsize = grp_upc_size.upc_size>
+			<cfset upcstruct.upcgrpid = grp_upc_size.grp_id>
+			<cfset upcstruct.createupcfolder = grp_upc_size.upc_folder_format>
+		</cfif>
+
+		 <!--- Return --->
 		 <cfreturn upcstruct>
 	</cffunction>
 

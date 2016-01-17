@@ -624,7 +624,7 @@
 		<cfset arguments.thestruct.qrydetail = details>
 		<cfset arguments.thestruct.link_kind = details.link_kind>
 		<cfset arguments.thestruct.filenameorg = details.filenameorg>
-		<cfthread intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#" priority="low">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 		<!--- Flush Cache --->
@@ -727,6 +727,11 @@
 							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 						)
 					) = 'X' THEN 'X'
+					WHEN (
+						SELECT folder_owner
+						FROM #session.hostdbprefix#folders f
+						WHERE f.folder_id = a.folder_id_r
+					) = '#Session.theUserID#' THEN 'X'
 				END as permfolder
 			</cfif>
 		FROM  
@@ -826,7 +831,10 @@
 			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
 				<cfset local.root = "yes">
 				<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#audios SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+					UPDATE #session.hostdbprefix#audios 
+					SET
+					in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -938,7 +946,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-			<cfthread intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
 		</cfif>

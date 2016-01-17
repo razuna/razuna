@@ -59,16 +59,19 @@
 				<input type="hidden" name="from_sf" id="from_sf" value="#attributes.from_sf#">
 				<input type="hidden" name="sf_id" id="sf_id" value="#attributes.sf_id#">
 				<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
+				<!--- As of 1.8 we only search within --->
+				<input type="hidden" name="newsearch" id="s_newsearch" value="f">
+
 				<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 					<tr>
 						<th colspan="5">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
 					</tr>
 					<tr>
-						<td valign="top" width="1%" nowrap="nowrap">
+						<!--- <td valign="top" width="1%" nowrap="nowrap">
 							<div style="padding-top:13px;">
 								<input type="radio" id="s_newsearch" name="newsearch" value="t"<cfif attributes.newsearch EQ "t"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("new_search")#</a> <input type="radio" name="newsearch" id="s_newsearch" value="f"<cfif attributes.newsearch EQ "f"> checked="true"</cfif>> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("search_within")#</a>
 							</div>
-						</td>
+						</td> --->
 						<td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("file_name")#
 							<br />
@@ -86,11 +89,11 @@
 						</td>
 					</tr>
 					<tr>
-						<td valign="top" width="1%" nowrap="nowrap">
+						<!--- <td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">#myFusebox.getApplicationData().defaults.trans("help")#</a>)
 							<br />
 							<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:180px;" placeholder="#myFusebox.getApplicationData().defaults.trans("enter_search_term_2")#">
-						</td>
+						</td> --->
 						<td valign="top" width="1%" nowrap="nowrap">
 							#myFusebox.getApplicationData().defaults.trans("keywords")#
 							<br />
@@ -138,14 +141,6 @@
 					</tr>
 					<tr>
 						<td>
-							#myFusebox.getApplicationData().defaults.trans("match")#: 
-							<br /> 
-							<select name="andor" id="andor">
-								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_all")#</option>
-								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_any")#</option>
-							</select>
-						</td>
-						<td>
 							#myFusebox.getApplicationData().defaults.trans("search_for_type")#
 							<br />
 							<select name="thetype" id="s_type">
@@ -191,8 +186,17 @@
 					</tr>
 					<tr>
 						<td>
+							#myFusebox.getApplicationData().defaults.trans("match")#: 
+							<br /> 
+							<select name="andor" id="andor">
+								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_all")#</option>
+								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("match_any")#</option>
+							</select>
 							<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("user_search")#</button>
 						</td>
+						<!--- <td>
+							<button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("user_search")#</button>
+						</td> --->
 					</tr>
 					<!--- Has to be here or else search mocks up --->
 					<div style="display:none;">
@@ -229,21 +233,7 @@
 		<div style="padding:0;margin:0;">
 			<div id="search_tab">
 				<ul>
-					<li><a href="##content_search_all" onclick="<cfif attributes.share NEQ 't'>switchsearchtab('all');</cfif>" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# <cfif qry_filecount.thetotal EQ ''>(0)<cfelse>(#qry_filecount.thetotal#)</cfif></a></li>
-					<cfif structKeyExists(attributes, "thetype") AND attributes.thetype EQ 'all' AND attributes.share NEQ 't'>
-						<cfif structKeyExists(qry_files_count.qall, "img_cnt") AND qry_files_count.qall.img_cnt NEQ '' AND qry_files_count.qall.img_cnt NEQ 0 AND cs.tab_images>
-							<li><a href="##content_search_img" onclick="switchsearchtab('img');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#qry_files_count.qall.img_cnt#)</a></li>
-						</cfif>
-						<cfif structKeyExists(qry_files_count.qall, "vid_cnt") AND qry_files_count.qall.vid_cnt NEQ '' AND qry_files_count.qall.vid_cnt NEQ 0 AND cs.tab_videos>
-							<li><a href="##content_search_vid" onclick="switchsearchtab('vid');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_videos")# (#qry_files_count.qall.vid_cnt#)</a></li>
-						</cfif>
-						<cfif structKeyExists(qry_files_count.qall, "aud_cnt") AND qry_files_count.qall.aud_cnt NEQ '' AND qry_files_count.qall.aud_cnt NEQ 0 AND cs.tab_audios>
-							<li><a href="##content_search_aud" onclick="switchsearchtab('aud');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_audios")# (#qry_files_count.qall.aud_cnt#)</a></li>
-						</cfif>
-						<cfif structKeyExists(qry_files_count.qall, "doc_cnt") AND qry_files_count.qall.doc_cnt NEQ '' AND qry_files_count.qall.doc_cnt NEQ 0 AND cs.tab_doc>
-							<li><a href="##content_search_doc" onclick="switchsearchtab('doc');" rel="prefetch">Documents (#qry_files_count.qall.doc_cnt#)</a></li>
-						</cfif>
-					</cfif>
+					<li><a href="##content_search_all" onclick="<cfif attributes.share NEQ 't'>switchsearchtab('all');</cfif>" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# <cfif structKeyExists(qry_files,"searchcount")>(#qry_files.searchcount#)<cfelse>(#qry_filecount.thetotal#)</cfif></a></li>
 				</ul>
 
 				<cfif structKeyExists(attributes, "thetype") AND attributes.thetype NEQ 'all'>
@@ -256,20 +246,6 @@
 					</div>
 				</cfif>
 				
-				<cfif structKeyExists(attributes, "thetype") AND attributes.thetype EQ 'all' AND attributes.share NEQ 't'>
-					<cfif structKeyExists(qry_files_count.qall, "img_cnt") AND qry_files_count.qall.img_cnt NEQ '' AND qry_files_count.qall.img_cnt NEQ 0 AND cs.tab_images>
-						<div id="content_search_img"></div>
-					</cfif>
-					<cfif structKeyExists(qry_files_count.qall, "vid_cnt") AND qry_files_count.qall.vid_cnt NEQ '' AND qry_files_count.qall.vid_cnt NEQ 0 AND cs.tab_videos>
-						<div id="content_search_vid"></div>
-					</cfif>
-					<cfif structKeyExists(qry_files_count.qall, "aud_cnt") AND qry_files_count.qall.aud_cnt NEQ '' AND qry_files_count.qall.aud_cnt NEQ 0 AND cs.tab_audios>
-						<div id="content_search_aud"></div>
-					</cfif>
-					<cfif structKeyExists(qry_files_count.qall, "doc_cnt") AND qry_files_count.qall.doc_cnt NEQ '' AND qry_files_count.qall.doc_cnt NEQ 0 AND cs.tab_doc>
-						<div id="content_search_doc"></div>
-					</cfif>
-				</cfif>
 			</div>
 		</div>
 	</div>
@@ -286,9 +262,9 @@
 		// Search submit
 		$("#form_searchsearch").submit(function(e){
 			// Get searchfor value
-			var searchfor = encodeURIComponent($('#insearchsearchfor').val());
+			// var searchfor = encodeURIComponent($('#insearchsearchfor').val());
 			// Call subfunction to get fields
-			var searchtext = subadvfields('form_searchsearch');
+			var searchtext = encodeURIComponent(subadvfields('form_searchsearch'));
 			// Only allow chars
 			var illegalChars = /(\*|\?)/;
 			// Parse the entry
@@ -306,7 +282,7 @@
 				// Show loading bar
 				$("body").append('<div id="bodyoverlay"><img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 				// Get values
-				var newsearch = $('#s_newsearch:checked').val();
+				var newsearch = $('#s_newsearch').val();
 				var thetype = $('#s_type option:selected').val();
 				var listaudid = $('#s_listaudid').val();
 				var listvidid = $('#s_listvidid').val();
@@ -330,7 +306,7 @@
 				var sf_id = $('#sf_id').val();
 				var folder_id = $('#folder_id').val();
 				// Post the search
-				$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: searchtext, newsearch: newsearch, folder_id: folder_id, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id }, function(){
+				$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: searchtext, newsearch: newsearch, folder_id: folder_id, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id }, function() {
 						$("#bodyoverlay").remove();
 					}
 				);
