@@ -4,7 +4,7 @@ Razuna - The open source alternative to Enterprise Digital Asset Management
 NOTE
 ----
 
-As of Razuna 1.8 Java 8 is a required! Java 7 or 6 is no longer supported!
+As of Razuna 1.8 Java 8 is a required! Java 7 or 6 is no longer supported! Additionally, you need to install the dedicated search server. You can find the repository for the search at https://github.com/razuna/razuna-searchserver.
 
 Installation
 ------------
