@@ -37,7 +37,7 @@ function showwindow(theurl,thetitle,thew,thewin) {
 // Destroy Window
 function destroywindow(numb) {
 	try{
-		$('#thewindowcontent' + numb).dialog('destroy');
+		$('#thewindowcontent' + numb).dialog('destroy').empty();
 	}
 	catch(e) {};
 }
