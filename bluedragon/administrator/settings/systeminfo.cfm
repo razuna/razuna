@@ -3,6 +3,7 @@
     
     Contributing Developers:
     Matt Woodward - matt@mattwoodward.com
+    Marcus Fernstrom - marcus@marcusfernstrom.com
 
     This file is part of the Open BlueDragon Administrator.
 
@@ -72,21 +73,21 @@
 	<td bgcolor="##f0f0f0">Running Applications</td>
 	<td bgcolor="##ffffff" valign="top">
 	  <cfif ArrayLen(ApplicationList()) gt 0>
-	      <cfloop array="#ApplicationList()#" index="app">
-		<div class="row">
-		  <div class="pull-left" style="margin-left:20px;">#app#</div>
-		  <div class="pull-right" style="padding-right:200px;">
-		    <a href="_controller.cfm?action=unloadApplication&applicationName=#app#">
-		      <img src="../images/cancel.png" border="0" width="16" height="16" alt="Unload Application" title="Unload Application" />
-		    </a>
-		  </div>
-		</div>
+      <cfloop array="#ApplicationList()#" index="app">
+				<div class="row">
+				  <div class="pull-left" style="margin-left:20px;">#app# (#SessionCount(app)# session<cfif SessionCount(app) NEQ 1>s</cfif>)</div>
+				  <div class="pull-right" style="padding-right:200px;">
+				    <a href="_controller.cfm?action=unloadApplication&applicationName=#app#">
+				      <img src="../images/cancel.png" border="0" width="16" height="16" alt="Unload Application" title="Unload Application" />
+				    </a>
+				  </div>
+				</div>
 	      </cfloop>
 	  </cfif>
 	</td>
       </tr>
       <tr>
-	<td bgcolor="##f0f0f0">Number of Active Sessions</td>
+	<td bgcolor="##f0f0f0">Total Active Sessions</td>
 	<td bgcolor="##ffffff">#SessionCount()#</td>
       </tr>
     </table>

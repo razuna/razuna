@@ -392,6 +392,7 @@
 		<set name="session.firsttime.path_exiftool" value="" />
 		<set name="session.firsttime.path_dcraw" value="" />
 		<set name="session.firsttime.path_mp4box" value="" />
+		<set name="session.firsttime.path_ghostscript" value="" />
 		<set name="attributes.user_email" value="" />
 		<set name="attributes.user_pass" value="" />
 		<set name="attributes.user_login_name" value="" />
@@ -416,6 +417,7 @@
 		<set name="session.firsttime.path_exiftool" value="" />
 		<set name="session.firsttime.path_dcraw" value="" />
 		<set name="session.firsttime.path_mp4box" value="" />
+		<set name="session.firsttime.path_ghostscript" value="" />
 		<set name="attributes.user_email" value="" />
 		<set name="attributes.user_pass" value="" />
 		<set name="attributes.user_login_name" value="" />
