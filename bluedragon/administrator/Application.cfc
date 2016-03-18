@@ -146,7 +146,8 @@
 			</cfif>
 
 			<cfif !getPageContext().getRequest().getRequestURI() contains "login.cfm">
-				<cfset session.targetUrl = getPageContext().getRequest().getContextPath() & getPageContext().getRequest().getRequestURI()>
+				<!--- <cfset session.targetUrl = getPageContext().getRequest().getContextPath() & getPageContext().getRequest().getRequestURI()> --->
+				<cfset session.targetUrl = getPageContext().getRequest().getRequestURI()>
 			</cfif>
 			<cflocation url="#contextPath#/bluedragon/administrator/login.cfm" addtoken="false" />
 		</cfif>
