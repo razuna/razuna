@@ -1006,6 +1006,8 @@
 	<cfif isBoolean(arguments.thestruct.debug) AND arguments.thestruct.debug>
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
 	</cfif>
+	<!--- Set lib path --->
+	<cfset session.libpath  =  replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 	<cftry>
 		<!--- This is from the uploader in Razuna --->
 		<cfif isBoolean(arguments.thestruct.plupload) AND arguments.thestruct.plupload>
