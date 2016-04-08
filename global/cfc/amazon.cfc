@@ -122,8 +122,10 @@
 				<cfset multiobj.putobjectmultipart(bucketname='#arguments.awsbucket#', filekey='#arguments.key#', theasset='#arguments.theasset#', theassetsize='#int(theassetsize/1000)#', contenttype='#arguments.contenttype#')>
 			</cfif>
 			<cfcatch>
-				<cfset cfcatch.custom_message = "Error in function amazon.upload">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in function amazon.upload">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
