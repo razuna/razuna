@@ -3418,7 +3418,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 
 <cffunction name="getaccesscontrol" returntype="struct" hint="Get access control settings for the different tabs in administrator">
 	<cfquery dataSource="#application.razuna.datasource#" name="accessdata">
-		SELECT opt_id, opt_value FROM options WHERE lower(opt_id) LIKE '%access'
+		SELECT opt_id, opt_value
+		FROM options
+		WHERE lower(opt_id) LIKE '%access'
 	</cfquery>
 	<cfset var access_struct = structnew()>
 	<cfloop query="accessdata">
@@ -3443,6 +3445,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			<cfset structdelete (thestruct,field)>
 		</cfif>
 	</cfloop>
+	<!--- if user has no access we need to set the access here --->
+	<cfif !structkeyexists(thestruct, 'groups_access')>
+		<cfset thestruct.groups_access = false>
+	</cfif>
 	<cfreturn thestruct>
 </cffunction>
 

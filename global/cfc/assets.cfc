@@ -1053,30 +1053,29 @@
 				<!--- Query --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
-				FROM users u, ct_users_hosts ct, ct_groups_users gu
+				FROM users u INNER JOIN ct_users_hosts ct ON u.user_id = ct.ct_u_h_user_id
+				LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id <!--- Left join on groups since users that are non admin can now also access the API and they may not be part of any groups --->
 				WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
-				AND u.user_id = ct.ct_u_h_user_id
 				<cfif thehostid NEQ "">
 					AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
 				</cfif>
-				AND gu.ct_g_u_user_id = u.user_id
-				AND (
-					gu.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">
-					OR
-					gu.ct_g_u_grp_id = <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">
-				)
 				GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 				</cfquery>
 				<cfif qry.recordcount EQ 0>
 					<cfset var thesession = false>
 				<cfelse>
 					<cfset var thesession = true>
-					<cfset var theuserid = qry.user_id>
 				</cfif>
 			</cfif>
 		</cfif>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<cfset session.thegroupofuser = 0>
+			<cfset var theuserid = qry.user_id>
+			<!--- Put user groups into session if present--->
+			<cfif listlen(valuelist(qry.grpid)) GT 0>
+				<cfset session.thegroupofuser = valuelist(qry.grpid)>
+			</cfif>
 			<!--- If user wants to add metadata fields then collect them here --->
 			<cfif arguments.thestruct.metadata EQ 1>
 				<!--- Set array --->
