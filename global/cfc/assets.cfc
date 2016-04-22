@@ -986,6 +986,9 @@
 <!--- INSERT FROM API --->
 <cffunction name="addassetapi" output="false" access="public" returntype="string">
 	<cfargument name="thestruct" type="struct">
+	<cfset consoleoutput(true)>
+<cfset console(arguments.thestruct)>
+
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.debug" default="0">
 	<cfparam name="arguments.thestruct.isbinary" default="false">
@@ -1002,6 +1005,7 @@
 	<cfset arguments.thestruct.thejsonbody = "">
 	<!--- Put HTTP referer into var --->
 	<cfset arguments.thestruct.comingfrom = cgi.http_referer>
+	<cfset arguments.thestruct.tempid = createuuid("")>
 	<!--- If developer wants to debug  --->
 	<cfif isBoolean(arguments.thestruct.debug) AND arguments.thestruct.debug>
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
@@ -1065,17 +1069,17 @@
 					<cfset var thesession = false>
 				<cfelse>
 					<cfset var thesession = true>
+					<cfset var theuserid = qry.user_id>
+					<cfset session.thegroupofuser = 0>
+					<!--- Put user groups into session if present--->
+					<cfif listlen(valuelist(qry.grpid)) GT 0>
+						<cfset session.thegroupofuser = valuelist(qry.grpid)>
+					</cfif>
 				</cfif>
 			</cfif>
 		</cfif>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfset session.thegroupofuser = 0>
-			<cfset var theuserid = qry.user_id>
-			<!--- Put user groups into session if present--->
-			<cfif listlen(valuelist(qry.grpid)) GT 0>
-				<cfset session.thegroupofuser = valuelist(qry.grpid)>
-			</cfif>
 			<!--- If user wants to add metadata fields then collect them here --->
 			<cfif arguments.thestruct.metadata EQ 1>
 				<!--- Set array --->
@@ -1106,7 +1110,6 @@
 				<!--- Serialize it to JSON and put it into struct --->
 				<cfset arguments.thestruct.assetmetadatacf = SerializeJSON(metaarraycf)>
 			</cfif>
-			<cfset arguments.thestruct.tempid = createuuid("")>
 			<!--- Put current id into session --->
 			<cfset session.currentupload = session.currentupload & "," & arguments.thestruct.tempid>
 			<!--- Create a unique name for the temp directory to hold the file --->
@@ -1307,6 +1310,9 @@
 		</cfif>
 		<!--- Catch --->
 		<cfcatch type="any">
+			<cfset consoleoutput(true)>
+<cfset console(cfcatch)>
+
 			<!--- When the redirect param is here then --->
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
 				<cflocation url="#arguments.thestruct.redirectto#?responsecode=1&message=htmleditformat(Upload failed #xmlformat(cfcatch.Detail)# #xmlformat(cfcatch.Message)#)" addToken="yes">
