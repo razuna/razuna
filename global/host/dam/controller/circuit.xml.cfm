@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2016.03.10.1" />
+		<set name="attributes.cachetag" value="2016.05.12.1" />
 	</fuseaction> 
 	
 	<!--
@@ -10660,6 +10660,24 @@
 		<!-- Show -->
 		<do action="ajax.indexing" />
 	</fuseaction>
+
+	<!-- APPROVAL -->
+	
+	<!-- Admin -->
+	<fuseaction name="approval">
+		<!-- CFC: Get folders -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getFlatFolderList()" returnvariable="qry_folders" />
+		<!-- CFC: Get groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="mod_id" value="1" />
+		</invoke> 
+		<!-- CFC: Get users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
+		<!-- Show -->
+		<do action="ajax.approval" />
+	</fuseaction>
+
 
 	<!--  -->
 	<!-- START: White-Labelling of hosts -->

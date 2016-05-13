@@ -920,6 +920,11 @@
 		<include template="dsp_admin_indexing" />
 	</fuseaction>
 
+	<!-- Admin Approval -->
+	<fuseaction name="approval">
+		<include template="dsp_admin_approval" />
+	</fuseaction>
+
 	<!-- Upload basket to local storage -->
 	<fuseaction name="basket_upload2local">
 		<include template="dsp_basket_upload2local" />

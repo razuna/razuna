@@ -108,6 +108,10 @@
 			<cfif isadmin>
 				<li><a href="##indexing" onclick="loadcontent('indexing','#myself#c.indexing');">Indexing</a></li>
 			</cfif>
+			<!--- Approval --->
+			<cfif isadmin>
+				<li><a href="##approval" onclick="loadcontent('approval','#myself#c.approval');">Approval</a></li>
+			</cfif>
 		</ul>
 		
 		<!--- Users --->
@@ -236,6 +240,10 @@
 		<!--- Indexing --->
 		<cfif isadmin>
 			<div id="indexing"></div>
+		</cfif>
+		<!--- Approval --->
+		<cfif isadmin>
+			<div id="approval"></div>
 		</cfif>
 	</div>
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->
