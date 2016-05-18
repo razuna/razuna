@@ -1288,6 +1288,9 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('webp', 'img', 'image', 'webp')
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('svg', 'img', 'image', 'svg')
+		</cfquery>
 	</cffunction>
 	
 	<!--- Create Host Remote --->
