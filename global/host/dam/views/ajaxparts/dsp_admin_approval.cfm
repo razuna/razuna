@@ -59,7 +59,6 @@
 		<!--- Approval Group 1 --->
 		<h3>Approval Group 1</h3>
 		<p>Select from the list which users/groups are responsible to approve uploads</p>
-		<!--- <cfdump var="#qry_groups#"><cfabort>  --->
 		<table width="100%" border="0">
 			<tr>
 				<td style="width:450px;">
@@ -79,6 +78,32 @@
 				</td>
 				<td valign="top">
 					<input type="checkbox" value="true" name="approval_group_1_all"<cfif qry_approval.approval_group_1_all> checked="checked"</cfif>> All users/groups have to approve
+				</td>
+			</tr>
+		</table>
+
+		<!--- Approval Group 1 --->
+		<h3>Approval Group 2</h3>
+		<p>Select from the list which users/groups are responsible to approve uploads *after* the first group above has approved the files.</p>
+		<table width="100%" border="0">
+			<tr>
+				<td style="width:450px;">
+					<select data-placeholder="Choose users/groups" class="chzn-select" style="width:450px;" id="selectuser" name="approval_group_2" multiple>
+						<option value=""></option>
+						<optgroup label="Groups">
+							<cfloop query="qry_groups">
+								<option value="#grp_id#"<cfif ListFindnocase(qry_approval.approval_group_2, grp_id)> selected="selected"</cfif>>#grp_name#</option>
+							</cfloop>
+						</optgroup>
+						<optgroup label="Users">
+							<cfoutput query="qry_users" group="user_id">
+								<option value="#user_id#"<cfif ListFindnocase(qry_approval.approval_group_2, user_id)> selected="selected"</cfif>>#user_first_name# #user_last_name# (#user_email#)</option>
+							</cfoutput>
+						</optgroup>
+					</select>
+				</td>
+				<td valign="top">
+					<input type="checkbox" value="true" name="approval_group_2_all"<cfif qry_approval.approval_group_2_all> checked="checked"</cfif>> All users/groups have to approve
 				</td>
 			</tr>
 		</table>
