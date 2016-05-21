@@ -986,9 +986,6 @@
 <!--- INSERT FROM API --->
 <cffunction name="addassetapi" output="false" access="public" returntype="string">
 	<cfargument name="thestruct" type="struct">
-	<cfset consoleoutput(true)>
-<cfset console(arguments.thestruct)>
-
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.debug" default="0">
 	<cfparam name="arguments.thestruct.isbinary" default="false">
