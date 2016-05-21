@@ -181,6 +181,16 @@
 		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
+		<!--- If less then 51 (1.8.5) --->
+		<cfif updatenumber.opt_value LT 51>
+			<!--- Add SVG --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO file_types VALUES ('svg', 'img', 'image', 'svg')
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+		</cfif>
 
 		<!--- If less then 50 (1.8) --->
 		<cfif updatenumber.opt_value LT 50>
