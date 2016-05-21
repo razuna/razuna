@@ -65,6 +65,7 @@
 		<class alias="smartfolders" classpath="global.cfc.smartfolders" type="component" constructor="init"/>
 		<class alias="oauth" classpath="global.cfc.oauth" type="component" constructor="init"/>
 		<class alias="dropbox" classpath="global.cfc.dropbox" type="component" constructor="init"/>
+		<class alias="approval" classpath="global.cfc.approval" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

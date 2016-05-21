@@ -194,8 +194,11 @@
 		<!-- Oauth -->
 		<instantiate class="oauth" object="myFusebox.getApplicationData().oauth" overwrite="true">
 		</instantiate>
-		<!-- Oauth -->
+		<!-- Dropbox -->
 		<instantiate class="dropbox" object="myFusebox.getApplicationData().dropbox" overwrite="true">
+		</instantiate>
+		<!-- Approval -->
+		<instantiate class="approval" object="myFusebox.getApplicationData().approval" overwrite="true">
 		</instantiate>
 	</fuseaction>
 	

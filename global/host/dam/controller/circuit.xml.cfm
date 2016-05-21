@@ -10663,8 +10663,10 @@
 
 	<!-- APPROVAL -->
 	
-	<!-- Admin -->
+	<!-- Admin Approval Page -->
 	<fuseaction name="approval">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="admin_get()" returnvariable="qry_approval" />
 		<!-- CFC: Get folders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getFlatFolderList()" returnvariable="qry_folders" />
 		<!-- CFC: Get groups -->
@@ -10676,6 +10678,12 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show -->
 		<do action="ajax.approval" />
+	</fuseaction>
+
+	<!-- Admin Approval Save -->
+	<fuseaction name="admin_approval_save">
+		<!-- CFC: Save -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="admin_save(attributes)" />
 	</fuseaction>
 
 
