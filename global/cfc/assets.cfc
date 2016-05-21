@@ -1358,6 +1358,8 @@
 	WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.tempid#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Check for approval --->
+	<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#qry_file.folder_id#" />
 	<cftry>
 		<!--- Don't need to do any inserts for URL and versions --->
 		<cfif qry_file.file_id EQ 0>
@@ -1377,7 +1379,11 @@
 				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+				<cfif qry_approval.approval_enabled>
+					<cfqueryparam value="2" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+				</cfif>,
 				<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
 					<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
 				<cfelse>
@@ -1426,7 +1432,11 @@
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry_file.folder_id#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.folder_id#/vid/#qry_file.tempid#">,
-				<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+				<cfif qry_approval.approval_enabled>
+					<cfqueryparam value="2" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+				</cfif>,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 				)
 				</cfquery>
@@ -1481,7 +1491,11 @@
 				(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
 				VALUES(
 					<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+					<cfif qry_approval.approval_enabled>
+						<cfqueryparam value="2" cfsqltype="cf_sql_varchar">
+					<cfelse>
+						<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+					</cfif>,
 					<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
@@ -1502,7 +1516,11 @@
 				(file_id, is_available, folder_id_r, host_id, file_name, file_create_time)
 				VALUES(
 					<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
+					<cfif qry_approval.approval_enabled>
+						<cfqueryparam value="2" cfsqltype="cf_sql_varchar">
+					<cfelse>
+						<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+					</cfif>,
 					<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 					<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
@@ -1812,7 +1830,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
 	</cfif>
-
 	<!--- Catch issues with file not being fully uploaded to server due to interruption in data transfer. Happens if you 'Re-start Upload' or close plupload window during data transfer and then re-open which cancels previous uploads in progress --->
 	<cfif isdefined('arguments.thestruct.file_size')><!---  Check if file size reported by client via plupload is defined --->
 		<cfset var filesize_onserver = getfileinfo("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#").size> <!--- Get file size on server --->
@@ -1957,11 +1974,21 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.file_name = arguments.thestruct.qryfile.filename>
 		<cfset arguments.thestruct.folder_id = arguments.thestruct.qryfile.folder_id>
 		<cfset arguments.thestruct.folder_action = false>
-		<!--- Check on any plugin that call the on_file_add action --->
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-		<cfset arguments.thestruct.folder_action = true>
-		<!--- Check on any plugin that call the on_file_add action --->
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+		
+		<!--- Check for approval --->
+		<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.qryfile.folder_id#" />
+		<!--- If enabled do not execute plugins --->
+		<cfif qry_approval.approval_enabled>
+			<!--- Run approval --->
+			<cfinvoke component="global.cfc.approval" method="approval_execute" file_id="#returnid#" file_type="#fileType.type_type#" />
+		<cfelse>
+			<!--- Check on any plugin that call the on_file_add action --->
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<!--- Check on any plugin that call the on_file_add action --->
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+		</cfif>
+		
 	</cfif>
 	<!--- If we are coming from a scheduled task then... --->
 	<cfif structkeyexists(arguments.thestruct,"sched")>

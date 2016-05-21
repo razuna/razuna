@@ -10664,7 +10664,7 @@
 	<!-- APPROVAL -->
 	
 	<!-- Admin Approval Page -->
-	<fuseaction name="approval">
+	<fuseaction name="admin_approval">
 		<!-- CFC: Get values -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="admin_get()" returnvariable="qry_approval" />
 		<!-- CFC: Get folders -->
@@ -10677,7 +10677,7 @@
 		<!-- CFC: Get users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show -->
-		<do action="ajax.approval" />
+		<do action="ajax.admin_approval" />
 	</fuseaction>
 
 	<!-- Admin Approval Save -->
@@ -10686,6 +10686,23 @@
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="admin_save(attributes)" />
 	</fuseaction>
 
+	<!-- Staging Area -->
+	<fuseaction name="staging">
+		<xfa name="detaildoc" value="c.files_detail" />
+		<xfa name="detailimg" value="c.images_detail" />
+		<xfa name="detailvid" value="c.videos_detail" />
+		<xfa name="detailaud" value="c.audios_detail" />
+		<!-- CFC: Get all files -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_files()" returnvariable="qry_files" />
+		<!-- Show -->
+		<do action="ajax.staging" />
+	</fuseaction>
+
+	<!-- User clicks on accept -->
+	<fuseaction name="approval_accept">
+		<!-- CFC: Accept -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_accept(attributes)" />
+	</fuseaction>
 
 	<!--  -->
 	<!-- START: White-Labelling of hosts -->

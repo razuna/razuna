@@ -129,6 +129,15 @@
 			<div style="float:left;min-width:150px;"><a href="##" onclick="$('##userselection').toggle();" style="text-decoration:none;" class="ddicon">#session.firstlastname#</a></div>
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
+				<!--- Approval only show for sysadmins, admin or those users who are allowed --->
+				<cfif qry_approval.approval_enabled AND Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR listFind(qry_approval_users.user_ids, session.theuserid)>
+					<p>
+						<a href="##" onclick="loadcontent('rightside','#myself#c.staging');$('##userselection').toggle();return false;" style="width:100%;">Approval Area</a>
+					</p>
+					<p>
+						<hr />
+					</p>
+				</cfif>
 				<!--- Profile --->
 				<p>
 					<!--- RAZ-2718 Encode User's first and last name for title --->

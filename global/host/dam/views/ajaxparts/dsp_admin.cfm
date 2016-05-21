@@ -110,7 +110,7 @@
 			</cfif>
 			<!--- Approval --->
 			<cfif isadmin>
-				<li><a href="##approval" onclick="loadcontent('approval','#myself#c.approval');">Approval</a></li>
+				<li><a href="##approval" onclick="loadcontent('approval','#myself#c.admin_approval');">Approval</a></li>
 			</cfif>
 		</ul>
 		

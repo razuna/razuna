@@ -1156,4 +1156,21 @@
 	<cfreturn result />
 </cffunction>
 
+<!--- Get all users from a passed in list --->
+<cffunction name="getAllUsersFromList" returntype="query">
+	<cfargument name="user_ids" type="string">
+	<!--- Param --->
+	<cfset var qry = "">
+	<!--- Get cachetoken --->
+	<cfset var cache_user = getcachetoken("users")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cache_user#getAllUsersFromList */ user_id, user_first_name, user_last_name, user_email
+	FROM users
+	WHERE user_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.user_ids#" list="true">)
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry />
+</cffunction>
+
 </cfcomponent>

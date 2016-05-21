@@ -278,6 +278,7 @@
 			</cfif>
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND f.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.thestruct.folderaccess EQ 'R'>
 				AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 			</cfif>

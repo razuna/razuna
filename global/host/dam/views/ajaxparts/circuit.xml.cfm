@@ -921,8 +921,13 @@
 	</fuseaction>
 
 	<!-- Admin Approval -->
-	<fuseaction name="approval">
+	<fuseaction name="admin_approval">
 		<include template="dsp_admin_approval" />
+	</fuseaction>
+
+	<!-- Staging -->
+	<fuseaction name="staging">
+		<include template="dsp_staging" />
 	</fuseaction>
 
 	<!-- Upload basket to local storage -->
