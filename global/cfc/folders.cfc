@@ -8630,72 +8630,78 @@
 </cffunction>
 
 
-<cffunction name="getFlatFolderList" output="false">
+<cffunction name="getFlatFolderList" output="false" returntype="query">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("folders")>
+	<!--- Param --->
 	<cfset var qry = "" >
-	<!--- Query foolder on root level --->
-	<cfquery dataSource="#application.razuna.datasource#" name="qry">
-	SELECT folder_id, folder_name, '0' as folder_level
-	FROM #session.hostdbprefix#folders
-	WHERE folder_id = folder_id_r
-	AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
-	AND lower(in_trash) = <cfqueryparam value="f" CFSQLType="CF_SQL_VARCHAR">
-	AND (folder_is_collection IS NULL OR folder_is_collection = '')
+	<!--- Query folder on root level --->
+	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getFlatFolderList */ f.folder_of_user, f.folder_id, f.folder_name, '0' as folder_level, f.folder_name as folder_path, <cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username
+	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+	WHERE f.folder_id = f.folder_id_r
+	AND f.host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	AND lower(f.in_trash) = <cfqueryparam value="f" CFSQLType="CF_SQL_VARCHAR">
+	AND (f.folder_is_collection IS NULL OR f.folder_is_collection = '')
 	</cfquery>
-	<cfset consoleoutput(true)>
-	<cfset console(qry)>
-
-	<!--- Create our own query and tag on the results here --->
-	
-
-	<!--- Loop over folder and get subfolder --->
-	<cfloop query="qry">
-		<!--- Call to get the recursive folder ids --->
-		<cfinvoke method="recfoldername" returnvariable="_folderids">
-			<cfinvokeargument name="thelist" value="#folder_id#">
-			<cfinvokeargument name="thelevel" value="0">
-		</cfinvoke>
-
-		<cfset console(_folderids)>
-	</cfloop>
-	
-
+	<!--- Pass query to recursive function to get child folders --->
+	<cfinvoke method="recfoldername" returnvariable="_qry">
+		<cfinvokeargument name="theqry" value="#qry#">
+	</cfinvoke>
+	<!--- Sort query --->
+	<cfset QuerySort( _qry, 'folder_path', 'textnocase' )>
+	<!--- Return --->
+	<cfreturn _qry>
 </cffunction>
 
 <!--- RECURSIVE SUBQUERY TO READ FOLDERS --->
-<cffunction name="recfoldername" output="false" access="public" returntype="string">
-	<cfargument name="thelist" required="yes">
-	<cfargument name="thelevel" required="yes">
+<cffunction name="recfoldername" output="false" access="public" returntype="query">
+	<cfargument name="theqry" required="yes">
+	<cfargument name="theoverallqry" required="no" default="#querynew('folder_of_user, folder_id, folder_name, folder_level, folder_path, username')#">
+	<cfargument name="thelevel" required="no" default="0">
 	<!--- Increase folder level --->
 	<cfset thelevel = arguments.thelevel + 1>
 	<!--- Cache --->
 	<cfset var cachetoken = getcachetoken("folders")>
-	<!--- function internal vars --->
-	<cfset var local_query = 0>
-	<cfset var local_list = "">
-	<!--- If list empty then set to dummy value to prevent SQL from failing --->
-	<cfif arguments.thelist EQ "">
-		<cfset arguments.thelist = "-1">
-	</cfif>
-	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="local_query" cachedwithin="1" region="razcache">
-	SELECT /* #cachetoken#recfolder */ folder_id, folder_name, '#thelevel#' as folder_level
-	FROM #session.hostdbprefix#folders
-	WHERE folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-	AND folder_id != folder_id_r
-	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
-	<cfset consoleoutput(true)>
-	<cfset console(local_query)>
-	<!--- get child-folders of next level but only if this is not the same folder_id. This fixes a bug some experiences where folders would not get removed --->
-	<cfif local_query.RecordCount NEQ 0 AND arguments.thelist NEQ local_query.folder_id>
-		<cfinvoke method="recfolder" returnvariable="local_list">
-			<cfinvokeargument name="thelist" value="#ValueList(local_query.folder_id)#">
-			<cfinvokeargument name="thelevel" value="#thelevel#">
-		</cfinvoke>
-		<cfset Arguments.thelist = Arguments.thelist & "," & local_list>
-	</cfif>
-	<cfreturn Arguments.thelist>
+	<!--- Loop over the given query --->
+	<cfloop query="arguments.theqry">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="local_query" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#recfolder */ f.folder_of_user, f.folder_id, f.folder_name, '#thelevel#' as folder_level, <cfif application.razuna.thedatabase EQ "mssql">'#folder_path# / ' + f.folder_name<cfelse>concat('#folder_path# / ',f.folder_name)</cfif> as folder_path, <cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username
+		FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+		WHERE f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folder_id#">
+		AND f.folder_id != f.folder_id_r
+		AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Add the found records to the general query --->
+		<cfif local_query.RecordCount NEQ 0>
+			<cfquery dbtype="query" name="arguments.theoverallqry">
+			SELECT * FROM arguments.theqry
+			UNION
+			SELECT * FROM local_query
+			UNION
+			SELECT * FROM arguments.theoverallqry
+			</cfquery>
+			<!--- get child-folders of next level but only if this is not the same folder_id. This fixes a bug some experiences where folders would not get removed --->
+			<cfinvoke method="recfoldername" returnvariable="sub_query">
+				<cfinvokeargument name="theqry" value="#local_query#">
+				<cfinvokeargument name="theoverallqry" value="#arguments.theoverallqry#">
+				<cfinvokeargument name="thelevel" value="#thelevel#">
+			</cfinvoke>
+			<cfif sub_query.RecordCount NEQ 0>
+				<cfquery dbtype="query" name="arguments.theoverallqry">
+				SELECT * FROM arguments.theqry
+				UNION
+				SELECT * FROM sub_query
+				UNION
+				SELECT * FROM arguments.theoverallqry
+				</cfquery>
+			</cfif>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn arguments.theoverallqry>
 </cffunction>
 
 
