@@ -123,8 +123,17 @@
 			<cfinvoke component="users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.thestruct.list_recfolders">
 		</cfif>
 
+		<!--- If we come from a search in a search we need to set row to 0 in order to find all records --->
+		<cfif arguments.thestruct.newsearch EQ "T">
+			<cfset var _startrow = lucene_startrow>
+			<cfset var _maxrows = session.rowmaxpage>
+		<cfelse>
+			<cfset var _startrow = 0>
+			<cfset var _maxrows = 0>
+		</cfif>
+
 		<!--- Search in Lucene  --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#lucene_startrow#" maxrows="#session.rowmaxpage#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
+		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
 
 		<!--- Do we search in all results or only in originals --->
 		<!--- If arguments.thestruct.prefs = f we show all files --->
@@ -167,30 +176,49 @@
 			</cfloop>
 			<!--- Combine queries --->
 			<!--- All found records, despite paging are in searchcount of the lucene query --->
+			<cfif arguments.thestruct.newsearch EQ "T">
+				<cfset var _imgCount = qry_lucene.searchcount>
+				<cfset var _vidCount = qry_lucene.searchcount>
+				<cfset var _audCount = qry_lucene.searchcount>
+				<cfset var _docCount = qry_lucene.searchcount>
+			<cfelse>
+				<cfif imgHere>
+					<cfset var _imgCount = qry_img.recordcount>
+				</cfif>
+				<cfif vidHere>
+					<cfset var _vidCount = qry_vid.recordcount>
+				</cfif>
+				<cfif audHere>
+					<cfset var _audCount = qry_aud.recordcount>
+				</cfif>
+				<cfif docHere>
+					<cfset var _docCount = qry_doc.recordcount>
+				</cfif>
+			</cfif>
 			<cfquery dbtype="query" name="qry">
 			<cfif imgHere>
-				SELECT #qry_lucene.searchcount# as searchcount, *
+				SELECT #_imgCount# as searchcount, *
 				FROM qry_img
 			</cfif>
 			<cfif vidHere>
 				<cfif imgHere>
 					UNION ALL
 				</cfif>
-				SELECT #qry_lucene.searchcount# as searchcount, *
+				SELECT #_vidCount# as searchcount, *
 				FROM qry_vid
 			</cfif>
 			<cfif docHere>
 				<cfif vidHere OR imgHere>
 					UNION ALL
 				</cfif>
-				SELECT #qry_lucene.searchcount# as searchcount, *
+				SELECT #_docCount# as searchcount, *
 				FROM qry_doc
 			</cfif>
 			<cfif audHere>
 				<cfif docHere OR vidHere OR imgHere>
 					UNION ALL
 				</cfif>
-				SELECT #qry_lucene.searchcount# as searchcount, *
+				SELECT #_audCount# as searchcount, *
 				FROM qry_aud
 			</cfif>
 			</cfquery>
