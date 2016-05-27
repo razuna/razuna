@@ -929,6 +929,10 @@
 	<fuseaction name="staging">
 		<include template="dsp_staging" />
 	</fuseaction>
+	<!-- Reject show modal window -->
+	<fuseaction name="staging_reject">
+		<include template="dsp_staging_reject" />
+	</fuseaction>
 
 	<!-- Upload basket to local storage -->
 	<fuseaction name="basket_upload2local">

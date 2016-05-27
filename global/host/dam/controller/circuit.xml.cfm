@@ -10675,6 +10675,7 @@
 			<argument name="mod_id" value="1" />
 		</invoke> 
 		<!-- CFC: Get users -->
+		<set name="attributes.dam" value="true" />
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show -->
 		<do action="ajax.admin_approval" />
@@ -10692,6 +10693,13 @@
 		<xfa name="detailimg" value="c.images_detail" />
 		<xfa name="detailvid" value="c.videos_detail" />
 		<xfa name="detailaud" value="c.audios_detail" />
+		<xfa name="reject" value="ajax.staging_reject" />
+		<!-- Asset path -->
+		<do action="assetpath" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled('0')" returnvariable="qry_enabled" />
+		<!-- CFC: Get all allowed users -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_approval_users(true)" returnvariable="qry_users" />
 		<!-- CFC: Get all files -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_files()" returnvariable="qry_files" />
 		<!-- Show -->
@@ -10700,8 +10708,18 @@
 
 	<!-- User clicks on accept -->
 	<fuseaction name="approval_accept">
+		<!-- Params -->
+		<set name="attributes.dynpath" value="#dynpath#" />
 		<!-- CFC: Accept -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_accept(attributes)" />
+	</fuseaction>
+
+	<!-- After user rejected the file -->
+	<fuseaction name="approval_reject">
+		<!-- Params -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<!-- CFC: Accept -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_reject(attributes)" />
 	</fuseaction>
 
 	<!--  -->

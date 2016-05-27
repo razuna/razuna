@@ -182,7 +182,7 @@
 					<p><hr /></p>
 				</cfif>
 				<!--- Feedback --->
-				<cfif w EQ 100>
+				<!--- <cfif w EQ 100>
 					<p>
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
@@ -191,7 +191,7 @@
 						</cfif>
 					</p>
 					<p><hr /></p>
-				</cfif>
+				</cfif> --->
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>

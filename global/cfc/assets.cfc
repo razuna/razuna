@@ -1830,6 +1830,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
 	</cfif>
+	<!--- Check for approval --->
+	<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.qryfile.folder_id#" />
 	<!--- Catch issues with file not being fully uploaded to server due to interruption in data transfer. Happens if you 'Re-start Upload' or close plupload window during data transfer and then re-open which cancels previous uploads in progress --->
 	<cfif isdefined('arguments.thestruct.file_size')><!---  Check if file size reported by client via plupload is defined --->
 		<cfset var filesize_onserver = getfileinfo("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#").size> <!--- Get file size on server --->
@@ -1975,12 +1977,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.folder_id = arguments.thestruct.qryfile.folder_id>
 		<cfset arguments.thestruct.folder_action = false>
 		
-		<!--- Check for approval --->
-		<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.qryfile.folder_id#" />
 		<!--- If enabled do not execute plugins --->
 		<cfif qry_approval.approval_enabled>
 			<!--- Run approval --->
-			<cfinvoke component="global.cfc.approval" method="approval_execute" file_id="#returnid#" file_type="#fileType.type_type#" />
+			<cfinvoke component="global.cfc.approval" method="approval_execute" file_id="#returnid#" file_type="#fileType.type_type#" file_owner="#session.theuserid#" dynpath="#arguments.thestruct.dynpath#" />
 		<cfelse>
 			<!--- Check on any plugin that call the on_file_add action --->
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
