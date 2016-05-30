@@ -69,7 +69,10 @@
 			data: items
 		})
 		.done( function() {
+			// Show confirmation in the window
 			$('##reject_' + id).html("<h2>Your message has been sent and the file has been rejected! <br><br><a href='##'' onclick='destroywindow(1);return false;'>You can close this window now</a></h2>");
+			// Refresh the approval area
+			loadcontent('rightside','#myself#c.staging');
 		})
 		.fail( function() {
 			alert('fail!!!!!!!')

@@ -113,9 +113,6 @@
 		<cfelseif application.razuna.thedatabase EQ "mssql">
 			<cfset var theclob = "NVARCHAR(max)">
 			<cfset var thetimestamp = "datetime">
-		<cfelseif application.razuna.thedatabase EQ "oracle">
-			<cfset var theint = "number">
-			<cfset var thevarchar = "varchar2">
 		</cfif>
 
 		<!--- Get the correct paths for hosted vs non-hosted --->
@@ -187,6 +184,33 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO file_types VALUES ('svg', 'img', 'image', 'svg')
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Create approval --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_approval (
+				approval_enabled BOOLEAN DEFAULT '0',
+				approval_folders #thevarchar#(2000) DEFAULT NULL,
+				approval_group_1 #thevarchar#(2000) DEFAULT NULL,
+				approval_group_2 #thevarchar#(2000) DEFAULT NULL,
+				approval_group_1_all BOOLEAN DEFAULT '0',
+				approval_group_2_all BOOLEAN DEFAULT '0',
+				host_id #theint# DEFAULT NULL,
+				approval_folders_all BOOLEAN DEFAULT '0'
+				) #tableoptions#
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- Create approval done --->
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				CREATE TABLE raz1_approval_done (
+				user_id #thevarchar#(100) DEFAULT NULL,
+				approval_date timestamp NULL DEFAULT NULL,
+				file_id #thevarchar#(100) DEFAULT NULL
+				) #tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>

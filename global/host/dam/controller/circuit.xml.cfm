@@ -3087,6 +3087,8 @@
 		<set name="attributes.av" value="0" overwrite="false" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/#session.hostid#/assets/" />
+		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<if condition="structkeyexists(attributes,'assetid') AND attributes.assetid NEQ ''">
 			<true>
 				<set name="session.asset_id_r" value="#attributes.assetid#" />
@@ -10710,6 +10712,8 @@
 	<fuseaction name="approval_accept">
 		<!-- Params -->
 		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/#session.hostid#/assets/" />
+		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<!-- CFC: Accept -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_accept(attributes)" />
 	</fuseaction>
@@ -10718,6 +10722,8 @@
 	<fuseaction name="approval_reject">
 		<!-- Params -->
 		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/#session.hostid#/assets/" />
+		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<!-- CFC: Accept -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_reject(attributes)" />
 	</fuseaction>

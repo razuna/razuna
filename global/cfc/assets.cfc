@@ -1980,7 +1980,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- If enabled do not execute plugins --->
 		<cfif qry_approval.approval_enabled>
 			<!--- Run approval --->
-			<cfinvoke component="global.cfc.approval" method="approval_execute" file_id="#returnid#" file_type="#fileType.type_type#" file_owner="#session.theuserid#" dynpath="#arguments.thestruct.dynpath#" />
+			<cfinvoke component="global.cfc.approval" method="approval_execute" file_id="#returnid#" file_type="#fileType.type_type#" file_owner="#session.theuserid#" dynpath="#arguments.thestruct.dynpath#" urlasset="#arguments.thestruct.urlasset#" urlglobal="#arguments.thestruct.urlglobal#" />
 		<cfelse>
 			<!--- Check on any plugin that call the on_file_add action --->
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
