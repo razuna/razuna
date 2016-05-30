@@ -122,7 +122,11 @@
 		<cfargument name="all" type="boolean" required="true" />
 		<!--- Get the approval values --->
 		<cfset var _qry_approval = admin_get()>
-		<!--- <cfset console(_qry_approval.approval_group_1)> --->
+		<!--- If group is empty --->
+		<cfif _qry_approval.approval_group_1 EQ "">
+			<cfset _qry_approval.approval_group_1 = 0>
+			<cfset _qry_approval.approval_group_2 = 0>
+		</cfif>
 		<!--- Get all users of groups --->
 		<cfinvoke component="global.cfc.groups_users" method="getUsersOfGroups" grp_id="#_qry_approval.approval_group_1#" returnvariable="qry_group_users_1" />
 		<!--- Get users --->
