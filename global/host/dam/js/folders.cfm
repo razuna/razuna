@@ -134,7 +134,8 @@
 		var filename = document.forms[theform].filename.value;
 		var extension = document.forms[theform].extension.value;
 		var rawmetadata = document.forms[theform].rawmetadata.value;
-		var labels = $('#' + theform + ' [name="labels"]').val();
+		var labels = document.forms[theform].labels.value;
+		// var labels = $('#' + theform + ' [name="labels"]').val();
 		if(labels != null) 
 		{
 			labels = labels.toString().replace(/,/g, " ");
@@ -150,7 +151,9 @@
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' #cfid#');
 			<cfelseif cf_type EQ "select" OR cf_type EQ "select_multi">
-				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex] ? document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join(' #cfid#') : '';
+				try {
+					var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex] ? document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join(' #cfid#') : '';
+				} catch(e) {}
 			<cfelseif cf_type EQ "radio">
 				var oRadio = document.forms[theform].elements['cf#cfid#'];
 				for(var i = 0; i < oRadio.length; i++){
@@ -184,7 +187,7 @@
 			else {
 				var con1 = '\+';
 				var con2 = labels.split(' ').join(' +');
-				var labels = 'labels:(' + con1.concat(con2) + ')';
+				var labels = 'labels:("' + con1.concat(con2) + '")';
 			}
 		}
 		
