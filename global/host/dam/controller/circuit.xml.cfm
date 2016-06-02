@@ -10731,9 +10731,7 @@
 
 	<!-- For redirects from email -->
 	<fuseaction name="req_approval">
-		<!-- Params -->
-		<set name="attributes.goto" value="approval" />
-		<do action="main" />
+		<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;goto=approval" />
 	</fuseaction>
 	
 	<!--  -->
