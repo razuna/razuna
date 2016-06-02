@@ -3087,7 +3087,7 @@
 		<set name="attributes.av" value="0" overwrite="false" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
-		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/#session.hostid#/assets/" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/" />
 		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<if condition="structkeyexists(attributes,'assetid') AND attributes.assetid NEQ ''">
 			<true>
@@ -10728,6 +10728,13 @@
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_reject(attributes)" />
 	</fuseaction>
 
+	<!-- For redirects from email -->
+	<fuseaction name="req_approval">
+		<!-- Params -->
+		<set name="attributes.goto" value="approval" />
+		<do action="main" />
+	</fuseaction>
+	
 	<!--  -->
 	<!-- START: White-Labelling of hosts -->
 	<!--  -->

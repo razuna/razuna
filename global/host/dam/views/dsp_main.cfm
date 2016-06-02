@@ -284,7 +284,7 @@
 <!--- Activate the Tabs on the main page --->
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tabs_main_support");
-	<cfif fa EQ "c.req_approval">
+	<cfif attributes.goto EQ "approval">
 		$('##rightside').load('#myself#c.staging');
 	</cfif>
 </script>
