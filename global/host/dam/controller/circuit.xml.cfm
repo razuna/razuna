@@ -303,6 +303,7 @@
 	 			<!-- Param -->
 	 			<set name="session.hosttype" value="" overwrite="false" />
 	 			<set name="attributes.redirectmain" value="false" overwrite="false" />
+	 			<set name="attributes.goto" value="" overwrite="false" />
 	 			<!-- Set that we are in custom view -->
 				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
