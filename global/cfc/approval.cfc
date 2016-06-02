@@ -561,6 +561,13 @@
 		<!--- Get record --->
 		<cfset var _qry_file = get_file_values(file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal)>
 
+		<!--- Set the proper URL to get back to Razuna --->
+		<cfset var _raz_url = replaceNoCase(arguments.urlglobal, "global/", "", "ONE")>
+		<cfif application.razuna.isp>
+			<cfset _raz_url = _raz_url & "index.cfm?fa=c.req_approval">
+		<cfelse>
+			<cfset _raz_url = _raz_url & "raz#session.hostid#/dam/index.cfm?fa=c.req_approval">
+		</cfif>
 		<!--- Send emails to approval users/groups --->
 		<cfloop list="#arguments.group_users#" index="id" delimiters=",">
 			<!--- For approval --->
@@ -585,11 +592,12 @@ Dear #qry_user.user_first_name# #qry_user.user_last_name#,
 
 We need an approval from you on the following file (#_qry_file.qry.file_name#):
 
-#trim(_qry_file.thumbnail)#
-
+<p>
+	#trim(_qry_file.thumbnail)#
+</p>
 <p>
 	<strong>
-		<a href="">Click here to get to the approval dashboard</a>	
+		<a href="#_raz_url#">Click here to get to the approval dashboard</a>	
 	</strong>
 </p>
 					</cfoutput></cfsavecontent>
@@ -609,11 +617,12 @@ Dear #qry_user.user_first_name# #qry_user.user_last_name#,
 
 User #qry_owner.user_first_name# #qry_owner.user_last_name# (#qry_owner.user_email#) uploaded new file (#_qry_file.qry.file_name#) which requires your approval.
 
-#trim(_qry_file.thumbnail)#
-
+<p>
+	#trim(_qry_file.thumbnail)#
+</p>
 <p>
 	<strong>
-		<a href="">Click here to get to the approval dashboard</a>	
+		<a href="#_raz_url#">Click here to get to the approval dashboard</a>	
 	</strong>
 </p>
 				</cfoutput></cfsavecontent>
@@ -632,8 +641,9 @@ Dear #qry_user.user_first_name# #qry_user.user_last_name#,
 
 This is to let you know that the file (#_qry_file.qry.file_name#) has been fully approved and is now available in the system.
 
-#trim(_qry_file.thumbnail)#
-
+<p>
+	#trim(_qry_file.thumbnail)#
+</p>
 				</cfoutput></cfsavecontent>
 				
 			<!--- reject --->
@@ -652,8 +662,9 @@ The file (#_qry_file.qry.file_name#) has been rejected by the user (#qry_current
 
 #arguments.reject_message#
 
-#trim(_qry_file.thumbnail)#
-
+<p>
+	#trim(_qry_file.thumbnail)#
+</p>
 <p>
 	<em>The user who uploaded the file has been informed and the file has been removed from the system</em>
 </p>
@@ -683,8 +694,9 @@ The file (#_qry_file.qry.file_name#) has been rejected by the user (#qry_current
 
 #arguments.reject_message#
 
-#trim(_qry_file.thumbnail)#
-
+<p>
+	#trim(_qry_file.thumbnail)#
+</p>
 <p>
 	<em>The file has been removed from our system</em>
 </p>
@@ -702,8 +714,9 @@ Dear #qry_owner.user_first_name# #qry_owner.user_last_name#,
 
 The file (#_qry_file.qry.file_name#) has been approved and is now available in our system.
 
-#trim(_qry_file.thumbnail)#
-
+<p>
+	#trim(_qry_file.thumbnail)#
+</p>
 			</cfoutput></cfsavecontent>
 			<!--- All set call global send email function --->
 			<cfinvoke component="global.cfc.email" method="send_email" to="#qry_owner.user_email#" subject="#_subject_prefix# #_subject#" themessage="#_message#" />

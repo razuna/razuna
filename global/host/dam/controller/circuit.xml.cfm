@@ -10712,7 +10712,7 @@
 	<fuseaction name="approval_accept">
 		<!-- Params -->
 		<set name="attributes.dynpath" value="#dynpath#" />
-		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/#session.hostid#/assets/" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/" />
 		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<!-- CFC: Accept -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_accept(attributes)" />
@@ -10722,7 +10722,7 @@
 	<fuseaction name="approval_reject">
 		<!-- Params -->
 		<set name="attributes.dynpath" value="#dynpath#" />
-		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/#session.hostid#/assets/" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/" />
 		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<!-- CFC: Accept -->
 		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_reject(attributes)" />
