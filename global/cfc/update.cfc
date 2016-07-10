@@ -179,7 +179,7 @@
 		</cftry>
 
 		<!--- If less then 51 (1.8.5) --->
-		<cfif updatenumber.opt_value LT 51>
+		<cfif updatenumber.opt_value LT 52>
 			<!--- Add SVG --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
