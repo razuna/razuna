@@ -208,7 +208,7 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE TABLE raz1_approval_done (
 				user_id #thevarchar#(100) DEFAULT NULL,
-				approval_date timestamp NULL DEFAULT NULL,
+				approval_date #thetimestamp# NULL DEFAULT NULL,
 				file_id #thevarchar#(100) DEFAULT NULL
 				) #tableoptions#
 				</cfquery>
