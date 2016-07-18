@@ -8662,6 +8662,7 @@
 	<!--- Pass query to recursive function to get child folders --->
 	<cfinvoke method="recfoldername" returnvariable="_qry">
 		<cfinvokeargument name="theqry" value="#qry#">
+		<cfinvokeargument name="theoverallqry" value="#qry#">
 	</cfinvoke>
 	<!--- Sort query --->
 	<cfset QuerySort( _qry, 'folder_path', 'textnocase' )>

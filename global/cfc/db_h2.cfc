@@ -2157,6 +2157,31 @@
 			 PRIMARY KEY (fs_id)
 		)
 		</cfquery>
+
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#approval 
+		(
+			approval_enabled		boolean default '0',
+			approval_folders 		varchar(2000) default null,
+			approval_group_1 		varchar(2000) default null,
+			approval_group_2 		varchar(2000) default null,
+			approval_group_1_all 	boolean default '0',
+			approval_group_2_all 	boolean default '0',
+			host_id 				bigint default null,
+			approval_folders_all 	boolean default '0'
+		) 
+		</cfquery>
+
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#approval_done 
+		(
+			user_id 		varchar(100) default null,
+			approval_date 	timestamp null default null,
+			file_id 		varchar(100) default null
+		) 
+		</cfquery>
+
+
 	</cffunction>
 	
 	<!--- Create Indexes --->

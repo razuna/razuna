@@ -2734,8 +2734,38 @@
 			asset_description			varchar(3) DEFAULT 'F',
 			auto_entry	varchar(5) DEFAULT 'false',
 			PRIMARY KEY (fs_id),
-			KEY folder_id (folder_id),
-  			KEY user_id (user_id)
+			KEY #arguments.thestruct.host_db_prefix#fs_folder_id (folder_id),
+  			KEY #arguments.thestruct.host_db_prefix#fs_user_id (user_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval 
+		(
+			approval_enabled		boolean default '0',
+			approval_folders 		varchar(2000) default null,
+			approval_group_1 		varchar(2000) default null,
+			approval_group_2 		varchar(2000) default null,
+			approval_group_1_all 	boolean default '0',
+			approval_group_2_all 	boolean default '0',
+			host_id 				int default null,
+			approval_folders_all 	boolean default '0',
+			key #arguments.thestruct.host_db_prefix#ap_approval_enabled (approval_enabled),
+			key #arguments.thestruct.host_db_prefix#ap_approval_group_1_all (approval_group_1_all),
+			key #arguments.thestruct.host_db_prefix#ap_approval_group_2_all (approval_group_2_all),
+			key #arguments.thestruct.host_db_prefix#ap_host_id (host_id),
+			key #arguments.thestruct.host_db_prefix#ap_approval_folders_all (approval_folders_all)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval_done 
+		(
+			user_id 		varchar(100) default null,
+			approval_date 	timestamp null default null,
+			file_id 		varchar(100) default null
 		)
 		#this.tableoptions#
 		</cfquery>
