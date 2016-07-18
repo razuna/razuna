@@ -284,6 +284,9 @@
 <!--- Activate the Tabs on the main page --->
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tabs_main_support");
+	<cfif attributes.goto EQ "approval">
+		$('#rightside').load('index.cfm?fa=c.staging');
+	</cfif>
 </script>
 <!--- JS: FOLDERS --->
 <cfinclude template="../js/folders.cfm" runonce="true">

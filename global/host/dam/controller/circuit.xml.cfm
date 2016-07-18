@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2016.03.10.1" />
+		<set name="attributes.cachetag" value="2016.05.12.1" />
 	</fuseaction> 
 	
 	<!--
@@ -303,6 +303,7 @@
 	 			<!-- Param -->
 	 			<set name="session.hosttype" value="" overwrite="false" />
 	 			<set name="attributes.redirectmain" value="false" overwrite="false" />
+	 			<set name="attributes.goto" value="" overwrite="false" />
 	 			<!-- Set that we are in custom view -->
 				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
@@ -3087,6 +3088,8 @@
 		<set name="attributes.av" value="0" overwrite="false" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/" />
+		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
 		<if condition="structkeyexists(attributes,'assetid') AND attributes.assetid NEQ ''">
 			<true>
 				<set name="session.asset_id_r" value="#attributes.assetid#" />
@@ -10661,6 +10664,76 @@
 		<do action="ajax.indexing" />
 	</fuseaction>
 
+	<!-- APPROVAL -->
+	
+	<!-- Admin Approval Page -->
+	<fuseaction name="admin_approval">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="admin_get()" returnvariable="qry_approval" />
+		<!-- CFC: Get folders -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getFlatFolderList()" returnvariable="qry_folders" />
+		<!-- CFC: Get groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="mod_id" value="1" />
+		</invoke> 
+		<!-- CFC: Get users -->
+		<set name="attributes.dam" value="true" />
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
+		<!-- Show -->
+		<do action="ajax.admin_approval" />
+	</fuseaction>
+
+	<!-- Admin Approval Save -->
+	<fuseaction name="admin_approval_save">
+		<!-- CFC: Save -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="admin_save(attributes)" />
+	</fuseaction>
+
+	<!-- Staging Area -->
+	<fuseaction name="staging">
+		<xfa name="detaildoc" value="c.files_detail" />
+		<xfa name="detailimg" value="c.images_detail" />
+		<xfa name="detailvid" value="c.videos_detail" />
+		<xfa name="detailaud" value="c.audios_detail" />
+		<xfa name="reject" value="ajax.staging_reject" />
+		<!-- Asset path -->
+		<do action="assetpath" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled('0')" returnvariable="qry_enabled" />
+		<!-- CFC: Get all allowed users -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_approval_users(true)" returnvariable="qry_users" />
+		<!-- CFC: Get all files -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_files()" returnvariable="qry_files" />
+		<!-- Show -->
+		<do action="ajax.staging" />
+	</fuseaction>
+
+	<!-- User clicks on accept -->
+	<fuseaction name="approval_accept">
+		<!-- Params -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/" />
+		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
+		<!-- CFC: Accept -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_accept(attributes)" />
+	</fuseaction>
+
+	<!-- After user rejected the file -->
+	<fuseaction name="approval_reject">
+		<!-- Params -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.urlasset" value="#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/" />
+		<set name="attributes.urlglobal" value="#session.thehttp##cgi.http_host##cgi.context_path#/global/" />
+		<!-- CFC: Accept -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="approval_reject(attributes)" />
+	</fuseaction>
+
+	<!-- For redirects from email -->
+	<fuseaction name="req_approval">
+		<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;goto=approval" />
+	</fuseaction>
+	
 	<!--  -->
 	<!-- START: White-Labelling of hosts -->
 	<!--  -->

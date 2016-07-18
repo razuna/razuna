@@ -129,6 +129,15 @@
 			<div style="float:left;min-width:150px;"><a href="##" onclick="$('##userselection').toggle();" style="text-decoration:none;" class="ddicon">#session.firstlastname#</a></div>
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
+				<!--- Approval only show for sysadmins, admin or those users who are allowed --->
+				<cfif qry_approval.approval_enabled AND Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR listFind(qry_approval_users.user_ids, session.theuserid)>
+					<p>
+						<a href="##" onclick="loadcontent('rightside','#myself#c.staging');$('##userselection').toggle();return false;" style="width:100%;">Approval Area</a>
+					</p>
+					<p>
+						<hr />
+					</p>
+				</cfif>
 				<!--- Profile --->
 				<p>
 					<!--- RAZ-2718 Encode User's first and last name for title --->
@@ -173,7 +182,7 @@
 					<p><hr /></p>
 				</cfif>
 				<!--- Feedback --->
-				<cfif w EQ 100>
+				<!--- <cfif w EQ 100>
 					<p>
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
@@ -182,7 +191,7 @@
 						</cfif>
 					</p>
 					<p><hr /></p>
-				</cfif>
+				</cfif> --->
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>

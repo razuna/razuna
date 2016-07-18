@@ -1583,6 +1583,8 @@
 
 <!--- PATH TO ASSETS --->
 <cffunction name="assetpath" output="false" returntype="string">
+	<!--- Cache --->
+	<cfset variables.cachetoken = getcachetoken("settings")>
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
 	<!--- Query --->

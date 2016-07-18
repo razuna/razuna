@@ -199,6 +199,7 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
+		AND i.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		OR i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -2386,6 +2387,7 @@
 	</cfif>
 	<cfset resetcachetoken("images")>
 </cffunction>
+
 <!--- Get all asset from folder --->
 <cffunction name="getAllFolderAsset" output="false">
 	<cfargument name="thestruct" type="struct">

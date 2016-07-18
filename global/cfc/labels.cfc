@@ -741,7 +741,7 @@
 			SELECT /* #variables.cachetoken#labels_assets */
 			<cfif application.razuna.thedatabase EQ "mssql">TOP #session.rowmaxpage# </cfif>
 			<cfif application.razuna.thedatabase EQ "db2">row_number() over() as rownr,</cfif>
-			 i.img_id id, i.img_filename filename, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as fileidwithtype,
+			i.img_id id, i.img_filename filename, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as fileidwithtype,
 			i.folder_id_r,cast(i.img_size as decimal(12,0)) as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 			i.path_to_asset, i.cloud_url, i.cloud_url_org, 'R' as permfolder, i.expiry_date, f.folder_name, 'null' as customfields,

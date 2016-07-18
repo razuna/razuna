@@ -369,7 +369,7 @@
 	</cffunction>
 	
 	<!--- get asset from label --->
-	<cffunction name="getassetoflabel" access="remote" output="false" returntype="query" returnformat="json">
+	<cffunction name="getassetoflabel" access="remote" output="false" returntype="Any" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="label_id" required="true">
 		<cfargument name="label_type" required="false" default="assets">
@@ -383,7 +383,11 @@
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfset session.sortby = "name">
 			<!--- Call internal function, method labels_assets already checks proper permissions for user and returns appropriate labels--->
-			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="thexml">
+			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="_thexml">
+			<!--- This hack fixes issues on the hosted with yellow screen of death --->
+			<cfquery dbtype="query" name="thexml">
+			SELECT * FROM _thexml
+			</cfquery>
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>

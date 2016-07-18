@@ -2873,6 +2873,7 @@
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND fi.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND fi.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			AND fi.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "f" AND arguments.folder_id NEQ "">
 				AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -2895,6 +2896,7 @@
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			AND i.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 				AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -2917,6 +2919,7 @@
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			AND v.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 				AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -2939,6 +2942,7 @@
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			AND a.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 				AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			</cfif>
@@ -3257,6 +3261,7 @@
 		AND SUBSTR<cfif variables.database EQ "mssql">ING</cfif>(file_extension,1,3) = 'doc'
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif session.customfileid NEQ "">
 			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
@@ -3275,6 +3280,7 @@
 			AND SUBSTR<cfif variables.database EQ "mssql">ING</cfif>(file_extension,1,3) = 'xls'
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3294,6 +3300,7 @@
 			AND SUBSTR<cfif variables.database EQ "mssql">ING</cfif>(file_extension,1,3) = 'pdf'
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3315,6 +3322,7 @@
 			AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 'pdf')
 			OR  file_type = 'other')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3333,6 +3341,7 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND (img_group IS NULL OR img_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<!--- If coming from custom view and the session.customfileid is not empty --->
 			<cfif session.customfileid NEQ "">
 				AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
@@ -3352,6 +3361,7 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND (vid_group IS NULL OR vid_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3370,6 +3380,7 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND (aud_group IS NULL OR aud_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3977,6 +3988,7 @@
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		AND i.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
@@ -4035,6 +4047,7 @@
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		AND v.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
@@ -4094,6 +4107,7 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		AND a.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
@@ -4141,6 +4155,7 @@
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+		AND f.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
@@ -8628,5 +8643,81 @@
 	</cfif>
 	<cfreturn folder_check_pass/>
 </cffunction>
+
+
+<cffunction name="getFlatFolderList" output="false" returntype="query">
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("folders")>
+	<!--- Param --->
+	<cfset var qry = "" >
+	<!--- Query folder on root level --->
+	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #cachetoken#getFlatFolderList */ f.folder_of_user, f.folder_id, f.folder_name, '0' as folder_level, f.folder_name as folder_path, <cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username
+	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+	WHERE f.folder_id = f.folder_id_r
+	AND f.host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	AND lower(f.in_trash) = <cfqueryparam value="f" CFSQLType="CF_SQL_VARCHAR">
+	AND (f.folder_is_collection IS NULL OR f.folder_is_collection = '')
+	</cfquery>
+	<!--- Pass query to recursive function to get child folders --->
+	<cfinvoke method="recfoldername" returnvariable="_qry">
+		<cfinvokeargument name="theqry" value="#qry#">
+	</cfinvoke>
+	<!--- Sort query --->
+	<cfset QuerySort( _qry, 'folder_path', 'textnocase' )>
+	<!--- Return --->
+	<cfreturn _qry>
+</cffunction>
+
+<!--- RECURSIVE SUBQUERY TO READ FOLDERS --->
+<cffunction name="recfoldername" output="false" access="public" returntype="query">
+	<cfargument name="theqry" required="yes">
+	<cfargument name="theoverallqry" required="no" default="#querynew('folder_of_user, folder_id, folder_name, folder_level, folder_path, username')#">
+	<cfargument name="thelevel" required="no" default="0">
+	<!--- Increase folder level --->
+	<cfset thelevel = arguments.thelevel + 1>
+	<!--- Cache --->
+	<cfset var cachetoken = getcachetoken("folders")>
+	<!--- Loop over the given query --->
+	<cfloop query="arguments.theqry">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="local_query" cachedwithin="1" region="razcache">
+		SELECT /* #cachetoken#recfolder */ f.folder_of_user, f.folder_id, f.folder_name, '#thelevel#' as folder_level, <cfif application.razuna.thedatabase EQ "mssql">'#folder_path# / ' + f.folder_name<cfelse>concat('#folder_path# / ',f.folder_name)</cfif> as folder_path, <cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username
+		FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+		WHERE f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folder_id#">
+		AND f.folder_id != f.folder_id_r
+		AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Add the found records to the general query --->
+		<cfif local_query.RecordCount NEQ 0>
+			<cfquery dbtype="query" name="arguments.theoverallqry">
+			SELECT * FROM arguments.theqry
+			UNION
+			SELECT * FROM local_query
+			UNION
+			SELECT * FROM arguments.theoverallqry
+			</cfquery>
+			<!--- get child-folders of next level but only if this is not the same folder_id. This fixes a bug some experiences where folders would not get removed --->
+			<cfinvoke method="recfoldername" returnvariable="sub_query">
+				<cfinvokeargument name="theqry" value="#local_query#">
+				<cfinvokeargument name="theoverallqry" value="#arguments.theoverallqry#">
+				<cfinvokeargument name="thelevel" value="#thelevel#">
+			</cfinvoke>
+			<cfif sub_query.RecordCount NEQ 0>
+				<cfquery dbtype="query" name="arguments.theoverallqry">
+				SELECT * FROM arguments.theqry
+				UNION
+				SELECT * FROM sub_query
+				UNION
+				SELECT * FROM arguments.theoverallqry
+				</cfquery>
+			</cfif>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn arguments.theoverallqry>
+</cffunction>
+
 
 </cfcomponent>

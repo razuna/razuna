@@ -49,6 +49,9 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
 		<!-- CFC: Get customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Check approval -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled('0')" returnvariable="qry_approval" />
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="get_approval_users(true)" returnvariable="qry_approval_users" />
 		<!-- CFC: Get wl -->
 		<if condition="application.razuna.whitelabel">
 			<true>

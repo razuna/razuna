@@ -1,4 +1,0 @@
-RUN wget http://downloads.ghostscript.com/public/binaries/ghostscript-9.15-linux-x86_64.tgz -P /opt
-RUN tar -C /opt -xzvf /opt/ghostscript-9.15-linux-x86_64.tgz
-RUN mv /usr/bin/gs /usr/bin/gs--
-RUN ln -s /opt/ghostscript-9.15-linux-x86_64/gs-915-linux_x86_64 /usr/bin/gs
