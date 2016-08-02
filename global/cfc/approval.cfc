@@ -104,8 +104,10 @@
 		FROM #session.hostdbprefix#approval
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.folder_id NEQ 0>
-			AND approval_folders IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#" list="true">)
-			OR approval_folders_all = <cfqueryparam cfsqltype="cf_sql_double" value="1">
+			AND (
+				approval_folders IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#" list="true">)
+				OR approval_folders_all = <cfqueryparam cfsqltype="cf_sql_double" value="1">
+			)
 		</cfif> 
 		</cfquery>
 		<!--- If no record we have to add default values to qry --->
@@ -170,21 +172,25 @@
 		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#images r LEFT JOIN users u ON u.user_id = r.img_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT r.vid_id as id, r.vid_filename as name, r.vid_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, '' as thumb_extension, 'vid' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.vid_owner as file_owner, r.vid_name_org as filename_org, r.vid_extension as extension
 		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#videos r LEFT JOIN users u ON u.user_id = r.vid_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT r.aud_id as id, r.aud_name as name, r.aud_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, '' as thumb_extension, 'aud' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.aud_owner as file_owner, r.aud_name_org as filename_org, r.aud_extension as extension
 		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#audios r LEFT JOIN users u ON u.user_id = r.aud_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT r.file_id as id, r.file_name as name, r.file_create_time as date_create, r.cloud_url, r.cloud_url_org, r.path_to_asset, r.hashtag, r.folder_id_r, '' as thumb_extension, 'doc' as kind, u.user_first_name, u.user_last_name, f.folder_name, r.file_owner as file_owner, r.file_name_org as filename_org, r.file_extension as extension
 		FROM #session.hostdbprefix#folders f, #session.hostdbprefix#files r LEFT JOIN users u ON u.user_id = r.file_owner
 		WHERE r.is_available = <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		AND f.folder_id = r.folder_id_r
+		AND r.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY date_create DESC
 		</cfquery>
 		<!--- Get the approval done records --->
