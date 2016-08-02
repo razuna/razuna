@@ -241,6 +241,8 @@
 				<cfset var cattreeimg = querynew("categorytree")>
 				<cfset queryaddrow(cattreeimg)>
 			</cfif>
+		<cfelse>
+			<cfset var qryluceneimg = querynew("categorytree")>
 		</cfif>
 		<!--- Get cache --->
 		<cfset var cachetoken = getcachetoken(arguments.istruct.api_key,"search")>
@@ -693,6 +695,8 @@
 				<cfset var cattreevid = querynew("categorytree")>
 				<cfset queryaddrow(cattreevid)>
 			</cfif>
+		<cfelse>
+			<cfset var qrylucenevid = querynew("categorytree")>
 		</cfif>
 		<cfset var cachetoken = getcachetoken(arguments.vstruct.api_key,"search")>
 		<!--- Query --->
@@ -1129,6 +1133,8 @@
 				<cfset var cattreeaud = querynew("categorytree")>
 				<cfset queryaddrow(cattreeaud)>
 			</cfif>
+		<cfelse>
+			<cfset var qryluceneaud = querynew("categorytree")>
 		</cfif>
 		<cfset var cachetoken = getcachetoken(arguments.astruct.api_key,"search")>
 		<!--- Query --->
@@ -1553,6 +1559,8 @@
 				<cfset var cattreedoc = querynew("categorytree")>
 				<cfset queryaddrow(cattreedoc)>
 			</cfif>
+		<cfelse>
+			<cfset var qrylucenedoc = querynew("categorytree")>
 		</cfif>
 		<cfset var cachetoken = getcachetoken(arguments.fstruct.api_key,"search")>
 		<!--- Query --->
