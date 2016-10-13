@@ -1,5 +1,5 @@
 <cfoutput>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	// Popup windows for email
 	function basketemail(email){
 		// Open email Window
