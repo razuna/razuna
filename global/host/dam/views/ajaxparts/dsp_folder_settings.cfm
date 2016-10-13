@@ -51,7 +51,7 @@
 		</cfif>
 	</div>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Set tabs
 		jqtabs("tabfoldersettings");
 		// Load folder properties

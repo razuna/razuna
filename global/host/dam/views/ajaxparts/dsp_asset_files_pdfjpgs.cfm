@@ -26,7 +26,7 @@
 <cfoutput>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
-<head><script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script></head>
+<head><script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script></head>
 <body>
 
 <!--- Storage Decision --->

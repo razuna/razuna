@@ -169,7 +169,7 @@
 		</cfif> 
 	<!--- </cfif> --->
 </div>
-<script language="javascript">
+<script type="text/javascript">
 	// Change the sortby
 	function changesortbysearch(theselect){
 		// Show loading bar

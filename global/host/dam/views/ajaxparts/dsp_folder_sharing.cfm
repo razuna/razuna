@@ -163,7 +163,7 @@
 	</div>
 	</form>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
 	</script>

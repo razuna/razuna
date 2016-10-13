@@ -256,7 +256,7 @@
 
 	<!--- JS --->
 	<cfif attributes.isdetail NEQ "T">
-		<script language="JavaScript" type="text/javascript">
+		<script type="text/javascript">
 			// Initialize Tabs
 			jqtabs("folder#attributes.theid#-#attributes.isdetail#");
 			// Check link
@@ -266,7 +266,7 @@
 			}
 		</script>
 	</cfif>
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Focus on the folder_name
 		$('##folder_name').focus();
 		// Activate Chosen

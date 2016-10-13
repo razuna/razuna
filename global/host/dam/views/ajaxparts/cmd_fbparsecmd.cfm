@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 </cfoutput>
 Recreating parsed directory
 <script>

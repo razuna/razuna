@@ -39,17 +39,17 @@
 			<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 				<cfif isadmin>
 					<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F');$('##explorertools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">#myFusebox.getApplicationData().defaults.trans("folder_new")# (#myFusebox.getApplicationData().defaults.trans("on_root_level")#)</a></p>
-					<p><hr /></p>
+					<p><hr></p>
 				</cfif>
 				<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 				<cfif isadmin>
-					<p><hr /></p>
+					<p><hr></p>
 					<cfif session.showmyfolder EQ "F">
 						<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_all_folders")#</a></p>
 					<cfelse>
 						<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_my_folders")#</a></p>
 					</cfif>
-					<!--- <p><hr /></p> --->
+					<!--- <p><hr></p> --->
 				</cfif>
 				<!--- <p><a href="##" onclick="javascript:PicLensLite.start({feedUrl:'#myself#c.cooliris_folder&folder_id=0'});$('##explorertools').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("tooltip_cooliris")#</a></p> --->
 			</div>
@@ -86,7 +86,7 @@
 		<p style="padding-left:10px;"><a href="#myself#c.main&redirectmain=true&_v=#createuuid('')#" title="Click here to get to the main page">#myFusebox.getApplicationData().defaults.trans("go_to_main_page")#</a></p>
 	</cfif>
 		
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	// Load Folders
 	$(function () { 
 		$("##treeBox").tree({
