@@ -32,7 +32,7 @@
 	<input type="hidden" name="label_id" value="#attributes.label_id#">
 	<!--- Desc --->
 	<p>#myFusebox.getApplicationData().defaults.trans("header_download_folder_desc")#</p>
-	<p><hr /></p>
+	<p><hr></p>
 	<div>
 		<div style="float:left;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("download_folder_what")#</div>
 		<div style="float:left;">

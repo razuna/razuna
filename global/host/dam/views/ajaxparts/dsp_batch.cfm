@@ -145,7 +145,7 @@
 		<div id="updatebatch" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</form>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Initialize Tabs
 		jqtabs("tabs_batch");
 		// Submit Form

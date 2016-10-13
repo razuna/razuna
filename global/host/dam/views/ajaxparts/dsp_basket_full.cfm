@@ -711,14 +711,14 @@
 		<div style="border:1px solid ##ccc; width:95%; height:20px; overflow:auto; background:##eee;">
 		    <div id="progressor" style="background:##07c; width:0%; height:100%;"></div>
 		</div>
-		<hr />
+		<hr>
 	</cfif>
 </form>
 	
 	<cfif qry_basket.recordcount NEQ 0><div>* <em>#myFusebox.getApplicationData().defaults.trans("link_url_basket")#</em></div></cfif>
 </cfoutput>
 
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 
 	// New function to first get all the selected files
 	function orderSelectedFiles() {

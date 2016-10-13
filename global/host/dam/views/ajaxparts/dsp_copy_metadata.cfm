@@ -52,7 +52,7 @@
 		<div id="statusrenditionconvertdummy"></div>
 	</div>
 </cfoutput>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	function copy_meta(){
 		// Only allow chars
 		var illegalChars = /(\*|\?)/;

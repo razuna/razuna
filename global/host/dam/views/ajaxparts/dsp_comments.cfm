@@ -36,7 +36,7 @@
 <div id="comlist"></div>
 <div id="status_com"></div>
 <!--- Load Comment list --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	loadcontent('comlist','#myself##xfa.comlist#&file_id=#attributes.file_id#&type=#attributes.type#&folder_id=#attributes.folder_id#');
 	// Activate Chosen
 	/* $(".chzn-select").chosen({search_contains: true}); */
