@@ -112,7 +112,7 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	// Initialize Tabs
 	jqtabs("tab_imp_temp");
 	// Init Chosen

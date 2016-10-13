@@ -32,7 +32,7 @@
 		<!--- Show existing fields --->
 		<div id="thefields"></div>
 		<br />
-		<hr />
+		<hr>
 		<!--- Add a new field --->
 		<form name="form_cf_add" id="form_cf_add" method="post" action="#self#" onsubmit="customfieldadd();return false;">
 		<input type="hidden" name="#theaction#" value="c.custom_field_add">
@@ -118,7 +118,7 @@
 			</table>
 		</form>
 		<!--- JS --->
-		<script language="JavaScript" type="text/javascript">
+		<script type="text/javascript">
 			// Load existing fields
 			$('##thefields').load('#myself#c.custom_fields_existing');
 			// Activate Chosen

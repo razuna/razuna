@@ -248,7 +248,7 @@
 	</div>
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		$("##tab_admin").tabs();
 		
 		<cfif isadmin OR (structkeyexists(tabaccess_struct,"users_access") AND tabaccess_struct.users_access)>
