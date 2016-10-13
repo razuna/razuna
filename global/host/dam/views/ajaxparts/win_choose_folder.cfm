@@ -58,7 +58,7 @@ div.folders .tree li a,
 	<cfelse>
 		<cfset iscol = "F">
 	</cfif> --->
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 		// Load Folders
 		$(function () { 
 			$("##win_choosefolder_#session.tmpid#").tree({

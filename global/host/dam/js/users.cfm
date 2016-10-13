@@ -1,4 +1,4 @@
-<script language="javascript">
+<script type="text/javascript">
 	function usersearch(){
 		if (document.getElementById('user_login_name2').value == "" && document.getElementById('user_company2').value == "" && document.getElementById('user_email2').value == ""){
 			alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("one_field_fill"))#</cfoutput>');

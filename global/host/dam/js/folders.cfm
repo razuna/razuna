@@ -1,4 +1,4 @@
-<script language="javascript">
+<script type="text/javascript">
 	// when saving sharing only
 	function savesharing(theid,iscol){
 		var url = formaction("form_folder_share" + theid);

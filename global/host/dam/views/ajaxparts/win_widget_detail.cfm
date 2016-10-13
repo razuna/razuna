@@ -169,7 +169,7 @@
 		</form>
 	</div>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Create Tabs
 		jqtabs("widget_tab");
 		// Submit Form

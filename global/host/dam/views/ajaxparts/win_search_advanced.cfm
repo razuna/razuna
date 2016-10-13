@@ -122,7 +122,7 @@
 							<div id="pdfxmp" style="display:none;">
 								<table>
 									<tr>
-										<td colspan="2"><hr /></td>
+										<td colspan="2"><hr></td>
 									</tr>
 									<tr>
 										<th colspan="2">#myFusebox.getApplicationData().defaults.trans("pdf_only_xmp")#</th>
@@ -152,7 +152,7 @@
 										<td><input type="text" name="rightsmarked" style="width:300px;" class="textbold"></td>
 									</tr>
 									<tr>
-										<td colspan="2"><hr /></td>
+										<td colspan="2"><hr></td>
 									</tr>
 								</table>
 							</div>
@@ -200,7 +200,7 @@
 							<div id="imgxmp" style="display:none;">
 								<table>
 									<tr>
-										<td colspan="2"><hr /></td>
+										<td colspan="2"><hr></td>
 									</tr>
 									<tr>
 										<th colspan="2">#myFusebox.getApplicationData().defaults.trans("dedicated_metadata")#</th>
@@ -338,7 +338,7 @@
 										<td><input type="text" name="rights" style="width:300px;" class="textbold"></td>
 									</tr>
 									<tr>
-										<td colspan="2"><hr /></td>
+										<td colspan="2"><hr></td>
 									</tr>
 								</table>
 							</div>
@@ -422,7 +422,7 @@
 		<div id="loading_searchadv2" style="width:100%;text-align:center;"></div>
 	</div>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
 		jqtabs("searchadvanced");

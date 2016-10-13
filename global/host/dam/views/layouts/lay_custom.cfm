@@ -45,9 +45,9 @@
 <cfheader name="PRAGMA" value="public">
 <cfheader name="P3P" value="CP=\\\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\\\"">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
+<script type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css?" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css" />
@@ -55,10 +55,10 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>

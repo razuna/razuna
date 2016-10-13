@@ -31,7 +31,7 @@
 <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	top.location.href = "index.cfm?c.logoff";
 </script>
 </head>

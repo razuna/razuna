@@ -1,4 +1,4 @@
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	// Save Comment
 	function addcomment(fileid,type){
 		var thecom = $("#comment" + fileid).val();

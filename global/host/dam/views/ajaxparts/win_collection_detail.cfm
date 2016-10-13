@@ -573,11 +573,11 @@
 	</cfif>
 	</form>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
 	</script>	
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Initialize Tabs
 		jqtabs("col_detail#col_id#");
 		// Submit Form
