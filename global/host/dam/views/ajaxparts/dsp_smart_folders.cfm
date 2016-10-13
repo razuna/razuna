@@ -32,7 +32,7 @@
 			<div id="sfmanage" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 					<p><a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#">#myFusebox.getApplicationData().defaults.trans("smart_folder_new")#</a></p>
-					<p><hr /></p>
+					<p><hr></p>
 				</cfif>
 				<p><a href="##" onclick="loadcontent('explorer','#myself#c.smart_folders');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 			</div>

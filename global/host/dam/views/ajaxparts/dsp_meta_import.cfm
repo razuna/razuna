@@ -32,7 +32,7 @@
 	<input type="hidden" name="tempid" value="#attributes.tempid#">
 	<!--- Desc --->
 	<p>#myFusebox.getApplicationData().defaults.trans("import_metadata_desc")#</p>
-	<p><hr /></p>
+	<p><hr></p>
 	<div>
 		<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("apply_to")#...</div>
 		<div style="float:left;">
@@ -95,7 +95,7 @@
 	<!--- JS --->
 	<!---
 /*
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 		// Load the below when this page gets hit
 		// Append to frame url
 		function enabletemplates(){

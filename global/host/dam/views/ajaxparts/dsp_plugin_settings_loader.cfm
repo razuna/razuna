@@ -32,7 +32,7 @@
 	<!--- Link back to the Administration --->
 	<div style="padding-left:10px;"><a href="##" onclick="$('##rightside').load('#myself#c.admin', function(){$('##tab_admin').tabs('option', 'active', #activetabnum#)});">#myFusebox.getApplicationData().defaults.trans("back_to_admin")#</a></div>
 	<div style="clear:both;"></div>
-	<hr />
+	<hr>
 	<!--- Do the include of the plugin setting page --->
 	<cfif structKeyExists(pl,"pview")>
 		<cfloop list="#pl.pview#" delimiters="," index="i">
