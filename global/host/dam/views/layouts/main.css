@@ -444,16 +444,16 @@ font-size: 18px;
 }
 /* --- Drop Down Selection --- */
 .ddselection_header {
-width:150px;
-position:absolute;
-display:none;
-top:28px;
-background:#ffffff;
-padding-left:10px;
-padding-right:10px;
-border:1px solid #BBBBBB;
-font-weight: normal;
-z-index: 9999;
+	width:150px;
+	position:absolute;
+	display:none;
+	top:28px;
+	background:#ffffff;
+	padding-left:10px;
+	padding-right:10px;
+	border:1px solid #BBBBBB;
+	font-weight: normal;
+	z-index: 9999;
 }
 .ddselection_header a {
 text-decoration:none;
