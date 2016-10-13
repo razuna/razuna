@@ -56,7 +56,7 @@
 	</table>
 	</form>
 	<!--- JS for form --->
-	<script language="javascript">
+	<script type="text/javascript">
 		function submitassetemailshow() {
 			// Waiting gif
 			$('##subemail').html('<img src="#dynpath#/global/host/dam/images/loading-bars.gif" alt="loading-bars" width="128" height="15" />');

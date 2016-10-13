@@ -85,7 +85,7 @@
 	</table>
 	</form>
 	<!--- JS form --->
-	<script language="javascript">
+	<script type="text/javascript">
 		$("##assetemailform").submit(function(e) {
 			// Check that a email has been selected
 			var arehere = 'F';

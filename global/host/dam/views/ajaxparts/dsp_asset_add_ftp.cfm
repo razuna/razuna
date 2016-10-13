@@ -53,7 +53,7 @@
 		</tr>
 	</table>
 	</form>
-	<script language="javascript">
+	<script type="text/javascript">
 		function submitassetftpshow(){
 			// Get passive selection
 			for (var i = 0; i<document.assetftp.elements.length; i++) {

@@ -361,7 +361,7 @@
 		</cfif>
 	</form>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 	jqtabs("tab_detail#attributes.file_id#");
 	// Load renditions
 	function loadrenaud(){
