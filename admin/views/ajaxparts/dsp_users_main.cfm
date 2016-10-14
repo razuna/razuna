@@ -111,8 +111,8 @@
 	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#defaultsObj.trans("user_send_email_warning")#</p>
 </div>
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_users");
+<script type="text/javascript">
+	$("##tabs_users").tabs();
 	// Search
 	function searchme() {
 		if ($('##user_login_name2').val() == "" && $('##user_company2').val() == "" && $('##user_email2').val() == ""){

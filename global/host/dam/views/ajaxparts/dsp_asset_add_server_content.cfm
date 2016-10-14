@@ -102,7 +102,7 @@
 </form>
 
 <!--- JS to submit form here --->
-<script language="javascript">
+<script type="text/javascript">
 	$("##assetserverform").submit(function(e) {
 		var url = formaction("assetserverform");
 		var items = formserialize("assetserverform");

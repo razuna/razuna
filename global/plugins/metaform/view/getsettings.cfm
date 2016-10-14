@@ -143,9 +143,9 @@
 		</div>
 	</div>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Create Tabs
-		jqtabs("tab_metaform");
+		$("##tab_metaform").tabs();
 		// Make theactions sortable
 		$('##thefields').sortable({
 			placeholder: "myplace",

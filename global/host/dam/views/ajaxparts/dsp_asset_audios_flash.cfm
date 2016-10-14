@@ -77,7 +77,7 @@ div##wrapper {
 		<!--- Flash Player --->
 		<cfcase value="mp3">
 			<div class="flowplayerdetail" style="display:block;width:450px;height:20px;" href="#urlencodedformat(audiopath)#"></div>
-			<script language="javascript" type="text/javascript">
+			<script type="text/javascript">
 				// this simple call does the magic
 				flowplayer("div.flowplayerdetail", "#dynpath#/global/videoplayer/flowplayer-3.2.7.swf", { 
 				     // fullscreen button not needed here 
@@ -109,7 +109,7 @@ div##wrapper {
 		</cfcase>
 		<!--- Quicktime --->
 		<cfcase value="wav,m4a,m4b,m4p,au,amr">
-			<script language="JavaScript" type="text/javascript">
+			<script type="text/javascript">
 			QT_WriteOBJECT('#audiopath#','450','30','',
 			'target','myself',
 			'controller','true',

@@ -371,7 +371,7 @@
 	<div id="shared_basket"></div>
 </div>
 <script type="text/javascript">
-	jqtabs("tabs_shared");
+	$("##tabs_shared").tabs();
 	<cfif structkeyexists(attributes,"tab")>
 		$('##tabs_shared').tabs('option', 'active',1);
 	</cfif>

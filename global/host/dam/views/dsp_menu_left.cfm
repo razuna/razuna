@@ -59,7 +59,7 @@
 	<!--- <div id="explorer" style="margin-left:0;padding-left:0;"></div> --->
 	<div id="explorer" style="margin-left:0;padding-left:0;height:720px;width:240px;overflow-y:auto;overflow-x:auto;"></div>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		//RAZ-2267 Load the default explorer based on the admin customization 
 		<cfif structKeyExists(cs,"tab_explorer_default") AND cs.tab_explorer_default EQ 1>
 		$('##explorer').load('#myself#c.explorer');

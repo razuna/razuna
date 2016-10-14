@@ -46,6 +46,6 @@
 	</div>
 </cfoutput>
 
-<script language="javascript">
+<script type="text/javascript">
 	init();
 </script>

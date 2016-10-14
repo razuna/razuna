@@ -43,7 +43,7 @@
 
 	<script type="text/javascript">
 		// The tabs
-		jqtabs("labels_tab");
+		$("##labels_tab").tabs();
 		// Initial load
 		loadcontent('lab_content','#myself#c.labels_main_assets&label_id=#attributes.label_id#&label_kind=assets&offset=#attributes.offset#');
 	</script>

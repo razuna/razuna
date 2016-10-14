@@ -246,7 +246,7 @@
 		</cfif>
 	</div>
 
-	<script language="javascript">
+	<script type="text/javascript">
 		// Change the sortby
 		function changesortby(theselect){
 			// Get selected option

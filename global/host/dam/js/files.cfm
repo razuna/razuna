@@ -1,4 +1,4 @@
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
 // Create Version
 // function vercreate(fileid, type, tempid){

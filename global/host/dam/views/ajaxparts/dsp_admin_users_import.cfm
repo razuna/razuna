@@ -31,7 +31,7 @@
 		<input type="hidden" name="tempid" value="#tempid#">
 		<!--- Desc --->
 		<p>#myFusebox.getApplicationData().defaults.trans("users_import")#</p>
-		<p><hr /></p>
+		<p><hr></p>
 		<div>
 			<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_format")#</div>
 			<div style="float:left;">

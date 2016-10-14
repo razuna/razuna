@@ -32,49 +32,49 @@
 		<ul>
 			<!--- If we are a collection show the list of collections else the content of folder --->
 			<cfif attributes.iscol EQ "F">
-				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all&iscol=#attributes.iscol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_content")# (#arraySum(qry_fileTotalAllTypes['cnt'])#)</a></li>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_content")# (#arraySum(qry_fileTotalAllTypes['cnt'])#)</a></li>
 				<cfloop query="qry_fileTotalAllTypes">
 					<cfif qry_fileTotalAllTypes.cnt GT 0>
 						<cfif ext EQ "img">
 							<cfif cs.tab_images>
-								<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img&iscol=#attributes.iscol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#cnt#)</a></li>
+								<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "vid">
 							<cfif cs.tab_videos>
-								<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_videos")# (#cnt#)</a></li>
+								<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_videos")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "aud">
 							<cfif cs.tab_audios>
-								<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_audios")# (#cnt#)</a></li>
+								<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_audios")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "doc">
 							<cfif cs.tab_doc>
-								<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_word")# (#cnt#)</a></li>
+								<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_word")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "xls">
 							<cfif cs.tab_xls>
-								<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_excel")# (#cnt#)</a></li>
+								<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_excel")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "pdf">
 							<cfif cs.tab_pdf>
-								<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_pdf")# (#cnt#)</a></li>
+								<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_pdf")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "other">
 							<cfif cs.tab_other>
-								<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_others")# (#cnt#)</a></li>
+								<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("folder_others")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 					</cfif>
 				</cfloop>
 			<cfelse>
-				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_collections")#</a></li>
-				<li><a href="##contentrel" onclick="loadcontent('contentrel','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#&released=true');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_collections")# Released</a></li>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("header_collections")#</a></li>
+				<li><a href="##contentrel" onclick="loadcontent('contentrel','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#&released=true');">#myFusebox.getApplicationData().defaults.trans("header_collections")# Released</a></li>
 			</cfif>
 		</ul>
 		
@@ -114,7 +114,7 @@
 	</div>
 
 <script type="text/javascript">
-	jqtabs("tabsfolder_tab");
+	$("##tabsfolder_tab").tabs();
 	<cfif attributes.iscol EQ "F" OR attributes.iscol EQ "">
 		loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#');
 	<cfelse>

@@ -69,7 +69,7 @@
 
 <!--- Activate the Tabs --->
 <script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_groups");
+	$("##tabs_groups").tabs();
 	loadcontent('grpdamlist', '#myself#c.groups_list&kind=ecp&loaddiv=grpdamlist');
 	/* loadcontent('grpadmlist', '#myself#c.groups_list&kind=adm&loaddiv=grpadmlist'); */
 	// Add DAM group

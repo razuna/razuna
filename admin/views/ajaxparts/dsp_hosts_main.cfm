@@ -193,7 +193,7 @@
 	</div>
 <!--- Activate the Tabs --->
 <script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_hosts");
+	$("##tabs_hosts").tabs();
 	loadcontent('hostslist', '#myself#c.hosts_list');
 	loadcontent('thelangs', '#myself#c.hosts_languages');
 </script>

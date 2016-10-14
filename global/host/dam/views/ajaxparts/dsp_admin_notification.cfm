@@ -43,7 +43,7 @@
 			<h4>#myFusebox.getApplicationData().defaults.trans("from_email_header")#</h4>
 			#myFusebox.getApplicationData().defaults.trans("from_email_desc")#
 			<input type="text" name="set2_email_from" size="60" value="#attributes.notifications.set2_email_from#" /></td>
-			<hr />
+			<hr>
 			<!--- email settings for new registration from site --->
 			<h4>#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</h4>
 			<table border="0" width="100%">
@@ -74,7 +74,7 @@
 				</td>
 			</tr>
 			</table>
-			<hr />
+			<hr>
 			<!--- New User Welcome Email settings  --->
 			<h4>#myFusebox.getApplicationData().defaults.trans("new_user_email_header")#</h4>
 			<table border="0" width="100%">
@@ -107,7 +107,7 @@
 				</td>
 			</tr>
 			</table>
-			<hr />
+			<hr>
 
 		<h4>#myFusebox.getApplicationData().defaults.trans("folder_subscribe_email_header")# </h4>
 		<table border="0" width="100%">
@@ -133,7 +133,7 @@
 			        	</td>
 		        </tr>
 		</table>
-		<hr />
+		<hr>
 		<h4>#myFusebox.getApplicationData().defaults.trans("asset_expiry_email_header")#</h4>
 		<table border="0" width="100%">
 			<tr>
@@ -158,7 +158,7 @@
 			      	</td>
 		        </tr>
 		</table>
-		<hr />
+		<hr>
 		<h4>#myFusebox.getApplicationData().defaults.trans("duplicate_email_header")#</h4>
 		#myFusebox.getApplicationData().defaults.trans("duplicate_email_desc")#
 		<table border="0" width="100%">
@@ -193,7 +193,7 @@
 		<br/><br/>
 	</cfform>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Submit Form
 		$("##form_admin_notification").submit(function(e){
 			// Need to update ckeditor text area before form submit so that the current value is grabbed on submit for AJAX call

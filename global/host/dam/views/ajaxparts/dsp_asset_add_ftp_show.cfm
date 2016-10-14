@@ -112,7 +112,7 @@
 				</tr> --->
 		</table>
 		</form>
-		<script language="javascript">
+		<script type="text/javascript">
 			$("##assetftpform").submit(function(e) {
 				// Check that a file has been selected
 				var arehere = 'F';

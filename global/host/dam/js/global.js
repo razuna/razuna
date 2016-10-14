@@ -41,12 +41,6 @@ function destroywindow(numb) {
 	}
 	catch(e) {};
 }
-// Load Tabs
-function jqtabs(tabs){
-	$(function() {
-		$("#" + tabs).tabs();
-	});
-}
 // Load Content with JQuery
 function loadcontent(ele,url){
 	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
@@ -391,28 +385,6 @@ function razaddlabels(thediv,fileid,thetype,text){
 	$.sticky(text);
 }
 
-// For the Quick Search
-$(document).ready(function() {
-	// Store the value of the input field
-	var theval = $('#simplesearchtext').val();
-	// If user click on the quick search field we hide the text
-	$('#simplesearchtext').click(function(){
-		// Get the value of the entry field
-		var theentrynow = $('#simplesearchtext').val();
-		if (theentrynow == 'Quick Search'){
-			$('#simplesearchtext').val('');
-		}
-	});
-	// If the value field is empty restore the value field
-	$('#simplesearchtext').blur(function(){
-		// Get the current value of the field
-		var thevalnow = $('#simplesearchtext').val();
-		// If the current value is empty then restore it with the default value
-		if ( thevalnow === '') {
-			$('#simplesearchtext').val(theval);
-		}
-	});
-});
 function checkentry(){
 	// Define the folder id
 	var thefolderid = 0;
@@ -1235,6 +1207,25 @@ $(document).ready(function() {
 		document.form_account.target='myWin';
 		document.form_account.submit();
 	}
+	// Store the value of the input field
+	var theval = $('#simplesearchtext').val();
+	// If user click on the quick search field we hide the text
+	$('#simplesearchtext').click(function(){
+		// Get the value of the entry field
+		var theentrynow = $('#simplesearchtext').val();
+		if (theentrynow == 'Quick Search'){
+			$('#simplesearchtext').val('');
+		}
+	});
+	// If the value field is empty restore the value field
+	$('#simplesearchtext').blur(function(){
+		// Get the current value of the field
+		var thevalnow = $('#simplesearchtext').val();
+		// If the current value is empty then restore it with the default value
+		if ( thevalnow === '') {
+			$('#simplesearchtext').val(theval);
+		}
+	});
 });
 
 // FOLDER 

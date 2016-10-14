@@ -147,8 +147,8 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
-	jqtabs("rfstab");
+<script type="text/javascript">
+	$("##rfstab").tabs();
 	// Fire the form submit for new or update user
 	$(document).ready(function(){
 		$("##rfsdetail").validate({

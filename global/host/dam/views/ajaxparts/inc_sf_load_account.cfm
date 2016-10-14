@@ -28,7 +28,7 @@
 	<cfif a.is_dir>
 		<div style="padding:5px;border-bottom:1px solid grey;width:100%;" id="folder">
 			<div style="float:left;padding-top:10px;">
-				<a rel="prefetch" href="##" onclick="loadoverlay();$('##sf_account').load('#myself#c.sf_load_account', { path: '#a.path#', sf_type: '#session.sf_account#' }, function(){$('##bodyoverlay').remove();});">
+				<a href="##" onclick="loadoverlay();$('##sf_account').load('#myself#c.sf_load_account', { path: '#a.path#', sf_type: '#session.sf_account#' }, function(){$('##bodyoverlay').remove();});">
 					<div style="float:left;padding-right:15px;">
 						<img src="#dynpath#/global/host/dam/images/folder-blue-old.png" border="0">
 					</div>

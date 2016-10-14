@@ -225,7 +225,7 @@
 	</form>
 	<br />
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Submit Form
 		$("##form_admin_settings").submit(function(e){
 			// Get values

@@ -26,13 +26,13 @@
 <cfoutput>
 	<!--- Collections --->
 	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Collections</div> --->
-	<div style="width:60px;float:right;left:190px;position:absolute;top:3px;">
+	<div style="width:65px;float:right;left:190px;position:absolute;top:3px;word-break:keep-all">
 		<div style="float:left;"><a href="##" onclick="$('##collectiontools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##collectiontools').toggle();" class="ddicon"></div>
 		<div id="collectiontools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=T');$('##collectiontools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">Add Collection Folder</a></p>
-				<p><hr /></p>
+				<p><hr></p>
 			</cfif>
 			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer_col');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>
@@ -49,27 +49,20 @@
 			<a href="##" onclick="$('##rightside').load('#myself#c.collection_explorer_trash&trashkind=files&offset=0&rowmaxpage=25');">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")#</a>
 		</div>
 	</div>
-	<script language="javascript" type="text/javascript">
-		// Load Collections
-		$(function () { 
-			$("##colBox").tree({
-				plugins : {
-					cookie : { prefix : "cookiecolbox_" }
-				},
-				types : {
-					"default"  : {
-						deletable : false,
-						renameable : false,
-						draggable : false
-					}
-				},
-				data : { 
-					async : true,
-					opts : {
-						url : "#myself#c.getfolderfortree&col=T"
+	<script type="text/javascript">
+		// Load jstree
+		$('##colBox').jstree({
+			"state" : { "key" : "razuna-tree-collection" },
+			"plugins" : [ "state" ],
+			'core' : {
+				'data' : {
+					"url" : "#myself#c.getfolderfortree&col=T",
+					"dataType" : "json", // needed only if you do not supply JSON headers
+					"data" : function (node) {
+						return { "id" : node.id };
 					}
 				}
-			});
+			}
 		});
 	</script>
 </cfoutput>

@@ -112,9 +112,9 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	// Initialize Tabs
-	jqtabs("tab_imp_temp");
+	$("##tab_imp_temp").tabs();
 	// Init Chosen
 	//$(".chzn-select").chosen({no_results_text: "No results matched"});
 	// Fire the form submit for new or update

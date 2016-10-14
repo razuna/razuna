@@ -26,9 +26,9 @@
 		<div id="tab2">Content of Tab 2</div>
 	</div>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Create Tabs
-		jqtabs("tab_workflow_settings");
+		$("##tab_workflow_settings").tabs();
 		// Save from Button
 		function savethis(){
 			$('##mysave').load('/global/plugins/workflow/cfc/settings.cfc?method=setSettingsRemote&args=tests');

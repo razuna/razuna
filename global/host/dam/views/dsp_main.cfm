@@ -155,7 +155,7 @@
 										<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
 										<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 										<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
-										<p><hr /></p>
+										<p><hr></p>
 										<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("help_with_search")#</a></p>
 									</div>
 									<div style="float:left;">
@@ -270,7 +270,7 @@
 				</tr>
 			</table>
 		<cfelse>
-			<script language="JavaScript" type="text/javascript">
+			<script type="text/javascript">
 				$('##rightside').load('#myself#c.folder&col=F&folder_id=#session.folder_redirect_id#');
 			</script>
 		</cfif>
@@ -282,8 +282,8 @@
 	</cfoutput>
 </div>
 <!--- Activate the Tabs on the main page --->
-<script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_main_support");
+<script type="text/javascript">
+	$("#tabs_main_support").tabs();
 	<cfif attributes.goto EQ "approval">
 		$('#rightside').load('index.cfm?fa=c.staging');
 	</cfif>

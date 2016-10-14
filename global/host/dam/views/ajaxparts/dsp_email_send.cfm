@@ -53,7 +53,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<cfif attributes.frombasket EQ "T">
 		<tr>
-			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("basket_email_send_desc")#<br/><hr /></td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("basket_email_send_desc")#<br/><hr></td>
 		</tr>
 	</cfif>
 	<tr>
@@ -78,7 +78,7 @@
 	</tr>
 	<cfif attributes.frombasket EQ "F">
 		<tr>
-			<td colspan="2"> <hr /> </td>
+			<td colspan="2"> <hr> </td>
 		</tr>
 		<!--- Get size of asset --->
 		<cfset size = 0>
@@ -246,7 +246,7 @@
 				</tr>
 			</cfif>
 			<tr>
-				<td colspan="2"> <hr /> </td>
+				<td colspan="2"> <hr> </td>
 			</tr>
 		<cfelse>
 			<input type="hidden" name="sendaszip" value="F">

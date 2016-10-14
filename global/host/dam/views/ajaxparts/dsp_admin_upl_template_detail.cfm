@@ -1633,9 +1633,9 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	// Initialize Tabs
-	jqtabs("tab_upl_temp");
+	$("##tab_upl_temp").tabs();
 	// Fire the form submit for new or update
 	$(document).ready(function(){
 		$("##formupltemp").validate({

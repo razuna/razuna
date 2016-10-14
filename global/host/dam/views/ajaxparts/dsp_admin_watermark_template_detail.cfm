@@ -114,7 +114,7 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	// Fire the form submit for new or update
 	$(document).ready(function(){
 		$("##formwmtemp").validate({

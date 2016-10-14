@@ -25,7 +25,7 @@
 --->
 <div id="rightside"></div>
 <!--- JS to load content --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	loadcontent('rightside','<cfoutput>#myself#c.share_content&fid=#session.fid#</cfoutput>');
 </script>
 <!--- JS: Share --->
