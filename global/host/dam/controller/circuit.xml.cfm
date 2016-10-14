@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2016.05.12.1" />
+		<set name="attributes.cachetag" value="2016.10.14.1" />
 	</fuseaction> 
 	
 	<!--
