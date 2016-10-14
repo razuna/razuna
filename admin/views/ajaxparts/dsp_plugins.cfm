@@ -65,7 +65,7 @@
 	</form>
 
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
-		jqtabs("tabs_plugins");
+	<script type="text/javascript">
+		$("##tabs_plugins").tabs();
 	</script>
 </cfoutput>

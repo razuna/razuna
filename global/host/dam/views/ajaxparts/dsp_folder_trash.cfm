@@ -47,8 +47,8 @@
 			</cfif> 
 			<ul>
 				<!--- Show the trash asset and folder content--->
-				<li><a href="##assets" onclick="loadcontent('assets','#myself#c.trash_assets&trashkind=assets');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(file_trash_count['cnt'])#)</a></li>
-				<li><a href="##folders" onclick="loadcontent('folders','#myself#c.trash_folder_all&trashkind=folders');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folders")# (#arraySum(folder_trash_count['cnt'])#)</a></li>
+				<li><a href="##assets" onclick="loadcontent('assets','#myself#c.trash_assets&trashkind=assets');">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(file_trash_count['cnt'])#)</a></li>
+				<li><a href="##folders" onclick="loadcontent('folders','#myself#c.trash_folder_all&trashkind=folders');">#myFusebox.getApplicationData().defaults.trans("trash_folders")# (#arraySum(folder_trash_count['cnt'])#)</a></li>
 			</ul>
 			<!--- For assets  --->
 			<div id="assets"></div>
@@ -57,7 +57,7 @@
 		</div>
 			
 		<script type="text/javascript">
-			jqtabs("tabsfolder_tab");
+			$("##tabsfolder_tab").tabs();
 				<cfif attributes.trashkind EQ "folders">
 					$('##folders').load('#myself#c.trash_folder_all&trashkind=folders');
 					//$('##tabsfolder_tab').tabs('select','##folders');

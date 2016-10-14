@@ -304,7 +304,7 @@
 <!--- Activate the Tabs --->
 <script type="text/javascript">
 	// Initialize Tabs
-	jqtabs("tab_admin_user");
+	$("##tab_admin_user").tabs();
 	// Fire the form submit for new or update user
 	$(document).ready(function(){
 		$("##userdetailadd").validate({

@@ -36,7 +36,7 @@
 			<cfelse>
 				<cfset pc = pc & p & "/">
 			</cfif>
-			<a rel="prefetch" href="##" onclick="loadoverlay();$('##sf_account').load('#myself#c.sf_load_account', { path: '<cfif session.sf_account EQ "dropbox">/</cfif>#pc#', sf_type: '#session.sf_account#'}, function(){$('##bodyoverlay').remove(); });return false;">#p#</a> / 
+			<a href="##" onclick="loadoverlay();$('##sf_account').load('#myself#c.sf_load_account', { path: '<cfif session.sf_account EQ "dropbox">/</cfif>#pc#', sf_type: '#session.sf_account#'}, function(){$('##bodyoverlay').remove(); });return false;">#p#</a> / 
 		</cfloop></strong>
 	<p></p>
 	<div id="sf_select_div">

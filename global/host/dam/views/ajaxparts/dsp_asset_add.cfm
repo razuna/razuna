@@ -61,7 +61,7 @@
 	</div>
 	<!--- Activate the Tabs --->
 <script type="text/javascript">
-	jqtabs("tab_addassets");
+	$("##tab_addassets").tabs();
 	// $("##tab_addassets").tabs('select', 0);
 	loadcontent('addsingle','#myself##xfa.addsingle#&folder_id=#folder_id#');
 	// Check folder path

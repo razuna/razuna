@@ -208,8 +208,8 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_prefs_global");
+<script type="text/javascript">
+	$("##tabs_prefs_global").tabs();
 	loadcontent('gstorage','#myself#c.prefs_global_storage');
 	// Save this form
 	function savesettings() {

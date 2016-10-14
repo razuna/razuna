@@ -950,4 +950,9 @@
 		<include template="dsp_wl_news_edit" />
 	</fuseaction>
 
+	<!-- Just for Json output -->
+	<fuseaction name="json">
+		<include template="dsp_json" />
+	</fuseaction>
+
 </circuit>

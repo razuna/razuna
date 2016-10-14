@@ -235,8 +235,8 @@
 </div>
 <!--- Activate the Tabs on the main page --->
 <script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_main_support");
-	jqtabs("tabs_main_setup");
+	$("##tabs_main_support").tabs();
+	$("##tabs_main_setup").tabs();
 	loadcontent('check','<cfoutput>#myself#</cfoutput>c.mainchecklist');
 </script>
 

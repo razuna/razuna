@@ -171,7 +171,7 @@
 	<!--- JS --->
 	<script type="text/javascript">
 		// Create Tabs
-		jqtabs("widget_tab");
+		$("##widget_tab").tabs();
 		// Submit Form
 		$("##form_widget").submit(function(e){
 			// Check for widget name

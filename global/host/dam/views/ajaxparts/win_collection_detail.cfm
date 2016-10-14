@@ -579,7 +579,7 @@
 	</script>	
 	<script type="text/javascript">
 		// Initialize Tabs
-		jqtabs("col_detail#col_id#");
+		$("##col_detail#col_id#").tabs();
 		// Submit Form
 		$("##form#col_id#").submit(function(e){
 			// If collectionname is empty

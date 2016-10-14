@@ -147,7 +147,7 @@
 	<!--- Activate the Tabs --->
 	<script type="text/javascript">
 		// Initialize Tabs
-		jqtabs("tabs_batch");
+		$("##tabs_batch").tabs();
 		// Submit Form
 		$("##form0").submit(function(e){
 			// Show

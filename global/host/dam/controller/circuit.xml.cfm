@@ -613,13 +613,22 @@
 		<set name="attributes.col" value="F" overwrite="false" />
 		<set name="attributes.id" value="0" overwrite="false" />
 		<set name="attributes.actionismove" value="F" overwrite="false" />
+		<set name="attributes.permlist" value="r,w,x" overwrite="false" />
+		<set name="attributes.kind" value="" overwrite="false" />
+		<set name="attributes.fromtrash" value="false" overwrite="false" />
 		<set name="session.showmyfolder" value="F" overwrite="false" />
 		<!-- Get folder record -->
-		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
+		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="json_data">
 			<argument name="thestruct" value="#attributes#" />
 			<argument name="id" value="#attributes.id#" />
 			<argument name="col" value="#attributes.col#" />
+			<argument name="actionismove" value="#attributes.actionismove#" />
+			<argument name="permlist" value="#attributes.permlist#" />
+			<argument name="kind" value="#attributes.kind#" />
+			<argument name="fromtrash" value="#attributes.fromtrash#" />
 		</invoke>
+		<!-- Show -->
+		<do action="ajax.json" />
 	</fuseaction>
 	
 	<fuseaction name="searchforcopymetadata">
@@ -9505,8 +9514,13 @@
 	</fuseaction>
 	<!-- Load the label explorer -->
 	<fuseaction name="labels_tree">
+		<!-- Params -->
+		<set name="attributes.id" value="0" overwrite="false" />
+		<set name="attributes.dynpath" value="#dynpath#" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels(attributes, attributes.id)" returnvariable="qry_labels" />
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels(attributes, attributes.id)" returnvariable="json_data" />
+		<!-- Show -->
+		<do action="ajax.json" />
 	</fuseaction>
 	<!-- Update labels of the item -->
 	<fuseaction name="label_update">

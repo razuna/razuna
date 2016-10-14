@@ -258,7 +258,7 @@
 	<cfif attributes.isdetail NEQ "T">
 		<script type="text/javascript">
 			// Initialize Tabs
-			jqtabs("folder#attributes.theid#-#attributes.isdetail#");
+			$("##folder#attributes.theid#-#attributes.isdetail#").tabs();
 			// Check link
 			function jschecklink(){
 				// Check link

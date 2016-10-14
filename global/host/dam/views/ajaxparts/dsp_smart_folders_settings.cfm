@@ -150,7 +150,7 @@
 
 	<script type="text/javascript">
 		// Create tabs
-		jqtabs("sf_tab");
+		$("##sf_tab").tabs();
 		//check the drobox and amazon S3
        $(document).ready(function(){
    			<cfif chk_dropbox.recordcount EQ 0 AND chk_s3.recordcount EQ 0>

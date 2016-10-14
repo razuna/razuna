@@ -41,12 +41,6 @@ function destroywindow(numb) {
 	}
 	catch(e) {};
 }
-// Load Tabs
-function jqtabs(tabs){
-	$(function() {
-		$("#" + tabs).tabs();
-	});
-}
 // Load Content with JQuery
 function loadcontent(ele,url){
 	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');

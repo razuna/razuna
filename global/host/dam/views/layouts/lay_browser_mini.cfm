@@ -27,8 +27,8 @@
 <cfoutput>
 	<div id="tabs_mini">
 		<ul>
-			<li><a href="##thecontent" onclick="" rel="prefetch prerender">Folder &amp; Files</a></li>
-			<li><a href="##thesearch" onclick="" rel="prefetch prerender">Search</a></li>
+			<li><a href="##thecontent" onclick="">Folder &amp; Files</a></li>
+			<li><a href="##thesearch" onclick="">Search</a></li>
 		</ul>
 		<div id="thecontent">
 			<!--- Foldername --->

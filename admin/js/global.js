@@ -36,13 +36,6 @@ function destroywindow(numb) {
 	catch(e) {};
 }
 
-// Load Tabs
-function jqtabs(tabs){
-	$(function() {
-		$("#" + tabs).tabs();
-	});
-}
-
 // Load Content with JQuery
 function loadcontent(ele,url){
 	// Load the page

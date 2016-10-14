@@ -78,7 +78,7 @@
 	</div>
 
 	<script type="text/javascript">
-	jqtabs("tabs_footer");
+	$("##tabs_footer").tabs();
 	function tooglefooter(what){
 		// which div to resize
 		var thefooterslider = $('##footer_drop');

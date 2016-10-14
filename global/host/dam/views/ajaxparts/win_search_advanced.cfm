@@ -425,7 +425,7 @@
 	<script type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
-		jqtabs("searchadvanced");
+		$("##searchadvanced").tabs();
 		// Focus
 		$('##searchforadv_all').focus();
 	</script>	

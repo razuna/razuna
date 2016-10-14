@@ -142,7 +142,7 @@
 	<script type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
-		jqtabs("updatertabs");
+		$("##updatertabs").tabs();
 	</script>	
 </cfoutput>
 	

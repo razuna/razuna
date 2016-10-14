@@ -283,7 +283,7 @@
 </div>
 <!--- Activate the Tabs on the main page --->
 <script type="text/javascript">
-	jqtabs("tabs_main_support");
+	$("#tabs_main_support").tabs();
 	<cfif attributes.goto EQ "approval">
 		$('#rightside').load('index.cfm?fa=c.staging');
 	</cfif>

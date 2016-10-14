@@ -223,9 +223,9 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	// Tabs
-	jqtabs("theuser");
+	$("##theuser").tabs();
 	// Focus
 	$('##user_email').focus();
 	// Fire the form submit for new or update user
