@@ -123,7 +123,7 @@
 	</div>
 	<div style="float:right;">
 		<!--- User Name with drop down --->
-		<div style="width:auto;float:right;padding:7px 10px 0px 20px;">
+		<div style="width:auto;float:right;padding:7px 10px 0px 10px;">
 			<!--- UserName --->
 			<div style="float:left;padding-right:3px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##userselection').toggle();"></div>
 			<div style="float:left;min-width:150px;"><a href="##" onclick="$('##userselection').toggle();" style="text-decoration:none;" class="ddicon">#session.firstlastname#</a></div>
@@ -182,16 +182,14 @@
 					<p><hr /></p>
 				</cfif>
 				<!--- Feedback --->
-				<!--- <cfif w EQ 100>
-					<p>
-						<cfif application.razuna.whitelabel>
-							#wl_feedback#
-						<cfelse>
-							<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
-						</cfif>
-					</p>
-					<p><hr /></p>
-				</cfif> --->
+				<p>
+					<cfif application.razuna.whitelabel>
+						#wl_feedback#
+					<cfelse>
+						<a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a>
+					</cfif>
+				</p>
+				<p><hr /></p>
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>
@@ -205,18 +203,18 @@
 			</cfif>
 			<!--- Show basket link --->
 			<cfif cs.show_basket_part>
-				<div style="float:left;padding-right:20px;vertical-align:top">
+				<div style="float:left;vertical-align:top">
 					<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a>
 				</div>
 			</cfif>
 			<!--- Feedback --->
-			<cfif w EQ 300>
+			<!--- <cfif w EQ 300>
 				<cfif application.razuna.whitelabel>
 					<div style="float:left;">#wl_feedback#</div>
 				<cfelse>
 					<div style="float:left;"><a href="https://help.razuna.com" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_feedback")#</a></div>
 				</cfif>
-			</cfif>
+			</cfif> --->
 		</div>
 	</div>
 	<!--- JS --->
