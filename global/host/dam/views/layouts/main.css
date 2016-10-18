@@ -960,6 +960,13 @@ font-weight: bold;
 	-webkit-box-shadow: 0 0 5px #aaa;
 	box-shadow: 0 0 5px #aaa;
 }
+.ui-dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
 .ui-dialog .ui-dialog-titlebar-close {
 	top: 10%;
 }
@@ -970,41 +977,41 @@ font-weight: bold;
 /* Choose label updates*/
 .labelRemove{
 	display: block; cursor:pointer;
-    height: 12px;
-    position: absolute;
-    right: 3px;
-    top: 4px;
-    width: 12px;
+	height: 12px;
+	position: absolute;
+	right: 3px;
+	top: 4px;
+	width: 12px;
 	font-weight:bold;
 }
 .labelRemove:hover{text-decoration:none}
 .singleLabel {
- 	background-clip: padding-box;
-    background-color: #E4E4E4;
-    background-image: linear-gradient(#F4F4F4 20%, #F0F0F0 50%, #E8E8E8 52%, #EEEEEE 100%);
-    border: 1px solid #AAAAAA;
-    border-radius: 3px;
-    box-shadow: 0 0 2px #FFFFFF inset, 0 1px 0 rgba(0, 0, 0, 0.05);
-    color: #333333;
-    cursor: default;
-    line-height: 13px;
-    margin: 3px 0 3px 5px;
-    padding: 3px 20px 3px 5px;
-    position: relative;
+	background-clip: padding-box;
+	background-color: #E4E4E4;
+	background-image: linear-gradient(#F4F4F4 20%, #F0F0F0 50%, #E8E8E8 52%, #EEEEEE 100%);
+	border: 1px solid #AAAAAA;
+	border-radius: 3px;
+	box-shadow: 0 0 2px #FFFFFF inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+	color: #333333;
+	cursor: default;
+	line-height: 13px;
+	margin: 3px 0 3px 5px;
+	padding: 3px 20px 3px 5px;
+	position: relative;
 	float:left;
  } 
  .labelContainer{
-  	-moz-box-sizing: border-box;
-    background-color: #FFFFFF;
-    background-image: linear-gradient(#EEEEEE 1%, #FFFFFF 15%);
-    border: 1px solid #AAAAAA;
-    cursor: text;
-    height: auto !important;
-    margin: 0;
-    overflow: auto;
-    padding: 0;
-    position: relative;
-    width: 100%;
+	-moz-box-sizing: border-box;
+	background-color: #FFFFFF;
+	background-image: linear-gradient(#EEEEEE 1%, #FFFFFF 15%);
+	border: 1px solid #AAAAAA;
+	cursor: text;
+	height: auto !important;
+	margin: 0;
+	overflow: auto;
+	padding: 0;
+	position: relative;
+	width: 100%;
 	min-height:30px;
 }
 
