@@ -152,7 +152,7 @@
 						<!--- Create temp ID --->
 						<cfset _asset_id = createuuid("")>
 						<!--- Create record in db --->
-						<cfset _id = create_inserts(asset_id=_asset_id, host_id=x.host_id, folder_id=x.folder_id, is_available=x.is_available, filename_org=x.filename_org, filename=x.filename, type=x.type, api_key=arguments.api_key)>
+						<cfset _id = create_inserts(asset_id=_asset_id, host_id=x.host_id, folder_id=x.folder_id, is_available=x.is_available, filename_org=x.filename_org, filename=x.filename, type=x.type, group=x.group, ext=x.ext, extthumb = x.extthumb, api_key=arguments.api_key)>
 						<!--- Add our own tags to the query --->
 						<cfset thexml = querynew("asset_id, filename, type, status")>
 						<cfset queryaddrow(thexml, 1)>
@@ -179,7 +179,7 @@
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
-		</cfif> 
+		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
@@ -241,7 +241,7 @@
 		<!--- No session found --->
 		<cfelse>
 			<cfset var thexml = timeout()>
-		</cfif> 
+		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
@@ -258,13 +258,16 @@
 		<cfargument name="filename_org" type="string">
 		<cfargument name="filename" type="string">
 		<cfargument name="type" type="string">
+		<cfargument name="group" type="string">
+		<cfargument name="ext" type="string">
+		<cfargument name="extthumb" type="string">
 		<cfargument name="api_key" type="string">
 		<!--- IMAGES --->
 		<cfif arguments.type EQ "img">
 			<!--- Add records to the DB - We do this here so that fast subsequent calls from the API work --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#images
-			(img_id, host_id, folder_id_r, is_available, img_filename, img_filename_org, img_create_time)
+			(img_id, host_id, folder_id_r, is_available, img_filename, img_filename_org, img_create_time, path_to_asset, img_extension, thumb_extension, img_group)
 			VALUES(
 			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">,
@@ -272,7 +275,15 @@
 			<cfqueryparam value="#arguments.is_available#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#arguments.filename#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#arguments.filename_org#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam value="#arguments.folder_id#/img/#arguments.asset_id#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.ext#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.extthumb#" cfsqltype="cf_sql_varchar">,
+			<cfif arguments.group EQ "">
+				<cfqueryparam value="" null="true" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam value="#arguments.group#" cfsqltype="cf_sql_varchar">
+			</cfif>
 			)
 			</cfquery>
 			<!--- Create empty records in the table because we sometimes have images without XMP --->
@@ -282,21 +293,23 @@
 			(id_inc, img_id_r, lang_id_r, host_id)
 			VALUES(
 			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
 			)
 			</cfquery>
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#xmp
-			(id_r)
+			(asset_type, host_id, id_r)
 			VALUES(
+				<cfqueryparam value="#arguments.type#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.host_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		<!--- VIDEOS --->
-		<cfelseif qry_mime.type_type EQ "vid">
-			<!--- Insert record --->		
+		<cfelseif arguments.type EQ "vid">
+			<!--- Insert record --->
 			<!--- <cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#videos
 			(vid_id, vid_name_org, vid_filename, host_id, folder_id_r, path_to_asset, is_available, vid_create_time)
@@ -327,7 +340,7 @@
 				(id_inc, vid_id_r, lang_id_r, host_id)
 				VALUES(
 				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				)
@@ -352,7 +365,7 @@
 							UPDATE #session.hostdbprefix#videos_text
 							SET
 							vid_description = <cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
-							vid_keywords = <cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">, 
+							vid_keywords = <cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
 							vid_title = <cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">
 							WHERE vid_id_r = <cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">
 							</cfquery>
@@ -361,7 +374,7 @@
 				</cfloop>
 			</cfif> --->
 		<!--- AUDIOS --->
-		<cfelseif qry_mime.type_type EQ "aud">
+		<cfelseif arguments.type EQ "aud">
 			<!--- Add record --->
 			<!--- <cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#audios
@@ -388,7 +401,7 @@
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#files
-			(file_id, host_id, folder_id_r, is_available, file_name, file_name_org, file_create_time)
+			(file_id, host_id, folder_id_r, is_available, file_name, file_name_org, file_create_time, file_extension, path_to_asset)
 			VALUES(
 				<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">,
@@ -396,7 +409,9 @@
 				<cfqueryparam value="#arguments.is_available#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.filename#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.filename_org#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#arguments.ext#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.folder_id#/doc/#arguments.asset_id#" cfsqltype="cf_sql_varchar">
 			)
 			</cfquery>
 			<!--- Create empty records in the text table --->
@@ -406,7 +421,7 @@
 			(id_inc, file_id_r, lang_id_r, host_id)
 			VALUES(
 			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
 			)
