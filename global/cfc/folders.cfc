@@ -4430,6 +4430,10 @@
 		<cfset var iscol = "F">
 		<cfset var theid = arguments.id>
 	</cfif>
+	<!--- If theid is only a hashtag --->
+	<cfif theid EQ "##">
+		<cfset var theid = 0>
+	</cfif>
 	<!--- If this use is not in the admin groups clear the showmyfolder session --->
 	<cfif NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()>
 		<cfset session.showmyfolder = "F">
@@ -4662,10 +4666,17 @@
 	ORDER BY lower(folder_name)
 	</cfquery>
 
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(session.theuserid)>
+	<cfset console(" ISCOL : #iscol# ")>
+	<cfset console(" THEID : #theid# ")>
+	<cfset console(" ARGUMENTS.ID : #arguments.id# ")> --->
+
 	<!--- Create the XML --->
 	<cfif theid EQ 0>
 		<!--- This is the ROOT level  --->
 		<cfif session.showmyfolder EQ "F" AND iscol NEQ "T">
+			<!--- <cfset console("HERE !!!!!!!!!!!!!!!")> --->
 			<cfquery dbtype="query" name="qry">
 			SELECT *
 			FROM qry
@@ -4676,6 +4687,9 @@
 			</cfquery>
 		</cfif>
 	</cfif>
+
+	<!--- <cfset console(qry)>
+	<cfabort> --->
 
 	<!--- Node Array --->
 	<cfset var _node = arrayNew()>
@@ -4706,7 +4720,7 @@
 						<cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">
 							<cfset var _folder_name = _folder_name & "*">
 							<cfif folder_name EQ "my folder">
-								<cfset var _folder_name = _folder_name & " " & username>
+								<cfset var _folder_name = _folder_name & " <em>(" & username & ")</em>">
 							</cfif>
 						</cfif>
 					</cfif>
@@ -4771,7 +4785,7 @@
 				<cfset var _folder_name = folder_name>
 					<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 						<cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">
-							<cfset var _folder_name = _folder_name & " " & username>
+							<cfset var _folder_name = _folder_name & " <em>(" & username & ")</em>">
 						</cfif>
 					</cfif>
 				</cfif>
