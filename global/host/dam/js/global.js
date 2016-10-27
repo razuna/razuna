@@ -24,7 +24,7 @@ function showwindow(theurl,thetitle,thew,thewin) {
 		autoOpen: false,
 		width: thew,
 		height: 'auto',
-		position: 'top'
+		position: { my: 'top', at: 'top+10' }
 		//minHeight: 600,
 		// overlay: {
 		// 	backgroundColor: '#000',
