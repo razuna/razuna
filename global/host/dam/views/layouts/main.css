@@ -1039,3 +1039,14 @@ font-weight: bold;
 .ltgrey{color:#666666;}
 a:link .nolink{text-decoration: none;}
 
+/*Explorer*/
+.explorer {
+	margin-left:0;
+	padding-left:0;
+	height: -moz-calc(100vh - 150px); /* Firefox */
+	height: -webkit-calc(100vh - 150px); /* Chrome, Safari */
+	height: calc(100vh - 150px); /* IE9+ and future browsers */
+	width:240px;
+	overflow-y:auto;
+	overflow-x:auto;
+}
