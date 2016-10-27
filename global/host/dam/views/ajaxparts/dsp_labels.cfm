@@ -55,6 +55,10 @@
 			"state" : { "key" : "razuna-tree-labels" },
 			"plugins" : [ "state" ],
 			'core' : {
+				'themes': {
+					'name': 'proton',
+					'responsive': true
+				},
 				'data' : {
 					"url" : "#myself#c.labels_tree",
 					"dataType" : "json", // needed only if you do not supply JSON headers

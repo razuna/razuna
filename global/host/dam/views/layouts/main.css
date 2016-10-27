@@ -960,18 +960,11 @@ font-weight: bold;
 	-webkit-box-shadow: 0 0 5px #aaa;
 	box-shadow: 0 0 5px #aaa;
 }
-.ui-dialog {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	-webkit-transform: translate(-50%, -50%);
-	transform: translate(-50%, -50%);
-}
 .ui-dialog .ui-dialog-titlebar-close {
 	top: 10%;
 }
 .chosen-container-multi .chosen-choices { 
-  overflow: auto;
+	overflow: auto;
  } 
 
 /* Choose label updates*/

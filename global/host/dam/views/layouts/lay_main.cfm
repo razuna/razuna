@@ -48,7 +48,7 @@
 		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
 		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css?_v=#attributes.cachetag#" />
 		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jstree/dist/themes/default/style.min.css?_v=#attributes.cachetag#" />
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jstree/dist/themes/proton/style.min.css?_v=#attributes.cachetag#" />
 		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
 
 		<!--- JS --->

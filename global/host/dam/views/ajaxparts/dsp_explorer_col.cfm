@@ -55,6 +55,10 @@
 			"state" : { "key" : "razuna-tree-collection" },
 			"plugins" : [ "state" ],
 			'core' : {
+				'themes': {
+					'name': 'proton',
+					'responsive': true
+				},
 				'data' : {
 					"url" : "#myself#c.getfolderfortree&col=T",
 					"dataType" : "json", // needed only if you do not supply JSON headers
