@@ -258,7 +258,7 @@
 		// Hide Refine
 		$('#refine_search_panel').css('display', 'none');
 		// Load tabs
-		$("##search_tab").tabs();
+		$("#search_tab").tabs();
 		// Search submit
 		$("#form_searchsearch").submit(function(e){
 			// Get searchfor value
