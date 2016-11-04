@@ -1,16 +1,24 @@
-// Hack for IE10. Only works in IE10 as 10 has conditional testing
-var isIE10 = false;
-/*@cc_on
-	if (/^10/.test(@_jscript_version)) {
-		isIE10 = true;
-	}
-@*/
 // JQuery Settings. Disable jquery cache if IE10 as it caches way too much
-if (isIE10) {
+if (isIE()) {
 	$.ajaxSetup({
 		cache: false
 	});
 }
+
+// Check for IE here
+function isIE() {
+	var ms_ie = false;
+	var ua = window.navigator.userAgent;
+	var ms_ie = !!ua.match('MSIE |Trident/|Edge/');
+	// var ie11 = ua.indexOf('Trident/');
+	// var edge = ua.indexOf('Edge/');
+
+	// if ((old_ie > -1) || (new_ie > -1)) {
+	// 	ms_ie = true;
+	// }
+	return ms_ie;
+}
+
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
