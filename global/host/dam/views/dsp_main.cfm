@@ -94,15 +94,15 @@
 							<br>
 							<div class="panelsnew">
 								<h1>#myFusebox.getApplicationData().defaults.trans("razuna_main_video_header")#</h1>
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
 							</div>
 							<br />
 						</cfif>
@@ -205,7 +205,7 @@
 						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
 								<!--- System News --->
-								<cfif attributes.qry_news.news.recordcount NEQ 0>
+								<cfif  arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
 									<h1>System News</h1>
 								</cfif>
 								<!--- News --->
@@ -222,7 +222,7 @@
 											</div>
 										</cfif>
 									</cfloop>
-									<cfif attributes.qry_news.news.recordcount NEQ 0>
+									<cfif NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
 										<br>
 									</cfif>
 								<!--- RSS --->
@@ -237,7 +237,7 @@
 									</cfif>
 								</cfif>
 								<!--- Host News --->
-								<cfif attributes.qry_news.news_host.recordcount NEQ 0>
+								<cfif NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news_host.recordcount NEQ 0>
 									<h1>News</h1>
 								</cfif>
 								<!--- News --->
