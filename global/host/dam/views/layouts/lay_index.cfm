@@ -31,20 +31,16 @@
 <title><cfif application.razuna.whitelabel>#wl_html_title#<cfelse>Razuna Enterprise Digital Asset Management</cfif></title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <!--- Control the cache --->
-<!---
-<cfheader name="Expires" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
---->
 <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <cfheader name="P3P" value="CP=\\\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\\\"">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
+<script type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/login.min.js?_v=#attributes.cachetag#"></script>

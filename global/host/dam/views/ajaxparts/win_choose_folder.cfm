@@ -23,13 +23,6 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
- <style>
-/* Do not wrap in this view */
-div.folders .tree li a, 
-.tree li span {
-	white-space: nowrap !important;
-}
-</style>
 <cfset session.tmpid = createuuid('')>
 <cfoutput>
 	<div class="folders">
@@ -58,39 +51,24 @@ div.folders .tree li a,
 	<cfelse>
 		<cfset iscol = "F">
 	</cfif> --->
-	<script language="javascript" type="text/javascript">
-		// Load Folders
-		$(function () { 
-			$("##win_choosefolder_#session.tmpid#").tree({
-				// plugins : {
-				// 	cookie : { prefix : "treemovebox_" }
-				// },
-				types : {
-					"default"  : {
-						deletable : false,
-						renameable : false,
-						draggable : false,
-						icon : { 
-							image : "#dynpath#/global/host/dam/images/folder-blue-mini.png"
-						}
-					},
-					"file" : {
-						// the following three rules basically do the same
-						valid_children : "none",
-						max_children : 0,
-						max_depth :0,
-						icon : { 
-							image : "file.png"
-						}
-					}
+	<script type="text/javascript">
+		// Load jstree
+		$('##win_choosefolder_#session.tmpid#').jstree({
+			"state" : { "key" : "razuna-tree" },
+			"plugins" : [ "state" ],
+			'core' : {
+				'themes': {
+					'name': 'proton',
+					'responsive': true
 				},
-				data : { 
-					async : true,
-					opts : {
-						url : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#&fromtrash=#attributes.fromtrash#"
+				'data' : {
+					"url" : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#&fromtrash=#attributes.fromtrash#",
+					"dataType" : "json", // needed only if you do not supply JSON headers
+					"data" : function (node) {
+						return { "id" : node.id };
 					}
 				}
-			});
+			}
 		});
 		// Move folder call
 		function movethisfolder(){
@@ -100,7 +78,6 @@ div.folders .tree li a,
 			// Delay load of list
 			delayloadingoflist();
 		}
-		
 		function copythisfolder(){
 			loadcontent('div_forall','#myself##session.savehere#&intofolderid=#session.thefolderorg#&intolevel=1&iscol=f');
 			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
@@ -112,7 +89,6 @@ div.folders .tree li a,
 			}
 			catch(e) {};
 		}
-		
 		function delayfolderload(){
 			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
 			<cfif structKeyExists(attributes,"fromtrash") AND attributes.fromtrash>

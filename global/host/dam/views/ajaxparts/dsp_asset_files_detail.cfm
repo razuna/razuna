@@ -462,9 +462,9 @@
 	</cfif>
 	</form>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 	// Initialize Tabs
-	jqtabs("tab_detail#file_id#");
+	$("##tab_detail#file_id#").tabs();
 	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&isdoc=yes');
 	
 	function formchecks()

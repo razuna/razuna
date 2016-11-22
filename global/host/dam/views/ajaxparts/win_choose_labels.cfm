@@ -43,12 +43,12 @@
 			<cfloop	index="strLetter" list="#valuelist(qry_search_label_index.label_text_index)#" delimiters=",">
 				<a herf="##" onclick="loadcontent('show_labels','index.cfm?fa=c.search_label_for_asset&file_id=#attributes.file_id#&file_type=#attributes.file_type#&show=search&strLetter=#strLetter#');" style="padding-right:5px;font-weight:bold;cursor:pointer;">#strLetter#</a>
 			</cfloop>
-			<p><hr /></p>
+			<p><hr></p>
 			<div id="show_labels"></div>
 		</div>
 	</div>
 </cfoutput>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	$(document).ready(function(){
 		loadcontent('show_labels','<cfoutput>index.cfm?fa=c.search_label_for_asset&file_id=#attributes.file_id#&file_type=#attributes.file_type#&show=default</cfoutput>');
 	});

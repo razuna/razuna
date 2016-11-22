@@ -27,12 +27,12 @@
 <cfoutput>
 	<div id="tabfoldersettings">
 		<ul>
-			<li><a href="##properties" onclick="$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch"><cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_settings")#<cfelse>#myFusebox.getApplicationData().defaults.trans("collection_settings")#</cfif></a></li>
+			<li><a href="##properties" onclick="$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');"><cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_settings")#<cfelse>#myFusebox.getApplicationData().defaults.trans("collection_settings")#</cfif></a></li>
 			<cfif attributes.iscol EQ "F">
 				<!--- Sharing --->
-				<li><a href="##sharing" onclick="$('##sharing').load('#myself#c.folder_sharing&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
+				<li><a href="##sharing" onclick="$('##sharing').load('#myself#c.folder_sharing&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				<!--- Widgets --->
-				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
+				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 				<!--- Thumbnail --->
 				<li><a href="##thumbnail" >#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</a></li>
 			</cfif>
@@ -51,9 +51,9 @@
 		</cfif>
 	</div>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Set tabs
-		jqtabs("tabfoldersettings");
+		$("##tabfoldersettings").tabs();
 		// Load folder properties
 		$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');
 		// Save form in the folder edit window

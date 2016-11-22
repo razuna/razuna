@@ -1,16 +1,24 @@
-// Hack for IE10. Only works in IE10 as 10 has conditional testing
-var isIE10 = false;
-/*@cc_on
-	if (/^10/.test(@_jscript_version)) {
-		isIE10 = true;
-	}
-@*/
 // JQuery Settings. Disable jquery cache if IE10 as it caches way too much
-if (isIE10) {
+if (isIE()) {
 	$.ajaxSetup({
 		cache: false
 	});
 }
+
+// Check for IE here
+function isIE() {
+	var ms_ie = false;
+	var ua = window.navigator.userAgent;
+	var ms_ie = !!ua.match('MSIE |Trident/|Edge/');
+	// var ie11 = ua.indexOf('Trident/');
+	// var edge = ua.indexOf('Edge/');
+
+	// if ((old_ie > -1) || (new_ie > -1)) {
+	// 	ms_ie = true;
+	// }
+	return ms_ie;
+}
+
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
@@ -24,7 +32,7 @@ function showwindow(theurl,thetitle,thew,thewin) {
 		autoOpen: false,
 		width: thew,
 		height: 'auto',
-		position: 'top'
+		position: { my: 'top', at: 'top+10' }
 		//minHeight: 600,
 		// overlay: {
 		// 	backgroundColor: '#000',
@@ -40,12 +48,6 @@ function destroywindow(numb) {
 		$('#thewindowcontent' + numb).dialog('destroy').empty();
 	}
 	catch(e) {};
-}
-// Load Tabs
-function jqtabs(tabs){
-	$(function() {
-		$("#" + tabs).tabs();
-	});
 }
 // Load Content with JQuery
 function loadcontent(ele,url){
@@ -391,28 +393,6 @@ function razaddlabels(thediv,fileid,thetype,text){
 	$.sticky(text);
 }
 
-// For the Quick Search
-$(document).ready(function() {
-	// Store the value of the input field
-	var theval = $('#simplesearchtext').val();
-	// If user click on the quick search field we hide the text
-	$('#simplesearchtext').click(function(){
-		// Get the value of the entry field
-		var theentrynow = $('#simplesearchtext').val();
-		if (theentrynow == 'Quick Search'){
-			$('#simplesearchtext').val('');
-		}
-	});
-	// If the value field is empty restore the value field
-	$('#simplesearchtext').blur(function(){
-		// Get the current value of the field
-		var thevalnow = $('#simplesearchtext').val();
-		// If the current value is empty then restore it with the default value
-		if ( thevalnow === '') {
-			$('#simplesearchtext').val(theval);
-		}
-	});
-});
 function checkentry(){
 	// Define the folder id
 	var thefolderid = 0;
@@ -1235,6 +1215,25 @@ $(document).ready(function() {
 		document.form_account.target='myWin';
 		document.form_account.submit();
 	}
+	// Store the value of the input field
+	var theval = $('#simplesearchtext').val();
+	// If user click on the quick search field we hide the text
+	$('#simplesearchtext').click(function(){
+		// Get the value of the entry field
+		var theentrynow = $('#simplesearchtext').val();
+		if (theentrynow == 'Quick Search'){
+			$('#simplesearchtext').val('');
+		}
+	});
+	// If the value field is empty restore the value field
+	$('#simplesearchtext').blur(function(){
+		// Get the current value of the field
+		var thevalnow = $('#simplesearchtext').val();
+		// If the current value is empty then restore it with the default value
+		if ( thevalnow === '') {
+			$('#simplesearchtext').val(theval);
+		}
+	});
 });
 
 // FOLDER 

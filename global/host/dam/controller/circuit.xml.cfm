@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2016.05.12.1" />
+		<set name="attributes.cachetag" value="2016.10.26.1" />
 	</fuseaction> 
 	
 	<!--
@@ -34,6 +34,7 @@
 		<set name="attributes.shared" value="F" overwrite="false" />
 		<set name="attributes.fid" value="0" overwrite="false" />
 		<set name="attributes.wid" value="0" overwrite="false" />
+		<set name="attributes.qry_news" value="[]" overwrite="false" />
 		<set name="jr_enable" value="false" overwrite="false" />
 		<if condition="session.hostid NEQ ''">
 			<true>
@@ -304,6 +305,7 @@
 	 			<set name="session.hosttype" value="" overwrite="false" />
 	 			<set name="attributes.redirectmain" value="false" overwrite="false" />
 	 			<set name="attributes.goto" value="" overwrite="false" />
+	 			<set name="attributes.qry_news" value="[]" overwrite="false" />
 	 			<!-- Set that we are in custom view -->
 				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
@@ -613,13 +615,22 @@
 		<set name="attributes.col" value="F" overwrite="false" />
 		<set name="attributes.id" value="0" overwrite="false" />
 		<set name="attributes.actionismove" value="F" overwrite="false" />
+		<set name="attributes.permlist" value="r,w,x" overwrite="false" />
+		<set name="attributes.kind" value="" overwrite="false" />
+		<set name="attributes.fromtrash" value="false" overwrite="false" />
 		<set name="session.showmyfolder" value="F" overwrite="false" />
 		<!-- Get folder record -->
-		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
+		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="json_data">
 			<argument name="thestruct" value="#attributes#" />
 			<argument name="id" value="#attributes.id#" />
 			<argument name="col" value="#attributes.col#" />
+			<argument name="actionismove" value="#attributes.actionismove#" />
+			<argument name="permlist" value="#attributes.permlist#" />
+			<argument name="kind" value="#attributes.kind#" />
+			<argument name="fromtrash" value="#attributes.fromtrash#" />
 		</invoke>
+		<!-- Show -->
+		<do action="ajax.json" />
 	</fuseaction>
 	
 	<fuseaction name="searchforcopymetadata">
@@ -8125,6 +8136,7 @@
 		<set name="attributes.fromcol" value="F" overwrite="false" />
 		<set name="attributes.fp" value="F" overwrite="false" />
 		<set name="attributes.perm_password" value="F" />
+		<set name="attributes.qry_news" value="[]" />
 		<!-- Folder id into session -->
 		<set name="session.fid" value="#attributes.fid#" />
 		<if condition="#attributes.fromcol# EQ 'F' OR NOT structkeyexists(session,'iscol')">
@@ -9505,8 +9517,13 @@
 	</fuseaction>
 	<!-- Load the label explorer -->
 	<fuseaction name="labels_tree">
+		<!-- Params -->
+		<set name="attributes.id" value="0" overwrite="false" />
+		<set name="attributes.dynpath" value="#dynpath#" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels(attributes, attributes.id)" returnvariable="qry_labels" />
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels(attributes, attributes.id)" returnvariable="json_data" />
+		<!-- Show -->
+		<do action="ajax.json" />
 	</fuseaction>
 	<!-- Update labels of the item -->
 	<fuseaction name="label_update">

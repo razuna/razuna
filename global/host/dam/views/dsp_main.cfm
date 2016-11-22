@@ -94,15 +94,15 @@
 							<br>
 							<div class="panelsnew">
 								<h1>#myFusebox.getApplicationData().defaults.trans("razuna_main_video_header")#</h1>
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
+								<a href="##" onclick="SetVideo('https://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
 							</div>
 							<br />
 						</cfif>
@@ -155,7 +155,7 @@
 										<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
 										<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
 										<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
-										<p><hr /></p>
+										<p><hr></p>
 										<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">#myFusebox.getApplicationData().defaults.trans("help_with_search")#</a></p>
 									</div>
 									<div style="float:left;">
@@ -205,7 +205,7 @@
 						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
 								<!--- System News --->
-								<cfif attributes.qry_news.news.recordcount NEQ 0>
+								<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
 									<h1>System News</h1>
 								</cfif>
 								<!--- News --->
@@ -222,12 +222,12 @@
 											</div>
 										</cfif>
 									</cfloop>
-									<cfif attributes.qry_news.news.recordcount NEQ 0>
+									<cfif isArray(attributes.qry_news) AND NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
 										<br>
 									</cfif>
 								<!--- RSS --->
 								<cfelse>
-									<cfif arrayisempty(attributes.qry_news)>
+									<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news)>
 										<h2>Connection to the news is currently not available</h2>
 									<cfelse>
 										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
@@ -237,7 +237,7 @@
 									</cfif>
 								</cfif>
 								<!--- Host News --->
-								<cfif attributes.qry_news.news_host.recordcount NEQ 0>
+								<cfif isArray(attributes.qry_news) AND NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news_host.recordcount NEQ 0>
 									<h1>News</h1>
 								</cfif>
 								<!--- News --->
@@ -256,7 +256,7 @@
 									</cfloop>
 								<!--- RSS --->
 								<cfelse>
-									<cfif arrayisempty(attributes.qry_news)>
+									<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news)>
 										<h2>Connection to the news is currently not available</h2>
 									<cfelse>
 										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
@@ -270,7 +270,7 @@
 				</tr>
 			</table>
 		<cfelse>
-			<script language="JavaScript" type="text/javascript">
+			<script type="text/javascript">
 				$('##rightside').load('#myself#c.folder&col=F&folder_id=#session.folder_redirect_id#');
 			</script>
 		</cfif>
@@ -282,8 +282,8 @@
 	</cfoutput>
 </div>
 <!--- Activate the Tabs on the main page --->
-<script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_main_support");
+<script type="text/javascript">
+	$("#tabs_main_support").tabs();
 	<cfif attributes.goto EQ "approval">
 		$('#rightside').load('index.cfm?fa=c.staging');
 	</cfif>

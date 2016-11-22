@@ -165,9 +165,9 @@
 	</form>
 
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Tabs
-		jqtabs("tabs_wl");
+		$("##tabs_wl").tabs();
 		// Save this form
 		$("##form_wl").submit(function(e){
 			// Get values

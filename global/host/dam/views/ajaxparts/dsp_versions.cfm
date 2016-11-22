@@ -55,7 +55,7 @@
 	<div id="status" style="width:95%;padding:10px;color:green;background-color:##FFFFE0;display:none;"></div>
 	<div id="versionlist"></div>
 	<!--- Load Version list --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		loadcontent('versionlist','#myself#c.versions_list&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#');
 	</script>
 </cfif>

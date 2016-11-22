@@ -257,6 +257,10 @@
 	<fuseaction name="hosts_detail">
   		<include template="dsp_hosts_detail" />
 	</fuseaction>
+	<!-- Hosts Details Size -->
+	<fuseaction name="hosts_detail_size">
+  		<include template="dsp_hosts_detail_size" />
+	</fuseaction>
 	<!-- Hosts Recreate -->
 	<fuseaction name="hosts_recreate">
   		<include template="dsp_hosts_recreate" />

@@ -94,7 +94,7 @@
 				</tr>
 			</table>
 	</form>
-	<hr />
+	<hr>
 	<table>
 		<tr style="height:300px;vertical-align:top">
 			<td>

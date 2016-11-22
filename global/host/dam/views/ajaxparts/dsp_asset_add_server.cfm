@@ -27,7 +27,7 @@
 	<div id="browse" style="float:left;width:200px;height:auto;float:left;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 	<div id="serverfoldercontent" style="width:550px;heigth:400px;float:right;left:220px;padding-bottom:20px;"></div>
 	<!--- Load folder view in left side --->
-	<script language="javascript">
+	<script type="text/javascript">
 		loadcontent('browse','#myself##xfa.serverfolders#&folder_id=#folder_id#&folderpath=#urlencodedformat(thispath)#');
 	</script>
 </cfoutput>

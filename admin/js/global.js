@@ -12,17 +12,12 @@ function showwindow(theurl,thetitle,thew,thewin) {
 	// Load Content into Dialog
 	$('#thewindowcontent' + thewin).load(theurl).dialog({
 		// RAZ-2718 Decode User's first and last name for title
-		title: decodeURI(thetitle),
+		title: unescape(thetitle),
 		modal: true,
 		autoOpen: false,
 		width: thew,
-		position: 'top',
 		height: 'auto',
-		//minHeight: 300,
-		overlay: {
-			backgroundColor: '#000',
-			opacity: 0.5
-		}
+		position: { my: 'top', at: 'top+10' }
 	});
 	// Open window
 	$('#thewindowcontent' + thewin).dialog('open');
@@ -33,14 +28,7 @@ function destroywindow(numb) {
 	try{
 		$('#thewindowcontent' + numb).dialog('destroy');
 	}
-	catch(e) {};
-}
-
-// Load Tabs
-function jqtabs(tabs){
-	$(function() {
-		$("#" + tabs).tabs();
-	});
+	catch(e) {}
 }
 
 // Load Content with JQuery

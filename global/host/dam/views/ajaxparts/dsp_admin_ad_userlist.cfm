@@ -27,7 +27,7 @@
 	<div id="container">
 		<div>
 			<p>#myFusebox.getApplicationData().defaults.trans("ad_userlist_header")#</p>
-			<p><hr /></p>
+			<p><hr></p>
 		</div>
 		<div style="clear:both;"></div>
 		<div style="width:auto;float:right;height:60px;">

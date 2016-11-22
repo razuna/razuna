@@ -51,7 +51,7 @@
 				<div style="float:left;"><textarea name="wl_login_links_#session.hostid#" id="wl_login_links" style="width:500px;height:70px;">#qry_wl.wl_login_links#</textarea></div>
 				<div style="clear:both;"></div>
 				<br>
-				<hr />
+				<hr>
 				<br />
 				<!--- Main page Videos --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_video")#</strong><br />
@@ -59,7 +59,7 @@
 				<div style="float:left;"><textarea name="wl_main_static_#session.hostid#" id="wl_main_static" style="width:500px;height:70px;">#qry_wl.wl_main_static#</textarea></div>
 				<div style="clear:both;"></div>
 				<br>
-				<hr />
+				<hr>
 				<br />
 				<!--- Main Razuna tab Bottom --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab")#</strong><br />
@@ -70,7 +70,7 @@
 				<div style="float:left;"><textarea name="wl_razuna_tab_content_#session.hostid#" id="wl_razuna_tab_content" style="width:500px;height:70px;">#qry_wl.wl_razuna_tab_content#</textarea></div>
 				<div style="clear:both;"></div>
 				<br>
-				<hr />
+				<hr>
 				<br />
 				<!--- Feedback link --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_feedback")#</strong><br />
@@ -93,7 +93,7 @@
 				<div style="float:left;"><textarea name="wl_link_doc_#session.hostid#" id="wl_link_doc" style="width:500px;height:70px;">#qry_wl.wl_link_doc#</textarea></div>
 				<div style="clear:both;"></div>
 				<br>
-				<hr />
+				<hr>
 				<br>
 				#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates_desc")#<br/><br/>
 				<strong>#myFusebox.getApplicationData().defaults.trans("wl_show_recent_updates_header")#</strong><br />
@@ -122,7 +122,7 @@
 </cfoutput>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	$("#tab_wl").tabs();
 	// Save this form
 	$("#form_wl").submit(function(e){

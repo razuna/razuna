@@ -33,25 +33,23 @@
 	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Folders</div> --->
 	<cfif cs.show_manage_part AND (isadmin OR  cs.show_manage_part_slct EQ "" OR listfind(cs.show_manage_part_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_manage_part_slct,session.thegroupofuser) NEQ "")>
 		<!--- Drop down menu --->
-		<div style="width:60px;float:right;position:absolute;left:190px;top:3px;">
+		<div style="width:65px;float:right;position:absolute;left:190px;top:3px;word-break:keep-all">
 			<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
 			<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 				<cfif isadmin>
 					<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F');$('##explorertools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">#myFusebox.getApplicationData().defaults.trans("folder_new")# (#myFusebox.getApplicationData().defaults.trans("on_root_level")#)</a></p>
-					<p><hr /></p>
+					<p><hr></p>
 				</cfif>
 				<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 				<cfif isadmin>
-					<p><hr /></p>
+					<p><hr></p>
 					<cfif session.showmyfolder EQ "F">
 						<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_all_folders")#</a></p>
 					<cfelse>
 						<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">#myFusebox.getApplicationData().defaults.trans("show_my_folders")#</a></p>
 					</cfif>
-					<!--- <p><hr /></p> --->
 				</cfif>
-				<!--- <p><a href="##" onclick="javascript:PicLensLite.start({feedUrl:'#myself#c.cooliris_folder&folder_id=0'});$('##explorertools').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("tooltip_cooliris")#</a></p> --->
 			</div>
 		</div>
 	</cfif>
@@ -86,30 +84,24 @@
 		<p style="padding-left:10px;"><a href="#myself#c.main&redirectmain=true&_v=#createuuid('')#" title="Click here to get to the main page">#myFusebox.getApplicationData().defaults.trans("go_to_main_page")#</a></p>
 	</cfif>
 		
-<script language="javascript" type="text/javascript">
-	// Load Folders
-	$(function () { 
-		$("##treeBox").tree({
-			plugins : {
-				cookie : { prefix : "cookietreebox_", keep_selected : false, keep_opened: true }
+<script type="text/javascript">
+	// Load jstree
+	$('##treeBox').jstree({
+		"state" : { "key" : "razuna-tree" },
+		"plugins" : [ "state" ],
+		'core' : {
+			'themes': {
+				'name': 'proton',
+				'responsive': true
 			},
-			types : {
-				"default"  : {
-					deletable : false,
-					renameable : false,
-					draggable : false,
-					icon : { 
-						image : "#dynpath#/global/host/dam/images/folder-blue-mini.png"
-					}
-				}
-			},
-			data : { 
-				async : true,
-				opts : {
-					url : "#myself#c.getfolderfortree&col=F"
+			'data' : {
+				"url" : "#myself#c.getfolderfortree&col=F",
+				"dataType" : "json", // needed only if you do not supply JSON headers
+				"data" : function (node) {
+					return { "id" : node.id };
 				}
 			}
-		});
+		}
 	});
 </script>
 

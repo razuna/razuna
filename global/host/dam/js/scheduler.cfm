@@ -1,7 +1,7 @@
 <!--- ---------------------------------------------------------------------------------------- --->
 <!--- JAVASCRIPT FOR UPLOAD SCHEDULER SETTINGS                                                 --->
 <!--- ---------------------------------------------------------------------------------------- --->
-<script language="JavaScript">
+<script type="text/javascript">
 
 <!--- Final validation of mandatory method fiels --------------------------------------------- --->
 function validateMethodInput(myform,kind) {

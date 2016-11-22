@@ -35,7 +35,7 @@
 		<!--- Return --->
 		<cfreturn s>
 	</cffunction>
-	
+
 	<cffunction name="getFolders" access="remote" output="true" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Create struct --->
@@ -130,6 +130,307 @@
 		</cfloop>
 		<!--- Return --->
 		<cfreturn arguments.theqry>
+	</cffunction>
+
+	<!--- Create empty record --->
+	<cffunction name="add" access="remote" output="false" returntype="query" returnformat="json" hint="Obvious">
+		<cfargument name="api_key" required="true" hint="Your api key">
+		<cfargument name="files" required="true" hint="Files data">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- deserializeJSON back into array --->
+				<cfset var thejson = DeserializeJSON(arguments.files)>
+				<cfset var l = "">
+				<!--- Loop over JSON and update data --->
+				<cfloop array='#thejson#' index="x">
+					<cftry>
+						<!--- Create temp ID --->
+						<cfset _asset_id = createuuid("")>
+						<!--- Create record in db --->
+						<cfset _id = create_inserts(asset_id=_asset_id, host_id=x.host_id, folder_id=x.folder_id, is_available=x.is_available, filename_org=x.filename_org, filename=x.filename, type=x.type, group=x.group, ext=x.ext, extthumb = x.extthumb, api_key=arguments.api_key)>
+						<!--- Add our own tags to the query --->
+						<cfset thexml = querynew("asset_id, filename, type, status")>
+						<cfset queryaddrow(thexml, 1)>
+						<cfset querysetcell(thexml, "asset_id", _id)>
+						<cfset querysetcell(thexml, "filename", x.filename)>
+						<cfset querysetcell(thexml, "type", x.type)>
+						<cfset querysetcell(thexml, "status", true)>
+						<cfcatch>
+							<cfset consoleoutput(true)>
+							<cfset console(cfcatch)>
+							<!--- Add our own tags to the query --->
+							<cfset thexml = querynew("filename, type, status")>
+							<cfset queryaddrow(thexml, 1)>
+							<cfset querysetcell(thexml, "filename", x.filename)>
+							<cfset querysetcell(thexml, "type", x.type)>
+							<cfset querysetcell(thexml, "status", false)>
+						</cfcatch>
+					</cftry>
+				</cfloop>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
+	<!--- Create empty record --->
+	<cffunction name="addcloud" access="remote" output="false" returntype="query" returnformat="json" hint="Obvious">
+		<cfargument name="api_key" required="true" hint="Your api key">
+		<cfargument name="cloud" required="true" hint="Cloud data">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<cfset var thexml ="">
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- If user is in admin --->
+			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
+				<!--- deserializeJSON back into array --->
+				<cfset var thejson = DeserializeJSON(arguments.cloud)>
+				<cfset var l = "">
+				<!--- Loop over JSON and update data --->
+				<cfloop array='#thejson#' index="x">
+					<!--- Images --->
+					<cfif x.type EQ "img">
+						<cfset var _db = "images">
+						<cfset var _id = "img_id">
+					<cfelse>
+						<cfset var _db = "files">
+						<cfset var _id = "file_id">
+					</cfif>
+					<cftry>
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix##_db#
+						SET
+						cloud_url = <cfqueryparam value="#x.cloud_url#" cfsqltype="CF_SQL_VARCHAR">,
+						cloud_url_org = <cfqueryparam value="#x.cloud_url_org#" cfsqltype="CF_SQL_VARCHAR">
+						WHERE #_id# = <cfqueryparam value="#x.asset_id#" cfsqltype="CF_SQL_VARCHAR">
+						</cfquery>
+						<!--- Add our own tags to the query --->
+						<cfset thexml = querynew("asset_id, type, status")>
+						<cfset queryaddrow(thexml, 1)>
+						<cfset querysetcell(thexml, "asset_id", x.asset_id)>
+						<cfset querysetcell(thexml, "type", x.type)>
+						<cfset querysetcell(thexml, "status", true)>
+						<cfcatch>
+							<cfset consoleoutput(true)>
+							<cfset console(cfcatch)>
+							<!--- Add our own tags to the query --->
+							<cfset thexml = querynew("asset_id, type, status")>
+							<cfset queryaddrow(thexml, 1)>
+							<cfset querysetcell(thexml, "asset_id", x.asset_id)>
+							<cfset querysetcell(thexml, "type", x.type)>
+							<cfset querysetcell(thexml, "status", false)>
+						</cfcatch>
+					</cftry>
+				</cfloop>
+			<!--- User not admin --->
+			<cfelse>
+				<cfset var thexml = noaccess()>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
+
+
+
+	<!--- Create Inserts --->
+	<cffunction name="create_inserts" output="true" access="private">
+		<cfargument name="asset_id" type="string">
+		<cfargument name="host_id" type="string">
+		<cfargument name="folder_id" type="string">
+		<cfargument name="is_available" type="string">
+		<cfargument name="filename_org" type="string">
+		<cfargument name="filename" type="string">
+		<cfargument name="type" type="string">
+		<cfargument name="group" type="string">
+		<cfargument name="ext" type="string">
+		<cfargument name="extthumb" type="string">
+		<cfargument name="api_key" type="string">
+		<!--- IMAGES --->
+		<cfif arguments.type EQ "img">
+			<!--- Add records to the DB - We do this here so that fast subsequent calls from the API work --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#images
+			(img_id, host_id, folder_id_r, is_available, img_filename, img_filename_org, img_create_time, path_to_asset, img_extension, thumb_extension, img_group)
+			VALUES(
+			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.is_available#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.filename#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.filename_org#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam value="#arguments.folder_id#/img/#arguments.asset_id#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.ext#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#arguments.extthumb#" cfsqltype="cf_sql_varchar">,
+			<cfif arguments.group EQ "">
+				<cfqueryparam value="" null="true" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam value="#arguments.group#" cfsqltype="cf_sql_varchar">
+			</cfif>
+			)
+			</cfquery>
+			<!--- Create empty records in the table because we sometimes have images without XMP --->
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#images_text
+			(id_inc, img_id_r, lang_id_r, host_id)
+			VALUES(
+			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
+			)
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#xmp
+			(asset_type, host_id, id_r)
+			VALUES(
+				<cfqueryparam value="#arguments.type#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.host_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+		<!--- VIDEOS --->
+		<cfelseif arguments.type EQ "vid">
+			<!--- Insert record --->
+			<!--- <cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#videos
+			(vid_id, vid_name_org, vid_filename, host_id, folder_id_r, path_to_asset, is_available, vid_create_time)
+			VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry_file.tempid#">,
+			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.filename#">
+			</cfif>,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.filename#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry_file.folder_id#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.folder_id#/vid/#qry_file.tempid#">,
+			<cfif qry_approval.approval_enabled>
+				<cfqueryparam value="2" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+			</cfif>,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			)
+			</cfquery>
+			<!--- Create empty records in the text table --->
+			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+				<!--- Insert --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#videos_text
+				(id_inc, vid_id_r, lang_id_r, host_id)
+				VALUES(
+				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfloop>
+			<!--- Add the TEXTS to the DB. We have to hide this is if we are coming from FCK --->
+			<cfif structkeyexists(arguments.thestruct,"langcount")>
+				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+					<cfif arguments.thestruct.uploadkind EQ "many">
+						<cfset var desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
+						<cfset var keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
+						<cfset var title="file_title_" & "#countnr#" & "_" & "#langindex#">
+					<cfelse>
+						<cfset var desc="arguments.thestruct.file_desc_" & "#langindex#">
+						<cfset var keywords="arguments.thestruct.file_keywords_" & "#langindex#">
+						<cfset var title="arguments.thestruct.file_title_" & "#langindex#">
+					</cfif>
+					<cfif desc CONTAINS langindex>
+						<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
+						<cfif IsDefined(desc) and IsDefined(keywords) and IsDefined(title)>
+							<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#videos_text
+							SET
+							vid_description = <cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
+							vid_keywords = <cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
+							vid_title = <cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">
+							WHERE vid_id_r = <cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">
+							</cfquery>
+						</cfif>
+					</cfif>
+				</cfloop>
+			</cfif> --->
+		<!--- AUDIOS --->
+		<cfelseif arguments.type EQ "aud">
+			<!--- Add record --->
+			<!--- <cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#audios
+			(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
+			VALUES(
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfif qry_approval.approval_enabled>
+					<cfqueryparam value="2" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+				</cfif>,
+				<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+					<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					<cfqueryparam value="#qry_file.filename#" cfsqltype="cf_sql_varchar">
+				</cfif>
+			)
+			</cfquery> --->
+		<!--- DOCUMENTS --->
+		<cfelse>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#files
+			(file_id, host_id, folder_id_r, is_available, file_name, file_name_org, file_create_time, file_extension, path_to_asset)
+			VALUES(
+				<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.is_available#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.filename#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.filename_org#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#arguments.ext#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.folder_id#/doc/#arguments.asset_id#" cfsqltype="cf_sql_varchar">
+			)
+			</cfquery>
+			<!--- Create empty records in the text table --->
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#files_desc
+			(id_inc, file_id_r, lang_id_r, host_id)
+			VALUES(
+			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.asset_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
+			)
+			</cfquery>
+		</cfif>
+		<!--- Flush Cache (the api one does it for all types) --->
+		<cfset resetcachetoken(arguments.api_key, "images")>
+		<!--- Return --->
+		<cfreturn arguments.asset_id />
 	</cffunction>
 
 </cfcomponent>

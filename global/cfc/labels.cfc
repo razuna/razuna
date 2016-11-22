@@ -377,20 +377,54 @@
 	<cffunction name="labels" output="true" access="public">
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="id" type="string" required="true">
+		<!--- If id is # --->
+		<cfif arguments.id EQ "##">
+			<cfset arguments.id = "0">
+		</cfif>
+		<!--- Node Array --->
+		<cfset var _node = arrayNew()>
+		<!--- Set row --->
+		<cfset var _row = 1>
 		<!--- Query --->
 		<cfinvoke method="labels_query" thestruct="#arguments.thestruct#" id="#arguments.id#" returnVariable="qry" />
-		<!--- Output for tree --->
+		<!--- Result --->
 		<cfloop query="qry">
 			<!--- If label is expiry label then only show for admins --->
 			<cfif label_text EQ 'Asset has expired' AND structKeyExists(request,"securityObj") AND NOT (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
-					<cfcontinue>
+				<cfcontinue>
+			</cfif>
+			<!--- Default values --->
+			<cfset _node[_row].children = false>
+			<!--- Set id --->
+			<cfset var _id = label_id>
+			<cfset _node[_row].id = _id>
+			<!--- Do we have children? --->
+			<cfif subhere NEQ "">
+				<cfset _node[_row].children = true>
+			</cfif>
+			<!--- Set link --->
+			<cfset var _attr = structNew()>
+			<cfset _attr.onclick = "loadcontent('rightside','index.cfm?fa=c.labels_main&label_id=#_id#');return false;">
+			<cfset _node[_row].a_attr = _attr >
+			<!--- Folder name --->
+			<cfset _node[_row].text = "#label_text# (#label_count#)">
+			<!--- Icon --->
+			<cfset _node[_row].icon = "#arguments.thestruct.dynpath#/global/host/dam/images/tag_16.png">
+			<!--- Increase --->
+			<cfset _row = _row + 1>
+		</cfloop>
+		<!--- Output for tree --->
+		<!--- <cfloop query="qry">
+			<!--- If label is expiry label then only show for admins --->
+			<cfif label_text EQ 'Asset has expired' AND structKeyExists(request,"securityObj") AND NOT (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+				<cfcontinue>
 			</cfif>
 			<cfoutput>
 			<li id="#label_id#"<cfif subhere NEQ ""> class="closed"</cfif>><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.labels_main&label_id=#label_id#');return false;"><ins>&nbsp;</ins>#label_text# (#label_count#)</a></li>
 			</cfoutput>
-		</cfloop>
+		</cfloop> --->
 		<!--- Return --->
-		<cfreturn />
+		<cfreturn _node />
 	</cffunction>
 	
 	<!--- Build labels drop down menu --->

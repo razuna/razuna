@@ -48,7 +48,7 @@
 			<a class="flowplayerdetail" href="#thevideourl#" style="display:block;width:#attributes.vw#px;height:#attributes.vh#px;">
 				<img src="#thevideoimage#" border="0">
 			</a>
-			<script language="javascript" type="text/javascript">
+			<script type="text/javascript">
 				// this simple call does the magic
 				flowplayer("a.flowplayerdetail", "#dynpath#/global/videoplayer/flowplayer-3.2.7.swf", { 
 				    clip: {

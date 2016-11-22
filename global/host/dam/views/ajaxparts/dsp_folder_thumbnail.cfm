@@ -29,7 +29,7 @@
 <head>
 <link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
 <link rel="stylesheet" href="#dynpath#/global/js/chosen/chosen.css" type="text/css" />
-<script  type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+<script  type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 <script  type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script>
 <style type="text/css">
 .chzn-container .chzn-drop .chzn-results {
@@ -115,7 +115,7 @@
 	</div>
 	</form>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<script type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen({search_contains: true});
 		//set width

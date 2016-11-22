@@ -40,6 +40,7 @@
 	<cfset var xPath = "">
 	<cfset var node = "">
 	
+	<cftry>
 		<cfcachecontent name="blog" cachedwithin="#CreateTimeSpan(0,6,0,0)#" region="razcache">
 			<cfhttp url="#arguments.thefeed#" method="get" throwonerror="no" timeout="6">
 		</cfcachecontent>
@@ -74,7 +75,9 @@
 				<cfset node.desc = items[x].description.xmlText>
 				<cfset result[arrayLen(result)+1] = duplicate(node)>
 			</cfloop>
-		
+		<cfcatch></cfcatch>
+	</cftry>
+	
 	<cfreturn result>
 		
 </cffunction>

@@ -63,8 +63,8 @@
 	</form>
 
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
-		jqtabs("tabs_prefs");
+	<script type="text/javascript">
+		$("##tabs_prefs").tabs();
 		loadcontent('pglobal','#myself#c.prefs_global');
 		// Save this form
 		function savesettings() {

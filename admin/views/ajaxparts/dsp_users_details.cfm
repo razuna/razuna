@@ -69,11 +69,11 @@
 		</tr>
 		<tr>
 			<td valign="top">#defaultsObj.trans("email")#*</td>
-			<td><input type="text" name="user_email" id="user_email" size="55" class="text" value="#qry_detail.user_email#" tabindex="2"></td>
+			<td><input type="text" name="user_email" id="user_email" size="45" class="text" value="#qry_detail.user_email#" tabindex="2"></td>
 		</tr>
 		<tr>
 			<td width="180" valign="top">#defaultsObj.trans("user_name")#*</td>
-			<td width="420"><input type="text" name="user_login_name" id="user_login_name" size="55" value="#qry_detail.user_login_name#" tabindex="3"></td>
+			<td width="420"><input type="text" name="user_login_name" id="user_login_name" size="45" value="#qry_detail.user_login_name#" tabindex="3"></td>
 		</tr>
 		<tr>
 			<th colspan="2">#defaultsObj.trans("password")#</th>
@@ -223,9 +223,9 @@
 </form>
 
 <!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 	// Tabs
-	jqtabs("theuser");
+	$("##theuser").tabs();
 	// Focus
 	$('##user_email').focus();
 	// Fire the form submit for new or update user

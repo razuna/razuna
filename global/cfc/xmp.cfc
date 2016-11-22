@@ -2285,7 +2285,7 @@
 			<cfloop query="arguments.thestruct.qry_xmp">
 				<!--- Loop to set images metadata values to selected metadata into export file--->
 				<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," >
-					<cfif id_r EQ arguments.thestruct.file_id AND isDefined('arguments.thestruct.qry_xmp.#idx#')>
+					<cfif id_r EQ arguments.thestruct.file_id AND structkeyexists(arguments.thestruct.qry_xmp, idx) AND isDefined('arguments.thestruct.qry_xmp.#idx#')>
 						<cfset QuerySetCell(arguments.thestruct.tq, "#idx#", evaluate("arguments.thestruct.qry_xmp.#idx#"))>
 					</cfif>
 				</cfloop>
@@ -2295,7 +2295,7 @@
 			<cfloop query="arguments.thestruct.qry_pdfxmp">
 				<!--- Loop to set images metadata values to selected metadata into export file--->
 				<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," >
-					<cfif id_r EQ arguments.thestruct.file_id AND isDefined('arguments.thestruct.qry_pdfxmp.#idx#')>
+					<cfif id_r EQ arguments.thestruct.file_id AND structkeyexists(arguments.thestruct.qry_pdfxmp, idx) AND isDefined('arguments.thestruct.qry_pdfxmp.#idx#')>
 						<cfset QuerySetCell(arguments.thestruct.tq, "#idx#", evaluate("arguments.thestruct.qry_pdfxmp.#idx#"))>
 					</cfif>
 				</cfloop>

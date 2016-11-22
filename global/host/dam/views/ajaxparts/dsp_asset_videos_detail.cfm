@@ -398,8 +398,8 @@
 		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</form>
 	<!--- Activate the Tabs --->
-<script language="JavaScript" type="text/javascript">
-	jqtabs("tab_detail#attributes.file_id#");
+<script type="text/javascript">
+	$("##tab_detail#attributes.file_id#").tabs();
 	// Load renditions
 	function loadrenvid(){
 		<cfif qry_detail.detail.link_kind NEQ "url">

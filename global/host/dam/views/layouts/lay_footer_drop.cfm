@@ -46,7 +46,7 @@
 	<div id="tabs_footer">
 		<ul>
 			<li style="#basket_css#" ><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("show_basket")#</a></li>
-			<li style="#favorites_css#"><a href="##thedropfav" id="div_link_fav"onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">#myFusebox.getApplicationData().defaults.trans("show_favorites")#</a></li>
+			<li style="#favorites_css#"><a href="##thedropfav" id="div_link_fav" onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">#myFusebox.getApplicationData().defaults.trans("show_favorites")#</a></li>
 			<li style="#orders_css#"><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">#myFusebox.getApplicationData().defaults.trans("show_orders")#</a></li>
 			<cfif !application.razuna.whitelabel>
 				<li style="float:right;"><a href="##raztab" onclick="tooglefooter('3');">#myFusebox.getApplicationData().defaults.trans("about")# Razuna</a></li>
@@ -78,7 +78,7 @@
 	</div>
 
 	<script type="text/javascript">
-	jqtabs("tabs_footer");
+	$("##tabs_footer").tabs();
 	function tooglefooter(what){
 		// which div to resize
 		var thefooterslider = $('##footer_drop');

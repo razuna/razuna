@@ -51,11 +51,11 @@
 			</cfif> 
 			<ul>
 				<!--- Show the collection files in the trash --->
-				<li><a href="##files" onclick="loadcontent('files','#myself#c.get_collection_trash_files&trashkind=files');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(qry_file_count['cnt'])#)</a></li>
+				<li><a href="##files" onclick="loadcontent('files','#myself#c.get_collection_trash_files&trashkind=files');">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(qry_file_count['cnt'])#)</a></li>
 				<!--- Show the collection folders in the trash --->
-				<li><a href="##folders" onclick="loadcontent('folders','#myself#c.get_collection_trash_folders&trashkind=folders');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folders")# (#arraySum(qry_folder_count['cnt'])#)</a></li>
+				<li><a href="##folders" onclick="loadcontent('folders','#myself#c.get_collection_trash_folders&trashkind=folders');">#myFusebox.getApplicationData().defaults.trans("trash_folders")# (#arraySum(qry_folder_count['cnt'])#)</a></li>
 				<!--- Show the collection in the trash --->
-				<li><a href="##collections" onclick="loadcontent('collections','#myself#c.col_get_trash&trashkind=collections');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_collections")# (#arraySum(col_count_trash['cnt'])#)</a></li>
+				<li><a href="##collections" onclick="loadcontent('collections','#myself#c.col_get_trash&trashkind=collections');">#myFusebox.getApplicationData().defaults.trans("trash_collections")# (#arraySum(col_count_trash['cnt'])#)</a></li>
 			</ul>
 			<!--- for files --->
 			<div id="files"></div>
@@ -65,21 +65,21 @@
 			<div id="collections"></div>
 		</div>
 		<script type="text/javascript">
-           jqtabs("tabsfolder_tab");
-           <cfif attributes.trashkind EQ 'collections'>
-               $('##collections').load('#myself#c.col_get_trash&trashkind=collections');
-               //$('##tabsfolder_tab').tabs('select','##collections');
-			    var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
+			$("##tabsfolder_tab").tabs();
+			<cfif attributes.trashkind EQ 'collections'>
+			   $('##collections').load('#myself#c.col_get_trash&trashkind=collections');
+			   //$('##tabsfolder_tab').tabs('select','##collections');
+				var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
 				$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-           <cfelseif attributes.trashkind EQ 'folders'>
-		   		$('##folders').load('#myself#c.get_collection_trash_folders&trashkind=folders');
-               //loadcontent('folders','#myself#c.get_collection_trash_folders&trashkind=folders');
-               //$('##tabsfolder_tab').tabs('select','##folders');
-			    var index = $('##tabsfolder_tab div.ui-tabs-panel').length-2;
+			<cfelseif attributes.trashkind EQ 'folders'>
+				$('##folders').load('#myself#c.get_collection_trash_folders&trashkind=folders');
+			   //loadcontent('folders','#myself#c.get_collection_trash_folders&trashkind=folders');
+			   //$('##tabsfolder_tab').tabs('select','##folders');
+				var index = $('##tabsfolder_tab div.ui-tabs-panel').length-2;
 				$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
-           <cfelse>
-               $('##files').load('#myself#c.get_collection_trash_files&trashkind=files');
-           </cfif>
-       </script>
+			<cfelse>
+			   $('##files').load('#myself#c.get_collection_trash_files&trashkind=files');
+			</cfif>
+	   </script>
 	</cfif>
 </cfoutput>

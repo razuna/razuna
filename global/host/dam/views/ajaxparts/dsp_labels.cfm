@@ -25,8 +25,7 @@
 --->
 <cfoutput>
 	<!--- Folders --->
-	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Labels</div> --->
-	<div style="width:60px;float:right;left:190px;position:absolute;top:3px;">
+	<div style="width:65px;float:right;left:190px;position:absolute;top:3px;word-break:keep-all">
 		<div style="float:left;"><a href="##" onclick="$('##labeltools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##labeltools').toggle();" class="ddicon"></div>
 		<div id="labeltools" class="ddselection_header" style="top:18px;width:250px;z-index:6;">
@@ -40,7 +39,7 @@
 						<option value="#label_id#">#label_path#</option>
 					</cfloop>
 				</select></p>
-				<p><hr /></p>
+				<p><hr></p>
 			</cfif>
 			<p><a href="##" onclick="loadcontent('explorer','#myself#c.labels_list');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>
@@ -50,50 +49,68 @@
 	</div>
 	<div style="clear:both;"></div>
 
-<script language="javascript" type="text/javascript">
-	// Load Collections
-	$(function () { 
-		$("##labtree").tree({
-			plugins : {
-				cookie : { prefix : "cookielabtree_" }
-			},
-			types : {
-				"default" : {
-					deletable : false,
-					renameable : false,
-					draggable : false,
-					icon : { 
-						image : "#dynpath#/global/host/dam/images/tag_16.png"
+	<script type="text/javascript">
+		// Load jstree
+		$('##labtree').jstree({
+			"state" : { "key" : "razuna-tree-labels" },
+			"plugins" : [ "state" ],
+			'core' : {
+				'themes': {
+					'name': 'proton',
+					'responsive': true
+				},
+				'data' : {
+					"url" : "#myself#c.labels_tree",
+					"dataType" : "json", // needed only if you do not supply JSON headers
+					"data" : function (node) {
+						return { "id" : node.id };
 					}
-				}
-			},
-			data : { 
-				async : true,
-				opts : {
-					url : "#myself#c.labels_tree"
 				}
 			}
 		});
-	});
-	// Add Label
-	function addlabel(){
-		//check label for first char and letters
-		if(!isValidLabel('label_text')){
-			alert('Please use first charactor as letters or numbers.');
-			return false;
+		// Load Collections
+		// $(function () { 
+		// 	$("##labtree").tree({
+		// 		plugins : {
+		// 			cookie : { prefix : "cookielabtree_" }
+		// 		},
+		// 		types : {
+		// 			"default" : {
+		// 				deletable : false,
+		// 				renameable : false,
+		// 				draggable : false,
+		// 				icon : { 
+		// 					image : "#dynpath#/global/host/dam/images/tag_16.png"
+		// 				}
+		// 			}
+		// 		},
+		// 		data : { 
+		// 			async : true,
+		// 			opts : {
+		// 				url : "#myself#c.labels_tree"
+		// 			}
+		// 		}
+		// 	});
+		// });
+		// Add Label
+		function addlabel(){
+			//check label for first char and letters
+			if(!isValidLabel('label_text')){
+				alert('Please use first charactor as letters or numbers.');
+				return false;
+			}
+			
+			// Get value
+			var thelab = $("##label_text").val().trim();
+			var theparent = $("##sublabelof option:selected").val();
+			// Submit
+			if (thelab != "") {
+				$('##explorer').load('#myself#c.labels_add', {label_id:0, label_text: thelab, label_parent: theparent});
+			}
+			else {
+				return false;
+			}
 		}
-		
-		// Get value
-		var thelab = $("##label_text").val().trim();
-		var theparent = $("##sublabelof option:selected").val();
-		// Submit
-		if (thelab != "") {
-			$('##explorer').load('#myself#c.labels_add', {label_id:0, label_text: thelab, label_parent: theparent});
-		}
-		else {
-			return false;
-		}
-	}
-</script>
+	</script>
 </cfoutput>
 	

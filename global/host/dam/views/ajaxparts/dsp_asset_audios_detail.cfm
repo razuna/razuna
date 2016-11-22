@@ -361,8 +361,8 @@
 		</cfif>
 	</form>
 	<!--- Activate the Tabs --->
-	<script language="JavaScript" type="text/javascript">
-	jqtabs("tab_detail#attributes.file_id#");
+	<script type="text/javascript">
+	$("##tab_detail#attributes.file_id#").tabs();
 	// Load renditions
 	function loadrenaud(){
 		<cfif qry_detail.detail.link_kind NEQ "url">

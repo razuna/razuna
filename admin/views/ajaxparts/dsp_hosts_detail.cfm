@@ -52,10 +52,12 @@
 				<td>#qry_hostsdetail.host_path#</td>
 			</tr>
 		</cfif>
-		<tr>
-			<td nowrap="true">#defaultsObj.trans("hosts_size")#</td>
-			<td>#hostsize#</td>
-		</tr>
+		<cfif application.razuna.storage NEQ "amazon">
+			<tr>
+				<td valign="top" nowrap="true">#defaultsObj.trans("hosts_size")#</td>
+				<td><span id='hostsize'><img src="images/loading.gif" border="0"></span><br><em>(If this tenant has a large asset pool this can take a long time!)</em></td>
+			</tr>
+		</cfif>
 		<!--- <tr>
 			<td nowrap="true">#defaultsObj.trans("db_prefix")#</td>
 			<td>#qry_hostsdetail.host_db_prefix#</td>
@@ -68,6 +70,10 @@
 	</form>
 	</div>
 	<script language="javascript">
+		// Get size
+		<cfif application.razuna.storage NEQ "amazon">
+		$('##hostsize').load('#myself#c.hosts_detail_size&host_id=#attributes.host_id#');
+		</cfif>
 		$("##form_hostedit").submit(function(e){
 			// Get values
 			var url = formaction("form_hostedit");

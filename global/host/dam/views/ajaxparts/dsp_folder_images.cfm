@@ -441,7 +441,7 @@
 		</form>
 	
 		<!--- JS for the combined view --->
-		<script language="JavaScript" type="text/javascript">
+		<script type="text/javascript">
 			<cfif session.file_id NEQ "">
 				enablesub('#kind#form');
 			</cfif>
