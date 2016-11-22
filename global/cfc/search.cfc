@@ -135,11 +135,12 @@
 		<!--- Search in Lucene  --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
 
+		<!--- Get all ids --->
+		<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" returnvariable="qry_idstype">
+
 		<!--- Do we search in all results or only in originals --->
 		<!--- If arguments.thestruct.prefs = f we show all files --->
-		<cfif qry_lucene.recordcount NEQ "0">
-			<!--- Get all ids --->
-			<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" returnvariable="qry_idstype">
+		<cfif qry_lucene.recordcount NEQ 0 AND qry_idstype.recordcount NEQ 0>
 			<!--- Group type together --->
 			<cfquery dbtype="query" name="grptype">
 			SELECT category
