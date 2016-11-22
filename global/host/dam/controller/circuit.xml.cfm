@@ -34,6 +34,7 @@
 		<set name="attributes.shared" value="F" overwrite="false" />
 		<set name="attributes.fid" value="0" overwrite="false" />
 		<set name="attributes.wid" value="0" overwrite="false" />
+		<set name="attributes.qry_news" value="[]" overwrite="false" />
 		<set name="jr_enable" value="false" overwrite="false" />
 		<if condition="session.hostid NEQ ''">
 			<true>
@@ -304,6 +305,7 @@
 	 			<set name="session.hosttype" value="" overwrite="false" />
 	 			<set name="attributes.redirectmain" value="false" overwrite="false" />
 	 			<set name="attributes.goto" value="" overwrite="false" />
+	 			<set name="attributes.qry_news" value="[]" overwrite="false" />
 	 			<!-- Set that we are in custom view -->
 				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
@@ -8134,6 +8136,7 @@
 		<set name="attributes.fromcol" value="F" overwrite="false" />
 		<set name="attributes.fp" value="F" overwrite="false" />
 		<set name="attributes.perm_password" value="F" />
+		<set name="attributes.qry_news" value="[]" />
 		<!-- Folder id into session -->
 		<set name="session.fid" value="#attributes.fid#" />
 		<if condition="#attributes.fromcol# EQ 'F' OR NOT structkeyexists(session,'iscol')">
