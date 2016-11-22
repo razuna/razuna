@@ -222,12 +222,12 @@
 											</div>
 										</cfif>
 									</cfloop>
-									<cfif NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
+									<cfif isArray(attributes.qry_news) AND NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
 										<br>
 									</cfif>
 								<!--- RSS --->
 								<cfelse>
-									<cfif arrayisempty(attributes.qry_news)>
+									<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news)>
 										<h2>Connection to the news is currently not available</h2>
 									<cfelse>
 										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
@@ -237,7 +237,7 @@
 									</cfif>
 								</cfif>
 								<!--- Host News --->
-								<cfif NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news_host.recordcount NEQ 0>
+								<cfif isArray(attributes.qry_news) AND NOT arrayisempty(attributes.qry_news) AND attributes.qry_news.news_host.recordcount NEQ 0>
 									<h1>News</h1>
 								</cfif>
 								<!--- News --->
@@ -256,7 +256,7 @@
 									</cfloop>
 								<!--- RSS --->
 								<cfelse>
-									<cfif arrayisempty(attributes.qry_news)>
+									<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news)>
 										<h2>Connection to the news is currently not available</h2>
 									<cfelse>
 										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
