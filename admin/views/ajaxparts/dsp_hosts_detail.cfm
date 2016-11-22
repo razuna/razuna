@@ -53,7 +53,7 @@
 			</tr>
 		</cfif>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("hosts_size")#</td>
+			<td valign="top" nowrap="true">#defaultsObj.trans("hosts_size")#</td>
 			<td><span id='hostsize'><img src="images/loading.gif" border="0"></span><br><em>(If this tenant has a large asset pool this can take a long time!)</em></td>
 		</tr>
 		<!--- <tr>

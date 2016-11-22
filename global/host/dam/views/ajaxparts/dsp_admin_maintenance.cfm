@@ -71,7 +71,7 @@ Please choose the database cache to flush:<br />
 				<tr class="list">
 					<td>
 					#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushtemplate_desc")#<br /><br />
-					<a href="#session.thehttp##cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank" style="text-decoration:none;">
+					<a href="#session.thehttp##cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" style="text-decoration:none;">
 					<input type="button" name="rebuiltcache" value="#myFusebox.getApplicationData().defaults.trans("admin_maintenance_flushtemplate_link")#" class="button" /></a>
 					<br /><br />
 					</td>

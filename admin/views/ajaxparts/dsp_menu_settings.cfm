@@ -45,6 +45,9 @@
 						<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.pref_global_wl');return false;">&raquo; #defaultsObj.trans("link_white_labelling")#</a></td>
 					</tr>
 				</cfif>
+				<tr>
+					<td valign="top" style="padding-top:20px;"><a href="#session.thehttp##cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#">&raquo; Flush admin cache</a></td>
+				</tr>
 			</table>
 			<!--- Users --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
