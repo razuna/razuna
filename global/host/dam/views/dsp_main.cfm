@@ -205,7 +205,7 @@
 						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
 								<!--- System News --->
-								<cfif  arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
+								<cfif isArray(attribues.qry_news) AND arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
 									<h1>System News</h1>
 								</cfif>
 								<!--- News --->
