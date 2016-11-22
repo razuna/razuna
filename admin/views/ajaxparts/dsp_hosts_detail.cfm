@@ -54,7 +54,7 @@
 		</cfif>
 		<tr>
 			<td nowrap="true">#defaultsObj.trans("hosts_size")#</td>
-			<td>#hostsize#</td>
+			<td><span id='hostsize'><img src="images/loading.gif" border="0"></span></td>
 		</tr>
 		<!--- <tr>
 			<td nowrap="true">#defaultsObj.trans("db_prefix")#</td>
@@ -68,6 +68,8 @@
 	</form>
 	</div>
 	<script language="javascript">
+		// Get size
+		$('##hostsize').load('#myself#c.hosts_detail_size&host_id=#attributes.host_id#');
 		$("##form_hostedit").submit(function(e){
 			// Get values
 			var url = formaction("form_hostedit");
