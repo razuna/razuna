@@ -1009,17 +1009,40 @@ font-weight: bold;
 }
 
 /* This will finally wrap long lines in the jstree */
+/**/
+
+#treeBox,
+#colBox,
+#labtree {
+	max-width: 220px;
+	float:left;
+	/*border: 1px solid red;*/
+}
+
 .jstree-anchor {
-	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-	white-space: -pre-wrap;      /* Opera 4-6 */
-	white-space: -o-pre-wrap;    /* Opera 7 */
-	white-space: pre-wrap !important;       /* css-3 */
-	word-wrap: break-word;       /* Internet Explorer 5.5+ */
-	white-space: pre; /* CSS2 */
-	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
-	_white-space: pre;
-	display: inline;
-	word-break:break-all;
+    /*enable wrapping*/
+    white-space : normal !important;
+    /*ensure lower nodes move down*/
+    height : auto !important;
+    /*offset icon width*/
+    padding-right : 0;
+    word-break: break-all;
+}
+.jstree-proton .jstree-hovered {
+  /*background: #ededed;*/
+  /*color: #999;*/
+  border-radius: 3px;
+  /*box-shadow: inset 0 0 1px #ededed;*/
+  padding-right: 0;
+  width: 100%;
+}
+.jstree-proton .jstree-clicked {
+  /*background: #ededed;*/
+  /*color: #ffffff;*/
+  border-radius: 3px;
+  /*box-shadow: inset 0 0 1px #ededed;*/
+  padding-right: 0;
+  width: 100%;
 }
 
 /* Fix 100% width */
@@ -1046,7 +1069,7 @@ a:link .nolink{text-decoration: none;}
 	height: -moz-calc(100vh - 150px); /* Firefox */
 	height: -webkit-calc(100vh - 150px); /* Chrome, Safari */
 	height: calc(100vh - 150px); /* IE9+ and future browsers */
-	width:240px;
-	overflow-y:auto;
-	overflow-x:auto;
+	/*width:240px;*/
+	overflow:auto;
+	/*overflow-x:auto;*/
 }
