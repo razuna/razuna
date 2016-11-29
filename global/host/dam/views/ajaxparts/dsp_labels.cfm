@@ -45,7 +45,7 @@
 		</div>
 	</div>
 	<div style="clear:both;"></div>
-	<div id="labtree" style="width:200;height:200;float:left;">
+	<div id="labtree">
 	</div>
 	<div style="clear:both;"></div>
 

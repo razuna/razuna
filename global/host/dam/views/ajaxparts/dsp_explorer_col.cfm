@@ -38,7 +38,7 @@
 		</div>
 	</div>
 	<div style="clear:both;"></div>
-	<div id="colBox" style="width:200;height:200;float:left;"></div>
+	<div id="colBox"></div>
 	<div style="clear:both;"></div>
 	<!--- Trash --->
 	<div style="padding:15px 0px 10px 8px;">

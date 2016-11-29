@@ -55,7 +55,7 @@
 	</cfif>
 	<div style="clear:both;"></div>
 	<!--- Load folders --->
-	<div id="treeBox" style="width:200;height:200;float:left;"></div>
+	<div id="treeBox"></div>
 	
 	<cfif cs.show_trash_icon AND (isadmin OR  cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
 		<div style="clear:both;"></div>
