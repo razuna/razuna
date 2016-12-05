@@ -4753,7 +4753,7 @@
 				<cfset var _attr_destroywindow = "destroywindow(1);">
 				<cfset var _fromtrash = "">
 
-				<cfif NOT session.thefileid CONTAINS ",">
+				<cfif structKeyExists(session, "thefileid") AND NOT session.thefileid CONTAINS ",">
 					<cfset var _attr_destroywindow = "destroywindow(2);">
 				</cfif>
 
@@ -4771,7 +4771,6 @@
 					<cfset var _attr_fa = "c.collections">
 					<cfset var _attr_fa_explorer = "c.explorer_col">
 					<cfset var _attr_div_explorer = "##explorer_col">
-
 				</cfif>
 
 				<!--- If fromtrash --->
@@ -4783,13 +4782,14 @@
 				<cfset _node[_row].id = _id>
 				<!--- Folder name --->
 				<cfset var _folder_name = folder_name>
-					<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
-						<cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">
-							<cfset var _folder_name = _folder_name & " <em>(" & username & ")</em>">
-						</cfif>
+				<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+					<cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">
+						<cfset var _folder_name = _folder_name & " <em>(" & username & ")</em>">
 					</cfif>
 				</cfif>
 				<cfset _node[_row].text = _folder_name>
+			
+				
 
 				<!--- Set link --->
 				<cfset var _attr = structNew()>
@@ -4934,136 +4934,19 @@
 
 				<!--- Increase --->
 				<cfset _row = _row + 1>
-
-				<!--- <li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>>
-					<!--- Only allow users with write permissions to perform actions on the folder --->
-					<cfif !listfindnocase('w,x',qry.permfolder)> 
-					<!--- movefile --->
-					<cfelseif session.type EQ "movefile">
-						<cfif session.thefolderorg NEQ folder_id>
-							<cfif arguments.kind EQ "search">
-								<a href="#" onclick="$('##div_choosefolder_status_#session.tmpid#').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The file(s) are being moved now.<br />Note: For a large batch of files this can take some time until it reflects in the system!<br />You can close this window.');});">
-							<cfelse>
-								<a href="#" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The file(s) are being moved now.<br />Note: For a large batch of files this can take some time until it reflects in the system!<br />You can close this window.');});" style="white-space:normal;">
-							</cfif>
-						</cfif>
-					<!--- movefolder --->
-					<cfelseif session.type EQ "movefolder">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');<cfif arguments.fromtrash>$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">c.collection<cfelse>c.folder</cfif>_explorer_trash');</cfif>});destroywindow(1);return false;" style="white-space:normal;">
-						</cfif>
-					<!--- copyfolder --->
-					<cfelseif session.type EQ "copyfolder">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="loadcontent('div_forall','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#&inherit_perm='+$('##perm_inherit').is(':checked'), function(){
-								<cfif arguments.fromtrash>$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">x.collection<cfelse>c.folder</cfif>_explorer_trash');</cfif>
-							});$('#_attr_div_explorer#').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');destroywindow(1);return false;" style="white-space:normal;">
-						</cfif>
-					<!--- restorefolder --->
-					<cfelseif session.type EQ "restorefolder">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#');$('##rightside').load('index.cfm?fa=c.folder_explorer_trash&trashkind=folders');destroywindow(1);return false;" style="white-space:normal;">
-						</cfif>
-					<!--- restoreselectedfolders --->
-					<cfelseif session.type EQ "restoreselectedfolders">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#');destroywindow(1);return false;" style="white-space:normal;">
-						</cfif>
-					<!--- restorefile --->
-					<cfelseif session.type EQ "restorefile">
-						<cfif session.thefolderorg NEQ folder_id> 
-							<a href="#" onclick="<cfif session.thefileid CONTAINS ",">loadoverlay();</cfif>$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&intolevel=#folder_level#', function(){loadfolderwithdelay('#session.thefolderorg#');$('##bodyoverlay').remove();});#_attr_destroywindow#<cfif NOT session.thefileid CONTAINS ",">loadcontent('thewindowcontent1','index.cfm?fa=c.<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>_detail&file_id=#session.thefileid#&what=<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>&loaddiv=&folder_id=#folder_id#')</cfif>;" style="white-space:normal;">
-						</cfif>
-					<!--- restorefileall --->
-					<cfelseif session.type EQ "restorefileall">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;" style="white-space:normal;">
-						</cfif>
-					<!--- restoreselectedfiles --->
-					<cfelseif session.type EQ "restoreselectedfiles">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');delayloadingoflist();destroywindow(1);return false;" style="white-space:normal;">
-						</cfif>
-					<!--- restorefolderall --->
-					<cfelseif session.type EQ "restorefolderall">
-						<cfif session.thefolderorg NEQ folder_id>
-							<a href="#" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;" style="white-space:normal;">
-						</cfif> 
-					<!--- saveaszip or as a collection --->
-					<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
-						<a href="#" onclick="loadcontent('win_choosefolder_#session.tmpid#','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');" style="white-space:normal;">
-					<!--- upload --->
-					<cfelseif session.type EQ "uploadinto">
-						<a href="#" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;" style="white-space:normal;">
-					<!--- customization --->
-					<cfelseif session.type EQ "customization">
-						<a href="#" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);" style="white-space:normal;">
-					<!--- group detail--->
-					<cfelseif session.type EQ "groups_detail">
-						<!--- <a href="#" onclick="javascript:$('#folder_redirect').val('#folder_id#'); $('#folder_name').val('#folder_name#');destroywindow(1);" style="white-space:normal;"> --->
-						<a href="#" onclick="javascript:document.grpedit.folder_redirect.value = '#folder_id#'; document.grpedit.folder_name.value = '#folder_name#';destroywindow(2);" style="white-space:normal;">
-					<!--- scheduler --->
-					<cfelseif session.type EQ "scheduler">
-						<a href="#" onclick="javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#folder_name#';destroywindow(2);" style="white-space:normal;">
-					<!--- choose a collection --->
-					<cfelseif session.type EQ "choosecollection">
-						<a href="#" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');" style="white-space:normal;">
-					<!--- choose a collection for restore file --->
-					<cfelseif session.type EQ "restore_collection_file">
-						<a href="#" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');" style="white-space:normal;">
-					<!--- Restore all collection files in the trash --->
-					<cfelseif session.type EQ "restoreallcollectionfiles">
-						<a href="#" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');" style="white-space:normal;">
-					<!--- Restore selected collection files in the trash --->
-					<cfelseif session.type EQ "restoreselectedcolfiles">
-						<a href="#" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');" style="white-space:normal;">
-					<!--- choose a folder for restore collection --->
-					<cfelseif session.type EQ "restore_collection">
-						<a href="#" onclick="loadcontent('collections','index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;" style="white-space:normal;">
-					<!--- Restore all collections in the trash --->
-					<cfelseif session.type EQ "restoreallcollections">
-						<a href="#" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;" style="white-space:normal;">
-					<!--- Restore selected collections  --->
-					<cfelseif session.type EQ "restoreselectedcollection">
-						<a href="#" onclick="loadcontent('collections','index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;" style="white-space:normal;">
-					<!--- Restore collection folder in the trash --->
-					<cfelseif session.type EQ "restorecolfolder">
-						<a href="#" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;" style="white-space:normal;">
-					<!--- Restore all collection folder in the trash --->
-					<cfelseif session.type EQ "restorecolfolderall">
-						<a href="#" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;" style="white-space:normal;">
-					<!--- Restore all collection folder in the trash --->
-					<cfelseif session.type EQ "restoreselectedcolfolder">
-						<a href="#" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;" style="white-space:normal;">
-					<!--- copy metadata --->
-					<cfelseif session.type EQ "copymetadata">
-						<a href="#" onclick="loadcontent('result','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&what=#session.thetype#&fid=#session.file_id#');destroywindow(2);return false;" style="white-space:normal;"> 
-					<!--- Plugin --->
-					<cfelseif session.type EQ "plugin">
-						<a href="#" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);" style="white-space:normal;">
-					<!--- From Smart Folder --->
-					<cfelseif session.type EQ "sf_download">
-						<a href="#" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status_#session.tmpid#').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;" style="white-space:normal;">
-					<!--- Alias --->
-					<cfelseif session.type EQ "alias">
-						<cfif session.thefolderorg NEQ folder_id>
-							<cfif arguments.kind EQ "search">
-								<a href="#" onclick="$('##div_choosefolder_status_#session.tmpid#').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select it from the list above!<br />You can close this window.');});">
-							<cfelse>
-								<a href="#" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){$('##div_choosefolder_status_#session.tmpid#').html('The alias has been created in the selected folder.<br />Note: If you want to create an alias for the same file(s) in another folder simply select it from the list above!<br />You can close this window.');});">
-							</cfif>
-						</cfif>
-					</cfif>
-					<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif>
-					<cfif session.thefolderorg NEQ folder_id></a></cfif>
-				</li>
-			</cfif> --->
+			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("folders")>
 	</cfif>
-	<!--- <cfdump var="#_node#">
-	<cfabort> --->
+	<!--- 
+	<cfset consoleoutput(true)>
+	<cfloop array="#_node#" item="a" index='i'>
+		<cfset console(a)>
+	</cfloop>
+	<cfdump var="#_node#">
+	<cfabort> 
+	--->
 	<cfreturn _node />
 </cffunction>
 
