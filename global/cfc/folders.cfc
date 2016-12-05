@@ -4753,7 +4753,7 @@
 				<cfset var _attr_destroywindow = "destroywindow(1);">
 				<cfset var _fromtrash = "">
 
-				<cfif NOT session.thefileid CONTAINS ",">
+				<cfif structKeyExists(session, "thefileid") AND NOT session.thefileid CONTAINS ",">
 					<cfset var _attr_destroywindow = "destroywindow(2);">
 				</cfif>
 
