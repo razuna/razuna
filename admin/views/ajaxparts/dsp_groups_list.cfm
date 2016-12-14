@@ -30,7 +30,7 @@
 	</tr>
 	<cfloop query="qry_groups">
 		<tr>
-			<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#grp_name#',500,1);return false;">#grp_name#</a></td>
+			<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#Encodeforjavascript(grp_name)#',500,1);return false;">#grp_name#</a></td>
 			<td align="center" valign="top" nowrap width="1%">
 				<cfif attributes.kind EQ "ecp" OR attributes.kind EQ "adm" AND grp_id NEQ 1 AND grp_id NEQ 2>
 					<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=groups&id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a>

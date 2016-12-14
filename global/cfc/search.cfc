@@ -134,7 +134,8 @@
 
 		<!--- Search in Lucene  --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
-
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(qry_lucene)> --->
 		<!--- Get all ids --->
 		<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" returnvariable="qry_idstype">
 
@@ -242,24 +243,44 @@
 					</cfif>
 				</cfloop>
 			</cfif>
+			<!--- <cfset consoleoutput(true)>
+			<cfset console(qry)> --->
 			<!--- Init var for new fileid --->
 			<cfset var editids = "0,">
 			<cfset var fileids = "">
-			<!--- Get proper folderaccess --->
-			<cfloop query="qry">
-				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
-				<!--- Store only file_ids where folder access is not read-only --->
-				<cfif theaccess NEQ "R" AND theaccess NEQ "n">
-					<cfset editids = editids & listid & ",">
-				</cfif>
-				<cfset fileids = fileids & id & ",">
-			</cfloop>
+			<!--- Get proper folderaccess no need for admin --->
+			<cfif NOT Request.securityObj.CheckSystemAdminUser() OR NOT Request.securityObj.CheckAdministratorUser() AND session.customaccess NEQ "">
+				<cfloop query="qry">
+					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#" />
+					<!--- Add labels query --->
+					<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+					<!--- Store only file_ids where folder access is not R --->
+					<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+						<cfset editids = editids & listid & ",">
+						<cfset fileids = fileids & id & ",">
+						<!--- Add the record to the final query --->
+						<cfquery dbtype="query" name="qry_final">
+						<cfif Parameterexists(qry_final)>
+						SELECT *
+						FROM qry_final
+						UNION
+						</cfif>
+						SELECT *
+						FROM qry
+						WHERE id = '#id#'
+						AND folder_id_r = '#folder_id_r#'
+						</cfquery>
+					</cfif>
+				</cfloop>
+			</cfif>
 			<!--- Save the editable ids in a session --->
 			<cfset session.search.edit_ids = editids>
 			<!--- Save fileids into session --->
 			<cfset session.search.search_file_ids = fileids>
+			<!--- IF we have a qry_final --->
+			<cfif Parameterexists(qry_final) AND isQuery(qry_final)>
+				<cfset var qry = qry_final>
+			</cfif>
 		<!--- Nothing found --->
 		<cfelse>
 			<!--- Save the editable ids in a session --->
