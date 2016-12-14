@@ -4784,10 +4784,10 @@
 				<cfset var _folder_name = folder_name>
 				<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 					<cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">
-						<cfset var _folder_name = _folder_name & " <em>(" & username & ")</em>">
+						<cfset var _folder_name = _folder_name & " <em>(" & Encodeforjavascript(username) & ")</em>">
 					</cfif>
 				</cfif>
-				<cfset _node[_row].text = _folder_name>
+				<cfset _node[_row].text = Encodeforjavascript(_folder_name)>
 			
 				
 
@@ -4873,13 +4873,13 @@
 					<cfset _attr.onclick = "showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;">
 				<!--- customization --->
 				<cfelseif session.type EQ "customization">
-					<cfset _attr.onclick = "javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
+					<cfset _attr.onclick = "javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#Encodeforjavascript(folder_name)#';destroywindow(1);">
 				<!--- group detail--->
 				<cfelseif session.type EQ "groups_detail">
-					<cfset _attr.onclick = "javascript:document.grpedit.folder_redirect.value = '#folder_id#'; document.grpedit.folder_name.value = '#folder_name#';destroywindow(2);">
+					<cfset _attr.onclick = "javascript:document.grpedit.folder_redirect.value = '#folder_id#'; document.grpedit.folder_name.value = '#Encodeforjavascript(folder_name)#';destroywindow(2);">
 				<!--- scheduler --->
 				<cfelseif session.type EQ "scheduler">
-					<cfset _attr.onclick = "javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#folder_name#';destroywindow(2);">
+					<cfset _attr.onclick = "javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#Encodeforjavascript(folder_name)#';destroywindow(2);">
 				<!--- choose a collection --->
 				<cfelseif session.type EQ "choosecollection">
 					<cfset _attr.onclick = "loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
@@ -4915,7 +4915,7 @@
 					<cfset _attr.onclick = "loadcontent('result','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&what=#session.thetype#&fid=#session.file_id#');destroywindow(2);return false;"> 
 				<!--- Plugin --->
 				<cfelseif session.type EQ "plugin">
-					<cfset _attr.onclick = "$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
+					<cfset _attr.onclick = "$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#Encodeforjavascript(folder_name)#');destroywindow(1);">
 				<!--- From Smart Folder --->
 				<cfelseif session.type EQ "sf_download">
 					<cfset _attr.onclick = "$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status_#session.tmpid#').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;">
