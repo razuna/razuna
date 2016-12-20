@@ -249,7 +249,7 @@
 			<cfset var editids = "0,">
 			<cfset var fileids = "">
 			<!--- Get proper folderaccess no need for admin --->
-			<cfif NOT Request.securityObj.CheckSystemAdminUser() OR NOT Request.securityObj.CheckAdministratorUser() AND session.customaccess NEQ "">
+			<!--- <cfif NOT Request.securityObj.CheckSystemAdminUser() OR NOT Request.securityObj.CheckAdministratorUser() AND session.customaccess NEQ ""> --->
 				<cfloop query="qry">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#" />
 					<!--- Add labels query --->
@@ -259,7 +259,7 @@
 						<cfset editids = editids & listid & ",">
 						<cfset fileids = fileids & id & ",">
 						<!--- Add the record to the final query --->
-						<cfquery dbtype="query" name="qry_final">
+						<!--- <cfquery dbtype="query" name="qry_final">
 						<cfif Parameterexists(qry_final)>
 						SELECT *
 						FROM qry_final
@@ -269,18 +269,18 @@
 						FROM qry
 						WHERE id = '#id#'
 						AND folder_id_r = '#folder_id_r#'
-						</cfquery>
+						</cfquery> --->
 					</cfif>
 				</cfloop>
-			</cfif>
+			<!--- </cfif> --->
 			<!--- Save the editable ids in a session --->
 			<cfset session.search.edit_ids = editids>
 			<!--- Save fileids into session --->
 			<cfset session.search.search_file_ids = fileids>
 			<!--- IF we have a qry_final --->
-			<cfif Parameterexists(qry_final) AND isQuery(qry_final)>
+			<!--- <cfif Parameterexists(qry_final) AND isQuery(qry_final)>
 				<cfset var qry = qry_final>
-			</cfif>
+			</cfif> --->
 		<!--- Nothing found --->
 		<cfelse>
 			<!--- Save the editable ids in a session --->
