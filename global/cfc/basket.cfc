@@ -830,11 +830,11 @@
 			<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#" charset="utf-8"></cfhttp>
 					</cfthread>
 				<cfelse>
 					<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#" charset="utf-8"></cfhttp>
 					</cfthread>
 				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
@@ -1176,7 +1176,7 @@
 				</cfif>
 				<!--- Either http or s3 direct download --->
 				<cfif _download_http>
-					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thedir#" charset="utf-8"></cfhttp>
 				<cfelse>
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Download">
@@ -1198,13 +1198,13 @@
 					<cfthread action="join" name="#thethreadid#" />
 				<cfelseif theart EQ "versions">
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 					<!--- Wait for the thread above until the file is downloaded fully --->
 					<cfthread action="join" name="#thethreadid#" />
 				<cfelse>
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 					<!--- Wait for the thread above until the file is downloaded fully --->
 					<cfthread action="join" name="#thethreadid#" />
@@ -1501,7 +1501,7 @@
 				</cfif>
 				<!--- Either http or s3 direct download --->
 				<cfif _download_http>
-					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#" charset="utf-8"></cfhttp>
 					<cfthread name="#wvt#"></cfthread>
 				<cfelse>
 					<!--- Download file --->
@@ -1517,11 +1517,11 @@
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				<cfelse>
 					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.thenewname#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.thenewname#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
@@ -1774,7 +1774,7 @@
 				</cfif>
 				<!--- Either http or s3 direct download --->
 				<cfif _download_http>
-					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#" charset="utf-8"></cfhttp>
 					<cfthread name="download#theart##theaudid#"></cfthread>
 				<cfelse>
 					<!--- Download file --->
@@ -1790,11 +1790,11 @@
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				<cfelse>
 					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
