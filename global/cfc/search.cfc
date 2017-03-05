@@ -1380,6 +1380,10 @@
 		<cfelseif session.sortby EQ "datechanged">
 			<cfset var sortby = "date_change DESC">
 		</cfif>
+
+		<!--- Check rendition search setting --->
+		<cfset var _search_rendition = arguments.thestruct.prefs.set2_rendition_search >
+
 		<cfset var qry = "">
 			<!--- MySQL Offset --->
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
@@ -1409,8 +1413,7 @@
 					AND so.asset_type = 'img' 
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					) AS theformat, 
-					LOWER(i.img_filename) 
-					filename_forsort, 
+					LOWER(i.img_filename) filename_forsort, 
 					cast(i.img_size as decimal(12,0)) size, 
 					i.hashtag,
 					fo.folder_name, 
@@ -1502,8 +1505,12 @@
 					WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 					<!--- If rendition then look at expiry_date for original asset --->
 					WHEN NOT (i.img_group is null OR i.img_group='')
-					 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#images WHERE img_id = i.img_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
+						THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#images WHERE img_id = i.img_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
 					ELSE 1 END  = 1
+					<!--- Filter renditions --->
+					<cfif _search_rendition EQ "t">
+						AND ( i.img_group IS NULL OR i.img_group = '' )
+					</cfif>
 					GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash, i.img_upc_number, i.expiry_date
 					</cfif><!--- Images Search end here --->
 						
@@ -1714,7 +1721,10 @@
 						WHEN NOT (v.vid_group is null OR v.vid_group='')
 						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#videos WHERE vid_id = v.vid_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
 						ELSE 1 END  = 1
-
+						<!--- Filter renditions --->
+						<cfif _search_rendition EQ "t">
+							AND ( v.vid_group IS NULL OR v.vid_group = '' )
+						</cfif>
 						GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash, v.vid_upc_number, v.expiry_date
 						</cfif><!--- Video search end here --->
 						
@@ -1828,6 +1838,10 @@
 						WHEN NOT (a.aud_group is null OR a.aud_group='')
 						 THEN CASE WHEN  EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('W','X') AND (SELECT expiry_date FROM  #session.hostdbprefix#audios WHERE aud_id = a.aud_group) < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0 ELSE 1 END
 						ELSE 1 END  = 1
+						<!--- Filter renditions --->
+						<cfif _search_rendition EQ "t">
+							AND ( a.aud_group IS NULL OR a.aud_group = '' )
+						</cfif>
 						GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash, a.aud_upc_number, a.expiry_date
 						</cfif>
 						<!--- Audio search end here --->
@@ -1888,24 +1902,25 @@
 							</cfif>		 
 						</cfif>
 				</cfquery>
-					<!--- Select only records that are unlocked --->
-					<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-						<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
-							SELECT found_rows() as total
-						</cfquery>--->
-						<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
-							<cfquery dbtype="query" name="qryCount">
-								SELECT sum(individualCount) as cnt from qry
-							</cfquery>
-							<cfset var newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
-							<cfset queryAddRow(newQuery)>
-							<cfset querySetCell(newQuery, "cnt", qryCount.cnt)>
-							<cfoutput  query="qry" >
-								<cfset querySetCell(newQuery, qry.kind&"_cnt", val(individualCount))>
-							</cfoutput>
-							<cfset qry =newQuery/>
-						</cfif>
+
+				<!--- Select only records that are unlocked --->
+				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
+						SELECT found_rows() as total
+					</cfquery>--->
+					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
+						<cfquery dbtype="query" name="qryCount">
+							SELECT sum(individualCount) as cnt from qry
+						</cfquery>
+						<cfset var newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
+						<cfset queryAddRow(newQuery)>
+						<cfset querySetCell(newQuery, "cnt", qryCount.cnt)>
+						<cfoutput  query="qry" >
+							<cfset querySetCell(newQuery, qry.kind&"_cnt", val(individualCount))>
+						</cfoutput>
+						<cfset qry =newQuery/>
 					</cfif>
+				</cfif>
 
 				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 					<!--- Init var for new fileid --->
