@@ -59,12 +59,12 @@
 				INSERT INTO #session.hostdbprefix#cart
 				(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
 				VALUES(
-				<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">, 
-				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 				<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -76,12 +76,12 @@
 	<!--- Remove expired assets from cart --->
 	<cfquery datasource="#application.razuna.datasource#" name="removeexpired">
 		<cfif application.razuna.thedatabase NEQ "h2">
-		DELETE c FROM #session.hostdbprefix#cart c 
+		DELETE c FROM #session.hostdbprefix#cart c
 		LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
 		LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
 		LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid'
 		LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc'
-		WHERE 
+		WHERE
 		i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 		OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 		OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
@@ -115,233 +115,233 @@
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, c.cart_order_artofimage, c.cart_order_artofvideo, c.cart_order_artofaudio,
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
 						SELECT file_change_time
-						FROM #session.hostdbprefix#files 
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'img'
 					THEN (
 						SELECT img_change_time
-						FROM #session.hostdbprefix#images 
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'vid'
 					THEN (
 						SELECT vid_change_time
-						FROM #session.hostdbprefix#videos 
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT aud_change_time
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as change_date,
 
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
 						SELECT file_create_time
-						FROM #session.hostdbprefix#files 
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'img'
 					THEN (
 						SELECT img_create_time
-						FROM #session.hostdbprefix#images 
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'vid'
 					THEN (
-						SELECT vid_create_time 
-						FROM #session.hostdbprefix#videos 
+						SELECT vid_create_time
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT aud_create_time
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as create_date,
 
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
-						SELECT expiry_date 
-						FROM #session.hostdbprefix#files 
+						SELECT expiry_date
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'img'
 					THEN (
-						SELECT expiry_date 
-						FROM #session.hostdbprefix#images 
+						SELECT expiry_date
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'vid'
 					THEN (
-						SELECT expiry_date 
-						FROM #session.hostdbprefix#videos 
+						SELECT expiry_date
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT expiry_date
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as expiry_date,
 
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
-						SELECT file_name 
-						FROM #session.hostdbprefix#files 
+						SELECT file_name
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'img'
 					THEN (
-						SELECT img_filename 
-						FROM #session.hostdbprefix#images 
+						SELECT img_filename
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'vid'
 					THEN (
-						SELECT vid_filename 
-						FROM #session.hostdbprefix#videos 
+						SELECT vid_filename
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT aud_name
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as filename,
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
 						SELECT file_extension
-						FROM #session.hostdbprefix#files 
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
-				WHEN c.cart_file_type = 'aud' 
+				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT aud_extension
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as theextension,
-			CASE 
-				WHEN c.cart_file_type = 'img' 
+			CASE
+				WHEN c.cart_file_type = 'img'
 					THEN (
 						SELECT img_width
-						FROM #session.hostdbprefix#images 
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
-				WHEN c.cart_file_type = 'vid' 
+				WHEN c.cart_file_type = 'vid'
 					THEN (
 						SELECT vid_width
-						FROM #session.hostdbprefix#videos 
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as cart_width,
-			CASE 
-				WHEN c.cart_file_type = 'img' 
+			CASE
+				WHEN c.cart_file_type = 'img'
 					THEN (
 						SELECT img_height
-						FROM #session.hostdbprefix#images 
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
-				WHEN c.cart_file_type = 'vid' 
+				WHEN c.cart_file_type = 'vid'
 					THEN (
 						SELECT vid_height
-						FROM #session.hostdbprefix#videos 
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as cart_height,
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
 						SELECT file_size
-						FROM #session.hostdbprefix#files 
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'img'
 					THEN (
 						SELECT img_size
-						FROM #session.hostdbprefix#images 
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'vid'
 					THEN (
 						SELECT vid_size
-						FROM #session.hostdbprefix#videos 
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT aud_size
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as cart_size,
-			CASE 
-				WHEN c.cart_file_type = 'doc' 
+			CASE
+				WHEN c.cart_file_type = 'doc'
 					THEN (
 						SELECT file_upc_number
-						FROM #session.hostdbprefix#files 
+						FROM #session.hostdbprefix#files
 						WHERE file_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'img'
 					THEN (
 						SELECT img_upc_number
-						FROM #session.hostdbprefix#images 
+						FROM #session.hostdbprefix#images
 						WHERE img_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'vid'
 					THEN (
 						SELECT vid_upc_number
-						FROM #session.hostdbprefix#videos 
+						FROM #session.hostdbprefix#videos
 						WHERE vid_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 				WHEN c.cart_file_type = 'aud'
 					THEN (
 						SELECT aud_upc_number
-						FROM #session.hostdbprefix#audios 
+						FROM #session.hostdbprefix#audios
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
@@ -360,7 +360,7 @@
 <!--- Assets Additional Versions --->
 <cffunction name="additional_versions" output="false">
 	<cfset var getbasket = readbasket()>
-	<!--- param ---> 
+	<!--- param --->
 	<cfset var qry = structnew()>
 	<!--- check recordcount --->
 	<cfif getbasket.recordcount NEQ 0>
@@ -470,7 +470,12 @@
 	<cfset var basketsize = totsize.basketsize/1000000>
 	<!--- Loop trough the basket --->
 	<cfloop query="thebasket">
-		<cfset arguments.thestruct.filesize = cart_size/1000000>
+		<cfif (cart_size)>
+	        <cfset arguments.thestruct.filesize = cart_size/1000000>
+	    <cfelse>
+	        <cfset arguments.thestruct.filesize = 0>
+	    </cfif>
+		<!--- <cfset arguments.thestruct.filesize = cart_size/1000000> --->
 		<!--- Set the asset id into a var --->
 		<cfset arguments.thestruct.theid = cart_product_id>
 		<!--- Get the files according to the extension --->
@@ -546,11 +551,11 @@
 		<cfzip action="create" ZIPFILE="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.zipname#" source="#attributes.intstruct.newpath#" recurse="true" timeout="300" />
 	</cfthread>
 	<!--- Get thread status --->
-	<cfset var thethread=cfthread["#basketname#"]> 
+	<cfset var thethread=cfthread["#basketname#"]>
 	<!--- Output to page to prevent it from timing out while thread is running --->
 	<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
 		<cfoutput> . </cfoutput>
-		<cfset sleep(3000) > 
+		<cfset sleep(3000) >
 		<cfflush>
 	</cfloop>
 	<cfthread action="join" name="#basketname#" />
@@ -720,7 +725,7 @@
 					<cfset var thefilepath = "#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.qry.file_name_org#">
 				</cfif>
 				<cfset var awsfileexists = false>
-				
+
 				<!--- convert the filename without space and foreign chars --->
 				<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thename" thename="#arguments.thestruct.thename#">
 				<cfif arguments.thestruct.skipduplicates><!--- If skip duplicate is on then look to see if file already is on AWS --->
@@ -786,11 +791,11 @@
 			<cfset var uniqueCount = 1>
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thename#")>
-					<cfset arguments.thestruct.thename = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thename,'.')> 
+					<cfset arguments.thestruct.thename = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thename,'.')>
 					<cfset uniqueCount = uniqueCount + 1>
 				<cfelse>
 					<cfset fileNameOK = false>
-				</cfif>	
+				</cfif>
 			</cfloop>
 
 			<cfset var starttime = gettickcount()> <!--- start download time counter --->
@@ -825,18 +830,18 @@
 			<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#" charset="utf-8"></cfhttp>
 					</cfthread>
 				<cfelse>
 					<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#" charset="utf-8"></cfhttp>
 					</cfthread>
 				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.thename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-									
+
 		#attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
@@ -974,9 +979,9 @@
 			<cfif upcstruct.upcenabled AND upcstruct.createupcfolder>
 				<cfset var fn_last_char = "">
 			 	<cfquery name="qry_upcgrp" dbtype="query">
-				SELECT grp_id 
-				FROM arguments.thestruct.qry_GroupsOfUser 
-				WHERE upc_size != '' 
+				SELECT grp_id
+				FROM arguments.thestruct.qry_GroupsOfUser
+				WHERE upc_size != ''
 				AND upc_size is not null
 				</cfquery>
 				<cfif qry_upcgrp.recordcount gt 1>
@@ -1004,7 +1009,7 @@
 								<cfset var rendition_version ="." & rendition_version>
 							</cfif>
 							<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
-							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)> 
+							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)>
 							<cfif not isnumeric(fn_last_char)>
 								<cfset var fn_ischar = true>
 							<cfelse>
@@ -1068,7 +1073,7 @@
 						</cfif>
 					</cfloop>
 				</cfif>
-				
+
 				<cfset var epoch = dateadd("yyyy", 10, now())>
 				<cfif !awsfileexists>
 					<cfset var fileext = listlast(thefilepath,'.')>
@@ -1092,7 +1097,7 @@
 							</cfif>
 							<!--- Calculate average upload speed --->
 							<cfset application.uploadspeed = (application.uploadspeed + arguments.thestruct.filesize/timediff)/2>
-						
+
 							<cfset session.theawsurl["#arguments.thestruct.thefinalname#"] = AmazonS3geturl(
 							 datasource='#arguments.thestruct.awsdatasource#',
 							 bucket='#arguments.thestruct.awsbucket#',
@@ -1120,14 +1125,14 @@
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefinalname#")>
 					<cfif find('.',arguments.thestruct.thefinalname)>
-						<cfset arguments.thestruct.thefinalname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thefinalname,'.')> 
+						<cfset arguments.thestruct.thefinalname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thefinalname,'.')>
 					<cfelse>
-						<cfset arguments.thestruct.thefinalname = arguments.thestruct.thefinalname & '_' & uniqueCount> 
+						<cfset arguments.thestruct.thefinalname = arguments.thestruct.thefinalname & '_' & uniqueCount>
 					</cfif>
 					<cfset var uniqueCount = uniqueCount + 1>
 				<cfelse>
-					<cfset var fileNameOK = false>	
-				</cfif>	
+					<cfset var fileNameOK = false>
+				</cfif>
 			</cfloop>
 
 			<!--- convert the filename without space and foreign chars --->
@@ -1138,11 +1143,11 @@
 				<cfif theart EQ "versions">
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid##attributes.intstruct.qry.path_to_asset#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thefinalname#" mode="775">
-					</cfthread>	
+					</cfthread>
 				<cfelse>
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" destination="#attributes.intstruct.thedir#/#attributes.intstruct.thefinalname#" mode="775" >
-					</cfthread>	
+					</cfthread>
 				</cfif>
 				<!--- Wait for the thread above until the file is downloaded fully --->
 				<cfthread action="join" name="#thethreadid#" />
@@ -1161,11 +1166,17 @@
 						<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.folder_id_r#/img/#arguments.thestruct.qry.av_id#/#arguments.thestruct.theimgname#">
 					</cfif>
 				<cfelse>
-					<cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#">
+					<cfif theart EQ "thumb">
+						<cfset arguments.thestruct.asset_path = qry.cloud_url>
+					<cfelse>
+						<cfset arguments.thestruct.asset_path = qry.cloud_url_org>
+					</cfif>
+					<cfset var _download_http = true>
+					<!--- <cfset arguments.thestruct.asset_path = "/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#"> --->
 				</cfif>
 				<!--- Either http or s3 direct download --->
 				<cfif _download_http>
-					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thedir#" charset="utf-8"></cfhttp>
 				<cfelse>
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Download">
@@ -1187,13 +1198,13 @@
 					<cfthread action="join" name="#thethreadid#" />
 				<cfelseif theart EQ "versions">
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 					<!--- Wait for the thread above until the file is downloaded fully --->
 					<cfthread action="join" name="#thethreadid#" />
 				<cfelse>
 					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 					<!--- Wait for the thread above until the file is downloaded fully --->
 					<cfthread action="join" name="#thethreadid#" />
@@ -1202,7 +1213,7 @@
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.img_filename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-							
+
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 				<!--- Wait for the thread above until the file is downloaded fully --->
@@ -1310,7 +1321,7 @@
 				<!--- The filename for the folder --->
 				<cfset var rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
-				<cfset var thenewname = rep & "." & qry.vid_extension> 
+				<cfset var thenewname = rep & "." & qry.vid_extension>
 				<cfset thenewname = "rend_" & thenewname>
 			<cfelseif theart EQ "versions">
 				<cfset var theext = listlast(qry.path_to_asset,".")>
@@ -1327,11 +1338,11 @@
 			<!--- If thenewname variable contains /\ --->
 			<cfset var thenewname = replace(thenewname,"/","-","all")>
 			<cfset thenewname = replace(thenewname,"\","-","all")>
-			
+
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset var thefname = listfirst(thefnamewithext, ".")>
-			
+
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" returnvariable="crumbs" />
 			<cfset var parentfoldersname = ''>
@@ -1431,11 +1442,11 @@
 
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
-					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')> 
+					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')>
 					<cfset uniqueCount = uniqueCount + 1>
 				<cfelse>
-					<cfset fileNameOK = false>	
-				</cfif>	
+					<cfset fileNameOK = false>
+				</cfif>
 			</cfloop>
 
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
@@ -1490,7 +1501,7 @@
 				</cfif>
 				<!--- Either http or s3 direct download --->
 				<cfif _download_http>
-					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#" charset="utf-8"></cfhttp>
 					<cfthread name="#wvt#"></cfthread>
 				<cfelse>
 					<!--- Download file --->
@@ -1506,18 +1517,18 @@
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				<cfelse>
 					<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.thenewname#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.thenewname#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
-				</cfif>		
+				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.vid_filename#.txt" output="This asset is located on a external source. Here is the direct link (or the embeeded code) to the asset:
-							
+
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
@@ -1590,7 +1601,7 @@
 			<cfif qry.aud_group NEQ "">
 				<cfset var rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
-				<cfset var thenewname = rep & "." & qry.aud_extension> 
+				<cfset var thenewname = rep & "." & qry.aud_extension>
 				<cfset var thenewname = "rend_" & thenewname>
 			<cfelseif theart EQ "versions">
 				<cfset var theext = listlast(qry.path_to_asset,".")>
@@ -1609,7 +1620,7 @@
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset var thefname = listfirst(thefnamewithext, ".")>
-			
+
 			<!--- Get Parent folder names --->
 			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" returnvariable="crumbs" />
 			<cfset var parentfoldersname = ''>
@@ -1707,11 +1718,11 @@
 
 			<cfloop condition="#fileNameOK#">
 				<cfif fileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thenewname#")>
-					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')> 
+					<cfset arguments.thestruct.thenewname = replacenocase(thenameorg,'.'&listlast(thenameorg,'.'),'') & '_' & uniqueCount & '.' & listLast(arguments.thestruct.thenewname,'.')>
 					<cfset uniqueCount = uniqueCount + 1>
 				<cfelse>
-					<cfset fileNameOK = false>	
-				</cfif>	
+					<cfset fileNameOK = false>
+				</cfif>
 			</cfloop>
 
 			<!--- RAZ-2906: Check the settings for download assets with ext or not  --->
@@ -1763,7 +1774,7 @@
 				</cfif>
 				<!--- Either http or s3 direct download --->
 				<cfif _download_http>
-					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#"></cfhttp>
+					<cfhttp url="#arguments.thestruct.asset_path#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.thedir#" charset="utf-8"></cfhttp>
 					<cfthread name="download#theart##theaudid#"></cfthread>
 				<cfelse>
 					<!--- Download file --->
@@ -1779,18 +1790,18 @@
 			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
 				<cfif theart EQ "versions">
 					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.qry.path_to_asset#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				<cfelse>
 					<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#" charset="utf-8"></cfhttp>
 					</cfthread>
 				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.aud_name#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-							
+
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
@@ -1848,10 +1859,10 @@
 	<cfset var thesubject = "Basket Order: #session.thecart#">
 	<cfset var mailmessage = "Hello,
 		The below order just came in:<br/><br/>
-		
+
 		Basket Order: #session.thecart#<br/>
 		Date: #dateformat(now(), "#thedateformat#")#<br/><br/>
-		
+
 		Log in to Razuna to process this order.">
 	<cftry>
 		<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#thesubject#" themessage="#mailmessage#">
@@ -1976,7 +1987,7 @@
 			<cfset res.message  = 'Copying "#filename#" #repeatString("  ",250)#'>
 			<cfoutput>#serializeJSON(res)#</cfoutput>
 			<cfflush>
-			<cfset var thethread=cfthread["#tt#"]> 
+			<cfset var thethread=cfthread["#tt#"]>
 			<!--- Get file size in MB --->
 			<!--- Calculate size of progress bar in % that the file will take up --->
 			<cfset var chunksize =  (arguments.thestruct.filesize/basketsize)*100>
@@ -1991,7 +2002,7 @@
 			<!--- <Cfset console("numparts = #numparts#")> --->
 			<!--- Update progress bar on page  --->
 			<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
-				<cfset sleep(mb5time) > 
+				<cfset sleep(mb5time) >
 				<cfif chunkctr EQ 0>
 					<cfset chunkctr = chunkctr + resctr + numparts>
 				<cfelse>
@@ -2162,7 +2173,7 @@
 			<cfset res.message  = 'Copying "#filename#" #repeatString("  ",250)#'>
 			<cfoutput>#serializeJSON(res)#</cfoutput>
 			<cfflush>
-			<cfset var thethread=cfthread["#tt#"]> 
+			<cfset var thethread=cfthread["#tt#"]>
 			<!--- Get file size in MB --->
 			<!--- Calculate size of progress bar in % that the file will take up --->
 			<cfset var chunksize =  (arguments.thestruct.filesize/basketsize)*100>
@@ -2177,7 +2188,7 @@
 			<!--- <Cfset console("numparts = #numparts#")> --->
 			<!--- Update progress bar on page  --->
 			<cfloop condition="#thethread.status# EQ 'RUNNING' OR thethread.Status EQ 'NOT_STARTED' "> <!--- Wait till thread is finished --->
-				<cfset sleep(mb5time) > 
+				<cfset sleep(mb5time) >
 				<cfif chunkctr EQ 0>
 					<cfset chunkctr = chunkctr + resctr + numparts>
 				<cfelse>

@@ -25,7 +25,7 @@
 --->
 
 <cfcomponent output="false" extends="authentication">
-	
+
 	<!--- Retrieve assets from a folder --->
 	<cffunction name="getassets" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -68,38 +68,42 @@
 					AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
 					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					<!--- Check to ensure user has permissions for folder --->
-					AND 
+					AND
 					(
 						EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 						OR
 						fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 						OR
 						fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
-						OR 
+						OR
 						f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 					)
 					</cfquery>
 					<cfset thefolderlist = listappend(arguments.folderid, ValueList(thefolders.folder_id))>
 				<cfelse>
 					<cfset thefolderlist = arguments.folderid>
-				</cfif>	
+				</cfif>
 				<!--- Query --->
 				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 					<!--- Images --->
 					<cfif arguments.show EQ "ALL" OR arguments.show EQ "img">
 						SELECT  /* #cachetokenimg#getassetsfolder1 */
-						i.img_id id, 
-						i.img_filename filename, 
-						i.folder_id_r folder_id, 
-						i.img_extension extension, 
+						i.img_id id,
+						i.img_filename filename,
+						i.folder_id_r folder_id,
+						i.img_extension extension,
 						'dummy' as video_image,
-						i.img_filename_org filename_org, 
-						'img' as kind, 
-						i.thumb_extension extension_thumb, 
-						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size, 
+						i.img_filename_org filename_org,
+						'img' as kind,
+						i.thumb_extension extension_thumb,
+						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
 						i.img_width AS width,
 						i.img_height AS height,
-						it.img_description description, 
+						i.img_meta AS metadata,
+						i.thumb_width AS thumb_width,
+						i.thumb_height AS thumb_height,
+						i.thumb_size AS thumb_size,
+						it.img_description description,
 						it.img_keywords keywords,
 						i.path_to_asset,
 						i.cloud_url,
@@ -107,8 +111,8 @@
 						i.img_create_time dateadd,
 						i.img_change_time datechange,
 						(
-							SELECT 
-								CASE 
+							SELECT
+								CASE
 									WHEN count(img_id) = 0 THEN 'false'
 									ELSE 'true'
 								END AS test
@@ -155,7 +159,7 @@
 						x.yres AS ydpi,
 						x.resunit AS unit,
 						i.hashtag AS md5hash
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 						LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 						LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 						WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -170,18 +174,22 @@
 					<!--- Videos --->
 					<cfif arguments.show EQ "ALL" OR arguments.show EQ "vid">
 						SELECT /* #cachetokenvid#getassetsfolder2 */
-						v.vid_id id, 
-						v.vid_filename filename, 
-						v.folder_id_r folder_id, 
-						v.vid_extension extension, 
+						v.vid_id id,
+						v.vid_filename filename,
+						v.folder_id_r folder_id,
+						v.vid_extension extension,
 						v.vid_name_image as video_image,
-						v.vid_name_org filename_org, 
-						'vid' as kind, 
-						v.vid_extension extension_thumb, 
-						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size, 
+						v.vid_name_org filename_org,
+						'vid' as kind,
+						v.vid_extension extension_thumb,
+						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_size as varchar(100)), '0')</cfif> AS size,
 						v.vid_width AS width,
 						v.vid_height AS height,
-						vt.vid_description description, 
+						'dummy' AS metadata,
+						0 as thumb_width,
+						0 AS thumb_height,
+						'dummy' AS thumb_size,
+						vt.vid_description description,
 						vt.vid_keywords keywords,
 						v.path_to_asset,
 						v.cloud_url,
@@ -189,8 +197,8 @@
 						v.vid_create_time dateadd,
 						v.vid_change_time datechange,
 						(
-							SELECT 
-								CASE 
+							SELECT
+								CASE
 									WHEN count(vid_id) = 0 THEN 'false'
 									ELSE 'true'
 								END AS test
@@ -237,7 +245,7 @@
 						'' AS ydpi,
 						'' AS unit,
 						v.hashtag AS md5hash
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v
 						LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 						WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 						AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -250,19 +258,23 @@
 					</cfif>
 					<!--- Audios --->
 					<cfif arguments.show EQ "ALL" OR arguments.show EQ "aud">
-						SELECT /* #cachetokenaud#getassetsfolder3 */ 
-						a.aud_id id, 
-						a.aud_name filename, 
-						a.folder_id_r folder_id, 
-						a.aud_extension extension, 
+						SELECT /* #cachetokenaud#getassetsfolder3 */
+						a.aud_id id,
+						a.aud_name filename,
+						a.folder_id_r folder_id,
+						a.aud_extension extension,
 						'dummy' as video_image,
-						a.aud_name_org filename_org, 
-						'aud' as kind, 
-						a.aud_extension extension_thumb, 
-						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, 
+						a.aud_name_org filename_org,
+						'aud' as kind,
+						a.aud_extension extension_thumb,
+						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size,
 						0 AS width,
 						0 AS height,
-						aut.aud_description description, 
+						'dummy' AS metadata,
+						0 as thumb_width,
+						0 AS thumb_height,
+						'dummy' AS thumb_size,
+						aut.aud_description description,
 						aut.aud_keywords keywords,
 						a.path_to_asset,
 						a.cloud_url,
@@ -270,8 +282,8 @@
 						a.aud_create_time dateadd,
 						a.aud_change_time datechange,
 						(
-							SELECT 
-								CASE 
+							SELECT
+								CASE
 									WHEN count(aud_id) = 0 THEN 'false'
 									ELSE 'true'
 								END AS test
@@ -317,7 +329,7 @@
 						'' AS ydpi,
 						'' AS unit,
 						a.hashtag AS md5hash
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a
 						LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 						WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 						AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -331,18 +343,22 @@
 					<!--- Docs --->
 					<cfif arguments.show EQ "ALL" OR arguments.show EQ "doc">
 						SELECT /* #cachetokendoc#getassetsfolder4 */
-						f.file_id id, 
-						f.file_name filename, 
-						f.folder_id_r folder_id, 
-						f.file_extension extension, 
+						f.file_id id,
+						f.file_name filename,
+						f.folder_id_r folder_id,
+						f.file_extension extension,
 						'dummy' as video_image,
-						f.file_name_org filename_org, 
-						'doc' as kind, 
-						f.file_extension extension_thumb, 
-						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, 
+						f.file_name_org filename_org,
+						'doc' as kind,
+						f.file_extension extension_thumb,
+						<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size,
 						0 AS width,
 						0 AS height,
-						ft.file_desc description, 
+						'dummy' AS metadata,
+						0 as thumb_width,
+						0 AS thumb_height,
+						'dummy' AS thumb_size,
+						ft.file_desc description,
 						ft.file_keywords keywords,
 						f.path_to_asset,
 						f.cloud_url,
@@ -388,7 +404,7 @@
 						'' AS ydpi,
 						'' AS unit,
 						f.hashtag AS md5hash
-						FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f
 						LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 						WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 						AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
@@ -429,7 +445,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-		
+
 	<!--- Retrieve folders --->
 	<cffunction name="getfolders" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -449,14 +465,14 @@
 
 				<!--- Query folder --->
 				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner, 
-				 (SELECT <cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> folder_desc from #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc WHERE folder_id_r = f.folder_id AND lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric"> 
+				SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner,
+				 (SELECT <cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> folder_desc from #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc WHERE folder_id_r = f.folder_id AND lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 				 	<cfif application.razuna.api.thedatabase EQ "oracle">
 						AND rownum = 1
 					<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						LIMIT 1
 					</cfif>
-				 	) as folder_description, 
+				 	) as folder_description,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "h2">NVL<cfelseif application.razuna.api.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 					(
 						CASE WHEN EXISTS (SELECT 1
@@ -484,14 +500,14 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				<!--- Check to ensure user has permissions for folder --->
-				AND 
+				AND
 				(
 					EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 					OR
 					EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r = '0')
 					OR
 					EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">))
-					OR 
+					OR
 					f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 				)
 				ORDER BY f.folder_name
@@ -529,7 +545,7 @@
 						<cfset querysetcell(qry,"howmanycollections",q.howmanycollections, qry.currentrow)>
 					</cfloop>
 				</cfif>
-				
+
 				<cfset thexml = qry>
 			<!--- No access --->
 			<cfelse>
@@ -543,7 +559,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- GetFolder --->
 	<cffunction name="getfolder" output="false" access="remote" returnType="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -556,7 +572,7 @@
 			<cfset querysetcell(thexml,"responsecode","1")>
 			<cfset querysetcell(thexml,"message","Either folderid or foldername parameter must be specified")>
 			<cfreturn thexml>
-		</cfif> 
+		</cfif>
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<cfset var qry = "">
@@ -568,11 +584,11 @@
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description, 
+			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description,
 			CASE WHEN lower(f.folder_shared) = 't' then 'true' else 'false' end folder_shared
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-			WHERE 
+			WHERE
 			f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			<cfif isDefined("arguments.folderid")>
@@ -582,25 +598,25 @@
 				AND lower(f.folder_name)  like  <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.foldername)#%">
 			</cfif>
 			<!--- Check to ensure user has permissions for folder --->
-			AND 
+			AND
 			(
 				EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2'))
 				OR
 				EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r = '0')
 				OR
 				EXISTS (SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id = fg.folder_id_r  AND fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">))
-				OR 
+				OR
 				f.folder_owner =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 			)
 			</cfquery>
 			<cfset var q = querynew("group_permission,totalassets,totalimg,totalvid,totaldoc,totalaud,folder_id")>
-			
+
 			<cfloop query="qry">
 				<!--- Query total count --->
 				<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#qry.folder_id#" returnvariable="totalassets">
 				<!--- Query total count for individual files --->
 				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#qry.folder_id#" returnvariable="totaltypes">
-				
+
 				<!--- Get groups for folder --->
 				<cfquery datasource="#application.razuna.api.dsn#" name="thegroups" cachedwithin="1" region="razcache">
 					SELECT /* #cachetoken#getfolder */ grp_id_r, grp_permission
@@ -639,7 +655,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- SetFolder --->
 	<cffunction name="setfolder" output="false" access="remote" returnType="struct" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -697,7 +713,7 @@
 					<cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelse>
 					<cfqueryparam value="#arguments.folder_owner#" cfsqltype="CF_SQL_VARCHAR">
-				</cfif>	
+				</cfif>
 				,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -741,7 +757,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Delete Folder --->
 	<cffunction name="removefolder" output="false" access="remote" returnType="struct" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -825,7 +841,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Set Custom Field Value --->
 	<cffunction name="setFolderPermissions" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -839,7 +855,7 @@
 			<cfif listFind(session.thegroupofuser,"2",",") GT 0 OR listFind(session.thegroupofuser,"1",",") GT 0>
 				<!--- Deserialize the JSON back into a struct --->
 				<cfset thejson = DeserializeJSON(arguments.permissions)>
-				
+
 				<!--- Loop over struct --->
 				<cfloop array="#thejson#" index="f">
 					<!--- Check to see if there is a record --->
@@ -876,7 +892,7 @@
 					<!--- Check group 'folder_subscribe' setting and add all users in this group to receive folder notifications if set to true --->
 					<cfinvoke component="global.cfc.groups" method="add_grp_users2notify" group_id='#f[2]#'>
 				</cfloop>
-				
+
 				<!--- Flush cache --->
 				<cfset resetcachetoken(arguments.api_key,"folders")>
 				<!--- Feedback --->
@@ -893,8 +909,8 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-		
+
 	<!--- Private Functions --->
-	
-		
+
+
 </cfcomponent>
