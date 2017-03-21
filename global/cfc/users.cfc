@@ -889,6 +889,16 @@
 				SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thepass#">
 				WHERE lower(user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(email)#">
 				</cfquery>
+			<cfelseif active NEQ "">
+				<!--- Feedback --->
+				<cfoutput>The user with the eMail address "#email#" exists. But as requested we are changing his active status now.<br></cfoutput>
+				<cfflush>
+				<!--- Update DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE users
+				SET user_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#active#">
+				WHERE lower(user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(email)#">
+				</cfquery>
 			<cfelse>
 				<!--- Feedback --->
 				<cfoutput>The user with the eMail address "#email#" exists. Skipping record update.<br></cfoutput>
@@ -903,7 +913,8 @@
 				<!--- Create structure for function --->
 				<cfset arguments.thestruct.user_login_name = login_name>
 				<cfset arguments.thestruct.user_email = email>
-				<cfset arguments.thestruct.user_pass = password>
+				<cfset var _pass = (password EQ "" ? createuuid() : password)> 
+				<cfset arguments.thestruct.user_pass = _pass>
 				<cfset arguments.thestruct.user_first_name = first_name>
 				<cfset arguments.thestruct.user_last_name = last_name>
 				<cfset arguments.thestruct.user_active = active>
