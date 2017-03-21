@@ -30,7 +30,7 @@
 							</cfif>	
 						</cfif>	
 					</cfif>	
-						<span style="float:left;"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#&file_id=#attributes.file_id#&file_type=#attributes.file_type#','#Jsstringformat(label_text)#',450,1);return false"><cfif flag EQ 1 OR (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())><img src="#dynpath#/global/host/dam/images/edit.png" width="16" height="16" border="0"></cfif></a></span>
+						<span style="float:left;"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#&file_id=#attributes.file_id#&file_type=#attributes.file_type#','#Jsstringformat(label_text)#',450,1);return false"><cfif flag EQ 1 OR (session.is_system_admin OR session.is_administrator)><img src="#dynpath#/global/host/dam/images/edit.png" width="16" height="16" border="0"></cfif></a></span>
 					</br>
 				</cfloop> 
 			<cfelse>

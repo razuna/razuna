@@ -73,8 +73,6 @@
 				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" returnvariable="qry_sysadmingrp" />
 				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" returnvariable="qry_admingrp" />
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" returnvariable="qry_groups_user" />
-				<!-- init with dummy host 0 -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(0,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- <relocate url="#myself#c.choosehost" /> -->
 				<do action="choosehost" />
 			</true>

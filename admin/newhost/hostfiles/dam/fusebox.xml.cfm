@@ -26,7 +26,6 @@
 		<class alias="settings" classpath="global.cfc.settings" type="component" constructor="init"/>
 		<class alias="folders" classpath="global.cfc.folders" type="component" constructor="init"/>
 		<!-- <class alias="global" classpath="model.global" type="component" constructor="init"/> -->
-		<class alias="security" classpath="global.cfc.security" type="component" constructor="init"/>
 		<class alias="modules" classpath="global.cfc.modules" type="component" constructor="init"/>
 		<!-- start : folder files -->
 		<class alias="images" classpath="global.cfc.images" type="component" constructor="init"/>

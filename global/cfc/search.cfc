@@ -119,7 +119,7 @@
 		</cfif>
 
 		<!--- Get all the folders the user is allowed to access but not if we are admin or list_recfolders has records --->
-		<cfif ( arguments.thestruct.list_recfolders EQ "0" OR arguments.thestruct.list_recfolders EQ "" ) AND NOT ( session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() )>
+		<cfif ( arguments.thestruct.list_recfolders EQ "0" OR arguments.thestruct.list_recfolders EQ "" ) AND NOT ( session.is_system_admin OR session.is_administrator )>
 			<cfinvoke component="users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.thestruct.list_recfolders">
 		</cfif>
 
@@ -249,7 +249,7 @@
 			<cfset var editids = "0,">
 			<cfset var fileids = "">
 			<!--- Get proper folderaccess no need for admin --->
-			<!--- <cfif NOT session.securityobj.CheckSystemAdminUser() OR NOT session.securityobj.CheckAdministratorUser() AND session.customaccess NEQ ""> --->
+			<!--- <cfif NOT session.is_system_admin OR NOT session.is_administrator AND session.customaccess NEQ ""> --->
 				<cfloop query="qry">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#" />
 					<!--- Add labels query --->
@@ -418,7 +418,7 @@
 				fo.folder_name,
 				'' as labels,
 				i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-				<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -494,7 +494,7 @@
 				fo.folder_name,
 				'' as labels,
 				i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-				<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -637,7 +637,7 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -711,7 +711,7 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -844,7 +844,7 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
-			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -906,7 +906,7 @@
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
-			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -1047,7 +1047,7 @@
 				fo.folder_name,
 				'' as labels,
 				'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-				<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -1120,7 +1120,7 @@
 				fo.folder_name,
 				'' as labels,
 				'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-				<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -1420,7 +1420,7 @@
 					'' AS labels, 
 					i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
 					<!--- Check if this folder belongs to a user and lock/unlock --->
-					<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+					<cfif session.is_system_admin OR session.is_administrator>
 						'unlocked' AS perm, 
 					<cfelse>
 						CASE
@@ -1446,7 +1446,7 @@
 							ELSE 'locked'
 						END as perm,
 					</cfif>	
-					<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+					<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 						'X' AS permfolder 
 					<cfelseif session.customaccess NEQ "">
 						'#session.customaccess#' as permfolder
@@ -1527,7 +1527,7 @@
 					fo.folder_name, 
 					'' AS labels, 
 					'0' AS width, '0' AS height, '' AS xres, '' AS yres,'' AS colorspace, f.expiry_date expiry_date_actual,
-					<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+					<cfif session.is_system_admin OR session.is_administrator>
 					'unlocked' AS perm,
 					<cfelse>
 							CASE
@@ -1553,7 +1553,7 @@
 								ELSE 'locked'
 							END as perm,
 					</cfif>	
-					<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+					<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 						'X' as permfolder
 					<cfelseif session.customaccess NEQ "">
 						'#session.customaccess#' as permfolder
@@ -1635,7 +1635,7 @@
 						 fo.folder_name, 
 						 '' AS labels, '0' AS width, '0' AS height, '' AS xres, '' AS yres, '' AS colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
 						 <!--- Check if this folder belongs to a user and lock/unlock --->
-						<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()> 
+						<cfif session.is_system_admin OR session.is_administrator> 
 							'unlocked' AS perm,
 						<cfelse>
 							CASE
@@ -1661,7 +1661,7 @@
 								ELSE 'locked'
 							END as perm,
 						</cfif> 
-						<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+						<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 							'X' as permfolder
 						<cfelseif session.customaccess NEQ "">
 							'#session.customaccess#' as permfolder
@@ -1752,7 +1752,7 @@
 						'' as labels,
 						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
 						<!--- Check if this folder belongs to a user and lock/unlock --->
-						<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+						<cfif session.is_system_admin OR session.is_administrator>
 							'unlocked' as perm,
 						<cfelse>
 							CASE
@@ -1778,7 +1778,7 @@
 								ELSE 'locked'
 							END as perm,
 						</cfif>
-						<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() AND session.customaccess EQ "">
+						<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 							'X' as permfolder
 						<cfelseif session.customaccess NEQ "">
 							'#session.customaccess#' as permfolder

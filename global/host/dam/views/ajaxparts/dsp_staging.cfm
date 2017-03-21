@@ -31,7 +31,7 @@
 	<div id="done_message"></div>
 
 	<!--- Only if allowed --->
-	<cfif qry_enabled.approval_enabled AND session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR listFind(qry_users.user_ids, session.theuserid)>
+	<cfif qry_enabled.approval_enabled AND session.is_system_admin OR session.is_administrator OR listFind(qry_users.user_ids, session.theuserid)>
 
 		<!--- If nothing here --->
 		<cfif qry_files.files.recordcount EQ 0>

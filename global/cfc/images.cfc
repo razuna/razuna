@@ -472,7 +472,7 @@
 	i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind, i.path_to_asset, i.cloud_url, i.cloud_url_org, 
 	i.hashtag, 'false' AS in_collection, 'images' as what, '' AS folder_main_id_r
 	<!--- Permfolder --->
-	<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+	<cfif session.is_system_admin OR session.is_administrator>
 		, 'X' as permfolder
 	<cfelse>
 		,

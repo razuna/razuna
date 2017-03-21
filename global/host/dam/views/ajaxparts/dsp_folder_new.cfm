@@ -102,7 +102,7 @@
 										<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 									</cfloop>
 								</select>
-								<cfif flag EQ 1 OR (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
+								<cfif flag EQ 1 OR (session.is_system_admin OR session.is_administrator)>
 									<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 								</cfif>
 							<cfelse>
@@ -118,7 +118,7 @@
 											</cfif>
 										</cfloop>
 									</div>
-									<cfif qry_label_set.set2_labels_users EQ "t" OR (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
+									<cfif qry_label_set.set2_labels_users EQ "t" OR (session.is_system_admin OR session.is_administrator)>
 										<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 									</cfif>
 									<!--- Select label button --->
@@ -229,15 +229,15 @@
 		</cfif>
 		<!--- Buttons --->
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
-			<cfif attributes.isdetail EQ "T" AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR attributes.folderaccess EQ "X") AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
+			<cfif attributes.isdetail EQ "T" AND (session.is_system_admin OR session.is_administrator OR attributes.folderaccess EQ "X") AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
 				<input type="button" name="movefolder" value="#myFusebox.getApplicationData().defaults.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("move_folder")#',600,1);"> 
 				<cfif qry_folder.folder_is_collection NEQ "T" AND application.razuna.storage NEQ 'amazon'>
 					<input type="button" name="copyfolder" value="#myFusebox.getApplicationData().defaults.trans("copy_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=copyfolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("copy_folder")#',600,1);">
 				</cfif>   
 			</cfif>
 			<cfif attributes.isdetail EQ "T">
-				<cfif cs.show_trash_icon AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "" OR attributes.folderaccess EQ "X")>
-					<cfif (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR attributes.folderaccess EQ "X")>
+				<cfif cs.show_trash_icon AND (session.is_system_admin OR session.is_administrator OR cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "" OR attributes.folderaccess EQ "X")>
+					<cfif (session.is_system_admin OR session.is_administrator OR attributes.folderaccess EQ "X")>
 						<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">
 					<cfelseif qry_folder.folder_name NEQ "my folder" AND qry_folder.folder_owner EQ session.theuserid>
 						<input type="button" name="trashfolder" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" class="button" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,2);" style="margin-right:20px;">

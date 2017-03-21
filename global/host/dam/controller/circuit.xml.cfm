@@ -99,8 +99,6 @@
 				</invoke> -->
 				<!-- CFC: Check for collection -->
 				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- Redirect request -->
 				<if condition="attributes.redirectto NEQ ''">
 					<true>
@@ -161,17 +159,11 @@
 							<argument name="user_id" value="#loginstatus#" />
 							<argument name="host_id" value="#Session.hostid#" />
 						</invoke>
-						<!-- CFC: Check for collection -->
-						<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
-						<!-- set host again with real value -->
-						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="session.securityobj" />
 						<!-- Relocate -->
 						<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 					<!-- This is for shared login -->
 					<false>
-						<!-- set host again with real value -->
-						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="session.securityobj" />
 						<!-- Folder id into session -->
 						<set name="session.fid" value="#attributes.fid#" />
 						<!-- Only for the shared folder -->
@@ -3113,7 +3105,6 @@
 		<do action="storage" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
-		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(session.hostid,session.theuserid,'adm')" returnvariable="session.securityobj" />
 		<!-- CFC: Upload -->
 		<if condition="attributes.av EQ 0">
 			<true>
@@ -8218,8 +8209,6 @@
 		<!-- User is found -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<!-- CFC: Check if user is allowed for this folder -->
@@ -8232,7 +8221,7 @@
 					</true>
 				</if>
 				<!-- Encode login vars and pass it to sharep which will verify login with it -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="encrypt('#logindone.qryuser.user_id#','#logindone.notfound#')" returnvariable="ls" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="encrypt('#logindone.qryuser.user_id#','#logindone.notfound#')" returnvariable="ls" />
 				<!-- Relocate -->
 				<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;ls=#urlencodedformat(ls)#&amp;_v=#createuuid('')#" />
 			</true>
@@ -8273,9 +8262,9 @@
 				</if>
 				<!-- Decode and validate login credentials  -->
 				<!-- Decode login vars -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="decrypt('#urldecode(attributes.ls)#','F')" returnvariable="userid" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="decrypt('#urldecode(attributes.ls)#','F')" returnvariable="userid" />
 				<!-- Check if decoded userid exists in database -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="isuser('#userid#')" returnvariable="logcheck" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="isuser('#userid#')" returnvariable="logcheck" />
 				<if condition="logcheck eq false">
 					<true>
 						<!-- Relocate to login -->
@@ -8772,17 +8761,6 @@
 		<!-- Params -->
 		<set name="attributes.view" value="combined" />
 		<set name="session.iscol" value="#attributes.col#" />
-		<!-- Set security only if we have no userid in the session -->
-		<if condition="NOT StructKeyExists(session, 'theuserid')">
-			<true>
-				<!-- Param -->
-				<set name="session.theuserid" value="0" />
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="session.securityobj" />
-				<!-- CFC: Set Access -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
-			</true>
-		</if>
 	</fuseaction>
 	
 	<!-- View includes -->
@@ -9024,6 +9002,8 @@
 		<set name="session.theuserid" value="0" overwrite="false" />
 		<set name="attributes.qry_news.news_title" value="" overwrite="false" />
 		<set name="attributes.qry_news.news_text" value="" overwrite="false" />
+		<set name="session.is_system_admin" value="false" overwrite="false" />
+		<set name="session.is_administrator" value="false" overwrite="false" />
 		<set name="session.widget_login" value="F" />
 		<set name="session.offset" value="0" />
 		<set name="jr_enable" value="false" overwrite="false" />
@@ -9100,8 +9080,6 @@
 				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 			</true>
 		</if>
-		<!-- set host again with real value -->
-		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="session.securityobj" />
 		<!-- Params -->
 		<set name="attributes.external" value="t" />
 		<set name="attributes.widget_id" value="#session.widget_id#" />
@@ -9241,8 +9219,6 @@
 		<!-- User is found -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<set name="session.widget_login" value="T" />

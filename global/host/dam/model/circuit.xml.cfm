@@ -60,7 +60,6 @@
 			<argument name="database" value="#application.razuna.thedatabase#" />
 			<argument name="setid" value="#application.razuna.setid#" />
 		</instantiate>
-		<instantiate class="security" object="myFusebox.getApplicationData().security" arguments="#application.razuna.datasource#" overwrite="true" />
 		<instantiate class="rssparser" object="myFusebox.getApplicationData().rssparser" arguments="" overwrite="true" />
 		<!-- eMail -->
 		<instantiate class="email" object="myFusebox.getApplicationData().email" overwrite="true">

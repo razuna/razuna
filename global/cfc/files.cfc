@@ -517,7 +517,7 @@
 				'files' as what, 
 				'' AS folder_main_id_r
 					<!--- Permfolder --->
-					<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+					<cfif session.is_system_admin OR session.is_administrator>
 						, 'X' as permfolder
 					<cfelse>
 						,

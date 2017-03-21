@@ -1302,7 +1302,7 @@ Comment:<br>
 		<cfelse>
 			<cfset session.indebt = false>
 		</cfif>
-		<cfif session.securityobj.CheckSystemAdminUser()>
+		<cfif session.is_system_admin>
 			<cfset session.indebt = false>
 		</cfif>
 		<!--- Return --->

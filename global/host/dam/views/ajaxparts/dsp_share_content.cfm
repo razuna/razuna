@@ -36,7 +36,7 @@
 <cfoutput>
 <div id="tabs_shared">
 	<!--- Check to see if basket button is not set to hidden --->
-	<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+	<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 		<ul>
 			<li><a href="##shared_thumbs">#myFusebox.getApplicationData().defaults.trans("thumbnails")#</a></li>
 			<cfif qry_folder.share_comments EQ "T"><li><a href="##shared_list">#myFusebox.getApplicationData().defaults.trans("list")#</a></li></cfif>
@@ -54,7 +54,7 @@
 							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&jsessionid=#session.SessionID#&fromshare=true','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" style="padding-right:10px;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_file")#</button></a> 
 						</cfif>
 						<cfif qry.qry_filecount.thetotal EQ "">0<cfelse>#qry.qry_filecount.thetotal#</cfif> #myFusebox.getApplicationData().defaults.trans("share_content_count")#
-						<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+						<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 							<a href="##" id="checkallcontent" style="text-decoration:underline;padding-right:10px;padding-left:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
 						</cfif>
 						<!--- BreadCrumb --->
@@ -139,7 +139,7 @@
 									</div>
 									<cfif expiry_date EQ '' OR expiry_date GTE now()>
 										<!--- Check to see if basket button is not set to hidden --->
-										<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+										<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 											<div>
 												<input type="checkbox" name="file_id" value="#id#-img" onclick="selectone();">
 												<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
@@ -161,7 +161,7 @@
 									</div>
 									<cfif expiry_date EQ '' OR expiry_date GTE now()>
 										<!--- Check to see if basket button is not set to hidden --->
-										<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+										<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 											<div>
 												<input type="checkbox" name="file_id" value="#id#-vid" onclick="selectone();">
 												<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
@@ -181,7 +181,7 @@
 									</div>
 									<cfif expiry_date EQ '' OR expiry_date GTE now()>
 										<!--- Check to see if basket button is not set to hidden --->
-										<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+										<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 											<div>
 												<input type="checkbox" name="file_id" value="#id#-aud" onclick="selectone();">
 												<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
@@ -208,7 +208,7 @@
 									</div>
 									<cfif expiry_date EQ '' OR expiry_date GTE now()>
 										<!--- Check to see if basket button is not set to hidden --->
-										<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+										<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 											<div>
 												<input type="checkbox" name="file_id" value="#id#-doc" onclick="selectone();">
 												<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
@@ -289,7 +289,7 @@
 								</cfif>
 								<cfif expiry_date EQ '' OR expiry_date GTE now()>
 									<!--- Check to see if basket button is not set to hidden --->
-									<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+									<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 									</cfif>
 								</cfif>
@@ -307,7 +307,7 @@
 								</cfif>
 								<cfif expiry_date EQ '' OR expiry_date GTE now()>
 									<!--- Check to see if basket button is not set to hidden --->
-									<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+									<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 									</cfif>
 								</cfif>
@@ -316,7 +316,7 @@
 								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="120" border="0">
 								<cfif expiry_date EQ '' OR expiry_date GTE now()>
 									<!--- Check to see if basket button is not set to hidden --->
-									<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+									<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 									</cfif>
 								</cfif>
@@ -333,14 +333,14 @@
 								</cfif>
 								<cfif expiry_date EQ '' OR expiry_date GTE now()>
 									<!--- Check to see if basket button is not set to hidden --->
-									<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+									<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 									<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('#myFusebox.getApplicationData().defaults.trans("item_basket")#');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 									</cfif>
 								</cfif>
 							</cfif>
 							<cfif expiry_date EQ '' OR expiry_date GTE now()>
 								<!--- Check to see if basket button is not set to hidden --->
-								<cfif cs.button_basket AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
+								<cfif cs.button_basket AND (session.is_system_admin OR session.is_administrator OR cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
 							#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 								</cfif>
 							</cfif>

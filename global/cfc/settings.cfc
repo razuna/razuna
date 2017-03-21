@@ -3506,4 +3506,39 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
   	 <cfreturn cs_place_struct>
 </cffunction>
 
+<cffunction name="isuser" returntype="boolean" output="false" hint="query to see if user_id exists in user table">
+	<cfargument name="user_id" type="string" required="yes">
+	<!--- function internal vars --->
+	<cfset var localquery = 0>
+	<!--- function body --->
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+		SELECT 1
+		FROM users
+		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="cf_sql_varchar">
+	</cfquery>
+
+	<cfif localquery.recordcount neq 0>
+		<cfset var userexists = true>
+	<cfelse>
+		<cfset var userexists = false>
+	</cfif>
+	<cfreturn userexists>
+</cffunction>
+
+<cffunction name="encrypt" returntype="String" hint="Encrypts a given string with the given key using the default openbd algorithm">
+		<cfargument name="str2encrypt" required="true">
+		<cfargument name="key" required="true">
+		<cfreturn encrypt(arguments.str2encrypt,arguments.key)>
+	</cffunction>
+
+<cffunction name="decrypt" returntype="String" hint="Decrypts an encrypted string using the key provided using the default openbd algorithm">
+	<cfargument name="str2decrypt" required="true">
+	<cfargument name="key" required="true">
+	<cftry>
+		<cfset var decstr = decrypt(arguments.str2decrypt,arguments.key)>
+		<cfcatch><cfset var decstr = "false"></cfcatch>
+	</cftry>
+	<cfreturn decstr>
+</cffunction>
+
 </cfcomponent>

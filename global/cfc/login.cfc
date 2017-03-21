@@ -142,6 +142,8 @@
 		<cfif qryuser.recordcount EQ 0 OR (isdefined("adauth") AND adauth EQ false)>
 			<cfset theuser.notfound = "T">
 		<cfelse>
+			<cfset session.is_system_admin = false>
+			<cfset session.is_administrator = false>
 			<cfset theuser.notfound = "F">
 			<!--- Put the query result in the structure --->
 			<cfset theuser.qryuser = qryuser>
@@ -171,10 +173,18 @@
 			<!--- Set lib path --->
 			<cfset session.libpath  =  replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
-			<cfinvoke component="groups_users" method="getGroupsOfUser">
+			<cfinvoke component="groups_users" method="getGroupsOfUser" returnvariable="groups_of_user">
 				<cfinvokeargument name="user_id" value="#qryuser.user_id#" />
 				<cfinvokeargument name="host_id" value="#session.hostid#" />
 			</cfinvoke>
+			<!--- Set user admin status --->
+			<cfloop query="groups_of_user">
+				<cfif grp_id EQ "1">
+					<cfset session.is_system_admin = true>
+				<cfelseif grp_id EQ "2">
+					<cfset session.is_administrator = true>
+				</cfif>
+			</cfloop>
 			<!--- Admin Login: Set the domain ID into a session --->
 			<cfif arguments.thestruct.loginto EQ "admin">
 				<cfset session.hostid = "0">
@@ -728,6 +738,8 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 				</cfif>
 				<!--- If all goes well redirect to login --->
 				<cfif razgo>
+					<cfset session.is_system_admin = false>
+					<cfset session.is_administrator = false>
 					<!--- Set the Login into a session --->
 					<cfset session.login = "T">
 					<!--- Set the Web Login into a session --->
@@ -740,6 +752,19 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 					<cfif arguments.thestruct.shared EQ "F">
 						<cfinvoke method="createmyfolder" userid="#qryaccount.user_id_r#" />
 					</cfif>
+					<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
+					<cfinvoke component="groups_users" method="getGroupsOfUser" returnvariable="groups_of_user">
+						<cfinvokeargument name="user_id" value="#qryaccount.user_id_r#" />
+						<cfinvokeargument name="host_id" value="#session.hostid#" />
+					</cfinvoke>
+					<!--- Set user admin status --->
+					<cfloop query="groups_of_user">
+						<cfif grp_id EQ "1">
+							<cfset session.is_system_admin = true>
+						<cfelseif grp_id EQ "2">
+							<cfset session.is_administrator = true>
+						</cfif>
+					</cfloop>
 					<!--- and return --->
 					<cfreturn qryaccount.user_id_r />
 				<cfelse>

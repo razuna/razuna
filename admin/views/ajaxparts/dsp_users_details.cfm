@@ -125,7 +125,7 @@
 			<td>#defaultsObj.trans("user_mobile")#</td>
 			<td><input name="user_mobile" type="text" size="45" value="#qry_detail.user_mobile#" tabindex="12"></td>
 		</tr>
-		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			<tr>
 				<td>#defaultsObj.trans("user_expirydate")#</td>
 				<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>

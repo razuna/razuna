@@ -77,7 +77,7 @@
 									<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								</cfif>
 								<!--- Indexing Full --->
-								<cfif !application.razuna.isp OR session.securityobj.CheckSystemAdminUser()>
+								<cfif !application.razuna.isp OR session.is_system_admin>
 									<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
 								</cfif> 
 								--->

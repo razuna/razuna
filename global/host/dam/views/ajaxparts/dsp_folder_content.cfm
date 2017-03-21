@@ -24,7 +24,7 @@
 *
 --->
 <cfparam name="attributes.view" default="">
-<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
+<cfif session.is_system_admin OR session.is_administrator>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>
