@@ -27,7 +27,7 @@
 <cferror type="exception" template="error.cfm" />
 <cferror type="request" template="error_request.cfm" />
 <!--- Decide on production or dev mode for FB --->
-<cfif cgi.http_host CONTAINS "127.0.0.1" OR cgi.http_host CONTAINS "local" OR cgi.http_host CONTAINS ".jedi">
+<cfif cgi.http_host CONTAINS "local" OR cgi.http_host CONTAINS ".jedi">
 	<cfset application.fusebox.mode = "development-full-load">
 	<cflock name="#attributes.cfapplicationname#" timeout="120" type="exclusive">
 		<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
