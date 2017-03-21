@@ -51,7 +51,7 @@
 	<cfquery datasource="#variables.dsn#" name="f_1" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken##session.theUserID#getTreeByCollection */ #Arguments.ColumnList#,
 		<!--- Permission follow but not for sysadmin and admin --->
-		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+		<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 			CASE
 				<!--- If this folder is protected with a group and this user belongs to this group --->
 				WHEN EXISTS(
@@ -102,7 +102,7 @@
 	</cfif>
 	<!--- filter user folders --->
 	<!--- Does not apply to SystemAdmin users --->
-	<cfif not Request.securityObj.CheckSystemAdminUser()>
+	<cfif not session.securityobj.CheckSystemAdminUser()>
 		AND
 			(
 			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(f.folder_of_user,<cfqueryparam cfsqltype="cf_sql_varchar" value="f">)) <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
@@ -174,7 +174,7 @@
 		OR f.folder_owner = <cfqueryparam cfsqltype="cf_sql_numeric" value="#Session.theUserID#">
 	) --->
 	<!--- filter folder permissions, not neccessary for SysAdmin or Admin --->
-	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+	<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 		AND (
 			<!--- R/W/X permission by group --->
 			EXISTS(
@@ -1718,7 +1718,7 @@
 	'folder' as what,     
 	f.folder_main_id_r 
 	<!--- Permfolder --->
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 		, 'X' as permfolder
 	<cfelse>
 		,
@@ -3419,7 +3419,7 @@
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as folder_owner, '0' as folder_id_r<cfelse>f.folder_owner</cfif>,  
-	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+	<cfif structKeyExists(session,"securityObj") AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 		'X' as permfolder
 	<cfelse>
 		CASE
@@ -3476,7 +3476,7 @@
 		</cfif>
 	</cfloop>
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
-	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
+	<cfif structKeyExists(session,"securityObj") AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
 		<cfset var folderaccess = "x">
 	</cfif>
 	<!--- If session.customaccess is here and is not empty --->
@@ -4435,7 +4435,7 @@
 		<cfset var theid = 0>
 	</cfif>
 	<!--- If this use is not in the admin groups clear the showmyfolder session --->
-	<cfif NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()>
+	<cfif NOT session.securityobj.CheckSystemAdminUser() AND NOT session.securityobj.CheckAdministratorUser()>
 		<cfset session.showmyfolder = "F">
 	</cfif>
 	<!--- Param --->
@@ -4474,7 +4474,7 @@
 			END AS folder_name,
 		</cfif>
 		<!--- Permission follow but not for sysadmin and admin --->
-		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+		<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 			CASE
 				<!--- Check permission on this folder --->
 				WHEN EXISTS(
@@ -4519,7 +4519,7 @@
 				ANd s1.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND s1.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<!--- AND lower(s.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">  --->
-				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+				<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 					AND s1.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 				</cfif>
 				<!--- If this is a move then dont show the folder that we are moving --->
@@ -4592,7 +4592,7 @@
 			ELSE 0
 		END AS subhere
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -4645,7 +4645,7 @@
 			AND lower(f.folder_is_collection) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		</cfif>
 		<!--- filter user folders, but not for collections --->
-		<cfif iscol EQ "F" AND (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser())>
+		<cfif iscol EQ "F" AND (NOT session.securityobj.CheckSystemAdminUser() AND NOT session.securityobj.CheckAdministratorUser())>
 			AND
 				(
 				LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(f.folder_of_user,<cfqueryparam cfsqltype="cf_sql_varchar" value="f">)) <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
@@ -4782,7 +4782,7 @@
 				<cfset _node[_row].id = _id>
 				<!--- Folder name --->
 				<cfset var _folder_name = folder_name>
-				<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+				<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 					<cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">
 						<cfset var _folder_name = _folder_name & " <em>(" & Encodeforjavascript(username) & ")</em>">
 					</cfif>
@@ -5023,7 +5023,7 @@
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#sharecheckpermfolder */ folder_id,
 			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+			<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 				CASE
 					WHEN EXISTS(
 						SELECT fg.folder_id_r
@@ -5051,7 +5051,7 @@
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#sharecheckpermfolder */ col_id,
 			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+			<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 				CASE
 					WHEN EXISTS(
 						SELECT fg.col_id_r
@@ -5541,7 +5541,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
-	<cfif structKeyExists(Request.securityObj,"CheckSystemAdminUser") AND structKeyExists(Request.securityObj,"CheckAdministratorUser") AND NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser() AND NOT structkeyexists(arguments,"external")>
+	<cfif structKeyExists(session.securityobj,"CheckSystemAdminUser") AND structKeyExists(session.securityobj,"CheckAdministratorUser") AND NOT session.securityobj.CheckSystemAdminUser() AND NOT session.securityobj.CheckAdministratorUser() AND NOT structkeyexists(arguments,"external")>
 		CASE
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
@@ -5591,7 +5591,7 @@
 	</cfif>
 --->
 	<!--- filter user folders, but not for collections --->
-	<cfif (structKeyExists(Request.securityObj,"CheckSystemAdminUser") AND structKeyExists(Request.securityObj,"CheckAdministratorUser") AND NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()) AND NOT structkeyexists(arguments,"external")>
+	<cfif (structKeyExists(session.securityobj,"CheckSystemAdminUser") AND structKeyExists(session.securityobj,"CheckAdministratorUser") AND NOT session.securityobj.CheckSystemAdminUser() AND NOT session.securityobj.CheckAdministratorUser()) AND NOT structkeyexists(arguments,"external")>
 		AND
 			(
 			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(f.folder_of_user,<cfqueryparam cfsqltype="cf_sql_varchar" value="f">)) <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
@@ -5717,7 +5717,7 @@
 		--->
 		</cfquery>
 		<!--- QoQ do not do it if system or admin meaning return all folders --->
-		<cfif checkperm AND (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser())>
+		<cfif checkperm AND (NOT session.securityobj.CheckSystemAdminUser() AND NOT session.securityobj.CheckAdministratorUser())>
 			<cfquery dbtype="query" name="qry">
 			SELECT *
 			FROM qry
@@ -6332,7 +6332,7 @@
 	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -6370,7 +6370,7 @@
 	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -6408,7 +6408,7 @@
 	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -6446,7 +6446,7 @@
 	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -6497,7 +6497,7 @@
 	AND (folder_is_collection IS NULL OR folder_is_collection = '')
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -8698,7 +8698,7 @@
 	FROM (
 			SELECT f.folder_id, f.folder_name, f.folder_owner,
 			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+			<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 				CASE
 					<!--- Check permission on this folder --->
 					WHEN EXISTS(

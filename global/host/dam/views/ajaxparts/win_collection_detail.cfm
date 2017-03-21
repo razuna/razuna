@@ -30,7 +30,7 @@
 <cfelse>
 --->
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>

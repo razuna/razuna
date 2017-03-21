@@ -36,7 +36,7 @@
 	<div>
 		<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("apply_to")#...</div>
 		<div style="float:left;">
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				#myFusebox.getApplicationData().defaults.trans("please_select")# <select name="expwhat" id="expwhat">
 					<option value="folder" selected="selected">#myFusebox.getApplicationData().defaults.trans("all_assets_folder")#</option>
 					<option value="all">#myFusebox.getApplicationData().defaults.trans("all_assets_razuna")#</option>

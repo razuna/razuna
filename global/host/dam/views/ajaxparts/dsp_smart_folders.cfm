@@ -30,7 +30,7 @@
 			<div style="float:left;"><a href="##" onclick="$('##sfmanage').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##sfmanage').toggle();" class="ddicon"></div>
 			<div id="sfmanage" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
-				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+				<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 					<p><a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#">#myFusebox.getApplicationData().defaults.trans("smart_folder_new")#</a></p>
 					<p><hr></p>
 				</cfif>

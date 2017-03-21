@@ -1308,7 +1308,7 @@
 		<!--- Catch --->
 		<cfcatch type="any">
 			<cfset consoleoutput(true)>
-<cfset console(cfcatch)>
+			<cfset console(cfcatch)>
 
 			<!--- When the redirect param is here then --->
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
@@ -2037,7 +2037,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Thread --->
 	<cfthread action="run" intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
-		<cfset var removetime = DateAdd("h", -6, "#now()#")>
+		<cfset removetime = DateAdd("h", -6, "#now()#")>
 		<!--- Clear assets dbs from records which have no path_to_asset --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#images
@@ -4121,7 +4121,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset var ziptempid = arguments.thestruct.tempid>
 	<cftry>
 		<!--- Check if archive is a Razuna Versions archive in which cases already existing files are versioned. User must be admin to use this feature  --->
-		<cfif arguments.thestruct.qryfile.filename contains 'RazunaVersions' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+		<cfif arguments.thestruct.qryfile.filename contains 'RazunaVersions' AND (session.securityObj.CheckSystemAdminUser() OR session.securityObj.CheckAdministratorUser())>
 			<cfset var razver = true>
 			<!--- Get folders in trash to omit later when checking for file exists in database query --->
 			<cfinvoke component="global.cfc.folders" method="gettrashfolder" returnvariable="trashfolders">
@@ -4455,7 +4455,6 @@ This is the main function called directly by a single upload else from addassets
 					WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
-
 					<!--- If this is a RazunaVersions.zip Archive then version existing files --->
 					<cfif razver>
 						<!--- Set file type --->

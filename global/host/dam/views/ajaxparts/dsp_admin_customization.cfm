@@ -31,7 +31,7 @@
 		<div>#myFusebox.getApplicationData().defaults.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">#myFusebox.getApplicationData().defaults.trans("read_documentation")#</a></div>
 		<form name="form_admin_custom" id="form_admin_custom" method="post" action="#self#?#theaction#=c.admin_customization_save">
 		<input type="hidden" name="folder_redirect" value="#qry_customization.folder_redirect#" >
-		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("apply_tenants")#</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
+		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><cfif session.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("apply_tenants")#</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		<div style="clear:both;"><br /></div>
 		<div id="customization" class="collapsable">
 			<!--- Logo and images --->
@@ -1451,7 +1451,7 @@
 
 		<div style="clear:both;"></div>
 		<div id="status_custom_2" style="float:left;padding-top:15px;"></div>
-		<div style="float:right;padding-top:15px;"><cfif Request.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("apply_tenants")#</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
+		<div style="float:right;padding-top:15px;"><cfif session.securityobj.CheckSystemAdminUser()><input type="checkbox" name="apply_global" value="true"> <em style="padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("apply_tenants")#</em> </cfif><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		</form>
 		<div style="clear:both;"></div>
 		<div id="dummy_maintenance"></div>

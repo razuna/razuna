@@ -390,7 +390,7 @@
 		<!--- Result --->
 		<cfloop query="qry">
 			<!--- If label is expiry label then only show for admins --->
-			<cfif label_text EQ 'Asset has expired' AND structKeyExists(request,"securityObj") AND NOT (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+			<cfif label_text EQ 'Asset has expired' AND structKeyExists(session,"securityObj") AND NOT (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 				<cfcontinue>
 			</cfif>
 			<!--- Default values --->
@@ -416,7 +416,7 @@
 		<!--- Output for tree --->
 		<!--- <cfloop query="qry">
 			<!--- If label is expiry label then only show for admins --->
-			<cfif label_text EQ 'Asset has expired' AND structKeyExists(request,"securityObj") AND NOT (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+			<cfif label_text EQ 'Asset has expired' AND structKeyExists(session,"securityObj") AND NOT (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 				<cfcontinue>
 			</cfif>
 			<cfoutput>

@@ -29,17 +29,17 @@
 		<div ><strong><cfif attributes.iscol EQ "T">#myFusebox.getApplicationData().defaults.trans("choose_collection")#...<cfelse>#myFusebox.getApplicationData().defaults.trans("choose_folder")#:</cfif></strong></div>
 		<div id="win_choosefolder_#session.tmpid#"></div>
 		<!--- For different kind of folder action --->
-		<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 OR session.type EQ "restorefolder" OR session.type EQ "restoreselectedfolders" OR session.type EQ "restorefolderall" OR session.type EQ "restorecolfolder" OR session.type EQ 'restorecolfolderall' OR session.type EQ 'restoreselectedcolfolder' AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+		<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 OR session.type EQ "restorefolder" OR session.type EQ "restoreselectedfolders" OR session.type EQ "restorefolderall" OR session.type EQ "restorecolfolder" OR session.type EQ 'restorecolfolderall' OR session.type EQ 'restoreselectedcolfolder' AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 			<div style="clear:both;padding-top:15px;" />
 			<div><a href="##" onclick="movethisfolder();return false;">#myFusebox.getApplicationData().defaults.trans("move_folder_top")#</a></div>
 		</cfif>
 		<!--- For copy folder --->
-		<cfif session.type EQ "copyfolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+		<cfif session.type EQ "copyfolder" AND session.thefolderorglevel NEQ 1 AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 			<div style="clear:both;padding-top:15px;" />
 			<div><a href="##" onclick="copythisfolder();return false;">#myFusebox.getApplicationData().defaults.trans("copy_folder_top")#</a></div>
 		</cfif>
 		<!--- RAZ-273 Inherit permissions of parent folder for copy folder--->
-		<cfif session.type EQ "copyfolder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+		<cfif session.type EQ "copyfolder" AND (session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser())>
 			<div style="clear:both;padding-top:15px;"><input type="checkbox" name="perm_inherit" id="perm_inherit" value="">Inherit permissions of parent folder</div>
 		</cfif>
 		<div id="div_choosecol"></div>

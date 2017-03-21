@@ -100,7 +100,7 @@
 				<!-- CFC: Check for collection -->
 				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
 				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
+				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- Redirect request -->
 				<if condition="attributes.redirectto NEQ ''">
 					<true>
@@ -164,14 +164,14 @@
 						<!-- CFC: Check for collection -->
 						<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
 						<!-- set host again with real value -->
-						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
+						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="session.securityobj" />
 						<!-- Relocate -->
 						<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 					<!-- This is for shared login -->
 					<false>
 						<!-- set host again with real value -->
-						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
+						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="session.securityobj" />
 						<!-- Folder id into session -->
 						<set name="session.fid" value="#attributes.fid#" />
 						<!-- Only for the shared folder -->
@@ -3113,6 +3113,7 @@
 		<do action="storage" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="attributes.prefs" />
+		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(session.hostid,session.theuserid,'adm')" returnvariable="session.securityobj" />
 		<!-- CFC: Upload -->
 		<if condition="attributes.av EQ 0">
 			<true>
@@ -8218,7 +8219,7 @@
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
 				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
+				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<!-- CFC: Check if user is allowed for this folder -->
@@ -8777,7 +8778,7 @@
 				<!-- Param -->
 				<set name="session.theuserid" value="0" />
 				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="Request.securityobj" />
+				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="session.securityobj" />
 				<!-- CFC: Set Access -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 			</true>
@@ -9100,7 +9101,7 @@
 			</true>
 		</if>
 		<!-- set host again with real value -->
-		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="Request.securityobj" />
+		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="session.securityobj" />
 		<!-- Params -->
 		<set name="attributes.external" value="t" />
 		<set name="attributes.widget_id" value="#session.widget_id#" />
@@ -9241,7 +9242,7 @@
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
 				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
+				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="session.securityobj" />
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<set name="session.widget_login" value="T" />

@@ -64,15 +64,15 @@
 <cfif StructKeyExists(Session, "theuserid") and Session.theuserid neq "" and StructKeyExists(Session, "hostid")>
 	<!--- Component : SECURITY : stored in request scope for better performance--->
 	<cftry>
-		<cfinvoke component="global.cfc.security" method="init" returnvariable="Request.securityobj" dsn="#application.razuna.datasource#" />
-		<cfinvoke component="#Request.securityobj#" method="initUser" host_id="#Session.hostid#" user_id="#Session.theuserid#" mod_short="dsc">
+		<cfinvoke component="global.cfc.security" method="init" returnvariable="session.securityobj" dsn="#application.razuna.datasource#" />
+		<cfinvoke component="#session.securityobj#" method="initUser" host_id="#Session.hostid#" user_id="#Session.theuserid#" mod_short="dsc">
 		<cfcatch type="database"></cfcatch>
 	</cftry>
 </cfif>
 
 <!--- Log User Out when Session.login has expired. Timeout of Sessions is set above --->
 <cfif not IsDefined("Attributes.fa") or (Attributes.fa neq "c.login" and Attributes.fa neq "c.dologin" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa DOES NOT CONTAIN "update" AND application.razuna.firsttime NEQ "true" AND attributes.fa NEQ "c.runschedbackup" AND attributes.fa NEQ "c.logoff" AND attributes.fa NEQ "c.folder_subscribe_task" AND attributes.fa DOES NOT CONTAIN "c.w_")>
-	<cfif NOT structkeyexists(session,"login") OR session.login EQ "F" OR NOT structkeyexists(session,"thelang") OR NOT structkeyexists(session,"hostid") OR NOT structkeyexists(request,"securityobj")>
+	<cfif NOT structkeyexists(session,"login") OR session.login EQ "F" OR NOT structkeyexists(session,"thelang") OR NOT structkeyexists(session,"hostid") OR NOT structkeyexists(session,"securityobj")>
 		<script language="javascript" type="text/javascript">
 			top.location.href = "<cfoutput>#self#?c.logoff</cfoutput>";
 		</script>

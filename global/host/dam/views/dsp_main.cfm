@@ -172,7 +172,7 @@
 							</div>
 							<br />
 							<!--- If SystemAdmin or Admininstrator --->
-							<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+							<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 								<div id="tab_admin">
 									<div class="panelsnew">
 										<h1>#myFusebox.getApplicationData().defaults.trans("administrator_panel")#</h1>

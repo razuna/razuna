@@ -130,7 +130,7 @@
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
 				<!--- Approval only show for sysadmins, admin or those users who are allowed --->
-				<cfif qry_approval.approval_enabled AND Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR listFind(qry_approval_users.user_ids, session.theuserid)>
+				<cfif qry_approval.approval_enabled AND session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR listFind(qry_approval_users.user_ids, session.theuserid)>
 					<p>
 						<a href="##" onclick="loadcontent('rightside','#myself#c.staging');$('##userselection').toggle();return false;" style="width:100%;">Approval Area</a>
 					</p>
@@ -148,7 +148,7 @@
 				</p>
 				<p><hr /></p>
 				<!--- Administration. Show if user is admin or if user has access to some admin features --->
-				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
+				<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
 					<p><hr /></p>
@@ -170,7 +170,7 @@
 				</p>
 				<p><hr /></p>
 				<!--- Account --->
-				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
+				<cfif cgi.http_host CONTAINS "razuna.com" AND (session.securityobj.CheckAdministratorUser() OR session.securityobj.CheckSystemAdminUser())>
 					<p><a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
 					<p><hr /></p>
 				</cfif>
@@ -196,7 +196,7 @@
 		</div>
 		<div style="width:auto;float:right;padding:7px 0px 0px 0px;">
 			<!--- Account --->
-		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
+		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (session.securityobj.CheckAdministratorUser() OR session.securityobj.CheckSystemAdminUser())>
 				<div style="float:left;padding-right:20px;">
 					<a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
 				</div>

@@ -44,7 +44,7 @@
 	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released,
 	lower(ct.col_name) AS namesort,
 	<!--- Permission follow but not for sysadmin and admin --->
-	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+	<cfif not session.securityobj.CheckSystemAdminUser() and not session.securityobj.CheckAdministratorUser()>
 		CASE
 			WHEN EXISTS(
 				SELECT fg.col_id_r
@@ -347,7 +347,7 @@
 	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, 
 	c.share_dl_thumb, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
 	<!--- Permfolder --->
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 		, 'X' as colaccess
 	<cfelse>
 		,
@@ -518,7 +518,7 @@
 		c.col_item_order, i.img_id AS id, i.thumb_extension AS ext, i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind AS link_kind,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, i.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -567,7 +567,7 @@
 		c.col_item_order, a.aud_id AS id, a.aud_extension AS ext, a.aud_name_org AS filename_org, 'aud' AS kind, a.link_kind,
 		a.path_to_asset, a.cloud_url, a.cloud_url_org, a.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -616,7 +616,7 @@
 		c.col_item_order, v.vid_id AS id, v.vid_extension AS ext, v.vid_name_image AS filename_org, 'vid' AS kind, v.link_kind, v.path_to_asset, 
 		v.cloud_url, v.cloud_url_org, v.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -666,7 +666,7 @@
 		f.file_extension AS ext, f.file_name_org AS filename_org, 'doc' AS kind, f.link_kind, f.path_to_asset, f.cloud_url, 
 		f.cloud_url_org, f.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -732,7 +732,7 @@
 		f.folder_id AS id, '' AS ext, '' AS filename_org, 'folder' AS kind, '' AS link_kind, '' AS path_to_asset, '' AS cloud_url, 
 		'' AS cloud_url_org, '' AS hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -796,7 +796,7 @@
 		'' AS col_item_order, c.col_id AS id, '' AS ext, '' AS filename_org, 'collection' AS kind, '' AS link_kind, '' AS path_to_asset, 
 		'' AS cloud_url, '' AS cloud_url_org, '' AS hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -996,7 +996,7 @@
 		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -1043,7 +1043,7 @@
 		AND folder_is_collection = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -1091,7 +1091,7 @@
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND c.col_id_r = col.col_id
 		AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.securityobj.CheckSystemAdminUser() OR session.securityobj.CheckAdministratorUser()>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
