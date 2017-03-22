@@ -243,7 +243,10 @@
 						alert("#myFusebox.getApplicationData().defaults.trans('upc_num_check')#");
 					} else {
 						$( this ).dialog( "close" );
-						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","));	
+						$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","), function() {
+								$("##bodyoverlay").remove();
+						});	
 					}
 				}
 			}
