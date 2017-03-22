@@ -718,45 +718,36 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
-	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("general")>
-	<!--- Only run this code between 1am - 2am. This will give people time to correct any mistakes they migth have made before we delete the entries.  --->
-	<cfif hour(now()) EQ '1'>
-		<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
-		<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#folder_subscribe_task */ f.folder_id, u.user_id
-			FROM #session.hostdbprefix#folders f 
-			INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
-			INNER JOIN users u ON u.user_id = fs.user_id
-			WHERE
-			<!--- User is not administrator --->
-			NOT EXISTS (SELECT 1 FROM ct_groups_users cu WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id in ('1','2'))
-			<!--- User is not folder_owner --->
-			AND f.folder_owner <>  fs.user_id 
-			 <!--- Folder is not shared with everybody --->
-			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0') 
-			<!--- User is not part of group that has access to folder --->
-			AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r) 
+
+	<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
+	<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
+	SELECT f.folder_id, u.user_id
+	FROM #session.hostdbprefix#folders f 
+	INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
+	INNER JOIN users u ON u.user_id = fs.user_id
+	WHERE
+	<!--- User is not administrator --->
+	NOT EXISTS (SELECT 1 FROM ct_groups_users cu WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id in ('1','2'))
+	<!--- User is not folder_owner --->
+	AND f.folder_owner <>  fs.user_id 
+	 <!--- Folder is not shared with everybody --->
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0') 
+	<!--- User is not part of group that has access to folder --->
+	AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r) 
+	</cfquery>
+	<cfloop query="getusers_wo_access">
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
+		AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
-		<cfloop query="getusers_wo_access">
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE
-			FROM #session.hostdbprefix#folder_subscribe
-			WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
-			AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
-			</cfquery>
-		</cfloop>
-		<!--- if we had to delete users, flush the cache --->
-		<cfif getusers_wo_access.recordcount NEQ 0>
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("general")>
-		</cfif>
-	</cfif>
+	</cfloop>
 
 	<!--- Get User subscribed folders --->
-	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions" cachedwithin="1" region="razcache">
-	SELECT /* #cachetoken#qGetUserSubscriptions */ fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, 
-	fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
+	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
+	SELECT fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, fo.folder_name 
+	FROM #session.hostdbprefix#folder_subscribe fs
 	LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
 	WHERE 
 	<!--- H2 or MSSQL --->
@@ -765,10 +756,10 @@
 	<!--- MYSQL --->
 	<cfelseif application.razuna.thedatabase EQ "mysql">
 		DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
-	<!--- Oracle, DB2 ?? --->	
 	</cfif>
 	< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 	</cfquery>
+
 	<!--- Date Format --->
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
 	<!--- Get Assets Log of Subscribed folders --->
@@ -1028,8 +1019,6 @@
 		SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("general")>
 	</cfoutput>
 </cffunction>
 
@@ -1055,7 +1044,7 @@
 				)
 		</cfquery>
 	</cfloop>
-	<!--- Get assets that  have expired --->
+	<!--- Get assets that have expired --->
 	<cfquery datasource="#application.razuna.datasource#" name="getexpired_assets">
 	SELECT img_id id, host_id, 'img' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')label_id FROM raz1_images i WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION ALL
