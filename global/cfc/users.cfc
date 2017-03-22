@@ -718,6 +718,7 @@
 	<cfset MyArray[1] = "">
 	<cfset QueryAddcolumn(qry, "groupid", "varchar", MyArray)>
 	<cfset QueryAddcolumn(qry, "password", "varchar", MyArray)>
+
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
 	<!--- Loop over records and update each record with the groupid --->
 	<cfloop query="qry">
@@ -733,6 +734,7 @@
 	</cfloop>
 	<!--- Remove the user_id column --->
 	<cfset QueryDeletecolumn( qry, "user_id" )>
+	<cfset QueryDeletecolumn( qry, "ct_g_u_grp_id" )>
 	<!--- We got the query ready, continue export --->
 	<!--- CVS --->
 	<cfif arguments.thestruct.format EQ "csv">
@@ -793,6 +795,8 @@
 	<cfset SpreadsheetSetcolumnwidth(sxls, 4, 10000)>
 	<cfset SpreadsheetSetcolumnwidth(sxls, 5, 3000)>
 	<cfset SpreadsheetSetcolumnwidth(sxls, 6, 10000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 7, 10000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 8, 10000)>
 	<!--- Add orders from query --->
 	<cfset SpreadsheetAddRows(sxls, arguments.theqry, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
@@ -802,7 +806,6 @@
 		<!--- create directory --->
 		<cfdirectory action="create" directory="#arguments.thepath#/outgoing" mode="777">
 	</cfif>
-
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#",true)>
 	<!--- Feedback --->
