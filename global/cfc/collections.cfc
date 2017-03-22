@@ -2016,7 +2016,7 @@
 	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
 	WHERE lower(ct.col_name) = <cfqueryparam value="#lcase(arguments.thestruct.collection_name)#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	AND ct.col_id_r != <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND ct.col_id_r <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.col_id = ct.col_id_r
 	AND c.folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>

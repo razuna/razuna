@@ -176,7 +176,7 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND a.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND a.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
@@ -758,9 +758,9 @@
 		<cfquery name="qry_audio" dbtype="query">
 			SELECT *
 			FROM qry_audio
-			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+			WHERE permfolder <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
 			<cfif noread>
-				AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+				AND lower(permfolder) <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfif>
 		</cfquery>
 	</cfif>

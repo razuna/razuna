@@ -165,7 +165,7 @@
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif structKeyExists(arguments,'avoid_link_path') AND arguments.avoid_link_path EQ 'yes'>
-		AND (f.link_path != '/' OR f.link_path != '\\' OR f.link_path IS NULL)
+		AND (f.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '/' OR f.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '\\' OR f.link_path IS NULL)
 	</cfif>
 	<!--- *** START SECURITY *** --->
 	<!--- filter user folders
@@ -3322,7 +3322,7 @@
 			AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 'pdf')
 			OR  file_type = 'other')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+			AND is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3341,7 +3341,7 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND (img_group IS NULL OR img_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+			AND is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<!--- If coming from custom view and the session.customfileid is not empty --->
 			<cfif session.customfileid NEQ "">
 				AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
@@ -3361,7 +3361,7 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND (vid_group IS NULL OR vid_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+			AND is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3380,7 +3380,7 @@
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND (aud_group IS NULL OR aud_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+			AND is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif session.customfileid NEQ "">
 				AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 			</cfif>
@@ -3609,7 +3609,7 @@
 	SELECT /* #cachetoken#recfolder */ folder_id, folder_level
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-	AND folder_id != folder_id_r
+	AND folder_id <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> folder_id_r
 	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -3988,7 +3988,7 @@
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND i.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND i.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
@@ -4047,7 +4047,7 @@
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND v.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND v.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
@@ -4107,7 +4107,7 @@
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND a.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND a.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (a.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR a.expiry_date is null)
 		</cfif>
@@ -4155,7 +4155,7 @@
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		AND f.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND f.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
@@ -4524,11 +4524,11 @@
 				</cfif>
 				<!--- If this is a move then dont show the folder that we are moving --->
 				<cfif (arguments.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
-					AND s1.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+					AND s1.folder_id <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 				</cfif>
 				<!--- RAZ-583 : exclude link folder from subfolder count --->
 				<cfif session.type NEQ ''>
-					AND (s1.link_path != '/' OR s1.link_path != '\\' OR s1.link_path IS NULL)
+					AND (s1.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '/' OR s1.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '\\' OR s1.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -4550,11 +4550,11 @@
 				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				<!--- If this is a move then dont show the folder that we are moving --->
 				<cfif (arguments.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
-					AND s2.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+					AND s2.folder_id <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 				</cfif>
 				<!--- RAZ-583 : exclude link folder from subfolder count --->
 				<cfif session.type NEQ ''>
-					AND (s2.link_path != '/' OR s2.link_path != '\\' OR s2.link_path IS NULL)
+					AND (s2.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '/' OR s2.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '\\' OR s2.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -4576,11 +4576,11 @@
 				AND s3.host_id = fg4.host_id
 				<!--- If this is a move then dont show the folder that we are moving --->
 				<cfif (arguments.actionismove EQ "T" AND session.type EQ "movefolder") OR session.type EQ "copyfolder">
-					AND s3.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+					AND s3.folder_id <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 				</cfif>
 				<!--- RAZ-583 : exclude link folder from subfolder count --->
 				<cfif session.type NEQ ''>
-					AND (s3.link_path != '/' OR s3.link_path != '\\' OR s3.link_path IS NULL)
+					AND (s3.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '/' OR s3.link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '\\' OR s3.link_path IS NULL)
 				</cfif>
 				<cfif variables.database EQ "oracle">
 					AND ROWNUM = 1
@@ -4657,11 +4657,11 @@
 	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	<!--- If this is a move or copy then don't show the folder that we are moving/copying into --->
 	<cfif session.type EQ "movefolder" OR session.type EQ "copyfolder">
-		AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+		AND itb.folder_id <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 	</cfif>
 	<!--- RAZ-583 : exclude link folder from select --->
 	<cfif session.type NEQ ''>
-		AND (link_path != '/' OR link_path != '\\' OR link_path IS NULL)
+		AND (link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '/' OR link_path <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '\\' OR link_path IS NULL)
 	</cfif>
 	ORDER BY lower(folder_name)
 	</cfquery>
@@ -8819,7 +8819,7 @@
 		SELECT /* #cachetoken#recfolder */ f.folder_of_user, f.folder_id, f.folder_name, '#thelevel#' as folder_level, <cfif application.razuna.thedatabase EQ "mssql">'#folder_path# / ' + f.folder_name<cfelse>concat('#folder_path# / ',f.folder_name)</cfif> as folder_path, <cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username
 		FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
 		WHERE f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#folder_id#">
-		AND f.folder_id != f.folder_id_r
+		AND f.folder_id <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> f.folder_id_r
 		AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>

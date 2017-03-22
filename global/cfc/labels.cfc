@@ -306,7 +306,7 @@
 		FROM ct_labels
 		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
 		AND ct_type = <cfqueryparam value="#arguments.thetype#" cfsqltype="cf_sql_varchar" />
-		AND ct_label_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
+		AND ct_label_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
@@ -340,7 +340,7 @@
 		FROM ct_labels
 		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
 		AND ct_type = <cfqueryparam value="#arguments.thetype#" cfsqltype="cf_sql_varchar" />
-		AND ct_label_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
+		AND ct_label_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
@@ -550,7 +550,7 @@
 		<cfif arguments.id EQ 0>
 			(l.label_id = l.label_id_r OR l.label_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">)
 		<cfelse>
-			l.label_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> l.label_id_r
+			l.label_id <cfif variables.database EQ "mysql" OR variables.database EQ "db2"><><cfelse>!=</cfif> l.label_id_r
 			AND
 			l.label_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
 		</cfif>
@@ -1327,7 +1327,7 @@
 		SELECT /* #cachetoken#getchildlabelscheckforkids*/ label_id as child_id
 		FROM  #session.hostdbprefix#labels 
 		WHERE label_id_r = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar">
-		AND label_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar">
+		AND label_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- Loop over kids records --->
 		<cfif checkforkids.recordcount NEQ 0>

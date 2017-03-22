@@ -58,7 +58,7 @@
 		WHERE <cfif Arguments.id gt 0>
 						c.cat_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.id#">
 						AND
-						c.cat_id_r != c.cat_id
+						c.cat_id_r <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> c.cat_id
 					<!--- root level --->
 					<cfelse>
 						c.cat_id_r = c.cat_id

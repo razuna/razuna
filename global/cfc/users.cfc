@@ -80,7 +80,7 @@
 		<cfquery dbtype="query" name="localquery">
 		SELECT *
 		FROM localquery
-		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 	</cfif>
 	<cfreturn localquery>
@@ -96,7 +96,7 @@
 	FROM ct_users_hosts ct, users u
 	WHERE ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND ct.ct_u_h_user_id = u.user_id
-	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	<cfif structkeyexists(arguments.thestruct,"user_login_name")>
 		AND lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.user_login_name)#">
 	<cfelseif structkeyexists(arguments.thestruct,"user_email")>
@@ -152,7 +152,7 @@
 		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 		AND uh.ct_u_h_user_id = u.user_id
 		)
-	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 	GROUP BY user_id, user_login_name, user_first_name, user_last_name, user_email, user_active, user_company, user_pass
 	</cfquery>
 	<!--- If we come from DAM we don't show System Admins --->
@@ -160,9 +160,9 @@
 		<cfquery dbtype="query" name="localquery">
 		SELECT *, <cfif isdefined("arguments.thestruct.sortby")>'yes'<cfelse>'no'</cfif> sorted, <cfif isdefined("arguments.thestruct.sortby")>'#arguments.thestruct.sortby#'<cfelse>''</cfif>sortby
 		FROM localquery
-		WHERE  ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		WHERE  ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		AND ct_g_u_grp_id NOT LIKE '1,%'
-		AND ct_g_u_grp_id != '1'
+		AND ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> '1'
 		<cfif isdefined("arguments.thestruct.sortby")>
 			ORDER  BY #arguments.thestruct.sortby# #arguments.thestruct.sortorder#
 		<cfelse>
@@ -431,7 +431,7 @@
 	WHERE lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.user_email)#" cfsqltype="cf_sql_varchar">
 	AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 	AND ct.ct_u_h_user_id = u.user_id
-	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- There is no user with the same name thus continue --->
 	<cfif qry_sameuser.RecordCount EQ 0>
@@ -1044,8 +1044,8 @@
 		<cfquery dbtype="query" name="qry_users">
 		SELECT *
 		FROM qry_users
-		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
-		AND ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
+		AND ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 		<!--- Put all the userids into a list --->
 		<cfset arguments.thestruct.theuserid = valueList(qry_users.user_id,",")>
@@ -1104,7 +1104,7 @@
 		<cfquery dbtype="query" name="qry_users">
 		SELECT *
 		FROM qry_users
-		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
 		</cfquery>
 		<!--- Put all the userids into a list --->
 		<cfset arguments.thestruct.theuserid = valueList(qry_users.user_id,",")>

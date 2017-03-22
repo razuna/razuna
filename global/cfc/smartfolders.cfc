@@ -36,7 +36,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
 		FROM #session.hostdbprefix#smart_folders
-		WHERE sf_type <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
+		WHERE sf_type <cfif variables.database EQ "mysql" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
