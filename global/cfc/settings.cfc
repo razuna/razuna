@@ -2060,262 +2060,384 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfloop query="qry">
 			<cfif custom_id EQ "folder_redirect">
 				<cfset v.folder_redirect = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "myfolder_create" AND !custom_value>
 				<cfset v.myfolder_create = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_metadata_link" AND !custom_value>
 				<cfset v.show_metadata_link = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "myfolder_upload" AND !custom_value>
 				<cfset v.myfolder_upload = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_top_part" AND !custom_value>
 				<cfset v.show_top_part = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_basket_part" AND !custom_value>
 				<cfset v.show_basket_part = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_favorites_part" AND !custom_value>
 				<cfset v.show_favorites_part = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_manage_part" AND !custom_value>
 				<cfset v.show_manage_part = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_trash_icon" AND !custom_value>
 				<cfset v.show_trash_icon = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_twitter" AND !custom_value>
 				<cfset v.show_twitter = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_twitter" AND !custom_value>
 				<cfset v.tab_twitter = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_facebook" AND !custom_value>
 				<cfset v.show_facebook = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_facebook" AND !custom_value>
 				<cfset v.tab_facebook = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_razuna_blog" AND !custom_value>
 				<cfset v.tab_razuna_blog = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_razuna_support" AND !custom_value>
 				<cfset v.tab_razuna_support = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_collections" AND !custom_value>
 				<cfset v.tab_collections = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_labels" AND !custom_value>
 				<cfset v.tab_labels = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_add_from_server" AND !custom_value>
 				<cfset v.tab_add_from_server = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_add_from_email" AND !custom_value>
 				<cfset v.tab_add_from_email = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_add_from_ftp" AND !custom_value>
 				<cfset v.tab_add_from_ftp = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_add_from_link" AND !custom_value>
 				<cfset v.tab_add_from_link = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_images" AND !custom_value>
 				<cfset v.tab_images = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_videos" AND !custom_value>
 				<cfset v.tab_videos = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_audios" AND !custom_value>
 				<cfset v.tab_audios = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_other" AND !custom_value>
 				<cfset v.tab_other = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_pdf" AND !custom_value>
 				<cfset v.tab_pdf = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_doc" AND !custom_value>
 				<cfset v.tab_doc = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_xls" AND !custom_value>
 				<cfset v.tab_xls = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_alias" AND !custom_value>
 				<cfset v.icon_alias = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_move" AND !custom_value>
 				<cfset v.icon_move = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_batch" AND !custom_value>
 				<cfset v.icon_batch = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_select" AND !custom_value>
 				<cfset v.icon_select = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_refresh" AND !custom_value>
 				<cfset v.icon_refresFh = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_show_subfolder" AND !custom_value>
 				<cfset v.icon_show_subfolder = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_create_subfolder" AND !custom_value>
 				<cfset v.icon_create_subfolder = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_favorite_folder" AND !custom_value>
 				<cfset v.icon_favorite_folder = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_search" AND !custom_value>
 				<cfset v.icon_search = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_print" AND !custom_value>
 				<cfset v.icon_print = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_rss" AND !custom_value>
 				<cfset v.icon_rss = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_word" AND !custom_value>
 				<cfset v.icon_word = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_metadata_import" AND !custom_value>
 				<cfset v.icon_metadata_import = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_metadata_export" AND !custom_value>
 				<cfset v.icon_metadata_export = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_download_folder" AND !custom_value>
 				<cfset v.icon_download_folder = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_description_keywords" AND !custom_value>
 				<cfset v.tab_description_keywords = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_custom_fields" AND !custom_value>
 				<cfset v.tab_custom_fields = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_convert_files" AND !custom_value>
 				<cfset v.tab_convert_files = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_comments" AND !custom_value>
 				<cfset v.tab_comments = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_metadata" AND !custom_value>
 				<cfset v.tab_metadata = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_xmp_description" AND !custom_value>
 				<cfset v.tab_xmp_description = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_iptc_contact" AND !custom_value>
 				<cfset v.tab_iptc_contact = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_iptc_image" AND !custom_value>
 				<cfset v.tab_iptc_image = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_iptc_content" AND !custom_value>
 				<cfset v.tab_iptc_content = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_iptc_status" AND !custom_value>
 				<cfset v.tab_iptc_status = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_origin" AND !custom_value>
 				<cfset v.tab_origin = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_versions" AND !custom_value>
 				<cfset v.tab_versions = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_sharing_options" AND !custom_value>
 				<cfset v.tab_sharing_options = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_preview_images" AND !custom_value>
 				<cfset v.tab_preview_images = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_additional_renditions" AND !custom_value>
 				<cfset v.tab_additional_renditions = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "tab_history" AND !custom_value>
 				<cfset v.tab_history = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_send_email" AND !custom_value>
 				<cfset v.button_send_email = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_send_ftp" AND !custom_value>
 				<cfset v.button_send_ftp = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_basket" AND !custom_value>
 				<cfset v.button_basket = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_add_to_collection" AND !custom_value>
 				<cfset v.button_add_to_collection = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_print" AND !custom_value>
 				<cfset v.button_print = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_move" AND !custom_value>
 				<cfset v.button_move = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "button_delete" AND !custom_value>
 				<cfset v.button_delete = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "share_folder" AND custom_value>
 				<cfset v.share_folder = true>
 			<cfelseif custom_id EQ "share_download_thumb" AND !custom_value>
 				<cfset v.share_download_thumb = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "share_download_original" AND custom_value>
 				<cfset v.share_download_original = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "share_uploading" AND custom_value>
 				<cfset v.share_uploading = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "share_comments" AND custom_value>
 				<cfset v.share_comments = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "request_access" AND !custom_value>
 				<cfset v.request_access = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "req_filename" AND !custom_value>
 				<cfset v.req_filename = false>
+				<cfcontinue>
 			<cfelseif custom_id EQ "req_description" AND custom_value>
 				<cfset v.req_description = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "req_keywords" AND custom_value>
 				<cfset v.req_keywords = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "upload_server_remove_files" AND custom_value>
 				<cfset v.upload_server_remove_files = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "images_metadata">
 				<cfset v.images_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "videos_metadata">
 				<cfset v.videos_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "files_metadata">
 				<cfset v.files_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "audios_metadata">
 				<cfset v.audios_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "images_metadata_top">
 				<cfset v.images_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "videos_metadata_top">
 				<cfset v.videos_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "files_metadata_top">
 				<cfset v.files_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "audios_metadata_top">
 				<cfset v.audios_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_images_metadata_top">
 				<cfset v.cf_images_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_videos_metadata_top">
 				<cfset v.cf_videos_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_files_metadata_top">
 				<cfset v.cf_files_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_audios_metadata_top">
 				<cfset v.cf_audios_metadata_top = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "assetbox_height">
 				<cfset v.assetbox_height = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "assetbox_width">
 				<cfset v.assetbox_width = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "windows_netpath2asset">
 				<cfset v.windows_netpath2asset = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "mac_netpath2asset">
 				<cfset v.mac_netpath2asset = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "unix_netpath2asset">
 				<cfset v.unix_netpath2asset = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "basket_awsurl">
 				<cfset v.basket_awsurl= custom_value>
 			<cfelseif custom_id EQ "btn_email_slct">
 				<cfset v.btn_email_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "btn_ftp_slct">
 				<cfset v.btn_ftp_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "btn_basket_slct">
 				<cfset v.btn_basket_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "btn_print_slct">
 				<cfset v.btn_print_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "btn_collection_slct">
 				<cfset v.btn_collection_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_alias_slct">
 				<cfset v.icon_alias_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_move_slct">
 				<cfset v.icon_move_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_batch_slct">
 				<cfset v.icon_batch_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_metadata_export_slct">
 				<cfset v.icon_metadata_export_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "icon_metadata_import_slct">
 				<cfset v.icon_metadata_import_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_manage_part_slct">
 				<cfset v.show_manage_part_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_trash_icon_slct">
 				<cfset v.show_trash_icon_slct = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "hide_select_links" AND custom_value>
 				<cfset v.hide_select_links = true>
+				<cfcontinue>
 			</cfif>
 			<!--- RAZ-2267 get the default value--->
 			<cfif custom_id EQ "tab_explorer_default">
 				<cfset v.tab_explorer_default = custom_value>
+				<cfcontinue>
 			</cfif>
 			<!--- RAZ-2834 get the default value --->
 			<cfif custom_id EQ "customfield_images_metadata">
 				<cfset v.customfield_images_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "customfield_videos_metadata">
 				<cfset v.customfield_videos_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "customfield_files_metadata">
 				<cfset v.customfield_files_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "customfield_audios_metadata">
 				<cfset v.customfield_audios_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "customfield_all_metadata">
 				<cfset v.customfield_all_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "show_metadata_labels" AND !custom_value>
 				<cfset v.show_metadata_labels = false>
+				<cfcontinue>
 			</cfif>
 			<!--- For folder custom fields --->
 			<cfif custom_id EQ "cf_images_metadata">
 				<cfset v.cf_images_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_videos_metadata">
 				<cfset v.cf_videos_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_files_metadata">
 				<cfset v.cf_files_metadata = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "cf_audios_metadata">
 				<cfset v.cf_audios_metadata = custom_value>
+				<cfcontinue>
 			</cfif>
 			<!--- For Basket fields --->
 			<cfif custom_id EQ "ftp_btn_basket">
 				<cfset v.ftp_btn_basket = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "email_btn_basket">
 				<cfset v.email_btn_basket = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "publish_btn_basket">
 				<cfset v.publish_btn_basket = custom_value>
+				<cfcontinue>
 			<cfelseif custom_id EQ "metadata_btn_basket">
 				<cfset v.metadata_btn_basket = custom_value>
+				<cfcontinue>
 			</cfif>
 			<!--- For search --->
 			<cfif custom_id EQ "search_selection" AND custom_value>
 				<cfset v.search_selection = true>
+				<cfcontinue>
 			<cfelseif custom_id EQ "hide_search_tabs" AND custom_value>
 				<cfset v.hide_search_tabs = true>
+				<cfcontinue>
 			</cfif>
 		</cfloop>
 	</cfif>

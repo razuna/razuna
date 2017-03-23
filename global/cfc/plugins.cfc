@@ -25,7 +25,7 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 	
-	<cfset variables.cachetoken = getcachetoken("settings")>
+	<!--- <cfset variables.cachetoken = getcachetoken("settings")> --->
 
 	<!--- Get all plugins --->
 	<cffunction name="getall">
@@ -78,7 +78,7 @@
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#" region="razcache">
 			SELECT p.p_id, p.p_name, p.p_url, p.p_version, p.p_author, p.p_author_url, p.p_path, p.p_active, p.p_description
 			FROM plugins p
 		<cfif arguments.dam>
@@ -100,7 +100,7 @@
 		<cfargument name="p_id" type="string" required="true">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 		SELECT p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_active,p_description,p_license
 		FROM plugins
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
@@ -308,7 +308,7 @@
 		<cfset result.pview = "">
 		<cfset var qry = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 		SELECT pa.comp, pa.func, pa.args, p.p_path
 		FROM plugins_actions pa, plugins p
 		WHERE lower(pa.action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
