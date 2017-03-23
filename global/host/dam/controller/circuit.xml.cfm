@@ -5191,7 +5191,7 @@
 						<!-- Set the total -->
 						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5231,7 +5231,7 @@
 						<!-- Set the total -->
 						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5279,7 +5279,7 @@
 						<!-- Set the total -->
 						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5327,7 +5327,7 @@
 						<!-- Set the total -->
 						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5375,7 +5375,7 @@
 						<!-- Set the total -->
 						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
