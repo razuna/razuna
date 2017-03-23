@@ -66,13 +66,13 @@
 <cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thename## */ host_id, host_name, host_type, host_shard_group
 FROM hosts
-WHERE lower(host_name_custom) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thename)##">
+WHERE host_name_custom = <cfqueryparam cfsqltype="cf_sql_varchar" value="##thename##">
 </cfquery>
 <cfif thehost.recordcount EQ 0>
 <cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thesubdomain## */ host_id, host_name, host_type, host_shard_group
 FROM hosts
-WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thesubdomain)##">
+WHERE host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="##thesubdomain##">
 </cfquery>
 </cfif>
 <cfif thehost.recordcount EQ 0>

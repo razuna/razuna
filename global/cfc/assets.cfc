@@ -50,7 +50,7 @@
 	</cfif>
 	<!--- Upload file --->
 	<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#arguments.thestruct.thefieldname#" result="thefile">
-	<cfset arguments.thestruct.thefile.serverFileExt = "#lcase(thefile.serverFileExt)#">
+	<cfset arguments.thestruct.thefile.serverFileExt = "#thefile.serverFileExt#">
 	<cfset arguments.thestruct.thefile = thefile>
 	<cfset arguments.thestruct.dsn = application.razuna.datasource>
 	<cfset arguments.thestruct.hostid = session.hostid>
@@ -87,7 +87,7 @@
 			VALUES(
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.tempid#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(attributes.intstruct.thefile.serverFileExt)#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.serverFileExt#">,
 			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.folder_id#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.user_id#">,
@@ -324,7 +324,7 @@
 					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
 					SELECT /* #variables.cachetoken#qryGetFolderDetails */ folder_id, folder_name
 					FROM #session.hostdbprefix#folders
-					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+					WHERE folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_name#">
 					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 					AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -341,7 +341,7 @@
 			<cfquery datasource="#application.razuna.datasource#" name="qryfidr" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#qryfidr */ folder_id
 			FROM #session.hostdbprefix#folders
-			WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
+			WHERE folder_name = <cfqueryparam value="#fname#" cfsqltype="cf_sql_varchar">
 			AND folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="cf_sql_varchar">
 			AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
 			</cfquery>
@@ -419,7 +419,7 @@
 					<cfquery datasource="#application.razuna.datasource#" name="fileType">
 					SELECT type_type, type_mimecontent, type_mimesubcontent
 					FROM file_types
-					WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
+					WHERE type_id = <cfqueryparam value="#fileNameExt.theext#" cfsqltype="cf_sql_varchar">
 					</cfquery>
 					<!--- set attributes of file structure --->
 					<cfif #fileType.recordCount# GT 0>
@@ -465,7 +465,7 @@
 							ELSE 0
 						END AS ISHERE
 						FROM #session.hostdbprefix#folders f
-						WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theServerDirname)#">
+						WHERE f.folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theServerDirname#">
 						AND f.folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 						<!---
 						AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
@@ -485,7 +485,7 @@
 							<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 							SELECT folder_id, folder_name
 							FROM #session.hostdbprefix#folders
-							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+							WHERE folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_name#">
 							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 							AND folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1175,7 +1175,7 @@
 				<cfif thefile.filesize LT 0 AND isdefined('arguments.thestruct.file_size') >
 					<cfset thefile.filesize = arguments.thestruct.file_size>
 				</cfif>
-				<cfset thefile.serverFileExt = "#lcase(thefile.serverFileExt)#">
+				<cfset thefile.serverFileExt = "#thefile.serverFileExt#">
 				<!--- If the extension is longer then 9 chars --->
 				<cfif len(thefile.serverFileExt) GT 9>
 					<cfset thefile.serverFileExt = "txt">
@@ -1209,7 +1209,7 @@
 				<cfset var checkfolder = "">
 				<cfquery datasource="#application.razuna.datasource#" name="checkfolder">
 					SELECT 1 FROM #session.hostdbprefix#folders WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">
-					AND lower(in_trash) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="f">
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="f">
 				</cfquery>
 				<cfif checkfolder.recordcount EQ 0>
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
@@ -1260,7 +1260,7 @@
 				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type
 				FROM file_types
-				WHERE lower(type_id) = <cfqueryparam value="#lcase(thefile.serverFileExt)#" cfsqltype="cf_sql_varchar">
+				WHERE type_id = <cfqueryparam value="#thefile.serverFileExt#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- set attributes of file structure --->
 				<cfif fileType.recordCount GT 0>
@@ -1379,7 +1379,7 @@
 			<cfquery dataSource="#application.razuna.datasource#" name="qry_mime">
 			SELECT type_type
 			FROM file_types
-			WHERE lower(type_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(qry_file.extension)#">
+			WHERE type_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.extension#">
 			</cfquery>
 			<!--- IMAGES --->
 			<cfif qry_mime.type_type EQ "img">
@@ -1947,7 +1947,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="fileType" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 		SELECT type_type, type_mimecontent, type_mimesubcontent
 		FROM file_types
-		WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.qryfile.extension)#" cfsqltype="cf_sql_varchar">
+		WHERE type_id = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- set attributes of file structure --->
 		<cfif fileType.recordCount GT 0>
@@ -3676,7 +3676,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction hint="GET FILE AND EXTENSION" name="getFileExtension" output="true" returntype="struct">
 	<cfargument name="thefilename" default="" required="yes" type="string">
 	<!--- Get the file extension --->
-	<cfset fileNameExt.theExt  = "#lcase(listLast(listRest(arguments.thefilename, '.'), '.'))#">
+	<cfset fileNameExt.theExt  = "#listLast(listRest(arguments.thefilename, '.'), '.')#">
 	<!--- Get the file name --->
 	<cfif fileNameExt.theExt NEQ "">
 		<cfset var lenFile = #len(arguments.thefilename)# - #len(fileNameExt.theExt)# - 1>
@@ -4206,7 +4206,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
 				SELECT folder_id
 				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
+				WHERE folder_name = <cfqueryparam value="#fnameforqry#" cfsqltype="cf_sql_varchar">
 				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 				AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 				ORDER BY folder_create_time DESC
@@ -4218,7 +4218,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 					SELECT folder_id, folder_name, folder_level, folder_id_r
 					FROM #session.hostdbprefix#folders
-					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+					WHERE folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_name#">
 					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 					AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -4269,7 +4269,7 @@ This is the main function called directly by a single upload else from addassets
 				FROM #session.hostdbprefix#workflow_folders wf, #session.hostdbprefix#workflow_actions wa
 				WHERE wf.folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">
 				AND wa.wf_id_r = wf.wf_id_r
-				AND lower(wa.wf_type) = <cfqueryparam value="wf_event" cfsqltype="CF_SQL_VARCHAR">
+				AND wa.wf_type = <cfqueryparam value="wf_event" cfsqltype="CF_SQL_VARCHAR">
 				AND wa.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add workflows to just created folder --->
@@ -4326,7 +4326,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type, type_mimecontent, type_mimesubcontent
 				FROM file_types
-				WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
+				WHERE type_id = <cfqueryparam value="#fileNameExt.theext#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- set attributes of file structure --->
 				<cfif #fileType.recordCount# GT 0>
@@ -4377,7 +4377,7 @@ This is the main function called directly by a single upload else from addassets
 						ELSE 0
 					END AS ISHERE
 					FROM #session.hostdbprefix#folders f
-					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thedirname)#">
+					WHERE f.folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedirname#">
 					AND f.folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 					<!---
 					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
@@ -4398,7 +4398,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 						SELECT folder_id, folder_name
 						FROM #session.hostdbprefix#folders
-						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						WHERE folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_name#">
 						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 						AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -4485,9 +4485,9 @@ This is the main function called directly by a single upload else from addassets
 							<cfquery name="filename_exists" datasource="#application.razuna.datasource#">
 								SELECT #colname#_id id
 								FROM #session.hostdbprefix##tblname#
-								WHERE (lower(#colname#_#fileprefix#name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thefilename)#">
-								OR (lower(#colname#_#fileprefix#name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thefilename_noext)#">
-									AND #colname#_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(fileNameExt.theext)#">))
+								WHERE (#colname#_#fileprefix#name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">
+								OR (#colname#_#fileprefix#name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename_noext#">
+									AND #colname#_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">))
 								AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 								<cfif findnocase(arguments.thestruct.type,'img,vid,aud')>
 									AND (#colname#_group IS NULL OR #colname#_group ='')
@@ -5808,7 +5808,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfquery datasource="#application.razuna.datasource#" name="fileType">
 	SELECT type_type, type_mimecontent, type_mimesubcontent
 	FROM file_types
-	WHERE lower(type_id) = <cfqueryparam value="#lcase(thefile.serverFileExt)#" cfsqltype="cf_sql_varchar">
+	WHERE type_id = <cfqueryparam value="#thefile.serverFileExt#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<!--- set attributes of file structure --->
 	<cfif fileType.recordCount GT 0>
@@ -6063,7 +6063,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfquery datasource="#application.razuna.datasource#" name="fileType">
 			SELECT type_type
 			FROM file_types
-			WHERE lower(type_id) = <cfqueryparam value="#lcase(extension)#" cfsqltype="cf_sql_varchar">
+			WHERE type_id = <cfqueryparam value="#extension#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- According to type we query db --->
 			<cfif fileType.type_type EQ "img">
@@ -6104,7 +6104,7 @@ This is the main function called directly by a single upload else from addassets
 			SELECT #columns#
 			FROM #session.hostdbprefix##db#
 			WHERE hashtag = <cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-			OR lower(#colname#) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(filename_org)#">
+			OR #colname# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filename_org#">
 			</cfquery>
 			<!--- If found then --->
 			<cfif samefile.recordcount NEQ 0>
@@ -6317,7 +6317,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -6436,7 +6436,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -6565,7 +6565,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -6693,7 +6693,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -6813,7 +6813,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -6933,7 +6933,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -7053,7 +7053,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -7173,7 +7173,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#" name="chkfolder">
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
-		WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 		AND in_trash = 'F'
@@ -7573,7 +7573,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
 				SELECT folder_id
 				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
+				WHERE folder_name = <cfqueryparam value="#fnameforqry#" cfsqltype="cf_sql_varchar">
 				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 				AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
@@ -7584,7 +7584,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 					SELECT folder_id, folder_name, folder_level, folder_id_r
 					FROM #session.hostdbprefix#folders
-					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+					WHERE folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_name#">
 					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 					AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -7629,7 +7629,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type, type_mimecontent, type_mimesubcontent
 				FROM file_types
-				WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
+				WHERE type_id = <cfqueryparam value="#fileNameExt.theext#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- set attributes of file structure --->
 				<cfif #fileType.recordCount# GT 0>
@@ -7686,7 +7686,7 @@ This is the main function called directly by a single upload else from addassets
 						ELSE 0
 					END AS ISHERE
 					FROM #session.hostdbprefix#folders f
-					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thedirname)#">
+					WHERE f.folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedirname#">
 					AND f.folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 					<!---
 					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
@@ -7707,7 +7707,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 						SELECT folder_id, folder_name
 						FROM #session.hostdbprefix#folders
-						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						WHERE folder_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_name#">
 						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 						AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

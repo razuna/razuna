@@ -42,7 +42,7 @@
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qrylist" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released,
-	lower(ct.col_name) AS namesort,
+	ct.col_name AS namesort,
 	<!--- Permission follow but not for sysadmin and admin --->
 	<cfif not session.is_system_admin and not session.is_administrator>
 		CASE
@@ -50,7 +50,7 @@
 				SELECT fg.col_id_r
 				FROM #session.hostdbprefix#collections_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 				WHERE fg.col_id_r = c.col_id
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- If this is the user folder or he is the owner --->
 			WHEN ( c.col_owner = '#Session.theUserID#' ) THEN 'unlocked'
@@ -115,7 +115,7 @@
 	FROM #session.hostdbprefix#collections c, #session.hostdbprefix#collections_text ct
 	WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 	AND c.col_id = ct.col_id_r
-	AND lower(ct.col_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.collectionname)#">
+	AND ct.col_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.collectionname#">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Collection not here thus continue --->
@@ -456,9 +456,9 @@
 		END as theextension
 	FROM #session.hostdbprefix#collections_ct_files ct 
 	LEFT JOIN #session.hostdbprefix#images i ON ct.file_id_r = i.img_id 
-	LEFT JOIN #session.hostdbprefix#audios a ON ct.file_id_r = a.aud_id AND lower(a.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
-	LEFT JOIN #session.hostdbprefix#videos v ON ct.file_id_r = v.vid_id AND lower(v.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
-	LEFT JOIN #session.hostdbprefix#files f ON ct.file_id_r = f.file_id AND lower(f.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#audios a ON ct.file_id_r = a.aud_id AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#videos v ON ct.file_id_r = v.vid_id AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#files f ON ct.file_id_r = f.file_id AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
 	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	<cfif arguments.thestruct.colaccess EQ 'R'>
@@ -467,10 +467,10 @@
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 	</cfif>
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 	GROUP BY ct.col_id_r, ct.file_id_r, ct.col_file_type, ct.col_item_order, ct.col_file_format
 	ORDER BY ct.col_item_order
 	</cfquery>
@@ -715,7 +715,7 @@
 		FROM qry
 		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 		<cfif noread>
-			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+			AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif>
 	</cfquery>
 	<!--- Return --->
@@ -779,7 +779,7 @@
 		FROM qry
 		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 		<cfif noread>
-			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+			AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif> 
 	</cfquery>
 	<!--- Return --->
@@ -844,7 +844,7 @@
 		FROM qry
 		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 		<cfif noread>
-			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+			AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif>
 	</cfquery>
 	<!--- Return --->
@@ -1300,7 +1300,7 @@
 	WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 	AND c.col_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
 	AND c.col_id = ct.col_id_r
-	AND lower(ct.col_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.collectionname)#">
+	AND ct.col_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.collectionname#">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Collection not here thus continue --->
@@ -1657,10 +1657,10 @@
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 	</cfquery>
 	<!--- Put together the lists for a collections search --->
 	<cfquery dbtype="query" name="qry.listimg">
@@ -2014,7 +2014,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT 1
 	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
-	WHERE lower(ct.col_name) = <cfqueryparam value="#lcase(arguments.thestruct.collection_name)#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE ct.col_name = <cfqueryparam value="#arguments.thestruct.collection_name#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND ct.col_id_r <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.col_id = ct.col_id_r

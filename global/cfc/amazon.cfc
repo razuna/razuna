@@ -311,7 +311,7 @@
 				<cfquery datasource="#application.razuna.datasource#" name="qry_aws_settings">
 				SELECT set_id, set_pref
 				FROM #session.hostdbprefix#settings
-				WHERE lower(set_id) LIKE 'aws_%_#awsid#'
+				WHERE set_id LIKE 'aws_%_#awsid#'
 				</cfquery>
 				<!--- Set the Amazon datasource --->
 				<cfif qry_aws_settings.recordcount NEQ 0>

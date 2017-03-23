@@ -115,7 +115,7 @@
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, cast(v.vid_size as decimal(12,0))  size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+				SELECT #Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, v.vid_filename filename_forsort, cast(v.vid_size as decimal(12,0))  size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -136,7 +136,7 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsvid */ #thecolumnlist#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, v.*, vt.*, 
-			lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+			v.vid_filename filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -161,7 +161,7 @@
 		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="vid">
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = c.asset_id_r AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
@@ -172,7 +172,7 @@
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change, v.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, v.vid_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'vid' kind</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, v.vid_filename filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change, v.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, v.vid_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'vid' kind</cfif>
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
@@ -274,7 +274,7 @@
 				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = v.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -284,12 +284,12 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = v.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
-			WHEN lower(v.vid_owner) = (
-				SELECT lower(fo.folder_of_user) 
+			WHEN v.vid_owner = (
+				SELECT fo.folder_of_user 
 				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+				WHERE fo.folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
 				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 				AND fo.folder_id = v.folder_id_r
 				) THEN 'unlocked'
@@ -849,7 +849,7 @@
 				FROM qry_video
 				WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 				<cfif noread>
-					AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+					AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfif> 
 			</cfquery>
 		</cfif>

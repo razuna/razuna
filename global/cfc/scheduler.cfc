@@ -683,7 +683,7 @@
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 					SELECT u.user_email
 					FROM users u, ct_users_hosts ct
-					WHERE lower(u.user_email) in (<cfqueryparam value="#lcase(emailList)#" cfsqltype="cf_sql_varchar" list="true">)
+					WHERE u.user_email in (<cfqueryparam value="#lcase(emailList)#" cfsqltype="cf_sql_varchar" list="true">)
 					AND ct.ct_u_h_host_id = <cfqueryparam value="#doit.qry_detail.host_id#" cfsqltype="cf_sql_numeric">
 					AND ct.ct_u_h_user_id = u.user_id
 				</cfquery>
@@ -1065,7 +1065,7 @@
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id 
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION ALL
@@ -1076,7 +1076,7 @@
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id 
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
 	UNION ALL
@@ -1087,7 +1087,7 @@
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
 	UNION ALL
@@ -1098,7 +1098,7 @@
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id 
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
 	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=fi.host_id AND label_id_r = '0'))
 	</cfquery>

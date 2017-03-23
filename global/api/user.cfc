@@ -53,8 +53,8 @@
 			SELECT users.user_email, users.user_login_name, user_id
 			FROM users, ct_users_hosts
 			WHERE (
-				lower(users.user_email) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
-				OR lower(users.user_login_name) = <cfqueryparam value="#lcase(arguments.user_name)#" cfsqltype="cf_sql_varchar">
+				users.user_email = <cfqueryparam value="#arguments.user_email#" cfsqltype="cf_sql_varchar">
+				OR users.user_login_name = <cfqueryparam value="#arguments.user_name#" cfsqltype="cf_sql_varchar">
 				)
 			AND ct_users_hosts.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.sessiontoken#"]#
 			</cfquery>
@@ -201,9 +201,9 @@
 			<cfif arguments.userid NEQ "">
 				WHERE user_id = <cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">
 			<cfelseif arguments.userloginname NEQ "">
-				WHERE lower(user_login_name) = <cfqueryparam value="#lcase(arguments.userloginname)#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE user_login_name = <cfqueryparam value="#arguments.userloginname#" cfsqltype="CF_SQL_VARCHAR">
 			<cfelseif arguments.useremail NEQ "">
-				WHERE lower(user_email) = <cfqueryparam value="#lcase(arguments.useremail)#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE user_email = <cfqueryparam value="#arguments.useremail#" cfsqltype="CF_SQL_VARCHAR">
 			<cfelse>
 				WHERE user_email = <cfqueryparam value="nada" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
@@ -291,9 +291,9 @@
 			<cfif arguments.userid NEQ "">
 				WHERE user_id = <cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">
 			<cfelseif arguments.userloginname NEQ "">
-				WHERE lower(user_login_name) = <cfqueryparam value="#lcase(arguments.userloginname)#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE user_login_name = <cfqueryparam value="#arguments.userloginname#" cfsqltype="CF_SQL_VARCHAR">
 			<cfelseif arguments.useremail NEQ "">
-				WHERE lower(user_email) = <cfqueryparam value="#lcase(arguments.useremail)#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE user_email = <cfqueryparam value="#arguments.useremail#" cfsqltype="CF_SQL_VARCHAR">
 			<cfelse>
 				WHERE user_email = <cfqueryparam value="nada" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>

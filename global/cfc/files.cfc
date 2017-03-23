@@ -44,14 +44,14 @@
 		<!--- if doc or xls also add office 2007 format to query --->
 		<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 			(
-			LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-			OR LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+			<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
+			OR <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#x">
 			)
 		<!--- query all formats if not other --->
 		<cfelseif Arguments.file_extension neq "other">
-			LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+			<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
 		<cfelse>
-			LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+			<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 		</cfif>
 	</cfif>
 	</cfquery>
@@ -130,7 +130,7 @@
 				SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, 
 				filename_forsort, size, hashtag, date_create, date_change
 				FROM (
-					SELECT #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
+					SELECT #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, file_name filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
 					FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					<cfif Len(Arguments.file_extension)>
@@ -138,16 +138,16 @@
 						<!--- if doc or xls also add office 2007 format to query --->
 						<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 							(
-							LOWER(NVL(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-							OR LOWER(NVL(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+							NVL(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
+							OR NVL(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#x">
 							)
 						<!--- query all formats if not other --->
 						<cfelseif Arguments.file_extension neq "other">
-							LOWER(NVL(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+							NVL(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
 						<!--- query all files except the ones in the list --->
 						<cfelse>
 							(
-							LOWER(NVL(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+							NVL(file_extension, '') NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 							OR (file_extension IS NULL OR file_extension = '')
 							)
 						</cfif>
@@ -168,7 +168,7 @@
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #thecolumnlist#, ft.file_keywords keywords, ft.file_desc description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*, ft.*, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
+				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*, ft.*, file_name filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
 				FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				<cfif Len(Arguments.file_extension)>
@@ -176,16 +176,16 @@
 					<!--- if doc or xls also add office 2007 format to query --->
 					<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 						(
-						LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-						OR LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+						file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
+						OR file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#x">
 						)
 					<!--- query all formats if not other --->
 					<cfelseif Arguments.file_extension neq "other">
-						LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+						file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
 					<!--- query all files except the ones in the list --->
 					<cfelse>
 						(
-						LOWER(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+						file_extension NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 						OR (file_extension IS NULL OR file_extension = '')
 						)
 					</cfif>
@@ -212,22 +212,22 @@
 			WHERE c.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND c.type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">
 			AND c.asset_id_r = f.file_id
-			AND lower(f.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+			AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
 			<cfif Len(Arguments.file_extension)>
 				AND
 				<!--- if doc or xls also add office 2007 format to query --->
 				<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 					(
-					LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-					OR LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+					file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
+					OR file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#x">
 					)
 				<!--- query all formats if not other --->
 				<cfelseif Arguments.file_extension neq "other">
-					LOWER(file_extension) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+					file_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
 				<!--- query all files except the ones in the list --->
 				<cfelse>
 					(
-					LOWER(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+					file_extension NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 					OR (file_extension IS NULL OR file_extension = '')
 					)
 				</cfif>
@@ -244,7 +244,7 @@
 				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 			</cfif>
 			
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, hashtag, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, hashtag, 
 			file_create_time date_create, file_change_date date_change, f.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, f.file_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'doc' kind</cfif>
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">
@@ -262,16 +262,16 @@
 				<!--- if doc or xls also add office 2007 format to query --->
 				<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 					(
-					LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-					OR LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+					<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
+					OR <cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#x">
 					)
 				<!--- query all formats if not other --->
 				<cfelseif Arguments.file_extension neq "other">
-					LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+					<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Arguments.file_extension#">
 				<!--- query all files except the ones in the list --->
 				<cfelse>
 					(
-					LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+					<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '') NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 					OR (file_extension IS NULL OR file_extension = '')
 					)
 				</cfif>
@@ -583,7 +583,7 @@
 					FROM qry_file
 					WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
 					<cfif noread>
-						AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+						AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 					</cfif>
 				</cfquery>
 			</cfif>

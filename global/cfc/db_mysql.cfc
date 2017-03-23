@@ -25,7 +25,7 @@
 --->
 <cfcomponent output="false">
 	
-	<cfset this.tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin ROW_FORMAT=DYNAMIC;">
+	<cfset this.tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci ROW_FORMAT=DYNAMIC;">
 	
 	<!--- Setup the DB if DB is not here --->
 	<cffunction name="setup" access="public" output="false">

@@ -311,7 +311,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 		SELECT pa.comp, pa.func, pa.args, p.p_path
 		FROM plugins_actions pa, plugins p
-		WHERE lower(pa.action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
+		WHERE pa.action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
 		AND pa.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif structKeyExists(arguments.args, "p_id")>
 			AND p.p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args.p_id#">

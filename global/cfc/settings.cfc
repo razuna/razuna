@@ -220,7 +220,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
 	SELECT thetool, thepath
 	FROM tools
-	WHERE lower(thetool) = <cfqueryparam value="ffmpeg" cfsqltype="CF_SQL_VARCHAR">
+	WHERE thetool = <cfqueryparam value="ffmpeg" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<cfset qry.set2_path_ffmpeg = qrypaths.thepath>
 	<cfreturn qry>
@@ -258,7 +258,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT type_id, type_type, type_mimecontent, type_mimesubcontent
 	FROM file_types
-	ORDER BY lower(type_id)
+	ORDER BY type_id
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -270,10 +270,10 @@
 	INSERT INTO file_types
 	(type_id, type_type, type_mimecontent, type_mimesubcontent)
 	VALUES(
-	<cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
+	<cfqueryparam value="#arguments.thestruct.type_id#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#arguments.thestruct.type_type#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#arguments.thestruct.type_mimecontent#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#arguments.thestruct.type_mimesubcontent#" cfsqltype="cf_sql_varchar">
 	)
 	</cfquery>
 	<cfreturn />
@@ -284,7 +284,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM file_types
-	WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
+	WHERE type_id = <cfqueryparam value="#arguments.thestruct.type_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<cfreturn />
 </cffunction>
@@ -295,11 +295,11 @@
 	<cfquery datasource="#application.razuna.datasource#">
 	UPDATE file_types
 	SET
-	type_id = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
-	type_type = <cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
-	type_mimecontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">, 
-	type_mimesubcontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
-	WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
+	type_id = <cfqueryparam value="#arguments.thestruct.type_id#" cfsqltype="cf_sql_varchar">,
+	type_type = <cfqueryparam value="#arguments.thestruct.type_type#" cfsqltype="cf_sql_varchar">,
+	type_mimecontent = <cfqueryparam value="#arguments.thestruct.type_mimecontent#" cfsqltype="cf_sql_varchar">, 
+	type_mimesubcontent = <cfqueryparam value="#arguments.thestruct.type_mimesubcontent#" cfsqltype="cf_sql_varchar">
+	WHERE type_id = <cfqueryparam value="#arguments.thestruct.type_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<cfreturn />
 </cffunction>
@@ -552,7 +552,7 @@
 	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_location")>
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) = <cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">
+		WHERE set_id = <cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
@@ -570,7 +570,7 @@
 	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_server")>
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) = <cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">
+		WHERE set_id = <cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
@@ -592,14 +592,14 @@
 			<!--- First remove all values in DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM options
-			WHERE lower(opt_id) = <cfqueryparam value="#lcase(ts)#" cfsqltype="cf_sql_varchar">
+			WHERE opt_id = <cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO options
 			(opt_id, opt_value, rec_uuid)
 			VALUES (
-				<cfqueryparam value="#lcase(ts)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#ts#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.thestruct[ts]#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
@@ -622,7 +622,7 @@
 			<cfquery datasource="#application.razuna.datasource#" name="x">
 			SELECT thetool
 			FROM tools
-			WHERE lower(thetool) = <cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">
+			WHERE thetool = <cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Check if here or not --->
 			<cfif x.recordcount EQ 1>
@@ -630,7 +630,7 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE tools
 				SET thepath = <cfqueryparam value="#arguments.thestruct[myform]#" cfsqltype="cf_sql_varchar">
-				WHERE lower(thetool) = <cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">
+				WHERE thetool = <cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 			<cfelse>
 				<!--- Insert --->
@@ -638,7 +638,7 @@
 				INSERT INTO tools
 				(thetool, thepath)
 				VALUES(
-				<cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.thestruct[myform]#" cfsqltype="cf_sql_varchar">
 				)
 				</cfquery>
@@ -658,7 +658,7 @@
 			<cfif #myform# CONTAINS "set_">
 				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM #qry_host.host_shard_group#settings
-				WHERE lower(set_id) = <cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">
+				WHERE set_id = <cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -666,7 +666,7 @@
 				(set_pref, set_id, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#form["#myform#"]#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#myform#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
@@ -942,27 +942,27 @@
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aws_bucket")>
-			<cfif commad EQ "T">,</cfif>set2_aws_bucket = <cfqueryparam value="#lcase(arguments.thestruct.set2_aws_bucket)#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aws_bucket = <cfqueryparam value="#arguments.thestruct.set2_aws_bucket#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_url")>
-			<cfif commad EQ "T">,</cfif>set2_aka_url = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_url)#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aka_url = <cfqueryparam value="#arguments.thestruct.set2_aka_url#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_img")>
-			<cfif commad EQ "T">,</cfif>set2_aka_img = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_img)#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aka_img = <cfqueryparam value="#arguments.thestruct.set2_aka_img#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_vid")>
-			<cfif commad EQ "T">,</cfif>set2_aka_vid = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_vid)#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aka_vid = <cfqueryparam value="#arguments.thestruct.set2_aka_vid#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_aud")>
-			<cfif commad EQ "T">,</cfif>set2_aka_aud = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_aud)#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aka_aud = <cfqueryparam value="#arguments.thestruct.set2_aka_aud#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_doc")>
-			<cfif commad EQ "T">,</cfif>set2_aka_doc = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_doc)#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aka_doc = <cfqueryparam value="#arguments.thestruct.set2_aka_doc#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
@@ -1117,7 +1117,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="sett">
 	SELECT set_pref
 	FROM #session.hostdbprefix#settings
-	WHERE lower(set_id) = <cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">
+	WHERE set_id = <cfqueryparam value="#arguments.thefield#" cfsqltype="cf_sql_varchar">
 	<cfif arguments.thefield EQ "rendering_farm_server">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 	<cfelse>
@@ -1134,7 +1134,7 @@
 	<cfargument name="thevalue" type="string" default="" required="yes">
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#settings
-	WHERE lower(set_id) = <cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">
+	WHERE set_id = <cfqueryparam value="#arguments.thefield#" cfsqltype="cf_sql_varchar">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfquery datasource="#application.razuna.datasource#">
@@ -1142,7 +1142,7 @@
 	(set_pref, set_id, host_id, rec_uuid)
 	VALUES(
 	<cfqueryparam value="#arguments.thevalue#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#arguments.thefield#" cfsqltype="cf_sql_varchar">,
 	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 	<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 	)
@@ -1485,7 +1485,7 @@
 		</cfif>
 	</cfif>
 	<cfif arguments.thestruct.trans_text IS NOT "">
-		lower(trans_text) LIKE <cfqueryparam value="%#lcase(arguments.thestruct.trans_text)#%" cfsqltype="cf_sql_varchar">
+		trans_text LIKE <cfqueryparam value="%#arguments.thestruct.trans_text#%" cfsqltype="cf_sql_varchar">
 	</cfif>
 	</cfquery>
 	<cfreturn qry>
@@ -1499,7 +1499,7 @@
 	SELECT trans_id, trans_text, lang_id_r
 	FROM #session.hostdbprefix#translations
 	WHERE
-	lower(trans_id) LIKE <cfqueryparam value="#lcase(arguments.thestruct.trans_id)#" cfsqltype="cf_sql_varchar">
+	trans_id LIKE <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
@@ -1522,7 +1522,7 @@
 						SET trans_text = <cfqueryparam value="#form["#myform#"]#" cfsqltype="CF_SQL_CHAR">, 
 						trans_changed = <cfqueryparam value="T" cfsqltype="CF_SQL_CHAR">
 						WHERE lang_id_r = <cfqueryparam value="#thenr#" cfsqltype="cf_sql_numeric">
-						AND lower(trans_id) = <cfqueryparam value="#lcase(arguments.thestruct.trans_id)#" cfsqltype="cf_sql_varchar">
+						AND trans_id = <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 						</cfquery>
 					</cfif>
 				</cfloop>
@@ -1540,7 +1540,7 @@
 	SELECT trans_id
 	FROM #session.hostdbprefix#translations
 	WHERE 
-	lower(trans_id) = <cfqueryparam value="#lcase(arguments.thestruct.trans_id)#" cfsqltype="cf_sql_varchar">
+	trans_id = <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<!--- If all ok do the insert --->
 	<cfif thesame.recordcount EQ 0>
@@ -1576,7 +1576,7 @@
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#translations
 	WHERE
-	lower(trans_id) LIKE <cfqueryparam value="#lcase(arguments.thestruct.trans_id)#" cfsqltype="cf_sql_varchar">
+	trans_id LIKE <cfqueryparam value="#arguments.thestruct.trans_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<cfreturn />
 </cffunction>
@@ -2502,7 +2502,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				INSERT INTO #session.hostdbprefix#custom
 				(custom_id, custom_value, host_id)
 				VALUES(
-					<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#i#" CFSQLType="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
 				)
@@ -2573,7 +2573,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- First remove all entries --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM options
-		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(i)#">
+		WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 		</cfquery>
 		<!--- Save to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -2673,7 +2673,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_options_hosts */ opt_id, opt_value
 	FROM options
-	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="wl_%_#session.hostid#">
+	WHERE opt_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="wl_%_#session.hostid#">
 	</cfquery>
 	<!--- Loop over query --->
 	<cfloop query="qry">
@@ -2726,7 +2726,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- First remove all entries --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM options
-		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(i)#">
+		WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 		</cfquery>
 		<!--- Save to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -2756,7 +2756,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_options_one */ opt_id, opt_value
 	FROM options
-	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.id)#">
+	WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.id#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn q.opt_value />
@@ -2772,7 +2772,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #cachetoken#prefs_taskserver */ opt_id, opt_value
 	FROM options
-	WHERE lower(opt_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver%">
+	WHERE opt_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="taskserver%">
 	</cfquery>
 	<!--- Return it as a struct --->
 	<cfset var s = structnew()>
@@ -2790,14 +2790,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- First remove entry --->
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM options
-	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.opt_id)#">
+	WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.opt_id#">
 	</cfquery>
 	<!--- Save to DB --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO options
 	(opt_id, opt_value, rec_uuid)
 	VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.opt_id)#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.opt_id#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.opt_value#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#createUUID()#">
 	)
@@ -2878,14 +2878,14 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				<!--- First remove all values in DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM options
-				WHERE lower(opt_id) = <cfqueryparam value="ss_#lcase(f)#" cfsqltype="cf_sql_varchar">
+				WHERE opt_id = <cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- Insert --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO options
 				(opt_id, opt_value, rec_uuid)
 				VALUES (
-					<cfqueryparam value="ss_#lcase(f)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="ss_#f#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#arguments.thestruct[f]#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
@@ -2908,7 +2908,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_options_one_host */ opt_id, opt_value
 	FROM options
-	WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.id)#">
+	WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.id#">
 	</cfquery>
 	<!--- If query is empty or no value returned query the default value --->
 	<cfif q.recordcount EQ 0 OR q.opt_value EQ "">
@@ -2917,7 +2917,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Get value --->
 		<cfset var thevalue = get_options_one(theid)>
 		<!--- Add to query --->
-		<cfset queryAddRow(query=q, data=[{ opt_id='#lcase(theid)#', opt_value='#thevalue#' }])>
+		<cfset queryAddRow(query=q, data=[{ opt_id='#theid#', opt_value='#thevalue#' }])>
 	</cfif>
 	<!--- Return --->
 	<cfreturn q.opt_value />
@@ -3092,9 +3092,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set_id, set_pref
 		FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
+		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
-		ORDER BY lower(set_id)
+		ORDER BY set_id
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -3106,7 +3106,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<!--- Remove all aws fields in DB first --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
+		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%_">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.hostid#">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
@@ -3134,9 +3134,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set_id, set_pref
 		FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="ad_server_%">
+		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="ad_server_%">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		ORDER BY lower(set_id)
+		ORDER BY set_id
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -3320,7 +3320,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 					(exp_id, exp_field, exp_value, exp_timestamp, host_id, user_id)
 					VALUES(
 						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#i#" CFSQLType="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
 						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" >,
 						<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">,
@@ -3523,7 +3523,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="setaccesscontrol" returntype="void" hint="Sets access control for the different tabs in administrator">
 	<cfargument name="thestruct" type="Struct">
 	<cfquery dataSource="#application.razuna.datasource#">
-		DELETE FROM options WHERE lower(opt_id) LIKE '%access'
+		DELETE FROM options WHERE opt_id LIKE '%access'
 	</cfquery>
 	<cfloop delimiters="," index="field" list="#arguments.thestruct.fieldnames#">
 		<cfif field NEQ 'FA'>
@@ -3544,7 +3544,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery dataSource="#application.razuna.datasource#" name="accessdata">
 		SELECT opt_id, opt_value
 		FROM options
-		WHERE lower(opt_id) LIKE '%access'
+		WHERE opt_id LIKE '%access'
 	</cfquery>
 	<cfset var access_struct = structnew()>
 	<cfloop query="accessdata">

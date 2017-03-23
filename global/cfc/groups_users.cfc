@@ -230,7 +230,7 @@
 			AND g.grp_id IN (<cfqueryparam value="#Arguments.list_grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true" separator="#Arguments.list_delim#">)
 		</cfif>
 		<cfif StructKeyExists(Arguments, "list_grp_name")>
-			AND lower(g.grp_name) IN (<cfqueryparam value="#lcase(Arguments.list_grp_name)#" cfsqltype="cf_sql_varchar" list="true" separator="#Arguments.list_delim#">)
+			AND g.grp_name IN (<cfqueryparam value="#Arguments.list_grp_name#" cfsqltype="cf_sql_varchar" list="true" separator="#Arguments.list_delim#">)
 		</cfif>
 		AND ct.ct_g_u_user_id = u.user_id
 	)

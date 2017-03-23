@@ -68,17 +68,17 @@
 		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar">
+			u.user_login_name = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar"> 
+			OR u.user_email = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
 			)
 		AND u.user_pass = <cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
 		<cfif arguments.thestruct.loginto EQ "admin">
 			AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 			AND ctg.ct_g_u_user_id = u.user_id
 		<cfelseif arguments.thestruct.loginto EQ "dam">
-			AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+			AND u.user_in_dam = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		</cfif>
-		AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+		AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		<cfif arguments.thestruct.loginto NEQ "admin">
 			AND ct.ct_u_h_user_id = u.user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
@@ -103,17 +103,17 @@
 					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
-						lower(u.user_login_name) = <cfqueryparam value="#lcase(adusername)#" cfsqltype="cf_sql_varchar"> 
-						OR lower(u.user_email) = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
+						u.user_login_name = <cfqueryparam value="#adusername#" cfsqltype="cf_sql_varchar"> 
+						OR u.user_email = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
 						)
 					AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
 					<cfif arguments.thestruct.loginto EQ "admin">
 						AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 						AND ctg.ct_g_u_user_id = u.user_id
 					<cfelseif arguments.thestruct.loginto EQ "dam">
-						AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+						AND u.user_in_dam = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 					</cfif>
-					AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+					AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 					<cfif arguments.thestruct.loginto NEQ "admin">
 						AND ct.ct_u_h_user_id = u.user_id
 						AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
@@ -274,7 +274,7 @@
 		FROM #session.hostdbprefix#folders
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (
-			lower(folder_is_collection) <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+			folder_is_collection <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 			OR
 			folder_is_collection IS NULL
 			)
@@ -343,7 +343,7 @@
 			SELECT /* #attributes.intstruct.cachetoken#createmyfolder */ custom_id, custom_value
 			FROM #session.hostdbprefix#custom
 			WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
-			AND lower(custom_id) = <cfqueryparam value="myfolder_create" cfsqltype="cf_sql_varchar">
+			AND custom_id = <cfqueryparam value="myfolder_create" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Check if value is here --->
 			<cfif qry.recordcount EQ 0>
@@ -357,7 +357,7 @@
 				SELECT folder_of_user
 				FROM #session.hostdbprefix#folders
 				WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">
-				AND lower(folder_name) = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
+				AND folder_name = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Create the MY FOLDER for this user --->
@@ -450,8 +450,8 @@
 		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass, u.user_expiry_date
 		FROM users u, ct_users_hosts ct
 		WHERE (
-			lower(u.user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
-			OR lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
+			u.user_email = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.email#">
+			OR u.user_login_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.email#">
 			)
 		<!--- When password is requested from admin login then the hostid is not set in session and is set to 0 --->
 		<cfif session.hostid neq 0>
@@ -628,10 +628,10 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
 		FROM users u, ct_users_hosts ct, hosts h
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar">
+			u.user_login_name = <cfqueryparam value="#loginname#" cfsqltype="cf_sql_varchar"> 
+			OR u.user_email = <cfqueryparam value="#loginname#" cfsqltype="cf_sql_varchar">
 		)
-		AND lower(u.user_active) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
+		AND u.user_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		AND u.user_id = ct.ct_u_h_user_id
 		<cfif structkeyexists(session,"hostid")>
 			AND h.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
@@ -711,11 +711,11 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 					SELECT /* #variables.cachetoken#login_janrain2 */ uc.identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 					FROM #session.hostdbprefix#users_accounts uc, users u
 					WHERE (
-						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(email)#">
+						uc.identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#email#">
 						OR
-						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(preferredUsername)#">
+						uc.identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#preferredUsername#">
 						)
-					AND lower(uc.provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+					AND uc.provider = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#providerName#">
 					AND uc.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					AND uc.user_id_r = u.user_id
 					</cfquery>
@@ -725,7 +725,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 						UPDATE #session.hostdbprefix#users_accounts
 						SET jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
 						WHERE user_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qryaccount.user_id_r#">
-						AND lower(provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+						AND provider = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#providerName#">
 						</cfquery>
 						<!--- Flush Cache --->
 						<cfset variables.cachetoken = resetcachetoken("users")>

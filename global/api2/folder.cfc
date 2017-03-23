@@ -495,7 +495,7 @@
 				<cfif arguments.collectionfolder EQ "false">
 					AND (f.folder_is_collection IS NULL OR f.folder_is_collection = '')
 				<cfelse>
-					AND lower(f.folder_is_collection) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
+					AND f.folder_is_collection = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 				</cfif>
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -585,7 +585,7 @@
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description,
-			CASE WHEN lower(f.folder_shared) = 't' then 'true' else 'false' end folder_shared
+			CASE WHEN f.folder_shared = 't' then 'true' else 'false' end folder_shared
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE
@@ -595,7 +595,7 @@
 				AND f.folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#">
 			</cfif>
 			<cfif isDefined("arguments.foldername")>
-				AND lower(f.folder_name)  like  <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.foldername)#%">
+				AND f.folder_name like  <cfqueryparam cfsqltype="cf_sql_varchar" value="%#arguments.foldername#%">
 			</cfif>
 			<!--- Check to ensure user has permissions for folder --->
 			AND

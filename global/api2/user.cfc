@@ -46,8 +46,8 @@
 				SELECT users.user_email, users.user_login_name, user_id
 				FROM users, ct_users_hosts
 				WHERE (
-					lower(users.user_email) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
-					OR lower(users.user_login_name) = <cfqueryparam value="#lcase(arguments.user_name)#" cfsqltype="cf_sql_varchar">
+					users.user_email = <cfqueryparam value="#arguments.user_email#" cfsqltype="cf_sql_varchar">
+					OR users.user_login_name = <cfqueryparam value="#arguments.user_name#" cfsqltype="cf_sql_varchar">
 					)
 				AND ct_users_hosts.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
 				</cfquery>
@@ -186,9 +186,9 @@
 				<cfif arguments.userid NEQ "">
 					WHERE user_id = <cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelseif arguments.userloginname NEQ "">
-					WHERE lower(user_login_name) = <cfqueryparam value="#lcase(arguments.userloginname)#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE user_login_name = <cfqueryparam value="#arguments.userloginname#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelseif arguments.useremail NEQ "">
-					WHERE lower(user_email) = <cfqueryparam value="#lcase(arguments.useremail)#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE user_email = <cfqueryparam value="#arguments.useremail#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelse>
 					WHERE user_email = <cfqueryparam value="nada" cfsqltype="CF_SQL_VARCHAR">
 				</cfif>
@@ -279,9 +279,9 @@
 				<cfif arguments.userid NEQ "">
 					WHERE user_id = <cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelseif arguments.userloginname NEQ "">
-					WHERE lower(user_login_name) = <cfqueryparam value="#lcase(arguments.userloginname)#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE user_login_name = <cfqueryparam value="#arguments.userloginname#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelseif arguments.useremail NEQ "">
-					WHERE lower(user_email) = <cfqueryparam value="#lcase(arguments.useremail)#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE user_email = <cfqueryparam value="#arguments.useremail#" cfsqltype="CF_SQL_VARCHAR">
 				<cfelse>
 					WHERE user_email = <cfqueryparam value="nada" cfsqltype="CF_SQL_VARCHAR">
 				</cfif>
@@ -383,8 +383,8 @@
 				SELECT u.user_email, u.user_login_name, u.user_id, u.user_pass
 				FROM users u, ct_users_hosts ct
 				WHERE (
-					lower(u.user_email) = <cfqueryparam value="#lcase(user_email)#" cfsqltype="cf_sql_varchar">
-					OR lower(u.user_login_name) = <cfqueryparam value="#lcase(user_email)#" cfsqltype="cf_sql_varchar">
+					u.user_email = <cfqueryparam value="#user_email#" cfsqltype="cf_sql_varchar">
+					OR u.user_login_name = <cfqueryparam value="#user_email#" cfsqltype="cf_sql_varchar">
 					)
 				AND ct.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
 				AND ct.ct_u_h_user_id = u.user_id
@@ -398,7 +398,7 @@
 					<cfquery datasource="#application.razuna.api.dsn#" name="qry_isp">
 					SELECT opt_value
 					FROM options
-					WHERE lower(opt_id) = <cfqueryparam value="conf_isp" cfsqltype="cf_sql_varchar">
+					WHERE opt_id = <cfqueryparam value="conf_isp" cfsqltype="cf_sql_varchar">
 					</cfquery>
 					<!--- If for hosted --->
 					<cfif qry_isp.opt_value>

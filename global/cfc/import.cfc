@@ -1438,7 +1438,7 @@
 			<cfquery dataSource="#application.razuna.datasource#" name="labhere">
 			SELECT label_id
 			FROM #session.hostdbprefix#labels
-			WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(i)#">
+			WHERE label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<!--- Make sure that records exists --->
 			AND (
@@ -1462,7 +1462,7 @@
 					<cfquery dataSource="#application.razuna.datasource#" name="checklabelpath">
 					SELECT label_id, label_text, label_path
 					FROM #session.hostdbprefix#labels
-					WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(label_path_list)#">
+					WHERE label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_path_list#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<!--- Insert only new labels --->

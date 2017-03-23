@@ -103,7 +103,7 @@
 		FROM (
 			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels, lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
+				SELECT #thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels, a.aud_name filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
 				FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -124,7 +124,7 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ #thecolumnlist#, att.aud_keywords keywords, att.aud_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, a.*, att.*, 
-			lower(a.aud_name) filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
+			a.aud_name filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
 			FROM audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -149,7 +149,7 @@
 		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = c.asset_id_r AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
@@ -163,7 +163,7 @@
 		</cfif>
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ 
 		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
-		lower(a.aud_name) filename_forsort, cast(a.aud_size as decimal(12,0)) size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change, a.expiry_date, 'null' as customfields<cfif thecolumns does not contain ' id'>, a.aud_id id</cfif><cfif thecolumns does not contain ' kind'>,'aud' kind</cfif>
+		a.aud_name filename_forsort, cast(a.aud_size as decimal(12,0)) size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change, a.expiry_date, 'null' as customfields<cfif thecolumns does not contain ' id'>, a.aud_id id</cfif><cfif thecolumns does not contain ' kind'>,'aud' kind</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
 				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">att
@@ -760,7 +760,7 @@
 			FROM qry_audio
 			WHERE permfolder <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
 			<cfif noread>
-				AND lower(permfolder) <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+				AND permfolder <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfif>
 		</cfquery>
 	</cfif>

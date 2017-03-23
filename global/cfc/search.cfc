@@ -412,7 +412,7 @@
 					AND so.asset_type = 'img'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(i.img_filename) filename_forsort,
+				i.img_filename filename_forsort,
 				cast(i.img_size as decimal(12,0)) size,
 				i.hashtag,
 				fo.folder_name,
@@ -488,7 +488,7 @@
 					AND so.asset_type = 'img'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(i.img_filename) filename_forsort,
+				i.img_filename filename_forsort,
 				cast(i.img_size as decimal(12,0)) size,
 				i.hashtag,
 				fo.folder_name,
@@ -631,7 +631,7 @@
 				AND so.asset_type = 'vid'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			) AS theformat,
-			lower(v.vid_filename) filename_forsort,
+			v.vid_filename filename_forsort,
 			cast(v.vid_size as decimal(12,0)) size,
 			v.hashtag,
 			fo.folder_name,
@@ -705,7 +705,7 @@
 				AND so.asset_type = 'vid'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			) AS theformat,
-			lower(v.vid_filename) filename_forsort,
+			v.vid_filename filename_forsort,
 			cast(v.vid_size as decimal(12,0)) size,
 			v.hashtag,
 			fo.folder_name,
@@ -840,7 +840,7 @@
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
 			'0' as vwidth, '0' as vheight,  '0' isalias,
-			'0' as theformat, lower(f.file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
+			'0' as theformat, f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
@@ -902,7 +902,7 @@
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
 			'0' as vwidth, '0' as vheight,  '1' isalias,
-			'0' as theformat, lower(f.file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
+			'0' as theformat, f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
@@ -1041,7 +1041,7 @@
 					AND so.asset_type = 'aud'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(a.aud_name) filename_forsort,
+				a.aud_name filename_forsort,
 				cast(a.aud_size as decimal(12,0)) size,
 				a.hashtag,
 				fo.folder_name,
@@ -1114,7 +1114,7 @@
 					AND so.asset_type = 'aud'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(a.aud_name) filename_forsort,
+				a.aud_name filename_forsort,
 				cast(a.aud_size as decimal(12,0)) size,
 				a.hashtag,
 				fo.folder_name,
@@ -1413,7 +1413,7 @@
 					AND so.asset_type = 'img' 
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					) AS theformat, 
-					LOWER(i.img_filename) filename_forsort, 
+					i.img_filename filename_forsort, 
 					cast(i.img_size as decimal(12,0)) size, 
 					i.hashtag,
 					fo.folder_name, 
@@ -1430,7 +1430,7 @@
 								FROM #session.hostdbprefix#folders_groups fg
 								WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 								AND fg.folder_id_r = i.folder_id_r
-								AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+								AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 								AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 								) THEN 'unlocked'
 							<!--- When folder is shared for everyone --->
@@ -1440,7 +1440,7 @@
 								WHERE fg2.grp_id_r = '0'
 								AND fg2.folder_id_r = i.folder_id_r
 								AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-								AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+								AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 								) THEN 'unlocked'
 							WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 							ELSE 'locked'
@@ -1523,7 +1523,7 @@
 					f.file_extension ext, f.file_name_org filename_org, f.file_type AS kind,f.is_available, 
 					f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url, 
 					f.path_to_asset, f.cloud_url,f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
-					'0' AS vwidth, '0' AS vheight, '0' AS isalias,'0' AS theformat,LOWER(f.file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
+					'0' AS vwidth, '0' AS vheight, '0' AS isalias,'0' AS theformat,f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
 					fo.folder_name, 
 					'' AS labels, 
 					'0' AS width, '0' AS height, '' AS xres, '' AS yres,'' AS colorspace, f.expiry_date expiry_date_actual,
@@ -1537,7 +1537,7 @@
 									FROM #session.hostdbprefix#folders_groups fg
 									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND fg.folder_id_r = f.folder_id_r
-									AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 									) THEN 'unlocked'
 								<!--- When folder is shared for everyone --->
@@ -1547,7 +1547,7 @@
 									WHERE fg2.grp_id_r = '0'
 									AND fg2.folder_id_r = f.folder_id_r
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
 								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
@@ -1630,7 +1630,7 @@
 							AND so.asset_type = 'vid'
 							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1"> 
 						 ) AS theformat,
-						 LOWER(v.vid_filename) filename_forsort, 
+						 v.vid_filename filename_forsort, 
 						 cast(v.vid_size as decimal(12,0)) size, v.hashtag, 
 						 fo.folder_name, 
 						 '' AS labels, '0' AS width, '0' AS height, '' AS xres, '' AS yres, '' AS colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
@@ -1645,7 +1645,7 @@
 									FROM #session.hostdbprefix#folders_groups fg
 									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND fg.folder_id_r = v.folder_id_r
-									AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 									) THEN 'unlocked'
 								<!--- When folder is shared for everyone --->
@@ -1655,7 +1655,7 @@
 									WHERE fg2.grp_id_r = '0'
 									AND fg2.folder_id_r = v.folder_id_r
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
 								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
@@ -1745,7 +1745,7 @@
 							AND so.asset_type = 'aud'
 							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 						) AS theformat,
-						lower(a.aud_name) filename_forsort,
+						a.aud_name filename_forsort,
 						cast(a.aud_size as decimal(12,0)) size,
 						a.hashtag,
 						fo.folder_name,
@@ -1762,7 +1762,7 @@
 									FROM #session.hostdbprefix#folders_groups fg
 									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND fg.folder_id_r = a.folder_id_r
-									AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 									) THEN 'unlocked'
 								<!--- When folder is shared for everyone --->
@@ -1772,7 +1772,7 @@
 									WHERE fg2.grp_id_r = '0'
 									AND fg2.folder_id_r = a.folder_id_r
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
 								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'

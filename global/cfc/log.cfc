@@ -104,14 +104,14 @@
 						FROM #session.hostdbprefix#log_users
 						WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-							AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+							AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 						</cfif>
 					) as thetotal
 					FROM #session.hostdbprefix#log_users l
-					WHERE lower(l.log_section) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
+					WHERE l.log_section = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
 					AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND l.log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_id, l.log_timestamp
 					ORDER BY log_timestamp DESC
@@ -128,23 +128,23 @@
 				FROM #session.hostdbprefix#log_users
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-					AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+					AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 				</cfif>
 			) as thetotal
 			FROM #session.hostdbprefix#log_users l
-			WHERE lower(l.log_section) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
+			WHERE l.log_section = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
 			AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+				AND l.log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 			</cfif>
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN (
 					SELECT TOP #min# log_id
 					FROM #session.hostdbprefix#log_users
-					WHERE lower(log_section) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
+					WHERE log_section = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					ORDER BY log_timestamp DESC
 				)
@@ -227,7 +227,7 @@
 						FROM #session.hostdbprefix#log_assets
 						WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-							AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+							AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 						</cfif>
 						<cfif arguments.thestruct.id NEQ 0>
 							AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
@@ -236,7 +236,7 @@
 					FROM #session.hostdbprefix#log_assets l LEFT JOIN users u ON l.log_user = u.user_id
 					WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND l.log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					<cfif arguments.thestruct.id NEQ 0>
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
@@ -257,7 +257,7 @@
 				FROM #session.hostdbprefix#log_assets
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-					AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+					AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 				</cfif>
 				<cfif arguments.thestruct.id NEQ 0>
 					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
@@ -269,7 +269,7 @@
 				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 			</cfif>
 			<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+				AND l.log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 			</cfif>
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
@@ -278,7 +278,7 @@
 					FROM #session.hostdbprefix#log_assets
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					<cfif arguments.thestruct.id NEQ 0>
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
@@ -358,13 +358,13 @@
 						FROM #session.hostdbprefix#log_folders
 						WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-							AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+							AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 						</cfif>
 					) as thetotal
 					FROM #session.hostdbprefix#log_folders l LEFT JOIN users u ON l.log_user = u.user_id
 					WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND l.log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, u.user_first_name, u.user_last_name, l.log_id, l.log_timestamp
 					ORDER BY log_timestamp DESC
@@ -381,13 +381,13 @@
 				FROM #session.hostdbprefix#log_folders
 				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-					AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+					AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 				</cfif>
 			) as thetotal
 			FROM #session.hostdbprefix#log_folders l LEFT JOIN users u ON l.log_user = u.user_id
 			WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+				AND l.log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 			</cfif>
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
@@ -396,7 +396,7 @@
 					FROM #session.hostdbprefix#log_folders
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND log_action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					ORDER BY log_timestamp DESC
 				)
@@ -521,7 +521,7 @@
 	FROM #session.hostdbprefix#log_search
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif structkeyexists(arguments.thestruct,"what") AND arguments.thestruct.what NEQ "">
-		AND lower(log_search_from) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.what#">
+		AND log_search_from = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.what#">
 	</cfif>
 	GROUP BY log_search_for
 	order by found DESC, count_words DESC
@@ -672,7 +672,7 @@
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#log_search */ l.LOG_ACTION, l.LOG_DESC, <cfif arguments.thestruct.logtype EQ "log_assets">l.LOG_FILE_TYPE,</cfif> l.LOG_TIMESTAMP, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix##arguments.thestruct.logtype# l LEFT JOIN users u ON l.log_user = u.user_id
-	WHERE lower(l.log_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.thestruct.searchtext)#%">
+	WHERE l.log_desc LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#arguments.thestruct.searchtext#%">
 	AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif arguments.thestruct.id NEQ 0>
 		AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">

@@ -42,7 +42,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- Nirvanix and in Admin --->
 		<cfif session.thisapp EQ "admin">
-			AND lower(shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+			AND shared = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		</cfif>
 		<!--- todo : filter for file-extension --->
 	</cfquery>
@@ -121,7 +121,7 @@
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag,
+				SELECT #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, i.img_filename filename_forsort, i.img_size size, i.hashtag,
 				i.img_create_time date_create, i.img_change_time date_change
 				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -143,7 +143,7 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #thecolumnlist#, it.img_keywords keywords, it.img_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, i.*, it.*,
-			lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
+			i.img_filename filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
 			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
@@ -168,7 +168,7 @@
 		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = c.asset_id_r AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
@@ -181,7 +181,7 @@
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum, sorted_inline_view.* FROM (
 		</cfif>
 
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, cast(i.img_size as decimal(12,0)) size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, i.img_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'img' kind</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, i.img_filename filename_forsort, cast(i.img_size as decimal(12,0)) size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, i.img_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'img' kind</cfif>
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -536,7 +536,7 @@
 			FROM qry_image
 			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
 			<cfif noread>
-				AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+				AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfif>
 		</cfquery>
 	</cfif>

@@ -190,7 +190,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="thislang">
 	SELECT set_pref 
 	FROM #session.hostdbprefix#settings
-	WHERE LOWER(set_id) = <cfqueryparam value="#lcase(arguments.theid)#" cfsqltype="cf_sql_varchar">
+	WHERE set_id = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(thislang.set_pref)>

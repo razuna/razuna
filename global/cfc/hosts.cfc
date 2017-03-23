@@ -50,11 +50,11 @@
 	FROM hosts
 	WHERE 
 	<cfif structkeyexists(arguments.thestruct, "host_name")>
-		lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.host_name)#">
+		host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.host_name#">
 	<cfelseif structkeyexists(arguments.thestruct, "host_path")>
-		lower(host_path) = <cfqueryparam value="#lcase(arguments.thestruct.host_path)#" cfsqltype="cf_sql_varchar">
+		host_path = <cfqueryparam value="#arguments.thestruct.host_path#" cfsqltype="cf_sql_varchar">
 	<cfelseif structkeyexists(arguments.thestruct, "host_db_prefix")>
-		lower(host_db_prefix) = <cfqueryparam value="#lcase(arguments.thestruct.host_db_prefix)#_" cfsqltype="cf_sql_varchar">
+		host_db_prefix = <cfqueryparam value="#arguments.thestruct.host_db_prefix#_" cfsqltype="cf_sql_varchar">
 	</cfif>
 	</cfquery>
 	<cfreturn qry>
@@ -72,7 +72,7 @@
 	<cfquery datasource="#variables.dsn#" name="same">
 	SELECT host_name
 	FROM hosts
-	WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.host_name)#">
+	WHERE host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.host_name#">
 	</cfquery>
 	<!--- No record with the same name exist thus add it else throw an error --->
 	<cfif same.recordcount EQ 0>

@@ -40,7 +40,7 @@
  		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.fieldsenabled>
-			AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+			AND c.cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		</cfif>
 		<cfif arguments.xmppath>
 			AND (c.cf_xmp_path IS NOT NULL OR c.cf_xmp_path <cfif application.razuna.thedatabase EQ "h2"><><cfelse>!=</cfif> '')
@@ -135,15 +135,15 @@
 		FROM ct_labels ctl, #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 		WHERE c.cf_id = ct.cf_id_r
-		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+		AND c.cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		<cfif list NEQ "">
-			AND lower(c.cf_show) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#list#" list="true" >)
+			AND c.cf_show IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#list#" list="true" >)
 		<cfelseif arguments.thestruct.cf_show EQ "users" OR arguments.thestruct.cf_show EQ "col">
-			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
+			AND c.cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 		<cfelse>
 			AND (
-				lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
-				OR lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
+				c.cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
+				OR c.cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 			)
 		</cfif>
 		<cfif structKeyExists(arguments.thestruct,"cf_in_form")>
@@ -159,15 +159,15 @@
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 		LEFT JOIN ct_labels ctl ON ctl.ct_id_r = c.cf_id
 		WHERE c.cf_id = ct.cf_id_r
-		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+		AND c.cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		<cfif list NEQ "">
-			AND lower(c.cf_show) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#list#" list="true" >)
+			AND c.cf_show IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#list#" list="true" >)
 		<cfelseif arguments.thestruct.cf_show EQ "users" OR arguments.thestruct.cf_show EQ "col">
-			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
+			AND c.cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 		<cfelse>
 			AND (
-				lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
-				OR lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
+				c.cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
+				OR c.cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 			)
 		</cfif>
 		<cfif structKeyExists(arguments.thestruct,"cf_in_form")>
@@ -194,7 +194,7 @@
 		SELECT /* #variables.cachetoken#getfieldssearch */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_select_list, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		WHERE c.cf_id = ct.cf_id_r
-		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+		AND c.cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		GROUP BY c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_select_list, ct.cf_text

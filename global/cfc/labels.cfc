@@ -38,7 +38,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_text, label_id AS labelid
 		FROM #session.hostdbprefix#labels
-		WHERE lower(label_text) = <cfqueryparam value="#lcase(arguments.thestruct.thelab)#" cfsqltype="cf_sql_varchar" />
+		WHERE label_text = <cfqueryparam value="#arguments.thestruct.thelab#" cfsqltype="cf_sql_varchar" />
 		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		<!--- If exists then add label to this record --->
@@ -245,7 +245,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT label_id
 		FROM #session.hostdbprefix#labels
-		WHERE lower(label_text) = <cfqueryparam value="#lcase(arguments.thestruct.thelab)#" cfsqltype="cf_sql_varchar" />
+		WHERE label_text = <cfqueryparam value="#arguments.thestruct.thelab#" cfsqltype="cf_sql_varchar" />
 		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
 		<!--- Remove from ct_labels --->
@@ -275,7 +275,7 @@
 		SELECT /* #variables.cachetoken#getalllabels */ label_text, label_path, label_id
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-		ORDER BY lower(label_text)
+		ORDER BY label_text
 		</cfquery>
 		<!--- Put into list --->
 		<cfloop query="qry">
@@ -318,9 +318,9 @@
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif structKeyExists(arguments,'checkUPC') AND arguments.checkUPC EQ 'true'>
-				AND lower(label_text) = <cfqueryparam value="upc" cfsqltype="cf_sql_varchar" />
+				AND label_text = <cfqueryparam value="upc" cfsqltype="cf_sql_varchar" />
 			</cfif>
-			ORDER BY lower(label_text)
+			ORDER BY label_text
 			</cfquery>
 			<!--- Param --->
 			<cfset var l = valuelist(qry.label_id)>
@@ -351,7 +351,7 @@
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-			ORDER BY lower(label_text)
+			ORDER BY label_text
 			</cfquery>
 			<!--- Param --->
 			<cfset var l = valuelist(qry.label_path)>
@@ -507,17 +507,17 @@
 				OR
 				<!--- Check is user is in group that has access --->
 				EXISTS (
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups cg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND c.col_id = cg.col_id_r AND cg.grp_id_r = cc.ct_g_u_grp_id AND lower(cg.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups cg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND c.col_id = cg.col_id_r AND cg.grp_id_r = cc.ct_g_u_grp_id AND cg.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups f WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = f.folder_id_r AND f.grp_id_r = cc.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
 					)
 				)
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -525,13 +525,13 @@
 				<!--- Check if admin user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-				WHEN EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND fi.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#folders_groups fg WHERE cc.ct_g_u_user_id ='#session.theuserid#' AND fi.folder_id_r = fg.folder_id_r AND cc.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND fi.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					) THEN 0
 				ELSE 1 END  = 1
 
@@ -631,13 +631,13 @@
 					)
 				OR
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x')
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('r','w','x')
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('r','w','x')
 					)
 				)
 				<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
@@ -645,13 +645,13 @@
 				<!--- Check if admin user --->
 				WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 				<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+				WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					UNION ALL
-					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
+					SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND grp_permission NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />
 					) THEN 0
 				ELSE 1 END  = 1
 			) AS count_assets,
@@ -677,7 +677,7 @@
 				OR
 				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE l.ct_id_r = f.folder_id_r AND  f.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
 				)
 			) AS count_folders,
 			(
@@ -696,7 +696,7 @@
 				OR
 				EXISTS (SELECT 1 FROM  #session.hostdbprefix#collections_groups f WHERE l.ct_id_r = f.col_id_r AND f.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND l.ct_id_r = f.col_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
 				)
 			) AS count_collections
 		FROM ct_labels
@@ -771,7 +771,7 @@
 			i.folder_id_r,cast(i.img_size as decimal(12,0)) as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 			i.path_to_asset, i.cloud_url, i.cloud_url_org, 'R' as permfolder, i.expiry_date, f.folder_name, 'null' as customfields,
-			lower(i.img_filename) as filename_forsort
+			i.img_filename as filename_forsort
 			<cfif isdefined('arguments.thestruct.cs')>
 				<!--- custom metadata fields to show --->
 				<cfif arguments.thestruct.cs.images_metadata NEQ "">
@@ -824,14 +824,14 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND i.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
@@ -842,7 +842,7 @@
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f.cloud_url_org, 'R' as permfolder, f.expiry_date, fo.folder_name, 'null' as customfields,
-			lower(f.file_name) as filename_forsort
+			f.file_name as filename_forsort
 			<cfif isdefined('arguments.thestruct.cs')>
 				<!--- custom metadata fields to show --->
 				<cfif arguments.thestruct.cs.images_metadata NEQ "">
@@ -894,14 +894,14 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  ('r','w','x'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND lower(fg.grp_permission) NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND c.ct_g_u_grp_id = fg.grp_id_r AND fg.grp_permission NOT IN  ('w','x') AND f.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
@@ -912,7 +912,7 @@
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 			v.path_to_asset, v.cloud_url, v.cloud_url_org, 'R' as permfolder, v.expiry_date, f.folder_name, 'null' as customfields,
-			lower(v.vid_filename) as filename_forsort
+			v.vid_filename as filename_forsort
 			<cfif isdefined('arguments.thestruct.cs')>
 				<!--- custom metadata fields to show --->
 				<cfif arguments.thestruct.cs.images_metadata NEQ "">
@@ -962,14 +962,14 @@
 				OR
 				EXISTS (SELECT 1 FROM  #session.hostdbprefix#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  ('r','w','x'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND v.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
 			UNION ALL
 			SELECT 
@@ -980,7 +980,7 @@
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 			a.path_to_asset, a.cloud_url, a.cloud_url_org, 'R' as permfolder, a.expiry_date, f.folder_name, 'null' as customfields,
-			lower(a.aud_name) as filename_forsort
+			a.aud_name as filename_forsort
 			<cfif isdefined('arguments.thestruct.cs')>
 				<!--- custom metadata fields to show --->
 				<cfif arguments.thestruct.cs.images_metadata NEQ "">
@@ -1030,14 +1030,14 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups f WHERE a.folder_id_r = f.folder_id_r AND f.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x'))
 			   )
 			<!--- Check if asset has expired and if user has only read only permissions in which case we hide asset --->
 			AND CASE 
 			<!--- Check if admin user --->
 			WHEN EXISTS (SELECT 1 FROM ct_groups_users WHERE ct_g_u_user_id ='#session.theuserid#' and ct_g_u_grp_id in ('1','2')) THEN 1
 			<!---  Check if asset is in folder for which user has read only permissions and asset has expired in which case we do not display asset to user --->
-			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND lower(grp_permission) NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
+			WHEN EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND c.ct_g_u_grp_id = f.grp_id_r AND grp_permission NOT IN  ('w','x') AND a.expiry_date < <cfqueryparam value="#dateformat(now(),'mm/dd/yyyy')#" cfsqltype="cf_sql_date" />) THEN 0
 			ELSE 1 END  = 1
 			ORDER BY #sortby#
 			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2"> 
@@ -1085,7 +1085,7 @@
 				OR
 				folder_owner = '#session.theuserid#' 
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND lower(fg.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users c, #session.hostdbprefix#folders_groups fg WHERE c.ct_g_u_user_id ='#session.theuserid#' AND f.folder_id = fg.folder_id_r AND (fg.grp_id_r = c.ct_g_u_grp_id OR fg.grp_id_r = 0)AND fg.grp_permission IN  ('r','w','x'))
 			)
 			</cfquery>
 			<!--- Get proper folderaccess --->
@@ -1115,7 +1115,7 @@
 				OR
 				EXISTS (SELECT 1 FROM #session.hostdbprefix#collections_groups f WHERE c.col_id = f.col_id_r AND  f.grp_id_r = '0')
 				OR
-				EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND lower(f.grp_permission) IN  ('r','w','x'))
+				EXISTS (SELECT 1 FROM ct_groups_users cc, #session.hostdbprefix#collections_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND c.col_id = f.col_id_r AND f.grp_id_r = cc.ct_g_u_grp_id  AND f.grp_permission IN  ('r','w','x'))
 			)
 			GROUP BY c.col_id, c.folder_id_r, ct.col_name
 			</cfquery>
@@ -1139,7 +1139,7 @@
 		SELECT label_id, label_text
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-		ORDER BY lower(label_text)
+		ORDER BY label_text
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
@@ -1362,7 +1362,7 @@
 			FROM #session.hostdbprefix#labels
 			WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			<cfif structKeyExists(arguments.thestruct,'strLetter')>
-				AND lower(label_text) LIKE <cfqueryparam value="#lcase(arguments.thestruct.strLetter)#%" cfsqltype="cf_sql_varchar" />
+				AND label_text LIKE <cfqueryparam value="#arguments.thestruct.strLetter#%" cfsqltype="cf_sql_varchar" />
 			</cfif>
 			ORDER BY 
 			<cfif structKeyExists(arguments.thestruct,'show') AND arguments.thestruct.show EQ 'default'>

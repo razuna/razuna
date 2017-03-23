@@ -659,28 +659,28 @@
 				OR
 				<!--- Check if folder containing asset that has label is accessible to 'Everyone' and that user has appropriate access privileges on it   --->
 				EXISTS (
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE i.folder_id_r = f.folder_id_r AND  f.grp_id_r ='0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  a.folder_id_r = f.folder_id_r AND f.grp_id_r ='0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE  v.folder_id_r = f.folder_id_r AND f.grp_id_r = '0' AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  fo.folder_id = fg.folder_id_r AND fg.grp_id_r = '0' AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE  fo.folder_id = fg.folder_id_r AND fg.grp_id_r = '0' AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					)
 				OR
 				<!--- Check if folder containing asset that has label is accessible to a group that user belows to and that he has appropriate access privileges on it  --->
 				EXISTS (
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND i.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND a.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND lower(f.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups f WHERE ct_g_u_user_id ='#session.theuserid#' AND v.folder_id_r = f.folder_id_r AND f.grp_id_r = c.ct_g_u_grp_id  AND f.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND f.folder_id_r = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					UNION
-					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND lower(fg.grp_permission) IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
+					SELECT 1 FROM ct_groups_users c, #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups fg WHERE ct_g_u_user_id ='#session.theuserid#' AND fo.folder_id = fg.folder_id_r AND fg.grp_id_r = c.ct_g_u_grp_id AND fg.grp_permission IN  (<cfqueryparam cfsqltype="cf_sql_varchar" value="#privileges#" list="true">)
 					)
 				)
 			</cfquery>

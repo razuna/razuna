@@ -158,7 +158,7 @@
 				<cfquery datasource="#application.razuna.api.dsn#" name="qry_samegrp">
 				SELECT grp_id
 				FROM groups
-				WHERE lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="CF_SQL_VARCHAR">
 				AND grp_host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric">
 				</cfquery>
 				<!--- If group does not exist do the insert --->

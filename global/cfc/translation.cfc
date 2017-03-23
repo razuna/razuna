@@ -34,7 +34,7 @@
 	<cfquery datasource="#Variables.dsn#" name="qTrans">
 		SELECT TRIM(trans_text) AS trans_text
 		FROM #session.hostdbprefix#translations
-		WHERE lower(trans_id) = <cfqueryparam value="#lcase(arguments.trans_id)#" cfsqltype="cf_sql_varchar">
+		WHERE trans_id = <cfqueryparam value="#lcase(arguments.trans_id)#" cfsqltype="cf_sql_varchar">
 		and lang_id_r = <cfqueryparam value="#Arguments.lang#" cfsqltype="cf_sql_numeric">
 	</cfquery>
 	<cfreturn qTrans.trans_text>

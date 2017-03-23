@@ -48,7 +48,7 @@
 		SELECT sf_id, sf_name, sf_type, 'true' AS shared
 		FROM #session.hostdbprefix#smart_folders sf JOIN #session.hostdbprefix#folders_groups fg ON sf.sf_id = fg.folder_id_r
 		AND sf.sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
-		AND lower(fg.grp_permission) = <cfqueryparam cfsqltype="cf_sql_varchar" value="r">
+		AND fg.grp_permission = <cfqueryparam cfsqltype="cf_sql_varchar" value="r">
 		AND sf.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY sf_type DESC, sf_name
 		</cfquery>
@@ -198,7 +198,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry_sf">
 		SELECT sf_id 
 		FROM #session.hostdbprefix#smart_folders
-		WHERE lower(sf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.sf_account)#">
+		WHERE sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_account#">
 		</cfquery>
 		<cfloop query="qry_sf">
 			<!--- Remove in master record --->
