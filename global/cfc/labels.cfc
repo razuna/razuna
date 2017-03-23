@@ -296,6 +296,8 @@
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
 		<cfargument name="checkUPC" type="string" required="false" default="false" > 
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("labels")>
 		<!--- Param --->
 		<cfset var l = "">
 		<cfset var qryct = "">
