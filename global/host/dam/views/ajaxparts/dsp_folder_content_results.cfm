@@ -34,7 +34,7 @@
 	<cfif structKeyExists(qry_files,"searchcount")>
 		<cfset _count = qry_files.searchcount>
 	<cfelse>
-		<cfset _count = qry_filecount.thetotal>
+		<cfset _count = attributes.qry_filecount.thetotal>
 	</cfif>
 	<cfif _count LTE session.rowmaxpage>
 		<cfset session.offset = 0>
