@@ -256,17 +256,17 @@
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
-			<cfif qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
+			<cfif attributes.qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+			<cfif attributes.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE attributes.qry_filecount.thetotal> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
 				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
 			<cfif attributes.bot eq "true">
-				<cfif qry_filecount.thetotal GT session.rowmaxpage>
+				<cfif attributes.qry_filecount.thetotal GT session.rowmaxpage>
 					<span style="padding-left:10px;">
-						<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
+						<cfset thepage = ceiling(attributes.qry_filecount.thetotal / session.rowmaxpage)>
 						#myFusebox.getApplicationData().defaults.trans("page")#: 
 							<select class="thepagelist#kind#"  onChange="loadcontent('#thediv#', $('.thepagelist#kind# :selected').val());">
 							<cfloop from="1" to="#thepage#" index="i">
@@ -277,9 +277,9 @@
 					</span>
 				</cfif>
 			<cfelse>
-				<cfif qry_filecount.thetotal GT session.rowmaxpage>
+				<cfif attributes.qry_filecount.thetotal GT session.rowmaxpage>
 					<span style="padding-left:10px;">
-						<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
+						<cfset thepage = ceiling(attributes.qry_filecount.thetotal / session.rowmaxpage)>
 						#myFusebox.getApplicationData().defaults.trans("page")#: 
 							<select id="thepagelist#kind#" onChange="loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
 							<cfloop from="1" to="#thepage#" index="i">
@@ -321,7 +321,7 @@
 		</cfif>
 		<!--- Change the amount of images shown --->
 		<cfif attributes.bot eq "true">
-			<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#" id="selectrowperpage#kind#" onChange="changerow('#thediv#','selectrowperpage#kind#')" style="width:80px;">
+			<td align="right" width="1%" nowrap="true"><cfif attributes.qry_filecount.thetotal GT session.rowmaxpage OR attributes.qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#" id="selectrowperpage#kind#" onChange="changerow('#thediv#','selectrowperpage#kind#')" style="width:80px;">
 				<option value="javascript:return false;">Show how many...</option>
 				<option value="javascript:return false;">---</option>
 				<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
@@ -331,7 +331,7 @@
 			</select></cfif>
 			</td>
 		<cfelse>
-			<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
+			<td align="right" width="1%" nowrap="true"><cfif attributes.qry_filecount.thetotal GT session.rowmaxpage OR attributes.qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 				<option value="javascript:return false;">#myFusebox.getApplicationData().defaults.trans("show_how_many")#...</option>
 				<option value="javascript:return false;">---</option>
 				<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
