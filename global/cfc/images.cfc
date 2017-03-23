@@ -69,7 +69,7 @@
 	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
-		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
+		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#application.razuna.thedatabase#" returnvariable="thefolders">
 		<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
@@ -89,7 +89,7 @@
 		<cfelse>
 			<cfset var min = session.offset * session.rowmaxpage>
 			<cfset var max = (session.offset + 1) * session.rowmaxpage>
-			<cfif variables.database EQ "db2">
+			<cfif application.razuna.thedatabase EQ "db2">
 				<cfset min = min + 1>
 			</cfif>
 		</cfif>
@@ -112,7 +112,7 @@
 		<cfset var sortby = "date_change DESC">
 	</cfif>
 	<!--- Oracle --->
-	<cfif variables.database EQ "oracle">
+	<cfif application.razuna.thedatabase EQ "oracle">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
@@ -135,7 +135,7 @@
 		WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 		</cfquery>
 	<!--- DB2 --->
-	<cfelseif variables.database EQ "db2">
+	<cfelseif application.razuna.thedatabase EQ "db2">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
@@ -176,7 +176,7 @@
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum, sorted_inline_view.* FROM (
 		</cfif>
@@ -199,17 +199,17 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
-		AND i.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND i.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		OR i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
 			 ) resultSet
 			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 		</cfif>
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				ORDER BY #sortby# LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>

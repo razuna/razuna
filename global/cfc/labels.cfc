@@ -550,7 +550,7 @@
 		<cfif arguments.id EQ 0>
 			(l.label_id = l.label_id_r OR l.label_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">)
 		<cfelse>
-			l.label_id <cfif variables.database EQ "mysql" OR variables.database EQ "db2"><><cfelse>!=</cfif> l.label_id_r
+			l.label_id <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> l.label_id_r
 			AND
 			l.label_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
 		</cfif>
@@ -723,7 +723,7 @@
 		<cfelse>
 			<cfset var min = session.offset * session.rowmaxpage>
 			<cfset var max = (session.offset + 1) * session.rowmaxpage>
-			<cfif variables.database EQ "db2">
+			<cfif application.razuna.thedatabase EQ "db2">
 				<cfset var min = min + 1>
 			</cfif>
 		</cfif>

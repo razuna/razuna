@@ -61,7 +61,7 @@
 				)
 	</cfif>
 	<cfif StructKeyExists(arguments, "check_upc_size") AND arguments.check_upc_size EQ 'true'>
-		AND upc_size <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> '' 
+		AND upc_size <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> '' 
 		AND upc_size is not null
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#

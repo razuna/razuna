@@ -44,14 +44,14 @@
 		<!--- if doc or xls also add office 2007 format to query --->
 		<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 			(
-			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-			OR LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+			LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+			OR LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
 			)
 		<!--- query all formats if not other --->
 		<cfelseif Arguments.file_extension neq "other">
-			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+			LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
 		<cfelse>
-			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+			LOWER(<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 		</cfif>
 	</cfif>
 	</cfquery>
@@ -76,7 +76,7 @@
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- If we need to show subfolders --->
 		<cfif session.showsubfolders EQ "T">
-			<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
+			<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#application.razuna.thedatabase#" returnvariable="thefolders">
 			<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 		<cfelse>
 			<cfset var thefolderlist = arguments.folder_id & ",">
@@ -96,7 +96,7 @@
 			<cfelse>
 				<cfset var min = session.offset * session.rowmaxpage>
 				<cfset var max = (session.offset + 1) * session.rowmaxpage>
-				<cfif variables.database EQ "db2">
+				<cfif application.razuna.thedatabase EQ "db2">
 					<cfset min = min + 1>
 				</cfif>
 			</cfif>
@@ -119,7 +119,7 @@
 			<cfset var sortby = "date_change DESC">
 		</cfif>
 		<!--- Oracle --->
-		<cfif variables.database EQ "oracle">
+		<cfif application.razuna.thedatabase EQ "oracle">
 			<!--- Clean columnlist --->
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
@@ -161,7 +161,7 @@
 			WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 			</cfquery>
 		<!--- DB2 --->
-		<cfelseif variables.database EQ "db2">
+		<cfelseif application.razuna.thedatabase EQ "db2">
 			<!--- Clean columnlist --->
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
@@ -239,7 +239,7 @@
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 			<!--- MSSQL --->
-			<cfif variables.database EQ "mssql">
+			<cfif application.razuna.thedatabase EQ "mssql">
 				SELECT * FROM (
 				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 			</cfif>
@@ -262,36 +262,36 @@
 				<!--- if doc or xls also add office 2007 format to query --->
 				<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
 					(
-					LOWER(<cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-					OR LOWER(<cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
+					LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+					OR LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
 					)
 				<!--- query all formats if not other --->
 				<cfelseif Arguments.file_extension neq "other">
-					LOWER(<cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
+					LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
 				<!--- query all files except the ones in the list --->
 				<cfelse>
 					(
-					LOWER(<cfif variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+					LOWER(<cfif application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 					OR (file_extension IS NULL OR file_extension = '')
 					)
 				</cfif>
 			</cfif>
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND f.is_available <cfif variables.database EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+			AND f.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 			<cfif arguments.thestruct.folderaccess EQ 'R'>
 				AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 			</cfif>
 			OR f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 			<!--- MySQL --->
-			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				ORDER BY #sortby#
 				<!--- Show the limit only if pages is null or current (from print) --->
 				<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 					LIMIT #mysqloffset#, #session.rowmaxpage#
 				</cfif>
 			<!--- MSSQL --->
-			<cfelseif variables.database EQ "mssql">
+			<cfelseif application.razuna.thedatabase EQ "mssql">
 					) sorted_inline_view
 				 ) resultSet
 			 	 WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
