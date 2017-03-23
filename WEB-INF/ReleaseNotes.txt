@@ -5,6 +5,11 @@ http://openbd.org/
 https://github.com/OpenBD/openbd-core
 __________________________________
 
+- added support for queryall in salesforce query function
+- fixed honouring charset for http body in CFHTTP
+- ternary operator bug #31
+- QueryRun result missing generatedkey #29 
+- fixed typos in AmazonS3Write/GenerateKey functions
 - Add DecodeForHTML function
 - At least Java 8 version support
 - added result parameter support to queryrun function
