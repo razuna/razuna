@@ -66,8 +66,6 @@
 </cfif>
 <!--- Storage Decision --->
 <cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
-<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
-<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 
 <!--- Ignore content-length attribute for previews --->
 <!--- <cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
@@ -75,6 +73,8 @@
 </cfif> --->
 <!--- File is external --->
 <cfif qry_binary.qfile.link_kind EQ "url">
+	<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
+	<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 	<!--- Get file --->
 	<cfhttp url="#qry_binary.qfile.link_path_url#" getasbinary="yes" />
 	<!--- Serve the file --->
@@ -82,6 +82,8 @@
 <cfelse>
 	<!--- Nirvanix --->
 	<cfif application.razuna.storage EQ "amazon">
+		<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
+		<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 		<!--- Decide on original or preview --->
 		<cfif attributes.v EQ "o">
 			<cfset theurl = qry_binary.qfile.cloud_url_org>
@@ -100,51 +102,43 @@
 			<!--- Serve file --->
 			<cfcontent remote="#remote#" />
 		</cfif>
-	<!--- <cfelseif application.razuna.storage EQ "akamai">
-		<cfif attributes.type EQ "img">
-			<cfset akatype = attributes.akaimg>
-		<cfelseif attributes.type EQ "vid">
-			<cfset akatype = attributes.akavid>
-		<cfelseif attributes.type EQ "aud">
-			<cfset akatype = attributes.akaaud>
-		<cfelse>
-			<cfset akatype = attributes.akadoc>
-		</cfif>
-		<!--- This is for basket or direct downloads --->
-		<cfif attributes.download EQ "T">
-			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
-			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="false">
-		<cfelse>
-			<!--- Decide on original or preview --->
-			<cfif attributes.v EQ "o">
-				<cfset theurl = "#attributes.akaurl##akatype#/#qry_binary.qfile.filenameorg#">
-			<cfelse>
-				<cfset theurl = "#session.thehttp##cgi.http_host#/assets/#session.hostid#/#qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
-			</cfif>
-			<!--- Get file --->
-			<cfhttp url="#theurl#" getasbinary="yes" />
-			<!--- Serve the file --->
-			<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
-		</cfif> --->
 	<!--- Local --->
 	<cfelse>
 		<!--- This is for basket or direct downloads --->
 		<cfif attributes.download EQ "T">
+			<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
+			<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
 			<cfcontent type="application/force-download" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="false">
 		<cfelse>
 			<!--- Different file location for assets stored on lan --->
 			<cfif qry_binary.qfile.link_kind EQ "lan">
+				<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
+				<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 				<cfset thefileloc = "#replace(qry_binary.qfile.link_path_url,"\ "," ","ALL")#">
 				<!--- Serve the file --->
 				<cfcontent type="application/force-download" file="#thefileloc#" deletefile="false">
 			<cfelse>
-				<!--- Struct for remote --->
-				<cfset remote = structnew()>
-				<cfset remote.type = "http">
-				<cfset remote.url = qry_binary.theurl>
-				<!--- Serve file --->
-				<cfcontent remote="#remote#" />
+				<cfif qry_binary.theurl NEQ ''>
+					<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
+					<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
+					<!--- Struct for remote --->
+					<!--- <cfset remote = structnew()>
+					<cfset remote.type = "http">
+					<cfset remote.url = qry_binary.theurl>
+					<cfdump var="#remote#"> --->
+					<!--- Get file --->
+					<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
+					<!--- Serve the file --->
+					<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
+					<!--- <cfabort> --->
+					<!--- Serve file --->
+					<!--- <cfcontent remote="#remote#" /> --->
+				<cfelse>
+					<h1>Something's wrong. We could not fetch the file for you!</h1>
+					<h2>We received the following variables:</h2>
+					<cfdump var="#qry_binary#">
+				</cfif>
 			</cfif>
 		</cfif>
 	</cfif>
