@@ -37,7 +37,7 @@
 				<div style="float:right;font-weight:bold;"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#attributes.folder_id#');" style="text-decoration:underline;">Upload</a></cfif></div>
 				<div style="clear:both;"></div>
 			</cfif>
-			<div>There are #qry_subfolders.recordcount# folders and #qry_filecount.thetotal# files here.</div>
+			<div>There are #qry_subfolders.recordcount# folders and #attributes.qry_filecount# files here.</div>
 			<br />
 			<cfloop query="qry_subfolders">
 				<div id="folders">

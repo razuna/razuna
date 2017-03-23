@@ -233,7 +233,7 @@
 		<div style="padding:0;margin:0;">
 			<div id="search_tab">
 				<ul>
-					<li><a href="##content_search_all" onclick="<cfif attributes.share NEQ 't'>switchsearchtab('all');</cfif>">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# <cfif structKeyExists(qry_files,"searchcount")>(#qry_files.searchcount#)<cfelse>(#attributes.qry_filecount.thetotal#)</cfif></a></li>
+					<li><a href="##content_search_all" onclick="<cfif attributes.share NEQ 't'>switchsearchtab('all');</cfif>">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# <cfif structKeyExists(qry_files,"searchcount")>(#qry_files.searchcount#)<cfelse>(#attributes.qry_filecount#)</cfif></a></li>
 				</ul>
 
 				<cfif structKeyExists(attributes, "thetype") AND attributes.thetype NEQ 'all'>

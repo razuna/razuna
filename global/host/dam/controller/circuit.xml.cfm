@@ -2607,7 +2607,7 @@
 		<!-- The total of found records is within the query itself -->
 		<if condition="!structkeyexists(attributes,'search_simple')">
 			<true>
-				<set name="attributes.qry_filecount.thetotal" value="#qry_files.qall.recordcount#" />
+				<set name="attributes.qry_filecount" value="#qry_files.qall.recordcount#" />
 			</true>
 		</if>
 		<!-- Get Include -->
@@ -5189,9 +5189,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5207,7 +5207,7 @@
 						<!-- Set results into different variable name -->
 						<set name="qry_files_count.qall" value="#qry_files.qall#" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5229,9 +5229,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5255,7 +5255,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5277,9 +5277,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5303,7 +5303,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5325,9 +5325,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5351,7 +5351,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5373,9 +5373,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5399,7 +5399,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -10192,7 +10192,7 @@
 		<set name="qry_files.qaud.cnt" value="#session.qaud#" />
 		<set name="qry_files.qdoc.cnt" value="#session.qdoc#" />
 		<!-- Set the total -->
-		<set name="attributes.qry_filecount.thetotal" value="#session.thetotal#" />
+		<set name="attributes.qry_filecount" value="#session.thetotal#" />
 		<!-- Show -->
 		<if condition="!attributes.fcall">
 			<true>
