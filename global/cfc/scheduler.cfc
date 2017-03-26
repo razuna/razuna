@@ -25,6 +25,8 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
+<cfset consoleoutput(true)>
+
 <!--- GET ALL SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
 	<cfset var qry = "">
@@ -720,7 +722,7 @@
 <cffunction name="folder_subscribe_task" output="true" access="public" >
 
 	<!--- Check / create lock --->
-	<cfset var locktask = _lockFile('subscribe')>
+	<cfset _lockFile("subscribe")>
 
 	<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
 	<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
@@ -1023,7 +1025,7 @@
 		</cfquery>
 	</cfoutput>
 	<!--- Check / create lock --->
-	<cfset var removeLock = _removeLockFile('subscribe')>
+	<cfset _removeLockFile('subscribe')>
 
 </cffunction>
 
@@ -1319,37 +1321,43 @@
 </cffunction>
 
 <!--- lock File --->
-<cffunction name="_lockFile" access="private" returntype="query">
-	<cfargument name="type" default="" required="yes" type="string">
-	<!--- Log --->
-	<cfset console("#now()# ---------------------- Checking the lock file for task : #arguments.type#")>
-	<!--- Name of lock file --->
-	<cfset var lockfile = "lock_task_#arguments.type#.lock">
-	<!--- Check if lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
-	<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
-	<cfset var lockfiledelerr = false>
-	<cfif fileExists(lockfilepath) >
-		<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
-		<cfif datediff("n", lockfiledate, now()) GT 5>
-			<cftry>
-				<cffile action="delete" file="#lockfilepath#">
-				<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
-			</cftry>
-		<cfelse>
-			<cfset lockfiledelerr = true>
+<cffunction name="_lockFile" access="private" returntype="void">
+	<cfargument name="task_type" default="" required="yes" type="string">
+	<cftry>
+		<!--- Log --->
+		<cfset console("#now()# ---------------------- Checking the lock file for task : #arguments.task_type#")>
+		<!--- Name of lock file --->
+		<cfset var lockfile = "lock_task_#arguments.task_type#.lock">
+		<!--- Check if lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
+		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfset var lockfiledelerr = false>
+		<cfif fileExists(lockfilepath) >
+			<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
+			<cfif datediff("n", lockfiledate, now()) GT 5>
+				<cftry>
+					<cffile action="delete" file="#lockfilepath#">
+					<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
+				</cftry>
+			<cfelse>
+				<cfset lockfiledelerr = true>
+			</cfif>
 		</cfif>
-	</cfif>
-	<!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
-	<cfif lockfiledelerr>
-		<!--- Log --->
-		<cfset console("#now()# ---------------------- Lock file for Task (#arguments.type#) exists. Skipping this execution for now!")>
-		<cfabort>
-	<cfelse>
-		<!--- Log --->
-		<cfset console("#now()# ---------------------- Lock file created for task : #arguments.type#")>
-		<!--- We are all good write file --->
-		<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
-	</cfif>
+		<!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
+		<cfif lockfiledelerr>
+			<!--- Log --->
+			<cfset console("#now()# ---------------------- Lock file for Task (#arguments.task_type#) exists. Skipping this execution for now!")>
+			<cfabort>
+		<cfelse>
+			<!--- Log --->
+			<cfset console("#now()# ---------------------- Lock file created for task : #arguments.task_type#")>
+			<!--- We are all good write file --->
+			<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		</cfif>
+		<cfcatch type="any">
+			<cfset console("#now()# ---------------------- ERROR creating lock file for Task : #arguments.task_type#")>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry>
 	
 	<!--- Return --->
 	<cfreturn  />
@@ -1357,18 +1365,18 @@
 
 <!--- Remove lock file --->
 <cffunction name="_removeLockFile" access="private">
-	<cfargument name="type" default="" required="yes" type="string">
+	<cfargument name="task_type" default="" required="yes" type="string">
 	<cftry>
 		<!--- Log --->
-		<cfset console("#now()# ---------------------- Removing lock file for task : #arguments.type#!")>
+		<cfset console("#now()# ---------------------- Removing lock file for task : #arguments.task_type#!")>
 		<!--- Name of lock file --->
-		<cfset var lockfile = "lock_task_#arguments.type#.lock">
+		<cfset var lockfile = "lock_task_#arguments.task_type#.lock">
 		<!--- Action --->
 		<cfif fileExists("#GetTempDirectory()#/#lockfile#")>
 			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
 		</cfif>
 		<cfcatch type="any">
-			<cfset console("#now()# ---------------------- ERROR removing lock file for Task : #arguments.type#")>
+			<cfset console("#now()# ---------------------- ERROR removing lock file for Task : #arguments.task_type#")>
 			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
