@@ -1620,15 +1620,8 @@
 		  EXPIRY_DATE DATE,
 		PRIMARY KEY (FILE_ID),
 		KEY #arguments.thestruct.host_db_prefix#files_hostid (HOST_ID),
-	    KEY #arguments.thestruct.host_db_prefix#files_name (FILE_NAME),
 	    KEY #arguments.thestruct.host_db_prefix#files_folderid (folder_id_r),
-	    KEY #arguments.thestruct.host_db_prefix#files_name_org (FILE_NAME_ORG),
-	    KEY #arguments.thestruct.host_db_prefix#files_pathtoasset (PATH_TO_ASSET),
-	    KEY #arguments.thestruct.host_db_prefix#files_ext (FILE_EXTENSION),
-	    KEY #arguments.thestruct.host_db_prefix#files_type (FILE_TYPE),
-	    KEY #arguments.thestruct.host_db_prefix#files_owner (file_owner),
-	    KEY #arguments.thestruct.host_db_prefix#files_createdate (FILE_CREATE_DATE),
-	    KEY #arguments.thestruct.host_db_prefix#files_hashtag (HASHTAG),
+	    KEY #arguments.thestruct.host_db_prefix#files_is_available (IS_AVAILABLE),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1714,13 +1707,9 @@
 		  IMG_UPC_NUMBER	  VARCHAR(20),
 		  EXPIRY_DATE DATE,
 		PRIMARY KEY (IMG_ID),
-		KEY #arguments.thestruct.host_db_prefix#img_name (IMG_FILENAME),
-	  	KEY #arguments.thestruct.host_db_prefix#img_name_org (IMG_FILENAME_ORG),
 	  	KEY #arguments.thestruct.host_db_prefix#img_folderid (folder_id_r),
-	  	KEY #arguments.thestruct.host_db_prefix#img_group (img_group),
-	  	KEY #arguments.thestruct.host_db_prefix#img_pathtoasset (PATH_TO_ASSET),
 	  	KEY #arguments.thestruct.host_db_prefix#img_hostid (HOST_ID),
-	  	KEY #arguments.thestruct.host_db_prefix#img_hashtag (HASHTAG),
+	  	KEY #arguments.thestruct.host_db_prefix#img_is_available (IS_AVAILABLE),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1763,7 +1752,11 @@
 		  FOLDER_ID			VARCHAR(100),
 		  PRIMARY KEY (LOG_ID),
 		  KEY #arguments.thestruct.host_db_prefix#la_user (log_user),
-  		  KEY #arguments.thestruct.host_db_prefix#la_hostid (HOST_ID)
+  		  KEY #arguments.thestruct.host_db_prefix#la_hostid (HOST_ID),
+  		  KEY #arguments.thestruct.host_db_prefix#la_log_timestamp (LOG_TIMESTAMP),
+  		  KEY #arguments.thestruct.host_db_prefix#la_asset_id_r (ASSET_ID_R),
+  		  KEY #arguments.thestruct.host_db_prefix#la_folder_id_r (FOLDER_ID_R),
+  		  KEY #arguments.thestruct.host_db_prefix#la_log_action (LOG_ACTION)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -2141,12 +2134,9 @@
 		VID_UPC_NUMBER 			VARCHAR(15),
 		EXPIRY_DATE DATE,
 		PRIMARY KEY (VID_ID),
-		KEY #arguments.thestruct.host_db_prefix#vid_group (vid_group),
 	    KEY #arguments.thestruct.host_db_prefix#vid_folderid (folder_id_r),
-	    KEY #arguments.thestruct.host_db_prefix#vid_pathtoasset (PATH_TO_ASSET),
 	    KEY #arguments.thestruct.host_db_prefix#vid_hostid (HOST_ID),
-	    KEY #arguments.thestruct.host_db_prefix#vid_owner (vid_owner),
-	    KEY #arguments.thestruct.host_db_prefix#vid_hash (HASHTAG),
+	    KEY #arguments.thestruct.host_db_prefix#vid_is_available (IS_AVAILABLE),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2401,10 +2391,8 @@
 		  	EXPIRY_DATE DATE,
 			PRIMARY KEY (aud_ID),
 			KEY #arguments.thestruct.host_db_prefix#aud_hostid (HOST_ID),
-	     		KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
-			KEY #arguments.thestruct.host_db_prefix#aud_group (aud_group),
-			KEY #arguments.thestruct.host_db_prefix#aud_pathtoasset (PATH_TO_ASSET),
-			KEY #arguments.thestruct.host_db_prefix#aud_hashtag (HASHTAG),
+     		KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
+     		KEY #arguments.thestruct.host_db_prefix#aud_is_available (IS_AVAILABLE),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
