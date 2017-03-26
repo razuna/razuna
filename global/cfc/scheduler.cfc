@@ -1030,6 +1030,10 @@
 </cffunction>
 
 <cffunction name="asset_expiry_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
+	
+	<!--- Check / create lock --->
+	<cfset _lockFile("expiry")>
+
 	<!--- Check if expiry label is not present for a host --->
 	<cfquery datasource="#application.razuna.datasource#" name="getmissing_labels">
 	SELECT h.HOST_ID 
@@ -1269,6 +1273,9 @@
 		<!--- Send the email --->
 		<cfinvoke component="email" method="send_email" to="#getuserinfo.user_email#" subject="#email_subject#" themessage="#msgbody#" userid="#getuserinfo.user_id#"/>
 	</cfloop>
+
+	<cfset _removeLockFile('expiry') />
+
 </cffunction>
 
 <cffunction name="ftp_notifications_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
