@@ -764,47 +764,46 @@
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
 	<!--- Get Assets Log of Subscribed folders --->
 	<cfoutput query="qGetUserSubscriptions">
-		<!--- <cfinvoke component="folders" method="init" returnvariable="foldersObj" /> --->
+		<!--- Var --->
+		<cfset var qGetUpdatedAssets = "">
+		<cfset var folders_list = "">
+		<cfset var damset = "">
 		<!--- Get Sub-folders of Folder subscribe --->
 		<cfinvoke component="folders" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
 		<!--- Get UPC setting --->
 		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
-			SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
-			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
-			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
-				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
-				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
-			</cfif>
-			<cfif damset.set2_upc_enabled EQ 'true'>
-				, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number 
-			</cfif>
-  
-			FROM (
-				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc, log_user, folder_id, host_id
-				FROM #session.hostdbprefix#log_assets 
-				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
-				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
-				) l
-			LEFT JOIN users u ON l.log_user = u.user_id
-			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
-			LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
-			LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
-			LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
-			LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
-			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
-				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
-				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
-				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
-				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
-			</cfif>
-			ORDER BY l.log_timestamp DESC
+		SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
+		ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
+		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+			, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
+			i.img_keywords, i.img_description, f.file_desc, f.file_keywords
+		</cfif>
+		<cfif damset.set2_upc_enabled EQ 'true'>
+			, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number 
+		</cfif>
+		FROM #session.hostdbprefix#log_assets l
+		LEFT JOIN users u ON l.log_user = u.user_id
+		LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
+		LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
+		LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
+		LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
+		LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
+		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+			LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
+		</cfif>
+		WHERE l.folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
+		AND l.log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+		ORDER BY l.log_timestamp DESC
 		</cfquery>
-		
-		<cfset var data= "">
-		<cfset var datacols= "">
-		<cfset var fields= "">
+		<!--- Vars --->
+		<cfset var data = "">
+		<cfset var datacols = "">
+		<cfset var fields = "">
 		<!--- Get metafields --->
 		<cfinvoke component="settings" method="get_notifications" returnvariable="fields">
 		<!--- Get Email subject --->
