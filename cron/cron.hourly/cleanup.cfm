@@ -1,13 +1,14 @@
 <cftry>
 
 	<cfset consoleoutput(true)>
-	<cfset console("#now()# ---------------- Starting to clean up incoming and outgoing directories")>
+	<cfset console("#now()# ---------------- Starting to clean up incoming, outgoing, and tmp directories")>
 
 	<!--- Path --->
 	<cfset _path = expandPath("../..")>
 	<!--- Set time for remove --->
 	<cfset _removetime_incoming = DateAdd("h", -2, now())>
 	<cfset _removetime_outgoing = DateAdd("d", -4, now())>
+	<cfset _removetime_tmp = DateAdd("h", -2, now())>
 
 	<!--- Get database --->
 	<cfquery datasource="razuna_default" name="_config">
@@ -61,6 +62,31 @@
 			</cfif>
 		</cfloop>
 	</cfloop>
+
+	<!--- Removie tmp files --->
+	<cfset console("#now()# ---------------- Cleaning tmp dir!")>
+	<cfdirectory action="list" directory="#GetTempDirectory()#" name="tmpList" type="file" />
+	<cftry>
+		<cfset console("------------REMOVING ANY LOCK OR OTHER TEMP FILES------------------")>
+		<cfdirectory action="list" directory="#GetTempDirectory()#" name="tmpList" type="file" />
+		<cfloop query="tmpList">
+			<cfif (name CONTAINS ".sh" OR name CONTAINS ".tmp" OR name CONTAINS ".temp" OR name CONTAINS ".csv" OR name CONTAINS ".xls" OR name CONTAINS ".xlsx" OR name CONTAINS ".lock") AND datelastmodified LT _removetime_tmp>
+				<cftry>
+					<cfset console("#now()# ---------------- Removing file in temp dir: #GetTempDirectory()#/#name#")>
+					<cffile action="delete" file="#GetTempDirectory()#/#name#" />
+					<cfcatch type="any">
+						<cfset console("------------ ERROR REMOVING TEMP FILE : #GetTempDirectory()#/#name# !!!!!!!!!!!!!!!!!!!!!!!!!")>
+						<cfset console(cfcatch)>
+					</cfcatch>
+				</cftry>
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfset consoleoutput(true)>
+			<cfset console("------------ ERROR REMOVING TEMP FILES !!!!!!!!!!!!!!!!!!!!!!!!!")>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry>
 
 	<cfset console("#now()# ---------------- Finished clean up job!")>
 
