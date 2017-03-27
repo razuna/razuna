@@ -2055,7 +2055,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Thread --->
-	<cfthread action="run" intvars="#arguments.thestruct#">
+	<!--- <cfthread action="run" intvars="#arguments.thestruct#"> --->
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, now())>
 		<!--- Clear assets dbs from records which have no path_to_asset --->
@@ -2109,17 +2109,17 @@ This is the main function called directly by a single upload else from addassets
 		</cfloop>
 		<cftry>
 			<!--- Now check directory on the hard drive. This will fix issue with files that were not successfully uploaded thus missing in the temp db --->
-			<cfdirectory action="list" directory="#attributes.intvars.thepath#/incoming" name="thedirs">
+			<cfdirectory action="list" directory="#arguments.thestruct.thepath#/incoming" name="thedirs">
 			<!--- Loop over dirs --->
 			<cfloop query="thedirs">
-				<cfif datelastmodified LT removetime AND directoryexists("#attributes.intvars.thepath#/incoming/#name#")>
-					<cfdirectory action="delete" directory="#attributes.intvars.thepath#/incoming/#name#" recurse="true" mode="775">
+				<cfif datelastmodified LT removetime AND directoryexists("#arguments.thestruct.thepath#/incoming/#name#")>
+					<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#name#" recurse="true" mode="775">
 				</cfif>
 			</cfloop>
 			<cfcatch type="any">
 			</cfcatch>
 		</cftry>
-	</cfthread>
+	<!--- </cfthread> --->
 </cffunction>
 
 <!--- PROCESS A DOCUMENT-FILE -------------------------------------------------------------------->
