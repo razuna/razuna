@@ -1622,6 +1622,7 @@
 		KEY #arguments.thestruct.host_db_prefix#files_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#files_folderid (folder_id_r),
 	    KEY #arguments.thestruct.host_db_prefix#files_is_available (IS_AVAILABLE),
+	    KEY #arguments.thestruct.host_db_prefix#files_expiry_date (EXPIRY_DATE),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -1705,11 +1706,12 @@
 		  IN_TRASH		   	  VARCHAR(2) DEFAULT 'F',
 		  IS_INDEXED		  VARCHAR(1) DEFAULT 0,
 		  IMG_UPC_NUMBER	  VARCHAR(20),
-		  EXPIRY_DATE DATE,
+		  EXPIRY_DATE 		  DATE,
 		PRIMARY KEY (IMG_ID),
 	  	KEY #arguments.thestruct.host_db_prefix#img_folderid (folder_id_r),
 	  	KEY #arguments.thestruct.host_db_prefix#img_hostid (HOST_ID),
 	  	KEY #arguments.thestruct.host_db_prefix#img_is_available (IS_AVAILABLE),
+	  	KEY #arguments.thestruct.host_db_prefix#img_expiry_date (EXPIRY_DATE),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2137,6 +2139,7 @@
 	    KEY #arguments.thestruct.host_db_prefix#vid_folderid (folder_id_r),
 	    KEY #arguments.thestruct.host_db_prefix#vid_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#vid_is_available (IS_AVAILABLE),
+	    KEY #arguments.thestruct.host_db_prefix#vid_expiry_date (EXPIRY_DATE),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2393,6 +2396,7 @@
 			KEY #arguments.thestruct.host_db_prefix#aud_hostid (HOST_ID),
      		KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
      		KEY #arguments.thestruct.host_db_prefix#aud_is_available (IS_AVAILABLE),
+     		KEY #arguments.thestruct.host_db_prefix#aud_expiry_date (EXPIRY_DATE),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2570,8 +2574,8 @@
   		label_id_r		varchar(100),
   		label_path		varchar(500),
   		PRIMARY KEY (label_id),
-  		KEY #arguments.thestruct.host_db_prefix#labels_id (label_id),
-  		KEY #arguments.thestruct.host_db_prefix#labels_text (label_text)
+  		KEY #arguments.thestruct.host_db_prefix#labels_host_id (host_id),
+  		KEY #arguments.thestruct.host_db_prefix#labels_label_id_r (label_id_r)
 		)
 		#this.tableoptions#
 		</cfquery>
