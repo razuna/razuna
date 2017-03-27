@@ -1712,6 +1712,7 @@
 	  	KEY #arguments.thestruct.host_db_prefix#img_hostid (HOST_ID),
 	  	KEY #arguments.thestruct.host_db_prefix#img_is_available (IS_AVAILABLE),
 	  	KEY #arguments.thestruct.host_db_prefix#img_expiry_date (EXPIRY_DATE),
+	  	KEY #arguments.thestruct.host_db_prefix#img_group (IMG_GROUP),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2140,6 +2141,7 @@
 	    KEY #arguments.thestruct.host_db_prefix#vid_hostid (HOST_ID),
 	    KEY #arguments.thestruct.host_db_prefix#vid_is_available (IS_AVAILABLE),
 	    KEY #arguments.thestruct.host_db_prefix#vid_expiry_date (EXPIRY_DATE),
+    	KEY #arguments.thestruct.host_db_prefix#vid_group (VID_GROUP),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
@@ -2397,6 +2399,7 @@
      		KEY #arguments.thestruct.host_db_prefix#aud_folderid (folder_id_r),
      		KEY #arguments.thestruct.host_db_prefix#aud_is_available (IS_AVAILABLE),
      		KEY #arguments.thestruct.host_db_prefix#aud_expiry_date (EXPIRY_DATE),
+ 			KEY #arguments.thestruct.host_db_prefix#aud_group (AUD_GROUP),
 			FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		#this.tableoptions#
