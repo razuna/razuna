@@ -41,6 +41,8 @@
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">
 <cfparam name="session.firstlastname" default="">
+<cfparam name="session.is_system_admin" default="false">
+<cfparam name="session.is_administrator" default="false">
 
 <!--- Set this app --->
 <cfparam name="session.thisapp" default="dam">
