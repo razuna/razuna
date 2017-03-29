@@ -2024,8 +2024,6 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="delete" file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#">
 		</cfif>
 	</cfif>
-	<!--- Remove record in DB and file system --->
-	<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
 	<cfif returnid NEQ 0>
 		<!--- Call method to send email --->
 		<cfset arguments.thestruct.emailwhat = "end_adding">
@@ -2049,79 +2047,6 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.qryfile.path>
-</cffunction>
-
-<!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
-<cffunction name="removeasset" output="true">
-	<cfargument name="thestruct" type="struct">
-	<!--- Thread --->
-	<!--- <cfthread action="run" intvars="#arguments.thestruct#"> --->
-		<cftransaction>
-			<!--- Set time for remove --->
-			<cfset removetime = DateAdd("h", -6, now())>
-			<!--- Clear assets dbs from records which have no path_to_asset --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#images
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-			ORDER BY img_id
-			</cfquery>
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#videos
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-			ORDER BY vid_id
-			</cfquery>
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#files
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-			ORDER BY file_id
-			</cfquery>
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#audios
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-			ORDER BY aud_id
-			</cfquery>
-			<!--- Select temp assets which are older then 6 hours --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry">
-			SELECT path as temppath, tempid
-			FROM #session.hostdbprefix#assets_temp
-			WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-			AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
-			AND path IS NOT NULL
-			</cfquery>
-			<!--- Loop trough the found records --->
-			<cfloop query="qry">
-				<!--- Delete in the DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				DELETE FROM #session.hostdbprefix#assets_temp
-				WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
-				</cfquery>
-				<!--- Delete on the file system --->
-				<cfif directoryexists(temppath)>
-					<cftry>
-						<cfdirectory action="delete" recurse="true" directory="#temppath#">
-						<cfcatch></cfcatch>
-					</cftry>
-
-				</cfif>
-			</cfloop>
-		</cftransaction>
-		<cftry>
-			<!--- Now check directory on the hard drive. This will fix issue with files that were not successfully uploaded thus missing in the temp db --->
-			<cfdirectory action="list" directory="#arguments.thestruct.thepath#/incoming" name="thedirs">
-			<!--- Loop over dirs --->
-			<cfloop query="thedirs">
-				<cfif datelastmodified LT removetime AND directoryexists("#arguments.thestruct.thepath#/incoming/#name#")>
-					<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#name#" recurse="true" mode="775">
-				</cfif>
-			</cfloop>
-			<cfcatch type="any">
-			</cfcatch>
-		</cftry>
-	<!--- </cfthread> --->
 </cffunction>
 
 <!--- PROCESS A DOCUMENT-FILE -------------------------------------------------------------------->
