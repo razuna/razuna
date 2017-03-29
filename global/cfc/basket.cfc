@@ -39,72 +39,76 @@
 		<cfset thetype = listlast(thenr,"-")>
 		<cfset thenr = listfirst(thenr,"-")>
 		<!--- First check if the product is not already in this basket --->
-		<cfquery datasource="#application.razuna.datasource#" name="here">
-		SELECT user_id
-		FROM #session.hostdbprefix#cart
-		WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
-		<cfif arguments.thestruct.fromshare EQ "F">
-			AND user_id = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfif>
-		AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- If no record has been found continue --->
-		<cfif here.recordcount EQ 0>
-			<!--- Sometimes we have a 0 in the list, filter this out --->
-			<cfif thenr NEQ 0 AND len(thetype) LTE 5>
-				<!--- insert the prodcut to the cart --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#cart
-				(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
-				VALUES(
-				<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-				</cfquery>
+		<cftransaction>
+			<cfquery datasource="#application.razuna.datasource#" name="here">
+			SELECT user_id
+			FROM #session.hostdbprefix#cart
+			WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
+			<cfif arguments.thestruct.fromshare EQ "F">
+				AND user_id = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
-		</cfif>
+			AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- If no record has been found continue --->
+			<cfif here.recordcount EQ 0>
+				<!--- Sometimes we have a 0 in the list, filter this out --->
+				<cfif thenr NEQ 0 AND len(thetype) LTE 5>
+					<!--- insert the prodcut to the cart --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#cart
+					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
+					VALUES(
+					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+				</cfif>
+			</cfif>
+		</cftransaction>
 	</cfloop>
 	<!--- Remove expired assets from cart --->
-	<cfquery datasource="#application.razuna.datasource#" name="removeexpired">
-		<cfif application.razuna.thedatabase NEQ "h2">
-		DELETE c FROM #session.hostdbprefix#cart c
-		LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
-		LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
-		LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid'
-		LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc'
-		WHERE
-		i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		<cfelse>
-		DELETE FROM #session.hostdbprefix#cart c
-			WHERE EXISTS (
-			SELECT 1 FROM #session.hostdbprefix#cart cc
-			LEFT JOIN #session.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img'
-			LEFT JOIN #session.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud'
-			LEFT JOIN #session.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid'
-			LEFT JOIN #session.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc'
+	<cftransaction>
+		<cfquery datasource="#application.razuna.datasource#" name="removeexpired">
+			<cfif application.razuna.thedatabase NEQ "h2">
+			DELETE c FROM #session.hostdbprefix#cart c
+			LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
+			LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
+			LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid'
+			LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc'
 			WHERE
-			c.cart_product_id=cc.cart_product_id
-			AND
-			(i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			<cfelse>
+			DELETE FROM #session.hostdbprefix#cart c
+				WHERE EXISTS (
+				SELECT 1 FROM #session.hostdbprefix#cart cc
+				LEFT JOIN #session.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img'
+				LEFT JOIN #session.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud'
+				LEFT JOIN #session.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid'
+				LEFT JOIN #session.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc'
+				WHERE
+				c.cart_product_id=cc.cart_product_id
+				AND
+				(i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+				OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+				OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+				OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+				)
 			)
-		)
-		</cfif>
-	</cfquery>
+			</cfif>
+		</cfquery>
+	</cftransaction>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
