@@ -2961,8 +2961,6 @@
 			FROM dual
 		</cfif>
 	</cfquery>
-	<cfset consoleoutput(true)>
-	<cfset console(total)>
 	<cfreturn total>
 </cffunction>
 
