@@ -25,10 +25,12 @@
 	GROUP BY host_shard_group
 	</cfquery>
 
+	
+
 	<cfloop query="_qry_hosts">
 		<cftransaction>
 			<!--- Clear assets dbs from records which have no path_to_asset --->
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#_db#">
 			DELETE FROM #host_shard_group#images
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
@@ -36,7 +38,7 @@
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#_db#">
 			DELETE FROM #host_shard_group#videos
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
@@ -44,7 +46,7 @@
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#_db#">
 			DELETE FROM #host_shard_group#files
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
@@ -52,7 +54,7 @@
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
+			<cfquery datasource="#_db#">
 			DELETE FROM #host_shard_group#audios
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
@@ -61,7 +63,7 @@
 		</cftransaction>
 		<cftransaction>
 			<!--- Select temp assets which are older then 6 hours --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry">
+			<cfquery datasource="#_db#" name="qry">
 			SELECT path as temppath, tempid
 			FROM #host_shard_group#assets_temp
 			WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
@@ -71,7 +73,7 @@
 			<!--- Loop trough the found records --->
 			<cfloop query="qry">
 				<!--- Delete in the DB --->
-				<cfquery datasource="#application.razuna.datasource#">
+				<cfquery datasource="#_db#">
 				DELETE FROM #host_shard_group#assets_temp
 				WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
 				</cfquery>
