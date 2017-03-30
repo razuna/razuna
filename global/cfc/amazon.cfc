@@ -274,11 +274,20 @@
 				<cfset arguments.path = "">
 			</cfif>
 			<!--- Get keys --->
-			<cfset result.contents = AmazonS3list(
-				datasource=session.aws[arguments.sf_id].datasource, 
-				bucket=session.aws[arguments.sf_id].bucket, 
-				prefix=arguments.path
-			)>
+			<cftry>
+				<cfset result.contents = AmazonS3list(
+					datasource=session.aws[arguments.sf_id].datasource, 
+					bucket=session.aws[arguments.sf_id].bucket, 
+					prefix=arguments.path
+				)>
+				<cfcatch>
+					<cfoutput>
+						Oops, there is an error accessing this bucket. Amazon reports the following:
+						<p>#cfcatch.message#</p>
+					</cfoutput>
+					<cfabort>
+				</cfcatch>
+			</cftry>
 			<!--- set path --->
 			<cfset result.path = arguments.path>
 		</cfif>
@@ -330,8 +339,6 @@
 				<!--- Error --->
 				<cfcatch type="any">
 					<cfoutput>An error has occured connecting to your Amazon S3 account<br />Message: #cfcatch.message# <br />Detail: #cfcatch.detail#</cfoutput>
-					<cfset cfcatch.custom_message = "An error has occured connecting to your Amazon S3 account in function amazon.awssourcecheck">
-					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>
