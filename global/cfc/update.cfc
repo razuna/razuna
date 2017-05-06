@@ -106,13 +106,15 @@
 		<cfset var theint = "int">
 		<cfset var thevarchar = "varchar">
 		<cfset var thetimestamp = "timestamp">
+		<cfset var theboolean = "boolean">
 		<!--- Map different types according to database --->
 		<cfif application.razuna.thedatabase EQ "mysql">
-			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
+			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci ROW_FORMAT=DYNAMIC">
 			<cfset var theclob = "longtext">
 		<cfelseif application.razuna.thedatabase EQ "mssql">
 			<cfset var theclob = "NVARCHAR(max)">
 			<cfset var thetimestamp = "datetime">
+			<cfset var theboolean = "bit">
 		</cfif>
 
 		<!--- Get the correct paths for hosted vs non-hosted --->
@@ -191,14 +193,14 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE TABLE raz1_approval (
-				approval_enabled BOOLEAN DEFAULT '0',
+				approval_enabled #theboolean# DEFAULT '0',
 				approval_folders #thevarchar#(2000) DEFAULT NULL,
 				approval_group_1 #thevarchar#(2000) DEFAULT NULL,
 				approval_group_2 #thevarchar#(2000) DEFAULT NULL,
-				approval_group_1_all BOOLEAN DEFAULT '0',
-				approval_group_2_all BOOLEAN DEFAULT '0',
+				approval_group_1_all #theboolean# DEFAULT '0',
+				approval_group_2_all #theboolean# DEFAULT '0',
 				host_id #theint# DEFAULT NULL,
-				approval_folders_all BOOLEAN DEFAULT '0'
+				approval_folders_all #theboolean# DEFAULT '0'
 				) #tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
