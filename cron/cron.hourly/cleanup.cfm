@@ -28,65 +28,51 @@
 	
 
 	<cfloop query="_qry_hosts">
-		<cftransaction>
-			<!--- Clear assets dbs from records which have no path_to_asset --->
+		<!--- Clear assets dbs from records which have no path_to_asset --->
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#images
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#videos
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#files
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#audios
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<!--- Select temp assets which are older then 6 hours --->
+		<cfquery datasource="#_db#" name="qry">
+		SELECT path as temppath, tempid
+		FROM #host_shard_group#assets_temp
+		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
+		AND path IS NOT NULL
+		</cfquery>
+		<!--- Loop trough the found records --->
+		<cfloop query="qry">
+			<!--- Delete in the DB --->
 			<cfquery datasource="#_db#">
-			DELETE FROM #host_shard_group#images
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			ORDER BY img_id
+			DELETE FROM #host_shard_group#assets_temp
+			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
 			</cfquery>
-		</cftransaction>
-		<cftransaction>
-			<cfquery datasource="#_db#">
-			DELETE FROM #host_shard_group#videos
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			ORDER BY vid_id
-			</cfquery>
-		</cftransaction>
-		<cftransaction>
-			<cfquery datasource="#_db#">
-			DELETE FROM #host_shard_group#files
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			ORDER BY file_id
-			</cfquery>
-		</cftransaction>
-		<cftransaction>
-			<cfquery datasource="#_db#">
-			DELETE FROM #host_shard_group#audios
-			WHERE (path_to_asset IS NULL OR path_to_asset = '')
-			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			ORDER BY aud_id
-			</cfquery>
-		</cftransaction>
-		<cftransaction>
-			<!--- Select temp assets which are older then 6 hours --->
-			<cfquery datasource="#_db#" name="qry">
-			SELECT path as temppath, tempid
-			FROM #host_shard_group#assets_temp
-			WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
-			AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
-			AND path IS NOT NULL
-			</cfquery>
-			<!--- Loop trough the found records --->
-			<cfloop query="qry">
-				<!--- Delete in the DB --->
-				<cfquery datasource="#_db#">
-				DELETE FROM #host_shard_group#assets_temp
-				WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
-				</cfquery>
-				<!--- Delete on the file system --->
-				<cfif directoryexists(temppath)>
-					<cftry>
-						<cfdirectory action="delete" recurse="true" directory="#temppath#">
-						<cfcatch></cfcatch>
-					</cftry>
+			<!--- Delete on the file system --->
+			<cfif directoryexists(temppath)>
+				<cftry>
+					<cfdirectory action="delete" recurse="true" directory="#temppath#">
+					<cfcatch></cfcatch>
+				</cftry>
 
-				</cfif>
-			</cfloop>
-		</cftransaction>
+			</cfif>
+		</cfloop>
 	</cfloop>
 
 
