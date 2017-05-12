@@ -1337,7 +1337,7 @@
 			<cfset cfcatch.custom_message = "Error in API upload in function assets.addassetapi">
 			<cfset errobj.logerrors(cfcatch,false)/>
 			<!--- Delete leftover entries --->
-			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 				DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 			</cfquery>
 			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
@@ -1348,7 +1348,7 @@
 			</cfquery>
 			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 				DELETE FROM #session.hostdbprefix#files WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
-			</cfquery>
+			</cfquery> --->
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -1850,7 +1850,7 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Check for approval --->
 	<cfinvoke component="global.cfc.approval" method="check_enabled" returnvariable="qry_approval" folder_id="#arguments.thestruct.qryfile.folder_id#" />
-	<!--- Catch issues with file not being fully uploaded to server due to interruption in data transfer. Happens if you 'Re-start Upload' or close plupload window during data transfer and then re-open which cancels previous uploads in progress --->
+	<!--- Catch issues with file not being fully uploaded to server due to interruption in data transfer. Happens if you 'Re-start Upload' or close plupload window during data transfer and then re-open which cancels previous uploads in progress
 	<cfif isdefined('arguments.thestruct.file_size')><!---  Check if file size reported by client via plupload is defined --->
 		<cfset var filesize_onserver = getfileinfo("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#").size> <!--- Get file size on server --->
 		<!--- Compare file size on server to actual file size reported by client and if size error > 1% abort --->
@@ -1872,7 +1872,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<cfabort>
 		</cfif>
-	</cfif>
+	</cfif> --->
 	<!--- If this is zip file and extract is set to yes then try and read the file to ensure it is not corrupted --->
 	<cfif arguments.thestruct.qryfile.extension EQ "zip" AND arguments.thestruct.zip_extract>
 		<cftry>
