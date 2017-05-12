@@ -25,8 +25,6 @@
 	GROUP BY host_shard_group
 	</cfquery>
 
-	
-
 	<cfloop query="_qry_hosts">
 		<!--- Clear assets dbs from records which have no path_to_asset --->
 		<cfquery datasource="#_db#">
@@ -57,11 +55,12 @@
 		AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
 		AND path IS NOT NULL
 		</cfquery>
+		<cfset _host_shard_group = host_shard_group>
 		<!--- Loop trough the found records --->
 		<cfloop query="qry">
 			<!--- Delete in the DB --->
 			<cfquery datasource="#_db#">
-			DELETE FROM #host_shard_group#assets_temp
+			DELETE FROM #_host_shard_group#assets_temp
 			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
 			</cfquery>
 			<!--- Delete on the file system --->
