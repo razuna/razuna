@@ -37,6 +37,9 @@
 		<cfargument name="showmsg" required="false" type="boolean" default="true" hint="display message to user or not">
 		<cfparam name="arguments.cfcatch.custom_message" default="N/A">
 
+		<cfset var qryid = "">
+		<cfset var errortext = "">
+
 		<cfif arguments.showmsg>
 			<!--- Output to user --->
 			<h2 style="color:red;">We are so sorry. Something went wrong. <cfif (isdefined("application.razuna.isp") AND application.razuna.isp) OR cgi.http_host CONTAINS "razunabd.local">We have been notified of this error and will fix it asap.<cfelse>We saved the error and you or your administrator can notify us of this error within the Administration.</cfif></h2>
@@ -59,6 +62,7 @@
 		</cfif>
 		</cfoutput>
 		</cfsavecontent>
+
 		<!--- Increment ID --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryid">
 		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(id),0) + 1 as theid
