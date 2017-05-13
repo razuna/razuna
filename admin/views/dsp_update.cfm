@@ -26,34 +26,59 @@
 <cfoutput>
 <div id="ft" style="padding:15px;">
 
-	<!--- Page output starts here --->
-	<span class="loginform_header">Razuna Database Update Required!</span>
-	<br />
-	<br />
-	<cfif session.updatedb>
-		#defaultsObj.trans("db_update_here")#
+	<cfif session.update_db_number EQ '53' AND application.razuna.thedatabase EQ "mysql">
+
+		<h2>Welcome to the Razuna 1.9.2 update</h2>
+
+		<p>This database update differs from others as we have to alter each table of your database as we changed the schema to be all case insensitive. This in return speeds up performance.</p>
+		<p>Before you continue please make sure that you created an update of your database.</p>
+		<p>Once done, please click on the update button below (you will see each step of the update).</p>
 		<br />
-		<br />
-		<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update")#" class="button" onclick="showupdate();">
-		<br />
-		<div id="updatestatus"></div>
+		<p><a href="#myself#c.update_do" class="button" style="text-decoration: none;">#defaultsObj.trans("button_update")#</a></p>
+
+	<cfelseif session.update_db_number EQ '53' AND application.razuna.thedatabase EQ "mssql">
+
+		<h2>Welcome to the Razuna 1.9.2 update</h2>
+
+		<p>This database update differs from others as we have to alter each table of your database as we changed the schema to be all case insensitive. This in return speeds up performance.</p>
+
+		<p>However, as each MSSQL deployment is different we cannot provide an update script for you and you have to execute each step manually. Please follow the update instructions to do so in the link below.</p>
+
+		<p><a href="http://wiki.razuna.com/display/ecp/Razuna+1.9.2">Update to Razuna 1.9.2</a></p>
+
 	<cfelse>
-		#defaultsObj.trans("db_update_done")#
-		<!--- <br />
+
+		<!--- Page output starts here --->
+		<span class="loginform_header">Razuna Database Update Required!</span>
 		<br />
-		Note: You should check the <a href="#session.thehttp# #cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done!  --->
 		<br />
-		<br />
-		<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">
+		<cfif session.updatedb>
+			#defaultsObj.trans("db_update_here")#
+			<br />
+			<br />
+			<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update")#" class="button" onclick="showupdate();">
+			<br />
+			<div id="updatestatus"></div>
+		<cfelse>
+			#defaultsObj.trans("db_update_done")#
+			<!--- <br />
+			<br />
+			Note: You should check the <a href="#session.thehttp# #cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done!  --->
+			<br />
+			<br />
+			<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">
+		</cfif>
+		
+		</div>
+		
+		<script language="JavaScript" type="text/javascript">
+			function showupdate(){
+				$('##updatestatus').html('Please wait...');
+				location.href='#myself#c.update_do&r=' + parseInt((Math.random() * 99999999));
+			}
+		</script>
+
+
 	</cfif>
-	
-	</div>
-	
-	<script language="JavaScript" type="text/javascript">
-		function showupdate(){
-			$('##updatestatus').html('Please wait...');
-			location.href='#myself#c.update_do&r=' + parseInt((Math.random() * 99999999));
-		}
-	</script>
 
 </cfoutput>
