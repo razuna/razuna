@@ -7423,6 +7423,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
 <!--- RAZ - 2907 EXTRACT A COMPRESSED FILE (ZIP) for version bulk upload--->
 <cffunction name="extractFrom_versions_Zip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">
