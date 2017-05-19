@@ -1517,6 +1517,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'img' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1525,9 +1526,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'img'
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1  AND i.host_id = it.host_id
 	WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = i.host_id
 	AND ct.file_id_r = i.img_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1547,6 +1550,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'vid' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1555,9 +1559,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'vid'
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1 AND v.host_id = vt.host_id
 	WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = v.host_id
 	AND ct.file_id_r = v.vid_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="vid">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1578,6 +1584,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'aud' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1586,9 +1593,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'aud'
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1 AND a.host_id = aut.host_id
 	WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = a.host_id
 	AND ct.file_id_r = a.aud_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="aud">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1608,6 +1617,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'doc' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1616,9 +1626,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'doc' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 AND f.host_id = ft.host_id
 	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = f.host_id
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">

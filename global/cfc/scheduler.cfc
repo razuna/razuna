@@ -726,9 +726,9 @@
 
 	<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
 	<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
-	SELECT f.folder_id, u.user_id
+	SELECT f.folder_id, u.user_id, f.host_id
 	FROM #session.hostdbprefix#folders f 
-	INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
+	INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id AND f.host_id = fs.host_id
 	INNER JOIN users u ON u.user_id = fs.user_id
 	WHERE
 	<!--- User is not administrator --->
@@ -746,14 +746,15 @@
 		FROM #session.hostdbprefix#folder_subscribe
 		WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
 		AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
 		</cfquery>
 	</cfloop>
 
 	<!--- Get User subscribed folders --->
 	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
-	SELECT fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, fo.folder_name 
+	SELECT fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, fs.host_id, fo.folder_name
 	FROM #session.hostdbprefix#folder_subscribe fs
-	LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
+	LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id AND fs.host_id = fo.host_id
 	WHERE 
 	<!--- H2 or MSSQL --->
 	<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
@@ -790,19 +791,20 @@
 		</cfif>
 		FROM #session.hostdbprefix#log_assets l
 		LEFT JOIN users u ON l.log_user = u.user_id
-		LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
-		LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
-		LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
-		LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
-		LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
+		LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id AND l.host_id = fo.host_id
+		LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r AND l.host_id = aa.host_id
+		LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r AND l.host_id = ff.host_id
+		LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r AND l.host_id = ii.host_id
+		LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r AND l.host_id = vv.host_id
 		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
-			LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
-			LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
-			LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
-			LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
+			LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1 AND l.host_id = a.host_id
+			LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1 AND l.host_id = f.host_id
+			LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1 AND l.host_id = i.host_id
+			LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1 AND l.host_id = v.host_id
 		</cfif>
 		WHERE l.folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
 		AND l.log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
 		ORDER BY l.log_timestamp DESC
 		</cfquery>
 		<!--- Vars --->

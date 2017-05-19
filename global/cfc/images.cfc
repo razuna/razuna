@@ -123,7 +123,7 @@
 			FROM (
 				SELECT #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, i.img_filename filename_forsort, i.img_size size, i.hashtag,
 				i.img_create_time date_create, i.img_change_time date_change
-				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1  AND i.host_id = it.host_id
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -144,7 +144,7 @@
 		FROM (
 			SELECT row_number() over() as rownr, i.*, it.*,
 			i.img_filename filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
-			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 AND i.host_id = it.host_id
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
 			AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -191,7 +191,7 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 AND i.host_id = it.host_id LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id AND i.host_id = x.host_id
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -826,6 +826,7 @@
 	SELECT /* #variables.cachetoken#detaildescimg */ img_description, img_keywords, lang_id_r, img_description as thedesc, img_keywords as thekeys
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Convert the size --->
 	<cfif isnumeric(details.ilength)>
@@ -951,6 +952,7 @@
 						FROM #session.hostdbprefix#images_text
 						WHERE img_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfif ishere.recordcount NEQ 0>
 							<cfset tdesc = evaluate(thisdesc)>
@@ -972,6 +974,7 @@
 							img_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 							WHERE img_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 							AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							</cfquery>
 						<cfelse>
 							<cfquery datasource="#variables.dsn#">
@@ -2253,7 +2256,8 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery> --->
 	<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
-		SELECT img_description,img_keywords, lang_id_r FROM #session.hostdbprefix#images_text
+		SELECT img_description,img_keywords, lang_id_r 
+		FROM #session.hostdbprefix#images_text
 		WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="cf_sql_varchar" >
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -2320,7 +2324,8 @@
 		<cfloop list="#arguments.thestruct.idList#" index="theidtoupdate" >
 			<cfloop query = "select_images_text">
 				<cfquery name="append_images_text" datasource="#application.razuna.datasource#">
-					SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
+					SELECT img_description,img_keywords 
+					FROM #session.hostdbprefix#images_text
 					WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">

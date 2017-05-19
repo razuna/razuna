@@ -80,12 +80,11 @@
 		<cfquery datasource="#application.razuna.datasource#" name="removeexpired">
 			<cfif application.razuna.thedatabase NEQ "h2">
 			DELETE c FROM #session.hostdbprefix#cart c
-			LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
-			LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
-			LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid'
-			LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc'
-			WHERE
-			i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
+			LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img' AND c.host_id = i.host_id
+			LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud' AND c.host_id = a.host_id
+			LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid' AND c.host_id = v.host_id
+			LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc' AND c.host_id = f.host_id
+			WHERE i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
@@ -93,12 +92,11 @@
 			DELETE FROM #session.hostdbprefix#cart c
 				WHERE EXISTS (
 				SELECT 1 FROM #session.hostdbprefix#cart cc
-				LEFT JOIN #session.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img'
-				LEFT JOIN #session.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud'
-				LEFT JOIN #session.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid'
-				LEFT JOIN #session.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc'
-				WHERE
-				c.cart_product_id=cc.cart_product_id
+				LEFT JOIN #session.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img' AND cc.host_id = i.host_id
+				LEFT JOIN #session.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud' AND cc.host_id = a.host_id
+				LEFT JOIN #session.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid' AND cc.host_id = v.host_id
+				LEFT JOIN #session.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc' AND cc.host_id = f.host_id
+				WHERE c.cart_product_id=cc.cart_product_id
 				AND
 				(i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
 				OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
@@ -632,6 +630,7 @@
 				file_keywords = <cfqueryparam value="#thekey#" cfsqltype="cf_sql_varchar">
 				WHERE file_id_r = <cfqueryparam value="#getfileid.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
 		</cfloop>

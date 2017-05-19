@@ -452,9 +452,9 @@
 					</cfloop>
 				</cfif>
 				FROM #session.hostdbprefix#images i
-				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
+				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
-				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
 				WHERE i.img_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -529,9 +529,9 @@
 				</cfif>
 				FROM #session.hostdbprefix#images i
 				INNER JOIN ct_aliases ct ON i.img_id = ct.asset_id_r
-				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
+				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND i.host_id = fo.host_id
-				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
 				WHERE i.img_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -670,7 +670,7 @@
 				</cfloop>
 			</cfif>
 			FROM #session.hostdbprefix#videos v
-			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 			WHERE v.vid_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
@@ -745,7 +745,7 @@
 			</cfif>
 			FROM #session.hostdbprefix#videos v
 			INNER JOIN ct_aliases ct ON v.vid_id = ct.asset_id_r
-			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND v.host_id = fo.host_id
 			WHERE v.vid_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
@@ -879,8 +879,8 @@
 			</cfif>
 			FROM #session.hostdbprefix#files f
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
-			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
+			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
+			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 			WHERE f.file_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -942,8 +942,8 @@
 			FROM #session.hostdbprefix#files f
 			INNER JOIN ct_aliases ct ON f.file_id = ct.asset_id_r
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND f.host_id = fo.host_id
-			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
+			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
+			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 			WHERE f.file_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -1080,7 +1080,7 @@
 					</cfloop>
 				</cfif>
 				FROM #session.hostdbprefix#audios a
-				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
 				WHERE a.aud_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
@@ -1154,7 +1154,7 @@
 				</cfif>
 				FROM #session.hostdbprefix#audios a
 				INNER JOIN ct_aliases ct ON a.aud_id = ct.asset_id_r
-				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND a.host_id = fo.host_id
 				WHERE a.aud_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
@@ -1480,9 +1480,9 @@
 						</cfloop>
 					</cfif>	 
 					FROM #session.hostdbprefix#images i
-					LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
+					LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
 					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
-					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> 
+					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
 					WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 					AND (
@@ -1588,8 +1588,8 @@
 						</cfif>
 						FROM #session.hostdbprefix#files f
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
-						LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id 
+						LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
+						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 						WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 						AND (
 							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
@@ -1694,7 +1694,7 @@
 							</cfloop>
 						</cfif>
 						FROM #session.hostdbprefix#videos v
-						LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+						LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 						WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
@@ -1811,7 +1811,7 @@
 							</cfloop>
 						</cfif>
 						FROM #session.hostdbprefix#audios a
-						LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+						LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id 
 						WHERE  a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 

@@ -35,6 +35,8 @@
 <cfset filenamefordownload_clean =myFusebox.getApplicationData().global.cleanfilename(qry_binary.thefilename)>
 <!--- Urlencode filename while preserving the '.' --->
 <cfset filenamefordownload = replace(urlencodedformat(replace(filenamefordownload_clean,'.','@DOT@','ALL'),'utf-8'),'%40DOT%40','.','ALL')>
+<!--- Storage Decision --->
+<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 
 <!--- This is for additional versions --->
 <cfif attributes.av>
@@ -63,16 +65,8 @@
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#cfhttp.FileContent#"> --->
 	<cfcontent remote="#remote#" />
-</cfif>
-<!--- Storage Decision --->
-<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
-
-<!--- Ignore content-length attribute for previews --->
-<!--- <cfif isdefined("v") AND v neq "p" AND application.razuna.storage NEQ "amazon">
-	<cfheader name="content-length" value="#qry_binary.qfile.thesize#" />
-</cfif> --->
 <!--- File is external --->
-<cfif qry_binary.qfile.link_kind EQ "url">
+<cfelseif qry_binary.qfile.link_kind EQ "url">
 	<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
 	<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 	<!--- Get file --->

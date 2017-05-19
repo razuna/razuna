@@ -799,8 +799,8 @@
 				</cfif>
 			</cfif>
 			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#images i 
-			LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
-			LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+			LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 AND i.host_id = it.host_id
+			LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id AND i.host_id = x.host_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -870,8 +870,8 @@
 				</cfif>
 			</cfif>
 			FROM ct_labels ct, #session.hostdbprefix#folders fo, #session.hostdbprefix#files f 
-			LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 
-			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
+			LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 AND f.host_id = ft.host_id
+			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
 			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -938,7 +938,7 @@
 					</cfloop>
 				</cfif>
 			</cfif>
-			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1 AND v.host_id = vt.host_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = v.vid_id
 			AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -1006,7 +1006,7 @@
 					</cfloop>
 				</cfif>
 			</cfif>
-			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+			FROM ct_labels ct, #session.hostdbprefix#folders f, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1 AND a.host_id = aut.host_id
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
 			AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">

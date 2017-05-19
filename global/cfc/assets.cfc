@@ -1488,6 +1488,7 @@
 								vid_keywords = <cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
 								vid_title = <cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">
 								WHERE vid_id_r = <cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">
+								AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 								</cfquery>
 							</cfif>
 						</cfif>
@@ -2363,6 +2364,7 @@ This is the main function called directly by a single upload else from addassets
 						file_desc = <cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
 						file_keywords = <cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">
 						WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 					<!--- <cfelse>
 						<!--- Insert Keywords and Descriptions --->
@@ -4062,10 +4064,12 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#files
 		WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Params --->
 		<cfparam default="0" name="arguments.thestruct.upl_template">
