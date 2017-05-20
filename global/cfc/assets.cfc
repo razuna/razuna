@@ -2739,26 +2739,26 @@ This is the main function called directly by a single upload else from addassets
 			img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">,
 			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar))>
-			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
-			</cfif>
 			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
-			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
-			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum')>
-			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-				,
-				img_filename_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
-			<cfelse>
-				,
-				img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-			</cfif>
-			<cfif structkeyexists(arguments.thestruct.qryfile,"groupid") AND arguments.thestruct.qryfile.groupid NEQ "">
-				,
-				img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfif>
-			</cfif>
-			,
+			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum') OR (structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar))>
+				,
+				link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">
+			</cfif>
+			<cfif !structKeyExists(arguments.thestruct,'upcRenditionNum')>
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+					,
+					img_filename_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					,
+					img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+				</cfif>
+				<cfif structkeyexists(arguments.thestruct.qryfile,"groupid") AND arguments.thestruct.qryfile.groupid NEQ "">
+					,
+					img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
+				</cfif>
+			</cfif>
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
@@ -2766,9 +2766,9 @@ This is the main function called directly by a single upload else from addassets
 			<cfthread action="run" intstruct="#arguments.thestruct#">
 				<!--- Get sharing option for folder so it can be applied to the asset --->
 				<cfquery datasource="#application.razuna.datasource#" name="get_dl_params">
-					SELECT share_dl_thumb, share_dl_org
-					FROM #session.hostdbprefix#folders
-					WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				SELECT share_dl_thumb, share_dl_org
+				FROM #session.hostdbprefix#folders
+				WHERE folder_id = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Check the UPC rendition upload --->
 				<cfif structKeyExists(attributes.intstruct,'upcRenditionNum') AND (attributes.intstruct.upcRenditionNum NEQ 1 OR attributes.intstruct.fn_ischar)>
@@ -2908,7 +2908,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.database = application.razuna.thedatabase>
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
-	<!--- At times the orignal filename is stored in a different var so check for it and put it in proper var --->
+	<!--- At times the original filename is stored in a different var so check for it and put it in proper var --->
 	<cfif isdefined("arguments.thestruct.thefilenameoriginal") AND NOT isdefined("arguments.thestruct.theoriginalfilename")>
 		<cfset arguments.thestruct.theoriginalfilename = arguments.thestruct.thefilenameoriginal>
 	</cfif>
@@ -2922,6 +2922,14 @@ This is the main function called directly by a single upload else from addassets
 	</cfinvoke>
 	<cfif structKeyExists(arguments.thestruct,'upc_name') AND arguments.thestruct.upc_name NEQ ''>
 		<cfset arguments.thestruct.image_name = arguments.thestruct.upc_name >
+		
+		<cfif structKeyExists(arguments.thestruct,'upc_record_to_update') AND arguments.thestruct.upc_record_to_update.recordcount>
+			<!--- Store the current temp id --->
+			<cfset arguments.thestruct.current_temp_id = arguments.thestruct.newid >
+			<!--- Store the id of the UPC record we need to update --->
+			<cfset arguments.thestruct.newid = arguments.thestruct.upc_record_to_update.id >
+		</cfif>
+
 	</cfif>
 	<!--- Random ID for script --->
 	<cfset var imguuid = arguments.thestruct.newid>
@@ -3009,7 +3017,7 @@ This is the main function called directly by a single upload else from addassets
 						img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
 					<cfelse>
 						img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">,
-						img_upc_number =  <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar">
+						img_upc_number = <cfqueryparam value="#arguments.thestruct.dl_query.upc_number#" cfsqltype="cf_sql_varchar">
 					</cfif>
 				<cfelse>
 					img_filename_org = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
@@ -3326,6 +3334,13 @@ This is the main function called directly by a single upload else from addassets
 		is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfif>
+	<cfif structKeyExists(arguments.thestruct,'upcRenditionNum') AND (arguments.thestruct.upcRenditionNum NEQ 1 OR arguments.thestruct.fn_ischar) AND structKeyExists(arguments.thestruct,'upc_record_to_update') AND arguments.thestruct.upc_record_to_update.recordcount>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		DELETE FROM #session.hostdbprefix#images
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.current_temp_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">		
 		</cfquery>
 	</cfif>
 	<!--- return --->
@@ -4045,20 +4060,28 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="extractFromZip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">
 	<cfset var ziptempid = arguments.thestruct.tempid>
+	<cfset var razver = false>
 	<cftry>
 		<!--- Check if archive is a Razuna Versions archive in which cases already existing files are versioned. User must be admin to use this feature  --->
-		<cfif arguments.thestruct.qryfile.filename contains 'RazunaVersions' AND (session.is_system_admin OR session.is_administrator)>
-			<cfset var razver = true>
-			<!--- Get folders in trash to omit later when checking for file exists in database query --->
-			<cfinvoke component="global.cfc.folders" method="gettrashfolder" returnvariable="trashfolders">
-			<cfset var trashfolderlist = listappend(-1,valuelist(trashfolders.id))>
-			<!--- Look for subfolders of trash folders --->
-			<cfloop query="trashfolders">
-				<cfinvoke component="global.cfc.folders" method="getchildfolders" parentid = "#trashfolders.id#" returnvariable="sflist">
-				<cfset trashfolderlist = listappend(trashfolderlist,sflist)>
-			</cfloop>
-		<cfelse>
-			<cfset var razver = false>
+		<cfif arguments.thestruct.qryfile.filename contains 'RazunaVersions' OR arguments.thestruct.qryfile.filename contains 'RazunaVersion'>
+			<cfset var qry_GroupsOfUser = "">
+			<!--- Get current user UPC Details  --->
+			<cfinvoke component="groups_users" method="getGroupsOfUser" returnvariable="qry_GroupsOfUser" >
+				<cfinvokeargument name="user_id" value="#session.theuserid#">
+				<cfinvokeargument name="host_id" value="#session.hostid#">
+				<cfinvokeargument name="check_upc_size" value="true">
+			</cfinvoke>
+			<cfif qry_GroupsOfUser.recordCount>
+				<cfset var razver = true>
+				<!--- Get folders in trash to omit later when checking for file exists in database query --->
+				<cfinvoke component="global.cfc.folders" method="gettrashfolder" returnvariable="trashfolders">
+				<cfset var trashfolderlist = listappend(-1,valuelist(trashfolders.id))>
+				<!--- Look for subfolders of trash folders --->
+				<cfloop query="trashfolders">
+					<cfinvoke component="global.cfc.folders" method="getchildfolders" parentid = "#trashfolders.id#" returnvariable="sflist">
+					<cfset trashfolderlist = listappend(trashfolderlist,sflist)>
+				</cfloop>
+			</cfif>
 		</cfif>
 		<!--- Remove the ZIP file from the files DB. This is being created on normal file upload and is not needed --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -4393,7 +4416,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Check if  file exists in system --->
 						<cfset var thefilename = listlast(name,FileSeparator())>
 						<cfset var thefilename_noext = replacenocase(thefilename, '.' & lcase(fileNameExt.theext),'')>
-						<cfif thefilename does not contain "RazunaVersions"> <!--- Omit the zip file itself --->
+						<cfif thefilename does not contain "RazunaVersions" OR thefilename does not contain "RazunaVersion"> <!--- Omit the zip file itself --->
 							<cfif arguments.thestruct.type eq 'img'>
 								<cfset var colname = 'img'>
 								<cfset var fileprefix = 'file'>
@@ -7835,6 +7858,15 @@ This is the main function called directly by a single upload else from addassets
 			<cfelse>
 				<cfset arguments.thestruct.upc_name = '#arguments.thestruct.upc_name#.#arguments.thestruct.upcRenditionNum#'>
 			</cfif>
+			<!--- Get the ID of the record to update --->
+			<cfquery name="arguments.thestruct.upc_record_to_update" datasource="#application.razuna.datasource#">
+			SELECT #field_name# as id
+			FROM #table_name#
+			WHERE img_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.upc_name#">
+			AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
 		<cfelse>
 			<cfset arguments.thestruct.qryGroupDetails = queryNew('id')>
 			<cfset arguments.thestruct.upc_name = arguments.thestruct.upcFileName>
@@ -7847,11 +7879,6 @@ This is the main function called directly by a single upload else from addassets
 <!--- Get all asset from folder --->
 <cffunction name="swap_rendition_original" output="false" returntype="void" hint="swaps an additional rendition for the original">
 	<cfargument name="thestruct" type="struct">
-
-	<!--- Move reset cache to top. It looks like at times it doesn't trigger properly when at bottom --->
-	<cfset resetcachetoken('files')>
-	<cfset resetcachetoken('folders')>
-	<cfset resetcachetoken('general')>
 
 	<!--- Get information for additional rendition  --->
 	<cfquery name="avinfo" datasource="#application.razuna.datasource#">

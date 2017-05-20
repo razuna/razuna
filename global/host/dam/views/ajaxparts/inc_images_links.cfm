@@ -114,7 +114,7 @@
 		<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
 	</cfif>
 	<!--- Show related images (if any) --->
-	<div id="relatedimages"></div>
+	<div id="relatedimages"><img src="#session.thehttp##cgi.http_host##dynpath#/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;"></div>
 	<!--- Show additional version --->
 	<div id="additionalversions"></div>
 </cfoutput>
