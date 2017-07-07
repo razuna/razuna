@@ -69,7 +69,7 @@
 	  <cfset console("------------REMOVING ANY LOCK OR OTHER TEMP FILES------------------")>
 	  <cfdirectory action="list" directory="#GetTempDirectory()#" name="tmpList" type="file" />
 	  <cfloop query="tmpList">
-	  	<cfif name CONTAINS ".sh" OR name CONTAINS ".tmp" OR name CONTAINS ".temp" OR name CONTAINS ".csv" OR name CONTAINS ".xls" OR name CONTAINS ".xlsx" OR name CONTAINS ".lock">
+	  	<cfif name CONTAINS ".sh" OR name CONTAINS ".tmp" OR name CONTAINS ".temp" OR name CONTAINS ".csv" OR name CONTAINS ".xls" OR name CONTAINS ".xlsx" OR name CONTAINS ".lock" OR name CONTAINS ".bat">
 			<cftry>
 				<cfset console("#now()# ---------------- Removing file in temp dir: #GetTempDirectory()#/#name#")>
 				<cffile action="delete" file="#GetTempDirectory()#/#name#" />
