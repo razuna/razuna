@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false" extends="extQueryCaching">
-	
+
 	<!--- <cfset variables.cachetoken = getcachetoken("settings")> --->
 
 	<!--- Get all plugins --->
@@ -72,7 +72,7 @@
 		<!--- Return --->
 		<cfreturn qryall>
 	</cffunction>
-	
+
 	<!--- Get all plugins --->
 	<cffunction name="getalldb" returntype="query">
 		<cfargument name="active" default="false" type="string" required="false">
@@ -86,7 +86,7 @@
 		<cfif arguments.dam>
 			, ct_plugins_hosts ct
 			WHERE p.p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
-			AND ct.ct_host_id_r = #session.hostid# 
+			AND ct.ct_host_id_r = #session.hostid#
 			AND ct.ct_pl_id_r = p.p_id
 		<cfelseif arguments.active>
 			WHERE p.p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
@@ -165,7 +165,7 @@
 		<!--- <cfset console(pluginPathName)> --->
 		<cfset var pluginDir = arguments.pathup & "global/plugins/" & pluginPathName & "/cfc/">
 		<!--- <cfset console(pluginDir)> --->
-		
+
 		<!--- First remove all actions for this plugin --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM plugins_actions
@@ -195,7 +195,7 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE plugins
-		SET 
+		SET
 		p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_active#">,
 		p_cfc_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#listCFC#">
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
@@ -326,6 +326,7 @@
 			AND p.p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args.p_id#">
 		</cfif>
 		AND pa.p_id = p.p_id
+		AND pa.p_id IS NOT NULL
 		<cfif arguments.args.folder_action>
 			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:#arguments.args.folder_id#%">
 		<cfelse>
