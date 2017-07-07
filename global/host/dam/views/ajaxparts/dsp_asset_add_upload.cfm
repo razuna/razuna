@@ -68,12 +68,12 @@ $(function() {
 		//chunk_size : '1mb',
 		required_features : 'multipart',
 		//multipart_params : {param1: 12345, param2:  },
-		
+
 		// Resize images on clientside if we can
 		// resize : {width : 320, height : 240, quality : 90},
 
 		// Specify what files to browse for
-		/* 
+		/*
 		filters : [
 			{title : "Image files", extensions : "jpg,gif,png"},
 			{title : "Zip files", extensions : "zip"}
@@ -86,7 +86,7 @@ $(function() {
 		// Silverlight settings
 		silverlight_xap_url : '#dynpath#/global/js/plupload/plupload.silverlight.xap'
 		<cfif attributes.nopreview EQ 0>
-			,		
+			,
 			preinit : function(up) {
 				up.bind('UploadFile', function(up, file) {
 					// RAZ-2907 check the condition for bulk upload versions
@@ -97,12 +97,16 @@ $(function() {
 						up.settings.url = '#myself#c.asset_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&nopreview=#attributes.nopreview#&type=#attributes.type#&thefieldname=file&_v=' + S4();
 						up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), preview: false, file_size:file.size};
 					</cfif>
-					
+
 				});
 				<cfif !session.fromshare AND (!structKeyExists(attributes,'extjs'))>
 					up.bind('UploadComplete', function() {
 						<cfif !pl_return.cfc.pl.loadform.active>
-							parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
+							setTimeout(function() {
+								parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
+								// close window
+								parent.$('##thewindowcontent1').dialog('close');
+							}, 1250);
 						<cfelse>
 							// This is for the metaform plugin
 							try {
@@ -117,9 +121,9 @@ $(function() {
 				</cfif>
 			}
 		</cfif>
-		
+
 	});
-	
+
 	function delayloadingplugin(){
 		// close window
 		parent.$('##thewindowcontent1').dialog('close');
@@ -135,24 +139,24 @@ $(function() {
 	// Extend global multipart_params for each UploadFile dynamically
 	/*
 $('##uploader').pluploadQueue().bind('QueueChanged',
-    function() { 
+    function() {
         $('##uploader').pluploadQueue().settings.multipart_params = { zip_extract: $('##zip_extract_plupl').attr('checked') };
     });
 */
-	
-	
+
+
    /*
  $("##uploader").pluploadQueue().bind('UploadFile', function(up) {
     	alert($('##zip_extract_plupl').attr('checked'));
     	$('##uploader').extend(up.settings.multipart_params, { param1 : $('##zip_extract_plupl').attr('checked') });
     });
 */
-    	
+
 	// Client side form validation
 	/*
 	$('form').submit(function(e) {
 			var uploader = $('##uploader').pluploadQueue();
-	
+
 			// Validate number of uploaded files
 			if (uploader.total.uploaded == 0) {
 				// Files in queue upload them first
@@ -162,11 +166,11 @@ $('##uploader').pluploadQueue().bind('QueueChanged',
 						if (uploader.total.uploaded == uploader.files.length)
 							alert('done');
 					});
-	
+
 					uploader.start();
 				} else
 					alert('You must at least upload one file.');
-	
+
 				e.preventDefault();
 			}
 		});
