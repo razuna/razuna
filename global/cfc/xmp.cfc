@@ -1719,8 +1719,10 @@
 	<cfinvoke component="custom_fields" method="get" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cfields" />
 	<!--- If this is from basket --->
 	<cfif arguments.thestruct.what EQ "basket">
+		<!--- Set to read all fields --->
+		<cfset arguments.thestruct.get_all_fields = true>
 		<!--- Read Basket --->
-		<cfinvoke component="basket" method="readbasket" returnvariable="thebasket">
+		<cfinvoke component="basket" method="readbasket" thestruct="#arguments.thestruct#" returnvariable="thebasket">
 		<!--- Loop over items in basket --->
 		<cfloop query="thebasket">
 			<!--- Set query --->

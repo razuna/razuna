@@ -38,6 +38,9 @@
 	<cfelse>
 		<div style="padding-top:5px;">
 			<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("checkout_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_full_remove_all_footer');">#myFusebox.getApplicationData().defaults.trans("clear_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("reload_basket")#</a>
+			<cfif qry_basket.total GT 20>
+				 | <a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');">We only show 20 items here. Click here to see all.</a>
+			</cfif>
 		</div>
 		<div style="overflow:auto;">
 			<table border="0">
@@ -107,11 +110,11 @@
 									</cfloop>
 								</cfdefaultcase>
 							</cfswitch>
-							<div style="padding-top:3px;font-weight:normal;"><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_remove&id=#cart_product_id#');return false;">#myFusebox.getApplicationData().defaults.trans("remove_txt")#</a></div>	
-						</td>				
+							<div style="padding-top:3px;font-weight:normal;"><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_remove&id=#cart_product_id#');return false;">#myFusebox.getApplicationData().defaults.trans("remove_txt")#</a></div>
+						</td>
 					</cfloop>
 				</tr>
 			</table>
 		</div>
-	</cfif>			
+	</cfif>
 </cfoutput>

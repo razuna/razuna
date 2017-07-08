@@ -1095,7 +1095,14 @@
 		<set name="attributes.isbrowser" value="#session.isbrowser#" />
 		<do action="storage" /> -->
 		<!-- CFC: Load basket -->
-		<invoke object="myFusebox.getApplicationData().basket" methodcall="readbasket(attributes)" returnvariable="qry_basket" />
+		<if condition="structkeyexists(attributes,'basket_quick')">
+			<true>
+				<invoke object="myFusebox.getApplicationData().basket" methodcall="readbasketquick(attributes)" returnvariable="qry_basket" />
+			</true>
+			<false>
+				<invoke object="myFusebox.getApplicationData().basket" methodcall="readbasket(attributes)" returnvariable="qry_basket" />
+			</false>
+		</if>
 		<set name="attributes.qrybasket" value="#qry_basket#" />
 		<!-- CFC: Get details for files -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="detailforbasket(attributes)" returnvariable="qry_thefile" />
@@ -1133,7 +1140,7 @@
 			</true>
 		</if>
 		<!-- CFC: Get Additional Versions -->
-		<invoke object="myFusebox.getApplicationData().basket" methodcall="additional_versions()" returnvariable="qry_addition_version" />
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="additional_versions(attributes)" returnvariable="qry_addition_version" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 	</fuseaction>
@@ -1151,6 +1158,9 @@
 	<fuseaction name="basket">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<!-- Limit basket results -->
+		<set name="attributes.basket_limit" value="true" />
+		<set name="attributes.basket_quick" value="true" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- Load include -->
