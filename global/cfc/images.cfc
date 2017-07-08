@@ -1849,14 +1849,8 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, 
-	i.img_online, i.img_owner, i.img_filename_org, i.img_meta,
-	i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
-	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
-	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
-	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
-	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, 
-	i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension
+	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner, i.img_filename_org, i.img_meta, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
+	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension, i.hashtag
 	FROM #session.hostdbprefix#images i
 	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#"> 
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

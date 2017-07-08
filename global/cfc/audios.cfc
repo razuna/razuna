@@ -123,7 +123,7 @@
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ #thecolumnlist#, att.aud_keywords keywords, att.aud_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
-			SELECT row_number() over() as rownr, a.*, att.*, 
+			SELECT row_number() over() as rownr, a.*, att.*,
 			a.aud_name filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
 			FROM audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1 AND a.host_id = att.host_id
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -161,7 +161,7 @@
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsaud */ 
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */
 		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
 		a.aud_name filename_forsort, cast(a.aud_size as decimal(12,0)) size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change, a.expiry_date, 'null' as customfields<cfif thecolumns does not contain ' id'>, a.aud_id id</cfif><cfif thecolumns does not contain ' kind'>,'aud' kind</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
@@ -185,7 +185,7 @@
 		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
 			 ) resultSet
-			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage#
 		</cfif>
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
@@ -255,15 +255,15 @@
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailaud */ 
-	a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, 
+	SELECT /* #variables.cachetoken#detailaud */
+	a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner,
 	a.cloud_url, a.cloud_url_org, a.aud_group,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
-	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
+	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url,
 	a.path_to_asset, a.lucene_key, a.aud_upc_number, a.expiry_date,s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
 	u.user_first_name, u.user_last_name, fo.folder_name, CASE WHEN NOT(a.aud_group ='' OR a.aud_group is null) THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_group) ELSE expiry_date END expiry_date_actual,
 	'' as perm
-	FROM #session.hostdbprefix#audios a 
+	FROM #session.hostdbprefix#audios a
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = a.host_id
 	LEFT JOIN users u ON u.user_id = a.aud_owner
 	LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
@@ -397,8 +397,8 @@
 						<!--- Update --->
 						<cfquery datasource="#variables.dsn#">
 						UPDATE #session.hostdbprefix#audios_text
-						SET 
-						aud_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">, 
+						SET
+						aud_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">,
 						aud_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 						WHERE aud_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
@@ -409,9 +409,9 @@
 						(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
 						VALUES(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">, 
-						<cfqueryparam value="#ltrim(evaluate(thisdesc))#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">,
+						<cfqueryparam value="#ltrim(evaluate(thisdesc))#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam value="#ltrim(evaluate(thiskeywords))#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
@@ -424,7 +424,7 @@
 		<cfif isdefined("arguments.thestruct.expiry_date")>
 			<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#audios
-				SET 
+				SET
 				<cfif expiry_date EQ '00/00/0000'>
 					expiry_date = null
 				<cfelseif isdate(arguments.thestruct.expiry_date)>
@@ -444,7 +444,7 @@
 			<!--- RAZ-2940: If this is an additional rendition then save to proper table --->
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#additional_versions
-			SET 
+			SET
 			av_link_title = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">
 			WHERE av_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -532,7 +532,7 @@
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("search")> 
+	<cfset resetcachetoken("search")>
 	<cfset resetcachetoken("labels")>
 </cffunction>
 
@@ -644,7 +644,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#audios 
+		UPDATE #session.hostdbprefix#audios
 		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -679,20 +679,20 @@
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettrashaudio */ 
-		a.aud_id AS id, 
-		a.aud_name AS filename, 
-		a.folder_id_r, 
+		SELECT /* #variables.cachetoken#gettrashaudio */
+		a.aud_id AS id,
+		a.aud_name AS filename,
+		a.folder_id_r,
 		a.aud_extension AS ext,
-		a.aud_name_org AS filename_org, 
-		'aud' AS kind, 
-		a.link_kind, 
-		a.path_to_asset, 
-		a.cloud_url, 
+		a.aud_name_org AS filename_org,
+		'aud' AS kind,
+		a.link_kind,
+		a.path_to_asset,
+		a.cloud_url,
 		a.cloud_url_org,
-		a.hashtag, 
-		'false' AS in_collection, 
-		'audios' as what, 
+		a.hashtag,
+		'false' AS in_collection,
+		'audios' as what,
 		'' AS folder_main_id_r
 			<!--- Permfolder --->
 			<cfif session.is_system_admin OR session.is_administrator>
@@ -737,12 +737,12 @@
 					) = '#Session.theUserID#' THEN 'X'
 				END as permfolder
 			</cfif>
-		FROM  
-			#session.hostdbprefix#audios a 
-		WHERE 
+		FROM
+			#session.hostdbprefix#audios a
+		WHERE
 			a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			
+
 	</cfquery>
 	<cfif qry_audio.RecordCount NEQ 0>
 		<cfset var myArray = arrayNew( 1 )>
@@ -751,7 +751,7 @@
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
 			SELECT file_id_r
 			FROM #session.hostdbprefix#collections_ct_files
-			WHERE file_id_r = <cfqueryparam value="#qry_audio.id#" cfsqltype="CF_SQL_VARCHAR"> 
+			WHERE file_id_r = <cfqueryparam value="#qry_audio.id#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<cfif alert_col.RecordCount NEQ 0>
 				<cfset temp = QuerySetCell(qry_audio, "in_collection", "True", currentRow  )>
@@ -760,9 +760,9 @@
 		<cfquery name="qry_audio" dbtype="query">
 			SELECT *
 			FROM qry_audio
-			WHERE permfolder <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
+			WHERE permfolder <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 			<cfif noread>
-				AND permfolder <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+				AND permfolder <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
 		</cfquery>
 	</cfif>
@@ -778,7 +778,7 @@
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#audios 
+		UPDATE #session.hostdbprefix#audios
 		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
 		WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
@@ -809,7 +809,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- check parent folder is exist --->
 	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders
 		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -819,13 +819,13 @@
 		<cfset local.istrash = "trash">
 	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
-			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders
 			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfloop query="dir_parent_id">
 			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
-				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders
 				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
@@ -834,7 +834,7 @@
 			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
 				<cfset local.root = "yes">
 				<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#audios 
+					UPDATE #session.hostdbprefix#audios
 					SET
 					in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -1083,7 +1083,7 @@
 					<!--- Update DB --->
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#audios
-					SET 
+					SET
 					folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -1144,7 +1144,7 @@
 			<!--- Update renditions --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#audios
-			SET 
+			SET
 			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -1164,7 +1164,7 @@
 	<cfset var qry = "">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size, 
+	SELECT /* #variables.cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size,
 	a.link_kind, a.link_path_url, a.path_to_asset, a.aud_name_org filename_org, f.share_dl_org, f.share_dl_thumb,
 	'' as perm
 	FROM #session.hostdbprefix#audios a, #session.hostdbprefix#folders f
@@ -1227,7 +1227,7 @@
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
 		<cfset cloud_url_org.newepoch = 0>
-		<cfparam name="arguments.thestruct.upl_template" default="0">		
+		<cfparam name="arguments.thestruct.upl_template" default="0">
 		<!--- Get Tools --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Go grab the platform --->
@@ -1333,10 +1333,10 @@
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="convert#tempfolder#" />
 		<!--- Ok, file is here so continue --->
-		
+
 		<!--- Check the platform and then decide on the ffmpeg tag --->
 		<cfif isWindows>
-			<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">	
+			<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
 		<cfelse>
 			<cfset arguments.thestruct.theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 		</cfif>
@@ -1351,9 +1351,9 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#audios
 			(aud_id, host_id)
-			VALUES( 
+			VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			)
 			</cfquery>
 			<!--- If from upload templates --->
@@ -1528,7 +1528,7 @@
 							<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 						</cfif>
 					</cfquery>
-					
+
 					<cfinvoke component="global" method="ExtractUPCInfo" returnvariable="upcinfo">
 						<cfinvokeargument name="upcnumber" value="#get_upc.upcnumber#"/>
 						<cfinvokeargument name="upcgrpsize" value="#upcstruct.upcgrpsize#"/>
@@ -1538,18 +1538,18 @@
 				<!--- Update the audio record with other information --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
-				SET 
+				SET
 				<cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
 					aud_group = <cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">,
 				<cfelse>
-					aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
+					aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
 				</cfif>
 				<!--- If UPC is enabled and product string is numeric then change filename --->
 				aud_name = 	<cfif upcstruct.upcenabled and isNumeric(upcinfo.upcprodstr)>
 							<cfqueryparam value="#upcinfo.upcprodstr#.#theformat#" cfsqltype="cf_sql_varchar">
 						<cfelse>
 							<cfqueryparam value="#finalaudioname#" cfsqltype="cf_sql_varchar">
-						</cfif>, 
+						</cfif>,
 				aud_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 				aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 				aud_change_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
@@ -1573,7 +1573,7 @@
 					<cfquery datasource="#application.razuna.datasource#" name="qry_theaudtxt">
 						SELECT lang_id_r,aud_description as thedesc,aud_keywords as thekeys
 						FROM #session.hostdbprefix#audios_text
-						WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
+						WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<cfif qry_theaudtxt.recordcount neq 0>
@@ -1583,9 +1583,9 @@
 							(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
 							VALUES(
 							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">, 
-							<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">, 
-							<cfqueryparam value="#ltrim(qry_theaudtxt.thedesc)#" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#qry_theaudtxt.lang_id_r#" cfsqltype="cf_sql_numeric">,
+							<cfqueryparam value="#ltrim(qry_theaudtxt.thedesc)#" cfsqltype="cf_sql_varchar">,
 							<cfqueryparam value="#ltrim(qry_theaudtxt.thekeys)#" cfsqltype="cf_sql_varchar">,
 							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							)
@@ -1604,7 +1604,7 @@
 								<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 								)
 							</cfquery>
-						</cfloop>	
+						</cfloop>
 					</cfif>
 				</cfif>
 				<!--- Log --->
@@ -1625,7 +1625,7 @@
 		<cfcatch type="any">
 			<cfset cfcatch.custom_message = "Error while converting audio in function audios.convertaudiothread">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>	
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<!--- Return file id for API rendition --->
@@ -1641,8 +1641,7 @@
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, 
-	path_to_asset, aud_group, aud_name_org, cloud_url_org
+	SELECT /* #variables.cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group, aud_name_org, cloud_url_org, hashtag
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1689,7 +1688,7 @@
 		<cfset var thecolname = "audio">
 		<!--- Query the db --->
 		<cfquery name="qry" datasource="#variables.dsn#">
-		SELECT a.aud_name, a.aud_extension, a.aud_name_org, a.folder_id_r, a.aud_group, a.link_kind, 
+		SELECT a.aud_name, a.aud_extension, a.aud_name_org, a.folder_id_r, a.aud_group, a.link_kind,
 		a.link_path_url, a.path_to_asset, a.cloud_url_org
 		FROM #session.hostdbprefix#audios a, #session.hostdbprefix#settings_2 s
 		WHERE a.aud_id = <cfqueryparam value="#theaudioid#" cfsqltype="CF_SQL_VARCHAR">
@@ -1879,8 +1878,8 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-	SELECT 
-	aud_id id, aud_name, folder_id_r, cloud_url, cloud_url_org, aud_name_org filenameorg, link_kind, link_path_url, 
+	SELECT
+	aud_id id, aud_name, folder_id_r, cloud_url, cloud_url_org, aud_name_org filenameorg, link_kind, link_path_url,
 	path_to_asset, lucene_key
 	FROM #session.hostdbprefix#audios
 	WHERE (folder_id_r IS NULL OR folder_id_r = '')
@@ -1925,7 +1924,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="theaudtext">
 		SELECT aud_description,aud_keywords , lang_id_r
 		FROM #session.hostdbprefix#audios_text
-		WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
+		WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfif arguments.thestruct.insert_type EQ 'replace'>
@@ -1940,9 +1939,9 @@
 			</cfquery> --->
 			<cfloop query="theaudtext">
 				<cfquery datasource="#application.razuna.datasource#" name="checkid">
-					SELECT aud_id_r 
+					SELECT aud_id_r
 					FROM #session.hostdbprefix#audios_text
-					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#"> 
+					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 				</cfquery>
@@ -1962,8 +1961,8 @@
 						(id_inc, aud_id_r, aud_description, aud_keywords, host_id, lang_id_r)
 						VALUES(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam value="#theaudtext.aud_keywords#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
@@ -1977,9 +1976,9 @@
 		<cfloop list="#arguments.thestruct.idlist#" index="i">
 			<cfloop query="theaudtext">
 				<cfquery datasource="#application.razuna.datasource#" name="theaudtextdetail">
-					SELECT aud_description,aud_keywords 
+					SELECT aud_description,aud_keywords
 					FROM #session.hostdbprefix#audios_text
-					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#"> 
+					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">
 				</cfquery>
@@ -1999,9 +1998,9 @@
 						(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id, lang_id_r)
 						VALUES(
 						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
-						<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">,
+						<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam value="#theaudtext.aud_keywords#" cfsqltype="cf_sql_varchar">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#theaudtext.lang_id_r#">

@@ -35,8 +35,8 @@
 					 <cfset args.thumb_img_id= img_id>
 					 <cfinvoke component="global.cfc.global" method="get_share_options" thestruct="#args#" returnvariable="qry_share_options">
 					 <cfif application.razuna.storage EQ 'local' AND qry_share_options.group_asset_id NEQ ''> 
-					 	<a href="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" target="_blank">
-					 		<img src="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#" style="max-height:50px;max-width:100px;">
+					 	<a href="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#?_v=#hashtag#" target="_blank">
+					 		<img src="//#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#?_v=#hashtag#" style="max-height:50px;max-width:100px;">
 					 	</a>
 					 <cfelse>
 					 	<!--- Validate cloud_url (in case there is a different filename SMSB or converting from local to S3) --->
@@ -49,7 +49,7 @@
 					 		<cfif application.razuna.awslocation NEQ "us-east">
 						 		<cfset _awslocation = application.razuna.awslocation>
 					 		</cfif>
-						 	<cfset new_cloud_url = "https://#qry_storage.set2_aws_bucket#.#_awslocation#.amazonaws.com/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#">
+						 	<cfset new_cloud_url = "https://#qry_storage.set2_aws_bucket#.#_awslocation#.amazonaws.com/#path_to_asset#/thumb_#qry_share_options.group_asset_id#.#qry_related.thumb_extension#?_v=#hashtag#">
 					 	</cfif>
 					 	<a href="#new_cloud_url#" target="_blank"><img src="#new_cloud_url#" style="max-height:50px;max-width:100px;"></a>
 					 </cfif>

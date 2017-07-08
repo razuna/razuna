@@ -536,14 +536,15 @@ padding: 5px;
 /*background: #fffffc;*/
 background: #ffffff;
 border: #D8D5D2 1px solid;
-float: left;
+/*float: left;*/
 min-height: 230px;
 -webkit-border-radius: 5px;
 -moz-border-radius: 5px;
 border-radius: 5px;
 word-wrap: break-word;
-width: 120px;
+max-width: 180px;
 color: #717171;
+display: inline-grid;
 }
 
 .assetbox_title {

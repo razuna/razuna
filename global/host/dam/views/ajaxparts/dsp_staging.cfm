@@ -64,16 +64,16 @@
 							</cfif>
 						<cfelse>
 							<cfif kind EQ "img">
-								<img src="#thestorage##path_to_asset#/thumb_#id#.#thumb_extension#?#hashtag#" border="0" style="max-width:400px">
+								<img src="#thestorage##path_to_asset#/thumb_#id#.#thumb_extension#?_v=#hashtag#" border="0" style="max-width:400px">
 							<cfelseif kind EQ "vid">
 								<cfset thethumb = replacenocase(filename_org, ".#extension#", ".jpg", "all")>
-								<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0" style="max-width:400px">
+								<img src="#thestorage##path_to_asset#/#thethumb#?_v=#hashtag#" border="0" style="max-width:400px">
 							<cfelseif kind EQ "aud">
 								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif extension EQ "mp3" OR extension EQ "wav">#extension#<cfelse>aud</cfif>.png" border="0">
 							<cfelse>
 								<cfset thethumb = replacenocase(filename_org, ".#extension#", ".jpg", "all")>
 								<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-									<img src="#thestorage##path_to_asset#/#thethumb#?#hashtag#" border="0" style="max-width:400px">
+									<img src="#thestorage##path_to_asset#/#thethumb#?_v=#hashtag#" border="0" style="max-width:400px">
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_#extension#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 								</cfif>

@@ -44,11 +44,11 @@
 									#qry_detail.detail.link_path_url#
 								</cfif>
 							<cfelse>
-								<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#<cfelse>#qry_detail.detail.cloud_url#</cfif>" style="max-height:50px;max-width:100px;"></a>
+								<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#qry_detail.detail.hashtag#<cfelse>#qry_detail.detail.cloud_url#</cfif>" style="max-height:50px;max-width:100px;"></a>
 							</cfif>
 						<cfelse>
 							<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" target="_blank"></cfif>
-								<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#" border="0" style="max-height:50px;max-width:100px;">
+								<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#qry_detail.detail.hashtag#" border="0" style="max-height:50px;max-width:100px;">
 							</a>
 							<br />
 						</cfif>

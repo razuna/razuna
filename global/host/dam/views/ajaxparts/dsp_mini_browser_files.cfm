@@ -40,7 +40,7 @@
 							<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 						</cfif>
 					<cfelse>
-						<img src="#thestore##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?#qry_detail.detail.hashtag#" border="0">
+						<img src="#thestore##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?_v=#qry_detail.detail.hashtag#" border="0">
 					</cfif>
 				<cfelse>
 					<img src="#qry_detail.detail.link_path_url#" border="0">
@@ -75,7 +75,7 @@
 							<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 						</cfif>
 					<cfelse>
-						<img src="#thestore##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#" border="0">
+						<img src="#thestore##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#qry_detail.detail.hashtag#" border="0">
 					</cfif>
 				<cfelse>
 					<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

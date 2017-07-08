@@ -142,16 +142,16 @@
 											#qry_detail.detail.link_path_url#
 										</cfif>
 									<cfelse>
-										<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#&#uniqueid#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a>
+										<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#qry_detail.detail.hashtag#&#uniqueid#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a>
 									</cfif>
 								</div>
 							<cfelse>
-								<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400"><br />
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#uniqueid#" border="0" width="400"><br />
 								#qry_detail.detail.link_path_url#<br />
 								#myFusebox.getApplicationData().defaults.trans("link_videos_desc")#
 							</cfif>
 						<cfelse>
-							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400">
+							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#uniqueid#" border="0" width="400">
 						</cfif>
 					</td>
 				<cfif qry_detail.detail.link_kind EQ "url">

@@ -126,7 +126,7 @@
 														<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 													</cfif>
 												<cfelse>
-													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#uniqueid#" border="0" img-tt="img-tt">
+													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?_v=#uniqueid#" border="0" img-tt="img-tt">
 												</cfif>
 											<cfelse>
 												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -259,7 +259,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?_v=#uniqueid#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -379,7 +379,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?_v=#uniqueid#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">

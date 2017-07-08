@@ -40,7 +40,7 @@
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
 		<form id="#kind#form"></form>
-		
+
 		<div style="float:left;">
 			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 		</div>
@@ -122,13 +122,14 @@
 		<cfif session.view EQ "">
 			<tr>
 				<td style="border:0px;" id="selectme">
+				<!--- <div> --->
 				<!--- Show Subfolders --->
 				<cfinclude template="inc_folder_thumbnail.cfm">
 				<cfloop query="qry_files">
 					<cfset mycurrentRow = (session.offset * session.rowmaxpage) + currentRow>
 					<!--- Images --->
 					<cfif kind EQ "img">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
+						<div class="assetbox" style="padding-top:15px;<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -154,7 +155,6 @@
 									</cfif>
 								});
 								</script>
-
 								<!--- custom metadata fields to show --->
 								<cfloop list="#attributes.cs_place.top.image#" index="m" delimiters=",">
 									<cfif m CONTAINS "_filename">
@@ -202,7 +202,7 @@
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0" img-tt="img-tt">
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -367,7 +367,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -671,7 +671,7 @@
 									<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 										<img src="#cloud_url#" border="0" img-tt="img-tt">
 									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
+										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 									</cfif>
@@ -760,6 +760,7 @@
 						</div>
 					</cfif>
 				</cfloop>
+				<!--- </div> --->
 			</td>
 		</tr>
 		<!--- Combined View --->
@@ -812,7 +813,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -923,7 +924,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -990,7 +991,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>	
+								<textarea name="#id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>
 							</div>
 						</td>
 					</tr>
@@ -1059,7 +1060,7 @@
 											<cfelse>
 												<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=#attributes.view#&offset=#session.offset#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 											</cfif>
-										</cfif>									
+										</cfif>
 									</cfif>
 								</div>
 							</div>
@@ -1127,7 +1128,7 @@
 										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
@@ -1257,7 +1258,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -1351,7 +1352,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -1522,7 +1523,7 @@
 										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
@@ -1617,7 +1618,7 @@
 					$("##updatestatusall2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			   	}
 			});
-	        return false; 
+	        return false;
 		};
 		<cfif session.view EQ "combined">
 			// Activate Chosen

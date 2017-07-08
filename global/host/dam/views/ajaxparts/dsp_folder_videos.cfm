@@ -126,7 +126,7 @@
 														<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 													</cfif>
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/#vid_name_image#?#uniqueid#" border="0">
+													<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0">
 												</cfif>
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -248,8 +248,8 @@
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<img src="#cloud_url#" border="0" width="160">
-											<cfelse>		
-												<img src="#thestorage##path_to_asset#/#vid_name_image#?#uniqueid#" border="0" width="160">
+											<cfelse>
+												<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0" width="160">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
@@ -315,7 +315,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#vid_id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+								<textarea name="#vid_id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>
 							</div>
 						</td>
 					</tr>
@@ -368,7 +368,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#vid_name_image#?#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -428,7 +428,7 @@
 			</tr>
 		</table>
 		</form>
-	
+
 		<!--- JS for the combined view --->
 		<script type="text/javascript">
 			<cfif session.file_id NEQ "">
@@ -459,7 +459,7 @@
 						$("##updatestatusvid2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 				   	}
 				});
-		        return false; 
+		        return false;
 			}
 			<cfif session.view EQ "combined">
 				// Activate Chosen

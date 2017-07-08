@@ -61,9 +61,9 @@
 			</tr>
 		</cfloop>
 	</table>
-	
+
 	<hr class="theline" />
-	
+
 	<!--- Additional Renditions / Uploaded --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
@@ -118,7 +118,7 @@
 		</cfloop>
 
 	</table>
-	
+
 	<div id="previewimage_prev"></div>
 	<div id="status" style="display:none;"></div>
 	<script type="text/javascript">
