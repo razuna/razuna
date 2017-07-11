@@ -177,7 +177,7 @@
 	<cfparam name="arguments.thestruct.get_all_fields" default="false">
 	<!--- Get total --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_count" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#readbasketfullcount */ count(cart_id) AS total 
+		SELECT /* #variables.cachetoken#readbasketfullcount */ count(cart_id) AS total
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -214,7 +214,7 @@
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
 			END as filename
-			<cfif arguments.thestruct.get_all_fields>
+
 				,
 				CASE
 					WHEN c.cart_file_type = 'doc'
@@ -309,7 +309,7 @@
 							)
 				END as expiry_date,
 
-				
+
 				CASE
 					WHEN c.cart_file_type = 'doc'
 						THEN (
@@ -418,7 +418,7 @@
 							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							)
 				END as upc_number
-			</cfif>
+
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
