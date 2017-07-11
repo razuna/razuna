@@ -77,36 +77,6 @@
 				</cfif>
 			</cfif>
 		</cfloop>
-		<!--- Remove expired assets from cart --->
-	 	<cfquery datasource="#attributes.intstruct.datasource#" name="removeexpired">
-			<cfif attributes.intstruct.thedatabase NEQ "h2">
-			DELETE c FROM #attributes.intstruct.hostdbprefix#cart c
-			LEFT JOIN #attributes.intstruct.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img' AND c.host_id = i.host_id
-			LEFT JOIN #attributes.intstruct.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud' AND c.host_id = a.host_id
-			LEFT JOIN #attributes.intstruct.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid' AND c.host_id = v.host_id
-			LEFT JOIN #attributes.intstruct.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc' AND c.host_id = f.host_id
-			WHERE i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			<cfelse>
-			DELETE FROM #attributes.intstruct.hostdbprefix#cart c
-				WHERE EXISTS (
-				SELECT 1 FROM #attributes.intstruct.hostdbprefix#cart cc
-				LEFT JOIN #attributes.intstruct.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img' AND cc.host_id = i.host_id
-				LEFT JOIN #attributes.intstruct.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud' AND cc.host_id = a.host_id
-				LEFT JOIN #attributes.intstruct.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid' AND cc.host_id = v.host_id
-				LEFT JOIN #attributes.intstruct.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc' AND cc.host_id = f.host_id
-				WHERE c.cart_product_id=cc.cart_product_id
-				AND
-				(i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-				OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-				OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-				OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-				)
-			)
-			</cfif>
-		</cfquery>
 	</cfthread>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>

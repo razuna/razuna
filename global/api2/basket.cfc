@@ -41,34 +41,38 @@
 			<!--- Set time for remove --->
 			<cfset var removetime = DateAdd("h", -72, "#now()#")>
 			<!--- Loop over the asset_id --->
-			<cfloop list="#arguments.asset_id#" index="assetid" delimiters=",">
-				<!--- Check if we already have the same id of the same basket id--->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-				SELECT asset_id
-				FROM api_basket
-				WHERE asset_id = <cfqueryparam value="#assetid#" cfsqltype="cf_sql_varchar">
-				AND basket_id = <cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">
-				AND asset_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar">
-				</cfquery>
-				<!--- if not found insert --->
-				<cfif qry.recordcount EQ 0>
+			<cftransaction>
+				<cfloop list="#arguments.asset_id#" index="assetid" delimiters=",">
+					<!--- Check if we already have the same id of the same basket id--->
 					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-					INSERT INTO api_basket
-					(basket_id, asset_id, date_added, asset_type)
-					VALUES (
-						<cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam value="#assetid#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-						<cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar">
-					)
+					SELECT asset_id
+					FROM api_basket
+					WHERE asset_id = <cfqueryparam value="#assetid#" cfsqltype="cf_sql_varchar">
+					AND basket_id = <cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">
+					AND asset_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar">
 					</cfquery>
-				</cfif>
-			</cfloop>
+					<!--- if not found insert --->
+					<cfif qry.recordcount EQ 0>
+						<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+						INSERT INTO api_basket
+						(basket_id, asset_id, date_added, asset_type)
+						VALUES (
+							<cfqueryparam value="#arguments.basket_id#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam value="#assetid#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+							<cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar">
+						)
+						</cfquery>
+					</cfif>
+				</cfloop>
+			</cftransaction>
 			<!--- Remove records that are older than 72 hours --->
-			<cfquery datasource="#application.razuna.api.dsn#">
-			DELETE FROM api_basket
-			WHERE date_added < <cfqueryparam value="#removetime#" cfsqltype="cf_sql_timestamp">
-			</cfquery>
+			<cftransaction>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM api_basket
+				WHERE date_added < <cfqueryparam value="#removetime#" cfsqltype="cf_sql_timestamp">
+				</cfquery>
+			</cftransaction>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0 />
 			<cfset thexml.message = "File has been added to the basket" />
