@@ -5,7 +5,7 @@ FROM razuna_config
 </cfquery>
 
 	<!--- Remove expired assets from cart --->
-<cfquery datasource="#_config.conf_datasource#" name="removeexpired">
+<cfquery datasource="#_config.conf_datasource#">
 <cfif _config.conf_database NEQ "h2">
 	DELETE c FROM raz1_cart c
 	LEFT JOIN raz1_images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img' AND c.host_id = i.host_id
@@ -33,6 +33,8 @@ FROM razuna_config
 		)
 	)
 </cfif>
+</cfquery>
+<cfquery datasource="#_config.conf_datasource#">
 <cfif _config.conf_database NEQ "h2">
 	DELETE c FROM raz2_cart c
 	LEFT JOIN raz2_images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img' AND c.host_id = i.host_id
