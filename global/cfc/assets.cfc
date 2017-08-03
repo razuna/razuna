@@ -4238,8 +4238,8 @@ This is the main function called directly by a single upload else from addassets
 				</cfloop>
 				<!--- Catch --->
 				<cfcatch type="any">
-					<cfset consoleoutput(true)>
-					<cfset console(cfcatch)>
+					<!--- <cfset consoleoutput(true)>
+					<cfset console(cfcatch)> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>
