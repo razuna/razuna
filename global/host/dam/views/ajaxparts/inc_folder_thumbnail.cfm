@@ -44,4 +44,8 @@
 		</a>
 	</div>
 </cfloop>
+<cfif qry_subfolders.recordcount>
+	<hr>
+	<div style="clear: both;"></div>
+</cfif>
 </cfoutput>

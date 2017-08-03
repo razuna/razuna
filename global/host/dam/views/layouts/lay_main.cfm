@@ -202,9 +202,25 @@
 		<!--- Tooltip Div --->
 		<div id="demotip">&nbsp;</div>
 		<div id="div_forall" style="display:none;"></div>
-		
+
 		<cfif cgi.http_host CONTAINS "razuna.com">
 			<script type="text/javascript">
+				var __lc = {};
+				__lc.license = 4481361;
+				__lc.group = 4;
+				__lc.params = [
+					{ name: 'User', value: '#session.firstlastname#' },
+					{ name: 'User ID', value: '#session.theuserid#' },
+					{ name: 'Host ID', value: '#session.hostid#' },
+					{ name: 'Admin', value: '#session.is_administrator#' },
+					{ name: 'Host', value: '#session.hostname#' },
+					{ name: 'Type', value: '#session.hosttype#' },
+				];
+				(function() {
+						var lc = document.createElement('script'); lc.type = 'text/javascript'; lc.async = true;
+						lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
+						var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(lc, s);
+				})();
 				var _gaq = _gaq || [];
 				_gaq.push(['_setAccount', 'UA-27003876-1']);
 				_gaq.push(['_setDomainName', 'razuna.com']);
