@@ -4091,11 +4091,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfthread action="join" name="#tzip#" />
 		<!--- Get folder level of the folder we are in to create new folder --->
 		<cfquery datasource="#application.razuna.datasource#" name="folders">
-		SELECT folder_level, folder_main_id_r, folder_id_r
-		FROM #session.hostdbprefix#folders
-		WHERE folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
+		SELECT f.folder_level, f.folder_main_id_r, f.folder_id_r, l.ct_label_id
+		FROM #session.hostdbprefix#folders f LEFT JOIN ct_labels l ON f.folder_id = l.ct_id_r
+		WHERE f.folder_id = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND f.in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- set root folder id to keep top folder during creating folder out of zip archive --->
 		<cfset var rootfolderId = arguments.thestruct.qryfile.folder_id>
@@ -4199,6 +4199,20 @@ This is the main function called directly by a single upload else from addassets
 			<cfqueryparam value="#folderlevel#" cfsqltype="cf_sql_numeric">
 			)
 			</cfquery>
+			<!--- If there are labels. Loop over results for many labels --->
+			<cfloop query="folders">
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO ct_labels
+				(ct_label_id, ct_id_r, ct_type, rec_uuid)
+				VALUES
+				(
+					<cfqueryparam value="#ct_label_id#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#newfolderidinsert#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfloop>
 			<!--- Apply custom setting to new folder --->
 			<cfinvoke component="global.cfc.folders" method="apply_custom_shared_setting" folder_id="#newfolderidinsert#" />
 			<!--- Add the workflow to the just created folder --->
@@ -7814,21 +7828,26 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="uploadUpc" output="true" >
 	<cfargument name="thestruct" type="struct" required="true" >
 	<cfargument name="assetfrom" type="string" required="true" >
+	<!--- <cfset console(arguments.thestruct)> --->
 	<!--- param --->
 	<cfparam name="arguments.thestruct.upc_name" default="" >
 	<cfparam name="arguments.thestruct.theoriginalfilename" default="" >
+	<cfparam name="arguments.thestruct.wait_count" default="0">
 	<cfif arguments.assetfrom EQ 'img'>
 		<cfset field_name = 'img_id'>
 		<cfset table_name = '#session.hostdbprefix#images'>
 		<cfset check_field_name = 'img_upc_number'>
+		<cfset col_file_name = 'img_filename'>
 	<cfelseif arguments.assetfrom EQ 'aud'>
 		<cfset field_name = 'aud_id'>
 		<cfset table_name = '#session.hostdbprefix#audios'>
 		<cfset check_field_name = 'aud_upc_number'>
+		<cfset col_file_name = 'aud_name'>
 	<cfelseif arguments.assetfrom EQ 'vid'>
 		<cfset field_name = 'vid_id'>
 		<cfset table_name = '#session.hostdbprefix#videos'>
 		<cfset check_field_name = 'vid_upc_number'>
+		<cfset col_file_name = 'vid_filename'>
 	</cfif>
 	<!--- Get settings dam details --->
 	<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="prefs">
@@ -7881,6 +7900,7 @@ This is the main function called directly by a single upload else from addassets
 			SELECT #field_name# as id
 			FROM #table_name#
 			WHERE #check_field_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.dl_query.upc_number#">
+			AND #col_file_name# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">
 			AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
@@ -7927,6 +7947,13 @@ This is the main function called directly by a single upload else from addassets
 			<!--- If record is not found call this function action with a pause so that .1 might have been uploaded in the meantime --->
 			<cfif ! arguments.thestruct.qryGroupDetails.recordcount>
 				<cfpause interval="10">
+				<!--- If wait count is over 20 abort --->
+				<cfif arguments.thestruct.wait_count EQ 20>
+					<cfset console('Wait count exceeded 20 times and aborted adding this rendition !!!')>
+					<cfabort>
+				</cfif>
+				<!--- Increase the count --->
+				<cfset arguments.thestruct.wait_count = arguments.thestruct.wait_count + 1>
 				<!--- Call this function again --->
 				<cfset uploadUpc(arguments.thestruct, assetfrom)>
 			</cfif>
