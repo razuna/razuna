@@ -1552,8 +1552,8 @@
 		<cfelse>
 			<cfset var thedpitags = " -Photoshop:XResolution=#thedpi# -Photoshop:YResolution=#thedpi# -IFD0:XResolution=#thedpi# -JFIF:XResolution=#thedpi# -IFD0:YResolution=#thedpi# -JFIF:YResolution=#thedpi#">
 		</cfif>
-		<!--- Remove -0 from the Converted filename only for GIF files ---> 
-		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat NEQ 'gif' AND theformat NEQ 'tif'>
+		<!--- Remove -0 from the Converted filename only for GIF files --->
+		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat NEQ 'gif' AND theformat NEQ 'tif' AND fileexists("#thisfolder#/#arguments.thestruct.thenamenoext#-0.#theformat#")>
 			<cffile action="rename" source="#thisfolder#/#arguments.thestruct.thenamenoext#-0.#theformat#" destination="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" />
 		</cfif>
 
