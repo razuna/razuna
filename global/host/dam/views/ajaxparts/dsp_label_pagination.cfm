@@ -222,7 +222,7 @@
 			</a>
 		</cfif>
 		<!--- Trash --->
-		<!--- <cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()> --->
+		<!--- <cfif session.is_system_admin OR session.is_administrator> --->
 		<cfif cs.show_trash_icon AND (cs.show_trash_icon_slct EQ "" OR listfind(cs.show_trash_icon_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.show_trash_icon_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('label_form','all','labels','0','delete');return false;">
 				<div style="float:left;padding-left:5px;">

@@ -34,180 +34,69 @@
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.thetype" default="">
 	<cfparam name="arguments.thestruct.fromshare" default="F">
-	<cfloop index="thenr" delimiters="," list="#arguments.thestruct.file_id#">
-		<!--- If we come from a overview we have numbers with the type --->
-		<cfset thetype = listlast(thenr,"-")>
-		<cfset thenr = listfirst(thenr,"-")>
-		<!--- First check if the product is not already in this basket --->
-		<cfquery datasource="#application.razuna.datasource#" name="here">
-		SELECT user_id
-		FROM #session.hostdbprefix#cart
-		WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
-		<cfif arguments.thestruct.fromshare EQ "F">
-			AND user_id = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfif>
-		AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- If no record has been found continue --->
-		<cfif here.recordcount EQ 0>
-			<!--- Sometimes we have a 0 in the list, filter this out --->
-			<cfif thenr NEQ 0 AND len(thetype) LTE 5>
-				<!--- insert the prodcut to the cart --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#cart
-				(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
-				VALUES(
-				<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-				</cfquery>
+	<cfparam name="arguments.thestruct.hostdbprefix" default="#session.hostdbprefix#">
+	<cfparam name="arguments.thestruct.datasource" default="#application.razuna.datasource#">
+	<cfparam name="arguments.thestruct.thedatabase" default="#application.razuna.thedatabase#">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfloop index="thenr" delimiters="," list="#attributes.intstruct.file_id#">
+			<!--- If we come from a overview we have numbers with the type --->
+			<cfset thetype = listlast(thenr,"-")>
+			<cfset thenr = listfirst(thenr,"-")>
+			<!--- First check if the product is not already in this basket --->
+			<cfquery datasource="#attributes.intstruct.datasource#" name="here">
+			SELECT user_id
+			FROM #session.hostdbprefix#cart
+			WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
+			<cfif attributes.intstruct.fromshare EQ "F">
+				AND user_id = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfif>
-		</cfif>
-	</cfloop>
-	<!--- Remove expired assets from cart --->
-	<cfquery datasource="#application.razuna.datasource#" name="removeexpired">
-		<cfif application.razuna.thedatabase NEQ "h2">
-		DELETE c FROM #session.hostdbprefix#cart c
-		LEFT JOIN #session.hostdbprefix#images i ON c.cart_product_id = i.img_id AND cart_file_type = 'img'
-		LEFT JOIN #session.hostdbprefix#audios a ON c.cart_product_id = a.aud_id AND cart_file_type = 'aud'
-		LEFT JOIN #session.hostdbprefix#videos v ON c.cart_product_id = v.vid_id AND cart_file_type = 'vid'
-		LEFT JOIN #session.hostdbprefix#files f ON c.cart_product_id = f.file_id AND cart_file_type = 'doc'
-		WHERE
-		i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-		<cfelse>
-		DELETE FROM #session.hostdbprefix#cart c
-			WHERE EXISTS (
-			SELECT 1 FROM #session.hostdbprefix#cart cc
-			LEFT JOIN #session.hostdbprefix#images i ON cc.cart_product_id = i.img_id AND cc.cart_file_type = 'img'
-			LEFT JOIN #session.hostdbprefix#audios a ON cc.cart_product_id = a.aud_id AND cc.cart_file_type = 'aud'
-			LEFT JOIN #session.hostdbprefix#videos v ON cc.cart_product_id = v.vid_id AND cc.cart_file_type = 'vid'
-			LEFT JOIN #session.hostdbprefix#files f ON cc.cart_product_id = f.file_id AND cc.cart_file_type = 'doc'
-			WHERE
-			c.cart_product_id=cc.cart_product_id
-			AND
-			(i.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR a.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR v.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			OR f.expiry_date < <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">
-			)
-		)
-		</cfif>
-	</cfquery>
+			AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- If no record has been found continue --->
+			<cfif here.recordcount EQ 0>
+				<!--- Sometimes we have a 0 in the list, filter this out --->
+				<cfif thenr NEQ 0 AND len(thetype) LTE 5>
+					<!--- insert the prodcut to the cart --->
+					<cfquery datasource="#attributes.intstruct.datasource#">
+					INSERT INTO #session.hostdbprefix#cart
+					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
+					VALUES(
+					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+				</cfif>
+			</cfif>
+		</cfloop>
+	</cfthread>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
 <!--- READ BASKET --->
-<cffunction name="readbasket" output="false" returnType="query">
+<cffunction name="readbasketquick" output="false" returnType="query">
+	<cfargument name="thestruct" type="struct">
 	<cfset var qry = "">
+	<cfset var limit = false>
+	<!--- Get total --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_count" cachedwithin="1" region="razcache">
+		SELECT  /* #variables.cachetoken#readbasketquickcount */ count(cart_id) AS total
+		FROM #session.hostdbprefix#cart c
+		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, c.cart_order_artofimage, c.cart_order_artofvideo, c.cart_order_artofaudio,
-			CASE
-				WHEN c.cart_file_type = 'doc'
-					THEN (
-						SELECT file_change_time
-						FROM #session.hostdbprefix#files
-						WHERE file_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT img_change_time
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT vid_change_time
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'aud'
-					THEN (
-						SELECT aud_change_time
-						FROM #session.hostdbprefix#audios
-						WHERE aud_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as change_date,
-
-			CASE
-				WHEN c.cart_file_type = 'doc'
-					THEN (
-						SELECT file_create_time
-						FROM #session.hostdbprefix#files
-						WHERE file_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT img_create_time
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT vid_create_time
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'aud'
-					THEN (
-						SELECT aud_create_time
-						FROM #session.hostdbprefix#audios
-						WHERE aud_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as create_date,
-
-			CASE
-				WHEN c.cart_file_type = 'doc'
-					THEN (
-						SELECT expiry_date
-						FROM #session.hostdbprefix#files
-						WHERE file_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT expiry_date
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT expiry_date
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'aud'
-					THEN (
-						SELECT expiry_date
-						FROM #session.hostdbprefix#audios
-						WHERE aud_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as expiry_date,
-
+		SELECT /* #variables.cachetoken#readbasketquick */ '#qry_count.total#' as total, c.cart_product_id, c.cart_file_type,
 			CASE
 				WHEN c.cart_file_type = 'doc'
 					THEN (
@@ -237,129 +126,284 @@
 						WHERE aud_id = c.cart_product_id
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						)
-			END as filename,
-			CASE
-				WHEN c.cart_file_type = 'doc'
-					THEN (
-						SELECT file_extension
-						FROM #session.hostdbprefix#files
-						WHERE file_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'aud'
-					THEN (
-						SELECT aud_extension
-						FROM #session.hostdbprefix#audios
-						WHERE aud_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as theextension,
-			CASE
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT img_width
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT vid_width
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as cart_width,
-			CASE
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT img_height
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT vid_height
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as cart_height,
-			CASE
-				WHEN c.cart_file_type = 'doc'
-					THEN (
-						SELECT file_size
-						FROM #session.hostdbprefix#files
-						WHERE file_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT img_size
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT vid_size
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'aud'
-					THEN (
-						SELECT aud_size
-						FROM #session.hostdbprefix#audios
-						WHERE aud_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as cart_size,
-			CASE
-				WHEN c.cart_file_type = 'doc'
-					THEN (
-						SELECT file_upc_number
-						FROM #session.hostdbprefix#files
-						WHERE file_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'img'
-					THEN (
-						SELECT img_upc_number
-						FROM #session.hostdbprefix#images
-						WHERE img_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'vid'
-					THEN (
-						SELECT vid_upc_number
-						FROM #session.hostdbprefix#videos
-						WHERE vid_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-				WHEN c.cart_file_type = 'aud'
-					THEN (
-						SELECT aud_upc_number
-						FROM #session.hostdbprefix#audios
-						WHERE aud_id = c.cart_product_id
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-			END as upc_number
+			END as filename
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<!---
-		AND c.user_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.theuserid#">
-		--->
 		ORDER BY c.cart_file_type
+		LIMIT 20
 	</cfquery>
+	<cfreturn qry>
+</cffunction>
+
+<!--- READ BASKET --->
+<cffunction name="readbasket" output="false" returnType="query">
+	<cfargument name="thestruct" type="struct">
+	<cfset var qry = "">
+	<cfset var limit = false>
+	<cfif StructKeyexists(arguments.thestruct,'basket_limit')>
+		<cfset var limit = true>
+	</cfif>
+	<cfparam name="arguments.thestruct.get_all_fields" default="false">
+	<!--- Get total --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_count" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#readbasketfullcount */ count(cart_id) AS total
+		FROM #session.hostdbprefix#cart c
+		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#readbasket */ '#qry_count.total#' as total, c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, c.cart_create_date, c.cart_change_date, c.cart_order_artofimage, c.cart_order_artofvideo, c.cart_order_artofaudio,
+			CASE
+				WHEN c.cart_file_type = 'doc'
+					THEN (
+						SELECT file_name
+						FROM #session.hostdbprefix#files
+						WHERE file_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'img'
+					THEN (
+						SELECT img_filename
+						FROM #session.hostdbprefix#images
+						WHERE img_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'vid'
+					THEN (
+						SELECT vid_filename
+						FROM #session.hostdbprefix#videos
+						WHERE vid_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				WHEN c.cart_file_type = 'aud'
+					THEN (
+						SELECT aud_name
+						FROM #session.hostdbprefix#audios
+						WHERE aud_id = c.cart_product_id
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+			END as filename
+
+				,
+				CASE
+					WHEN c.cart_file_type = 'doc'
+						THEN (
+							SELECT file_change_time
+							FROM #session.hostdbprefix#files
+							WHERE file_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT img_change_time
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT vid_change_time
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'aud'
+						THEN (
+							SELECT aud_change_time
+							FROM #session.hostdbprefix#audios
+							WHERE aud_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as change_date,
+
+				CASE
+					WHEN c.cart_file_type = 'doc'
+						THEN (
+							SELECT file_create_time
+							FROM #session.hostdbprefix#files
+							WHERE file_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT img_create_time
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT vid_create_time
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'aud'
+						THEN (
+							SELECT aud_create_time
+							FROM #session.hostdbprefix#audios
+							WHERE aud_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as create_date,
+
+				CASE
+					WHEN c.cart_file_type = 'doc'
+						THEN (
+							SELECT expiry_date
+							FROM #session.hostdbprefix#files
+							WHERE file_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT expiry_date
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT expiry_date
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'aud'
+						THEN (
+							SELECT expiry_date
+							FROM #session.hostdbprefix#audios
+							WHERE aud_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as expiry_date,
+
+
+				CASE
+					WHEN c.cart_file_type = 'doc'
+						THEN (
+							SELECT file_extension
+							FROM #session.hostdbprefix#files
+							WHERE file_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'aud'
+						THEN (
+							SELECT aud_extension
+							FROM #session.hostdbprefix#audios
+							WHERE aud_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as theextension,
+				CASE
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT img_width
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT vid_width
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as cart_width,
+				CASE
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT img_height
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT vid_height
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as cart_height,
+				CASE
+					WHEN c.cart_file_type = 'doc'
+						THEN (
+							SELECT file_size
+							FROM #session.hostdbprefix#files
+							WHERE file_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT img_size
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT vid_size
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'aud'
+						THEN (
+							SELECT aud_size
+							FROM #session.hostdbprefix#audios
+							WHERE aud_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as cart_size,
+				CASE
+					WHEN c.cart_file_type = 'doc'
+						THEN (
+							SELECT file_upc_number
+							FROM #session.hostdbprefix#files
+							WHERE file_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'img'
+						THEN (
+							SELECT img_upc_number
+							FROM #session.hostdbprefix#images
+							WHERE img_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'vid'
+						THEN (
+							SELECT vid_upc_number
+							FROM #session.hostdbprefix#videos
+							WHERE vid_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+					WHEN c.cart_file_type = 'aud'
+						THEN (
+							SELECT aud_upc_number
+							FROM #session.hostdbprefix#audios
+							WHERE aud_id = c.cart_product_id
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+				END as upc_number
+
+		FROM #session.hostdbprefix#cart c
+		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		ORDER BY c.cart_file_type
+		<cfif limit>LIMIT 10</cfif>
+	</cfquery>
+<!--- 	<cfdump var="#qry#">
+	<cfabort> --->
 	<cfreturn qry>
 </cffunction>
 
 <!--- Assets Additional Versions --->
 <cffunction name="additional_versions" output="false">
-	<cfset var getbasket = readbasket()>
+	<cfargument name="thestruct" type="struct">
+	<cfset var getbasket = readbasket(arguments.thestruct)>
 	<!--- param --->
 	<cfset var qry = structnew()>
 	<!--- check recordcount --->
@@ -461,7 +505,7 @@
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
 	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
 	<!--- Read Basket --->
-	<cfinvoke method="readbasket" returnvariable="thebasket">
+	<cfinvoke method="readbasket" thestruct="#arguments.thestruct#" returnvariable="thebasket">
 	<!--- Get total size of all assets in cart --->
 	<cfquery name="totsize" dbtype="query">
 		SELECT sum(cart_size) basketsize FROM thebasket
@@ -628,6 +672,7 @@
 				file_keywords = <cfqueryparam value="#thekey#" cfsqltype="cf_sql_varchar">
 				WHERE file_id_r = <cfqueryparam value="#getfileid.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
 		</cfloop>
@@ -840,9 +885,7 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.thename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-
-		#attributes.intstruct.qry.link_path_url#" mode="775">
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.thename#.txt" output="This asset is located on a external source. Here is the direct link to the asset: #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "lan">
@@ -1212,9 +1255,7 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.img_filename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-
-#attributes.intstruct.qry.link_path_url#" mode="775">
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.img_filename#.txt" output="This asset is located on a external source. Here is the direct link to the asset: #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 				<!--- Wait for the thread above until the file is downloaded fully --->
 				<cfthread action="join" name="#thethreadid#" />
@@ -1527,9 +1568,7 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.vid_filename#.txt" output="This asset is located on a external source. Here is the direct link (or the embeeded code) to the asset:
-
-#attributes.intstruct.qry.link_path_url#" mode="775">
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.vid_filename#.txt" output="This asset is located on a external source. Here is the direct link (or the embeeded code) to the asset: #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
 			<cfelseif qry.link_kind EQ "lan">
@@ -1800,9 +1839,7 @@
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.aud_name#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
-
-#attributes.intstruct.qry.link_path_url#" mode="775">
+					<cffile action="write" file="#attributes.intstruct.thedir#/#attributes.intstruct.qry.aud_name#.txt" output="This asset is located on a external source. Here is the direct link to the asset: #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
 			<cfelseif qry.link_kind EQ "lan">
@@ -1935,7 +1972,7 @@
 		<!--- Create directory --->
 		<cfset var basketname = createuuid("")>
 		<!--- Read Basket --->
-		<cfinvoke method="readbasket" returnvariable="thebasket">
+		<cfinvoke method="readbasket" thestruct="#arguments.thestruct#" returnvariable="thebasket">
 		<cfset var filectr = 0>
 		<!--- Get total size of all assets in cart --->
 		<cfquery name="totsize" dbtype="query">
@@ -2121,7 +2158,7 @@
 			<cfset arguments.thestruct.s3list = listappend(arguments.thestruct.s3list, listlast(struct["key"],'/\'))>
 		</cfloop>
 		<!--- Read Basket --->
-		<cfinvoke method="readbasket" returnvariable="thebasket">
+		<cfinvoke method="readbasket" thestruct="#arguments.thestruct#" returnvariable="thebasket">
 		<cfset var filectr = 0>
 		<!--- Get total size of all assets in cart --->
 		<cfquery name="totsize" dbtype="query">

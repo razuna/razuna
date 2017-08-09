@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif session.is_system_admin OR session.is_administrator>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>
@@ -88,7 +88,7 @@
 									<cfloop list="#attributes.cs_place.top.video#" index="m" delimiters=",">
 										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 										<cfif m CONTAINS "_filename">
-											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
@@ -116,7 +116,7 @@
 										</cfif>
 									</cfloop>
 									<br/><br/>
-									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;">
 										<div id="draggable#vid_id#" type="#vid_id#-vid" class="theimg">
 											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -126,7 +126,7 @@
 														<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 													</cfif>
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/#vid_name_image#?#uniqueid#" border="0">
+													<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0">
 												</cfif>
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -160,13 +160,13 @@
 									<div style="clear:left;"></div>
 									<!--- custom metadata fields to show --->
 									<cfif attributes.cs.videos_metadata EQ "">
-										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(vid_filename,50)#</strong></a>
+										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#left(vid_filename,50)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs_place.bottom.video#" index="m" delimiters=",">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											<cfif m CONTAINS "_filename">
-												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											<cfelseif m CONTAINS "_time">
@@ -243,13 +243,13 @@
 					<tr class="list thumbview">
 						<td valign="top" width="1%" nowrap="true">
 							<cfif is_available>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;">
 									<div id="draggable#vid_id#" type="#vid_id#-vid">
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<img src="#cloud_url#" border="0" width="160">
-											<cfelse>		
-												<img src="#thestorage##path_to_asset#/#vid_name_image#?#uniqueid#" border="0" width="160">
+											<cfelse>
+												<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0" width="160">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
@@ -315,7 +315,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#vid_id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+								<textarea name="#vid_id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>
 							</div>
 						</td>
 					</tr>
@@ -358,7 +358,7 @@
 					<tr class="list thumbview">
 						<td valign="top" width="1%" nowrap="true">
 							<cfif is_available>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;">
 									<div id="draggable#vid_id#-vid" type="#vid_id#-vid">
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -368,7 +368,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#vid_name_image#?#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -387,7 +387,7 @@
 							</cfif>
 						</td>
 						<td width="100%" valign="top">
-							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#vid_filename#</strong></a>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#vid_filename#</strong></a>
 							<br />
 							<!--- Icons --->
 							<div style="float:left;padding-top:5px;">
@@ -428,7 +428,7 @@
 			</tr>
 		</table>
 		</form>
-	
+
 		<!--- JS for the combined view --->
 		<script type="text/javascript">
 			<cfif session.file_id NEQ "">
@@ -459,7 +459,7 @@
 						$("##updatestatusvid2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 				   	}
 				});
-		        return false; 
+		        return false;
 			}
 			<cfif session.view EQ "combined">
 				// Activate Chosen

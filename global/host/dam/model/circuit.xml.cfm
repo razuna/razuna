@@ -4,15 +4,15 @@
 	Example circuit.xml file for the model portion of an application.
 -->
 <circuit access="internal">
-	
+
 	<!--
 		Example model fuseaction that just references an action fuse.
 		Model fuseactions should only reference actions and queries.
-	
+
 	<fuseaction name="getTime">
 		<include template="act_get_time" />
 	</fuseaction>-->
-	
+
 	<!--
 		This is executed at application startup (from <appinit>) and
 		therefore is thread safe (and does not need a lock):
@@ -60,7 +60,6 @@
 			<argument name="database" value="#application.razuna.thedatabase#" />
 			<argument name="setid" value="#application.razuna.setid#" />
 		</instantiate>
-		<instantiate class="security" object="myFusebox.getApplicationData().security" arguments="#application.razuna.datasource#" overwrite="true" />
 		<instantiate class="rssparser" object="myFusebox.getApplicationData().rssparser" arguments="" overwrite="true" />
 		<!-- eMail -->
 		<instantiate class="email" object="myFusebox.getApplicationData().email" overwrite="true">
@@ -201,5 +200,5 @@
 		<instantiate class="approval" object="myFusebox.getApplicationData().approval" overwrite="true">
 		</instantiate>
 	</fuseaction>
-	
+
 </circuit>

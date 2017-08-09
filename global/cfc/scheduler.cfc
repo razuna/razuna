@@ -25,6 +25,8 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
+<cfset consoleoutput(true)>
+
 <!--- GET ALL SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
 	<cfset var qry = "">
@@ -68,7 +70,7 @@
 		FROM #session.hostdbprefix#schedules
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif variables.database EQ "mssql">
-			AND sched_id NOT IN 
+			AND sched_id NOT IN
 			(
 				SELECT TOP #min# sched_id
 				FROM #session.hostdbprefix#schedules
@@ -107,61 +109,61 @@
 		<!--- get next id --->
 		<cfset var newschid = createuuid()>
 		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#schedules 
-		(sched_id, 
-		 set2_id_r, 
-		 sched_user, 
-		 sched_method, 
-		 sched_name, 
-		 sched_folder_id_r, 
-		 sched_zip_extract, 
+		INSERT INTO #session.hostdbprefix#schedules
+		(sched_id,
+		 set2_id_r,
+		 sched_user,
+		 sched_method,
+		 sched_name,
+		 sched_folder_id_r,
+		 sched_zip_extract,
 		 sched_interval,
-		 sched_server_folder, 
-		 sched_server_recurse, 
-		 sched_server_files, 
-		 sched_mail_pop, 
-		 sched_mail_user, 
-		 sched_mail_pass, 
-		 sched_mail_subject, 
-		 sched_ftp_server, 
-		 sched_ftp_user, 
-		 sched_ftp_pass, 
+		 sched_server_folder,
+		 sched_server_recurse,
+		 sched_server_files,
+		 sched_mail_pop,
+		 sched_mail_user,
+		 sched_mail_pass,
+		 sched_mail_subject,
+		 sched_ftp_server,
+		 sched_ftp_user,
+		 sched_ftp_pass,
 		 sched_ftp_folder,
 		 sched_ftp_email,
 		 host_id,
 		 sched_upl_template,
 		 sched_ad_user_groups
-		 <cfif schedData.ftpPassive is not "">, sched_ftp_passive</cfif> 
+		 <cfif schedData.ftpPassive is not "">, sched_ftp_passive</cfif>
 		 <cfif schedData.startDate is not "">, sched_start_date</cfif>
 		 <cfif schedData.startTime is not "">, sched_start_time</cfif>
 		 <cfif schedData.endDate is not "">, sched_end_date</cfif>
-		 <cfif schedData.endTime is not "">, sched_end_time</cfif> 
+		 <cfif schedData.endTime is not "">, sched_end_time</cfif>
 		)
-		VALUES 
-		(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
-		 <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">, 
-		 <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-		 <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.folder_id#" cfsqltype="CF_SQL_VARCHAR">, 
-		 <cfqueryparam value="#schedData.zipExtract#" cfsqltype="cf_sql_numeric">, 
+		VALUES
+		(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">,
+		 <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">,
+		 <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+		 <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		 <cfqueryparam value="#schedData.zipExtract#" cfsqltype="cf_sql_numeric">,
 		 <cfqueryparam value="#schedData.interval#" cfsqltype="cf_sql_varchar">,
-		 <cfqueryparam value="#schedData.serverFolder#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.serverFolderRecurse#" cfsqltype="cf_sql_numeric">, 
-		 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-		 <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.mailSubject#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.ftpServer#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">, 
-		 <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">, 
+		 <cfqueryparam value="#schedData.serverFolder#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.serverFolderRecurse#" cfsqltype="cf_sql_numeric">,
+		 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
+		 <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.mailSubject#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.ftpServer#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">,
+		 <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.ftpemails#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		 <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="cf_sql_varchar">
-		 <cfif schedData.ftpPassive is not "">, <cfqueryparam value="#schedData.ftpPassive#" cfsqltype="cf_sql_numeric"></cfif> 
+		 <cfif schedData.ftpPassive is not "">, <cfqueryparam value="#schedData.ftpPassive#" cfsqltype="cf_sql_numeric"></cfif>
 		 <cfif schedData.startDate is not "">, <cfqueryparam value="#schedData.startDate#" cfsqltype="cf_sql_date"></cfif>
 		 <cfif schedData.startTime is not "">, <cfqueryparam value="#schedData.startTime#" cfsqltype="cf_sql_timestamp"></cfif>
 		 <cfif schedData.endDate is not "">, <cfqueryparam value="#schedData.endDate#" cfsqltype="cf_sql_date"></cfif>
@@ -171,7 +173,7 @@
 		<cfset serverUrl = "#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 		<!--- Save scheduled event in CFML scheduling engine --->
 		<cfschedule action="update"
-					task="RazScheduledUploadEvent[#newschid#]" 
+					task="RazScheduledUploadEvent[#newschid#]"
 					operation="HTTPRequest"
 					url="#serverUrl#?fa=c.scheduler_doit&sched_id=#newschid#"
 					startDate="#schedData.startDate#"
@@ -290,15 +292,15 @@
 	<cftry>
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#schedules_log
-		(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
+		(sched_log_id, sched_id_r, sched_log_action, sched_log_date,
 		sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id)
-		VALUES 
+		VALUES
 		(
-		<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
-		<cfqueryparam value="#arguments.theschedid#" cfsqltype="CF_SQL_VARCHAR">, 
-		<cfqueryparam value="#arguments.theaction#" cfsqltype="cf_sql_varchar">, 
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+		<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#arguments.theschedid#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#arguments.theaction#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 		<cfqueryparam value="#arguments.thedesc#" cfsqltype="cf_sql_varchar">
 		<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -350,13 +352,13 @@
 <!--- UPDATE --------------------------------------------------------------------->
 <cffunction name="update" returntype="string" output="true" access="public">
 	<cfargument name="thestruct" type="struct" required="yes">
-	
+
 	<!--- Param --->
 	<cfparam default="0" name="arguments.thestruct.serverFolderRecurse">
 	<cfparam default="0" name="arguments.thestruct.zipExtract">
 	<cfparam default="0" name="arguments.thestruct.upl_template">
 	<cfparam default="" name="arguments.thestruct.grp_id_assigneds">
-	
+
 	<cfset schedData.serverFolderRecurse = arguments.thestruct.serverFolderRecurse>
 	<cfset schedData.zipExtract = arguments.thestruct.zipExtract>
 	<cftry>
@@ -369,53 +371,53 @@
 		<!--- append to the DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#schedules
-		SET    
-		set2_id_r = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">, 
-		sched_user = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
+		SET
+		set2_id_r = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">,
+		sched_user = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 		sched_method = <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">,
 		sched_name = <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">,
 		sched_folder_id_r = <cfqueryparam value="#schedData.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-		sched_zip_extract = <cfqueryparam value="#schedData.zipExtract#" cfsqltype="cf_sql_varchar">, 
+		sched_zip_extract = <cfqueryparam value="#schedData.zipExtract#" cfsqltype="cf_sql_varchar">,
 		sched_interval = <cfqueryparam value="#schedData.interval#" cfsqltype="cf_sql_varchar">,
 		sched_server_folder = <cfqueryparam value="#schedData.serverFolder#" cfsqltype="cf_sql_varchar">,
 		sched_server_recurse = <cfqueryparam value="#schedData.serverFolderRecurse#" cfsqltype="cf_sql_numeric">,
-		<!--- sched_server_files = <cfqueryparam value="#schedData.serverFiles#" cfsqltype="cf_sql_numeric">, ---> 
-		sched_mail_pop = <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">, 
-		sched_mail_user = <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">, 
-		sched_mail_pass = <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">, 
-		sched_mail_subject = <cfqueryparam value="#schedData.mailSubject#" cfsqltype="cf_sql_varchar">, 
-		sched_ftp_server = <cfqueryparam value="#schedData.ftpServer#" cfsqltype="cf_sql_varchar">, 
-		sched_ftp_user = <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">, 
-		sched_ftp_pass = <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">, 
+		<!--- sched_server_files = <cfqueryparam value="#schedData.serverFiles#" cfsqltype="cf_sql_numeric">, --->
+		sched_mail_pop = <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">,
+		sched_mail_user = <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">,
+		sched_mail_pass = <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">,
+		sched_mail_subject = <cfqueryparam value="#schedData.mailSubject#" cfsqltype="cf_sql_varchar">,
+		sched_ftp_server = <cfqueryparam value="#schedData.ftpServer#" cfsqltype="cf_sql_varchar">,
+		sched_ftp_user = <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">,
+		sched_ftp_pass = <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">,
 		sched_ftp_folder = <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
 		sched_ftp_email = <cfqueryparam value="#schedData.ftpemails#" cfsqltype="cf_sql_varchar">,
 		sched_upl_template = <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">,
 		sched_ad_user_groups = <cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="cf_sql_varchar">,
-		sched_ftp_passive = 
+		sched_ftp_passive =
 		<cfif schedData.ftpPassive is not "">
 			<cfqueryparam value="#schedData.ftpPassive#" cfsqltype="cf_sql_numeric">
 		<cfelse>
 			<cfqueryparam value="0" cfsqltype="cf_sql_numeric">
-		</cfif>, 
-		sched_start_date = 
+		</cfif>,
+		sched_start_date =
 		<cfif schedData.startDate is not "">
 			<cfqueryparam value="#schedData.startDate#" cfsqltype="cf_sql_date">
 		<cfelse>
 			<cfqueryparam value="#schedData.startDate#" cfsqltype="cf_sql_date" null="true">
 		</cfif>,
-		sched_start_time = 
+		sched_start_time =
 		<cfif schedData.startTime is not "">
 			<cfqueryparam value="#schedData.startTime#" cfsqltype="cf_sql_timestamp">
 		<cfelse>
 			<cfqueryparam value="#schedData.startTime#" cfsqltype="cf_sql_timestamp" null="true">
 		</cfif>,
-		sched_end_date = 
+		sched_end_date =
 		<cfif schedData.endDate is not "">
 			<cfqueryparam value="#schedData.endDate#" cfsqltype="cf_sql_date">
 		<cfelse>
 			<cfqueryparam value="#schedData.endDate#" cfsqltype="cf_sql_date" null="true">
 		</cfif>,
-		sched_end_time = 
+		sched_end_time =
 		<cfif schedData.endTime is not "">
 			<cfqueryparam value="#schedData.endTime#" cfsqltype="cf_sql_timestamp">
 		<cfelse>
@@ -427,7 +429,7 @@
 		<cfset serverUrl = "#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 		<!--- Update scheduled event in CF scheduling engine --->
 		<cfschedule action="update"
-			task="RazScheduledUploadEvent[#schedData.sched_id#]" 
+			task="RazScheduledUploadEvent[#schedData.sched_id#]"
 			operation="HTTPRequest"
 			url="#serverUrl#?fa=c.scheduler_doit&sched_id=#schedData.sched_id#"
 			startDate="#schedData.startDate#"
@@ -501,7 +503,7 @@
 			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]">
 			<cfset returncode = "sched_error">
 			<cfset cfcatch.custom_message = "Error in function scheduler.run">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>		
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
 		</cfcatch>
 	</cftry>
 	<cfreturn returncode>
@@ -588,7 +590,7 @@
 	<cfelse>
 		<!--- SERVER --->
 		<cfif doit.qry_detail.sched_method EQ "server">
-			<!--- 
+			<!---
 			<!--- Look into the directory --->
 			<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" recurse="false" name="dirhere" />
 			<!--- Filter content --->
@@ -639,7 +641,7 @@
 			<cfquery datasource="#application.razuna.datasource#" name="runtimeqry">
 				SELECT SCHED_RUN_TIME
 				FROM #session.hostdbprefix#schedules
-				WHERE sched_id = <cfqueryparam value="#x.sched_id#" cfsqltype="cf_sql_varchar"> 
+				WHERE sched_id = <cfqueryparam value="#x.sched_id#" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Run the task only if its not already running or if the last run time is > 24 hrs --->
 			<cfif runtimeqry.sched_run_time EQ '' OR (isdate(runtimeqry.sched_run_time) AND datediff("h",runtimeqry.sched_run_time,now()) GT 24)>
@@ -676,14 +678,14 @@
 		<!--- AD Server --->
 		<cfelseif doit.qry_detail.sched_method EQ "ADServer">
 			<!--- Get LDAP User list --->
-				
+
 			<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments#">
 			<cfif results.recordcount NEQ 0>
 				<cfset emailList = valuelist(results.mail)>
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 					SELECT u.user_email
 					FROM users u, ct_users_hosts ct
-					WHERE lower(u.user_email) in (<cfqueryparam value="#lcase(emailList)#" cfsqltype="cf_sql_varchar" list="true">)
+					WHERE u.user_email in (<cfqueryparam value="#lcase(emailList)#" cfsqltype="cf_sql_varchar" list="true">)
 					AND ct.ct_u_h_host_id = <cfqueryparam value="#doit.qry_detail.host_id#" cfsqltype="cf_sql_numeric">
 					AND ct.ct_u_h_user_id = u.user_id
 				</cfquery>
@@ -703,10 +705,10 @@
 						<cfset arguments.thestruct.user_login_name = qryResults.SamAccountname>
 						<cfset arguments.thestruct.user_email = qryResults.mail>
 						<cfset arguments.thestruct.grp_id_assigneds = doit.qry_detail.sched_ad_user_groups>
-						<cfif arguments.thestruct.user_login_name NEQ '' OR arguments.thestruct.user_email NEQ ''> 
+						<cfif arguments.thestruct.user_login_name NEQ '' OR arguments.thestruct.user_email NEQ ''>
 							<cfinvoke component="global.cfc.users" method="add"  thestruct="#arguments.thestruct#">
 						</cfif>
-					</cfloop> 
+					</cfloop>
 					<!-- CFC: Log start -->
 					<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
 				</cfif>
@@ -718,102 +720,97 @@
 
 <!--- RUN FOLDER SUBSCRIBE SCHEDULE -------------------------------------------------------->
 <cffunction name="folder_subscribe_task" output="true" access="public" >
-	<!--- Cache --->
-	<cfset var cachetoken = getcachetoken("general")>
-	<!--- Only run this code between 1am - 2am. This will give people time to correct any mistakes they migth have made before we delete the entries.  --->
-	<cfif hour(now()) EQ '1'>
-		<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
-		<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#folder_subscribe_task */ f.folder_id, u.user_id
-			FROM #session.hostdbprefix#folders f 
-			INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id
-			INNER JOIN users u ON u.user_id = fs.user_id
-			WHERE
-			<!--- User is not administrator --->
-			NOT EXISTS (SELECT 1 FROM ct_groups_users cu WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id in ('1','2'))
-			<!--- User is not folder_owner --->
-			AND f.folder_owner <>  fs.user_id 
-			 <!--- Folder is not shared with everybody --->
-			AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0') 
-			<!--- User is not part of group that has access to folder --->
-			AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r) 
+
+	<!--- Check / create lock --->
+	<cfset _lockFile("subscribe")>
+
+	<!--- Delete Users that no longer have permissions to access the folder to whom they were subscribed --->
+	<cfquery datasource="#application.razuna.datasource#" name="getusers_wo_access">
+	SELECT f.folder_id, u.user_id, f.host_id
+	FROM #session.hostdbprefix#folders f
+	INNER JOIN #session.hostdbprefix#folder_subscribe fs ON f.folder_id = fs.folder_id AND f.host_id = fs.host_id
+	INNER JOIN users u ON u.user_id = fs.user_id
+	WHERE
+	<!--- User is not administrator --->
+	NOT EXISTS (SELECT 1 FROM ct_groups_users cu WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id in ('1','2'))
+	<!--- User is not folder_owner --->
+	AND f.folder_owner <>  fs.user_id
+	 <!--- Folder is not shared with everybody --->
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#folders_groups fg WHERE f.folder_id = fg.folder_id_r AND fg.grp_id_r = '0')
+	<!--- User is not part of group that has access to folder --->
+	AND NOT EXISTS (SELECT 1 FROM ct_groups_users cu, #session.hostdbprefix#folders_groups g WHERE cu.ct_g_u_user_id = fs.user_id AND cu.ct_g_u_grp_id = g.grp_id_r AND f.folder_id = g.folder_id_r)
+	</cfquery>
+	<cfloop query="getusers_wo_access">
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE
+		FROM #session.hostdbprefix#folder_subscribe
+		WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
+		AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
 		</cfquery>
-		<cfloop query="getusers_wo_access">
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE
-			FROM #session.hostdbprefix#folder_subscribe
-			WHERE folder_id = <cfqueryparam value="#getusers_wo_access.folder_id#" cfsqltype="cf_sql_varchar">
-			AND user_id = <cfqueryparam value="#getusers_wo_access.user_id#" cfsqltype="cf_sql_varchar">
-			</cfquery>
-		</cfloop>
-		<!--- if we had to delete users, flush the cache --->
-		<cfif getusers_wo_access.recordcount NEQ 0>
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("general")>
-		</cfif>
-	</cfif>
+	</cfloop>
 
 	<!--- Get User subscribed folders --->
-	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions" cachedwithin="1" region="razcache">
-	SELECT /* #cachetoken#qGetUserSubscriptions */ fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, 
-	fo.folder_name FROM #session.hostdbprefix#folder_subscribe fs
-	LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id
-	WHERE 
+	<cfquery datasource="#application.razuna.datasource#" name="qGetUserSubscriptions">
+	SELECT fs.fs_id, fs.user_id, fs.folder_id, fs.asset_description, fs.asset_keywords, fs.last_mail_notification_time, fs.host_id, fo.folder_name
+	FROM #session.hostdbprefix#folder_subscribe fs
+	LEFT JOIN #session.hostdbprefix#folders fo ON fs.folder_id = fo.folder_id AND fs.host_id = fo.host_id
+	WHERE
 	<!--- H2 or MSSQL --->
 	<cfif application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "mssql">
 		DATEADD(HOUR, mail_interval_in_hours, last_mail_notification_time)
 	<!--- MYSQL --->
 	<cfelseif application.razuna.thedatabase EQ "mysql">
 		DATE_ADD(last_mail_notification_time, INTERVAL mail_interval_in_hours HOUR)
-	<!--- Oracle, DB2 ?? --->	
 	</cfif>
 	< <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 	</cfquery>
+
 	<!--- Date Format --->
 	<cfinvoke component="defaults" method="getdateformat" returnvariable="dateformat">
 	<!--- Get Assets Log of Subscribed folders --->
 	<cfoutput query="qGetUserSubscriptions">
-		<!--- <cfinvoke component="folders" method="init" returnvariable="foldersObj" /> --->
+		<!--- Var --->
+		<cfset var qGetUpdatedAssets = "">
+		<cfset var folders_list = "">
+		<cfset var damset = "">
 		<!--- Get Sub-folders of Folder subscribe --->
 		<cfinvoke component="folders" method="recfolder" thelist="#qGetUserSubscriptions.folder_id#" returnvariable="folders_list" />
 		<!--- Get UPC setting --->
 		<cfinvoke component="settings" method="getsettingsfromdam" returnvariable="damset" />
 		<!--- Get Updated Assets --->
 		<cfquery datasource="#application.razuna.datasource#" name="qGetUpdatedAssets">
-			SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
-			ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
-			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
-				, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description, 
-				i.img_keywords, i.img_description, f.file_desc, f.file_keywords
-			</cfif>
-			<cfif damset.set2_upc_enabled EQ 'true'>
-				, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number 
-			</cfif>
-  
-			FROM (
-				SELECT asset_id_r, log_timestamp, log_action, log_file_type, log_desc, log_user, folder_id, host_id
-				FROM #session.hostdbprefix#log_assets 
-				WHERE folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
-				AND log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
-				) l
-			LEFT JOIN users u ON l.log_user = u.user_id
-			LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id
-			LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r
-			LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r
-			LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r
-			LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r
-			<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
-				LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1
-				LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1
-				LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1
-				LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1
-			</cfif>
-			ORDER BY l.log_timestamp DESC
+		SELECT l.asset_id_r, l.log_timestamp, l.log_action, l.log_file_type, l.log_desc, l.host_id, u.user_first_name, u.user_last_name, u.user_id, fo.folder_name, ii.path_to_asset img_asset_path, aa.path_to_asset aud_asset_path, vv.path_to_asset vid_asset_path, ff.path_to_asset file_asset_path,
+		ii.img_filename_org img_filenameorg, aa.aud_name_org aud_filenameorg,vv.vid_name_org vid_filenameorg, ff.file_name_org file_filenameorg, ii.cloud_url_org img_cloud_url, aa.cloud_url_org aud_cloud_url, vv.cloud_url_org vid_cloud_url, ff.cloud_url_org file_cloud_url , ii.thumb_extension img_thumb_ext, vv.vid_name_image vid_thumb, ii.cloud_url img_cloud_thumb, vv.cloud_url vid_cloud_thumb
+		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+			, a.aud_description, a.aud_keywords, v.vid_keywords, v.vid_description,
+			i.img_keywords, i.img_description, f.file_desc, f.file_keywords
+		</cfif>
+		<cfif damset.set2_upc_enabled EQ 'true'>
+			, ii.img_upc_number, aa.aud_upc_number, vv.vid_upc_number, ff.file_upc_number
+		</cfif>
+		FROM #session.hostdbprefix#log_assets l
+		LEFT JOIN users u ON l.log_user = u.user_id
+		LEFT JOIN #session.hostdbprefix#folders fo ON l.folder_id = fo.folder_id AND l.host_id = fo.host_id
+		LEFT JOIN #session.hostdbprefix#audios aa ON aa.aud_id = l.asset_id_r AND l.host_id = aa.host_id
+		LEFT JOIN #session.hostdbprefix#files ff ON ff.file_id = l.asset_id_r AND l.host_id = ff.host_id
+		LEFT JOIN #session.hostdbprefix#images ii ON ii.img_id = l.asset_id_r AND l.host_id = ii.host_id
+		LEFT JOIN #session.hostdbprefix#videos vv ON vv.vid_id = l.asset_id_r AND l.host_id = vv.host_id
+		<cfif qGetUserSubscriptions.asset_keywords eq 'T' OR qGetUserSubscriptions.asset_description eq 'T'>
+			LEFT JOIN #session.hostdbprefix#audios_text a ON a.aud_id_r = l.asset_id_r AND a.lang_id_r = 1 AND l.host_id = a.host_id
+			LEFT JOIN #session.hostdbprefix#files_desc f ON f.file_id_r = l.asset_id_r AND f.lang_id_r = 1 AND l.host_id = f.host_id
+			LEFT JOIN #session.hostdbprefix#images_text i ON i.img_id_r = l.asset_id_r AND i.lang_id_r = 1 AND l.host_id = i.host_id
+			LEFT JOIN #session.hostdbprefix#videos_text v ON v.vid_id_r = l.asset_id_r AND v.lang_id_r = 1 AND l.host_id = v.host_id
+		</cfif>
+		WHERE l.folder_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#folders_list#" list="true">)
+		AND l.log_timestamp > <cfqueryparam cfsqltype="cf_sql_timestamp" value="#qGetUserSubscriptions.last_mail_notification_time#">
+		AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
+		ORDER BY l.log_timestamp DESC
 		</cfquery>
-		
-		<cfset var data= "">
-		<cfset var datacols= "">
-		<cfset var fields= "">
+		<!--- Vars --->
+		<cfset var data = "">
+		<cfset var datacols = "">
+		<cfset var fields = "">
 		<!--- Get metafields --->
 		<cfinvoke component="settings" method="get_notifications" returnvariable="fields">
 		<!--- Get Email subject --->
@@ -828,7 +825,7 @@
 		<cfelse>
 			<cfinvoke component="defaults" method="trans" transid="subscribe_email_content" returnvariable="email_intro">
 		</cfif>
-		
+
 		<!--- Email if assets are updated in Subscribed folders --->
 		<cfif qGetUpdatedAssets.recordcount>
 			<!--- Get columns --->
@@ -890,7 +887,7 @@
 										<img src="#vid_cloud_thumb#"  height="50" onerror = "this.src=''">
 									</cfcase>
 								</cfswitch>
-								
+
 							</cfif>
 						</cfif>
 						</td>
@@ -1002,7 +999,7 @@
 										</cfif>
 									</cfcase>
 								</cfswitch>
-								
+
 							</cfif>
 						</cfif>
 						</td>
@@ -1024,19 +1021,24 @@
 		</cfif>
 		<!--- Update Folder Subscribe --->
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#folder_subscribe 
+		UPDATE #session.hostdbprefix#folder_subscribe
 		SET last_mail_notification_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		WHERE fs_id = <cfqueryparam value="#qGetUserSubscriptions.fs_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("general")>
 	</cfoutput>
+	<!--- Check / create lock --->
+	<cfset _removeLockFile('subscribe')>
+
 </cffunction>
 
 <cffunction name="asset_expiry_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
+
+	<!--- Check / create lock --->
+	<cfset _lockFile("expiry")>
+
 	<!--- Check if expiry label is not present for a host --->
 	<cfquery datasource="#application.razuna.datasource#" name="getmissing_labels">
-	SELECT h.HOST_ID 
+	SELECT h.HOST_ID
 	FROM raz1_labels l RIGHT JOIN hosts h
 	ON l.label_text='Asset has expired' AND l.host_id=h.host_id AND l.label_id_r = '0'
 	WHERE label_id IS NULL
@@ -1055,7 +1057,7 @@
 				)
 		</cfquery>
 	</cfloop>
-	<!--- Get assets that  have expired --->
+	<!--- Get assets that have expired --->
 	<cfquery datasource="#application.razuna.datasource#" name="getexpired_assets">
 	SELECT img_id id, host_id, 'img' type, (SELECT MAX(label_id) FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id AND label_id_r = '0')label_id FROM raz1_images i WHERE expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION ALL
@@ -1074,10 +1076,10 @@
 	WHERE i.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
-	AND cu.ct_g_u_user_id = u.user_id 
+	AND cu.ct_g_u_user_id = u.user_id
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=i.img_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=i.host_id  AND label_id_r = '0'))
 	UNION ALL
 	SELECT a.aud_id id, a.aud_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'aud' type, path_to_asset, '' thumb, '' cloud_thumb
@@ -1085,10 +1087,10 @@
 	WHERE a.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
-	AND cu.ct_g_u_user_id = u.user_id 
+	AND cu.ct_g_u_user_id = u.user_id
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=a.aud_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=a.host_id AND label_id_r = '0'))
 	UNION ALL
 	SELECT v.vid_id id, v.vid_filename name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'vid' type, path_to_asset, vid_name_image thumb, cloud_url cloud_thumb
@@ -1098,8 +1100,8 @@
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
 	AND cu.ct_g_u_user_id = u.user_id
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=v.vid_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired' AND host_id=v.host_id AND label_id_r = '0'))
 	UNION ALL
 	SELECT fi.file_id id, fi.file_name name, f.folder_id, f.folder_name, u.user_email, u.user_Id, 'doc' type, path_to_asset, '' thumb, '' cloud_thumb
@@ -1107,10 +1109,10 @@
 	WHERE fi.folder_id_r = f.folder_id
 	AND f.folder_id = fg.folder_id_r
 	AND cu.ct_g_u_grp_id = fg.grp_id_r
-	AND cu.ct_g_u_user_id = u.user_id 
+	AND cu.ct_g_u_user_id = u.user_id
 	AND fg.grp_id_r <>'0'
-	AND lower(fg.grp_permission) in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
-	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#"> 
+	AND fg.grp_permission in ('w','x') <!--- Only send notification to groups with write and full access permissions --->
+	AND expiry_date < <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 	AND NOT EXISTS (SELECT 1 FROM ct_labels WHERE ct_id_r=fi.file_id AND ct_label_id IN (SELECT label_id FROM raz1_labels WHERE label_text ='Asset has expired'AND host_id=fi.host_id AND label_id_r = '0'))
 	</cfquery>
 	<!--- Extract user information from query --->
@@ -1197,7 +1199,7 @@
 	<cfinvoke component="global.cfc.settings" method="get_notifications" returnvariable="fields">
 	<!--- Get columns --->
 	<cfinvoke component="global.cfc.settings" method="getmeta_asset" assetid= "#getusers2notify.id#" metafields="#fields.set2_asset_expiry_meta#" returnvariable="datacols">
-	
+
 	<!--- Send out notification email about expiry to users in groups that have access to the expired assets--->
 	<!--- Get Email subject --->
 	<cfif fields.set2_asset_expiry_email_sub NEQ "">
@@ -1267,12 +1269,15 @@
 					</cfloop>
 				</tr>
 			</cfloop>
-			</table> 
+			</table>
 		</cfsavecontent>
 		</cfoutput>
 		<!--- Send the email --->
 		<cfinvoke component="email" method="send_email" to="#getuserinfo.user_email#" subject="#email_subject#" themessage="#msgbody#" userid="#getuserinfo.user_id#"/>
 	</cfloop>
+
+	<cfset _removeLockFile('expiry') />
+
 </cffunction>
 
 <cffunction name="ftp_notifications_task" output="true" access="public" hint="Finds assets that have expired and sets the expired label for them or removes them if expiry has been reset">
@@ -1282,7 +1287,7 @@
 	FROM raz1_schedules_log l, raz1_schedules s
 	WHERE s.sched_id = l.sched_id_r
 	AND l.notified=<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
-	AND s.sched_ftp_email <>'' 
+	AND s.sched_ftp_email <>''
 	AND s.sched_ftp_email IS NOT NULL
 	</cfquery>
 	<cfquery name="getusers" dbtype="query">
@@ -1312,7 +1317,7 @@
 						<td>#dateformat(getdata.sched_log_time,"mm/dd/yyyy")#  #timeformat(getdata.sched_log_time,"hh:mm tt")#</td>
 					</tr>
 					<cfquery datasource="#application.razuna.datasource#" name="getlogs">
-					UPDATE raz1_schedules_log SET notified=<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="true"> 
+					UPDATE raz1_schedules_log SET notified=<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="true">
 					WHERE sched_log_id =<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#getdata.sched_log_id#">
 					</cfquery>
 				</cfloop>
@@ -1323,5 +1328,70 @@
 		<cfinvoke component="email" method="send_email" to="#getusers.sched_ftp_email#" subject="FTP Task Notifications" themessage="#msgbody#"/>
 	</cfloop>
 </cffunction>
+
+<!--- lock File --->
+<cffunction name="_lockFile" access="private" returntype="void">
+	<cfargument name="task_type" default="" required="yes" type="string">
+	<cftry>
+		<!--- Log --->
+		<cfset console("#now()# ---------------------- Checking the lock file for task : #arguments.task_type#")>
+		<!--- Name of lock file --->
+		<cfset var lockfile = "lock_task_#arguments.task_type#.lock">
+		<!--- Check if lock file exists and a) If it is older than a day then delete it or b) if not older than a day them abort as its probably running from a previous call --->
+		<cfset var lockfilepath = "#GetTempDirectory()#/#lockfile#">
+		<cfset var lockfiledelerr = false>
+		<cfif fileExists(lockfilepath) >
+			<cfset var lockfiledate = getfileinfo(lockfilepath).lastmodified>
+			<cfif datediff("n", lockfiledate, now()) GT 5>
+				<cftry>
+					<cffile action="delete" file="#lockfilepath#">
+					<cfcatch><cfset lockfiledelerr = true></cfcatch> <!--- Catch any errors on file deletion --->
+				</cftry>
+			<cfelse>
+				<cfset lockfiledelerr = true>
+			</cfif>
+		</cfif>
+		<!--- If error on lock file deletion then abort as file is probably still being used for indexing --->
+		<cfif lockfiledelerr>
+			<!--- Log --->
+			<cfset console("#now()# ---------------------- Lock file for Task (#arguments.task_type#) exists. Skipping this execution for now!")>
+			<cfabort>
+		<cfelse>
+			<!--- Log --->
+			<cfset console("#now()# ---------------------- Lock file created for task : #arguments.task_type#")>
+			<!--- We are all good write file --->
+			<cffile action="write" file="#GetTempDirectory()#/#lockfile#" output="x" mode="775" />
+		</cfif>
+		<cfcatch type="any">
+			<cfset console("#now()# ---------------------- ERROR creating lock file for Task : #arguments.task_type#")>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry>
+
+	<!--- Return --->
+	<cfreturn  />
+</cffunction>
+
+<!--- Remove lock file --->
+<cffunction name="_removeLockFile" access="private">
+	<cfargument name="task_type" default="" required="yes" type="string">
+	<cftry>
+		<!--- Log --->
+		<cfset console("#now()# ---------------------- Removing lock file for task : #arguments.task_type#!")>
+		<!--- Name of lock file --->
+		<cfset var lockfile = "lock_task_#arguments.task_type#.lock">
+		<!--- Action --->
+		<cfif fileExists("#GetTempDirectory()#/#lockfile#")>
+			<cffile action="delete" file="#GetTempDirectory()#/#lockfile#" />
+		</cfif>
+		<cfcatch type="any">
+			<cfset console("#now()# ---------------------- ERROR removing lock file for Task : #arguments.task_type#")>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 
 </cfcomponent>

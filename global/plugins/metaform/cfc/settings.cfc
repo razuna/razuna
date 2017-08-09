@@ -13,14 +13,14 @@
 		<cfquery datasource="#getDatasource()#" name="s.qry_mf_order">
 		SELECT mf_value
 		FROM #getHostPrefix()#metaform
-		WHERE lower(mf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_order">
+		WHERE mf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_order">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#getHostID()#">
 		</cfquery>
 		<!--- Get the values of the form --->
 		<cfquery datasource="#getDatasource()#" name="s.qry_mf_active">
 		SELECT mf_value
 		FROM #getHostPrefix()#metaform
-		WHERE lower(mf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_active">
+		WHERE mf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_active">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#getHostID()#">
 		</cfquery>
 		<!--- if active is empty --->
@@ -124,7 +124,7 @@
 		SELECT mf_value
 		FROM #getHostPrefix()#metaform
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#getHostID()#">
-		AND lower(mf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_active">
+		AND mf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_active">
 		</cfquery>
 		<cfif qryactive.recordcount NEQ 0>
 			<cfset s.active = qryactive.mf_value>

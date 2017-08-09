@@ -263,7 +263,7 @@
 		<cfargument name="path" required="false" default="">
 		<cfargument name="sf_id" required="true">
 		<cfargument name="root" required="false" default="false">
-		<!--- Param --->
+			<!--- Param --->
 		<cfset var result = structNew()>
 		<!--- Check that we have a Amazon Datasource --->
 		<cfset var ar = awssourcecheck(arguments.sf_id, arguments.root)>
@@ -274,11 +274,19 @@
 				<cfset arguments.path = "">
 			</cfif>
 			<!--- Get keys --->
-			<cfset result.contents = AmazonS3list(
-				datasource=session.aws[arguments.sf_id].datasource, 
-				bucket=session.aws[arguments.sf_id].bucket, 
-				prefix=arguments.path
-			)>
+			<cftry>
+				<cfset result.contents = AmazonS3list(
+					datasource=session.aws[arguments.sf_id].datasource, 
+					bucket=session.aws[arguments.sf_id].bucket, 
+					prefix=arguments.path
+				)>
+				<cfcatch>
+					<cfoutput>
+						Oops, there is an error accessing this bucket. Amazon reports the following:
+						<p>#cfcatch.message#</p>
+					</cfoutput>
+				</cfcatch>
+			</cftry>
 			<!--- set path --->
 			<cfset result.path = arguments.path>
 		</cfif>
@@ -304,6 +312,7 @@
 				FROM #session.hostdbprefix#smart_folders_prop
 				WHERE sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="bucket">
 				AND sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Get ID from bucket variable --->
 				<cfset var awsid = listLast(qry.sf_prop_value,"_")>
@@ -311,7 +320,8 @@
 				<cfquery datasource="#application.razuna.datasource#" name="qry_aws_settings">
 				SELECT set_id, set_pref
 				FROM #session.hostdbprefix#settings
-				WHERE lower(set_id) LIKE 'aws_%_#awsid#'
+				WHERE set_id LIKE 'aws_%_#awsid#'
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Set the Amazon datasource --->
 				<cfif qry_aws_settings.recordcount NEQ 0>
@@ -330,8 +340,6 @@
 				<!--- Error --->
 				<cfcatch type="any">
 					<cfoutput>An error has occured connecting to your Amazon S3 account<br />Message: #cfcatch.message# <br />Detail: #cfcatch.detail#</cfoutput>
-					<cfset cfcatch.custom_message = "An error has occured connecting to your Amazon S3 account in function amazon.awssourcecheck">
-					<cfset errobj.logerrors(cfcatch,false)/>
 					<cfabort>
 				</cfcatch>
 			</cftry>

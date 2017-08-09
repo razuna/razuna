@@ -37,7 +37,7 @@
 				<div style="float:right;font-weight:bold;"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#attributes.folder_id#');" style="text-decoration:underline;">Upload</a></cfif></div>
 				<div style="clear:both;"></div>
 			</cfif>
-			<div>There are #qry_subfolders.recordcount# folders and #qry_filecount.thetotal# files here.</div>
+			<div>There are #qry_subfolders.recordcount# folders and #attributes.qry_filecount# files here.</div>
 			<br />
 			<cfloop query="qry_subfolders">
 				<div id="folders">
@@ -60,7 +60,7 @@
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
+										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#hashtag#" border="0">
 									</cfif>
 								<cfelse>
 									<img src="#link_path_url#" border="0" width="120">
@@ -74,7 +74,7 @@
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+										<img src="#thestorage##path_to_asset#/#filename_org#?_v=#hashtag#" border="0">
 									</cfif>
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

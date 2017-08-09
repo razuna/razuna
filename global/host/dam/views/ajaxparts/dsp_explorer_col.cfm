@@ -30,7 +30,7 @@
 		<div style="float:left;"><a href="##" onclick="$('##collectiontools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##collectiontools').toggle();" class="ddicon"></div>
 		<div id="collectiontools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=T');$('##collectiontools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">Add Collection Folder</a></p>
 				<p><hr></p>
 			</cfif>

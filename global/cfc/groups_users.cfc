@@ -43,26 +43,28 @@
 	WHERE (
 		groups.grp_host_id = <cfqueryparam value="#Arguments.host_id#" cfsqltype="cf_sql_numeric">
 		OR groups.grp_host_id IS NULL
-		)
+	)
 	AND EXISTS(
-			  SELECT ct_groups_users.ct_g_u_grp_id, ct_groups_users.ct_g_u_user_id
-			  FROM ct_groups_users
-			  WHERE ct_groups_users.ct_g_u_grp_id = groups.grp_id
-			  AND ct_groups_users.ct_g_u_user_id = <cfqueryparam value="#Arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
-			  )
+		SELECT ct_groups_users.ct_g_u_grp_id, ct_groups_users.ct_g_u_user_id
+		FROM ct_groups_users
+		WHERE ct_groups_users.ct_g_u_grp_id = groups.grp_id
+		AND ct_groups_users.ct_g_u_user_id = <cfqueryparam value="#Arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
+	)
 	<cfif StructKeyExists(Arguments, "mod_id")>
 		AND	groups.grp_mod_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#Arguments.mod_id#">
 	</cfif>
 	<cfif StructKeyExists(Arguments, "mod_short")>
-		AND EXISTS(
-				SELECT mod_id, mod_name, mod_short, mod_host_id
-				FROM modules
-				WHERE modules.mod_id = groups.grp_mod_id AND modules.mod_short = <cfqueryparam value="#Arguments.mod_short#" cfsqltype="cf_sql_varchar">
-				)
+		AND EXISTS (
+			SELECT mod_id, mod_name, mod_short, mod_host_id
+			FROM modules
+			WHERE modules.mod_id = groups.grp_mod_id AND modules.mod_short = <cfqueryparam value="#Arguments.mod_short#" cfsqltype="cf_sql_varchar">
+		)
 	</cfif>
 	<cfif StructKeyExists(arguments, "check_upc_size") AND arguments.check_upc_size EQ 'true'>
-		AND upc_size != '' 
-		AND upc_size is not null
+		AND ( 
+			upc_size <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> '' 
+			OR upc_size is not null
+		)
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>
@@ -228,7 +230,7 @@
 			AND g.grp_id IN (<cfqueryparam value="#Arguments.list_grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true" separator="#Arguments.list_delim#">)
 		</cfif>
 		<cfif StructKeyExists(Arguments, "list_grp_name")>
-			AND lower(g.grp_name) IN (<cfqueryparam value="#lcase(Arguments.list_grp_name)#" cfsqltype="cf_sql_varchar" list="true" separator="#Arguments.list_delim#">)
+			AND g.grp_name IN (<cfqueryparam value="#Arguments.list_grp_name#" cfsqltype="cf_sql_varchar" list="true" separator="#Arguments.list_delim#">)
 		</cfif>
 		AND ct.ct_g_u_user_id = u.user_id
 	)

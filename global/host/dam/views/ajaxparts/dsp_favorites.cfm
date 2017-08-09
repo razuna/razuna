@@ -48,7 +48,7 @@
 					<cfif fav_type EQ "folder">
 						<a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#myid#');return false;" style="text-decoration:none;">
 							<img src="#dynpath#/global/host/dam/images/folder-brown.png" border="0" style="pading:0;margin:0;"><br>#mid(thename,1,28)#<cfif len(thename) GT 28>...</cfif>
-						</a>		
+						</a>
 					<cfelse>
 						<cfif fav_kind EQ "img">
 							<a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#myid#&what=images&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
@@ -64,7 +64,7 @@
 											<img src="#link_path_url#" border="0">
 										</cfif>
 									</cfif>
-								</cfloop>	
+								</cfloop>
 							</a>
 						<cfelseif fav_kind EQ "vid">
 							<a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#myid#&what=videos&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
@@ -80,8 +80,8 @@
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
 										</cfif>
 									</cfif>
-								</cfloop>	
-							</a>				
+								</cfloop>
+							</a>
 						<cfelseif fav_kind EQ "aud">
 							<a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#myid#&what=audios&loaddiv=&folder_id=#qry_favorites.folder_id#','#thename#',1000,1);return false;">
 								<cfloop query="qry_theaudio">
@@ -99,12 +99,12 @@
 										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
 									</cfif>
-								</cfloop>	
+								</cfloop>
 							</a>
 						</cfif>
 					</cfif>

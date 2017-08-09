@@ -163,7 +163,7 @@
 										           <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										   </cfif>
 											 <cfelse>
-										  	 <img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+										  	 <img src="#thestorage##path_to_asset#/#filename_org#?_v=#hashtag#" border="0">
 											 </cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

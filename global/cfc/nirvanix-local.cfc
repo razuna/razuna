@@ -34,7 +34,7 @@
 		SELECT folder_id, FOLDER_IS_COLLECTION
 		FROM #arguments.thestruct.qry_host.host_shard_group#folders
 		WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
-		AND (lower(FOLDER_IS_COLLECTION) != <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
+		AND (FOLDER_IS_COLLECTION != <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		OR FOLDER_IS_COLLECTION IS NULL)
 		</cfquery>
 		<!--- Feedback --->

@@ -28,7 +28,7 @@
 <div>
 	<div style="float:left;padding-top:7px;">
 		<cfif attributes.what EQ "folder">
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				Please select <select name="expwhat" id="expwhat">
 					<option value="folder" selected="selected">#myFusebox.getApplicationData().defaults.trans("export_folder")#</option>
 					<option value="all">#myFusebox.getApplicationData().defaults.trans("export_all_assets")#</option>

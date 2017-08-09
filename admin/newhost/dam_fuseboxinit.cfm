@@ -41,6 +41,8 @@
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">
 <cfparam name="session.firstlastname" default="">
+<cfparam name="session.is_system_admin" default="false">
+<cfparam name="session.is_administrator" default="false">
 
 <!--- Set this app --->
 <cfparam name="session.thisapp" default="dam">
@@ -66,13 +68,13 @@
 <cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thename## */ host_id, host_name, host_type, host_shard_group
 FROM hosts
-WHERE lower(host_name_custom) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thename)##">
+WHERE host_name_custom = <cfqueryparam cfsqltype="cf_sql_varchar" value="##thename##">
 </cfquery>
 <cfif thehost.recordcount EQ 0>
 <cfquery datasource="##application.razuna.datasource##" name="thehost" cachedwithin="##CreateTimeSpan(0,1,0,0)##">
 SELECT /* ##thesubdomain## */ host_id, host_name, host_type, host_shard_group
 FROM hosts
-WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thesubdomain)##">
+WHERE host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="##thesubdomain##">
 </cfquery>
 </cfif>
 <cfif thehost.recordcount EQ 0>
@@ -102,13 +104,9 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 <!--- Cart Session --->
 <cfparam name="session.thecart" default="##createuuid("")##">
 
-<!--- Component : SECURITY : stored in request scope for better performance--->
-<cfinvoke component="global.cfc.security" method="init" returnvariable="Request.securityobj" dsn="##application.razuna.datasource##" />
-<cfinvoke component="##Request.securityobj##" method="initUser" host_id="##Session.hostid##" user_id="##session.theuserid##" mod_short="ecp">
-
 <!--- Log User Out when Session.login has expired. Timeout of Sessions is set above --->
 <cfif NOT IsDefined("Attributes.fa") OR (Attributes.fa NEQ "c.login" AND Attributes.fa NEQ "c.dologin" AND Attributes.fa NEQ "c.login_janrain" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa DOES NOT CONTAIN "c.req_" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa NEQ "c.sv" AND attributes.fa NEQ "c.si" AND attributes.fa NEQ "c.sa" AND attributes.fa NEQ "c.sf" AND attributes.fa NEQ "c.asset_upload" AND attributes.fa DOES NOT CONTAIN "c.view_" AND attributes.fa NEQ "c.logout" AND attributes.fa NEQ "c.apiupload" AND attributes.fa DOES NOT CONTAIN "share" AND attributes.fa NEQ "c.scheduler_doit" AND attributes.fa NEQ "c.w" AND attributes.fa DOES NOT CONTAIN "c.w_" AND attributes.fa DOES NOT CONTAIN "c.mini" AND attributes.fa DOES NOT CONTAIN "widget" AND attributes.fa DOES NOT CONTAIN "basket" AND attributes.fa NEQ "c.serve_file" AND attributes.fa NEQ "c.rfs" AND attributes.fa NEQ "c.search_simple_custom" AND attributes.fa DOES NOT CONTAIN "c.store_" AND attributes.fa DOES NOT CONTAIN "c.meta_" AND attributes.fa NEQ "c.asset_add_single" AND attributes.fa NEQ "c.asset_add_upload" AND attributes.fa NEQ "c.folder_subscribe_task")>
-	<cfif NOT isdefined("session.login") OR session.login EQ "F" OR NOT isdefined("session.thelang") OR NOT structkeyexists(request,"securityobj") OR NOT isdefined("session.theuserid")>
+	<cfif NOT isdefined("session.login") OR session.login EQ "F" OR NOT isdefined("session.thelang") OR NOT isdefined("session.theuserid")>
 		<script language="javascript" type="text/javascript">
 			top.location.href = "<cfoutput>##myself##</cfoutput>c.logout";
 		</script>

@@ -142,16 +142,16 @@
 											#qry_detail.detail.link_path_url#
 										</cfif>
 									<cfelse>
-										<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#&#uniqueid#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a>
+										<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#qry_detail.detail.hashtag#&#uniqueid#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a>
 									</cfif>
 								</div>
 							<cfelse>
-								<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400"><br />
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#uniqueid#" border="0" width="400"><br />
 								#qry_detail.detail.link_path_url#<br />
 								#myFusebox.getApplicationData().defaults.trans("link_videos_desc")#
 							</cfif>
 						<cfelse>
-							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#uniqueid#" border="0" width="400">
+							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?_v=#uniqueid#" border="0" width="400">
 						</cfif>
 					</td>
 				<cfif qry_detail.detail.link_kind EQ "url">
@@ -212,7 +212,7 @@
 														<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 													</cfloop>
 												</select>
-												<cfif  flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+												<cfif  flag EQ 1 OR (session.is_system_admin OR session.is_administrator)>
 													<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 												</cfif>
 											<cfelse>
@@ -228,7 +228,7 @@
 															</cfif>
 														</cfloop>
 													</div>
-													<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+													<cfif flag EQ 1 OR (session.is_system_admin OR session.is_administrator)>
 														<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 													</cfif>
 													<!--- Select label button --->

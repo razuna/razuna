@@ -68,17 +68,17 @@
 		SELECT  u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar">
+			u.user_login_name = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar"> 
+			OR u.user_email = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
 			)
 		AND u.user_pass = <cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
 		<cfif arguments.thestruct.loginto EQ "admin">
 			AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 			AND ctg.ct_g_u_user_id = u.user_id
 		<cfelseif arguments.thestruct.loginto EQ "dam">
-			AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+			AND u.user_in_dam = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		</cfif>
-		AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+		AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		<cfif arguments.thestruct.loginto NEQ "admin">
 			AND ct.ct_u_h_user_id = u.user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
@@ -103,17 +103,17 @@
 					SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, u.user_search_selection
 					FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 					WHERE (
-						lower(u.user_login_name) = <cfqueryparam value="#lcase(adusername)#" cfsqltype="cf_sql_varchar"> 
-						OR lower(u.user_email) = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
+						u.user_login_name = <cfqueryparam value="#adusername#" cfsqltype="cf_sql_varchar"> 
+						OR u.user_email = <cfqueryparam value="#arguments.thestruct.name#" cfsqltype="cf_sql_varchar">
 						)
 					AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
 					<cfif arguments.thestruct.loginto EQ "admin">
 						AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 						AND ctg.ct_g_u_user_id = u.user_id
 					<cfelseif arguments.thestruct.loginto EQ "dam">
-						AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+						AND u.user_in_dam = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 					</cfif>
-					AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+					AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 					<cfif arguments.thestruct.loginto NEQ "admin">
 						AND ct.ct_u_h_user_id = u.user_id
 						AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
@@ -142,6 +142,8 @@
 		<cfif qryuser.recordcount EQ 0 OR (isdefined("adauth") AND adauth EQ false)>
 			<cfset theuser.notfound = "T">
 		<cfelse>
+			<cfset session.is_system_admin = false>
+			<cfset session.is_administrator = false>
 			<cfset theuser.notfound = "F">
 			<!--- Put the query result in the structure --->
 			<cfset theuser.qryuser = qryuser>
@@ -171,10 +173,18 @@
 			<!--- Set lib path --->
 			<cfset session.libpath  =  replace(replace("#expandpath('../../')#WEB-INF\lib","/","#fileseparator()#","ALL"),"\","#fileseparator()#","ALL")>
 			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
-			<cfinvoke component="groups_users" method="getGroupsOfUser">
+			<cfinvoke component="groups_users" method="getGroupsOfUser" returnvariable="groups_of_user">
 				<cfinvokeargument name="user_id" value="#qryuser.user_id#" />
 				<cfinvokeargument name="host_id" value="#session.hostid#" />
 			</cfinvoke>
+			<!--- Set user admin status --->
+			<cfloop query="groups_of_user">
+				<cfif grp_id EQ "1">
+					<cfset session.is_system_admin = true>
+				<cfelseif grp_id EQ "2">
+					<cfset session.is_administrator = true>
+				</cfif>
+			</cfloop>
 			<!--- Admin Login: Set the domain ID into a session --->
 			<cfif arguments.thestruct.loginto EQ "admin">
 				<cfset session.hostid = "0">
@@ -264,7 +274,7 @@
 		FROM #session.hostdbprefix#folders
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (
-			lower(folder_is_collection) <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+			folder_is_collection <cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 			OR
 			folder_is_collection IS NULL
 			)
@@ -333,7 +343,7 @@
 			SELECT /* #attributes.intstruct.cachetoken#createmyfolder */ custom_id, custom_value
 			FROM #session.hostdbprefix#custom
 			WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
-			AND lower(custom_id) = <cfqueryparam value="myfolder_create" cfsqltype="cf_sql_varchar">
+			AND custom_id = <cfqueryparam value="myfolder_create" cfsqltype="cf_sql_varchar">
 			</cfquery>
 			<!--- Check if value is here --->
 			<cfif qry.recordcount EQ 0>
@@ -347,7 +357,7 @@
 				SELECT folder_of_user
 				FROM #session.hostdbprefix#folders
 				WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">
-				AND lower(folder_name) = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
+				AND folder_name = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Create the MY FOLDER for this user --->
@@ -440,8 +450,8 @@
 		SELECT u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_id, u.user_pass, u.user_expiry_date
 		FROM users u, ct_users_hosts ct
 		WHERE (
-			lower(u.user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
-			OR lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.email)#">
+			u.user_email = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.email#">
+			OR u.user_login_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.email#">
 			)
 		<!--- When password is requested from admin login then the hostid is not set in session and is set to 0 --->
 		<cfif session.hostid neq 0>
@@ -618,10 +628,10 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
 		FROM users u, ct_users_hosts ct, hosts h
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(loginname)#" cfsqltype="cf_sql_varchar">
+			u.user_login_name = <cfqueryparam value="#loginname#" cfsqltype="cf_sql_varchar"> 
+			OR u.user_email = <cfqueryparam value="#loginname#" cfsqltype="cf_sql_varchar">
 		)
-		AND lower(u.user_active) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
+		AND u.user_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		AND u.user_id = ct.ct_u_h_user_id
 		<cfif structkeyexists(session,"hostid")>
 			AND h.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
@@ -701,11 +711,11 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 					SELECT /* #variables.cachetoken#login_janrain2 */ uc.identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 					FROM #session.hostdbprefix#users_accounts uc, users u
 					WHERE (
-						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(email)#">
+						uc.identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#email#">
 						OR
-						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(preferredUsername)#">
+						uc.identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#preferredUsername#">
 						)
-					AND lower(uc.provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+					AND uc.provider = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#providerName#">
 					AND uc.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					AND uc.user_id_r = u.user_id
 					</cfquery>
@@ -715,7 +725,7 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 						UPDATE #session.hostdbprefix#users_accounts
 						SET jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
 						WHERE user_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qryaccount.user_id_r#">
-						AND lower(provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+						AND provider = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#providerName#">
 						</cfquery>
 						<!--- Flush Cache --->
 						<cfset variables.cachetoken = resetcachetoken("users")>
@@ -728,6 +738,8 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 				</cfif>
 				<!--- If all goes well redirect to login --->
 				<cfif razgo>
+					<cfset session.is_system_admin = false>
+					<cfset session.is_administrator = false>
 					<!--- Set the Login into a session --->
 					<cfset session.login = "T">
 					<!--- Set the Web Login into a session --->
@@ -740,6 +752,19 @@ Hello #qryuser.user_first_name# #qryuser.user_last_name#
 					<cfif arguments.thestruct.shared EQ "F">
 						<cfinvoke method="createmyfolder" userid="#qryaccount.user_id_r#" />
 					</cfif>
+					<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
+					<cfinvoke component="groups_users" method="getGroupsOfUser" returnvariable="groups_of_user">
+						<cfinvokeargument name="user_id" value="#qryaccount.user_id_r#" />
+						<cfinvokeargument name="host_id" value="#session.hostid#" />
+					</cfinvoke>
+					<!--- Set user admin status --->
+					<cfloop query="groups_of_user">
+						<cfif grp_id EQ "1">
+							<cfset session.is_system_admin = true>
+						<cfelseif grp_id EQ "2">
+							<cfset session.is_administrator = true>
+						</cfif>
+					</cfloop>
 					<!--- and return --->
 					<cfreturn qryaccount.user_id_r />
 				<cfelse>

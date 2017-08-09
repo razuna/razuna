@@ -2502,7 +2502,7 @@
 			sf_type 		varchar(100),
 			sf_description 	varchar(2000),
 			sf_who	 		varchar(100),
-			sf_zipextract	 	varchar(1),
+			sf_zipextract	varchar(1),
 			host_id 		int,
 			PRIMARY KEY (sf_id)
 		)
@@ -2540,14 +2540,14 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#approval 
 		(
-			approval_enabled		boolean default '0',
+			approval_enabled		bit default '0',
 			approval_folders 		varchar(2000) default null,
 			approval_group_1 		varchar(2000) default null,
 			approval_group_2 		varchar(2000) default null,
 			approval_group_1_all 	boolean default '0',
 			approval_group_2_all 	boolean default '0',
 			host_id 				int default null,
-			approval_folders_all 	boolean default '0'
+			approval_folders_all 	bit default '0'
 		) 
 		</cfquery>
 

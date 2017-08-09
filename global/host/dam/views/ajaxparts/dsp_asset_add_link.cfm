@@ -44,7 +44,7 @@
 			<!--- Hide UPC settings if storage is not local --->
 			 <cfif !application.razuna.storage eq 'local'>
 			 	<cfset csshide= "style='display:none'">
-			 <cfelse> 
+			 <cfelse>
 			 	<cfset csshide= "">
 			</cfif>
 			<tr>
@@ -115,7 +115,7 @@
 						$("##addlinkstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 				   	}
 				});
-		        return false; 
+		        return false;
 			}
 		</script>
 	</cfif>

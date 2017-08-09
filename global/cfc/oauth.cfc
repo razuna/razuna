@@ -60,7 +60,7 @@
 				<!--- Delete any entry that might be in settings db already for this account --->
 				<cfquery datasource="#application.razuna.datasource#">
 				DELETE FROM #session.hostdbprefix#settings
-				WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.account)#_%">
+				WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.account#_%">
 				AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 				</cfquery>
 				<!--- Loop over tokens --->
@@ -140,7 +140,7 @@
 		<cfargument name="account" type="string" required="true">
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.account)#_%">
+		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
 		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
 		<cfreturn />
@@ -155,7 +155,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT set_id, set_pref
 		FROM #session.hostdbprefix#settings
-		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.account)#_%">
+		WHERE set_id LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
 		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
 		<!--- Return --->

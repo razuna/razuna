@@ -38,7 +38,6 @@
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
 		<!-- end : folder files -->
-		<instantiate class="security" object="myFusebox.getApplicationData().security" arguments="application.razuna.datasource" overwrite="true" />
 		<!-- RSS -->
 		<instantiate class="rssparser" object="myFusebox.getApplicationData().rssparser" arguments="" overwrite="true" />
 		<!-- update -->

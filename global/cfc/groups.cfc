@@ -64,7 +64,7 @@
 		AND grp_id = <cfqueryparam value="#arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfif>
 	<cfif StructKeyExists(Arguments, "grp_name")>
-		AND lower(grp_name) = <cfqueryparam value="#lcase(arguments.grp_name)#" cfsqltype="cf_sql_varchar">
+		AND grp_name = <cfqueryparam value="#arguments.grp_name#" cfsqltype="cf_sql_varchar">
 	</cfif>
 	</cfquery>
 	<cfreturn localquery>

@@ -126,7 +126,7 @@
 		<cfquery dataSource="#variables.dsn#" name="qry">
 		SELECT widget_id
 		FROM #session.hostdbprefix#widgets
-		WHERE lower(widget_password) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(arguments.thestruct.pass)#">
+		WHERE widget_password = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.pass#">
 		AND widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>

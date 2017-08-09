@@ -6,8 +6,8 @@
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
 		<set name="attributes.cachetag" value="2016.10.26.1" />
-	</fuseaction> 
-	
+	</fuseaction>
+
 	<!--
 		Default fuseaction for application, uses model and view circuits
 		to do all of its work:
@@ -99,8 +99,6 @@
 				</invoke> -->
 				<!-- CFC: Check for collection -->
 				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
 				<!-- Redirect request -->
 				<if condition="attributes.redirectto NEQ ''">
 					<true>
@@ -132,7 +130,7 @@
 		   	</false>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Login: Janrain -->
 	<fuseaction name="login_janrain">
 		<!-- Params -->
@@ -161,17 +159,11 @@
 							<argument name="user_id" value="#loginstatus#" />
 							<argument name="host_id" value="#Session.hostid#" />
 						</invoke>
-						<!-- CFC: Check for collection -->
-						<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
-						<!-- set host again with real value -->
-						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
 						<!-- Relocate -->
 						<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 					<!-- This is for shared login -->
 					<false>
-						<!-- set host again with real value -->
-						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
 						<!-- Folder id into session -->
 						<set name="session.fid" value="#attributes.fid#" />
 						<!-- Only for the shared folder -->
@@ -226,12 +218,12 @@
 		   	</false>
 		</if>
 	</fuseaction>
-	
-	<!-- 
+
+	<!--
 	NIRVANIX
 	-->
 
-	<!-- 
+	<!--
 	GLOBAL Fuseaction for storage
 	 -->
 	 <fuseaction name="storage">
@@ -274,8 +266,8 @@
 			</true>
 		</if>
 	</fuseaction>
-	
-	<!-- 
+
+	<!--
 	GLOBAL Fuseaction for Languages
 	 -->
 	 <fuseaction name="languages">
@@ -284,7 +276,7 @@
 		<!-- Set as attributes also -->
 		<set name="attributes.thelangs" value="#qry_langs#" />
 	</fuseaction>
-	<!-- 
+	<!--
 	GLOBAL Fuseaction for Labels
 	 -->
 	 <fuseaction name="labels">
@@ -294,7 +286,7 @@
 		<!-- <set name="attributes.thelabels" value="#qry_labels.l#" /> -->
 		<set name="attributes.thelabelsqry" value="#qry_labels#" />
 	</fuseaction>
-	
+
 	<!--
 		For the main layout queries and settings
 	 -->
@@ -442,7 +434,7 @@
 		<!-- Show -->
 		<do action="ajax.forgotpassfeedback" />
 	</fuseaction>
-	
+
 	<!--
 		User requests access
 	 -->
@@ -456,7 +448,7 @@
 		<set name="attributes.file_id" value="0" />
 		<set name="session.theuserid" value="0" />
 		<set name="session.thegroupofuser" value="0" />
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />	
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
@@ -494,7 +486,7 @@
 		<!-- Show -->
 		<do action="ajax.req_access_feedback" />
 	</fuseaction>
-	
+
 	<!--
 		User switches language
 	 -->
@@ -554,16 +546,16 @@
 		<set name="session.thedomainid" value="" />
 		<do action="login" />
 	</fuseaction>
-	
+
 	<!--
 		START: GET SETTINGS FOR CALLS
 	 -->
-	
+
 	<!-- Get Path to Assets -->
 	<fuseaction name="assetpath">
 		<invoke object="myFusebox.getApplicationData().settings" method="assetpath" returnvariable="attributes.assetpath" />
 	</fuseaction>
-	
+
 	<!-- Get Path to Assets -->
 	<fuseaction name="watermark">
 		<!-- CFC: get templates -->
@@ -573,11 +565,11 @@
 	<!--
 		END: GET SETTINGS FOR CALLS
 	 -->
-	
+
 	<!--
 		START: EXPLORER
 	 -->
-	
+
 	<!-- Load Explorer -->
 	<fuseaction name="explorer">
 		<!-- Param -->
@@ -597,7 +589,7 @@
 		<!-- Show -->
 		<do action="ajax.explorer" />
 	</fuseaction>
-	
+
 	<!-- Load Explorer -->
 	<fuseaction name="explorer_col">
 		<!-- XFA -->
@@ -608,7 +600,7 @@
 		<!-- Show -->
 		<do action="ajax.explorer_col" />
 	</fuseaction>
-	
+
 	<!-- Load Folders for tree -->
 	<fuseaction name="getfolderfortree">
 		<!-- Param -->
@@ -632,7 +624,7 @@
 		<!-- Show -->
 		<do action="ajax.json" />
 	</fuseaction>
-	
+
 	<fuseaction name="searchforcopymetadata">
 		<!-- Param -->
 		<set name="attributes.col" value="F" overwrite="false" />
@@ -688,7 +680,7 @@
 				<do action="trashfiles_remove" />
 			</true>
 		</if>
-		
+
 		<!-- Param -->
 		<set name="session.file_id" value="" />
 		<!-- CFC -->
@@ -699,7 +691,7 @@
 		<!-- Show -->
 		<do action="ajax.folder_trash" />
 	</fuseaction>
-	
+
 	<!-- This loads all files in trash -->
 	<fuseaction name="trash_assets">
 		<!-- Params -->
@@ -729,7 +721,7 @@
 		<!-- Show -->
 		<do action="ajax.trash_assets" />
 	</fuseaction>
-	
+
 	<!-- This loads all files in trash -->
 	<fuseaction name="trash_remove_all">
 		<!-- Param -->
@@ -762,7 +754,7 @@
 			</false>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Remove the selected files in trash-->
 	<fuseaction name="trashfiles_remove">
 		<!-- Param -->
@@ -776,7 +768,7 @@
 		<!-- Show -->
 		<!--<do action="trash_assets" />-->
 	</fuseaction>
-	
+
 	<!-- This loads all files in trash -->
 	<fuseaction name="trash_restore_all">
 		<!-- Param -->
@@ -784,7 +776,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore all files in trash -->
 	<fuseaction name="restore_allfile_do">
 		<!-- Param -->
@@ -805,7 +797,7 @@
 		<!-- Show -->
 		<do action="folder_explorer_trash" />
 	</fuseaction>
-	
+
 	<!-- Restore selected files -->
 	<fuseaction name="restore_selected_files">
 		<!-- Param -->
@@ -848,7 +840,7 @@
 			<argument name="qry_videos" value="#attributes.videotrash#" />
 		</invoke>
 	</fuseaction>
-	
+
 		<!-- Include for getting all files and folders in trash -->
 	<fuseaction name="get_all_in_trash_noread">
 		<!--CFC: Get trash images-->
@@ -879,7 +871,7 @@
 		<!--CFC: Get trash folder-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="gettrashfolder(noread=true)" returnvariable="qry_trash" />
 	</fuseaction>
-	
+
 	<!-- Loads all folders in trash-->
 	<fuseaction name="trash_folder_all">
 		<!-- Params -->
@@ -889,7 +881,7 @@
 			<true>
 				<set name="session.file_id" value=""  />
 			</true>
-		</if>	
+		</if>
 		<!-- Set the offset -->
 		<if condition="structkeyexists(attributes,'offset')">
 			<true>
@@ -912,7 +904,7 @@
 		<!-- Show -->
 		<do action="ajax.trash_folder_all" />
 	</fuseaction>
-	
+
 	<!-- This loads all folders in trash -->
 	<fuseaction name="trash_remove_folder">
 		<!-- Param -->
@@ -940,7 +932,7 @@
 			</false>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Remove selected folders in the trash-->
 	<fuseaction name="trashfolders_remove">
 		<!-- Param -->
@@ -956,7 +948,7 @@
 		<!-- Show -->
 		<!--<do action="trash_folder_all" />-->
 	</fuseaction>
-		
+
 	<!-- Restore all folders in the trash -->
 	<fuseaction name="trash_restore_folders">
 		<!-- Param -->
@@ -964,7 +956,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- This loads all folders in trash -->
 	<fuseaction name="folder_restore">
 		<!-- Param -->
@@ -978,7 +970,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore folders in trash-->
 	<fuseaction name="restore_folder_do">
 		<!-- Param -->
@@ -997,7 +989,7 @@
 		<!--<do action="folder_explorer_trash" />-->
 		<do action="trash_folder_all" />
 	</fuseaction>
-	
+
 	<!-- Restore selected folders in the trash-->
 	<fuseaction name="restore_selected_folders">
 		<!-- Param -->
@@ -1005,7 +997,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore selected folders in the trash-->
 	<fuseaction name="restore_selected_folders_do">
 		<!-- Param -->
@@ -1022,7 +1014,7 @@
 		<!--<do action="trash_folder_all" />-->
 		<do action="folder_explorer_trash" />
 	</fuseaction>
-	
+
 	<!-- Restore all folders in trash -->
 	<fuseaction name="restore_allfolder_do">
 		<!-- Param -->
@@ -1042,18 +1034,18 @@
 		<!-- Show -->
 		<do action="folder_explorer_trash" />
 	</fuseaction>
-	
-	
+
+
 	<!-- Incl-->
-	
+
 	<!--
 		END: EXPLORER
 	 -->
-	
+
 	<!--
 		START: FAVORITES
 	 -->
-	
+
 	<!-- Load Favorites -->
 	<fuseaction name="favorites">
 		<!-- XFA -->
@@ -1088,7 +1080,7 @@
 	<!--
 		START: BASKET
 	 -->
-	
+
 	<!-- INCLUDE: Load Basket Include -->
 	<fuseaction name="basket_include">
 		<xfa name="filedetail" value="c.files_detail" />
@@ -1103,7 +1095,14 @@
 		<set name="attributes.isbrowser" value="#session.isbrowser#" />
 		<do action="storage" /> -->
 		<!-- CFC: Load basket -->
-		<invoke object="myFusebox.getApplicationData().basket" methodcall="readbasket(attributes)" returnvariable="qry_basket" />
+		<if condition="structkeyexists(attributes,'basket_quick')">
+			<true>
+				<invoke object="myFusebox.getApplicationData().basket" methodcall="readbasketquick(attributes)" returnvariable="qry_basket" />
+			</true>
+			<false>
+				<invoke object="myFusebox.getApplicationData().basket" methodcall="readbasket(attributes)" returnvariable="qry_basket" />
+			</false>
+		</if>
 		<set name="attributes.qrybasket" value="#qry_basket#" />
 		<!-- CFC: Get details for files -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="detailforbasket(attributes)" returnvariable="qry_thefile" />
@@ -1141,7 +1140,7 @@
 			</true>
 		</if>
 		<!-- CFC: Get Additional Versions -->
-		<invoke object="myFusebox.getApplicationData().basket" methodcall="additional_versions()" returnvariable="qry_addition_version" />
+		<invoke object="myFusebox.getApplicationData().basket" methodcall="additional_versions(attributes)" returnvariable="qry_addition_version" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 	</fuseaction>
@@ -1159,6 +1158,9 @@
 	<fuseaction name="basket">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<!-- Limit basket results -->
+		<set name="attributes.basket_limit" value="true" />
+		<set name="attributes.basket_quick" value="true" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.prefs" />
 		<!-- Load include -->
@@ -1169,7 +1171,7 @@
 	<!-- Load Basket Save window -->
 	<fuseaction name="basket_save">
 		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />		
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.basket_save" />
 	</fuseaction>
@@ -1369,7 +1371,7 @@
 		<set name="attributes.artofaudio" value="#session.artofaudio#" />
 		<set name="attributes.artoffile" value="#session.artoffile#" />
 		<!-- Preserve langcount attribute in langs as it is overwritten by asset_upload_server method  and is needed by savedesckey method afterwards -->
-		<set name="attributes.langs" value="#attributes.langcount#" /> 
+		<set name="attributes.langs" value="#attributes.langcount#" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
@@ -1480,7 +1482,7 @@
 		<!-- CFC: Save order info to basket -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="basket_order(attributes)" />
 	</fuseaction>
-	
+
 	<!--
 		END: BASKET
 	 -->
@@ -1488,7 +1490,7 @@
 	<!--
 		START: COLLECTIONS
 	-->
-	
+
 	<!-- Load Collections Folder -->
 	<fuseaction name="collections">
 		<!-- Param -->
@@ -1674,7 +1676,7 @@
 		<!-- CFC: Copy Collection -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="docopy(attributes)" />
 	</fuseaction>
-	
+
 	<!--collection assets move to trash-->
 	<fuseaction name="col_asset_move_trash">
 		<!-- CFC:move collection asset to trash-->
@@ -1682,7 +1684,7 @@
 		<!-- Show -->
 		<do action="collection_detail" />
 	</fuseaction>
-	
+
 	<!-- Load Trash Collection-->
     <fuseaction name="collection_explorer_trash">
     	<!-- Param -->
@@ -1734,7 +1736,7 @@
 				<do action="selected_collection_remove" />
 			</true>
 		</if>
-		
+
 		<!-- Param -->
 		<set name="session.file_id" value="" />
     	<!-- XFA -->
@@ -1748,7 +1750,7 @@
 		<!-- Show -->
 		<do action="ajax.collection_trash" />
 	</fuseaction>
-	
+
 	<!--collection move to trash-->
 	<fuseaction name="col_move_trash">
 		<!-- CFC:move collection to trash-->
@@ -1756,7 +1758,7 @@
 		<!-- Show -->
 		<do action="collections" />
 	</fuseaction>
-	
+
 	<!-- Load collection in the trash -->
 	<fuseaction name="col_get_trash">
 		<!-- Params -->
@@ -1767,7 +1769,7 @@
 			<true>
 				<set name="session.file_id" value=""  />
 			</true>
-		</if>	
+		</if>
 		<!-- Set the offset -->
 		<if condition="structkeyexists(attributes,'offset')">
 			<true>
@@ -1788,7 +1790,7 @@
 		<!-- Show -->
 		<do action="ajax.collection_item_trash" />
 	</fuseaction>
-	
+
 	<!-- Load collection files in the trash -->
 	<fuseaction name="get_collection_trash_files">
 		<!-- Param -->
@@ -1818,7 +1820,7 @@
 		<!-- Show -->
 		<do action="ajax.col_file_trash" />
 	</fuseaction>
-	
+
 	<!-- Load collection folders in the trash -->
 	<fuseaction name="get_collection_trash_folders">
 		<!-- Params -->
@@ -1829,7 +1831,7 @@
 			<true>
 				<set name="session.file_id" value=""  />
 			</true>
-		</if>	
+		</if>
 		<!-- Set the offset -->
 		<if condition="structkeyexists(attributes,'offset')">
 			<true>
@@ -1850,7 +1852,7 @@
 		<!-- Show -->
 		<do action="ajax.col_folder_trash" />
 	</fuseaction>
-	
+
 	<!-- Remove all trash collection -->
 	<fuseaction name="remove_collection_trash_all">
 		<!-- param -->
@@ -1860,7 +1862,7 @@
 		<!-- Show -->
 		<do action="collection_explorer_trash" />
 	</fuseaction>
-	
+
 	<!-- Restore Collections-->
 	<fuseaction name="collection_file_restore">
 		<!-- param -->
@@ -1881,7 +1883,7 @@
 		<set name="session.file_id" value="#attributes.file_id#" />
 		<!-- show -->
 		<do action="get_collection_trash_files" />
-		
+
 		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'collection'">
@@ -1895,7 +1897,7 @@
 			</true>
 		</if> -->
 	</fuseaction>
-	
+
 	<!-- Restore all collection files in the trash -->
 	<fuseaction name="restore_all_collection_files">
 		<!-- param -->
@@ -1906,7 +1908,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!--Restore all collection files-->
 	<fuseaction name="restore_all_col_file_do">
 		<!-- Param -->
@@ -1914,11 +1916,11 @@
 		<set name="attributes.restoreall" value="true" />
 		<set name="attributes.trashkind" value="files" />
 		<!-- CFC:Update collection ct files -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="restore_col_file(attributes)"/>	
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="restore_col_file(attributes)"/>
 		<!-- Show -->
 		<do action="collection_explorer_trash" />
 	</fuseaction>
-	
+
 	<!-- Restore choose collection -->
 	<fuseaction name="restore_choose_collection">
 		<!-- Param -->
@@ -1937,15 +1939,15 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
-	<!-- Restore collection ct files-->	
+
+	<!-- Restore collection ct files-->
 	<fuseaction name="restore_col_file_do">
 		<!-- Param -->
 		<set name="attributes.file_id" value="#session.file_id#" />
 		<!-- CFC:Update collection ct files -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="restoreasset(attributes)"/>
 	</fuseaction>
-	
+
 	<!-- Restore collection -->
 	<fuseaction name="collection_restore">
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="restore_collection(attributes)" returnvariable="attributes.is_trash" />
@@ -1954,9 +1956,9 @@
 		<set name="attributes.artoffile" value="" />
 		<set name="attributes.artofvideo" value="" />
 		<!-- Show collection trash -->
-		<do action="col_get_trash" /> 
+		<do action="col_get_trash" />
 	</fuseaction>
-	
+
 	<!-- Check the folder to restore collection -->
 	<fuseaction name="restore_trash_collection">
 		<!-- Param -->
@@ -1970,7 +1972,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore collections-->
 	<fuseaction name="restore_collection_do">
 		<!-- Param -->
@@ -1980,7 +1982,7 @@
 		<!-- Show trash collection -->
 		<!--<do action="col_get_trash" />-->
 	</fuseaction>
-	
+
 	<!-- Restore all collections in the trash-->
 	<fuseaction name="restore_all_collections">
 		<!-- param -->
@@ -1991,7 +1993,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore all collections in the trash-->
 	<fuseaction name="restore_all_collections_do">
 		<!-- Param -->
@@ -2002,7 +2004,7 @@
 		<!-- Show -->
 		<do action="collection_explorer_trash" />
 	</fuseaction>
-	
+
 	<!-- Restore collection folder in the trash-->
 	<fuseaction name="restore_col_folder">
 		<set name="session.type" value="#attributes.type#" />
@@ -2014,7 +2016,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore collection folder in the trash-->
 	<fuseaction name="restore_col_folder_do">
 		<!-- Param -->
@@ -2032,7 +2034,7 @@
 		<!-- show -->
 		<do action="get_collection_trash_folders" />
 	</fuseaction>
-	
+
 	<!-- Restore all collection folder in the trash-->
 	<fuseaction name="restore_col_folder_all">
 		<set name="session.type" value="#attributes.type#" />
@@ -2040,7 +2042,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<fuseaction name="restore_col_folder_all_do">
 		<!-- Param -->
 		<set name="attributes.thispath" value="#thispath#" />
@@ -2059,7 +2061,7 @@
 		<!-- Show -->
 		<do action="collection_explorer_trash" />
 	</fuseaction>
-	
+
 	<!--Restore selected collection files -->
 	<fuseaction name="restore_selected_col_files">
 		<set name="session.type" value="#attributes.type#" />
@@ -2067,7 +2069,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!--Restore selected collection files -->
 	<fuseaction name="restore_selected_col_file_do">
 		<!-- Param -->
@@ -2086,7 +2088,7 @@
 		<!-- Show -->
 		<!--<do action="collection_explorer_trash" />-->
 	</fuseaction>
-	
+
 	<!--Restore selected collections -->
 	<fuseaction name="restore_selected_collection">
 		<!-- param -->
@@ -2095,7 +2097,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!--Restore selected collections -->
 	<fuseaction name="restore_selected_collections_do">
 		<!-- Param -->
@@ -2105,7 +2107,7 @@
 		<!-- Show -->
 		<do action="col_get_trash" />
 	</fuseaction>
-	
+
 	<!--Remove selected collections -->
 	<fuseaction name="selected_collection_remove">
 		<!-- Param -->
@@ -2115,7 +2117,7 @@
 		<!-- Show -->
 		<!--<do action="col_get_trash" />-->
 	</fuseaction>
-	
+
 	<!-- Restore selected collection folder-->
 	<fuseaction name="restore_selected_col_folder">
 		<set name="session.type" value="#attributes.type#" />
@@ -2123,7 +2125,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore selected collection folder -->
 	<fuseaction name="restore_selected_col_folder_do">
 		<!-- Param -->
@@ -2139,7 +2141,7 @@
 		<!-- show -->
 		<do action="get_collection_trash_folders" />
 	</fuseaction>
-	
+
 	<!-- Remove selected collection folder -->
 	<fuseaction name="selected_col_folder_remove">
 		<!-- Param -->
@@ -2162,7 +2164,7 @@
 	<!--
 		START: FOLDER CONTENT
 	 -->
-	
+
 	<!-- Load the folder Tabs -->
 	<fuseaction name="folder">
 		<!-- Param -->
@@ -2188,7 +2190,7 @@
 		<!-- Reset session -->
 		<set name="session.file_id" value="" />
 		<set name="session.thefileid" value="" />
-		<set name="session.trash" value="F" overwrite="false" /> 
+		<set name="session.trash" value="F" overwrite="false" />
 		<if condition="!session.customview">
 			<true>
 				<set name="session.customaccess" value="" />
@@ -2199,6 +2201,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get the total of files count and kind of files -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="fileTotalAllTypes(attributes.folder_id, attributes.folderaccess)" returnvariable="qry_fileTotalAllTypes" />
+		<!-- Put total in session -->
+		<set name="session.total_count_of_folder" value="#qry_fileTotalAllTypes.thetotal#" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
@@ -2545,7 +2549,7 @@
 			</true>
 		</if>
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" />
-		
+
 		<set name="attributes.issearch" value="false" overwrite="false" />
 		<if condition="!structkeyexists(attributes,'offset')">
 			<true>
@@ -2565,18 +2569,18 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
-		<set name="attributes.cs" value="#cs#" /> 
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Get placement for fields-->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
-		<set name="attributes.cs_place" value="#cs_place#" /> 
+		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Get settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- Only if it NOT from search -->
 		<if condition="!#attributes.issearch#">
 			<true>
-				<!-- CFC: Get the total file count -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
-				<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
+				<!-- CFC: Get the total file count: We already have this from folder action. We only create a temp query here -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount_temp()" returnvariable="qry_filecount" />
+				<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 			</true>
@@ -2613,7 +2617,7 @@
 		<!-- The total of found records is within the query itself -->
 		<if condition="!structkeyexists(attributes,'search_simple')">
 			<true>
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.recordcount#" />
+				<set name="attributes.qry_filecount" value="#qry_files.qall.recordcount#" />
 			</true>
 		</if>
 		<!-- Get Include -->
@@ -2684,7 +2688,7 @@
 				<set name="attributes.folder_id_org" value="#attributes.folder_id#" />
 				<set name="attributes.folder_id" value="#attributes.theid#" />
 			</true>
-		</if> 
+		</if>
 		<!-- CFC: Load Groups of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroups(attributes.folder_id,qry_groups)" returnvariable="qry_folder_groups" />
 		<!-- CFC: Load Groups of this folder for group 0 -->
@@ -2778,7 +2782,7 @@
 			</false>
 		</if> -->
 	</fuseaction>
-	
+
 	<!-- Update Folder -->
 	<fuseaction name="folder_update">
 		<set name="attributes.userid" value="#session.theuserid#" />
@@ -2805,11 +2809,11 @@
 	<!--
 		END: FOLDER CONTENT
 	 -->
-	 
+
 	<!--
 		START: COOLIRIS
 	-->
-	
+
 	<!-- Show for a folder -->
 	<fuseaction name="cooliris_folder">
 		<!-- Action: Check storage -->
@@ -2818,15 +2822,15 @@
 		<!-- CFC: Do the Cooliris RSS -->
 		<invoke object="myFusebox.getApplicationData().cooliris" methodcall="folder_rss(attributes)" returnvariable="folderfeed" />
 	</fuseaction>
-	
+
 	<!--
 		END: COOLIRIS
 	-->
-	
+
 	<!--
 		START: WORKING WITH ASSETS
 	 -->
-	
+
 	<!-- ADD -->
 	<fuseaction name="asset_add">
 		<!-- Param -->
@@ -2915,7 +2919,7 @@
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Upload -->
-		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetserver(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetserver(attributes)" />
 	</fuseaction>
 	<!-- Add eMail Form -->
 	<fuseaction name="asset_add_email">
@@ -2968,7 +2972,7 @@
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Upload -->
-		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetemail(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetemail(attributes)" />
 	</fuseaction>
 	<!-- Add FTP Form -->
 	<fuseaction name="asset_add_ftp">
@@ -3024,9 +3028,9 @@
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Upload -->
-		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetftpthread(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetftpthread(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Get Add settings -->
 	<fuseaction name="asset_get_settings">
 		<!-- CFC: Get image settings -->
@@ -3034,7 +3038,7 @@
 		<!-- CFC: Get video settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="settings_video" />
 	</fuseaction>
-	
+
 	<!-- Add Upload iFrame -->
 	<fuseaction name="asset_add_upload">
 		<set name="session.currentupload" value="0" />
@@ -3059,7 +3063,7 @@
 	</fuseaction>
 	<!-- Upload JUST THE FILE -->
 	<fuseaction name="asset_upload">
-		<set name="attributes.user_id" value="#session.theuserid#" />	
+		<set name="attributes.user_id" value="#session.theuserid#" />
 		<set name="attributes.nopreview" value="0" overwrite="false" />
 		<set name="attributes.av" value="0" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
@@ -3071,7 +3075,7 @@
 			<true>
 				<do action = "versions_add" />
 			</true>
-		</if>		
+		</if>
 		<!-- Show -->
 		<do action="ajax.versions_upload" />
 	</fuseaction>
@@ -3086,7 +3090,7 @@
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Upload -->
-		<invoke object="myFusebox.getApplicationData().assets" methodcall="addasset(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addasset(attributes)" />
 	</fuseaction>
 	<!-- Upload from API -->
 	<fuseaction name="apiupload">
@@ -3125,7 +3129,7 @@
 		<!-- Show -->
 		<do action="ajax.api_feedback" />
 	</fuseaction>
-	
+
 	<!-- Add LINK -->
 	<fuseaction name="asset_add_link">
 		<!-- XFA -->
@@ -3150,7 +3154,7 @@
 		<!-- CFC: Add link -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetlink(attributes)" returnvariable="result" />
 	</fuseaction>
-	
+
 	<!-- Called from uploader directly -->
 	<fuseaction name="w_import_from_uploader">
 		<!-- Param -->
@@ -3239,7 +3243,7 @@
 			</false>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Load history asset log -->
 	<fuseaction name="log_history">
 		<!-- Set offset for logs -->
@@ -3269,7 +3273,7 @@
 		<!-- Show -->
 		<do action="log_history" />
 	</fuseaction>
-	
+
 	<!-- Show Alias usage -->
 	<fuseaction name="usage_alias">
 		<!-- CFC -->
@@ -3289,11 +3293,11 @@
 	<!--
 		END: WORKING WITH ASSETS
 	 -->
-	
+
 	<!--
 		START: FILE SPECIFIC SECTIONS
 	 -->
-	 
+
 	<!-- Move file to trash-->
 	<fuseaction name="files_trash">
 		<!-- HTTP referer for workflow -->
@@ -3475,7 +3479,7 @@
 				<do action="labels_main" />
 			</true>
 		</if>
-	</fuseaction> 
+	</fuseaction>
 	<!-- Restore videos-->
 	<fuseaction name="videos_restore">
 		<!-- HTTP referer for workflow -->
@@ -3609,7 +3613,7 @@
 		<!-- Show the folder listing -->
 		<!-- <do action="audios_detail_related" /> -->
 	</fuseaction>
-	
+
 	<!-- Remove files MANY -->
 	<fuseaction name="doc_remove_many">
 		<!-- Param -->
@@ -3623,7 +3627,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3650,7 +3654,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3677,7 +3681,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3704,7 +3708,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3768,7 +3772,7 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Trash files MANY -->
 	<fuseaction name="doc_trash_many">
 		<!-- Param -->
@@ -3779,7 +3783,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3803,7 +3807,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3827,7 +3831,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3851,7 +3855,7 @@
     		<true>
     			<set name="attributes.id" value="#session.file_id#" />
     		</true>
-    	</if> 
+    	</if>
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -3926,11 +3930,11 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!--
 		START: DETAIL SECTION
 	 -->
-	
+
 	<!-- Load Detail -->
 	<fuseaction name="files_detail">
 		<!-- XFA -->
@@ -4043,7 +4047,7 @@
 	<!--
 		START: DETAIL VIDEO SECTION
 	 -->
-	
+
 	<!-- Load Video Detail -->
 	<fuseaction name="videos_detail">
 		<!-- XFA -->
@@ -4211,7 +4215,7 @@
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />
 	</fuseaction>
 	<!-- Videos Rendition Convert -->
 	<fuseaction name="rendition_videos_convert">
@@ -4230,17 +4234,17 @@
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />
 	</fuseaction>
-	
+
 	<!--
 		END: DETAIL VIDEO SECTION
 	 -->
-	
+
 	<!--
 		START: DETAIL IMAGE SECTION
 	 -->
-	
+
 	<!-- Load Image Detail -->
 	<fuseaction name="images_detail">
 		<!-- XFA -->
@@ -4422,7 +4426,7 @@
 		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
-		<!-- CFC: Convert images -->	
+		<!-- CFC: Convert images -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
 	<!-- Images Renditions Convert -->
@@ -4443,17 +4447,17 @@
 		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
-		<!-- CFC: Convert images -->	
+		<!-- CFC: Convert images -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
 	<!--
 		END: DETAIL IMAGE SECTION
 	-->
-	 
+
 	<!--
 		START: DETAIL AUDIO SECTION
 	-->
-	
+
 	<!-- Load Detail -->
 	<fuseaction name="audios_detail">
 		<!-- XFA -->
@@ -4609,7 +4613,7 @@
 		<!-- CFC: Check for custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="attributes.qry_cf" />
 		<!-- CFC: Convert video -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />
 	</fuseaction>
 	<!-- Audio Rendtions Convert-->
 	<fuseaction name="rendition_audios_convert">
@@ -4630,7 +4634,7 @@
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
 		<!-- CFC: Convert video -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />
 	</fuseaction>
 	<!-- Load related audios -->
 	<fuseaction name="audios_detail_related">
@@ -4643,15 +4647,15 @@
 		<!-- Show the folder listing -->
 		<do action="ajax.audios_detail_related" />
 	</fuseaction>
-	
+
 	<!--
 		END: DETAIL AUDIO SECTION
 	-->
-	
+
 	<!--
 		START: SAVE CUSTOM FIELDS VALUES
 	-->
-	
+
 	<fuseaction name="custom_fields_save">
 		<!-- CFC: Save field values -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="savevalues(attributes)" />
@@ -4661,15 +4665,15 @@
 		<!-- CFC: Save field values -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="saveorder(attributes)" />
 	</fuseaction>
-	
+
 	<!--
 		END: SAVE CUSTOM FIELDS VALUES
 	-->
-	
+
 	<!--
 		END: FILE SPECIFIC SECTIONS
 	-->
-	 
+
 	<!--
 		START: BASKET
 	-->
@@ -4711,15 +4715,15 @@
 		<!-- Show -->
 		<do action="basket" />
 	</fuseaction>
-	 
-	 
+
+
 	<!--
 		END: BASKET
 	-->
-	
+
 	<!--
 		START: FAVORITES
-	--> 
+	-->
 	<!-- Put into favorites -->
 	<fuseaction name="favorites_put">
 		<!-- CFC: Put file into favorites -->
@@ -4734,16 +4738,16 @@
 		<!-- Show -->
 		<do action="favorites" />
 	</fuseaction>
-	 
-	 
+
+
 	<!--
 		END: FAVORITES
-	--> 
-	 
+	-->
+
 	<!--
 		START: EMAIL
-	--> 
-	
+	-->
+
 	<!-- Send an eMail -->
 	<fuseaction name="email_send">
 		<!-- XFA -->
@@ -4861,7 +4865,7 @@
 					<argument name="prefix" value="#session.hostdbprefix#" />
 				</invoke>
 				<!-- Remove file from system -->
-				
+
 			</true>
 			<!-- We only need to send the email -->
 			<false>
@@ -4878,18 +4882,18 @@
 				</invoke>
 			</false>
 		</if>
-		
-		
+
+
 	</fuseaction>
-	
+
 	<!--
 		END: EMAIL
-	--> 
-	
+	-->
+
 	<!--
 		START: FTP
-	--> 
-	
+	-->
+
 	<!-- FTP Form -->
 	<fuseaction name="ftp_send">
 		<!-- XFA -->
@@ -5049,15 +5053,15 @@
 		<!-- CFC: Upload to FTP -->
 		<invoke object="myFusebox.getApplicationData().ftp" methodcall="putfile(attributes)" />
 	</fuseaction>
-	
+
 	<!--
 		END: FTP
-	--> 
-	
+	-->
+
 	<!--
 		START: SEARCH
-	--> 
-	
+	-->
+
 	<!-- INCLUDE for Search -->
 	<fuseaction name="search_include">
 		<!-- Param -->
@@ -5195,9 +5199,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5213,7 +5217,7 @@
 						<!-- Set results into different variable name -->
 						<set name="qry_files_count.qall" value="#qry_files.qall#" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5235,9 +5239,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5261,7 +5265,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5283,9 +5287,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5309,7 +5313,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5331,9 +5335,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5345,7 +5349,7 @@
 						<!-- Set results into different variable name -->
 						<set name="qry_files.qall" value="#qry_results_videos#" />
 						<!-- Put id's into lists -->
-						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />		
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
 					</true>
 					<false>
 						<!-- set search count call -->
@@ -5357,7 +5361,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5379,9 +5383,9 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
 						<!-- Set the session offset -->
-						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
 							<true>
 								<set name="session.offset" value="0" />
 							</true>
@@ -5405,7 +5409,7 @@
 						<!-- Put id's into lists -->
 						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
 						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
 			</true>
@@ -5428,7 +5432,7 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Simple Search -->
 	<fuseaction name="search_simple">
 		<!-- Params -->
@@ -5471,7 +5475,7 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization_placement(cs)" returnvariable="cs_place" />
 		<set name="attributes.cs_place" value="#cs_place#" />
 		<!-- CFC: Get settings -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />	
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- Search -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="newSearch(attributes)" returnvariable="qry_files" />
 		<!-- Set the session offset -->
@@ -5620,7 +5624,7 @@
 		<!-- Show -->
 		<do action="ajax.search" />
 	</fuseaction>
-	
+
 	<!-- Search: Files -->
 	<fuseaction name="search_files">
 		<!-- XFA -->
@@ -5662,7 +5666,7 @@
 		<!-- CFC: Search Audios -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_audios(attributes)" returnvariable="qry_results_audios" />
 	</fuseaction>
-	
+
 	<!-- Search: Advanced -->
 	<fuseaction name="search_advanced">
 		<!-- Params -->
@@ -5694,15 +5698,15 @@
 		<!-- Show -->
 		<do action="ajax.search_advanced" />
 	</fuseaction>
-	
+
 	<!--
 		END: SEARCH
-	--> 
-	
+	-->
+
 	<!--
 		START: CHOOSE FOLDER
-	--> 
-	
+	-->
+
 	<!-- Choose: Show window -->
 	<fuseaction name="choose_folder">
 		<!-- Params -->
@@ -5924,15 +5928,15 @@
 		<!-- Show -->
 		<do action="ajax.saveaszip_form" />
 	</fuseaction>
-	
+
 	<!--
 		END: CHOOSE FOLDER
-	--> 
-	
+	-->
+
 	<!--
 		START: MOVING FOLDER AND FILES
 	-->
-	
+
 	<!-- Alias -->
 	<fuseaction name="alias_create">
 		<invoke object="myFusebox.getApplicationData().global" methodcall="alias_create(attributes)" />
@@ -6003,7 +6007,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Copy Metadata -->
 	<fuseaction name="copy_metadata">
 		<if condition="attributes.what EQ 'images'">
@@ -6069,27 +6073,27 @@
 		<set name="qry_results" value="#qry_files.qall#" />
 		<do action="ajax.copy_metadata_do" />
 	</fuseaction>
-	
+
 	<!-- Update the metadata to selected image assets-->
 	<fuseaction name="copy_metadata_image_do">
 		<invoke object="myFusebox.getApplicationData().images" methodcall="copymetadataupdate(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Update the metadata to selected audio assets-->
 	<fuseaction name="copy_metadata_audio_do">
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="copymetadataupdate(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Update the metadata to selected video assets-->
 	<fuseaction name="copy_metadata_video_do">
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="copymetadataupdate(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Update the metadata to selected file assets-->
 	<fuseaction name="copy_metadata_files_do">
 		<invoke object="myFusebox.getApplicationData().files" methodcall="copymetadataupdate(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Folders folders for metadata-->
 	<fuseaction name="metadata_choose_folder">
 		<!-- Param -->
@@ -6099,7 +6103,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Get Metadata from Folders -->
 	<fuseaction name="get_meta_folder">
 		<if condition="attributes.what EQ 'images'">
@@ -6124,7 +6128,7 @@
 		</if>
 		<do action="ajax.copy_metadata_do" />
 	</fuseaction>
-	
+
 	<!-- Move the file into the desired folder -->
 	<fuseaction name="move_file_do">
 		<!-- Param -->
@@ -6187,9 +6191,9 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!-- START RESTORE FILES-->
-	
+
 	<!-- Restore file -->
 	<fuseaction name="restore_file">
 		<!-- Param -->
@@ -6205,7 +6209,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!-- Restore file into the desired directory-->
 	<fuseaction name="restore_file_do">
 		<!-- Param -->
@@ -6242,9 +6246,9 @@
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="movethread(attributes)" />
 			</true>
 		</if>
-		
+
 	</fuseaction>
-	
+
 	 <!-- Copy the folder into the desired folder -->
 	<fuseaction name="copy_folder">
 		<!-- Param -->
@@ -6275,7 +6279,7 @@
 	<!--
 		END: MOVING FOLDER AND FILES
 	-->
-	
+
 	<!-- external calls -->
 	<fuseaction name="w_hosts_remove">
 		<set name="attributes.theschema" value="#application.razuna.theschema#" />
@@ -6297,7 +6301,7 @@
 	<!--
 		START: BATCHING OF MANY FILES
 	-->
-	
+
 	<!-- Call the batch form -->
 	<fuseaction name="batch_form">
 		<!-- XFA -->
@@ -6421,15 +6425,15 @@
 		<do action="storage" />
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="batch_sharing(attributes)" />
 	</fuseaction>
-	
+
 	<!--
 		END: BATCHING OF MANY FILES
 	-->
-	
+
 	<!--
 		START: SERVE TO BROWSER (CALLS FROM EXTERNAL URL)
 	-->
-	
+
 	<!-- FILES -->
 	<fuseaction name="sf">
 		<!-- Params -->
@@ -6512,11 +6516,11 @@
 	<!--
 		END: SERVE TO BROWSER (CALLS FROM EXTERNAL URL)
 	-->
-	
+
 	<!--  -->
 	<!-- ADMIN SECTION -->
 	<!--  -->
-	
+
 	<!-- Calling the main admin -->
 	<fuseaction name="admin">
 		<!-- CFC: Get Access Control Settings -->
@@ -6651,7 +6655,7 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Users" methodcall="ad_server_user(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Users Search -->
 	<fuseaction name="users_search">
 		<!-- Param -->
@@ -6862,11 +6866,11 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="send_emails(attributes)" />
 		<!-- Show -->
 		<!-- <do action="users" /> -->
-	</fuseaction>	
+	</fuseaction>
 	<!--  -->
 	<!-- ADMIN: USERS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: GROUPS START -->
 	<!--  -->
@@ -6957,11 +6961,11 @@
 	<!--  -->
 	<!-- ADMIN: GROUPS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: SCHEDULER START -->
 	<!--  -->
-	
+
 	<!-- Scheduler List -->
 	<fuseaction name="scheduler_list">
 		<set name="qry_sched_status" value="sched_actions" overwrite="false" />
@@ -7098,15 +7102,15 @@
 			<argument name="ldap_dn" value="#attributes.ldap_dn#" />
 		</invoke>
 	</fuseaction>
-		
+
 	<!--  -->
 	<!-- ADMIN: SCHEDULER END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: UPLOAD TEMPLATES START -->
 	<!--  -->
-	
+
 	<!-- Templates List -->
 	<fuseaction name="upl_templates">
 		<!-- CFC: get templates -->
@@ -7137,14 +7141,14 @@
 	<fuseaction name="upl_templates_remove">
 		<!-- CFC: save -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates_remove(attributes)" />
-		
+
 		<do action="upl_templates" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: IMPORT TEMPLATES START -->
 	<!--  -->
-	
+
 	<!-- Templates List -->
 	<fuseaction name="imp_templates">
 		<!-- CFC: get templates -->
@@ -7184,18 +7188,18 @@
 		<!-- Show -->
 		<do action="imp_templates" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: UPLOAD TEMPLATES STOP -->
 	<!--  -->
-	
-	
-	
-	
+
+
+
+
 	<!--  -->
 	<!-- ADMIN: LOG USERS START -->
 	<!--  -->
-	
+
 	<!-- Get Log files -->
 	<fuseaction name="log_search">
 		<!-- CFC: Search log -->
@@ -7203,7 +7207,7 @@
 		<!-- Show -->
 		<do action="ajax.log_search" />
 	</fuseaction>
-	
+
 	<!-- Get Log files -->
 	<fuseaction name="log_users">
 		<!-- Set offset for logs -->
@@ -7223,15 +7227,15 @@
 		<!-- Show -->
 		<do action="log_users" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG USERS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG ASSETS START -->
 	<!--  -->
-	
+
 	<!-- Get Log files -->
 	<fuseaction name="log_assets">
 		<!-- Set offset for logs -->
@@ -7250,15 +7254,15 @@
 		<!-- Show -->
 		<do action="log_assets" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG ASSETS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG FOLDERS START -->
 	<!--  -->
-	
+
 
 	<!-- Get folder Summary -->
 	<fuseaction name="log_folder_summary">
@@ -7294,15 +7298,15 @@
 		<!-- Show -->
 		<do action="log_folders" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG FOLDERS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG SEARCHES START -->
 	<!--  -->
-	
+
 	<!-- Get Log files -->
 	<fuseaction name="log_searches">
 		<!-- Set offset for logs -->
@@ -7328,15 +7332,15 @@
 		<!-- Show -->
 		<do action="log_searches" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG SEARCHES END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG ERRORS START -->
 	<!--  -->
-	
+
 	<!-- Get Log files -->
 	<fuseaction name="log_errors">
 		<!-- Set offset for logs -->
@@ -7376,15 +7380,15 @@
 		<!-- CFC: Send the error log -->
 		<invoke object="myFusebox.getApplicationData().log" methodcall="send_log_error(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: LOG ERRORS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: CUSTOM FIELDS START -->
 	<!--  -->
-	
+
 	<!-- Get custom fields -->
 	<fuseaction name="custom_fields">
 		<!-- CFC: Get languages -->
@@ -7394,7 +7398,7 @@
 			<argument name="mod_id" value="1" />
 		</invoke>
 		<!-- CFC: Get users -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />		
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show -->
 		<do action="ajax.custom_fields" />
 	</fuseaction>
@@ -7441,15 +7445,15 @@
 		<!-- Show -->
 		<do action="custom_fields_existing" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: CUSTOM FIELDS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: ISP SETTINGS START -->
 	<!--  -->
-	
+
 	<!-- Get settings -->
 	<fuseaction name="isp_settings">
 		<!-- CFC: Get image settings -->
@@ -7462,7 +7466,7 @@
 	<!-- Update languages -->
 	<fuseaction name="isp_settings_updatelang">
 		<!-- Params -->
-		<set name="attributes.thepath" value="#ExpandPath('../..')#" />		
+		<set name="attributes.thepath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Get languages -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="lang_get_langs(attributes)" />
 		<!-- Show -->
@@ -7490,11 +7494,11 @@
 	</fuseaction>
 	<!-- ADMIN: ISP SETTINGS END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: CUSTOMIZATION START -->
 	<!--  -->
-	
+
 	<!-- For loading customization -->
 	<fuseaction name="admin_customization">
 		<!-- Param -->
@@ -7540,7 +7544,7 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: CUSTOMIZATION STOP -->
 	<!--  -->
@@ -7548,7 +7552,7 @@
 <!--  -->
 	<!-- ADMIN: NOTIFICATION START -->
 	<!--  -->
-	
+
 	<!-- For loading notification -->
 	<fuseaction name="admin_notification">
 		<!-- Param -->
@@ -7566,7 +7570,7 @@
 		<!-- Save form data -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_notifications(attributes)" />
 	</fuseaction>
-	
+
 	<fuseaction name="getimgmeta_map">
 		<!-- Save form data -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="getimgmeta_map()" returnvariable="attributes.meta_img" />
@@ -7579,7 +7583,7 @@
 	<!--  -->
 	<!-- ADMIN: INTEGRATION START -->
 	<!--  -->
-	
+
 	<!-- For loading integration -->
 	<fuseaction name="admin_integration">
 		<!-- Janrain -->
@@ -7614,15 +7618,15 @@
 		<!-- CFC: Set -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_s3(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: INTEGRATION STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: MAINTENANCE START -->
 	<!--  -->
-	
+
 	<!-- For loading maitenance -->
 	<fuseaction name="admin_maintenance">
 		<!-- Params -->
@@ -7788,15 +7792,15 @@
 		<!-- Call CFC -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="rebuildurl(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: MAINTENANCE END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: LABELS START -->
 	<!--  -->
-	
+
 	<!-- Loading labels -->
 	<fuseaction name="admin_labels">
 		<!-- CFC: Get setting -->
@@ -7805,9 +7809,9 @@
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="mod_short" value="ecp" />
 			<argument name="host_id" value="#session.hostid#" />
-		</invoke> 
+		</invoke>
 		<!-- CFC: Get users -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />		
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show -->
 		<!-- CFC: Get all labels -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="qry_labels" />
@@ -7845,9 +7849,9 @@
 		<!-- CFC: Save label -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_label_set(attributes.label_users)" />
 	</fuseaction>
-	
+
 	<!-- We moved labels for 1.5 to user view now -->
-	
+
 	<!-- Add or Update Label -->
 	<fuseaction name="labels_add">
 		<!-- CFC: Get label -->
@@ -7855,11 +7859,11 @@
 		<!-- Show -->
 		<do action="labels_list" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADMIN: LABELS STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADMIN: WATERMARK START -->
 	<!--  -->
@@ -7914,13 +7918,13 @@
 	<!--  -->
 	<!-- ADMIN SECTION END -->
 	<!--  -->
-	
+
 	<!-- For loading Gears -->
 	<fuseaction name="gears">
 		<!-- Show -->
 		<do action="v.gears" />
 	</fuseaction>
-	
+
 	<!-- Window for Print to PDF -->
 	<fuseaction name="topdf">
 		<!-- Action: Get asset path -->
@@ -8048,11 +8052,11 @@
 		<!-- Show -->
 		<do action="ajax.topdf" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- COMMENTS: START -->
 	<!--  -->
-	
+
 	<!-- Show Comments -->
 	<fuseaction name="comments">
 		<!-- XFA -->
@@ -8109,15 +8113,15 @@
 		<!-- Show -->
 		<do action="comments_list" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- COMMENTS: END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- SHARING: START -->
 	<!--  -->
-	
+
 	<!-- This is for a shared collection -->
 	<fuseaction name="sharec">
 		<!-- Param -->
@@ -8126,7 +8130,7 @@
 		<!-- Show -->
 		<do action="share" />
 	</fuseaction>
-	
+
 	<!-- First entry when sharing is activated -->
 	<fuseaction name="share">
 		<!-- Param -->
@@ -8217,8 +8221,6 @@
 		<!-- User is found -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<!-- CFC: Check if user is allowed for this folder -->
@@ -8231,7 +8233,7 @@
 					</true>
 				</if>
 				<!-- Encode login vars and pass it to sharep which will verify login with it -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="encrypt('#logindone.qryuser.user_id#','#logindone.notfound#')" returnvariable="ls" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="encrypt('#logindone.qryuser.user_id#','#logindone.notfound#')" returnvariable="ls" />
 				<!-- Relocate -->
 				<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;ls=#urlencodedformat(ls)#&amp;_v=#createuuid('')#" />
 			</true>
@@ -8272,9 +8274,9 @@
 				</if>
 				<!-- Decode and validate login credentials  -->
 				<!-- Decode login vars -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="decrypt('#urldecode(attributes.ls)#','F')" returnvariable="userid" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="decrypt('#urldecode(attributes.ls)#','F')" returnvariable="userid" />
 				<!-- Check if decoded userid exists in database -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="isuser('#userid#')" returnvariable="logcheck" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="isuser('#userid#')" returnvariable="logcheck" />
 				<if condition="logcheck eq false">
 					<true>
 						<!-- Relocate to login -->
@@ -8499,17 +8501,17 @@
 	<!--  -->
 	<!-- SHARING: END -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- VERSIONS: START -->
 	<!--  -->
-	
+
 	<!-- The initial call -->
 	<fuseaction name="versions">
 		<!-- Param -->
 		<set name="attributes.tempid" value="#createuuid()#" />
 		<!-- CFC: Get access -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />	
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.versions" />
 	</fuseaction>
@@ -8588,11 +8590,11 @@
 		<!-- Show -->
 		<do action="ajax.versions_upload" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- VERSIONS: STOP -->
 	<!--  -->
-	
+
 	<!-- Random Password -->
 	<fuseaction name="randompass">
 		<!-- CFC: Random Password -->
@@ -8600,17 +8602,17 @@
 		<!-- Show -->
 		<do action="ajax.randompass" />
 	</fuseaction>
-	
+
 	<!-- Parse FB -->
 	<fuseaction name="fbparsecmd">
 		<do action="ajax.fbparsecmd" />
 	</fuseaction>
-	
+
 	<!-- Send Feedback -->
 	<fuseaction name="send_feedback">
 		<invoke object="myFusebox.getApplicationData().global" methodcall="send_feedback(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Get asset shared option -->
 	<fuseaction name="share_options">
 		<!-- CFC: Load folder record -->
@@ -8673,11 +8675,11 @@
 		<!-- CFC: Save share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="share_reset_dl(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- Preview Images: START -->
 	<!--  -->
-	
+
 	<!-- Start -->
 	<fuseaction name="previewimage">
 		<!-- Param -->
@@ -8717,12 +8719,12 @@
 		<!-- CFC: Recreate it -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="recreatepreviewimage(attributes)" />
 	</fuseaction>
-		
-		
+
+
 	<!--  -->
 	<!-- ORDERS: START -->
 	<!--  -->
-	
+
 	<!-- Get orders -->
 	<fuseaction name="orders">
 		<!-- CFC: Get Orders -->
@@ -8757,33 +8759,22 @@
 		<!-- Show -->
 		<do action="orders" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ORDERS: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- VIEWS: START -->
 	<!--  -->
-	
+
 	<!-- View includes -->
 	<fuseaction name="view_includes">
 		<!-- Params -->
 		<set name="attributes.view" value="combined" />
 		<set name="session.iscol" value="#attributes.col#" />
-		<!-- Set security only if we have no userid in the session -->
-		<if condition="NOT StructKeyExists(session, 'theuserid')">
-			<true>
-				<!-- Param -->
-				<set name="session.theuserid" value="0" />
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="Request.securityobj" />
-				<!-- CFC: Set Access -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
-			</true>
-		</if>
 	</fuseaction>
-	
+
 	<!-- View includes -->
 	<fuseaction name="view_includes_queries">
 		<!-- CFC: Customization -->
@@ -8882,7 +8873,7 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!-- View: RSS -->
 	<fuseaction name="view_rss">
 		<!-- Call include -->
@@ -8896,7 +8887,7 @@
 		<!-- Show -->
 		<do action="ajax.views" />
 	</fuseaction>
-	
+
 	<!-- View: Excel -->
 	<fuseaction name="view_xls">
 		<!-- Call include -->
@@ -8910,7 +8901,7 @@
 		<!-- Show -->
 		<do action="ajax.views" />
 	</fuseaction>
-	
+
 	<!-- View: Doc -->
 	<fuseaction name="view_doc">
 		<!-- Call include -->
@@ -8924,16 +8915,16 @@
 		<!-- Show -->
 		<do action="ajax.views" />
 	</fuseaction>
-	
-	
+
+
 	<!--  -->
 	<!-- VIEWS: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- FLODER THUMBNAIL: START -->
 	<!--  -->
-	
+
 	<!-- Initial View -->
 	<fuseaction name="folder_thumbnail">
 		<!-- Param -->
@@ -8958,7 +8949,7 @@
 		<!-- Show -->
 		<do action="ajax.folder_thumbnail" />
 	</fuseaction>
-	
+
 	<fuseaction name="folder_thumbnail_save">
 		<xfa name="submitfolderform" value="c.folder_thumbnail_save" overwrite="false" />
 		<set name="attributes.uploadnow" value="F" overwrite="false" />
@@ -8986,11 +8977,11 @@
 	<!--  -->
 	<!-- FLODER THUMBNAIL: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- WIDGETS: START -->
 	<!--  -->
-	
+
 	<!-- Initial View -->
 	<fuseaction name="widgets">
 		<!-- XFA -->
@@ -9023,6 +9014,8 @@
 		<set name="session.theuserid" value="0" overwrite="false" />
 		<set name="attributes.qry_news.news_title" value="" overwrite="false" />
 		<set name="attributes.qry_news.news_text" value="" overwrite="false" />
+		<set name="session.is_system_admin" value="false" overwrite="false" />
+		<set name="session.is_administrator" value="false" overwrite="false" />
 		<set name="session.widget_login" value="F" />
 		<set name="session.offset" value="0" />
 		<set name="jr_enable" value="false" overwrite="false" />
@@ -9099,8 +9092,6 @@
 				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 			</true>
 		</if>
-		<!-- set host again with real value -->
-		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="Request.securityobj" />
 		<!-- Params -->
 		<set name="attributes.external" value="t" />
 		<set name="attributes.widget_id" value="#session.widget_id#" />
@@ -9240,8 +9231,6 @@
 		<!-- User is found -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<set name="session.widget_login" value="T" />
@@ -9262,11 +9251,11 @@
 	<!--  -->
 	<!-- WIDGETS: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- ADDITIONAL VERSIONS: START -->
 	<!--  -->
-	
+
 	<!-- Initial View -->
 	<fuseaction name="adi_versions">
 		<!-- Set fileid into session for upload -->
@@ -9322,15 +9311,15 @@
 		<!-- Show -->
 		<do action="ajax.av_load" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- ADDITIONAL VERSIONS: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- MINI: START -->
 	<!--  -->
-	
+
 	<!-- Initial action on calling the mini version -->
 	<fuseaction name="mini">
 		<!-- XFA -->
@@ -9415,7 +9404,7 @@
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 				<!-- CFC: Get Breadcrumb -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />	
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Get View -->
@@ -9495,15 +9484,15 @@
 		<!-- Show -->
 		<do action="ajax.mini_search" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- MINI: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- LABELS: START -->
 	<!--  -->
-	
+
 	<!-- Load the label explorer -->
 	<fuseaction name="labels_list">
 		<!-- Params -->
@@ -9639,15 +9628,15 @@
 		<!-- Show -->
 		<do action="ajax.labels_main_properties" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- LABELS: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- RFS: START -->
 	<!--  -->
-	
+
 	<!-- Pick up asset from rfs -->
 	<fuseaction name="rfs">
 		<!-- Action: Get asset path -->
@@ -9655,15 +9644,15 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().rfs" methodcall="pickup(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- RFS: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- EXPORT METADATA: START -->
 	<!--  -->
-	
+
 	<!-- Export -->
 	<fuseaction name="meta_export">
 		<!-- Param -->
@@ -9683,15 +9672,15 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- EXPORT METADATA: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- IMPORT METADATA: START -->
 	<!--  -->
-	
+
 	<!-- Import show window -->
 	<fuseaction name="meta_imp">
 		<!-- Param -->
@@ -9715,15 +9704,15 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().import" methodcall="doimport(attributes)" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- IMPORT METADATA: STOP -->
 	<!--  -->
-	
+
 	<!--  -->
 	<!-- DOWNLOAD FOLDER: START -->
 	<!--  -->
-	
+
 	<!-- Download Folder -->
 	<fuseaction name="download_folder_do">
 		<!-- Param -->
@@ -9807,11 +9796,11 @@
 			</false>
 		</if>
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- DOWNLOAD FOLDER: STOP -->
 	<!--  -->
-	
+
 	<!-- Store Art values -->
 	<fuseaction name="store_art_values">
 		<set name="session.artofimage" value="#attributes.artofimage#" />
@@ -9819,7 +9808,7 @@
 		<set name="session.artofaudio" value="#attributes.artofaudio#" />
 		<set name="session.artoffile" value="#attributes.artoffile#" />
 	</fuseaction>
-	
+
 	<!-- Store fileids and filetypes in session (takes care for more then 75 assets at once) -->
 	<fuseaction name="store_file_values">
 		<!-- Params -->
@@ -9829,7 +9818,7 @@
 		<!-- Put existing values together -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="store_selection(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Store all ids -->
 	<fuseaction name="store_file_all">
 		<set name="session.individual_select" value="false" />
@@ -9936,7 +9925,7 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Set offset for log -->
 	<fuseaction name="set_offset_admin">
 		<!-- Set the offset -->
@@ -9946,7 +9935,7 @@
 			</true>
 		</if>
 	</fuseaction>
-	
+
 	<!-- Download asset window -->
 	<fuseaction name="file_download">
 		<!-- Get link to assets for downloading -->
@@ -10001,13 +9990,13 @@
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
-					</true>	
+					</true>
 					<false>
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_detail.detail.img_filename#" />
 					</false>
 				</if>
-			
+
 			</true>
 		</if>
 		<!-- Videos -->
@@ -10026,7 +10015,7 @@
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
-					</true>	
+					</true>
 					<false>
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_detail.detail.vid_filename#" />
@@ -10050,7 +10039,7 @@
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
-					</true>	
+					</true>
 					<false>
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_detail.detail.aud_name#" />
@@ -10074,7 +10063,7 @@
 						<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_av.assets.av_link_title#" />
-					</true>	
+					</true>
 					<false>
 						<!-- Set filename -->
 						<set name="attributes.filename" value="#qry_detail.file_name#" />
@@ -10141,7 +10130,7 @@
 				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
 					<argument name="user_id" value="#url.userid#" />
 					<argument name="host_id" value="#session.hostid#" />
-				</invoke>				
+				</invoke>
  			</true>
 		</if>
 		<!-- If there is a userid then set sessions to userid -->
@@ -10213,7 +10202,7 @@
 		<set name="qry_files.qaud.cnt" value="#session.qaud#" />
 		<set name="qry_files.qdoc.cnt" value="#session.qdoc#" />
 		<!-- Set the total -->
-		<set name="qry_filecount.thetotal" value="#session.thetotal#" />
+		<set name="attributes.qry_filecount" value="#session.thetotal#" />
 		<!-- Show -->
 		<if condition="!attributes.fcall">
 			<true>
@@ -10304,7 +10293,7 @@
 	<fuseaction name="sf_load_account">
 		<!-- Param -->
 		<set name="attributes.noview" value="false" overwrite="false" />
-		<set name="attributes.root" value="false" overwrite="false" /> 
+		<set name="attributes.root" value="false" overwrite="false" />
 		<set name="session.sf_account" value="#attributes.sf_type#" />
 		<set name="attributes.path" value="/" overwrite="false" />
 		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
@@ -10348,7 +10337,7 @@
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(session.sf_id)" returnvariable="qry_sf" />
 		<set name="attributes.zip_extract" value="#qry_sf.sf.sf_zipextract#" />
 		<!-- CFC: get class according to type -->
-		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="downloadfiles(session.sf_path,attributes)" returnvariable="attributes.thefile" />		
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="downloadfiles(session.sf_path,attributes)" returnvariable="attributes.thefile" />
 		<!-- Call CFC -->
 		<!-- <do action="asset_upload_server" /> -->
 	</fuseaction>
@@ -10471,7 +10460,7 @@
 		<!-- Show the choose folder -->
 		<do action="ajax.select_label_popup" />
 	</fuseaction>
-	
+
 	<!-- Search label for the asset-->
 	<fuseaction name="search_label_for_asset">
 		<!-- Param -->
@@ -10490,7 +10479,7 @@
 		<!-- Show the choose folder -->
 		<do action="ajax.search_label_for_asset" />
 	</fuseaction>
-	
+
 	<!-- Add or Remove the label for asset -->
 	<fuseaction name="asset_label_add_remove">
 		<!-- CFC -->
@@ -10565,13 +10554,13 @@
 		<!-- CFC: Subscribe -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="subscribe(attributes)" />
 	</fuseaction>
-	
+
 	<!-- Run Folder subscribe schedule tasks -->
 	<fuseaction name="folder_subscribe_task">
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
-		<do action="storage" /> 
+		<do action="storage" />
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="folder_subscribe_task()" />
 	</fuseaction>
@@ -10682,7 +10671,7 @@
 	</fuseaction>
 
 	<!-- APPROVAL -->
-	
+
 	<!-- Admin Approval Page -->
 	<fuseaction name="admin_approval">
 		<!-- CFC: Get values -->
@@ -10693,7 +10682,7 @@
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="host_id" value="#session.hostid#" />
 			<argument name="mod_id" value="1" />
-		</invoke> 
+		</invoke>
 		<!-- CFC: Get users -->
 		<set name="attributes.dam" value="true" />
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
@@ -10750,7 +10739,7 @@
 	<fuseaction name="req_approval">
 		<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;goto=approval" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- START: White-Labelling of hosts -->
 	<!--  -->

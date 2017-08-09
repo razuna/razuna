@@ -21,7 +21,7 @@
 							<cfif application.razuna.storage EQ "amazon">
 								<img src="#qry_detail.detail.cloud_url#" border="0" style="max-height:50px;max-width:100px;">
 							<cfelse>
-								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?#qry_detail.detail.hashtag#&#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?_v=#qry_detail.detail.hashtag#&#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
 							</cfif>
 						</a>
 					</td>
@@ -71,7 +71,7 @@
 							<cfif application.razuna.storage EQ "amazon">
 								<img src="#qry_detail.detail.cloud_url#" border="0" style="max-height:50px;max-width:100px;">
 							<cfelse>
-								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?#qry_detail.detail.hashtag#&#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?_v=#qry_detail.detail.hashtag#&#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
 							</cfif>
 						</a>
 					</td>
@@ -114,7 +114,7 @@
 		<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
 	</cfif>
 	<!--- Show related images (if any) --->
-	<div id="relatedimages"></div>
+	<div id="relatedimages"><img src="#session.thehttp##cgi.http_host##dynpath#/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;"></div>
 	<!--- Show additional version --->
 	<div id="additionalversions"></div>
 </cfoutput>

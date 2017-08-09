@@ -29,7 +29,7 @@
 		<div style="float:left;"><a href="##" onclick="$('##labeltools').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("manage")#</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##labeltools').toggle();" class="ddicon"></div>
 		<div id="labeltools" class="ddselection_header" style="top:18px;width:250px;z-index:6;">
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				<p>#myFusebox.getApplicationData().defaults.trans("add_label")#</p>
 				<p><input type="text" name="label_text" id="label_text" style="width:120px;"> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("labels_add")#" class="button" onclick="addlabel();"></p>
 				<p>#myFusebox.getApplicationData().defaults.trans("nest_label")#:<br />

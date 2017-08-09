@@ -63,7 +63,7 @@
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
-		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
+		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
 		<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
 		<cfset var thefolderlist = arguments.folder_id & ",">
@@ -83,7 +83,7 @@
 		<cfelse>
 			<cfset var min = session.offset * session.rowmaxpage>
 			<cfset var max = (session.offset + 1) * session.rowmaxpage>
-			<cfif variables.database EQ "db2">
+			<cfif application.razuna.thedatabase EQ "db2">
 				<cfset min = min + 1>
 			</cfif>
 		</cfif>
@@ -106,7 +106,7 @@
 		<cfset var sortby = "date_change DESC">
 	</cfif>
 	<!--- Oracle --->
-	<cfif variables.database EQ "oracle">
+	<cfif application.razuna.thedatabase EQ "oracle">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
@@ -115,8 +115,8 @@
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, cast(v.vid_size as decimal(12,0))  size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
-				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+				SELECT #Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, v.vid_filename filename_forsort, cast(v.vid_size as decimal(12,0))  size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1 AND v.host_id = vt.host_id
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -128,7 +128,7 @@
 		WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 		</cfquery>
 	<!--- DB2 --->
-	<cfelseif variables.database EQ "db2">
+	<cfelseif application.razuna.thedatabase EQ "db2">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
@@ -136,8 +136,8 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsvid */ #thecolumnlist#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, v.*, vt.*, 
-			lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
-			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+			v.vid_filename filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1 AND v.host_id = vt.host_id
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
 			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -161,18 +161,18 @@
 		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="vid">
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = c.asset_id_r AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
 		</cfif>
-		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change, v.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, v.vid_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'vid' kind</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, v.vid_filename filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change, v.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, v.vid_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'vid' kind</cfif>
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
@@ -181,25 +181,25 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1 AND v.host_id = vt.host_id
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND v.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND v.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		</cfif>
 		OR v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
 			 ) resultSet
 			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 		</cfif>
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				ORDER BY #sortby# LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
@@ -274,7 +274,7 @@
 				FROM #session.hostdbprefix#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = v.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -284,12 +284,12 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = v.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
-			WHEN lower(v.vid_owner) = (
-				SELECT lower(fo.folder_of_user) 
+			WHEN v.vid_owner = (
+				SELECT fo.folder_of_user 
 				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+				WHERE fo.folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
 				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 				AND fo.folder_id = v.folder_id_r
 				) THEN 'unlocked'
@@ -505,8 +505,7 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, 
-	v.vid_height, v.vid_width, v.vid_size vlength, v.vid_name_org, v.path_to_asset, v.cloud_url_org, v.vid_group
+	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, v.vid_height, v.vid_width, v.vid_size vlength, v.vid_name_org, v.path_to_asset, v.cloud_url_org, v.vid_group, v.hashtag
 	FROM #session.hostdbprefix#videos v
 	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -785,7 +784,7 @@
 			'videos' as what, 
 			'' AS folder_main_id_r
 				<!--- Permfolder --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+				<cfif session.is_system_admin OR session.is_administrator>
 					, 'X' as permfolder
 				<cfelse>
 					,
@@ -849,7 +848,7 @@
 				FROM qry_video
 				WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 				<cfif noread>
-					AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+					AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfif> 
 			</cfquery>
 		</cfif>
@@ -1161,6 +1160,7 @@
 	SELECT /* #variables.cachetoken#detaildescvid */ vid_description, vid_keywords, lang_id_r, vid_description as thedesc, vid_keywords as thekeys
 	FROM #session.hostdbprefix#videos_text
 	WHERE vid_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Convert the size --->
 	<cfset var thesize = 0>
@@ -1245,6 +1245,7 @@
 					FROM #session.hostdbprefix#videos_text
 					WHERE vid_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 					AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<cfif ishere.recordcount NEQ 0>
 						<cfset var tdesc = evaluate(thisdesc)>
@@ -1266,6 +1267,7 @@
 						vid_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 						WHERE vid_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 					<cfelse>
 						<cfquery datasource="#variables.dsn#">
@@ -2284,6 +2286,7 @@
 			FROM #session.hostdbprefix#videos_text
 			WHERE vid_id_r IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
 			AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<cfset q_start = q_end + 1>
 	    	<cfset q_end = q_end + 990>
 	    </cfloop>

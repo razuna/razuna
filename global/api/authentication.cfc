@@ -48,11 +48,11 @@
 			SELECT u.user_id, gu.ct_g_u_grp_id grpid
 			FROM users u, ct_users_hosts ct, ct_groups_users gu
 			WHERE (
-				lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.user)#" cfsqltype="cf_sql_varchar"> 
-				OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.user)#" cfsqltype="cf_sql_varchar">
+				u.user_login_name = <cfqueryparam value="#arguments.user#" cfsqltype="cf_sql_varchar"> 
+				OR u.user_email = <cfqueryparam value="#arguments.user#" cfsqltype="cf_sql_varchar">
 				)
-			AND lower(u.user_pass) = <cfqueryparam value="#lcase(thepass)#" cfsqltype="cf_sql_varchar">
-			AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+			AND u.user_pass = <cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
+			AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 			AND u.user_id = ct.ct_u_h_user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#arguments.hostid#" cfsqltype="cf_sql_numeric">
 			AND gu.ct_g_u_user_id = u.user_id
@@ -178,7 +178,7 @@
 			<cfquery datasource="#application.razuna.api.dsn#" name="thehost">
 			SELECT host_id, host_name, host_db_prefix, host_type, host_shard_group
 			FROM hosts
-			WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thesubdomain)#">
+			WHERE host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thesubdomain#">
 			</cfquery>
 			<!--- If record is found then --->
 			<cfif thehost.recordcount EQ 0>
@@ -197,11 +197,11 @@
 			SELECT u.user_id, gu.ct_g_u_grp_id grpid
 			FROM users u, ct_users_hosts ct, ct_groups_users gu
 			WHERE (
-				lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.user)#" cfsqltype="cf_sql_varchar"> 
-				OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.user)#" cfsqltype="cf_sql_varchar">
+				u.user_login_name = <cfqueryparam value="#lcase(arguments.user)#" cfsqltype="cf_sql_varchar"> 
+				OR u.user_email = <cfqueryparam value="#lcase(arguments.user)#" cfsqltype="cf_sql_varchar">
 				)
-			AND lower(u.user_pass) = <cfqueryparam value="#lcase(thepass)#" cfsqltype="cf_sql_varchar">
-			AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+			AND u.user_pass = <cfqueryparam value="#lcase(thepass)#" cfsqltype="cf_sql_varchar">
+			AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 			AND u.user_id = ct.ct_u_h_user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
 			AND gu.ct_g_u_user_id = u.user_id

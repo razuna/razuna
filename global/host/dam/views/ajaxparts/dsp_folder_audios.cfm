@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif session.is_system_admin OR session.is_administrator>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>
@@ -87,7 +87,7 @@
 									<cfloop list="#attributes.cs_place.top.audio#" index="m" delimiters=",">
 										<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 										<cfif m CONTAINS "_filename">
-											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
@@ -115,7 +115,7 @@
 										</cfif>
 									</cfloop>
 									<br/><br/>
-									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;">
 										<div id="draggable#aud_id#" type="#aud_id#-aud" class="theimg">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 										</div>
@@ -147,13 +147,13 @@
 									<div style="clear:left;"></div>
 									<!--- custom metadata fields to show --->
 									<cfif attributes.cs.audios_metadata EQ "">
-										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(aud_name,50)#</strong></a>
+										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#left(aud_name,50)#</strong></a>
 									<cfelse>
 										<br />
 										<cfloop list="#attributes.cs_place.bottom.audio#" index="m" delimiters=",">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											<cfif m CONTAINS "_filename">
-												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+												<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 											<cfelseif m CONTAINS "_time">
@@ -234,7 +234,7 @@
 					<tr>
 						<td valign="top" width="1%" nowrap="true">
 							<cfif is_available>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;">
 									<div id="draggable#aud_id#" type="#aud_id#-aud">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
@@ -345,7 +345,7 @@
 					<tr class="list thumbview">
 						<td valign="top" width="1%" nowrap="true">
 							<cfif is_available>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;">
 									<div id="draggable#aud_id#-aud" type="#aud_id#-aud">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 									</div>
@@ -362,7 +362,7 @@
 							</cfif>
 						</td>
 						<td width="100%"valign="top">
-							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#aud_name#</strong></a>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#attributes.qry_filecount#','',1000,1);return false;"><strong>#aud_name#</strong></a>
 							<br />
 							<!--- Icons --->
 							<div style="float:left;padding-top:5px;">

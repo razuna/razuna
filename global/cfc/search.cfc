@@ -119,7 +119,7 @@
 		</cfif>
 
 		<!--- Get all the folders the user is allowed to access but not if we are admin or list_recfolders has records --->
-		<cfif ( arguments.thestruct.list_recfolders EQ "0" OR arguments.thestruct.list_recfolders EQ "" ) AND NOT ( Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() )>
+		<cfif ( arguments.thestruct.list_recfolders EQ "0" OR arguments.thestruct.list_recfolders EQ "" ) AND NOT ( session.is_system_admin OR session.is_administrator )>
 			<cfinvoke component="users" method="getAllFolderOfUser" user_id="#session.theuserid#" host_id="#session.hostid#" returnvariable="arguments.thestruct.list_recfolders">
 		</cfif>
 
@@ -249,7 +249,7 @@
 			<cfset var editids = "0,">
 			<cfset var fileids = "">
 			<!--- Get proper folderaccess no need for admin --->
-			<!--- <cfif NOT Request.securityObj.CheckSystemAdminUser() OR NOT Request.securityObj.CheckAdministratorUser() AND session.customaccess NEQ ""> --->
+			<!--- <cfif NOT session.is_system_admin OR NOT session.is_administrator AND session.customaccess NEQ ""> --->
 				<cfloop query="qry">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#" />
 					<!--- Add labels query --->
@@ -412,13 +412,13 @@
 					AND so.asset_type = 'img'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(i.img_filename) filename_forsort,
+				i.img_filename filename_forsort,
 				cast(i.img_size as decimal(12,0)) size,
 				i.hashtag,
 				fo.folder_name,
 				'' as labels,
 				i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -452,9 +452,9 @@
 					</cfloop>
 				</cfif>
 				FROM #session.hostdbprefix#images i
-				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
+				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
-				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
 				WHERE i.img_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -488,13 +488,13 @@
 					AND so.asset_type = 'img'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(i.img_filename) filename_forsort,
+				i.img_filename filename_forsort,
 				cast(i.img_size as decimal(12,0)) size,
 				i.hashtag,
 				fo.folder_name,
 				'' as labels,
 				i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -529,9 +529,9 @@
 				</cfif>
 				FROM #session.hostdbprefix#images i
 				INNER JOIN ct_aliases ct ON i.img_id = ct.asset_id_r
-				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
+				LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND i.host_id = fo.host_id
-				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
 				WHERE i.img_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
 				<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -631,13 +631,13 @@
 				AND so.asset_type = 'vid'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			) AS theformat,
-			lower(v.vid_filename) filename_forsort,
+			v.vid_filename filename_forsort,
 			cast(v.vid_size as decimal(12,0)) size,
 			v.hashtag,
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -670,7 +670,7 @@
 				</cfloop>
 			</cfif>
 			FROM #session.hostdbprefix#videos v
-			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 			WHERE v.vid_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
@@ -705,13 +705,13 @@
 				AND so.asset_type = 'vid'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			) AS theformat,
-			lower(v.vid_filename) filename_forsort,
+			v.vid_filename filename_forsort,
 			cast(v.vid_size as decimal(12,0)) size,
 			v.hashtag,
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -745,7 +745,7 @@
 			</cfif>
 			FROM #session.hostdbprefix#videos v
 			INNER JOIN ct_aliases ct ON v.vid_id = ct.asset_id_r
-			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+			LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND v.host_id = fo.host_id
 			WHERE v.vid_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
@@ -840,11 +840,11 @@
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
 			'0' as vwidth, '0' as vheight,  '0' isalias,
-			'0' as theformat, lower(f.file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
+			'0' as theformat, f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -879,8 +879,8 @@
 			</cfif>
 			FROM #session.hostdbprefix#files f
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
-			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
+			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
+			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 			WHERE f.file_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -902,11 +902,11 @@
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
 			'0' as vwidth, '0' as vheight,  '1' isalias,
-			'0' as theformat, lower(f.file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
+			'0' as theformat, f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
 			fo.folder_name,
 			'' as labels,
 			'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,f.expiry_date expiry_date_actual,
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+			<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 				'X' as permfolder
 			<cfelseif session.customaccess NEQ "">
 				'#session.customaccess#' as permfolder
@@ -942,8 +942,8 @@
 			FROM #session.hostdbprefix#files f
 			INNER JOIN ct_aliases ct ON f.file_id = ct.asset_id_r
 			LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND f.host_id = fo.host_id
-			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
+			LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
+			LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 			WHERE f.file_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 			<!--- Only if we have a folder id that is not 0 --->
 			<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -1041,13 +1041,13 @@
 					AND so.asset_type = 'aud'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(a.aud_name) filename_forsort,
+				a.aud_name filename_forsort,
 				cast(a.aud_size as decimal(12,0)) size,
 				a.hashtag,
 				fo.folder_name,
 				'' as labels,
 				'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -1080,7 +1080,7 @@
 					</cfloop>
 				</cfif>
 				FROM #session.hostdbprefix#audios a
-				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
 				WHERE a.aud_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
@@ -1114,13 +1114,13 @@
 					AND so.asset_type = 'aud'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				) AS theformat,
-				lower(a.aud_name) filename_forsort,
+				a.aud_name filename_forsort,
 				cast(a.aud_size as decimal(12,0)) size,
 				a.hashtag,
 				fo.folder_name,
 				'' as labels,
 				'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace,CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+				<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 					'X' as permfolder
 				<cfelseif session.customaccess NEQ "">
 					'#session.customaccess#' as permfolder
@@ -1154,7 +1154,7 @@
 				</cfif>
 				FROM #session.hostdbprefix#audios a
 				INNER JOIN ct_aliases ct ON a.aud_id = ct.asset_id_r
-				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+				LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
 				LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = ct.folder_id_r AND a.host_id = fo.host_id
 				WHERE a.aud_id IN (<cfif arguments.qry_idstype.categorytree EQ "">'0'<cfelse>'0'<cfloop query="arguments.qry_idstype">,'#categorytree#'</cfloop></cfif>)
 				<!--- Only if we have a folder id that is not 0 --->
@@ -1413,14 +1413,14 @@
 					AND so.asset_type = 'img' 
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					) AS theformat, 
-					LOWER(i.img_filename) filename_forsort, 
+					i.img_filename filename_forsort, 
 					cast(i.img_size as decimal(12,0)) size, 
 					i.hashtag,
 					fo.folder_name, 
 					'' AS labels, 
 					i.img_width width, i.img_height height, x.xres xres, x.yres yres, x.colorspace colorspace, CASE WHEN NOT (i.img_group is null OR i.img_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#images WHERE img_id=i.img_group) ELSE i.expiry_date END  expiry_date_actual,
 					<!--- Check if this folder belongs to a user and lock/unlock --->
-					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+					<cfif session.is_system_admin OR session.is_administrator>
 						'unlocked' AS perm, 
 					<cfelse>
 						CASE
@@ -1430,7 +1430,7 @@
 								FROM #session.hostdbprefix#folders_groups fg
 								WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 								AND fg.folder_id_r = i.folder_id_r
-								AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+								AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 								AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 								) THEN 'unlocked'
 							<!--- When folder is shared for everyone --->
@@ -1440,13 +1440,13 @@
 								WHERE fg2.grp_id_r = '0'
 								AND fg2.folder_id_r = i.folder_id_r
 								AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-								AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+								AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 								) THEN 'unlocked'
 							WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 							ELSE 'locked'
 						END as perm,
 					</cfif>	
-					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+					<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 						'X' AS permfolder 
 					<cfelseif session.customaccess NEQ "">
 						'#session.customaccess#' as permfolder
@@ -1480,9 +1480,9 @@
 						</cfloop>
 					</cfif>	 
 					FROM #session.hostdbprefix#images i
-					LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
+					LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r AND i.host_id = x.host_id
 					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
-					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> 
+					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND i.host_id = it.host_id
 					WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 					AND (
@@ -1523,11 +1523,11 @@
 					f.file_extension ext, f.file_name_org filename_org, f.file_type AS kind,f.is_available, 
 					f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url, 
 					f.path_to_asset, f.cloud_url,f.cloud_url_org, f.in_trash, fd.file_desc description, fd.file_keywords keywords, 
-					'0' AS vwidth, '0' AS vheight, '0' AS isalias,'0' AS theformat,LOWER(f.file_name) filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
+					'0' AS vwidth, '0' AS vheight, '0' AS isalias,'0' AS theformat,f.file_name filename_forsort, cast(f.file_size as decimal(12,0)) size, f.hashtag, 
 					fo.folder_name, 
 					'' AS labels, 
 					'0' AS width, '0' AS height, '' AS xres, '' AS yres,'' AS colorspace, f.expiry_date expiry_date_actual,
-					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+					<cfif session.is_system_admin OR session.is_administrator>
 					'unlocked' AS perm,
 					<cfelse>
 							CASE
@@ -1537,7 +1537,7 @@
 									FROM #session.hostdbprefix#folders_groups fg
 									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND fg.folder_id_r = f.folder_id_r
-									AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 									) THEN 'unlocked'
 								<!--- When folder is shared for everyone --->
@@ -1547,13 +1547,13 @@
 									WHERE fg2.grp_id_r = '0'
 									AND fg2.folder_id_r = f.folder_id_r
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
 								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
 							END as perm,
 					</cfif>	
-					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+					<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 						'X' as permfolder
 					<cfelseif session.customaccess NEQ "">
 						'#session.customaccess#' as permfolder
@@ -1588,8 +1588,8 @@
 						</cfif>
 						FROM #session.hostdbprefix#files f
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
-						LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id 
+						LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND f.host_id = fd.host_id
+						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id AND f.host_id = x.host_id
 						WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
 						AND (
 							<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
@@ -1630,12 +1630,12 @@
 							AND so.asset_type = 'vid'
 							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1"> 
 						 ) AS theformat,
-						 LOWER(v.vid_filename) filename_forsort, 
+						 v.vid_filename filename_forsort, 
 						 cast(v.vid_size as decimal(12,0)) size, v.hashtag, 
 						 fo.folder_name, 
 						 '' AS labels, '0' AS width, '0' AS height, '' AS xres, '' AS yres, '' AS colorspace, CASE WHEN NOT (v.vid_group is null OR v.vid_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#videos WHERE vid_id=v.vid_group) ELSE v.expiry_date END  expiry_date_actual,
 						 <!--- Check if this folder belongs to a user and lock/unlock --->
-						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()> 
+						<cfif session.is_system_admin OR session.is_administrator> 
 							'unlocked' AS perm,
 						<cfelse>
 							CASE
@@ -1645,7 +1645,7 @@
 									FROM #session.hostdbprefix#folders_groups fg
 									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND fg.folder_id_r = v.folder_id_r
-									AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 									) THEN 'unlocked'
 								<!--- When folder is shared for everyone --->
@@ -1655,13 +1655,13 @@
 									WHERE fg2.grp_id_r = '0'
 									AND fg2.folder_id_r = v.folder_id_r
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
 								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
 							END as perm,
 						</cfif> 
-						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+						<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 							'X' as permfolder
 						<cfelseif session.customaccess NEQ "">
 							'#session.customaccess#' as permfolder
@@ -1694,7 +1694,7 @@
 							</cfloop>
 						</cfif>
 						FROM #session.hostdbprefix#videos v
-						LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+						LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND v.host_id = vt.host_id
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 						WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 
@@ -1745,14 +1745,14 @@
 							AND so.asset_type = 'aud'
 							AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 						) AS theformat,
-						lower(a.aud_name) filename_forsort,
+						a.aud_name filename_forsort,
 						cast(a.aud_size as decimal(12,0)) size,
 						a.hashtag,
 						fo.folder_name,
 						'' as labels,
 						'0' as width, '0' as height, '' as xres, '' as yres, '' as colorspace, CASE WHEN NOT (a.aud_group is null OR a.aud_group='') THEN (SELECT expiry_date FROM #session.hostdbprefix#audios WHERE aud_id=a.aud_group) ELSE a.expiry_date END  expiry_date_actual,
 						<!--- Check if this folder belongs to a user and lock/unlock --->
-						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+						<cfif session.is_system_admin OR session.is_administrator>
 							'unlocked' as perm,
 						<cfelse>
 							CASE
@@ -1762,7 +1762,7 @@
 									FROM #session.hostdbprefix#folders_groups fg
 									WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 									AND fg.folder_id_r = a.folder_id_r
-									AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 									) THEN 'unlocked'
 								<!--- When folder is shared for everyone --->
@@ -1772,13 +1772,13 @@
 									WHERE fg2.grp_id_r = '0'
 									AND fg2.folder_id_r = a.folder_id_r
 									AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-									AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+									AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 									) THEN 'unlocked'
 								WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
 								ELSE 'locked'
 							END as perm,
 						</cfif>
-						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
+						<cfif session.is_system_admin OR session.is_administrator AND session.customaccess EQ "">
 							'X' as permfolder
 						<cfelseif session.customaccess NEQ "">
 							'#session.customaccess#' as permfolder
@@ -1811,7 +1811,7 @@
 							</cfloop>
 						</cfif>
 						FROM #session.hostdbprefix#audios a
-						LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+						LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric"> AND a.host_id = aut.host_id
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id 
 						WHERE  a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F"> 

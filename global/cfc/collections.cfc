@@ -42,15 +42,15 @@
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qrylist" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released,
-	lower(ct.col_name) AS namesort,
+	ct.col_name AS namesort,
 	<!--- Permission follow but not for sysadmin and admin --->
-	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+	<cfif not session.is_system_admin and not session.is_administrator>
 		CASE
 			WHEN EXISTS(
 				SELECT fg.col_id_r
 				FROM #session.hostdbprefix#collections_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 				WHERE fg.col_id_r = c.col_id
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- If this is the user folder or he is the owner --->
 			WHEN ( c.col_owner = '#Session.theUserID#' ) THEN 'unlocked'
@@ -115,7 +115,7 @@
 	FROM #session.hostdbprefix#collections c, #session.hostdbprefix#collections_text ct
 	WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 	AND c.col_id = ct.col_id_r
-	AND lower(ct.col_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.collectionname)#">
+	AND ct.col_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.collectionname#">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Collection not here thus continue --->
@@ -347,7 +347,7 @@
 	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, 
 	c.share_dl_thumb, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
 	<!--- Permfolder --->
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif session.is_system_admin OR session.is_administrator>
 		, 'X' as colaccess
 	<cfelse>
 		,
@@ -456,9 +456,9 @@
 		END as theextension
 	FROM #session.hostdbprefix#collections_ct_files ct 
 	LEFT JOIN #session.hostdbprefix#images i ON ct.file_id_r = i.img_id 
-	LEFT JOIN #session.hostdbprefix#audios a ON ct.file_id_r = a.aud_id AND lower(a.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
-	LEFT JOIN #session.hostdbprefix#videos v ON ct.file_id_r = v.vid_id AND lower(v.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
-	LEFT JOIN #session.hostdbprefix#files f ON ct.file_id_r = f.file_id AND lower(f.in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#audios a ON ct.file_id_r = a.aud_id AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#videos v ON ct.file_id_r = v.vid_id AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+	LEFT JOIN #session.hostdbprefix#files f ON ct.file_id_r = f.file_id AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
 	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	<cfif arguments.thestruct.colaccess EQ 'R'>
@@ -467,10 +467,10 @@
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 	</cfif>
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+	AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 	GROUP BY ct.col_id_r, ct.file_id_r, ct.col_file_type, ct.col_item_order, ct.col_file_format
 	ORDER BY ct.col_item_order
 	</cfquery>
@@ -518,7 +518,7 @@
 		c.col_item_order, i.img_id AS id, i.thumb_extension AS ext, i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind AS link_kind,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, i.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -567,7 +567,7 @@
 		c.col_item_order, a.aud_id AS id, a.aud_extension AS ext, a.aud_name_org AS filename_org, 'aud' AS kind, a.link_kind,
 		a.path_to_asset, a.cloud_url, a.cloud_url_org, a.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -616,7 +616,7 @@
 		c.col_item_order, v.vid_id AS id, v.vid_extension AS ext, v.vid_name_image AS filename_org, 'vid' AS kind, v.link_kind, v.path_to_asset, 
 		v.cloud_url, v.cloud_url_org, v.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -666,7 +666,7 @@
 		f.file_extension AS ext, f.file_name_org AS filename_org, 'doc' AS kind, f.link_kind, f.path_to_asset, f.cloud_url, 
 		f.cloud_url_org, f.hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -715,7 +715,7 @@
 		FROM qry
 		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 		<cfif noread>
-			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+			AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif>
 	</cfquery>
 	<!--- Return --->
@@ -732,7 +732,7 @@
 		f.folder_id AS id, '' AS ext, '' AS filename_org, 'folder' AS kind, '' AS link_kind, '' AS path_to_asset, '' AS cloud_url, 
 		'' AS cloud_url_org, '' AS hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -779,7 +779,7 @@
 		FROM qry
 		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 		<cfif noread>
-			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+			AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif> 
 	</cfquery>
 	<!--- Return --->
@@ -796,7 +796,7 @@
 		'' AS col_item_order, c.col_id AS id, '' AS ext, '' AS filename_org, 'collection' AS kind, '' AS link_kind, '' AS path_to_asset, 
 		'' AS cloud_url, '' AS cloud_url_org, '' AS hashtag
 		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif session.is_system_admin OR session.is_administrator>
 			, 'X' as permfolder
 		<cfelse>
 			,
@@ -844,7 +844,7 @@
 		FROM qry
 		WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
 		<cfif noread>
-			AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
+			AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR">
 		 </cfif>
 	</cfquery>
 	<!--- Return --->
@@ -996,7 +996,7 @@
 		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -1043,7 +1043,7 @@
 		AND folder_is_collection = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -1091,7 +1091,7 @@
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND c.col_id_r = col.col_id
 		AND CASE
-			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				WHEN 1=1 THEN 'X' 
 			</cfif>
 			WHEN (
@@ -1186,7 +1186,7 @@
 	UPDATE #session.hostdbprefix#collections_ct_files
 	SET col_item_order = col_item_order - 1
 	WHERE col_item_order > <cfqueryparam value="#arguments.thestruct.order#" cfsqltype="cf_sql_numeric">
-	AND col_item_order <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 1
+	AND col_item_order <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> 1
 	AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Flush Cache --->
@@ -1210,7 +1210,7 @@
 	UPDATE #session.hostdbprefix#collections_ct_files
 	SET col_item_order = col_item_order - 1
 	WHERE col_item_order > <cfqueryparam value="#arguments.thestruct.order#" cfsqltype="cf_sql_numeric">
-	AND col_item_order <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 1
+	AND col_item_order <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> 1
 	AND col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Flush Cache --->
@@ -1298,9 +1298,9 @@
 	SELECT ct.col_name
 	FROM #session.hostdbprefix#collections c, #session.hostdbprefix#collections_text ct
 	WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-	AND c.col_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+	AND c.col_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
 	AND c.col_id = ct.col_id_r
-	AND lower(ct.col_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.collectionname)#">
+	AND ct.col_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.collectionname#">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Collection not here thus continue --->
@@ -1487,7 +1487,7 @@
 		<cfelse>
 			<cfset var min = session.offset * session.rowmaxpage>
 			<cfset var max = (session.offset + 1) * session.rowmaxpage>
-			<cfif variables.database EQ "db2">
+			<cfif application.razuna.thedatabase EQ "db2">
 				<cfset var min = min + 1>
 			</cfif>
 		</cfif>
@@ -1517,6 +1517,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'img' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1525,9 +1526,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'img'
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1  AND i.host_id = it.host_id
 	WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = i.host_id
 	AND ct.file_id_r = i.img_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1547,6 +1550,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'vid' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1555,9 +1559,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'vid'
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1 AND v.host_id = vt.host_id
 	WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = v.host_id
 	AND ct.file_id_r = v.vid_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="vid">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1578,6 +1584,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'aud' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1586,9 +1593,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'aud'
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1 AND a.host_id = aut.host_id
 	WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = a.host_id
 	AND ct.file_id_r = a.aud_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="aud">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1608,6 +1617,7 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'doc' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theorder,
 		(
 			SELECT ct.col_file_format
@@ -1616,9 +1626,11 @@
 			AND ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND ct.col_file_type = 'doc' 
 			AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		) AS theformat
-	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 AND f.host_id = ft.host_id
 	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
+	AND ct.host_id = f.host_id
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
 	AND ct.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -1657,10 +1669,10 @@
 		AND (v.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR v.expiry_date is null)
 		AND (f.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR f.expiry_date is null)
 		</cfif>
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = i.img_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#audios WHERE aud_id = a.aud_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#videos WHERE vid_id = v.vid_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#files WHERE file_id = f.file_id AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 	</cfquery>
 	<!--- Put together the lists for a collections search --->
 	<cfquery dbtype="query" name="qry.listimg">
@@ -2014,9 +2026,9 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT 1
 	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
-	WHERE lower(ct.col_name) = <cfqueryparam value="#lcase(arguments.thestruct.collection_name)#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE ct.col_name = <cfqueryparam value="#arguments.thestruct.collection_name#" cfsqltype="CF_SQL_VARCHAR">
 	AND ct.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	AND ct.col_id_r != <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND ct.col_id_r <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.col_id = ct.col_id_r
 	AND c.folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>

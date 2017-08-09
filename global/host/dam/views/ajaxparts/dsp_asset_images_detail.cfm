@@ -132,7 +132,7 @@
 							<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 								<img src="#qry_detail.detail.cloud_url#" border="0">
 							<cfelse>
-								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?#qry_detail.detail.hashtag#&#uniqueid#" border="0">
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?_v=#qry_detail.detail.hashtag#&#uniqueid#" border="0">
 							</cfif>
 							<cfif qry_detail.detail.link_kind NEQ "lan"></a></cfif>
 							<cfif qry_detail.detail.link_kind NEQ "">
@@ -198,7 +198,7 @@
 														<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 													</cfloop>
 												</select>
-												<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+												<cfif flag EQ 1 OR (session.is_system_admin OR session.is_administrator)>
 													<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 												</cfif>
 											<cfelse>
@@ -214,7 +214,7 @@
 															</cfif>
 														</cfloop>
 													</div>
-													<cfif flag EQ 1 OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+													<cfif flag EQ 1 OR (session.is_system_admin OR session.is_administrator)>
 														<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false;" style="float:left;"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 													</cfif>
 													<!--- Select label button --->
@@ -445,7 +445,7 @@
 	<script type="text/javascript">
 	$("##tab_detail#attributes.file_id#").tabs();
 	// Load renditions
-	function loadren(){
+	function loadren() {
 		<cfif qry_detail.detail.link_kind NEQ "url">
 			$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
 		</cfif>

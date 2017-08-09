@@ -29,7 +29,7 @@
 <cfif structKeyExists(qry_files,"searchcount")>
 	<cfset _count = qry_files.searchcount>
 <cfelse>
-	<cfset _count = qry_filecount.thetotal>
+	<cfset _count = attributes.qry_filecount>
 </cfif>
 <table border="0" width="100%" cellspacing="0" cellpadding="0" class="gridno">
 	<tr>

@@ -318,7 +318,7 @@
 			x.yres AS ydpi,
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
-			lower(i.img_filename) filename_forsort,
+			i.img_filename filename_forsort,
 			<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'#qryluceneimg.searchcount#'</cfif> as cnt,
 			i.img_create_time date_create,
 			i.img_change_time date_change,
@@ -374,7 +374,7 @@
 				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg">,'#categorytree#'</cfloop></cfif>)
 			<cfelse>
 				<cfif thesearchfor NEQ "">
-					AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+					AND i.img_filename LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 				</cfif>
 			</cfif>
 			AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -388,7 +388,7 @@
 					FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg
 					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg.folder_id_r = i.folder_id_r
-					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 					) THEN 'unlocked'
 				<!--- When folder is shared for everyone --->
@@ -398,7 +398,7 @@
 					WHERE fg2.grp_id_r = '0'
 					AND fg2.folder_id_r = i.folder_id_r
 					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					) THEN 'unlocked'
 				<!--- When user is folder owner --->
 				WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -441,7 +441,7 @@
 			<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 				AND i.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#" list="true">)
 			</cfif>
-			GROUP BY i.img_id, i.img_filename, i.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename), i.img_group, i.expiry_date
+			GROUP BY i.img_id, i.img_filename, i.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, i.img_filename, i.img_group, i.expiry_date
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 			UNION ALL
 			<!--- Get Aliases --->
@@ -515,7 +515,7 @@
 			x.yres AS ydpi,
 			x.resunit AS unit,
 			i.hashtag AS md5hash,
-			lower(i.img_filename) filename_forsort,
+			i.img_filename filename_forsort,
 			<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'#qryluceneimg.searchcount#'</cfif> as cnt,
 			i.img_create_time date_create,
 			i.img_change_time date_change,
@@ -569,7 +569,7 @@
 				AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg">,'#categorytree#'</cfloop></cfif>)
 			<cfelse>
 				<cfif thesearchfor NEQ "">
-					AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+					AND i.img_filename LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 				</cfif>
 			</cfif>
 			AND (i.img_group IS NULL OR i.img_group = '')
@@ -584,7 +584,7 @@
 					FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders_groups fg
 					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND fg.folder_id_r = ct.folder_id_r
-					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 					) THEN 'unlocked'
 				<!--- When folder is shared for everyone --->
@@ -594,7 +594,7 @@
 					WHERE fg2.grp_id_r = '0'
 					AND fg2.folder_id_r = ct.folder_id_r
 					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					) THEN 'unlocked'
 				<!--- When user is folder owner --->
 				WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -637,7 +637,7 @@
 			<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 				AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#" list="true">)
 			</cfif>
-			GROUP BY i.img_id, i.img_filename, ct.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename), i.img_group, i.expiry_date
+			GROUP BY i.img_id, i.img_filename, ct.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height, i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, i.img_filename, i.img_group, i.expiry_date
 			<cfif arguments.istruct.ui>, i.is_available, i.link_kind, i.link_path_url</cfif>
 			ORDER BY #session.sortby#
 		</cfquery>
@@ -765,7 +765,7 @@
 		'' AS ydpi,
 		'' AS unit,
 		v.hashtag AS md5hash,
-		lower(v.vid_filename) filename_forsort,
+		v.vid_filename filename_forsort,
 		<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'#qrylucenevid.searchcount#'</cfif> as cnt,
 		v.vid_create_time date_create,
 		v.vid_change_time date_change,
@@ -820,7 +820,7 @@
 			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
-				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+				AND v.vid_filename LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -834,7 +834,7 @@
 				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = v.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -844,7 +844,7 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = v.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- When user is folder owner --->
 			WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -887,7 +887,7 @@
 		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 			AND v.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#" list="true">)
 		</cfif>
-		GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename), v.vid_group, v.expiry_date
+		GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, v.vid_filename, v.vid_group, v.expiry_date
 			<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 		UNION ALL
 		<!--- Get Aliases --->
@@ -955,7 +955,7 @@
 		'' AS ydpi,
 		'' AS unit,
 		v.hashtag AS md5hash,
-		lower(v.vid_filename) filename_forsort,
+		v.vid_filename filename_forsort,
 		<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'#qrylucenevid.searchcount#'</cfif> as cnt,
 		v.vid_create_time date_create,
 		v.vid_change_time date_change,
@@ -1008,7 +1008,7 @@
 			AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
-				AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+				AND v.vid_filename LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
 		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -1022,7 +1022,7 @@
 				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = ct.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -1032,7 +1032,7 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = ct.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- When user is folder owner --->
 			WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -1075,7 +1075,7 @@
 		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 			AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#" list="true">)
 		</cfif>
-		GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename), v.vid_group, v.expiry_date
+		GROUP BY v.vid_id, v.vid_filename, ct.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, v.vid_filename, v.vid_group, v.expiry_date
 			<cfif arguments.vstruct.ui>, v.is_available, v.link_kind, v.link_path_url</cfif>
 			ORDER BY #session.sortby# 
 		</cfquery>
@@ -1198,7 +1198,7 @@
 		'' AS ydpi,
 		'' AS unit,
 		a.hashtag AS md5hash,
-		lower(a.aud_name) filename_forsort,
+		a.aud_name filename_forsort,
 		<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'#qryluceneaud.searchcount#'</cfif> as cnt,
 		a.aud_create_time date_create,
 		a.aud_change_time date_change,
@@ -1253,7 +1253,7 @@
 			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
-				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+				AND a.aud_name LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -1267,7 +1267,7 @@
 				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = a.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -1277,7 +1277,7 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = a.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- When user is folder owner --->
 			WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -1320,7 +1320,7 @@
 		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
 			AND a.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#" list="true">)
 		</cfif>
-		GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
+		GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, a.aud_name, a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 		UNION ALL
 		<!--- Get Aliases --->
 		SELECT /* #cachetoken#search_audios_api */ <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
@@ -1382,7 +1382,7 @@
 		'' AS ydpi,
 		'' AS unit,
 		a.hashtag AS md5hash,
-		lower(a.aud_name) filename_forsort,
+		a.aud_name filename_forsort,
 		<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'#qryluceneaud.searchcount#'</cfif> as cnt,
 		a.aud_create_time date_create,
 		a.aud_change_time date_change,
@@ -1435,7 +1435,7 @@
 			AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
-				AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+				AND a.aud_name LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
 		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -1449,7 +1449,7 @@
 				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = ct.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -1459,7 +1459,7 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = ct.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- When user is folder owner --->
 			WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -1502,7 +1502,7 @@
 		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
 			AND ct.folder_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#" list="true">)
 		</cfif>
-		GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, lower(a.aud_name), a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
+		GROUP BY a.aud_id, a.aud_name, ct.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time, a.hashtag, fo.folder_name, a.aud_name, a.aud_group, a.expiry_date<cfif arguments.astruct.ui>, a.is_available, a.link_kind, a.link_path_url</cfif>
 		ORDER BY #session.sortby#
 		</cfquery>
 		<!--- Return --->
@@ -1631,7 +1631,7 @@
 		'' AS ydpi,
 		'' AS unit,
 		f.hashtag AS md5hash,
-		lower(f.file_name) filename_forsort,
+		f.file_name filename_forsort,
 		<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'#qrylucenedoc.searchcount#'</cfif> as cnt,
 		f.file_create_time date_create,
 		f.file_change_time date_change,
@@ -1685,7 +1685,7 @@
 			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
-				AND lower(f.file_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+				AND f.file_name LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -1699,7 +1699,7 @@
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = f.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -1709,7 +1709,7 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = f.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- When user is folder owner --->
 			WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -1754,7 +1754,7 @@
 		</cfif>
 		GROUP BY f.file_id, f.file_name, f.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 		f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
-		f.hashtag, fo.folder_name, lower(f.file_name), f.expiry_date
+		f.hashtag, fo.folder_name, f.file_name, f.expiry_date
 		UNION ALL
 		<!--- Get Aliases --->
 		SELECT /* #cachetoken#search_files_api */ 
@@ -1823,7 +1823,7 @@
 		'' AS ydpi,
 		'' AS unit,
 		f.hashtag AS md5hash,
-		lower(f.file_name) filename_forsort,
+		f.file_name filename_forsort,
 		<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'#qrylucenedoc.searchcount#'</cfif> as cnt,
 		f.file_create_time date_create,
 		f.file_change_time date_change,
@@ -1878,7 +1878,7 @@
 			AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc">,'#categorytree#'</cfloop></cfif>)
 		<cfelse>
 			<cfif thesearchfor NEQ "">
-				AND lower(f.file_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+				AND f.file_name LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 			</cfif>
 		</cfif>
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -1892,7 +1892,7 @@
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders_groups fg
 				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg.folder_id_r = ct.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 				) THEN 'unlocked'
 			<!--- When folder is shared for everyone --->
@@ -1902,7 +1902,7 @@
 				WHERE fg2.grp_id_r = '0'
 				AND fg2.folder_id_r = ct.folder_id_r
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg2.grp_permission IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
 			<!--- When user is folder owner --->
 			WHEN fo.folder_owner = '#session.theuserid#' THEN 'unlocked'
@@ -1947,7 +1947,7 @@
 		</cfif>
 		GROUP BY f.file_id, f.file_name, ct.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 		f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
-		f.hashtag, fo.folder_name, lower(f.file_name), f.expiry_date
+		f.hashtag, fo.folder_name, f.file_name, f.expiry_date
 		<cfif arguments.fstruct.ui>, f.is_available, f.link_kind, f.link_path_url</cfif>
         ORDER BY #session.sortby#
 		</cfquery>

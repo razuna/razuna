@@ -130,7 +130,7 @@
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
 				<!--- Approval only show for sysadmins, admin or those users who are allowed --->
-				<cfif qry_approval.approval_enabled AND Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR listFind(qry_approval_users.user_ids, session.theuserid)>
+				<cfif qry_approval.approval_enabled AND session.is_system_admin OR session.is_administrator OR listFind(qry_approval_users.user_ids, session.theuserid)>
 					<p>
 						<a href="##" onclick="loadcontent('rightside','#myself#c.staging');$('##userselection').toggle();return false;" style="width:100%;">Approval Area</a>
 					</p>
@@ -148,7 +148,7 @@
 				</p>
 				<p><hr /></p>
 				<!--- Administration. Show if user is admin or if user has access to some admin features --->
-				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR !structisempty(tabaccess_struct)>
+				<cfif session.is_system_admin OR session.is_administrator OR !structisempty(tabaccess_struct)>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
 					<p><hr /></p>
@@ -170,7 +170,7 @@
 				</p>
 				<p><hr /></p>
 				<!--- Account --->
-				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
+				<cfif cgi.http_host CONTAINS "razuna.com" AND (session.is_administrator OR session.is_system_admin)>
 					<p><a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a></p>
 					<p><hr /></p>
 				</cfif>
@@ -196,7 +196,7 @@
 		</div>
 		<div style="width:auto;float:right;padding:7px 0px 0px 0px;">
 			<!--- Account --->
-		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
+		 	<cfif cgi.http_host CONTAINS "razuna.com" AND (session.is_administrator OR session.is_system_admin)>
 				<div style="float:left;padding-right:20px;">
 					<a href="https://yoda.razuna.com/account/#session.hostid#" id="account" target="_blank">#myFusebox.getApplicationData().defaults.trans("acct_settings")#</a>
 				</div>
@@ -243,7 +243,10 @@
 						alert("#myFusebox.getApplicationData().defaults.trans('upc_num_check')#");
 					} else {
 						$( this ).dialog( "close" );
-						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","));	
+						$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","), function() {
+								$("##bodyoverlay").remove();
+						});	
 					}
 				}
 			}

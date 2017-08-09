@@ -25,7 +25,6 @@
 		<class alias="hosts" classpath="global.cfc.hosts" type="component" constructor="init"/>
 		<class alias="settings" classpath="global.cfc.settings" type="component" constructor="init"/>
 		<class alias="folders" classpath="global.cfc.folders" type="component" constructor="init"/>
-		<class alias="security" classpath="global.cfc.security" type="component" constructor="init"/>
 		<class alias="modules" classpath="global.cfc.modules" type="component" constructor="init"/>
 		<class alias="rssparser" classpath="global.cfc.rssparser" type="component" constructor="init"/>
 		<class alias="update" classpath="global.cfc.update" type="component" constructor="init"/>

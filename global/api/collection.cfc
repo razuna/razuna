@@ -252,7 +252,7 @@
 			LEFT JOIN #application.razuna.api.prefix["#arguments.sessiontoken#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#">
 			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
-			ORDER BY lower(ct.col_name)
+			ORDER BY ct.col_name
 			</cfquery>
 			<!--- Take the result and create XML --->
 			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
@@ -303,8 +303,8 @@ GROUP BY file_id_r
 		<cfquery datasource="#application.razuna.api.dsn#" name="f_1">
 		SELECT f.folder_id, f.folder_level, f.folder_name, f.folder_id_r, f.folder_owner,
 				CASE
-					WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#application.razuna.api.userid["#arguments.sessiontoken#"]#' AND lower(f.folder_name) = 'my folder') THEN 'unlocked'
-					WHEN ( lower(f.folder_of_user) = 't' AND lower(f.folder_name) = 'my folder') THEN 'locked'
+					WHEN ( f.folder_of_user = 't' AND f.folder_owner = '#application.razuna.api.userid["#arguments.sessiontoken#"]#' AND f.folder_name = 'my folder') THEN 'unlocked'
+					WHEN ( f.folder_of_user = 't' AND f.folder_name = 'my folder') THEN 'locked'
 					ELSE 'unlocked'
 				END AS perm,
 				<!--- Check if there are any subfolders --->
@@ -332,9 +332,9 @@ GROUP BY file_id_r
 		<cfelse>
 			f.folder_id = f.folder_id_r
 		</cfif>
-		AND lower(f.folder_is_collection) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+		AND f.folder_is_collection = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
-		ORDER BY lower(folder_name)
+		ORDER BY folder_name
 		</cfquery>
 		<!--- dummy QoQ to get correct datatypes --->
 		<cfquery dbtype="query" name="qRet">

@@ -30,7 +30,7 @@
 <cfelse>
 --->
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif session.is_system_admin OR session.is_administrator>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>
@@ -282,7 +282,7 @@
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>

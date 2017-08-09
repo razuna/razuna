@@ -40,10 +40,10 @@
 		DELETE FROM plugins_actions
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
-		AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
-		AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
-		AND lower(args) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.args)#">
+		AND action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">
+		AND comp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">
+		AND func = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">
+		AND args = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">
 		</cfquery>
 		<!--- Add this action to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -75,13 +75,13 @@
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.action NEQ "">
-			AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
+			AND action = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">
 		</cfif>
 		<cfif arguments.comp NEQ "">
-			AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
+			AND comp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">
 		</cfif>
 		<cfif arguments.func NEQ "">
-			AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
+			AND func = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">
 		</cfif>
 		<cfif arguments.args NEQ "">
 			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#arguments.args#%">
@@ -388,7 +388,7 @@
 			WHEN (f.type_type IS NULL) THEN 'doc'
 			ELSE f.type_type
 		END AS type
-		FROM #getHostPrefix()#assets_temp t LEFT JOIN file_types f ON lower(f.type_id) = lower(t.extension)
+		FROM #getHostPrefix()#assets_temp t LEFT JOIN file_types f ON f.type_id = t.extension
 		WHERE t.tempid IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>

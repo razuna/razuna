@@ -1,5 +1,5 @@
 <cfoutput>
-<cfif  Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif  session.is_system_admin OR session.is_administrator>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>

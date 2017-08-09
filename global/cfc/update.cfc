@@ -27,6 +27,7 @@
 <cfcomponent extends="extQueryCaching" output="false">
 	<!--- Global Object --->
 	<cfobject component="global.cfc.global" name="gobj">
+
 	<!--- Check for a DB update --->
 	<cffunction name="update_for">
 		<!--- Param --->
@@ -37,7 +38,7 @@
 		FROM options
 		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
 		</cfquery>
-		<!--- If no record has been found then insert 0 --->
+		<!--- If no record has been found than insert 0 --->
 		<cfif updatenumber.recordcount EQ 0>
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
@@ -55,6 +56,7 @@
 		<cfelse>
 			<!--- Read config file for dbupdate number --->
 			<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
+			<cfset session.update_db_number = dbupdateconfig>
 			<!--- Set var --->
 			<cfif dbupdateconfig GT updatenumber.opt_value AND NOT dbupdateconfig EQ updatenumber.opt_value>
 				<cfset var dbup = true>
@@ -80,7 +82,7 @@
 			<cfset v.newversionnr = trim(#theversion[1].thetext.xmlText#)>
 			<!--- Count how many dots are in the version --->
 			<cfset x = compare(v.newversionnr,currentversion)>
-			<!--- If the new version is bigger then the current version --->
+			<!--- If the new version is bigger than the current version --->
 			<cfif x EQ 1>
 				<cfset v.versionavailable = "T">
 			<cfelse>
@@ -106,13 +108,15 @@
 		<cfset var theint = "int">
 		<cfset var thevarchar = "varchar">
 		<cfset var thetimestamp = "timestamp">
+		<cfset var theboolean = "boolean">
 		<!--- Map different types according to database --->
 		<cfif application.razuna.thedatabase EQ "mysql">
-			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
+			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci ROW_FORMAT=DYNAMIC">
 			<cfset var theclob = "longtext">
 		<cfelseif application.razuna.thedatabase EQ "mssql">
 			<cfset var theclob = "NVARCHAR(max)">
 			<cfset var thetimestamp = "datetime">
+			<cfset var theboolean = "bit">
 		</cfif>
 
 		<!--- Get the correct paths for hosted vs non-hosted --->
@@ -175,10 +179,65 @@
 			<cfquery datasource="#application.razuna.datasource#">
 				UPDATE raz1_languages SET lang_id = '14' WHERE lang_name ='Brazilian'
 			</cfquery>
-		<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
-		<!--- If less then 51 (1.8.5) --->
+		<!--- If less than 53 (1.9.2) --->
+		<cfif updatenumber.opt_value LT 53>
+
+			<cfif application.razuna.thedatabase EQ "mysql">
+
+				<!--- Feedback --->
+				<cfoutput><h1>We are starting with the update now</h1><br><br></cfoutput>
+				<cfflush>
+				
+				<cfquery datasource="#application.razuna.datasource#" name="qry_drop">
+				select 
+				concat('alter table ',table_schema,'.',table_name,' DROP FOREIGN KEY ',constraint_name,';') AS dropfk
+				from information_schema.table_constraints
+				where table_schema='razuna'
+				and constraint_type = 'foreign key'
+				</cfquery>
+
+				<cfquery datasource="#application.razuna.datasource#" name="qry_alter">
+				select 
+				concat('alter table ',table_schema,'.',table_name,' CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;') AS altersql
+				from information_schema.tables
+				where table_schema='razuna' 
+				</cfquery>
+
+				<cfloop query ="qry_drop">
+					<cfquery datasource="#application.razuna.datasource#">
+					#dropfk#
+					</cfquery>
+				</cfloop>
+
+				<cfloop query ="qry_alter">
+					<cfoutput>
+						<p>#altersql#</p>
+					</cfoutput>
+					<cfflush>
+					<cfquery datasource="#application.razuna.datasource#">
+					#altersql#
+					</cfquery>
+					<cfoutput>
+						<p>This table was successfully converted!</p>
+					</cfoutput>
+					<cfflush>
+				</cfloop>
+
+				<!--- Feedback --->
+				<cfoutput>
+					<h2>We are done with the update. Please check the above output for any errors.</h2>
+					<p><a href="#cgi.SCRIPT_NAME#">All good. Take me to Razuna.</a></p>
+				</cfoutput>
+				<cfflush>
+
+			</cfif>
+
+		</cfif>
+
+		<!--- If less than 51 (1.8.5) --->
 		<cfif updatenumber.opt_value LT 52>
 			<!--- Add SVG --->
 			<cftry>
@@ -191,14 +250,14 @@
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				CREATE TABLE raz1_approval (
-				approval_enabled BOOLEAN DEFAULT '0',
+				approval_enabled #theboolean# DEFAULT '0',
 				approval_folders #thevarchar#(2000) DEFAULT NULL,
 				approval_group_1 #thevarchar#(2000) DEFAULT NULL,
 				approval_group_2 #thevarchar#(2000) DEFAULT NULL,
-				approval_group_1_all BOOLEAN DEFAULT '0',
-				approval_group_2_all BOOLEAN DEFAULT '0',
+				approval_group_1_all #theboolean# DEFAULT '0',
+				approval_group_2_all #theboolean# DEFAULT '0',
 				host_id #theint# DEFAULT NULL,
-				approval_folders_all BOOLEAN DEFAULT '0'
+				approval_folders_all #theboolean# DEFAULT '0'
 				) #tableoptions#
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
@@ -216,7 +275,7 @@
 			</cftry>
 		</cfif>
 
-		<!--- If less then 50 (1.8) --->
+		<!--- If less than 50 (1.8) --->
 		<cfif updatenumber.opt_value LT 50>
 			<!--- Add to basket --->
 			<cftry>
@@ -420,7 +479,7 @@
 			</cftry>
 		</cfif>
 
-		<!--- If less then 43 (1.7) --->
+		<!--- If less than 43 (1.7) --->
 		<cfif updatenumber.opt_value LT 43>
 			<!--- Add zip_extract column to smart_folders table --->
 			<cftry>
@@ -799,7 +858,7 @@
 			</cftry>
 		</cfif>
 
-		<!--- If update number is lower then 26 (v. 1.6.5) --->
+		<!--- If update number is lower than 26 (v. 1.6.5) --->
 		<cfif updatenumber.opt_value LT 26>
 			<cftry>
 				<!--- Add a unique index on raz1_languages to avoid duplicate entries --->
@@ -1160,7 +1219,7 @@
 
 		</cfif>
 		
-		<!--- If update number is lower then 17 (v. 1.6.2) --->
+		<!--- If update number is lower than 17 (v. 1.6.2) --->
 		<cfif updatenumber.opt_value LT 18>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
 			<cftry>
@@ -1182,7 +1241,7 @@
 			</cftry>
 		</cfif>
 
-		<!--- If update number is lower then 17 (v. 1.6.1) --->
+		<!--- If update number is lower than 17 (v. 1.6.1) --->
 		<cfif updatenumber.opt_value LT 17>
 			<!--- RAZ-2519 Add column set2_custom_file_ext to raz1_settings_2 table --->
 			<cftry>
@@ -1195,7 +1254,7 @@
 			</cftry>
 		</cfif>
 		
-		<!--- If update number is lower then 15 (v. 1.6) --->
+		<!--- If update number is lower than 15 (v. 1.6) --->
 		<cfif updatenumber.opt_value LT 15>
 
 			<!--- Core DB --->
@@ -2021,7 +2080,7 @@
 
 		</cfif>
 
-		<!--- If update number is lower then 15 (v. 1.6) --->
+		<!--- If update number is lower than 15 (v. 1.6) --->
 		<cfif updatenumber.opt_value LT 16>
 
 			<cftry>

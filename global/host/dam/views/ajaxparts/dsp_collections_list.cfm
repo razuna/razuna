@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+<cfif session.is_system_admin OR session.is_administrator>
 	<cfset isadmin = true>
 <cfelse>
 	<cfset isadmin = false>

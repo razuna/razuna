@@ -42,7 +42,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- Nirvanix and in Admin --->
 		<cfif session.thisapp EQ "admin">
-			AND lower(shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+			AND shared = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		</cfif>
 		<!--- todo : filter for file-extension --->
 	</cfquery>
@@ -69,7 +69,7 @@
 	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- If we need to show subfolders --->
 	<cfif session.showsubfolders EQ "T">
-		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#variables.database#" returnvariable="thefolders">
+		<cfinvoke component="folders" method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" hostid="#session.hostid#" database="#application.razuna.thedatabase#" returnvariable="thefolders">
 		<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
@@ -89,7 +89,7 @@
 		<cfelse>
 			<cfset var min = session.offset * session.rowmaxpage>
 			<cfset var max = (session.offset + 1) * session.rowmaxpage>
-			<cfif variables.database EQ "db2">
+			<cfif application.razuna.thedatabase EQ "db2">
 				<cfset min = min + 1>
 			</cfif>
 		</cfif>
@@ -112,7 +112,7 @@
 		<cfset var sortby = "date_change DESC">
 	</cfif>
 	<!--- Oracle --->
-	<cfif variables.database EQ "oracle">
+	<cfif application.razuna.thedatabase EQ "oracle">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
@@ -121,9 +121,9 @@
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag,
+				SELECT #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, i.img_filename filename_forsort, i.img_size size, i.hashtag,
 				i.img_create_time date_create, i.img_change_time date_change
-				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1  AND i.host_id = it.host_id
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -135,7 +135,7 @@
 		WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 		</cfquery>
 	<!--- DB2 --->
-	<cfelseif variables.database EQ "db2">
+	<cfelseif application.razuna.thedatabase EQ "db2">
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
@@ -143,8 +143,8 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #thecolumnlist#, it.img_keywords keywords, it.img_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, i.*, it.*,
-			lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
-			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+			i.img_filename filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
+			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 AND i.host_id = it.host_id
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
 			AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -168,7 +168,7 @@
 		FROM ct_aliases c
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">
-		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = c.asset_id_r AND lower(in_trash) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
+		AND NOT EXISTS (SELECT 1 FROM #session.hostdbprefix#images WHERE img_id = c.asset_id_r AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">)
 		</cfquery>
 		<cfif qry_aliases.recordcount NEQ 0>
 			<cfset var alias = valueList(qry_aliases.asset_id_r)>
@@ -176,12 +176,12 @@
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		<!--- MSSQL --->
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			SELECT * FROM (
 			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum, sorted_inline_view.* FROM (
 		</cfif>
 
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, cast(i.img_size as decimal(12,0)) size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, i.img_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'img' kind</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, i.img_filename filename_forsort, cast(i.img_size as decimal(12,0)) size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change, i.expiry_date, 'null' as customfields<cfif arguments.columnlist does not contain ' id'>, i.img_id id</cfif><cfif arguments.columnlist does not contain ' kind'>,'img' kind</cfif>
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.images_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
@@ -191,7 +191,7 @@
 				</cfif>.#m#
 			</cfloop>
 		</cfif>
-		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
+		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 AND i.host_id = it.host_id LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id AND i.host_id = x.host_id
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
@@ -199,17 +199,17 @@
 		<cfif arguments.thestruct.folderaccess EQ 'R'>
 			AND (i.expiry_date >=<cfqueryparam cfsqltype="cf_sql_date" value="#now()#"> OR i.expiry_date is null)
 		</cfif>
-		AND i.is_available != <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
+		AND i.is_available <cfif application.razuna.thedatabase EQ "mysql"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="2">
 		OR i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#alias#" list="true">)
 		<!--- MSSQL --->
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif application.razuna.thedatabase EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			) sorted_inline_view
 			 ) resultSet
 			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 		</cfif>
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 				ORDER BY #sortby# LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
@@ -472,7 +472,7 @@
 	i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind, i.path_to_asset, i.cloud_url, i.cloud_url_org, 
 	i.hashtag, 'false' AS in_collection, 'images' as what, '' AS folder_main_id_r
 	<!--- Permfolder --->
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif session.is_system_admin OR session.is_administrator>
 		, 'X' as permfolder
 	<cfelse>
 		,
@@ -536,7 +536,7 @@
 			FROM qry_image
 			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR"> 
 			<cfif noread>
-				AND lower(permfolder) != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+				AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfif>
 		</cfquery>
 	</cfif>
@@ -826,6 +826,7 @@
 	SELECT /* #variables.cachetoken#detaildescimg */ img_description, img_keywords, lang_id_r, img_description as thedesc, img_keywords as thekeys
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Convert the size --->
 	<cfif isnumeric(details.ilength)>
@@ -951,6 +952,7 @@
 						FROM #session.hostdbprefix#images_text
 						WHERE img_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfif ishere.recordcount NEQ 0>
 							<cfset tdesc = evaluate(thisdesc)>
@@ -972,6 +974,7 @@
 							img_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 							WHERE img_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 							AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							</cfquery>
 						<cfelse>
 							<cfquery datasource="#variables.dsn#">
@@ -1549,8 +1552,8 @@
 		<cfelse>
 			<cfset var thedpitags = " -Photoshop:XResolution=#thedpi# -Photoshop:YResolution=#thedpi# -IFD0:XResolution=#thedpi# -JFIF:XResolution=#thedpi# -IFD0:YResolution=#thedpi# -JFIF:YResolution=#thedpi#">
 		</cfif>
-		<!--- Remove -0 from the Converted filename only for GIF files ---> 
-		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat NEQ 'gif' AND theformat NEQ 'tif'>
+		<!--- Remove -0 from the Converted filename only for GIF files --->
+		<cfif arguments.thestruct.qry_detail.thumb_extension EQ 'gif' AND theformat NEQ 'gif' AND theformat NEQ 'tif' AND fileexists("#thisfolder#/#arguments.thestruct.thenamenoext#-0.#theformat#")>
 			<cffile action="rename" source="#thisfolder#/#arguments.thestruct.thenamenoext#-0.#theformat#" destination="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" />
 		</cfif>
 
@@ -1846,14 +1849,8 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, 
-	i.img_online, i.img_owner, i.img_filename_org, i.img_meta,
-	i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
-	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
-	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
-	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
-	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, 
-	i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension
+	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner, i.img_filename_org, i.img_meta, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
+	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.thumb_extension, i.hashtag
 	FROM #session.hostdbprefix#images i
 	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#"> 
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2253,7 +2250,8 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery> --->
 	<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
-		SELECT img_description,img_keywords, lang_id_r FROM #session.hostdbprefix#images_text
+		SELECT img_description,img_keywords, lang_id_r 
+		FROM #session.hostdbprefix#images_text
 		WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="cf_sql_varchar" >
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -2320,7 +2318,8 @@
 		<cfloop list="#arguments.thestruct.idList#" index="theidtoupdate" >
 			<cfloop query = "select_images_text">
 				<cfquery name="append_images_text" datasource="#application.razuna.datasource#">
-					SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
+					SELECT img_description,img_keywords 
+					FROM #session.hostdbprefix#images_text
 					WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#select_images_text.lang_id_r#">

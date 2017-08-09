@@ -1,13 +1,14 @@
 <cftry>
 
 	<cfset consoleoutput(true)>
-	<cfset console("#now()# ---------------- Starting to clean up incoming and outgoing directories")>
+	<cfset console("#now()# ---------------- Starting to clean up incoming, outgoing, and tmp directories")>
 
 	<!--- Path --->
 	<cfset _path = expandPath("../..")>
 	<!--- Set time for remove --->
 	<cfset _removetime_incoming = DateAdd("h", -2, now())>
 	<cfset _removetime_outgoing = DateAdd("d", -4, now())>
+	<cfset _removetime_tmp = DateAdd("h", -2, now())>
 
 	<!--- Get database --->
 	<cfquery datasource="razuna_default" name="_config">
@@ -23,6 +24,56 @@
 	FROM hosts
 	GROUP BY host_shard_group
 	</cfquery>
+
+	<cfloop query="_qry_hosts">
+		<!--- Clear assets dbs from records which have no path_to_asset --->
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#images
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#videos
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#files
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<cfquery datasource="#_db#">
+		DELETE FROM #host_shard_group#audios
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		</cfquery>
+		<!--- Select temp assets which are older then 6 hours --->
+		<cfquery datasource="#_db#" name="qry">
+		SELECT path as temppath, tempid
+		FROM #host_shard_group#assets_temp
+		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
+		AND path IS NOT NULL
+		</cfquery>
+		<cfset _host_shard_group = host_shard_group>
+		<!--- Loop trough the found records --->
+		<cfloop query="qry">
+			<!--- Delete in the DB --->
+			<cfquery datasource="#_db#">
+			DELETE FROM #_host_shard_group#assets_temp
+			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
+			</cfquery>
+			<!--- Delete on the file system --->
+			<cfif directoryexists(temppath)>
+				<cftry>
+					<cfdirectory action="delete" recurse="true" directory="#temppath#">
+					<cfcatch></cfcatch>
+				</cftry>
+
+			</cfif>
+		</cfloop>
+	</cfloop>
+
 
 	<!--- Loop over hosts and dirs --->
 	<cfloop query="_qry_hosts">
@@ -61,6 +112,31 @@
 			</cfif>
 		</cfloop>
 	</cfloop>
+
+	<!--- Remove tmp files --->
+	<cfset console("#now()# ---------------- Cleaning tmp dir!")>
+	<cfdirectory action="list" directory="#GetTempDirectory()#" name="tmpList" type="file" />
+	<cftry>
+		<cfset console("------------REMOVING ANY LOCK OR OTHER TEMP FILES------------------")>
+		<cfdirectory action="list" directory="#GetTempDirectory()#" name="tmpList" type="file" />
+		<cfloop query="tmpList">
+			<cfif (name CONTAINS ".sh" OR name CONTAINS ".tmp" OR name CONTAINS ".temp" OR name CONTAINS ".csv" OR name CONTAINS ".xls" OR name CONTAINS ".xlsx" OR name CONTAINS ".lock") AND datelastmodified LT _removetime_tmp>
+				<cftry>
+					<cfset console("#now()# ---------------- Removing file in temp dir: #GetTempDirectory()#/#name#")>
+					<cffile action="delete" file="#GetTempDirectory()#/#name#" />
+					<cfcatch type="any">
+						<cfset console("------------ ERROR REMOVING TEMP FILE : #GetTempDirectory()#/#name# !!!!!!!!!!!!!!!!!!!!!!!!!")>
+						<cfset console(cfcatch)>
+					</cfcatch>
+				</cftry>
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfset consoleoutput(true)>
+			<cfset console("------------ ERROR REMOVING TEMP FILES !!!!!!!!!!!!!!!!!!!!!!!!!")>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry>
 
 	<cfset console("#now()# ---------------- Finished clean up job!")>
 

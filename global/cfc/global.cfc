@@ -39,7 +39,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="hostslist">
 		SELECT host_id, host_name, host_path, host_create_date, host_db_prefix, host_lang
 		FROM hosts
-		ORDER BY lower(host_name)
+		ORDER BY host_name
 		</cfquery>
 		<cfreturn hostslist>
 	</cffunction>
@@ -1293,7 +1293,7 @@ Comment:<br>
 		FROM hosted_bills b, hosted_users u
 		WHERE u.host_id = <cfqueryparam value="#arguments.thehostid#" cfsqltype="cf_sql_numeric" />
 		AND b.user_id = u.user_id
-		and lower(b.bill_paid) = <cfqueryparam value="f" cfsqltype="cf_sql_varchar" />
+		and b.bill_paid = <cfqueryparam value="f" cfsqltype="cf_sql_varchar" />
 		and b.reminder_count > 1
 		</cfquery>
 		<!--- If there is a record then the user is in debt --->
@@ -1302,7 +1302,7 @@ Comment:<br>
 		<cfelse>
 			<cfset session.indebt = false>
 		</cfif>
-		<cfif Request.securityObj.CheckSystemAdminUser()>
+		<cfif session.is_system_admin>
 			<cfset session.indebt = false>
 		</cfif>
 		<!--- Return --->

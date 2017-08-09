@@ -433,8 +433,8 @@
 		<cfquery datasource="#application.razuna.api.dsn#" name="f_1">
 		SELECT f.folder_id, f.folder_level, f.folder_name, f.folder_id_r, f.folder_owner,
 			CASE
-				WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#application.razuna.api.userid["#arguments.sessiontoken#"]#' AND lower(f.folder_name) = 'my folder') THEN 'unlocked'
-				WHEN ( lower(f.folder_of_user) = 't' AND lower(f.folder_name) = 'my folder') THEN 'locked'
+				WHEN ( f.folder_of_user = 't' AND f.folder_owner = '#application.razuna.api.userid["#arguments.sessiontoken#"]#' AND f.folder_name = 'my folder') THEN 'unlocked'
+				WHEN ( f.folder_of_user = 't' AND f.folder_name = 'my folder') THEN 'locked'
 				ELSE 'unlocked'
 			END AS perm,
 			<!--- Check if there are any subfolders --->
@@ -462,7 +462,7 @@
 		</cfif>
 		AND (f.folder_is_collection IS NULL OR f.folder_is_collection = '')
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
-		ORDER BY <cfif application.razuna.api.thedatabase EQ "oracle">lower(folder_name)<cfelse>folder_name</cfif>
+		ORDER BY <cfif application.razuna.api.thedatabase EQ "oracle">folder_name<cfelse>folder_name</cfif>
 		</cfquery>
 		<!--- dummy QoQ to get correct datatypes --->
 		<cfquery dbtype="query" name="qRet">
@@ -470,7 +470,7 @@
 		FROM f_1
 		WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
 		AND perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
-		ORDER BY <cfif application.razuna.api.thedatabase EQ "oracle">lower(folder_name)<cfelse>folder_name</cfif>
+		ORDER BY <cfif application.razuna.api.thedatabase EQ "oracle">folder_name<cfelse>folder_name</cfif>
 		</cfquery>
 		<!--- Construct the Queries together --->
 		<cfloop query="f_1">

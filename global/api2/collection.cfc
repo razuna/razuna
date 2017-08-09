@@ -414,7 +414,7 @@
 					AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.released#">
 				</cfif>
 				AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-				ORDER BY lower(ct.col_name)
+				ORDER BY ct.col_name
 				</cfquery>
 			<!--- No access --->
 			<cfelse>
@@ -455,16 +455,16 @@
 					AND c.col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
 				</cfif>
 				<cfif arguments.name NEQ "">
-					AND lower(ct.col_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.name)#%">
+					AND ct.col_name LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#arguments.name#%">
 				</cfif>
 				<cfif arguments.keyword NEQ "">
-					AND lower(ct.col_keywords) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.keyword)#%">
+					AND ct.col_keywords LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#arguments.keyword#%">
 				</cfif>
 				<cfif arguments.description NEQ "">
-					AND lower(ct.col_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.description)#%">
+					AND ct.col_desc LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#arguments.description#%">
 				</cfif>
 				<cfif arguments.released NEQ "">
-					AND lower(c.col_released) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#lcase(arguments.released)#">
+					AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.released#">
 				</cfif>
 				</cfquery>
 				<!--- Get getcollections --->

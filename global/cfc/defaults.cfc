@@ -81,8 +81,11 @@
 		<!--- Return --->
 		<cfreturn thelangs>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error with database in function defaults.getlangs">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfset consoleoutput(true)>
+			<cfset console("Error with database in function defaults.getlangs")>
+			<cfset console(cfcatch)>
+			<!--- <cfset cfcatch.custom_message = "Error with database in function defaults.getlangs">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>
@@ -190,7 +193,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="thislang">
 	SELECT set_pref 
 	FROM #session.hostdbprefix#settings
-	WHERE LOWER(set_id) = <cfqueryparam value="#lcase(arguments.theid)#" cfsqltype="cf_sql_varchar">
+	WHERE set_id = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(thislang.set_pref)>

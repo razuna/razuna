@@ -49,7 +49,7 @@
 		<cfquery datasource="#conf.conf_datasource#" name="dbver">
 		SELECT opt_value
 		FROM options
-		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
+		WHERE opt_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
 		</cfquery>
 		<cfif dbver.opt_value LT 15>
 			<cfset session.dbuptodate = false>
@@ -90,13 +90,13 @@
 						SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name, 'admin' roles
 						FROM users u, ct_groups_users ctg
 						WHERE (
-							lower(u.user_login_name) = <cfqueryparam value="#lcase(cflogin.name)#" cfsqltype="cf_sql_varchar"> 
-							OR lower(u.user_email) = <cfqueryparam value="#lcase(cflogin.name)#" cfsqltype="cf_sql_varchar">
+							u.user_login_name = <cfqueryparam value="#cflogin.name#" cfsqltype="cf_sql_varchar"> 
+							OR u.user_email = <cfqueryparam value="#cflogin.name#" cfsqltype="cf_sql_varchar">
 							)
 						AND u.user_pass = <cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
 						AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 						AND ctg.ct_g_u_user_id = u.user_id			
-						AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+						AND u.user_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 					</cfquery>
 	                <cfif loginQuery.Roles NEQ ""> 
 	                    <cfloginuser name="#cflogin.name#" Password = "#cflogin.password#" 

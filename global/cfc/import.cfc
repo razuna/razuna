@@ -435,7 +435,7 @@
 					<!--- Check if record is here --->
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.img_id_r, i.img_id, it.img_keywords, it.img_description
-					FROM #session.hostdbprefix#images i JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r
+					FROM #session.hostdbprefix#images i JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND i.host_id = it.host_id
 					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					AND i.img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">
 					</cfquery>
@@ -800,7 +800,7 @@
 					<!--- Check if record is here --->
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.vid_id_r, i.vid_id, it.vid_keywords, it.vid_description
-					FROM #session.hostdbprefix#videos i JOIN #session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r
+					FROM #session.hostdbprefix#videos i JOIN #session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r AND v.host_id = it.host_id
 					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					AND i.vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
 					</cfquery>
@@ -988,7 +988,7 @@
 					<!--- Check if record is here --->
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.aud_id_r, i.aud_id, it.aud_keywords, it.aud_description
-					FROM #session.hostdbprefix#audios i JOIN #session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r
+					FROM #session.hostdbprefix#audios i JOIN #session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r AND i.host_id = it.host_id
 					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					AND i.aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
 					</cfquery>
@@ -1184,7 +1184,7 @@
 					<!--- Check if record is here --->
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.file_id_r, i.file_id, it.file_keywords, it.file_desc
-					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r
+					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r AND i.host_id = it.host_id
 					WHERE i.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					AND i.file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
 					</cfquery>
@@ -1438,7 +1438,7 @@
 			<cfquery dataSource="#application.razuna.datasource#" name="labhere">
 			SELECT label_id
 			FROM #session.hostdbprefix#labels
-			WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(i)#">
+			WHERE label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<!--- Make sure that records exists --->
 			AND (
@@ -1462,7 +1462,7 @@
 					<cfquery dataSource="#application.razuna.datasource#" name="checklabelpath">
 					SELECT label_id, label_text, label_path
 					FROM #session.hostdbprefix#labels
-					WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(label_path_list)#">
+					WHERE label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#label_path_list#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<!--- Insert only new labels --->

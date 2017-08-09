@@ -305,6 +305,7 @@
 						FROM #session.hostdbprefix#images_text d
 						WHERE img_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 						AND lang_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#langindex#">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfif arguments.thestruct.langcount GT 1>
 							<cfif arguments.thestruct.img_keywords EQ "">
@@ -719,6 +720,7 @@
 						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
 						WHERE <cfif structKeyExists(arguments.thestruct,'newid')> img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR"><cfelse>img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR"></cfif>
 						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfcatch type="any">
 							<cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
@@ -1717,8 +1719,10 @@
 	<cfinvoke component="custom_fields" method="get" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cfields" />
 	<!--- If this is from basket --->
 	<cfif arguments.thestruct.what EQ "basket">
+		<!--- Set to read all fields --->
+		<cfset arguments.thestruct.get_all_fields = true>
 		<!--- Read Basket --->
-		<cfinvoke component="basket" method="readbasket" returnvariable="thebasket">
+		<cfinvoke component="basket" method="readbasket" thestruct="#arguments.thestruct#" returnvariable="thebasket">
 		<!--- Loop over items in basket --->
 		<cfloop query="thebasket">
 			<!--- Set query --->

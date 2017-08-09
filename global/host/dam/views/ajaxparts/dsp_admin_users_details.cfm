@@ -120,7 +120,7 @@
 				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_mobile")#</strong></td>
 				<td><input name="user_mobile" type="text" style="width:300px;" value="#qry_detail.user_mobile#"></td>
 			</tr>
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+			<cfif session.is_system_admin OR session.is_administrator>
 				<tr>
 					<td><strong>#myFusebox.getApplicationData().defaults.trans("user_expirydate")#</strong></td>
 					<td><input name="user_expirydate" id="user_expirydate" type="text" style="width:300px;" value="#dateformat(qry_detail.user_expiry_date,'mm/dd/yyyy')#"></td>
@@ -169,14 +169,14 @@
 			<tr>
 				<td valign="top">
 					<!--- Since this can now be viewed by the user himself we only show selection for admins --->
-					<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser() OR tabaccess_struct.groups_access>
+					<cfif session.is_system_admin OR session.is_administrator OR tabaccess_struct.groups_access>
 						<!--- We come from myinfo --->
 						<cfif attributes.myinfo>
 							<!--- If SysAdmin or Admin --->
-							<cfif Request.securityobj.CheckSystemAdminUser()>
+							<cfif session.is_system_admin>
 								<input type="hidden" name="admin_group_1" value="1">
 								#myFusebox.getApplicationData().defaults.trans("sysadmin_access")#
-							<cfelseif Request.securityobj.CheckAdministratorUser()>
+							<cfelseif session.is_administrator>
 								<input type="hidden" name="admin_group_2" value="2">
 								#myFusebox.getApplicationData().defaults.trans("admin_access")#
 							</cfif>
