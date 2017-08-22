@@ -316,7 +316,7 @@
 			DELETE FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			ORDER BY img_ig
+			ORDER BY img_id
 			</cfquery>
 			<!--- Delete from files DB (including referenced data) --->
 			<cfquery datasource="#application.razuna.datasource#">
