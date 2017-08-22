@@ -1974,44 +1974,46 @@
 	<!--- set ids --->
 	<cfset var ids = "">
 	<!--- trash images --->
-	<cfinvoke component="images" method="gettrashimage" returnvariable="imagetrash" noread="true" />
-	<cfset var imageid = valueList(imagetrash.id)>
-	<cfloop list="#imageid#" index="i">
-		<!--- set ids --->
-		<cfset var ids = listAppend(ids,"#i#-img")>
-	</cfloop>
+	<cfthread name="t_img">
+		<cfinvoke component="images" method="gettrashimage" returnvariable="imagetrash" noread="true" />
+		<cfset thread.ids = valueList(imagetrash.listid)>
+	</cfthread>
 	<!--- trash audios --->
-	<cfinvoke component="audios" method="gettrashaudio" returnvariable="audiotrash"  noread="true" />
-	<cfset var audioid = valueList(audiotrash.id)>
-	<cfloop list="#audioid#" index="i">
-		<!--- set ids --->
-		<cfset var ids = listAppend(ids,"#i#-aud")>
-	</cfloop>
+	<cfthread name="t_aud">
+		<cfinvoke component="audios" method="gettrashaudio" returnvariable="audiotrash"  noread="true" />
+		<cfset thread.ids = valueList(audiotrash.listid)>
+	</cfthread>
 	<!--- trash files --->
-	<cfinvoke component="files" method="gettrashfile" returnvariable="filetrash"  noread="true" />
-	<cfset var fileid = valueList(filetrash.id)>
-	<cfloop list="#fileid#" index="i">
-		<!--- set ids --->
-		<cfset var ids = listAppend(ids,"#i#-doc")>
-	</cfloop>
+	<cfthread name="t_doc">
+		<cfinvoke component="files" method="gettrashfile" returnvariable="filetrash"  noread="true" />
+		<cfset thread.ids = valueList(filetrash.listid)>
+	</cfthread>
 	<!--- trash videos --->
-	<cfinvoke component="videos" method="gettrashvideos" returnvariable="videotrash"  noread="true" />
-	<cfset var videoid = valueList(videotrash.id)>
-	<cfloop list="#videoid#" index="i">
-		<!--- set ids --->
-		<cfset var ids = listAppend(ids,"#i#-vid")>
-	</cfloop>
+	<cfthread name="t_vid">
+		<cfinvoke component="videos" method="gettrashvideos" returnvariable="videotrash"  noread="true" />
+		<cfset thread.ids = valueList(videotrash.listid)>
+	</cfthread>
+	<!--- Wait for all threads --->
+	<cfthread action="join" name="t_img" />
+	<cfthread action="join" name="t_vid" />
+	<cfthread action="join" name="t_doc" />
+	<cfthread action="join" name="t_aud" />
+	<!--- Put the thread result into general struct --->
+	<cfset ids = listAppend(ids, cfthread["t_img"].ids)>
+	<cfset ids = listAppend(ids, cfthread["t_vid"].ids)>
+	<cfset ids = listAppend(ids, cfthread["t_aud"].ids)>
+	<cfset ids = listAppend(ids, cfthread["t_doc"].ids)>
 	<!--- Set the sessions --->
 	<cfset session.file_id = ids>
 	<cfset session.thefileid = ids>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("folders")>
+	<!--- <cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("images")>
 	<cfset resetcachetoken("videos")>
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("search")>
-	<cfset resetcachetoken("labels")>
+	<cfset resetcachetoken("labels")> --->
 	<cfreturn />
 </cffunction>
 

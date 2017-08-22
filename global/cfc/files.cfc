@@ -515,7 +515,8 @@
 				f.hashtag, 
 				'false' AS in_collection, 
 				'files' as what, 
-				'' AS folder_main_id_r
+				'' AS folder_main_id_r,
+				<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
 					<!--- Permfolder --->
 					<cfif session.is_system_admin OR session.is_administrator>
 						, 'X' as permfolder

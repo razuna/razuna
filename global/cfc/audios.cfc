@@ -693,7 +693,8 @@
 		a.hashtag,
 		'false' AS in_collection,
 		'audios' as what,
-		'' AS folder_main_id_r
+		'' AS folder_main_id_r,
+		<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
 			<!--- Permfolder --->
 			<cfif session.is_system_admin OR session.is_administrator>
 				, 'X' as permfolder

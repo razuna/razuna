@@ -782,7 +782,8 @@
 			v.hashtag, 
 			'false' AS in_collection, 
 			'videos' as what, 
-			'' AS folder_main_id_r
+			'' AS folder_main_id_r,
+			<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
 				<!--- Permfolder --->
 				<cfif session.is_system_admin OR session.is_administrator>
 					, 'X' as permfolder
