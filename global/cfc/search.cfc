@@ -1986,11 +1986,13 @@
 
 				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 					<!--- Get proper folderaccess --->
+					<cfif qry.recordcount>
 					<cfloop query="qry">
 						<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 						<!--- Add labels query --->
 						<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
 					</cfloop>
+					</cfif>
 				</cfif>
 
 				<!--- Init var for new fileid --->
