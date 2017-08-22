@@ -31,21 +31,25 @@
 		DELETE FROM #host_shard_group#images
 		WHERE (path_to_asset IS NULL OR path_to_asset = '')
 		AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		ORDER BY img_id
 		</cfquery>
 		<cfquery datasource="#_db#">
 		DELETE FROM #host_shard_group#videos
 		WHERE (path_to_asset IS NULL OR path_to_asset = '')
 		AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		ORDER BY vid_id
 		</cfquery>
 		<cfquery datasource="#_db#">
 		DELETE FROM #host_shard_group#files
 		WHERE (path_to_asset IS NULL OR path_to_asset = '')
 		AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		ORDER BY file_id
 		</cfquery>
 		<cfquery datasource="#_db#">
 		DELETE FROM #host_shard_group#audios
 		WHERE (path_to_asset IS NULL OR path_to_asset = '')
 		AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime_incoming#">
+		ORDER BY aud_id
 		</cfquery>
 		<!--- Select temp assets which are older then 6 hours --->
 		<cfquery datasource="#_db#" name="qry">
