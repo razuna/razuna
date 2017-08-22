@@ -250,11 +250,13 @@
 			<!--- Init var for new fileid --->
 			<cfset var editids = "0,">
 			<cfset var fileids = "">
-			<cfloop query="qry_lucene">
-				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
-				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
-			</cfloop>
+			<cfif qry_lucene.recordcount>
+				<cfloop query="qry_lucene">
+					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
+					<!--- Add labels query --->
+					<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+				</cfloop>
+			</cfif>
 			<!--- Get proper folderaccess no need for admin --->
 			<cfloop query="qry_lucene_all">
 				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
@@ -1984,16 +1986,16 @@
 				<!--- <cfset consoleoutput(true)>
 				<cfset console(qry_all)> --->
 
-				<!--- <cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
+				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 					<!--- Get proper folderaccess --->
 					<cfif qry.recordcount>
-					<cfloop query="qry">
-						<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-						<!--- Add labels query --->
-						<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
-					</cfloop>
+						<cfloop query="qry">
+							<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+							<!--- Add labels query --->
+							<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+						</cfloop>
 					</cfif>
-				</cfif> --->
+				</cfif>
 
 				<!--- Init var for new fileid --->
 				<cfset var editids = "0,">
