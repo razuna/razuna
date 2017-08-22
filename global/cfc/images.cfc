@@ -316,6 +316,7 @@
 			DELETE FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			ORDER BY img_ig
 			</cfquery>
 			<!--- Delete from files DB (including referenced data) --->
 			<cfquery datasource="#application.razuna.datasource#">
@@ -638,6 +639,7 @@
 			DELETE FROM #arguments.thestruct.hostdbprefix#images
 			WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			ORDER BY img_id
 			</cfquery>
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #arguments.thestruct.hostdbprefix#images_text
@@ -780,6 +782,7 @@
 		DELETE FROM #session.hostdbprefix#images
 		WHERE img_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		ORDER BY img_id
 		</cfquery>
 	</cfif>
 	<cfreturn />
