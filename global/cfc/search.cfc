@@ -1984,7 +1984,7 @@
 				<!--- <cfset consoleoutput(true)>
 				<cfset console(qry_all)> --->
 
-				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
+				<!--- <cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 					<!--- Get proper folderaccess --->
 					<cfif qry.recordcount>
 					<cfloop query="qry">
@@ -1993,7 +1993,7 @@
 						<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
 					</cfloop>
 					</cfif>
-				</cfif>
+				</cfif> --->
 
 				<!--- Init var for new fileid --->
 				<cfset var editids = "0,">
