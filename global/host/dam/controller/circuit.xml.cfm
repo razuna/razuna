@@ -676,7 +676,6 @@
 		<if condition="structkeyexists(attributes,'selected') AND attributes.selected EQ 'assets'">
 			<true>
 				<set name="attributes.removeselecteditems" value="true" />
-				<!-- Execute remove -->
 				<do action="trashfiles_remove" />
 			</true>
 		</if>
@@ -686,6 +685,7 @@
 		<!-- CFC -->
 		<!-- trash assets count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trashcount(attributes)" returnvariable="file_trash_count" />
+		<set name="session.file_trash_count" value="#arraySum(file_trash_count['cnt'])#" />
 		<!-- trash folder count-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="folderTrashCount(attributes)" returnvariable="folder_trash_count" />
 		<!-- Show -->
@@ -741,7 +741,7 @@
 				<set name="attributes.thekind" value="trashfiles" />
 				<do action="store_file_all" />
 				<!-- Show -->
-				<set name="attributes.selected" value="assets" />
+				<!-- <set name="attributes.selected" value="assets" /> -->
 				<do action="folder_explorer_trash" />
 			</true>
 			<false>
@@ -844,13 +844,13 @@
 		<!-- Include for getting all files and folders in trash -->
 	<fuseaction name="get_all_in_trash_noread">
 		<!--CFC: Get trash images-->
-		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage(noread=true)" returnvariable="attributes.imagetrash" />
+		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage(noread=true,nocount=true)" returnvariable="attributes.imagetrash" />
 		<!-- CFC: Get trash audios -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio(noread=true)" returnvariable="attributes.audiotrash" />
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio(noread=true,nocount=true)" returnvariable="attributes.audiotrash" />
 		<!-- CFC: Get trash files-->
-		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile(noread=true)" returnvariable="attributes.filetrash" />
+		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile(noread=true,nocount=true)" returnvariable="attributes.filetrash" />
 		<!-- CFC: Get trash videos-->
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos(noread=true)" returnvariable="attributes.videotrash" />
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos(noread=true,nocount=true)" returnvariable="attributes.videotrash" />
 		<!-- Combine queries above -->
 		<invoke object="myFusebox.getApplicationData().folders" method="gettrashcombined" returnvariable="qry_trash">
 			<argument name="qry_images" value="#attributes.imagetrash#" />
@@ -5199,13 +5199,7 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
-						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
-							<true>
-								<set name="session.offset" value="0" />
-							</true>
-						</if>
+						<set name="attributes.qry_filecount" value="#session.search.total_records#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="0" />
 						<!-- CFC: Combine searches -->
@@ -5217,7 +5211,7 @@
 						<!-- Set results into different variable name -->
 						<set name="qry_files_count.qall" value="#qry_files.qall#" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
+						<set name="attributes.qry_filecount" value="#session.search.total_records#" />
 					</false>
 				</if>
 			</true>
@@ -5239,13 +5233,7 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
-						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
-							<true>
-								<set name="session.offset" value="0" />
-							</true>
-						</if>
+						<set name="attributes.qry_filecount" value="#session.search.total_records#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="0" />
 						<!-- Search -->
@@ -5287,13 +5275,7 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
-						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
-							<true>
-								<set name="session.offset" value="0" />
-							</true>
-						</if>
+						<set name="attributes.qry_filecount" value="#session.search.total_records#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="0" />
 						<!-- Search -->
@@ -5335,13 +5317,7 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
-						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
-							<true>
-								<set name="session.offset" value="0" />
-							</true>
-						</if>
+						<set name="attributes.qry_filecount" value="#session.search.total_records#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="0" />
 						<!-- Search -->
@@ -5383,13 +5359,7 @@
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine_upc(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
-						<set name="attributes.qry_filecount" value="#qry_files_count.qall.cnt#" />
-						<!-- Set the session offset -->
-						<if condition="attributes.qry_filecount LTE session.rowmaxpage">
-							<true>
-								<set name="session.offset" value="0" />
-							</true>
-						</if>
+						<set name="attributes.qry_filecount" value="#session.search.total_records#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="0" />
 						<!-- Search -->
@@ -9812,16 +9782,27 @@
 	<!-- Store fileids and filetypes in session (takes care for more then 75 assets at once) -->
 	<fuseaction name="store_file_values">
 		<!-- Params -->
-		<set name="attributes.file_id" value="" overwrite="false" />
+		<!-- <set name="attributes.file_id" value="" overwrite="false" /> -->
 		<set name="attributes.thetype" value="" overwrite="false" />
-		<set name="session.individual_select" value="false" />
+		<!-- <set name="session.individual_select" value="false" /> -->
 		<!-- Put existing values together -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="store_selection(attributes)" />
+		<!-- <invoke object="myFusebox.getApplicationData().folders" methodcall="store_selection(attributes)" /> -->
+
+		<!-- Simply set sessions -->
+		<set name="session.individual_select" value="true" />
+		<set name="session.file_id" value="#attributes.file_id#" />
+		<set name="session.thefileid" value="#attributes.file_id#" />
+		<set name="session.editids" value="#attributes.file_id#" />
+
 	</fuseaction>
 
 	<!-- Store all ids -->
 	<fuseaction name="store_file_all">
 		<set name="session.individual_select" value="false" />
+		<!-- Param -->
+    	<set name="attributes.theuserid" value="#session.theuserid#" />
+    	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
+    	<set name="attributes.hostid" value="#session.hostid#" />
 		<if condition="attributes.folder_id NEQ '0'">
 			<true>
 				<!-- CFC: Store -->
@@ -9832,7 +9813,7 @@
 		<if condition="attributes.folder_id EQ '0' AND attributes.thekind EQ 'trashfiles'">
 			<true>
 				<!-- CFC: Store trash file ids-->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_file_values()" />
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_file_values(attributes)" />
 			</true>
 		</if>
 		<!-- for trash folder-->
@@ -9869,8 +9850,8 @@
 	<fuseaction name="store_file_search">
 		<!-- Simply set sessions -->
 		<set name="session.individual_select" value="false" />
-		<set name="session.file_id" value="#attributes.fileids#" />
-		<set name="session.thefileid" value="#session.file_id#" />
+		<set name="session.file_id" value="#session.search.search_file_ids#" />
+		<set name="session.thefileid" value="#session.search.search_file_ids#" />
 		<if condition="isdefined('attributes.editids')">
 			<true>
 				<set name="session.editids" value="#attributes.editids#" />

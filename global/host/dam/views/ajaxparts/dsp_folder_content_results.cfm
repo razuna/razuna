@@ -33,6 +33,8 @@
 	<!--- Set count for UPC or not --->
 	<cfif structKeyExists(qry_files,"searchcount")>
 		<cfset _count = qry_files.searchcount>
+	<!--- <cfelseif structKeyExists(qry_files,"qall") AND isQuery(qry_files.qall)>
+		<cfset _count = qry_files.qall.recordcount> --->
 	<cfelse>
 		<cfset _count = attributes.qry_filecount>
 	</cfif>

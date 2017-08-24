@@ -495,6 +495,7 @@
 	<!--- Get files from trash --->
 	<cffunction name="gettrashfile" output="false" returntype="Query">
 		<cfargument name="noread" required="false" default="false">
+		<cfargument name="nocount" required="false" default="false">
 		<!--- Param --->
 		<cfset var qry_file = "">
 		<!--- Get the cachetoken for here --->
@@ -565,6 +566,9 @@
 				WHERE 
 					f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfif !nocount>
+					LIMIT 500
+				</cfif>
 			</cfquery>
 			<cfif qry_file.RecordCount NEQ 0>
 				<cfset var myArray = arrayNew( 1 )>

@@ -464,6 +464,7 @@
 <!--- Get images from trash --->
 <cffunction name="gettrashimage" output="false" returntype="Query">
 	<cfargument name="noread" required="false" default="false">
+	<cfargument name="nocount" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry_image = "">
 	<!--- Get the cachetoken for here --->
@@ -519,6 +520,9 @@
 	FROM #session.hostdbprefix#images i 
 	WHERE i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfif !nocount>
+		LIMIT 500
+	</cfif>
 	</cfquery>
 	<cfif qry_image.RecordCount NEQ 0>
 		<cfset var myArray = arrayNew( 1 )>
@@ -602,6 +606,9 @@
 <!--- REMOVE MANY IMAGE --->
 <cffunction name="removeimagemany" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
+	<cfabort> --->
 	<!--- Set Params --->
 	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 	<cfset session.hostid = arguments.thestruct.hostid>

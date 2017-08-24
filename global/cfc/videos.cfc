@@ -761,99 +761,105 @@
 
 <!--- Get videos from trash --->
 <cffunction name="gettrashvideos" output="false" returntype="Query">
-		<cfargument name="noread" required="false" default="false">
-		<!--- Param --->
-		<cfset var qry_video = "">
-		<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken("videos")>
-		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#gettrashvideos */ 
-			v.vid_id AS id, 
-			v.vid_filename AS filename, 
-			v.folder_id_r AS folder_id_r, 
-			v.vid_extension AS ext, 
-			v.vid_name_image AS filename_org, 
-			'vid' AS kind, 
-			v.link_kind, 
-			v.path_to_asset, 
-			v.cloud_url, 
-			v.cloud_url_org, 
-			v.hashtag, 
-			'false' AS in_collection, 
-			'videos' as what, 
-			'' AS folder_main_id_r,
-			<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
-				<!--- Permfolder --->
-				<cfif session.is_system_admin OR session.is_administrator>
-					, 'X' as permfolder
-				<cfelse>
-					,
-					CASE
-						WHEN (
-							SELECT DISTINCT max(fg5.grp_permission)
-							FROM #session.hostdbprefix#folders_groups fg5
-							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg5.folder_id_r = v.folder_id_r
-							AND (
-								fg5.grp_id_r = '0'
-								OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							)
-						) = 'R' THEN 'R'
-						WHEN (
-							SELECT DISTINCT max(fg5.grp_permission)
-							FROM #session.hostdbprefix#folders_groups fg5
-							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg5.folder_id_r = v.folder_id_r
-							AND (
-								fg5.grp_id_r = '0'
-								OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							)
-						) = 'W' THEN 'W'
-						WHEN (
-							SELECT DISTINCT max(fg5.grp_permission)
-							FROM #session.hostdbprefix#folders_groups fg5
-							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							AND fg5.folder_id_r = v.folder_id_r
-							AND (
-								fg5.grp_id_r = '0'
-								OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-							)
-						) = 'X' THEN 'X'
-						WHEN (
-							SELECT folder_owner
-							FROM #session.hostdbprefix#folders f
-							WHERE f.folder_id = v.folder_id_r
-						) = '#Session.theUserID#' THEN 'X'
-					END as permfolder
-				</cfif>
-			FROM #session.hostdbprefix#videos v 
-			WHERE v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfif qry_video.RecordCount NEQ 0>
-			<cfset var myArray = arrayNew( 1 )>
-			<cfset var temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
-			<cfloop query="qry_video">
-				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-				SELECT file_id_r
-				FROM #session.hostdbprefix#collections_ct_files
-				WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
-				</cfquery>
-				<cfif alert_col.RecordCount NEQ 0>
-					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", currentRow  )>
-				</cfif>
-			</cfloop>
-			<cfquery name="qry_video" dbtype="query">
-				SELECT *
-				FROM qry_video
-				WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
-				<cfif noread>
-					AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
-				</cfif> 
-			</cfquery>
+	<cfargument name="noread" required="false" default="false">
+	<cfargument name="nocount" required="false" default="false">
+	<!--- Param --->
+	<cfset var qry_video = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#gettrashvideos */ 
+		v.vid_id AS id, 
+		v.vid_filename AS filename, 
+		v.folder_id_r AS folder_id_r, 
+		v.vid_extension AS ext, 
+		v.vid_name_image AS filename_org, 
+		'vid' AS kind, 
+		v.link_kind, 
+		v.path_to_asset, 
+		v.cloud_url, 
+		v.cloud_url_org, 
+		v.hashtag, 
+		'false' AS in_collection, 
+		'videos' as what, 
+		'' AS folder_main_id_r,
+		<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
+			<!--- Permfolder --->
+			<cfif session.is_system_admin OR session.is_administrator>
+				, 'X' as permfolder
+			<cfelse>
+				,
+				CASE
+					WHEN (
+						SELECT DISTINCT max(fg5.grp_permission)
+						FROM #session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg5.folder_id_r = v.folder_id_r
+						AND (
+							fg5.grp_id_r = '0'
+							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						)
+					) = 'R' THEN 'R'
+					WHEN (
+						SELECT DISTINCT max(fg5.grp_permission)
+						FROM #session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg5.folder_id_r = v.folder_id_r
+						AND (
+							fg5.grp_id_r = '0'
+							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						)
+					) = 'W' THEN 'W'
+					WHEN (
+						SELECT DISTINCT max(fg5.grp_permission)
+						FROM #session.hostdbprefix#folders_groups fg5
+						WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						AND fg5.folder_id_r = v.folder_id_r
+						AND (
+							fg5.grp_id_r = '0'
+							OR fg5.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+						)
+					) = 'X' THEN 'X'
+					WHEN (
+						SELECT folder_owner
+						FROM #session.hostdbprefix#folders f
+						WHERE f.folder_id = v.folder_id_r
+					) = '#Session.theUserID#' THEN 'X'
+				END as permfolder
+			</cfif>
+		FROM #session.hostdbprefix#videos v 
+		WHERE v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif !nocount>
+			LIMIT 500
 		</cfif>
-		<cfreturn qry_video />
+	</cfquery>
+	<cfif qry_video.RecordCount NEQ 0>
+		<cfset var myArray = arrayNew( 1 )>
+		<cfset var temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
+		<cfloop query="qry_video">
+			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+			SELECT file_id_r
+			FROM #session.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
+			</cfquery>
+			<cfif alert_col.RecordCount NEQ 0>
+				<cfset temp = QuerySetCell(qry_video, "in_collection", "True", currentRow  )>
+			</cfif>
+		</cfloop>
+		<cfquery name="qry_video" dbtype="query">
+			SELECT *
+			FROM qry_video
+			WHERE permfolder != <cfqueryparam value="" cfsqltype="CF_SQL_VARCHAR">
+			<cfif noread>
+				AND permfolder != <cfqueryparam value="r" cfsqltype="CF_SQL_VARCHAR"> 
+			</cfif> 
+		</cfquery>
+	</cfif>
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(qry_video)> --->
+	<cfreturn qry_video />
 </cffunction>
 
 <!--- RESTORE THE VIDEO --->
@@ -914,6 +920,9 @@
 <!--- REMOVE MANY VIDEO --->
 <cffunction name="removevideomany" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
+	<cfabort> --->
 	<!--- Set Params --->
 	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 	<cfset session.hostid = arguments.thestruct.hostid>

@@ -1971,41 +1971,58 @@
 
 <!--- store trash files ids in session --->
 <cffunction name="trash_file_values" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="trash_file_values_thread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+	<cfreturn />
+</cffunction>
+
+<!--- store trash files ids in session --->
+<cffunction name="trash_file_values_thread" output="false">
+	<cfargument name="thestruct" type="struct">
+<!--- 	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
+ --->
 	<!--- set ids --->
 	<cfset var ids = "">
 	<!--- trash images --->
-	<cfthread name="t_img">
-		<cfinvoke component="images" method="gettrashimage" returnvariable="imagetrash" noread="true" />
-		<cfset thread.ids = valueList(imagetrash.listid)>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke component="images" method="gettrashimage" returnvariable="imagetrash" noread="true" nocount="true" />
+		<cfset attributes.intstruct.id = valueList(imagetrash.listid)>
+		<cfinvoke component="images" method="removeimagemany" thestruct="#attributes.intstruct#" />
 	</cfthread>
 	<!--- trash audios --->
-	<cfthread name="t_aud">
-		<cfinvoke component="audios" method="gettrashaudio" returnvariable="audiotrash"  noread="true" />
-		<cfset thread.ids = valueList(audiotrash.listid)>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke component="audios" method="gettrashaudio" returnvariable="audiotrash"  noread="true" nocount="true" />
+		<cfset attributes.intstruct.id = valueList(audiotrash.listid)>
+		<cfinvoke component="audios" method="removeaudiomany" thestruct="#attributes.intstruct#" />
 	</cfthread>
 	<!--- trash files --->
-	<cfthread name="t_doc">
-		<cfinvoke component="files" method="gettrashfile" returnvariable="filetrash"  noread="true" />
-		<cfset thread.ids = valueList(filetrash.listid)>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke component="files" method="gettrashfile" returnvariable="filetrash"  noread="true" nocount="true" />
+		<cfset attributes.intstruct.id = valueList(filetrash.listid)>
+		<cfinvoke component="files" method="removefilemany" thestruct="#attributes.intstruct#" />
 	</cfthread>
 	<!--- trash videos --->
-	<cfthread name="t_vid">
-		<cfinvoke component="videos" method="gettrashvideos" returnvariable="videotrash"  noread="true" />
-		<cfset thread.ids = valueList(videotrash.listid)>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke component="videos" method="gettrashvideos" returnvariable="videotrash"  noread="true" nocount="true" />
+		<cfset attributes.intstruct.id = valueList(videotrash.listid)>
+		<cfinvoke component="videos" method="removevideomany" thestruct="#attributes.intstruct#" />
 	</cfthread>
-	<!--- Wait for all threads --->
-	<cfthread action="join" name="t_img" />
+	<!--- <cfthread action="join" name="t_img" />
 	<cfthread action="join" name="t_vid" />
 	<cfthread action="join" name="t_doc" />
-	<cfthread action="join" name="t_aud" />
+	<cfthread action="join" name="t_aud" /> --->
+	<!--- Wait for all threads --->
 	<!--- Put the thread result into general struct --->
-	<cfset ids = listAppend(ids, cfthread["t_img"].ids)>
+	<!--- <cfset ids = listAppend(ids, cfthread["t_img"].ids)>
 	<cfset ids = listAppend(ids, cfthread["t_vid"].ids)>
 	<cfset ids = listAppend(ids, cfthread["t_aud"].ids)>
-	<cfset ids = listAppend(ids, cfthread["t_doc"].ids)>
+	<cfset ids = listAppend(ids, cfthread["t_doc"].ids)> --->
 	<!--- Set the sessions --->
-	<cfset session.file_id = ids>
-	<cfset session.thefileid = ids>
+	<!--- <cfset session.file_id = ids>
+	<cfset session.thefileid = ids> --->
 	<!--- Flush Cache --->
 	<!--- <cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("images")>
@@ -4342,6 +4359,10 @@
 	<cfset theids.aliasids = "">
 	<cfset var isalias = "">
 	<!--- Get the ids and put them into the right struct --->
+	<cfset consoleoutput(true)>
+	<cfset console("Moved to trash : #arguments.thestruct.id#")>
+	<cfset console(session.file_id)>
+	<!--- <cfabort> --->
 	<cfloop list="#arguments.thestruct.id#" delimiters="," index="i">
 		<cfquery name="isalias" datasource="#application.razuna.datasource#">
 			SELECT rec_uuid FROM ct_aliases

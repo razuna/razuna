@@ -35,7 +35,7 @@
 	<tr>
 		<!--- Icons and drop down menu --->
 		<td align="left" width="1%" nowrap="true">
-			<div id="tooltip" style="float:left;min-width:600px;">
+			<div id="tooltip" style="float:left;">
 				<cfif !attributes.cv AND attributes.share EQ "F">
 					<!--- Select --->
 					<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
@@ -48,6 +48,7 @@
 			<div id="feedback_delete_search" style="white-space:no-wrap;"></div><div id="dummy_search" style="display:none;"></div>
 		</td>
 		<!--- Next and Back --->
+		<!--- <cfdump var="#qry_files#"> --->
 		<td align="right" width="100%" nowrap="true">
 			<cfif session.offset GTE 1>
 				<!--- For Back --->

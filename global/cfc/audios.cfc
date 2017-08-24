@@ -673,6 +673,7 @@
 <!--- Get trash audio --->
 <cffunction name="gettrashaudio" output="false" returntype="Query">
 	<cfargument name="noread" required="false" default="false">
+	<cfargument name="nocount" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry_audio = "">
 	<!--- Get the cachetoken for here --->
@@ -743,7 +744,9 @@
 		WHERE
 			a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-
+		<cfif !nocount>
+			LIMIT 500
+		</cfif>
 	</cfquery>
 	<cfif qry_audio.RecordCount NEQ 0>
 		<cfset var myArray = arrayNew( 1 )>

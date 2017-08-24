@@ -58,8 +58,7 @@
 	</div>
 	<script type="text/javascript">
 		// This is for search results
-
-		function replacewin(){
+		function replacewin() {
 			// Loop over file_ids and remove div
 			<cfloop list="#session.file_id#" index="i">
 				// Remove the div
@@ -76,9 +75,9 @@
 			// Deselect all
 			CheckAllNot('searchformall');
 			// Close Windows
-			destroywindow(2);
-			destroywindow(1);
-			// $('##div_win_trash_record').html('<div style="padding:10px;">The asset(s) have been successfully trashed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+			// destroywindow(2);
+			// destroywindow(1);
+			$('##div_win_trash_record').html('<div style="padding:10px;">The asset(s) have been successfully trashed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
 		}
 		// This is when coming from labels
 		function replacewinlabels(){

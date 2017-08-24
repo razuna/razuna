@@ -36,15 +36,15 @@
 	<!--- Show trash --->
 	<cfelse>
 		<div id="tabsfolder_tab">
-			<cfif attributes.trashkind EQ "folders">
+			<cfif structkeyexists(attributes, "trashkind") AND attributes.trashkind EQ "folders">
 				<cfif arraySum(folder_trash_count['cnt']) MOD session.trash_folder_rowmaxpage EQ 0>
 					<cfset session.trash_folder_offset = ceiling(arraySum(folder_trash_count['cnt']) / session.trash_folder_rowmaxpage) - 1>
 				</cfif>
 			<cfelse>
 				<cfif arraySum(file_trash_count['cnt']) MOD session.trash_rowmaxpage EQ 0>
 					<cfset session.trash_offset = ceiling(arraySum(file_trash_count['cnt']) / session.trash_rowmaxpage) - 1>
-				</cfif> 
-			</cfif> 
+				</cfif>
+			</cfif>
 			<ul>
 				<!--- Show the trash asset and folder content--->
 				<li><a href="##assets" onclick="loadcontent('assets','#myself#c.trash_assets&trashkind=assets');">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(file_trash_count['cnt'])#)</a></li>
@@ -55,10 +55,10 @@
 			<!--- For folders --->
 			<div id="folders"></div>
 		</div>
-			
+
 		<script type="text/javascript">
 			$("##tabsfolder_tab").tabs();
-				<cfif attributes.trashkind EQ "folders">
+				<cfif structkeyexists(attributes, "trashkind") AND attributes.trashkind EQ "folders">
 					$('##folders').load('#myself#c.trash_folder_all&trashkind=folders');
 					//$('##tabsfolder_tab').tabs('select','##folders');
 					var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
