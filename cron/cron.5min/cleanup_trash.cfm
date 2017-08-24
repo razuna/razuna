@@ -42,6 +42,7 @@
 		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		AND img_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 		ORDER BY img_id
+		LIMIT 100
 		</cfquery>
 		<!--- If found --->
 		<cfif qry_img.recordcount>
@@ -56,6 +57,7 @@
 		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		AND vid_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 		ORDER BY vid_id
+		LIMIT 100
 		</cfquery>
 		<!--- If found --->
 		<cfif qry_vid.recordcount>
@@ -70,6 +72,7 @@
 		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		AND aud_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 		ORDER BY aud_id
+		LIMIT 100
 		</cfquery>
 		<!--- If found --->
 		<cfif qry_aud.recordcount>
@@ -84,6 +87,7 @@
 		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		AND file_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
 		ORDER BY file_id
+		LIMIT 100
 		</cfquery>
 		<!--- If found --->
 		<cfif qry_doc.recordcount>
