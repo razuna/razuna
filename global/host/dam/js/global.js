@@ -463,7 +463,7 @@ function storeids(theform){
 	// $('input[name=checkbox][name="file_id"]:checked').each(function() {
 	// console.log($(this).val());
 	// });
-	if (theform && document.forms[theform].elements) {
+	if (theform && document.forms[theform] && document.forms[theform].elements) {
 		for (var i = 0; i<document.forms[theform].elements.length; i++) {
 		   if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
 				if (document.forms[theform].elements[i].checked) {
