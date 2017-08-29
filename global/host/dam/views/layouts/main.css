@@ -1035,11 +1035,27 @@ font-weight: bold;
   border-radius: 3px;
   /*box-shadow: inset 0 0 1px #ededed;*/
   padding-right: 0;
-  width: 90%;
+  width: 100%;
 }
 .jstree-proton .jstree-clicked {
   /*background: #ededed;*/
   /*color: #ffffff;*/
+  border-radius: 3px;
+  /*box-shadow: inset 0 0 1px #ededed;*/
+  padding-right: 0;
+  width: 100%;
+}
+.folders>.jstree-proton .jstree-clicked {
+  /*background: #ededed;*/
+  /*color: #ffffff;*/
+  border-radius: 3px;
+  /*box-shadow: inset 0 0 1px #ededed;*/
+  padding-right: 0;
+  width: 90%;
+}
+.folders>.jstree-proton .jstree-hovered {
+  /*background: #ededed;*/
+  /*color: #999;*/
   border-radius: 3px;
   /*box-shadow: inset 0 0 1px #ededed;*/
   padding-right: 0;
