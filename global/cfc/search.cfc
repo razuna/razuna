@@ -50,6 +50,7 @@
 		<cfparam default="0" name="session.thegroupofuser">
 		<cfparam default="0" name="session.customaccess">
 		<cfparam default="0" name="session.search.search_file_ids">
+		<cfparam default="0" name="session.search.total_records">
 
 		<!--- If there is a change then reset offset --->
 		<cfif structKeyExists(arguments.thestruct, "rowmaxpagechange")>
