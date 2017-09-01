@@ -132,7 +132,7 @@
 					</cfif>
 					<!--- Images --->
 					<cfif kind EQ "img">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								
 								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
@@ -254,7 +254,7 @@
 						</div>
 					<!--- Videos --->
 					<cfelseif kind EQ "vid">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -422,7 +422,7 @@
 						</div>
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -575,7 +575,7 @@
 						</div>
 					<!--- All other files --->
 					<cfelse>
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
