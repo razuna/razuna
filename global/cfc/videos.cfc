@@ -1115,8 +1115,9 @@
 			</cfquery>
 		</cfif>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error on removing a video from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#) in function videos.deletefromfilesystem">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfset console("#now()# ---------------- Error")>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
