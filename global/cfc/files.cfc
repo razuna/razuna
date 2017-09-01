@@ -506,7 +506,7 @@
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry_file" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_file" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 				SELECT /* #variables.cachetoken#gettrashfile */
 				f.file_id AS id,
 				f.file_name AS filename,

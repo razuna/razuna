@@ -6393,7 +6393,7 @@
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="asset_count" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="asset_count" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 	SELECT /* #variables.cachetoken#trashcount */ COUNT(img_id) AS cnt FROM #session.hostdbprefix#images i
 	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -6556,7 +6556,7 @@
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="folder_count" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="folder_count" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 	SELECT /* #variables.cachetoken#trashcount */ COUNT(folder_id) AS cnt
 	FROM #session.hostdbprefix#folders f
 	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">

@@ -787,7 +787,7 @@
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 		SELECT /* #variables.cachetoken#gettrashvideos */ 
 		v.vid_id AS id, 
 		v.vid_filename AS filename, 

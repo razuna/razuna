@@ -489,7 +489,7 @@
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_image" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_image" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 	SELECT /* #variables.cachetoken#gettrashimage */ i.img_id AS id, i.img_filename AS filename, i.folder_id_r, i.thumb_extension AS ext,
 	i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind, i.path_to_asset, i.cloud_url, i.cloud_url_org,
 	i.hashtag, 'false' AS in_collection, 'images' as what, '' AS folder_main_id_r, <cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid

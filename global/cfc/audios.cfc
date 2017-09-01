@@ -681,7 +681,7 @@
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 		SELECT /* #variables.cachetoken#gettrashaudio */
 		a.aud_id AS id,
 		a.aud_name AS filename,
