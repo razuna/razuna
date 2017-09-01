@@ -544,7 +544,7 @@ border-radius: 5px;
 word-wrap: break-word;
 max-width: 180px;
 color: #717171;
-display: inline-grid;
+display: inline-block;
 }
 
 .assetbox_title {
