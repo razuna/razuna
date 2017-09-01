@@ -215,7 +215,7 @@
 				<cfif session.file_trash_count GT qry_trash.recordcount>
 					<tr>
 						<td style="padding-top:20px;">
-							<em>There are #session.file_trash_count# files in the trash. We only show a maximum of #qry_trash.recordcount# files here</em>
+							<em style="text-align: center;">There are #session.file_trash_count# files in the trash. We only show a maximum of #qry_trash.recordcount# files here</em>
 						</td>
 					</tr>
 				</cfif>
