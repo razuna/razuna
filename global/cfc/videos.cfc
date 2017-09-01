@@ -947,6 +947,14 @@
 	<cfset session.hostid = arguments.thestruct.hostid>
 	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
+	<!--- Get storage --->
+	<cfset var qry_storage = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_storage" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+	SELECT set2_aws_bucket
+	FROM #arguments.thestruct.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+	</cfquery>
+	<cfset arguments.thestruct.awsbucket = qry_storage.set2_aws_bucket>
 	<!--- Loop --->
 	<cfset var i = "">
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">

@@ -46,6 +46,8 @@
 	</cfif>
 	<!--- Show button and next back --->
 	<cfif qry_trash.recordcount NEQ 0>
+		<div style="text-align: center;font-style: italic;">Items in the trash will automatically be removed after 30 days</div>
+		<div style="clear: both;"></div>
 		<div style="float:left;">
 			<!--- Select All --->
 			<a href="##" onClick="CheckAll('allform_assets','0','storeall','all_files_in_trash');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">

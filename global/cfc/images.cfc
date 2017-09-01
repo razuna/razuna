@@ -641,7 +641,7 @@
 	<cfset var qry_storage = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry_storage" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 	SELECT set2_aws_bucket
-	FROM #session.hostdbprefix#settings_2
+	FROM #arguments.thestruct.hostdbprefix#settings_2
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 	</cfquery>
 	<cfset arguments.thestruct.awsbucket = qry_storage.set2_aws_bucket>
