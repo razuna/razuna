@@ -825,14 +825,19 @@
 	</cfloop>
 	<!--- Delete related images in db as well --->
 	<cfif qry.recordcount NEQ 0>
-		<cftransaction>
+		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#images
 			WHERE img_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY img_id
 			</cfquery>
-		</cftransaction>
+			<cfcatch type="any">
+				<cfset console("#now()# ---------------- Error")>
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>>
 	</cfif>
 	<cfreturn />
 </cffunction>
