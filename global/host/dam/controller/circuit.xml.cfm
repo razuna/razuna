@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2017.08.29.1" />
+		<set name="attributes.cachetag" value="2017.08.31.1" />
 	</fuseaction>
 
 	<!--
@@ -810,13 +810,15 @@
 	<!-- Restore selected files -->
 	<fuseaction name="restore_selected_files_do">
 		<!-- Param -->
-	    	<set name="attributes.hostid" value="#session.hostid#" />
-	    	<set name="attributes.id" value="#session.file_id#" />
+    	<set name="attributes.hostid" value="#session.hostid#" />
+    	<set name="attributes.id" value="#session.file_id#" />
 		<set name="attributes.trashkind" value="assets" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Call include in order to get all files in trash -->
+		<do action="get_all_in_trash" />
 		<!-- CFC: Restore files-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="restoreselectedfiles(attributes)" />
 		<!-- Show -->
@@ -3305,7 +3307,7 @@
 		<set name="attributes.trash" value="T" />
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="trashfile(attributes)" />
-		<!-- Show the folder listing -->
+		<!-- Show the folder listing
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'content'">
@@ -3317,7 +3319,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
 			<true>
 				<do action="labels_main" />
@@ -3378,7 +3380,7 @@
 		<set name="attributes.trash" value="T" overwrite="false" />
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="trashimage(attributes)" />
-		<!-- Show the folder listing -->
+		<!-- Show the folder listing
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'content'">
@@ -3390,7 +3392,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
 			<true>
 				<do action="labels_main" />
@@ -3461,7 +3463,7 @@
 		<set name="attributes.trash" value="T" />
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="trashvideo(attributes)" />
-		<!-- Show the folder listing -->
+		<!-- Show the folder listing
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'content'">
@@ -3473,7 +3475,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
 			<true>
 				<do action="labels_main" />
@@ -3532,7 +3534,7 @@
 		<set name="attributes.trash" value="T" overwrite="false"/>
 		<!-- CFC: Trash -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="trashaudio(attributes)" />
-		<!-- Show the folder listing -->
+		<!-- Show the folder listing
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'content'">
@@ -3544,7 +3546,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 		<if condition="isdefined('attributes.label_id') AND attributes.label_id NEQ ''">
 			<true>
 				<do action="labels_main" />
@@ -3924,11 +3926,11 @@
 			</true>
 		</if>
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ ''">
+		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<do action="folder" />
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 
 	<!--
@@ -9842,6 +9844,12 @@
 			<true>
 				<!-- CFC: Collection trash folder ids-->
 				<invoke object="myFusebox.getApplicationData().collections" methodcall="trash_folder_values()" />
+			</true>
+		</if>
+		<!-- for all files in trash -->
+		<if condition="attributes.folder_id EQ '0' AND attributes.thekind EQ 'all_files_in_trash'">
+			<true>
+				<set name="session.file_id" value="#attributes.thekind#" />
 			</true>
 		</if>
 	</fuseaction>

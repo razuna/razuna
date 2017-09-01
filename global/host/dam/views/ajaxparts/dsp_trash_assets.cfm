@@ -48,7 +48,7 @@
 	<cfif qry_trash.recordcount NEQ 0>
 		<div style="float:left;">
 			<!--- Select All --->
-			<a href="##" onClick="CheckAll('allform_assets','0','storeall','trashfiles');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+			<a href="##" onClick="CheckAll('allform_assets','0','storeall','all_files_in_trash');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 			</a>
 			<!--- Remove all files in the trash --->

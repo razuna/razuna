@@ -82,10 +82,10 @@
 									<cfloop list="#attributes.cs_place.top.image#" index="m" delimiters=",">
 										<cfif m CONTAINS "_filename">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','',1000,1);return false;"><strong>#left(evaluate(listlast(m," ")),150)#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+											#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
@@ -94,7 +94,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -166,10 +166,10 @@
 										<cfloop list="#attributes.cs_place.bottom.image#" index="m" delimiters=",">
 											<cfif m CONTAINS "_filename">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+												<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','',1000,1);return false;"><strong>#left(evaluate(listlast(m," ")),150)#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
@@ -178,7 +178,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>
@@ -237,7 +237,7 @@
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -247,7 +247,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -312,7 +312,7 @@
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -322,7 +322,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>
@@ -388,7 +388,7 @@
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -398,7 +398,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -463,7 +463,7 @@
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -473,7 +473,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>
@@ -539,7 +539,7 @@
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -549,7 +549,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -626,7 +626,7 @@
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -636,7 +636,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>

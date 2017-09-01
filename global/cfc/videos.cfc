@@ -726,19 +726,34 @@
 	<cfreturn />
 </cffunction>
 
-<!--- TRASH MANY VIDEO --->
 <cffunction name="trashvideomany" output="true">
 	<cfargument name="thestruct" type="struct">
+	<cfset arguments.thestruct.file_id = session.file_id>
+	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
+	<cfset arguments.thestruct.theuserid = session.theuserid>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="trashvideomanythread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+	<cfreturn />
+</cffunction>
+
+<!--- TRASH MANY VIDEO --->
+<cffunction name="trashvideomanythread" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Set Params --->
+	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
+	<cfset session.hostid = arguments.thestruct.hostid>
+	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<!--- Loop --->
 	<cfset var i ="">
-	<cfloop list="#session.file_id#" index="i" delimiters=",">
+	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#videos 
+		UPDATE #arguments.thestruct.hostdbprefix#videos 
 		SET 
 		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">,
-		set_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+		vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 		WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
@@ -1009,6 +1024,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+			<cfset arguments.thestruct.assetpath = thedetail.path_to_asset>
 			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>

@@ -676,8 +676,19 @@
 		<cfreturn is_trash />
 	</cffunction>
 	
-	<!--- REMOVE MANY FILES --->
 	<cffunction name="removefilemany" output="true">
+		<cfargument name="thestruct" type="struct">
+		<cfset arguments.thestruct.file_id = session.file_id>
+		<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
+		<cfset arguments.thestruct.theuserid = session.theuserid>
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="removefilemanythread" thestruct="#attributes.intstruct#" />
+		</cfthread>
+		<cfreturn />
+	</cffunction>
+
+	<!--- REMOVE MANY FILES --->
+	<cffunction name="removefilemanythread" output="true">
 		<cfargument name="thestruct" type="struct">
 		<!--- Set Params --->
 		<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
@@ -711,7 +722,7 @@
 				<!--- Log --->
 				<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 				<cfinvoke component="extQueryCaching" method="log_assets">
-					<cfinvokeargument name="theuserid" value="#session.theuserid#">
+					<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
 					<cfinvokeargument name="logaction" value="Delete">
 					<cfinvokeargument name="logdesc" value="#deleted#: #thedetail.file_name#">
 					<cfinvokeargument name="logfiletype" value="doc">
@@ -763,6 +774,7 @@
 				<cfset arguments.thestruct.qrydetail = thedetail>
 				<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 				<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+				<cfset arguments.thestruct.assetpath = thedetail.path_to_asset>
 				<cfthread intstruct="#arguments.thestruct#" priority="low">
 					<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 				</cfthread>

@@ -428,16 +428,31 @@
 		<cfreturn />
 </cffunction>
 
-<!--- TRASH MANY IMAGE --->
 <cffunction name="trashimagemany" output="true">
 	<cfargument name="thestruct" type="struct">
+	<cfset arguments.thestruct.file_id = session.file_id>
+	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
+	<cfset arguments.thestruct.theuserid = session.theuserid>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="trashimagemanythread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+	<cfreturn />
+</cffunction>
+
+<!--- TRASH MANY IMAGE --->
+<cffunction name="trashimagemanythread" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Set Params --->
+	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
+	<cfset session.hostid = arguments.thestruct.hostid>
+	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<!--- Loop --->
 	<cfset var i ="">
-	<cfloop list="#session.file_id#" index="i" delimiters=",">
+	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#images 
+		UPDATE #arguments.thestruct.hostdbprefix#images 
 		SET 
 		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">,
 		img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
@@ -554,8 +569,10 @@
 </cffunction>
 
 <!--- RESTORE THE IMAGE --->
-<cffunction name="restoreimage" output="false" returntype="any" >
+<cffunction name="restoreimage" output="false" returntype="any">
 	<cfargument name="thestruct" type="struct">
+	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
 	<!--- check the parent folder is exist --->
 	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
 		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
@@ -604,6 +621,8 @@
 	<cfelse>
 		<cfset var is_trash = "notrash">
 	</cfif>
+	<cfset consoleoutput(true)>
+	<cfset console(is_trash)>
 	<cfreturn is_trash />
 </cffunction>
 
@@ -697,6 +716,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+			<cfset arguments.thestruct.assetpath = thedetail.path_to_asset>
 			<cfinvoke method="deletefromfilesystem" thestruct="#arguments.thestruct#">
 			<!--- <cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
@@ -759,8 +779,11 @@
 			</cfif>
 		</cfif>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while deleting in function images.deletefromfilesystem">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error while deleting in function images.deletefromfilesystem">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
+			<cfset console("#now()# ---------------- Error")>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 	<!--- REMOVE RELATED FOLDERS ALSO!!!! --->
@@ -784,8 +807,11 @@
 				<cfinvoke component="amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 			</cfif>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while deleting related folders in function images.deletefromfilesystem">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error while deleting related folders in function images.deletefromfilesystem">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
+				<cfset console("#now()# ---------------- Error")>
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
 	</cfloop>
