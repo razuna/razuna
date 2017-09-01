@@ -532,7 +532,7 @@ height: expression(this.height > 110 ? "110px" : true);
 
 .assetbox {
 margin: 5px;
-padding: 5px;
+padding: 15px;
 /*background: #fffffc;*/
 background: #ffffff;
 border: #D8D5D2 1px solid;

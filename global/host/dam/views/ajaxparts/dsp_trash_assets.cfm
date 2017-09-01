@@ -113,7 +113,7 @@
 		<form name="allform_assets" id="allform_assets" action="#self#" onsubmit="">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
-					<td colspan="6" style="border:0px;">
+					<td style="border:0px;">
 						<div id="folderselectionallform_assets" class="actiondropdown">
 							<!--- Restore selected files in the trash ---> 
 							<a href="##" onclick="showwindow('#myself#c.restore_selected_files&type=restoreselectedfiles','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
@@ -140,6 +140,7 @@
 						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_rowmaxpage#">
 							<div class="assetbox">
 								<div class="theimg">
+									<br/><br/>
 									<!--- Images --->
 									<cfif kind EQ "img">
 										<cfif application.razuna.storage EQ 'local' OR application.razuna.storage EQ 'akamai'> 
