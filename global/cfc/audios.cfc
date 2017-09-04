@@ -645,7 +645,9 @@
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#audios
-		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		SET 
+		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">,
+		aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -673,12 +675,13 @@
 <!--- Get trash audio --->
 <cffunction name="gettrashaudio" output="false" returntype="Query">
 	<cfargument name="noread" required="false" default="false">
+	<cfargument name="nocount" required="false" default="false">
 	<!--- Param --->
 	<cfset var qry_audio = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="#CreateTimeSpan(0,0,5,0)#" region="razcache">
 		SELECT /* #variables.cachetoken#gettrashaudio */
 		a.aud_id AS id,
 		a.aud_name AS filename,
@@ -693,7 +696,8 @@
 		a.hashtag,
 		'false' AS in_collection,
 		'audios' as what,
-		'' AS folder_main_id_r
+		'' AS folder_main_id_r,
+		<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
 			<!--- Permfolder --->
 			<cfif session.is_system_admin OR session.is_administrator>
 				, 'X' as permfolder
@@ -742,7 +746,9 @@
 		WHERE
 			a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-
+		<cfif !nocount>
+			LIMIT 500
+		</cfif>
 	</cfquery>
 	<cfif qry_audio.RecordCount NEQ 0>
 		<cfset var myArray = arrayNew( 1 )>
@@ -779,7 +785,9 @@
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#audios
-		SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		SET 
+		in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">,
+		aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 		WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
@@ -858,14 +866,33 @@
 	<cfreturn is_trash />
 </cffunction>
 
+<cffunction name="removeaudiomany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<cfset arguments.thestruct.file_id = session.file_id>
+	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
+	<cfset arguments.thestruct.theuserid = session.theuserid>
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="removeaudiomanythread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+	<cfreturn />
+</cffunction>
+
 <!--- REMOVE MANY AUDIOS --->
-<cffunction name="removeaudiomany" output="false" access="public">
+<cffunction name="removeaudiomanythread" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Set Params --->
 	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 	<cfset session.hostid = arguments.thestruct.hostid>
 	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
+	<!--- Get storage --->
+	<cfset var qry_storage = "">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_storage" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+	SELECT set2_aws_bucket
+	FROM #arguments.thestruct.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+	</cfquery>
+	<cfset arguments.thestruct.awsbucket = qry_storage.set2_aws_bucket>
 	<!--- Loop --->
 	<cfset var i ="">
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
@@ -892,7 +919,7 @@
 			<!--- Log --->
 			<cfinvoke component="defaults" method="trans" transid="deleted" returnvariable="deleted" />
 			<cfinvoke component="extQueryCaching" method="log_assets">
-				<cfinvokeargument name="theuserid" value="#session.theuserid#">
+				<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
 				<cfinvokeargument name="logaction" value="Delete">
 				<cfinvokeargument name="logdesc" value="#deleted#: #thedetail.aud_name#">
 				<cfinvokeargument name="logfiletype" value="aud">
@@ -949,6 +976,7 @@
 			<cfset arguments.thestruct.qrydetail = thedetail>
 			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+			<cfset arguments.thestruct.assetpath = thedetail.path_to_asset>
 			<cfthread intstruct="#arguments.thestruct#" priority="low">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
@@ -1033,8 +1061,9 @@
 			</cfquery>
 		</cfif>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while removing a audio from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#) in function audios.deletefromfilesystem">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfset console("#now()# ---------------- Error")>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 	<cfreturn />

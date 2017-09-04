@@ -532,7 +532,7 @@ height: expression(this.height > 110 ? "110px" : true);
 
 .assetbox {
 margin: 5px;
-padding: 5px;
+padding: 15px;
 /*background: #fffffc;*/
 background: #ffffff;
 border: #D8D5D2 1px solid;
@@ -1044,6 +1044,22 @@ font-weight: bold;
   /*box-shadow: inset 0 0 1px #ededed;*/
   padding-right: 0;
   width: 100%;
+}
+.folders>.jstree-proton .jstree-clicked {
+  /*background: #ededed;*/
+  /*color: #ffffff;*/
+  border-radius: 3px;
+  /*box-shadow: inset 0 0 1px #ededed;*/
+  padding-right: 0;
+  width: 90%;
+}
+.folders>.jstree-proton .jstree-hovered {
+  /*background: #ededed;*/
+  /*color: #999;*/
+  border-radius: 3px;
+  /*box-shadow: inset 0 0 1px #ededed;*/
+  padding-right: 0;
+  width: 90%;
 }
 
 /* Fix 100% width */

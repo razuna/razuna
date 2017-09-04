@@ -50,16 +50,39 @@
 					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search" OR attributes.loaddiv EQ "labels">
 						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&label_id=#attributes.label_id#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#&offset=#attributes.offset#');<cfif attributes.loaddiv NEQ "labels">replacewin();<cfelse>replacewinlabels();</cfif>" class="button">
 					<cfelse>
-						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#&offset=#attributes.offset#');" class="button">
+						<input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_trash<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#&offset=#attributes.offset#');replacelist();" class="button">
 					</cfif>
 				</td>
 			</tr>
 		</table>
 	</div>
 	<script type="text/javascript">
+		// This is for folder content
+		function replacelist() {
+			// Decide on ID
+			<cfif ("#attributes.id#" EQ "0")>
+				<cfset _id = "#session.file_id#">
+			<cfelse>
+				<cfset _id = "#attributes.id#">
+			</cfif>
+			// Loop over file_ids and remove div
+			<cfloop list="#_id#" index="i">
+				// Remove the div
+				$('###i#').remove();
+				$('###i#-img').remove();
+				$('###i#-vid').remove();
+				$('###i#-aud').remove();
+				$('###i#-doc').remove();
+			</cfloop>
+			// Deselect all
+			$(':checkbox').prop('checked',false);
+			// Close Windows
+			// destroywindow(2);
+			// destroywindow(1);
+			$('##div_win_trash_record').html('<div style="padding:10px;">The selected asset(s) have been moved to the trashed in the background!<br /><br />Depending on how many assets are being removed, this can take some time and the folder list will update once done.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+		}
 		// This is for search results
-
-		function replacewin(){
+		function replacewin() {
 			// Loop over file_ids and remove div
 			<cfloop list="#session.file_id#" index="i">
 				// Remove the div
@@ -76,9 +99,9 @@
 			// Deselect all
 			CheckAllNot('searchformall');
 			// Close Windows
-			destroywindow(2);
-			destroywindow(1);
-			// $('##div_win_trash_record').html('<div style="padding:10px;">The asset(s) have been successfully trashed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+			// destroywindow(2);
+			// destroywindow(1);
+			$('##div_win_trash_record').html('<div style="padding:10px;">The selected asset(s) have been moved to the trashed in the background! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
 		}
 		// This is when coming from labels
 		function replacewinlabels(){

@@ -26,7 +26,7 @@
 <cfoutput>
 <!--- Show Subfolders --->
 <cfloop query="qry_subfolders">
-	<div class="assetbox" style="text-align:center;<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
+	<div class="assetbox" style="text-align:center;">
 		<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 			<div class="theimg">
 				<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>

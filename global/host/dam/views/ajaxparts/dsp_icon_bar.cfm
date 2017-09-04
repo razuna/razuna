@@ -61,7 +61,7 @@
 		<td align="left" width="1%" nowrap="true">
 			<div>
 				<!--- Icons --->
-				<div id="tooltip" style="float:left;width:600px;">
+				<div id="tooltip" style="float:left;min-width:500px;">
 					<!--- Upload --->
 					<cfif attributes.folderaccess NEQ "R"> 
 						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (isadmin)>

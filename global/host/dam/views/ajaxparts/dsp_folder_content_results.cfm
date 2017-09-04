@@ -33,6 +33,8 @@
 	<!--- Set count for UPC or not --->
 	<cfif structKeyExists(qry_files,"searchcount")>
 		<cfset _count = qry_files.searchcount>
+	<!--- <cfelseif structKeyExists(qry_files,"qall") AND isQuery(qry_files.qall)>
+		<cfset _count = qry_files.qall.recordcount> --->
 	<cfelse>
 		<cfset _count = attributes.qry_filecount>
 	</cfif>
@@ -65,11 +67,12 @@
 		<input type="hidden" name="thetype" value="all">
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
 		<!--- Set count for UPC or not --->
-		<cfif structKeyExists(qry_files,"listid")>
+		<!--- <cfif structKeyExists(qry_files,"listid")>
 			<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.listid)#">
 		<cfelse>
 			<input type="hidden" name="listids" id="searchlistids" value="#valuelist(qry_files.qall.listid)#">
-		</cfif>
+		</cfif> --->
+		<input type="hidden" name="listids" id="searchlistids" value="#session.search.search_file_ids#">
 		<input type="hidden" name="editids" id="editids" value="#session.search.edit_ids#">
 		<input type="hidden" name="folder_id" id="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -129,54 +132,9 @@
 					</cfif>
 					<!--- Images --->
 					<cfif kind EQ "img">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
-								<script type="text/javascript">
-								$(function() {
-									$("##draggable-s#theid#-#kind#").draggable({
-										appendTo: 'body',
-										cursor: 'move',
-										addClasses: false,
-										iframeFix: true,
-										opacity: 0.25,
-										zIndex: 5000,
-										helper: 'clone',
-										start: function() {
-											//$('##dropbaskettrash').css('display','none');
-											//$('##dropfavtrash').css('display','none');
-										},
-										stop: function() {
-											//$('##dropbaskettrash').css('display','');
-											//$('##dropfavtrash').css('display','');
-										}
-									});
-									<cfif isdate(expiry_date_actual) AND expiry_date_actual LT now()>
-										$('##iconbar_search_#uniqueid#_#id#').css('display','none');
-									</cfif>
-								});
-								</script>
-								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<cfloop list="#attributes.cs_place.top.image#" index="m" delimiters=",">
-										<cfif m CONTAINS "_filename">
-											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
-										<cfelseif m CONTAINS "_size">
-											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
-										<cfelseif m CONTAINS "_time">
-											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
-										<cfelseif m CONTAINS "expiry_date">
-											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
-										<cfelse>
-											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
-										</cfif>
-										<br />
-									</cfloop>
-									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								</cfif>
+								
 								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
 
 									<!--- Show assets --->
@@ -248,10 +206,10 @@
 										<cfloop list="#attributes.cs_place.bottom.image#" index="m" delimiters=",">
 											<cfif m CONTAINS "_filename">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+												<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(evaluate(listlast(m," ")),150)#</strong></a>
 											<cfelseif m CONTAINS "_size">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
@@ -260,7 +218,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>
@@ -296,7 +254,7 @@
 						</div>
 					<!--- Videos --->
 					<cfelseif kind EQ "vid">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -330,7 +288,7 @@
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -340,7 +298,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -418,7 +376,7 @@
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -428,7 +386,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>
@@ -464,7 +422,7 @@
 						</div>
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -498,7 +456,7 @@
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -508,7 +466,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -571,7 +529,7 @@
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -581,7 +539,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>
@@ -617,7 +575,7 @@
 						</div>
 					<!--- All other files --->
 					<cfelse>
-						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
+						<div class="assetbox" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -651,7 +609,7 @@
 										<cfelseif m CONTAINS "_size">
 											<cfif evaluate(listlast(m," ")) NEQ "">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 											</cfif>
 										<cfelseif m CONTAINS "_time">
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -661,7 +619,7 @@
 											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 										<cfelse>
 											<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-											#evaluate(listlast(m," "))#
+											#left(evaluate(listlast(m," ")),150)#
 										</cfif>
 										<br />
 									</cfloop>
@@ -729,7 +687,7 @@
 											<cfelseif m CONTAINS "_size">
 												<cfif evaluate(listlast(m," ")) NEQ "">
 													<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+													#myFusebox.getApplicationData().global.converttomb('#left(evaluate(listlast(m," ")),150)#')# MB
 												</cfif>
 											<cfelseif m CONTAINS "_time">
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
@@ -739,7 +697,7 @@
 												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")#
 											<cfelse>
 												<span class="assetbox_title">#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")#</span>
-												#evaluate(listlast(m," "))#
+												#left(evaluate(listlast(m," ")),150)#
 											</cfif>
 											<br />
 										</cfloop>

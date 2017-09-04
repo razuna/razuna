@@ -244,16 +244,16 @@ function enablesub(myform,nostore) {
 		var n = $('#' + myform + ' input:checked').length;
 		// Open or close selection
 		if (n > 0) {
-			$("#folderselection" + myform).slideDown('slow');
-			$("#folderselectionb" + myform).slideDown('slow');
-			$("#selectalert" + myform).slideDown('slow');
-			$("#selectalertb" + myform).slideDown('slow');
+			$("#folderselection" + myform).slideDown('fast');
+			$("#folderselectionb" + myform).slideDown('fast');
+			$("#selectalert" + myform).slideDown('fast');
+			$("#selectalertb" + myform).slideDown('fast');
 		}
 		if (n === 0) {
-			$("#folderselection" + myform).slideUp('slow');
-			$("#folderselectionb" + myform).slideUp('slow');
-			$("#selectalert" + myform).slideUp('slow');
-			$("#selectalertb" + myform).slideUp('slow');
+			$("#folderselection" + myform).slideUp('fast');
+			$("#folderselectionb" + myform).slideUp('fast');
+			$("#selectalert" + myform).slideUp('fast');
+			$("#selectalertb" + myform).slideUp('fast');
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
@@ -280,13 +280,13 @@ function enablefromselectable(myform) {
 	var n = $("#" + myform + " .ui-selected input[name='file_id']").length;
 	// Open or close selection
 	if (n > 0 && isclosed) {
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
+		$("#folderselection" + myform).slideToggle('fast');
+		$("#folderselectionb" + myform).slideToggle('fast');
 		
 	}
 	if (n === 0 && !isclosed) {
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
+		$("#folderselection" + myform).slideToggle('fast');
+		$("#folderselectionb" + myform).slideToggle('fast');
 	}
 	// Hide select all status
 	$("#selectstore" + myform).css("display","none");
@@ -463,18 +463,21 @@ function storeids(theform){
 	// $('input[name=checkbox][name="file_id"]:checked').each(function() {
 	// console.log($(this).val());
 	// });
-	for (var i = 0; i<document.forms[theform].elements.length; i++) {
-	   if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
-			if (document.forms[theform].elements[i].checked) {
-				fileids += document.forms[theform].elements[i].value + ',';
+	if (theform && document.forms[theform] && document.forms[theform].elements) {
+		for (var i = 0; i<document.forms[theform].elements.length; i++) {
+		   if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
+				if (document.forms[theform].elements[i].checked) {
+					fileids += document.forms[theform].elements[i].value + ',';
+				}
+				/* else {
+					del_fileids += document.forms[theform].elements[i].value + ',';
+				}*/
 			}
-			/* else {
-				del_fileids += document.forms[theform].elements[i].value + ',';
-			}*/
 		}
+		// console.log(fileids)
+		// Store in session
+		$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids,individual_select:true});
 	}
-	// Store in session
-	$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids,individual_select:true});
 }
 function storeone(theid) {
 	// Remove all first
@@ -492,8 +495,8 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	// Loop over checkboxes and check all
 	$('#' + myform + ' :checkbox').prop('checked', true);
 	// Show drop down
-	$("#folderselection" + myform).slideDown('slow');
-	$("#folderselectionb" + myform).slideDown('slow');
+	$("#folderselection" + myform).slideDown('fast');
+	$("#folderselectionb" + myform).slideDown('fast');
 	// Remove ui-selected class
 	$('.assetbox').removeClass('ui-selected');
 	// Decide if this is from the search
@@ -512,15 +515,15 @@ function CheckAllNot(myform){
 	// Loop over checkboxes and check/uncheck and set var
 	$('#' + myform + ' :checkbox').prop('checked', false);
 	// Hide bar
-	$("#folderselection" + myform).slideUp('slow');
-	$("#folderselectionb" + myform).slideUp('slow');
+	$("#folderselection" + myform).slideUp('fast');
+	$("#folderselectionb" + myform).slideUp('fast');
 	// Hide the selectall desc
 	$("#selectstore" + myform).css("display","none");
 	$("#selectstoreb" + myform).css("display","none");
 	$("#selectalert" + myform).css("display","none");
 	$("#selectalertb" + myform).css("display","none");
 	// Get the ids from the hidden field
-	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
+	// $('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
 }
 
 // Site conversion
@@ -1198,7 +1201,7 @@ function customfieldupdate(){
 }
 // Reload the fields div
 function reloadfields(){
-	loadcontent('thefields','index.cfm?fa=c.custom_fields_existing');	
+	loadcontent('thefields','index.cfm?fa=c.custom_fields_existing');
 }
 // On document ready
 $(document).ready(function() {
@@ -1211,7 +1214,7 @@ $(document).ready(function() {
 	// }
 	// Account window
 	function showaccount(){
-		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
+		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');
 		document.form_account.target='myWin';
 		document.form_account.submit();
 	}
@@ -1852,7 +1855,7 @@ function razunatreefocusdelay(folderid){
 }
 // Toggle Slide
 function toggleslide(theclickid,thefield){
-	$('#' + theclickid).slideToggle('slow');
+	$('#' + theclickid).slideToggle('fast');
 	$('#' + thefield).select();
 	$('#' + thefield).click(function(){ 
 		this.select(); 

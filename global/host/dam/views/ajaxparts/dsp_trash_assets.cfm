@@ -35,7 +35,7 @@
 		<cfelseif attributes.thetype EQ 'vid'>
 			<cfset session.thefileid = ",#attributes.id#-vid,">
 		<cfelseif attributes.thetype EQ 'doc'>
-			<cfset session.thefileid = ",#attributes.id#-file,">	
+			<cfset session.thefileid = ",#attributes.id#-file,">
 		</cfif>
 		<cfif attributes.type EQ 'restorefile'>
 			<!--- Open choose folder window automatically --->
@@ -46,9 +46,11 @@
 	</cfif>
 	<!--- Show button and next back --->
 	<cfif qry_trash.recordcount NEQ 0>
+		<div style="text-align: center;font-style: italic;">Items in the trash will automatically be removed after 30 days</div>
+		<div style="clear: both;"></div>
 		<div style="float:left;">
 			<!--- Select All --->
-			<a href="##" onClick="CheckAll('allform_assets','0','storeall','trashfiles');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+			<a href="##" onClick="CheckAll('allform_assets','0','storeall','all_files_in_trash');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 			</a>
 			<!--- Remove all files in the trash --->
@@ -113,7 +115,7 @@
 		<form name="allform_assets" id="allform_assets" action="#self#" onsubmit="">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
-					<td colspan="6" style="border:0px;">
+					<td style="border:0px;">
 						<div id="folderselectionallform_assets" class="actiondropdown">
 							<!--- Restore selected files in the trash ---> 
 							<a href="##" onclick="showwindow('#myself#c.restore_selected_files&type=restoreselectedfiles','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
@@ -140,6 +142,7 @@
 						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_rowmaxpage#">
 							<div class="assetbox">
 								<div class="theimg">
+									<br/><br/>
 									<!--- Images --->
 									<cfif kind EQ "img">
 										<cfif application.razuna.storage EQ 'local' OR application.razuna.storage EQ 'akamai'> 
@@ -209,6 +212,13 @@
 						</cfoutput>
 					</td>
 				</tr>
+				<cfif session.file_trash_count GT qry_trash.recordcount>
+					<tr>
+						<td style="padding-top:20px;text-align: center;">
+							<em>There are #session.file_trash_count# files in the trash. We only show a maximum of #qry_trash.recordcount# files here</em>
+						</td>
+					</tr>
+				</cfif>
 			</table>
 		</form>
 	</div>

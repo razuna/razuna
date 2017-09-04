@@ -34,6 +34,7 @@ FROM razuna_config
 	)
 </cfif>
 </cfquery>
+<cftry>
 <cfquery datasource="#_config.conf_datasource#">
 <cfif _config.conf_database NEQ "h2">
 	DELETE c FROM raz2_cart c
@@ -63,3 +64,5 @@ FROM razuna_config
 	)
 </cfif>
 </cfquery>
+<cfcatch></cfcatch>
+</cftry>
