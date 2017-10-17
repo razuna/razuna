@@ -69,26 +69,28 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td style="border:0px;">
-					<!--- Show Subfolders --->
-					<cfloop query="qry_subfolders">
-						<div class="assetbox" style="text-align:center;">
-							<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
-								<div class="theimg">
-									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
-										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
-										<cfif myDir.RecordCount>
-											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+					<div class="grid-masonry">
+						<!--- Show Subfolders --->
+						<cfloop query="qry_subfolders">
+							<div class="assetbox grid-masonry-item" style="text-align:center;">
+								<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
+									<div class="theimg">
+										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+											<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
+											<cfif myDir.RecordCount>
+												<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>
-									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
-									</cfif>
-								</div>
-								<strong>#folder_name#</strong>
-							</a>
-						</div>
-					</cfloop>
+									</div>
+									<strong>#folder_name#</strong>
+								</a>
+							</div>
+						</cfloop>
+					</div>
 				</td>
 			</tr>
 		</table>
