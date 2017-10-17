@@ -6032,7 +6032,8 @@
 					<cfset var te = "">
 				</cfif>
 				<cfset var tn = replacenocase(filename,te,"")>
-				<cfset var thefinalname = "rend_" & tn & te>
+				<!--- <cfset var thefinalname = "rend_" & tn & te> --->
+				<cfset var thefinalname = tn & te>
 			</cfif>
 		</cfif>
 		<!--- RAZ-2901 : Check for additional renditions --->
@@ -6044,7 +6045,8 @@
 				<cfset var te = "">
 			</cfif>
 			<cfset var avid = av_id>
-			<cfset var thefinalname = "add_rend_" & tn & "_#av_id#" & te>
+			<!--- <cfset var thefinalname = "add_rend_" & tn & "_#av_id#" & te> --->
+			<cfset var thefinalname = tn & te>
 			<cfset var filename_av = listlast('#av_link_url#','/')>
 			<cfset var theorgname = filename_av>
 			<cfset var fs = replacenocase('#av_link_url#','/','','one')>
@@ -6075,7 +6077,8 @@
 					<cfelse>
 						<cfset var te = "">
 					</cfif>
-					<cfset var thefinalname = "rend_" & tn & te>
+					<!--- <cfset var thefinalname = "rend_" & tn & te> --->
+					<cfset var thefinalname = tn & te>
 				</cfif>
 			</cfif>
 
