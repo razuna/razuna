@@ -31,40 +31,46 @@
 			</tr>
 			<tr>
 				<td style="border:0px;">
-					<!--- Show Subfolders --->
-					<cfloop query="qry_labels_folders">
-						<div class="assetbox" style="text-align:center;">
-							<cfif perm NEQ "R">
-								<cfif folder_is_collection EQ "T">
-									<cfset thef = "c.collections&folder_id=col-#folder_id#">
-								<cfelse>
-									<cfset thef = "c.folder&folder_id=#folder_id#">
-								</cfif>
-								<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=#thef#');">
-									<div class="theimg">
-										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
-											<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
-											<cfif myDir.RecordCount>
-												<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+					<div class="grid-masonry">
+						<!--- Show Subfolders --->
+						<cfloop query="qry_labels_folders">
+							<div class="assetbox grid-masonry-item" style="text-align:center;">
+								<cfif perm NEQ "R">
+									<cfif folder_is_collection EQ "T">
+										<cfset thef = "c.collections&folder_id=col-#folder_id#">
+									<cfelse>
+										<cfset thef = "c.folder&folder_id=#folder_id#">
+									</cfif>
+									<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=#thef#');">
+										<div class="theimg">
+											<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+												<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
+												<cfif myDir.RecordCount>
+													<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+												<cfelse>
+													<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+												</cfif>
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 											</cfif>
-										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
-										</cfif>
+										</div>
+										<strong>#folder_name#</strong>
+									</a>
+								<cfelse>
+									<div class="theimg">
+										<img src="#dynpath#/global/host/dam/images/folder-locked.png" border="0"><br />
 									</div>
 									<strong>#folder_name#</strong>
-								</a>
-							<cfelse>
-								<div class="theimg">
-									<img src="#dynpath#/global/host/dam/images/folder-locked.png" border="0"><br />
-								</div>
-								<strong>#folder_name#</strong>
-							</cfif>
-						</div>
-					</cfloop>
+								</cfif>
+							</div>
+						</cfloop>
+					</div>
 				</td>
 			</tr>
 		</table>
 	</cfif>
 </cfoutput>
+<script type="text/javascript">
+	// Call for Masonry
+	callMasonry();
+</script>

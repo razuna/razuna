@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2017.08.31.1" />
+		<set name="attributes.cachetag" value="2017.10.17.1" />
 	</fuseaction>
 
 	<!--
@@ -9791,11 +9791,14 @@
 		<!-- <invoke object="myFusebox.getApplicationData().folders" methodcall="store_selection(attributes)" /> -->
 
 		<!-- Simply set sessions -->
-		<set name="session.individual_select" value="true" />
-		<set name="session.file_id" value="#attributes.file_id#" />
-		<set name="session.thefileid" value="#attributes.file_id#" />
-		<set name="session.editids" value="#attributes.file_id#" />
-
+		<if condition="structkeyexists(attributes,'file_id')">
+			<true>
+				<set name="session.individual_select" value="true" />
+				<set name="session.file_id" value="#attributes.file_id#" />
+				<set name="session.thefileid" value="#attributes.file_id#" />
+				<set name="session.editids" value="#attributes.file_id#" />
+			</true>
+		</if>
 	</fuseaction>
 
 	<!-- Store all ids -->

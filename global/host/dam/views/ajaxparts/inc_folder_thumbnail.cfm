@@ -26,7 +26,7 @@
 <cfoutput>
 <!--- Show Subfolders --->
 <cfloop query="qry_subfolders">
-	<div class="assetbox" style="text-align:center;">
+	<div class="assetbox grid-masonry-item" style="text-align:center;">
 		<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 			<div class="theimg">
 				<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
@@ -44,8 +44,8 @@
 		</a>
 	</div>
 </cfloop>
-<cfif qry_subfolders.recordcount>
+<!--- <cfif qry_subfolders.recordcount>
 	<hr>
 	<div style="clear: both;"></div>
-</cfif>
+</cfif> --->
 </cfoutput>

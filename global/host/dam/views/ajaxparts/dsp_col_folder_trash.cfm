@@ -96,65 +96,69 @@
 			</div>
 			<!--- show the available folder list for restoring --->
 			<form name="allform_folders" id="allform_folders" action="#self#" onsubmit="">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-				<tr>
-					<td colspan="6" style="border:0px;">
-						<div id="folderselectionallform_folders" class="actiondropdown">
-							<!--- Restore selected folders --->
-							<a href="##" onclick="showwindow('#myself#c.restore_selected_col_folder&type=restoreselectedcolfolder&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
-								<div style="float:left;">
-									<img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0" style="padding-right:3px;" />
-								</div>
-								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
-							</a>
-							<!--- Remove selected folders --->
-							<a href="##" onclick="showwindow('#myself#ajax.remove_folder&what=selected_col_folder&loaddiv=collection&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
-								<div style="float:left;">
-									<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
-								</div>
-								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash_Delete_Permanently")#</div>
-							</a>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td style="border:0px;" id="selectme">
-						<!--- For paging --->
-						<cfset mysqloffset = session.col_trash_folder_offset * session.col_trash_folder_rowmaxpage + 1>
-						<!--- Show trash folders --->
-						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.col_trash_folder_rowmaxpage#">
-							<div class="assetbox">
-								<div class="theimg">
-									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0">
-								</div>
-								<div style="padding-top:5px;">
-									<!--- Only if we have at least write permission --->
-									<cfif permfolder NEQ "R">
-										<div style="float:left;padding-top:2px;">
-											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_folders');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+				<div class="grid-masonry">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+						<tr>
+							<td colspan="6" style="border:0px;">
+								<div id="folderselectionallform_folders" class="actiondropdown">
+									<!--- Restore selected folders --->
+									<a href="##" onclick="showwindow('#myself#c.restore_selected_col_folder&type=restoreselectedcolfolder&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
+										<div style="float:left;">
+											<img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0" style="padding-right:3px;" />
 										</div>
-										<!--- Set vars for kind --->
-										<!--- Folder --->
-											<cfset url_remove = "ajax.remove_folder&loaddiv=folders&folder_id=#folder_id#&iscol=T&what=folder">
-										<div style="float:right;padding-top:2px;">
-											<!--- restore the folder --->
-											<a href="##" onclick="showwindow('#myself#c.restore_col_folder&type=restorecolfolder&folder_id=#folder_id#&folder_level=#folder_level#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
-											<!--- remove the folder --->
-											<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+										<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
+									</a>
+									<!--- Remove selected folders --->
+									<a href="##" onclick="showwindow('#myself#ajax.remove_folder&what=selected_col_folder&loaddiv=collection&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
+										<div style="float:left;">
+											<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
 										</div>
-									</cfif>
+										<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash_Delete_Permanently")#</div>
+									</a>
 								</div>
-								<div style="clear:both;">
-									<strong>#filename#</strong>
-								</div>
-							</div>
-						</cfoutput>
-					</td>
-				</tr>
-			</table>
+							</td>
+						</tr>
+						<tr>
+							<td style="border:0px;" id="selectme">
+								<!--- For paging --->
+								<cfset mysqloffset = session.col_trash_folder_offset * session.col_trash_folder_rowmaxpage + 1>
+								<!--- Show trash folders --->
+								<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.col_trash_folder_rowmaxpage#">
+									<div class="assetbox grid-masonry-item">
+										<div class="theimg">
+											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0">
+										</div>
+										<div style="padding-top:5px;">
+											<!--- Only if we have at least write permission --->
+											<cfif permfolder NEQ "R">
+												<div style="float:left;padding-top:2px;">
+													<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_folders');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+												</div>
+												<!--- Set vars for kind --->
+												<!--- Folder --->
+													<cfset url_remove = "ajax.remove_folder&loaddiv=folders&folder_id=#folder_id#&iscol=T&what=folder">
+												<div style="float:right;padding-top:2px;">
+													<!--- restore the folder --->
+													<a href="##" onclick="showwindow('#myself#c.restore_col_folder&type=restorecolfolder&folder_id=#folder_id#&folder_level=#folder_level#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
+													<!--- remove the folder --->
+													<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+												</div>
+											</cfif>
+										</div>
+										<div style="clear:both;">
+											<strong>#filename#</strong>
+										</div>
+									</div>
+								</cfoutput>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</form>
 		</div>
 		<script type="text/javascript">
+			// Call for Masonry
+			callMasonry();
 			<cfif session.file_id NEQ "">
 	            enablesub('allform_folders', true);
 	        </cfif>

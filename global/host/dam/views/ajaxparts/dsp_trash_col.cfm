@@ -119,61 +119,63 @@
 				</tr>
 				<tr>
 					<td style="border:0px;" id="selectme">
-						<!--- For paging --->
-						<cfset mysqloffset = session.trash_collection_offset * session.trash_collection_rowmaxpage + 1>
-						<!--- Show trash collections --->
-						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_collection_rowmaxpage#">
-							<div class="assetbox">
-								<div class="theimg">
-									<img src="#dynpath#/global/host/dam/images/folder-blue.png" border="0">
-								</div>
-								<div style="padding-top:5px;">
+						<div class="grid-masonry">
+							<!--- For paging --->
+							<cfset mysqloffset = session.trash_collection_offset * session.trash_collection_rowmaxpage + 1>
+							<!--- Show trash collections --->
+							<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_collection_rowmaxpage#">
+								<div class="assetbox grid-masonry-item">
+									<div class="theimg">
+										<img src="#dynpath#/global/host/dam/images/folder-blue.png" border="0">
+									</div>
+									<div style="padding-top:5px;">
+										<!--- Only if we have at least write permission --->
+										<cfif permfolder NEQ "R">
+											<div style="float:left;padding-top:2px;">
+												<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_collection');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
+											</div>
+											<!--- Set vars for kind --->
+											<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collections&showsubfolders=F&kind=collection">
+											<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collections&fromtrash=true">
+											<div style="float:right;padding-top:2px;">
+												<!--- restore the collection --->
+												<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
+												<!--- remove the collection --->
+												<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+											</div>
+										</cfif>
+									</div>
+									<div style="clear:both;">
+										<strong>#filename#</strong>
+									</div>
 									<!--- Only if we have at least write permission --->
-									<cfif permfolder NEQ "R">
-										<div style="float:left;padding-top:2px;">
-											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform_collection');"<cfif listfindnocase(session.file_id,"#id#-#kind#") NEQ 0> checked="checked"</cfif>>
-										</div>
+									<!---<cfif permfolder NEQ "R">
 										<!--- Set vars for kind --->
-										<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collections&showsubfolders=F&kind=collection">
-										<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collections&fromtrash=true">
-										<div style="float:right;padding-top:2px;">
-											<!--- restore the collection --->
-											<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
-											<!--- remove the collection --->
-											<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+										<!--- Folder --->
+										<cfif kind EQ "folder">
+											<cfset url_restore = "ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T">
+											<cfset url_remove = "ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder">
+										<!--- Collection --->
+										<cfelseif kind EQ "collection">
+											<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection">
+											<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection&fromtrash=true">
+										<!--- Files --->
+										<cfelse>
+											<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">
+											<cfset url_remove = "ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_item_order#&showsubfolders=#attributes.showsubfolders#">
+										</cfif>
+										<!--- Restore --->
+										<div>
+											<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 										</div>
-									</cfif>
+										<!--- Remove --->
+										<div>
+											<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+										</div>
+									</cfif>--->
 								</div>
-								<div style="clear:both;">
-									<strong>#filename#</strong>
-								</div>
-								<!--- Only if we have at least write permission --->
-								<!---<cfif permfolder NEQ "R">
-									<!--- Set vars for kind --->
-									<!--- Folder --->
-									<cfif kind EQ "folder">
-										<cfset url_restore = "ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T">
-										<cfset url_remove = "ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder">
-									<!--- Collection --->
-									<cfelseif kind EQ "collection">
-										<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection">
-										<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection&fromtrash=true">
-									<!--- Files --->
-									<cfelse>
-										<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">
-										<cfset url_remove = "ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_item_order#&showsubfolders=#attributes.showsubfolders#">
-									</cfif>
-									<!--- Restore --->
-									<div>
-										<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-									</div>
-									<!--- Remove --->
-									<div>
-										<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-									</div>
-								</cfif>--->
-							</div>
-						</cfoutput>
+							</cfoutput>
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -181,6 +183,8 @@
 	</div>
 	<!--- JS --->
 	<script type="text/javascript">
+		// Call for Masonry
+		callMasonry();
 		<cfif session.file_id NEQ "">
             enablesub('allform_collection', true);
         </cfif>
