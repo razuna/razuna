@@ -55,6 +55,8 @@
 	<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/js/masonry.pkgd.min.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/js/imagesloaded.pkgd.min.js?_v=#attributes.cachetag#"></script>
 	<!--- Custom CSS --->
 	<cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
 		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css?_v=#attributes.cachetag#" />
@@ -111,161 +113,165 @@
 		</tr>
 		<tr>
 			<td valign="top" align="center">
-				<!--- Show Subfolders --->
-				<cfif session.iscol EQ "F">
-					<cfloop query="qry_subfolders">
-						<div class="assetbox" style="text-align:center;">
-							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#">
-								<div class="theimg">
-									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
-										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
-										<cfif myDir.RecordCount>
-											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+				<div class="grid-masonry">
+					<!--- Show Subfolders --->
+					<cfif session.iscol EQ "F">
+						<cfloop query="qry_subfolders">
+							<div class="assetbox grid-masonry-item" style="text-align:center;">
+								<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#">
+									<div class="theimg">
+										<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+											<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#folder_id#/" type="file">
+											<cfif myDir.RecordCount>
+												<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>
-									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
-									</cfif>
-								</div>
-							<strong>#folder_name#</strong></a>
-							<br />
-							<!--- Show total assets in folder --->
-							<em>(Contains #filecount# files)</em>
-						</div>
-					</cfloop>
-				</cfif>
-				<cfoutput query="qry.qry_files" group="id"> <!--- We need this here since the SQL can not be smplified otherwise --->
-					<div class="assetbox">
-						<!--- Images --->
-						<cfif kind EQ "img">
-							<cfif is_available>
-								<div class="theimg">
-									<!--- Show assets --->
-									<cfif link_kind NEQ "url">
-										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<cfif theformat EQ "original" OR theformat EQ "org">
-												<cfset thev = "o">
-												<cfset thefile = cloud_url_org>
-												<cfset theid = id>
-											<cfelseif theformat EQ "thumb" OR theformat EQ "">
-												<cfset thev = "p">
-												<cfset thefile = cloud_url>
-												<cfset theid = id>
+									</div>
+								<strong>#folder_name#</strong></a>
+								<br />
+								<!--- Show total assets in folder --->
+								<em>(Contains #filecount# files)</em>
+							</div>
+						</cfloop>
+					</cfif>
+					<cfoutput query="qry.qry_files" group="id"> <!--- We need this here since the SQL can not be smplified otherwise --->
+						<div class="assetbox grid-masonry-item">
+							<!--- Images --->
+							<cfif kind EQ "img">
+								<cfif is_available>
+									<div class="theimg">
+										<!--- Show assets --->
+										<cfif link_kind NEQ "url">
+											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+												<cfif theformat EQ "original" OR theformat EQ "org">
+													<cfset thev = "o">
+													<cfset thefile = cloud_url_org>
+													<cfset theid = id>
+												<cfelseif theformat EQ "thumb" OR theformat EQ "">
+													<cfset thev = "p">
+													<cfset thefile = cloud_url>
+													<cfset theid = id>
+												<cfelse>
+													<cfset thev = "o">
+													<cfset theid = theformat>
+												</cfif>
+												<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0"></a>
 											<cfelse>
-												<cfset thev = "o">
-												<cfset theid = theformat>
+												<cfif theformat EQ "original" OR theformat EQ "org">
+													<cfset thev = "o">
+													<cfset theid = id>
+												<cfelseif theformat EQ "thumb" OR theformat EQ "">
+													<cfset thev = "p">
+													<cfset theid = id>
+												<cfelse>
+													<cfset thev = "o">
+													<cfset theid = theformat>
+												</cfif>
+												<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0"></a>
 											</cfif>
-											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0"></a>
 										<cfelse>
-											<cfif theformat EQ "original" OR theformat EQ "org">
-												<cfset thev = "o">
-												<cfset theid = id>
-											<cfelseif theformat EQ "thumb" OR theformat EQ "">
-												<cfset thev = "p">
-												<cfset theid = id>
-											<cfelse>
-												<cfset thev = "o">
-												<cfset theid = theformat>
-											</cfif>
-											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0"></a>
+											<img src="#link_path_url#" border="0">
 										</cfif>
-									<cfelse>
-										<img src="#link_path_url#" border="0">
-									</cfif>
-								</div>
-								<strong>#filename#</strong>
-								<cfif expiry_date EQ '' OR expiry_date GTE now()>
-									<br>
-									<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-								</cfif>
-							<cfelse>
-								The upload of "#filename#" is still in progress!
-							</cfif>
-						<!--- Videos --->
-						<cfelseif kind EQ "vid">
-							<cfif is_available>
-								<cfset theid = id>
-								<div class="theimg">
-									<cfif link_kind NEQ "url">
-										<!--- This is for the overlay --->
-										<cfif theformat EQ "video" OR theformat EQ "" OR theformat EQ "org">
-											<cfset theid = id>
-										<cfelse>
-											<cfset theid = theformat>
-										</cfif>
-										<!--- Show video preview images --->
-										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
-										<cfelse>
-											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" width="160"></a>
-										</cfif>
-									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
-									</cfif>
-								</div>
-								<strong>#filename#</strong>
-								<cfif expiry_date EQ '' OR expiry_date GTE now()>
-									<br>
-									<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-								</cfif>
-							<cfelse>
-								The upload of "#filename#" is still in progress!
-							</cfif>
-						<!--- Audios --->
-						<cfelseif kind EQ "aud">
-							<cfif is_available>
-								<cfset theid = id>
-								<!--- This is for the overlay --->
-								<cfif theformat EQ "audio" OR theformat EQ "" OR theformat EQ "org">
-									<cfset theid = id>
-								<cfelse>
-									<cfset theid = theformat>
-								</cfif>
-								<div class="theimg">
-									<a href="##" onclick="window.open('#myself#c.sa&f=#theid#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></a>
-								</div>
-								<strong>#filename#</strong>
-								<cfif expiry_date EQ '' OR expiry_date GTE now()>
-									<br>
-									<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-								</cfif>
-							<cfelse>
-								The upload of "#filename#" is still in progress!
-							</cfif>
-						<!--- All other files --->
-						<cfelse>
-							<cfif is_available>
-								<div class="theimg">
-									<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-									<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
-										<img src="#cloud_url#" border="0" img-tt="img-tt">
-									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
-									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
-									</cfif>
-								</div>
-								<strong>#filename#</strong>
-								<!--- For now download pf PDF is allows independent of setting in the widget preferences --->
-								<!--- <cfif qry_widget.widget_dl_org EQ "t"> --->
+									</div>
+									<strong>#filename#</strong>
 									<cfif expiry_date EQ '' OR expiry_date GTE now()>
 										<br>
-										<a href="#myself#c.serve_file&file_id=#id#&type=doc&jsessionid=#session.SessionID#">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+										<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 									</cfif>
-								<!--- </cfif> --->
+								<cfelse>
+									The upload of "#filename#" is still in progress!
+								</cfif>
+							<!--- Videos --->
+							<cfelseif kind EQ "vid">
+								<cfif is_available>
+									<cfset theid = id>
+									<div class="theimg">
+										<cfif link_kind NEQ "url">
+											<!--- This is for the overlay --->
+											<cfif theformat EQ "video" OR theformat EQ "" OR theformat EQ "org">
+												<cfset theid = id>
+											<cfelse>
+												<cfset theid = theformat>
+											</cfif>
+											<!--- Show video preview images --->
+											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+												<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
+											<cfelse>
+												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+												<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" width="160"></a>
+											</cfif>
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+										</cfif>
+									</div>
+									<strong>#filename#</strong>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<br>
+										<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+									</cfif>
+								<cfelse>
+									The upload of "#filename#" is still in progress!
+								</cfif>
+							<!--- Audios --->
+							<cfelseif kind EQ "aud">
+								<cfif is_available>
+									<cfset theid = id>
+									<!--- This is for the overlay --->
+									<cfif theformat EQ "audio" OR theformat EQ "" OR theformat EQ "org">
+										<cfset theid = id>
+									<cfelse>
+										<cfset theid = theformat>
+									</cfif>
+									<div class="theimg">
+										<a href="##" onclick="window.open('#myself#c.sa&f=#theid#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></a>
+									</div>
+									<strong>#filename#</strong>
+									<cfif expiry_date EQ '' OR expiry_date GTE now()>
+										<br>
+										<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud&jsessionid=#session.SessionID#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+									</cfif>
+								<cfelse>
+									The upload of "#filename#" is still in progress!
+								</cfif>
+							<!--- All other files --->
 							<cfelse>
-								The upload of "#filename#" is still in progress!
+								<cfif is_available>
+									<div class="theimg">
+										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
+										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
+											<img src="#cloud_url#" border="0" img-tt="img-tt">
+										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
+										</cfif>
+									</div>
+									<strong>#filename#</strong>
+									<!--- For now download pf PDF is allows independent of setting in the widget preferences --->
+									<!--- <cfif qry_widget.widget_dl_org EQ "t"> --->
+										<cfif expiry_date EQ '' OR expiry_date GTE now()>
+											<br>
+											<a href="#myself#c.serve_file&file_id=#id#&type=doc&jsessionid=#session.SessionID#">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+										</cfif>
+									<!--- </cfif> --->
+								<cfelse>
+									The upload of "#filename#" is still in progress!
+								</cfif>
 							</cfif>
-						</cfif>
-					</div>
-				</cfoutput>
+						</div>
+					</cfoutput>
+				</div>
 			</td>
 		</tr>
 	</table>
 	</div>
 	<script type="text/javascript">
+		// Call for Masonry
+		callMasonry();
 		function jumppage(){
 			var p = $('##thepagelistw :selected').val();
 			$('##rightside').load(p);

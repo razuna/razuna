@@ -68,7 +68,9 @@
 		<script type="text/javascript" src="#dynpath#/global/js/jquery.scrollstop.js?_v=#attributes.cachetag#"></script>
 		<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js?_v=#attributes.cachetag#"></script>
 		<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/sets/html/set.js?_v=#attributes.cachetag#"></script>
-		
+		<script type="text/javascript" src="#dynpath#/global/js/masonry.pkgd.min.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="#dynpath#/global/js/imagesloaded.pkgd.min.js?_v=#attributes.cachetag#"></script>
+
 		<!--- Favicon --->
 		<cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
 			<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />

@@ -309,16 +309,12 @@ margin: 2px 0px 5px 0px;
 border-collapse: collapse;
 }
 .grid th {
-/* border: 1px solid #ccc; */
 padding: 2px 4px 2px 4px;
-/* background: #E2E2E2; */
 background: white;
 font-weight: bold;
 text-align:left;
 }
 .grid td {
-/* border: 1px solid #BEBEBE; */
-/* border-bottom: 1px solid #BEBEBE; */
 padding: 3px 4px 3px 4px;
 }
 .gridlist {
@@ -530,21 +526,19 @@ height: expression(this.height > 110 ? "110px" : true);
 #div_feedback input:focus, #div_feedback textarea:focus { border: 3px solid #972324; }
 #div_feedback input, #div_feedback textarea { -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
 
+
 .assetbox {
-margin: 5px;
-padding: 15px;
-/*background: #fffffc;*/
-background: #ffffff;
-border: #D8D5D2 1px solid;
-/*float: left;*/
-min-height: 230px;
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
-border-radius: 5px;
-word-wrap: break-word;
-max-width: 180px;
-color: #717171;
-display: inline-grid;
+	margin: 5px;
+	padding: 15px;
+	background: #ffffff;
+	border: #D8D5D2 1px solid;
+	min-height: 230px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	word-wrap: break-word;
+	max-width: 180px;
+	color: #717171;
 }
 
 .assetbox_title {
@@ -591,42 +585,41 @@ input:focus, textarea:focus {
 border: 1px solid #357EC7;
 }
 #bodybg {
-position: absolute;
-left:0;
-top: 0px;
-width: 100%;
-height: 100%;
-background-color:#000000;
-opacity: 0.75;
-filter: alpha(opacity=75);
-z-index:99999;
+	position: absolute;
+	left:0;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-color:#000000;
+	opacity: 0.75;
+	filter: alpha(opacity=75);
+	z-index:99999;
 }
-#bodyoverlay
-{
-border-radius: 10px;
-box-shadow:
-0px 1px 3px rgba(000,000,000,0.5),
-inset 0px 0px 3px rgba(255,255,255,1);
--webkit-border-radius: 10px;
--moz-border-radius: 10px;
--moz-box-shadow:
-0px 1px 3px rgba(000,000,000,0.5),
-inset 0px 0px 3px rgba(255,255,255,1);
--webkit-box-shadow:
-0px 1px 3px rgba(000,000,000,0.5),
-inset 0px 0px 3px rgba(255,255,255,1);
-width: 160px;
-height: 35px;
-text-align: center;
-line-height: 50px;
-background-color: #82cdff;
-color: white;
-position: absolute;
-left: 50%;
-top: 50%;
-margin-left: -50px;
-margin-top: -50px;
-z-index: 9999;
+#bodyoverlay {
+	border-radius: 10px;
+	box-shadow:
+	0px 1px 3px rgba(000,000,000,0.5),
+	inset 0px 0px 3px rgba(255,255,255,1);
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-moz-box-shadow:
+	0px 1px 3px rgba(000,000,000,0.5),
+	inset 0px 0px 3px rgba(255,255,255,1);
+	-webkit-box-shadow:
+	0px 1px 3px rgba(000,000,000,0.5),
+	inset 0px 0px 3px rgba(255,255,255,1);
+	width: 160px;
+	height: 35px;
+	text-align: center;
+	line-height: 50px;
+	background-color: #82cdff;
+	color: white;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -50px;
+	margin-top: -50px;
+	z-index: 9999;
 }
 /*
 awesome buttons are based on a blog post by ZERB
@@ -1089,4 +1082,16 @@ a:link .nolink{text-decoration: none;}
 	/*width:240px;*/
 	overflow:auto;
 	/*overflow-x:auto;*/
+}
+
+.grid-masonry-item {
+	width: 20%;
+	/* max-width: 180px;
+	min-height: 230px; */
+	/* margin-bottom: 10px; */
+	/* float: left; */
+}
+.grid-masonry-folder {
+	/* width: 120px; */
+	width: 20%;
 }

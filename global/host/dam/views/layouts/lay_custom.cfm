@@ -67,6 +67,9 @@
 <script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/masonry.pkgd.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/imagesloaded.pkgd.min.js?_v=#attributes.cachetag#"></script>
+
 <!--- Favicon --->
 <cfif fileexists("#ExpandPath("../..")#global/host/favicon/#session.hostid#/favicon.ico")>
 	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />

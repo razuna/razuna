@@ -5,11 +5,25 @@ if (isIE()) {
 	});
 }
 
+function callMasonry() {
+	$('.grid-masonry').imagesLoaded( function() {
+		$('.grid-masonry').masonry({
+			itemSelector: '.grid-masonry-item',
+			horizontalOrder: true,
+			percentPosition: true
+		});
+	});
+}
+
+function clearMasonry() {
+	$('.grid-masonry').remove();
+}
+
 // Check for IE here
 function isIE() {
 	var ms_ie = false;
 	var ua = window.navigator.userAgent;
-	var ms_ie = !!ua.match('MSIE |Trident/|Edge/');
+	ms_ie = !!ua.match('MSIE |Trident/|Edge/');
 	// var ie11 = ua.indexOf('Trident/');
 	// var edge = ua.indexOf('Edge/');
 
@@ -47,7 +61,7 @@ function destroywindow(numb) {
 	try{
 		$('#thewindowcontent' + numb).dialog('destroy').empty();
 	}
-	catch(e) {};
+	catch(e) {}
 }
 // Load Content with JQuery
 function loadcontent(ele,url){
