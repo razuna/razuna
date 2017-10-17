@@ -722,7 +722,8 @@
 				<!--- If thenewname variable contains /\ --->
 				<cfset var thename = replace(thename,"/","-","all")>
 				<cfset var thename = replace(thename,"\","-","all")>
-				<cfset arguments.thestruct.thename =  "add_rend_" & thename & "_" & arguments.thestruct.qry.av_id & ".#theext#">
+				<!--- <cfset arguments.thestruct.thename =  "add_rend_" & thename & "_" & arguments.thestruct.qry.av_id & ".#theext#"> --->
+				<cfset arguments.thestruct.thename =  thename & ".#theext#">
 			<cfelse>
 				<!--- Check that the filename has an extension --->
 				<cfset var rep = replacenocase(arguments.thestruct.qry.file_name,".#arguments.thestruct.qry.file_extension#","","one")>
@@ -961,7 +962,8 @@
 				<cfset var theimgname = qry.av_link_title>
 				<cfset var theext = listlast(qry.path_to_asset,".")>
 				<cfset var theext = listfirst(theext,"?")>
-				<cfset var thefinalname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
+				<!--- <cfset var thefinalname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#"> --->
+				<cfset var thefinalname = replacenocase(qry.av_link_title,".#theext#","") & ".#theext#">
 			<cfelse>
 				<cfset var theimgname = qry.img_filename_org>
 				<cfset var thefinalname = qry.img_filename>
@@ -980,7 +982,8 @@
 				<cfset var rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
 				<cfset var thenewname = rep & "." & theext>
-				<cfset var thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") &  "." & theext>
+				<!--- <cfset var thefinalname = "rend_" & replacenocase(thefinalname,".#theext#","","one") &  "." & theext> --->
+				<cfset var thefinalname = replacenocase(thefinalname,".#theext#","","one") & "." & theext>
 				<cfset var theart = theext & "_" & theimgid>
 				<cfset var upcnum = qrysub.upcnum>
 			<cfelseif theart EQ "versions">
@@ -1369,7 +1372,8 @@
 				<cfset var theext = listlast(theext,"?")>
 				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
-				<cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
+				<!--- <cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#"> --->
+				<cfset var thenewname = replacenocase(qry.av_link_title,".#theext#","") & ".#theext#">
 			<cfelse>
 				<!--- The filename for the folder --->
 				<cfset var rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
@@ -1647,7 +1651,8 @@
 				<cfset var theext = listlast(theext,"?")>
 				<cfset var rep = replacenocase(qry.av_link_title,".#theext#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
-				<cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#">
+				<!--- <cfset var thenewname = "add_rend_" & replacenocase(qry.av_link_title,".#theext#","") & "_" & qry.av_id & ".#theext#"> --->
+				<cfset var thenewname = replacenocase(qry.av_link_title,".#theext#","") & ".#theext#">
 			<cfelse>
 				<cfset var rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
 				<cfset var thefname = replace(rep,".","-","all")>
