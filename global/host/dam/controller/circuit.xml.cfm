@@ -22,6 +22,13 @@
 				<set name="session.thehttp" value="http://" />
 			</false>
 		</if>
+
+		<if condition="#session.login# EQ 'T'">
+			<true>
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
+			</true>
+		</if>
+
 		<!-- XFA -->
 		<xfa name="submitform" value="c.dologin" />
 		<xfa name="forgotpass" value="c.forgotpass" />
