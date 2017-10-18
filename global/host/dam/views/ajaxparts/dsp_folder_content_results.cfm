@@ -135,28 +135,28 @@
 							<cfif kind EQ "img">
 								<div class="assetbox grid-masonry-item" id="#theid#-#kind##iif(isalias EQ 1,de('_alias'),de(''))#">
 									<cfif is_available>
-										
 										<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
-
-											<!--- Show assets --->
-											<cfif link_kind NEQ "url">
-												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-													<cfif cloud_url NEQ "">
-														<img src="#cloud_url#" border="0" img-tt="img-tt">
+											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+												<!--- Show assets --->
+												<cfif link_kind NEQ "url">
+													<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+														<cfif cloud_url NEQ "">
+															<img src="#cloud_url#" border="0" img-tt="img-tt">
+														<cfelse>
+															<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+														</cfif>
 													<cfelse>
-														<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+														<!--- Check if filename format follows UPC renditions naming and if thumb exists for it --->
+														<cfif refind('\.[0-9]',filename) AND !fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
+															<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#hashtag#" border="0" img-tt="img-tt">
+														<cfelse>
+															<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?_v=#hashtag#" border="0" img-tt="img-tt">
+														</cfif>
 													</cfif>
 												<cfelse>
-													<!--- Check if filename format follows UPC renditions naming and if thumb exists for it --->
-													<cfif refind('\.[0-9]',filename) AND !fileexists("#thestorage##path_to_asset#/thumb_#theid#.#ext#")>
-														<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#hashtag#" border="0" img-tt="img-tt">
-													<cfelse>
-														<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?_v=#hashtag#" border="0" img-tt="img-tt">
-													</cfif>
+													<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 												</cfif>
-											<cfelse>
-												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
-											</cfif>
+											</a>
 										</div>
 										<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 											</a>
