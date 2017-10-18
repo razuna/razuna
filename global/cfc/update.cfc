@@ -182,6 +182,26 @@
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
+		<!--- If less than 54 (1.9.5) --->
+		<cfif updatenumber.opt_value LT 54>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE users
+				SET user_pass = '0DB43DAFF7B4F9DD595054CE43BCA8B0'
+				WHERE user_id = '1'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE cache
+				SET cache_token = '#createuuid("")#'
+				WHERE cache_type = 'users'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+		</cfif>
+
 		<!--- If less than 53 (1.9.2) --->
 		<cfif updatenumber.opt_value LT 53>
 
