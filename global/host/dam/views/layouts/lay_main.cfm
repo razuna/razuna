@@ -37,40 +37,11 @@
 		<cfheader name="P3P" value="CP=\\\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\\\"">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<script type="text/javascript">var dynpath = '#dynpath#';</script>
-
 		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jstree/dist/themes/proton/style.min.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
-
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" />
 		<!--- JS --->
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jstree/dist/jstree.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery.lazyload.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery.scrollstop.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/sets/html/set.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/masonry.pkgd.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/imagesloaded.pkgd.min.js?_v=#attributes.cachetag#"></script>
-
+		<script type="text/javascript" src="#dynpath#/global/dist/vendors_#attributes.cachetag#.min.js"></script>
+		<script type="text/javascript" src="#dynpath#/global/dist/app_#attributes.cachetag#.min.js"></script>
 		<!--- Favicon --->
 		<cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
 			<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />

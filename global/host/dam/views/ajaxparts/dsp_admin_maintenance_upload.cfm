@@ -31,7 +31,7 @@
 <script type="text/javascript">var dynpath = '#dynpath#';</script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
-<link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
+<link rel="stylesheet" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" type="text/css" />
 <head>
 <body>
 <cfform action="#myself#c.admin_restore_upload" name="upme" method="post" enctype="multipart/form-data" target="foo" onSubmit="window.open('','foo','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=500,height=500');">

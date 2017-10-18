@@ -3663,4 +3663,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn decstr>
 </cffunction>
 
+<cffunction name="readPackageJson" output="false" returntype="string">
+<cfargument name="thenode" default="" required="yes" type="string" hint="the nodename which you want to parse">
+<cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
+	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
+	<cfinvokeargument name="pathTargetRelative" value="../../package.json">
+</cfinvoke>
+<cfset var _json = Jsonfileread( xmlFile )>
+<!--- Return --->
+<cfreturn _json[arguments.thenode]>
+</cffunction>
+
 </cfcomponent>
