@@ -170,6 +170,13 @@ module.exports = function(grunt) {
 						cwd: './global/js/jquery-ui-1.12.1.custom/images/',
 						src: '**',
 						dest: './global/dist/images'
+					},
+					{
+						nonull: true,
+						expand: true,
+						cwd: './global/host/dam/views/layouts/images/',
+						src: '**',
+						dest: './global/dist/images'
 					}
 				]
 			},
