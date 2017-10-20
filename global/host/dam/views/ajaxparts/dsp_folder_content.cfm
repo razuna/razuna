@@ -37,6 +37,12 @@
 	<cfif attributes.folderaccess EQ "R" AND session.view EQ 'combined'>
 		<cfset session.view = "">
 	</cfif>
+	<!--- Show approval alert --->
+	<!--- <cfdump var="#qry_approval_enabled#"> --->
+	<cfif qry_approval_enabled.approval_enabled>
+		<div style="padding:15px;background-color:cornsilk;">All assets uploaded to this folder will need to be approved before appearing</div>
+		<div style="padding-top:15px"></div>
+	</cfif>
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
 		<form id="#kind#form"></form>

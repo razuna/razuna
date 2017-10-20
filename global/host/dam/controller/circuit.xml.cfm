@@ -2322,6 +2322,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_files" />
 	</fuseaction>
@@ -2383,6 +2385,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_images" />
 	</fuseaction>
@@ -2447,6 +2451,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -2524,6 +2530,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -2592,6 +2600,8 @@
 				<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
+				<!-- CFC: check enabled -->
+				<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 			</true>
 		</if>
 		<!-- CFC: Get folder name -->
