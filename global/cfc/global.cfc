@@ -1808,7 +1808,7 @@ Comment:<br>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getAdditionalImages */ av_id, asset_id_r, folder_id_r, av_type, av_link_title, av_link_url, host_id, 
-			av_link, thesize, thewidth, theheight
+			av_link, thesize, thewidth, theheight, <cfif application.razuna.thedatabase EQ "mssql">asset_id_r + '-' + av_id + '-img'<cfelse>concat(asset_id_r,'-',av_id,'-versions')</cfif> as basket_download_id
 			FROM #session.hostdbprefix#additional_versions
 			WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#"> 
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

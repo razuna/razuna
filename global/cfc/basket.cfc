@@ -393,7 +393,7 @@
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY c.cart_file_type
-		<cfif limit>LIMIT 10</cfif>
+		<cfif limit>LIMIT 200</cfif>
 	</cfquery>
 <!--- 	<cfdump var="#qry#">
 	<cfabort> --->
@@ -451,6 +451,9 @@
 <!--- WRITE FILES IN BASKET TO SYSTEM --->
 <cffunction name="writebasket" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct.artofimage)>
+	<cfabort> --->
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.artofimage">
 	<cfparam default="" name="arguments.thestruct.artofvideo">
@@ -522,10 +525,28 @@
 		<!--- <cfset arguments.thestruct.filesize = cart_size/1000000> --->
 		<!--- Set the asset id into a var --->
 		<cfset arguments.thestruct.theid = cart_product_id>
+		<cfset arguments.thestruct.file_id = cart_product_id>
 		<!--- Get the files according to the extension --->
 		<cfswitch expression="#cart_file_type#">
 			<!--- Images --->
 			<cfcase value="img">
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artofimage = cart_product_id & "-original,">
+				</cfif>
+				<cfif session.allthumb EQ "true">
+					<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & cart_product_id & "-thumb,">
+				</cfif>
+				<!--- If rendition download then grab all renditions of this id --->
+				<cfif session.allrend EQ "true">
+					<cfinvoke component="images" method="relatedimages" thestruct="#arguments.thestruct#" returnvariable="qry_related">
+					<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & cart_product_id & "-" & valueList(qry_related.img_id) & ",">
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_image# "#filename#"</strong><br><br></cfoutput>
@@ -536,6 +557,23 @@
 			</cfcase>
 			<!--- Videos --->
 			<cfcase value="vid">
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artofvideo = cart_product_id & "-original,">
+				</cfif>
+				<cfif session.allthumb EQ "true">
+					<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & cart_product_id & "-thumb,">
+				</cfif>
+				<!--- If rendition download then grab all renditions of this id --->
+				<cfif session.allrend EQ "true">
+					<cfinvoke component="videos" method="relatedvideos" thestruct="#arguments.thestruct#" returnvariable="qry_related">
+					<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & cart_product_id & "-" & valueList(qry_related.vid_id)>
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_video# "#filename#"</strong><br><br></cfoutput>
@@ -546,6 +584,23 @@
 			</cfcase>
 			<!--- Audios --->
 			<cfcase value="aud">
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artofaudio = cart_product_id & "-original,">
+				</cfif>
+				<cfif session.allthumb EQ "true">
+					<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & cart_product_id & "-thumb,">
+				</cfif>
+				<!--- If rendition download then grab all renditions of this id --->
+				<cfif session.allrend EQ "true">
+					<cfinvoke component="audios" method="relatedaudios" thestruct="#arguments.thestruct#" returnvariable="qry_related">
+					<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & cart_product_id & "-" & valueList(qry_related.aud_id)>
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_audio# "#filename#"</strong><br><br></cfoutput>
@@ -556,6 +611,15 @@
 			</cfcase>
 			<!--- All other files --->
 			<cfdefaultcase>
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artoffile = cart_product_id & "-original,">
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artoffile = arguments.thestruct.artoffile & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_file# "#filename#"</strong><br><br></cfoutput>
@@ -937,9 +1001,9 @@
 				<cfquery name="qry" datasource="#variables.dsn#">
 					SELECT av.av_id,av.asset_id_r,av.folder_id_r,av.av_type,av.av_link_title,av.av_link_url AS path_to_asset,'' AS img_group,'' AS link_kind, av.folder_id_r, i.img_upc_number upcnum, av.av_link_title thefilename
 					FROM #session.hostdbprefix#additional_versions av LEFT JOIN #session.hostdbprefix#images i ON av.asset_id_r = i.img_id
-					WHERE av.av_id = <cfqueryparam value="#theavid#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE av.host_id = <cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">
 					AND av.av_type = <cfqueryparam value="img" cfsqltype="CF_SQL_VARCHAR">
-					AND av.host_id = <cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">
+					AND av.av_id = <cfqueryparam value="#theavid#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 			<cfelse>
 				<cfquery name="qry" datasource="#variables.dsn#">
@@ -1050,20 +1114,20 @@
 				<cfif theart NEQ "thumb">
 					<cfset var rendition_version ="">
 					<cfif find('.', thefilename)>
-							<cfset rendition_version = listlast(thefilename,'.')>
-							<cfif not isnumeric(rendition_version)>
-								<cfset var rendition_version ="">
-							<cfelse>
-								<cfset var rendition_version ="." & rendition_version>
-							</cfif>
-							<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
-							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)>
-							<cfif not isnumeric(fn_last_char)>
-								<cfset var fn_ischar = true>
-							<cfelse>
-								<cfset var fn_ischar = false>
-								<cfset var fn_last_char = "">
-							</cfif>
+						<cfset rendition_version = listlast(thefilename,'.')>
+						<cfif not isnumeric(rendition_version)>
+							<cfset var rendition_version ="">
+						<cfelse>
+							<cfset var rendition_version ="." & rendition_version>
+						</cfif>
+						<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
+						<cfset fn_last_char = right(listfirst(thefilename,'.'),1)>
+						<cfif not isnumeric(fn_last_char)>
+							<cfset var fn_ischar = true>
+						<cfelse>
+							<cfset var fn_ischar = false>
+							<cfset var fn_last_char = "">
+						</cfif>
 					</cfif>
 
 					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##fn_last_char##rendition_version#">

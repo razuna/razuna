@@ -1669,7 +1669,7 @@
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group, aud_name_org, cloud_url_org, hashtag
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">

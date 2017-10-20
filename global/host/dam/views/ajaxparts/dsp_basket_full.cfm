@@ -53,6 +53,8 @@
 </script>
 
 <cfoutput>
+	<!--- If more than 200 we disable checkboxes --->
+	<cfset _chk_disabled = qry_basket.total GT 200 ? 'disabled' : ''>
 	<!--- Get network path --->
 	<cfsavecontent variable="netpath">
 		#evaluate("qry_customization.#session.user_os#_netpath2asset")#
@@ -67,6 +69,10 @@
 				<cfif attributes.fromshare EQ "F">
 					<!--- <div style="float:left;">#myFusebox.getApplicationData().defaults.trans("files_in_basket")#</div> --->
 			                    <cfif qry_basket.recordcount NEQ 0>
+			                    	<cfif _chk_disabled EQ "disabled">
+				                    	<div style="padding:15px;background-color:cornsilk;">As you have more than 200 assets in the basket we only show the first 200 assets. Though, actions will apply to all assets in your basket.</div>
+				                    	<div style="padding-top:15px"></div>
+				                    </cfif>
 			                    	<!--- Buttons --->
 			                    	<div style="float:left;">
 			                    		<!--- Show buttons only if user is an admin OR no users/groups access defined OR if access if defined then user must have access or be part of a group that has access --->
@@ -134,7 +140,9 @@
 					<td colspan="4" style="padding-top:15px;">
 						<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans('all')#</a>
 						<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans("originals")#</a>
-						<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans('thumbnails')#</a>
+						<a href="##" id="checkthumb" style="text-decoration:underline;padding-right:10px" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans('thumbnails')#</a>
+						<a href="##" id="checkrend" style="text-decoration:underline;padding-right:10px" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# #myFusebox.getApplicationData().defaults.trans('image_settings_rendition_header')#</a>
+						<a href="##" id="checkvers" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans('select_deselect')# Additional versions</a>
 					</td>
 				</tr>
 			</cfif>
@@ -224,7 +232,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1" OR qry_theimage.share_dl_org EQ "T">
 													<tr>
-														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" onchange="checksel('#myid#','imgorg#myid#','img');" <cfif order EQ 0><cfif ListFindnocase( artofimage, "#myid#-original", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif></td>
+														<td><input type="checkbox" #_chk_disabled# name="artofimage" id="imgorg#myid#" value="#myid#-original" onchange="checksel('#myid#','imgorg#myid#','img');" <cfif order EQ 0><cfif ListFindnocase( artofimage, "#myid#-original", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -251,7 +259,7 @@
 												<cfelse>
 													<cfif perm NEQ "R" OR qry_share_options CONTAINS "#myid#-thumb-1" OR qry_theimage.share_dl_thumb EQ "T">
 														<tr>
-															<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" <cfif order EQ 0><cfif ListFindnocase( artofimage, "#myid#-thumb", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
+															<td width="1%"><input type="checkbox" #_chk_disabled# name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" <cfif order EQ 0><cfif ListFindnocase( artofimage, "#myid#-thumb", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
 															<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)
 															<cfif show_netpath>
 																<!--- Format the netwrk path variable --->
@@ -282,7 +290,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-#img_id#-1">
 													<tr>
-														<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" <cfif ListFindnocase( artofimage, "#myid#-#img_id#", "," )>checked="checked"</cfif> /></td>
+														<td><input type="checkbox" #_chk_disabled# name="artofimage" id="rend-#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" <cfif ListFindnocase( artofimage, "#myid#-#img_id#", "," )>checked="checked"</cfif> /></td>
 														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel) [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -306,7 +314,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" <cfif ListFindnocase( artofimage, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
+													<td><input type="checkbox" #_chk_disabled# name="artofimage" id="imgv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','imgv#myid#','img');" <cfif ListFindnocase( artofimage, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -376,7 +384,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1" OR qry_thevideo.share_dl_org EQ "T">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" onchange="checksel('#myid#','vid#myid#','vid');" <cfif order EQ 0><cfif ListFindnocase( artofvideo, "#myid#-video", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
+														<td width="1%"><input type="checkbox" #_chk_disabled# name="artofvideo" id="vid#myid#" value="#myid#-video" onchange="checksel('#myid#','vid#myid#','vid');" <cfif order EQ 0><cfif ListFindnocase( artofvideo, "#myid#-video", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -406,7 +414,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-#vid_id#-1">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" <cfif ListFindnocase( artofvideo, "#myid#-#vid_id#", "," )>checked="checked"</cfif> /></td>
+														<td width="1%"><input type="checkbox" #_chk_disabled# name="artofvideo" id="rend-#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" <cfif ListFindnocase( artofvideo, "#myid#-#vid_id#", "," )>checked="checked"</cfif> /></td>
 														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel) [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -430,7 +438,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" <cfif ListFindnocase( artofvideo, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
+													<td><input type="checkbox" #_chk_disabled# name="artofvideo" id="vidv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','vidv#myid#','vid');" <cfif ListFindnocase( artofvideo, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -492,7 +500,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1" OR qry_theaudio.share_dl_org EQ "T">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" onchange="checksel('#myid#','aud#myid#','aud');" <cfif order EQ 0><cfif ListFindnocase( artofaudio, "#myid#-audio", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
+														<td width="1%"><input type="checkbox" #_chk_disabled# name="artofaudio" id="aud#myid#" value="#myid#-audio" onchange="checksel('#myid#','aud#myid#','aud');" <cfif order EQ 0><cfif ListFindnocase( artofaudio, "#myid#-audio", "," )>checked="checked"</cfif><cfelse>checked="checked"</cfif> /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -522,7 +530,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-#aud_id#-1">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" <cfif ListFindnocase( artofaudio, "#myid#-#aud_id#", "," )>checked="checked"</cfif> /></td>
+														<td width="1%"><input type="checkbox" #_chk_disabled# name="artofaudio" id="rend-#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" <cfif ListFindnocase( artofaudio, "#myid#-#aud_id#", "," )>checked="checked"</cfif> /></td>
 														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB [#filename#]
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -546,7 +554,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" <cfif ListFindnocase( artofaudio, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
+													<td><input type="checkbox" #_chk_disabled# name="artofaudio" id="audv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','audv#myid#','aud');" <cfif ListFindnocase( artofaudio, "#myid#-#av_id#-versions", "," )>checked="checked"</cfif> /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -616,7 +624,7 @@
 											<cfelse>
 												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1" OR qry_thefile.share_dl_org EQ "T">
 													<tr>
-														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
+														<td width="1%"><input type="checkbox" #_chk_disabled# name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
 														<td width="100%">#myFusebox.getApplicationData().defaults.trans("original")#<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif>
 														<cfif show_netpath>
 															<!--- Format the netwrk path variable --->
@@ -640,7 +648,7 @@
 										<cfif qry_basket.cart_product_id EQ asset_id_r>
 											<cfif qry_share_options CONTAINS "#av_id#-av-1">
 												<tr>
-													<td><input type="checkbox" name="artoffile" id="docv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','docv#myid#','doc');" /></td>
+													<td><input type="checkbox" #_chk_disabled# name="artoffile" id="docv#myid#" value="#myid#-#av_id#-versions" onchange="checksel('#myid#','docv#myid#','doc');" /></td>
 													<td width="100%">#ucase(av_link_title)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB (#thewidth#x#theheight# pixel)
 													<cfif show_netpath>
 														<!--- Format the netwrk path variable --->
@@ -716,216 +724,390 @@
 </form>
 
 	<cfif qry_basket.recordcount NEQ 0><div>* <em>#myFusebox.getApplicationData().defaults.trans("link_url_basket")#</em></div></cfif>
+
+	<input type="hidden" id="basket_disabled" value="#_chk_disabled#">
+
 </cfoutput>
 
 <script type="text/javascript">
 
-	// New function to first get all the selected files
-	function orderSelectedFiles() {
-		// Get the selections
-		var artimage = getimageselection();
-		var artvideo = getvideoselection();
-		var artaudio = getaudioselection();
-		var artfile = getfileselection();
-		// For URL
-		var items = '&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile;
-		// Show window
-		showwindow('index.cfm?fa=ajax.share_order' + items,'Order',500,1);
-	}
+	$(document).ready(function() {
 
-  	function resetLog()
-    {
-         document.getElementById("divProgress").innerHTML = "";
-         document.getElementById('progressor').style.width = 0 + "%";
-    }
+		// On load store all
+		basketStoreAll('first');
 
-    function log_message(message)
-    {
-        document.getElementById("divProgress").innerHTML += message + '<br />';
-    }
-
-
-	    function basket_upload(type)
-	    {
-	        resetLog();
-	        if (!window.XMLHttpRequest)
-	        {
-	            log_message("Your browser does not support the native XMLHttpRequest object.");
-	            return;
-	        }
-
-	        try
-	        {
-	            var xhr = new XMLHttpRequest();
-	            xhr.previous_text = '';
-	            xhr.onerror = function() { log_message("[XHR] Fatal Error."); };
-	            xhr.onreadystatechange = function()
-	            {
-	                try
-	                {
-	                    if (xhr.readyState > 2)
-	                    {
-	                        var new_response = xhr.responseText.substring(xhr.previous_text.length);
-	                        var resparr = new_response.split('{');
-	                        for (var i=1;i<resparr.length;i++)
-	                        {
-	                        new_response =  '{' + resparr[i];
-	                        var result = $.parseJSON( new_response );
-	                        if (result.message !='')
-	                        	log_message(result.message);
-	                        //update the progressbar
-	                       document.getElementById('progressor').style.width = result.progress + "%";
-	                       }
-	                       xhr.previous_text = xhr.responseText;
-	                    }
-	                    // If request has completed
-	                   if (xhr.readyState==4)
-	                   {
-	                    	$("#upload_aws").prop("disabled",false);
-	                    	$("#upload_local").prop("disabled",false);
-	                    }
-	                }
-	                catch (e)
-	                {
-	                   //log_message("<b>[XHR] Exception: " + e + "</b>");
-	                }
-
-
-	            };
-	            // Set proper fuseaction
-	            <cfoutput>
-	            if (type=='aws')
-	            {
-	            	$("###theaction#").prop("value", "c.basket_upload2aws");
-	            	// Disable aws upload button to prevent users from hitting it again and initiating multiple requests
-	            	$("##upload_aws").prop("disabled",true);
-	            }
-	            else
-	            {
-			$("###theaction#").prop("value", "c.basket_upload2local");
-			$("##upload_local").prop("disabled",true);
+		// Store all
+		function basketStoreAll(the_value) {
+			// Var
+			var _type;
+			var _type_org;
+			var _type_thumb;
+			var _type_rend;
+			var _type_vers;
+			// Switch
+			switch(the_value) {
+				case 'first':
+					_type = 'all-org-thumb';
+					_type_org = true;
+					_type_thumb = true;
+					_type_rend = false;
+					_type_vers = false;
+					break;
+				case 'all':
+					_type = 'all';
+					_type_org = true;
+					_type_thumb = true;
+					_type_rend = true;
+					_type_vers = true;
+					break;
+				case 'all-not':
+					_type = '';
+					_type_org = false;
+					_type_thumb = false;
+					_type_rend = false;
+					_type_vers = false;
+					break;
+			}
+			// If disabled
+			var _disabled = $('#basket_disabled').val();
+			if ( _disabled === '' ) {
+				_type_org = false;
+				_type_thumb = false;
+				_type_rend = false;
+				_type_vers = false;
+			}
+			// Submit the values so we put them into sessions
+			var url = 'index.cfm?fa=c.store_art_values';
+			var items = '&artofimage=' + _type + '&artofvideo=' + _type + '&artofaudio=' + _type + '&artoffile=' + _type + '&allorg=' + _type_org + '&allthumb=' + _type_thumb + '&allrend=' + _type_rend + '&allvers=' + _type_vers;
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: items
+			});
 		}
-		</cfoutput>
-	            // Get values
-		var items = formserialize("thebasket");
-		// Get values for fields
-		createTarget();
-	            xhr.open("POST", " ", true);
-	            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded"); // set form encoding for params
-	            xhr.send(items);
-	            // Set fuseaction back to download
-		<cfoutput>$("###theaction#").prop("value", "c.basket_download");</cfoutput>
-	        }
-	        catch (e)
-	        {
-	            log_message("<b>[XHR] Exception: " + e + "</b>");
-	        }
+
+		// Store org
+		function basketStoreOrg(the_value) {
+			// Submit the values so we put them into sessions
+			var url = 'index.cfm?fa=c.store_art_values_org_basket';
+			var items = 'allorg=' + the_value;
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: items
+			});
+		}
+
+		// Store org
+		function basketStoreThumb(the_value) {
+			// Submit the values so we put them into sessions
+			var url = 'index.cfm?fa=c.store_art_values_thumb_basket';
+			var items = 'allthumb=' + the_value;
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: items
+			});
+		}
+
+		// Store renditions
+		function basketStoreRend(the_value) {
+			// Submit the values so we put them into sessions
+			var url = 'index.cfm?fa=c.store_art_values_rend_basket';
+			var items = 'allrend=' + the_value;
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: items
+			});
+		}
+
+		// Store renditions
+		function basketStoreVers(the_value) {
+			// Submit the values so we put them into sessions
+			var url = 'index.cfm?fa=c.store_art_values_vers_basket';
+			var items = 'allvers=' + the_value;
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: items
+			});
+		}
+
+
+		// New function to first get all the selected files
+		function orderSelectedFiles() {
+			// Get the selections
+			var artimage = getimageselection();
+			var artvideo = getvideoselection();
+			var artaudio = getaudioselection();
+			var artfile = getfileselection();
+			// For URL
+			var items = '&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile;
+			// Show window
+			showwindow('index.cfm?fa=ajax.share_order' + items,'Order',500,1);
+		}
+
+	  	function resetLog()
+	    {
+	         document.getElementById("divProgress").innerHTML = "";
+	         document.getElementById('progressor').style.width = 0 + "%";
 	    }
 
-	// Check folder path
-	function importfoldercheck(){
-		// Check link
-		<cfoutput>loadcontent('path_validate','#myself#c.folder_link_check&link_path=' + escape($('##uploaddir').val()));</cfoutput>
-	}
-	// Submit Form
-	$("#thebasket").submit(function(e){
-		// Get values
-		var url = formaction("thebasket");
-		var items = formserialize("thebasket");
-		// Get values for fields
-		createTarget();
-		// If nothing is selected
-		if ( (items.indexOf('artofvideo') == -1) && (items.indexOf('artofimage') == -1) && (items.indexOf('artofaudio') == -1) && (items.indexOf('artoffile') == -1) ){
-			alert('No assets have been selected for downloading. You need to selected at least one asset!');
-			$("#basketstatus").css("display","none");
-			$("#basketstatus").html('');
-			return false;
+	    function log_message(message)
+	    {
+	        document.getElementById("divProgress").innerHTML += message + '<br />';
+	    }
+
+
+		    function basket_upload(type)
+		    {
+		        resetLog();
+		        if (!window.XMLHttpRequest)
+		        {
+		            log_message("Your browser does not support the native XMLHttpRequest object.");
+		            return;
+		        }
+
+		        try
+		        {
+		            var xhr = new XMLHttpRequest();
+		            xhr.previous_text = '';
+		            xhr.onerror = function() { log_message("[XHR] Fatal Error."); };
+		            xhr.onreadystatechange = function()
+		            {
+		                try
+		                {
+		                    if (xhr.readyState > 2)
+		                    {
+		                        var new_response = xhr.responseText.substring(xhr.previous_text.length);
+		                        var resparr = new_response.split('{');
+		                        for (var i=1;i<resparr.length;i++)
+		                        {
+		                        new_response =  '{' + resparr[i];
+		                        var result = $.parseJSON( new_response );
+		                        if (result.message !='')
+		                        	log_message(result.message);
+		                        //update the progressbar
+		                       document.getElementById('progressor').style.width = result.progress + "%";
+		                       }
+		                       xhr.previous_text = xhr.responseText;
+		                    }
+		                    // If request has completed
+		                   if (xhr.readyState==4)
+		                   {
+		                    	$("#upload_aws").prop("disabled",false);
+		                    	$("#upload_local").prop("disabled",false);
+		                    }
+		                }
+		                catch (e)
+		                {
+		                   //log_message("<b>[XHR] Exception: " + e + "</b>");
+		                }
+
+
+		            };
+		            // Set proper fuseaction
+		            <cfoutput>
+		            if (type=='aws')
+		            {
+		            	$("###theaction#").prop("value", "c.basket_upload2aws");
+		            	// Disable aws upload button to prevent users from hitting it again and initiating multiple requests
+		            	$("##upload_aws").prop("disabled",true);
+		            }
+		            else
+		            {
+				$("###theaction#").prop("value", "c.basket_upload2local");
+				$("##upload_local").prop("disabled",true);
+			}
+			</cfoutput>
+		            // Get values
+			var items = formserialize("thebasket");
+			// Get values for fields
+			createTarget();
+		            xhr.open("POST", " ", true);
+		            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded"); // set form encoding for params
+		            xhr.send(items);
+		            // Set fuseaction back to download
+			<cfoutput>$("###theaction#").prop("value", "c.basket_download");</cfoutput>
+		        }
+		        catch (e)
+		        {
+		            log_message("<b>[XHR] Exception: " + e + "</b>");
+		        }
+		    }
+
+		// Check folder path
+		function importfoldercheck(){
+			// Check link
+			<cfoutput>loadcontent('path_validate','#myself#c.folder_link_check&link_path=' + escape($('##uploaddir').val()));</cfoutput>
 		}
-		// Show
-		// $("#basketstatus").fadeTo("fast", 100);
-		// $("#basketstatus").css("display","");
-		// $("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email with the download link once the basket is complete.');
 		// Submit Form
-		// $.ajax({
-		// 	type: "POST",
-		// 	url: url,
-		//    	data: items
-		  //  	success: function(data){
-		  //  		$("#basketstatus").html('<span style="color:green;">Your basket is ready.</span> <a href="'+ trim(data) +'">Click on this link to download the basket now!</a>');
-				// // $("#basketstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-		  //  	}
-		// });
-		return true;
-	})
-	// If we come from basket_full_remove
-	<cfif fa EQ "c.basket_full_remove">
-		$('#basket').load('<cfoutput>#myself#</cfoutput>c.basket');
-	</cfif>
-
-	// Initialize global variables to store selection statuses
-	if (window.checkall_global==undefined)
-		checkall_global= false;
-	if (window.checkorg_global==undefined)
-		checkorg_global= false;
-	if (window.checkthumb_global==undefined)
-		checkthumb_global= false;
-	// Select All
-	$('#checkall').click(function () {
-		$('#thebasket :checkbox').each( function() {
-			if(!checkall_global){
-				$(this).prop('checked', false);
-			}
-			else{
-				$(this).prop('checked', true);
-			}
+		$("#thebasket").submit(function(e){
+			// Get values
+			var url = formaction("thebasket");
+			var items = formserialize("thebasket");
+			// Get values for fields
+			createTarget();
+			// If nothing is selected
+			// if ( (items.indexOf('artofvideo') == -1) && (items.indexOf('artofimage') == -1) && (items.indexOf('artofaudio') == -1) && (items.indexOf('artoffile') == -1) ){
+			// 	alert('No assets have been selected for downloading. You need to selected at least one asset!');
+			// 	$("#basketstatus").css("display","none");
+			// 	$("#basketstatus").html('');
+			// 	return false;
+			// }
+			// Show
+			// $("#basketstatus").fadeTo("fast", 100);
+			// $("#basketstatus").css("display","");
+			// $("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email with the download link once the basket is complete.');
+			// Submit Form
+			// $.ajax({
+			// 	type: "POST",
+			// 	url: url,
+			//    	data: items
+			  //  	success: function(data){
+			  //  		$("#basketstatus").html('<span style="color:green;">Your basket is ready.</span> <a href="'+ trim(data) +'">Click on this link to download the basket now!</a>');
+					// // $("#basketstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+			  //  	}
+			// });
+			return true;
 		})
-		if (checkall_global)
-		{
-			checkall_global = false;
-			checkorg_global = false;
-			checkthumb_global = false;
-		}
-		else
-		{
-			checkall_global= true;
-			checkorg_global = true;
-			checkthumb_global = true;
-		}
-		return false;
-	});
+		// If we come from basket_full_remove
+		<cfif fa EQ "c.basket_full_remove">
+			$('#basket').load('<cfoutput>#myself#</cfoutput>c.basket');
+		</cfif>
 
-	// Select Originals
-	$('#checkorg').click(function() {
-		$('#thebasket').find('[id*="imgorg"],[id*="vid"],[id*="aud"],[id*="doc"]').each( function() {
-			if(!checkorg_global){
-				$(this).prop('checked', false);
+		// Initialize global variables to store selection statuses
+		if (window.checkall_global==undefined)
+			checkall_global= false;
+		if (window.checkorg_global==undefined)
+			checkorg_global= false;
+		if (window.checkthumb_global==undefined)
+			checkthumb_global= false;
+		if (window.checkrend_global==undefined)
+			checkrend_global= false;
+		if (window.checkvers_global==undefined)
+			checkvers_global= false;
+		// Select All
+		$('#checkall').click(function () {
+			$('#thebasket :checkbox').each( function() {
+				if(!checkall_global){
+					$(this).prop('checked', false);
+				}
+				else{
+					$(this).prop('checked', true);
+				}
+			})
+			if (checkall_global)
+			{
+				checkall_global = false;
+				checkorg_global = false;
+				checkthumb_global = false;
+				checkrend_global = false;
+				checkvers_global = false;
+				basketStoreAll('all');
 			}
-			else{
-				$(this).prop('checked', true);
+			else
+			{
+				checkall_global= true;
+				checkorg_global = true;
+				checkthumb_global = true;
+				checkrend_global = true;
+				checkvers_global = true;
+				basketStoreAll('all-not');
 			}
-		})
-		if (checkorg_global)
-			checkorg_global = false;
-		else
-			checkorg_global= true;
-		return false;
-	});
+			return false;
+		});
 
-	// Select Thumbnails
-	$('#checkthumb').click(function() {
-		$('#thebasket').find('[id*="imgt"]').each( function() {
-			if(!checkthumb_global){
-				$(this).prop('checked', false);
+		// Select Originals
+		$('#checkorg').click(function() {
+			$('#thebasket').find('[id*="imgorg"],[id*="vid"],[id*="aud"],[id*="doc"]').each( function() {
+				if(!checkorg_global){
+					$(this).prop('checked', false);
+				}
+				else{
+					$(this).prop('checked', true);
+				}
+			})
+			if (checkorg_global) {
+				checkorg_global = false;
+				basketStoreOrg(true);
 			}
-			else{
-				$(this).prop('checked', true);
+			else {
+				checkorg_global= true;
+				basketStoreOrg(false);
 			}
-		})
-		if (checkthumb_global)
-			checkthumb_global = false;
-		else
-			checkthumb_global= true;
-		return false;
+			return false;
+		});
+
+		// Select Thumbnails
+		$('#checkthumb').click(function() {
+			$('#thebasket').find('[id*="imgt"]').each( function() {
+				if(!checkthumb_global){
+					$(this).prop('checked', false);
+				}
+				else{
+					$(this).prop('checked', true);
+				}
+			})
+			if (checkthumb_global) {
+				checkthumb_global = false;
+				basketStoreThumb(true);
+			}
+			else {
+				checkthumb_global= true;
+				basketStoreThumb(false);
+			}
+			return false;
+		});
+
+		// Select Renditions
+		$('#checkrend').click(function() {
+			$('#thebasket').find('[id*="rend-"]').each( function() {
+				if(!checkrend_global){
+					$(this).prop('checked', true);
+				}
+				else{
+					$(this).prop('checked', false);
+				}
+			})
+			if (!checkrend_global) {
+				checkrend_global = true;
+				basketStoreRend(true);
+			}
+			else {
+				checkrend_global= false;
+				basketStoreRend(false);
+			}
+			return false;
+		});
+
+		// Select Renditions
+		$('#checkvers').click(function() {
+			$('#thebasket').find('[id*="imgv"],[id*="vidv"],[id*="audv"],[id*="docv"]').each( function() {
+				if(!checkvers_global){
+					$(this).prop('checked', true);
+				}
+				else{
+					$(this).prop('checked', false);
+				}
+			})
+			if (!checkvers_global) {
+				checkvers_global = true;
+				basketStoreVers(true);
+			}
+			else {
+				checkvers_global= false;
+				basketStoreVers(false);
+			}
+			return false;
+		});
+
 	});
 
 </script>

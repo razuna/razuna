@@ -1188,6 +1188,7 @@
 	<fuseaction name="basket_full">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<set name="attributes.basket_limit" value="true" overwrite="false" />
 		<set name="qry_folder.share_dl_org" value="F" overwrite="false" />
 		<set name="qry_folder.share_order" value="" overwrite="false" />
 		<!-- CFC: Get settings -->
@@ -9796,6 +9797,46 @@
 		<set name="session.artofvideo" value="#attributes.artofvideo#" />
 		<set name="session.artofaudio" value="#attributes.artofaudio#" />
 		<set name="session.artoffile" value="#attributes.artoffile#" />
+		<if condition="structkeyexists(attributes,'allorg')">
+			<true>
+				<set name="session.allorg" value="#attributes.allorg#" />
+			</true>
+		</if>
+		<if condition="structkeyexists(attributes,'allthumb')">
+			<true>
+				<set name="session.allthumb" value="#attributes.allthumb#" />
+				</true>
+			</if>
+		<if condition="structkeyexists(attributes,'allrend')">
+			<true>
+				<set name="session.allrend" value="#attributes.allrend#" />
+			</true>
+		</if>
+		<if condition="structkeyexists(attributes,'allvers')">
+			<true>
+				<set name="session.allvers" value="#attributes.allvers#" />
+			</true>
+		</if>
+	</fuseaction>
+
+	<!-- Store org values for basket -->
+	<fuseaction name="store_art_values_org_basket">
+		<set name="session.allorg" value="#attributes.allorg#" />
+	</fuseaction>
+
+	<!-- Store thumb values for basket -->
+	<fuseaction name="store_art_values_thumb_basket">
+		<set name="session.allthumb" value="#attributes.allthumb#" />
+	</fuseaction>
+
+	<!-- Store rend values for basket -->
+	<fuseaction name="store_art_values_rend_basket">
+		<set name="session.allrend" value="#attributes.allrend#" />
+	</fuseaction>
+
+	<!-- Store version values for basket -->
+	<fuseaction name="store_art_values_vers_basket">
+		<set name="session.allvers" value="#attributes.allvers#" />
 	</fuseaction>
 
 	<!-- Store fileids and filetypes in session (takes care for more then 75 assets at once) -->
