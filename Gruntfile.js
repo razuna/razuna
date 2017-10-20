@@ -90,16 +90,6 @@ module.exports = function(grunt) {
 				dest: './global/dist/app_<%= pkg.script_version %>.css'
 			}
 		},
-		replace: {
-			another_example: {
-				src: ['./global/dist/*.css'],
-				overwrite: true,
-				replacements: [{
-					from: '../fonts/',
-					to: 'fonts/'
-				}]
-			}
-		},
 		cssmin: {
 			options: {
 				sourceMap: true
@@ -127,6 +117,22 @@ module.exports = function(grunt) {
 						src: ['*.css', '!*.min.css'],
 						dest: './global/dist',
 						ext: '.min.css'
+					}
+				]
+			}
+		},
+		replace: {
+			fonts: {
+				src: ['./global/dist/*.css'],
+				overwrite: true,
+				replacements: [
+					{
+						from: '../fonts/',
+						to: 'fonts/'
+					},
+					{
+						from: '../img/',
+						to: 'images/'
 					}
 				]
 			}
@@ -175,6 +181,20 @@ module.exports = function(grunt) {
 						nonull: true,
 						expand: true,
 						cwd: './global/host/dam/views/layouts/images/',
+						src: '**',
+						dest: './global/dist/images'
+					},
+					{
+						nonull: true,
+						expand: true,
+						cwd: './global/js/plupload/jquery.ui.plupload/img',
+						src: '**',
+						dest: './global/dist/images'
+					},
+					{
+						nonull: true,
+						expand: true,
+						cwd: './global/js/plupload/jquery.plupload.queue/img',
 						src: '**',
 						dest: './global/dist/images'
 					}
@@ -243,7 +263,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-jsonminify');
 
 	// Default task(s).
-	grunt.registerTask('default', ['clean','concat','concat_css','replace','cssmin','copy:dist','uglify']);
+	grunt.registerTask('default', ['clean','concat','concat_css','cssmin','replace','copy:dist','uglify']);
 	grunt.registerTask('dev', ['clean','concat','concat_css','replace','cssmin','copy','jsonminify','rename']);
 
 };
