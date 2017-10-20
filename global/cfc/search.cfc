@@ -292,13 +292,13 @@
 
 			<!--- <cfset console("FIELIDS: #fileids#")> --->
 
-			<cfif qry.recordcount>
+			<!--- <cfif qry.recordcount>
 				<!--- <cfset var _len = listlen(fileids)> --->
-				<!--- <cfset session.search.total_records = _len> --->
+				<cfset session.search.total_records = _len>
 				<cfset session.search.total_records = qry.searchcount>
 			<cfelse>
 				<cfset session.search.total_records = 0>
-			</cfif>
+			</cfif> --->
 
 			<!--- <cfset console("session.search.total_records: #session.search.total_records#")> --->
 
@@ -308,6 +308,9 @@
 			<cfset session.search.edit_ids = "0">
 			<!--- Save fileids into session --->
 			<cfset session.search.search_file_ids = "0">
+
+			<!--- <cfset session.search.total_records = 0> --->
+
 			<!--- Var --->
 			<!--- <cfset var customlist = ""> --->
 			<!--- custom metadata fields to show --->
@@ -338,6 +341,7 @@
 
 		<!--- Set var --->
 		<cfset var _foundtotal = qry.searchcount>
+		<cfset session.search.total_records = qry.searchcount>
 
 		<!--- If nothing found make foundtotal a number --->
 		<cfif qry.recordcount EQ 0>
