@@ -1232,7 +1232,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -1282,7 +1282,7 @@
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.noemail" value="true" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -1337,7 +1337,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.noemail" value="true" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -1373,7 +1373,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<!-- Put session into attributes -->
 		<set name="attributes.artofimage" value="#session.artofimage#" />
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
@@ -9708,7 +9708,7 @@
 		<set name="attributes.what" value="folder" overwrite="false" />
 		<set name="attributes.expwhat" value="folder" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.pages" value="download" />
 		<set name="attributes.download_thumbnails" value="false" overwrite="false" />

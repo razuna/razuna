@@ -588,6 +588,8 @@
 		</cfif>
 		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
 			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		<cfelseif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.xls")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.xls">
 		</cfif>
 	</cfif>
 	<!--- Zip the folder --->
