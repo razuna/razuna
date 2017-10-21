@@ -588,8 +588,8 @@
 			</cfif>
 			<!--- cfcatch --->
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in function videos.create_previews">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in function videos.create_previews">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 	</cfif>
@@ -1101,8 +1101,8 @@
 					<cfinvoke component="amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 				</cfif>
 				<cfcatch type="any">
-					<cfset cfcatch.custom_message = "Error while deleting related folders in function videos.deletefromfilesystem">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+					<!--- <cfset cfcatch.custom_message = "Error while deleting related folders in function videos.deletefromfilesystem">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -2014,9 +2014,9 @@
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("videos")>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error in function videos.convertvideo">
+			<!--- <cfset cfcatch.custom_message = "Error in function videos.convertvideo">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<cfreturn newid>
@@ -2265,8 +2265,8 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in function videos.move">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in function videos.move">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->

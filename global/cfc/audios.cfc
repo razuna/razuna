@@ -295,9 +295,9 @@
 			<cfinvoke component="global" method="converttomb" returnvariable="thesize" thesize="#details.aud_size#">
 		</cfif>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error getting audio details in function audios.detail">
+			<!--- <cfset cfcatch.custom_message = "Error getting audio details in function audios.detail">
 			<cfset cfcatch.aud_details = details>
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			<cfabort>
 		</cfcatch>
 	</cftry>
@@ -1047,8 +1047,8 @@
 					<cfinvoke component="amazon" method="deletefolder" awsbucket="#arguments.thestruct.awsbucket#" folderpath="#path_to_asset#">
 				</cfif>
 				<cfcatch type="any">
-					<cfset cfcatch.custom_message = "Error while looping over records in function audios.deletefromfilesystem">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+					<!--- <cfset cfcatch.custom_message = "Error while looping over records in function audios.deletefromfilesystem">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -1147,8 +1147,8 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while moving audio in function audios.move">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error while moving audio in function audios.move">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->
@@ -1652,9 +1652,9 @@
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("audios")>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while converting audio in function audios.convertaudiothread">
+			<!--- <cfset cfcatch.custom_message = "Error while converting audio in function audios.convertaudiothread">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<!--- Return file id for API rendition --->
@@ -1807,8 +1807,8 @@
 	<cftry>
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#zipname#">
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while deleting file in function audios.writeaudio">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error while deleting file in function audios.writeaudio">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<cfif structKeyExists(session,"createzip") AND session.createzip EQ 'no'>

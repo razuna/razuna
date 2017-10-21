@@ -430,8 +430,8 @@
 					WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 					</cfquery>
 					<cfcatch type="any">
-						<cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.playback">
-						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+						<!--- <cfset cfcatch.custom_message = "Error in images text table for jpg in function versions.playback">
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -1563,8 +1563,8 @@
 		</cfquery>
 		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added Old Version: #arguments.thestruct.filename_org#',logfiletype='#arguments.thestruct.type#',assetid='#arguments.thestruct.qryfile.file_id#',folderid='#arguments.thestruct.folder_id#')>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error in function versions.create">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error in function versions.create">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>

@@ -429,53 +429,55 @@
 -xmp:UsageTerms=#replacenocase(ParagraphFormat(arguments.thestruct.iptc_status_rights_usage_terms),"<p>","","all")#
 			</cfsavecontent>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		</cfoutput>
 		<!--- Save XMP to DB --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#xmp
-			SET
-			subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_subject_code#">,
-			creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author#">,
-			title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_document_title#">,
-			authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author_title#">,
-			captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_description_writer#">,
-			ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_address#">,
-			category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_category#">,
-			supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_supplemental_categories#">,
-			urgency = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_origin_urgency#">,
-			description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.img_desc#">,
-			ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_city#">,
-			ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_country#">,
-			location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_location#">,
-			ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_postal_code#">,
-			ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_emails#">,
-			ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_websites#">,
-			citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_phones#">,
-			intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_intellectual_genre#">,
-			instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_instruction#">,
-			source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_source#">,
-			usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_rights_usage_terms#">,
-			copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_status#">,
-			transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_job_identifier#">,
-			webstatement = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_info_url#">,
-			headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_headline#">,
-			datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_date_created#">,
-			city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_city#">,
-			ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_state_province#">,
-			country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_country#">,
-			countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_iso_country_code#">,
-			scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_scene#">,
-			state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_state_province#">,
-			credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_provider#">,
-			rights  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_notice#">
-			WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+			<cftransaction>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#xmp
+				SET
+				subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_subject_code#">,
+				creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author#">,
+				title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_document_title#">,
+				authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author_title#">,
+				captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_description_writer#">,
+				ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_address#">,
+				category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_category#">,
+				supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_supplemental_categories#">,
+				urgency = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_origin_urgency#">,
+				description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.img_desc#">,
+				ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_city#">,
+				ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_country#">,
+				location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_location#">,
+				ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_postal_code#">,
+				ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_emails#">,
+				ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_websites#">,
+				citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_phones#">,
+				intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_intellectual_genre#">,
+				instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_instruction#">,
+				source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_source#">,
+				usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_rights_usage_terms#">,
+				copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_status#">,
+				transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_job_identifier#">,
+				webstatement = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_info_url#">,
+				headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_headline#">,
+				datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_date_created#">,
+				city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_city#">,
+				ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_state_province#">,
+				country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_country#">,
+				countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_iso_country_code#">,
+				scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_scene#">,
+				state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_state_province#">,
+				credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_provider#">,
+				rights  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_notice#">
+				WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+				AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cftransaction>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("search")>
@@ -529,8 +531,8 @@
 					<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 				</cfif>
 				<cfcatch type="any">
-				    <cfset cfcatch.custom_message = "Error writing xml file in function xmp.xmpwrite">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				   <!---  <cfset cfcatch.custom_message = "Error writing xml file in function xmp.xmpwrite">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		<!--- Storage: Nirvanix --->
@@ -586,15 +588,17 @@
 			</cfif>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#images
-		SET
-		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
-		is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		<cftransaction>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cftransaction>
 	</cfloop>
 </cffunction>
 
@@ -708,23 +712,25 @@
 						<cfset newdescription = evaluate(userdesc) & " " & description>
 					</cfif>
 					<cftry>
-						<!--- Append to DB --->
-						<cfquery datasource="#application.razuna.datasource#">
-						UPDATE #session.hostdbprefix#images_text
-						SET
-						<cfif newkeywords EQ ",">
-							img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
-						<cfelse>
-							img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
-						</cfif>,
-						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
-						WHERE <cfif structKeyExists(arguments.thestruct,'newid')> img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR"><cfelse>img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR"></cfif>
-						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						</cfquery>
+						<cftransaction>
+							<!--- Append to DB --->
+							<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#images_text
+							SET
+							<cfif newkeywords EQ ",">
+								img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+							<cfelse>
+								img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
+							</cfif>,
+							img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
+							WHERE <cfif structKeyExists(arguments.thestruct,'newid')> img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR"><cfelse>img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR"></cfif>
+							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							</cfquery>
+						</cftransaction>
 						<cfcatch type="any">
-							<cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
-							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+							<!--- <cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
+							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 						</cfcatch>
 					</cftry>
 				</cfif>
@@ -1364,8 +1370,8 @@
 		</cfif>
 		<!--- Catch the error --->
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error in function xmp.xmpparse">
-		 	<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error in function xmp.xmpparse">
+		 	<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<!--- Return variable --->
@@ -1516,8 +1522,8 @@
 				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 			</cfif>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in metadata writing for files in function xmp.metatofilethread">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in metadata writing for files in function xmp.metatofilethread">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 	<!--- Storage: Nirvanix --->
@@ -2445,8 +2451,8 @@
 					WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 					</cfquery>
 					<cfcatch type="database">
-						<cfset cfcatch.custom_message = "Database error while adding keywords and description to asset in function xmp.setmetadata">
-						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+						<!--- <cfset cfcatch.custom_message = "Database error while adding keywords and description to asset in function xmp.setmetadata">
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					</cfcatch>
 				</cftry>
 			</cfif>
