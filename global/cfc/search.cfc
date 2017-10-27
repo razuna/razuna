@@ -2007,6 +2007,10 @@
 						<cfset currentListPos = currentListPos+1>
 					</cfloop>
 				)
+				<!--- Filter renditions --->
+				<cfif _search_rendition EQ "t">
+					AND ( img_group IS NULL OR img_group = '' )
+				</cfif>
 				UNION ALL
 				SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as listid
 				FROM #session.hostdbprefix#videos
@@ -2023,6 +2027,10 @@
 						<cfset currentListPos = currentListPos+1>
 					</cfloop>
 				)
+				<!--- Filter renditions --->
+				<cfif _search_rendition EQ "t">
+					AND ( vid_group IS NULL OR vid_group = '' )
+				</cfif>
 				UNION ALL
 				SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as listid
 				FROM #session.hostdbprefix#audios
@@ -2039,6 +2047,10 @@
 						<cfset currentListPos = currentListPos+1>
 					</cfloop>
 				)
+				<!--- Filter renditions --->
+				<cfif _search_rendition EQ "t">
+					AND ( aud_group IS NULL OR aud_group = '' )
+				</cfif>
 				UNION ALL
 				SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as listid
 				FROM #session.hostdbprefix#files
