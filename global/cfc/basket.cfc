@@ -43,7 +43,7 @@
 			<cfset thetype = listlast(thenr,"-")>
 			<cfset thenr = listfirst(thenr,"-")>
 			<!--- First check if the product is not already in this basket --->
-			<cfquery datasource="#attributes.intstruct.datasource#" name="here">
+			<!--- <cfquery datasource="#attributes.intstruct.datasource#" name="here">
 			SELECT user_id
 			FROM #session.hostdbprefix#cart
 			WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
@@ -53,14 +53,14 @@
 			AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
-			</cfquery>
+			</cfquery> --->
 			<!--- If no record has been found continue --->
-			<cfif here.recordcount EQ 0>
+			<!--- <cfif here.recordcount EQ 0> --->
 				<!--- Sometimes we have a 0 in the list, filter this out --->
 				<cfif thenr NEQ 0 AND len(thetype) LTE 5>
 					<!--- insert the prodcut to the cart --->
 					<cfquery datasource="#attributes.intstruct.datasource#">
-					INSERT INTO #session.hostdbprefix#cart
+					<cfif application.razuna.thedatabase EQ "mysql">INSERT IGNORE<cfelse>MERGE</cfif> INTO #session.hostdbprefix#cart
 					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
 					VALUES(
 					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
@@ -75,7 +75,7 @@
 					)
 					</cfquery>
 				</cfif>
-			</cfif>
+			<!--- </cfif> --->
 		</cfloop>
 	</cfthread>
 	<!--- Flush Cache --->
