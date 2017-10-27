@@ -44,7 +44,7 @@ FROM razuna_config
 		</cfif>
 	</cfquery>
 	<cfcatch>
-		<cfset console(cfcatch)>
+		<!--- <cfset console(cfcatch)> --->
 	</cfcatch>
 </cftry>
 <cftry>
@@ -81,6 +81,6 @@ FROM razuna_config
 		</cfif>
 	</cfquery>
 	<cfcatch>
-		<cfset console(cfcatch)>
+		<!--- <cfset console(cfcatch)> --->
 	</cfcatch>
 </cftry>
