@@ -540,6 +540,12 @@ function CheckAllNot(myform){
 	// $('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 });
 }
 
+// Check all from search
+function CheckAllFromSearch() {
+	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 'all', editids : 'all' });
+	$('#checkall_from_search_desc').html( 'All files that match this search have now been selected' );
+}
+
 // Site conversion
 
 // Video Preset function
