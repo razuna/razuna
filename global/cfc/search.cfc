@@ -2028,6 +2028,7 @@
 				<!--- Init var for new fileid --->
 				<cfset var editids = "0,">
 				<cfset var fileids = "">
+				<cfset var counter = 0>
 
 				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 					<!--- Get proper folderaccess --->
@@ -2036,6 +2037,7 @@
 							<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 							<cfif theaccess NEQ "R" AND theaccess NEQ "n">
 								<cfset editids = editids & listid & ",">
+								<cfset counter = counter + 1>
 							</cfif>
 							<cfset fileids = fileids & listid & ",">
 							<cftry>
@@ -2048,21 +2050,9 @@
 					<cfset session.search.edit_ids = editids>
 					<!--- Save fileids into session --->
 					<cfset session.search.search_file_ids = fileids>
-
-					<cfif qry.recordcount>
-						<cfset var _len = listlen(fileids)>
-						<cfset session.search.total_records = _len>
-					</cfif>
+					<!--- Total --->
+					<cfset session.search.total_records = counter>
 				</cfif>
-
-				<!--- Get proper folderaccess --->
-				<!--- <cfloop query="qry_all">
-					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-					<cfif theaccess NEQ "R" AND theaccess NEQ "n">
-						<cfset editids = editids & listid & ",">
-					</cfif>
-					<cfset fileids = fileids & listid & ",">
-				</cfloop> --->
 
 				<!--- Qry Return --->
 				<cfreturn qry>
