@@ -60,7 +60,7 @@
 			</true>
 		</if>
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- CFC: Get customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
@@ -376,7 +376,7 @@
 				<!-- Get user groups  -->
 				<invoke object="myFusebox.getApplicationData().groups_users" method="getredirectfolders" returnvariable="redirectfolders" />
 				<!-- Get the Cache tag -->
-				<!--- <do action="cachetag" /> --->
+				<!-- <do action="cachetag" /> -->
 				<!-- Show main page -->
 			 	<do action="v.main" />
 			</true>
@@ -3072,7 +3072,7 @@
 			</false>
 		</if>
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
@@ -4060,7 +4060,7 @@
 		<!-- CFC: Serve the file -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="servefile(attributes)" returnvariable="qry_binary" />
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- Show -->
 		<do action="v.serve_asset" />
 	</fuseaction>
@@ -8157,7 +8157,7 @@
 		<!-- Check if folder is shared, secured. If so display log in -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckperm(attributes)" returnvariable="shared" />
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- If ISP (for now) -->
 		<if condition="cgi.http_host CONTAINS 'razuna.com'">
 			<true>
@@ -8241,7 +8241,7 @@
 	<!-- Share Proxy -->
 	<fuseaction name="sharep">
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- Folder id into session -->
 		<if condition="structkeyexists(attributes,'fid')">
 			<true>
@@ -9021,7 +9021,7 @@
 			</true>
 		</if>
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- Get how the widget is being shared -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<!-- Set folder ID -->
@@ -9093,7 +9093,7 @@
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
@@ -9331,7 +9331,7 @@
 			</true>
 		</if>
 		<!-- Get the Cache tag -->
-		<!--- <do action="cachetag" /> --->
+		<!-- <do action="cachetag" /> -->
 		<!-- Show -->
 		<do action="v.login_mini" />
 	</fuseaction>
@@ -9396,7 +9396,7 @@
 				<!-- CFC: Get Breadcrumb -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 				<!-- Get the Cache tag -->
-				<!--- <do action="cachetag" /> --->
+				<!-- <do action="cachetag" /> -->
 				<!-- Get View -->
 				<do action="v.mini_browser" />
 			</true>
