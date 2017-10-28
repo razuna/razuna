@@ -463,6 +463,12 @@
 	<!--- TRASH MANY FILE --->
 	<cffunction name="trashfilemany" output="true">
 		<cfargument name="thestruct" type="struct">
+		<cfif session.file_id EQ "all">
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#session.search.searchupc#" searchtext="#session.search.searchtext#" searchtype="doc" searchrenditions="#session.search.searchrenditions#" searchfolderid="#session.search.searchfolderid#" hostid="#session.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset session.file_id = ids>
+		</cfif>
 		<!--- Loop --->
 		<cfset var i = "">
 		<cfloop list="#session.file_id#" index="i" delimiters=",">
@@ -926,6 +932,7 @@
 	<!--- UPDATE FILES IN THREAD --->
 	<cffunction name="update" output="false">
 		<cfargument name="thestruct" type="struct">
+		<cfparam name="arguments.thestruct.sessions" default="#session#">
 		<!--- Set arguments --->
 		<cfset arguments.thestruct.dsn = variables.dsn>
 		<cfset arguments.thestruct.setid = variables.setid>
@@ -944,6 +951,13 @@
 		<cfparam name="arguments.thestruct.frombatch" default="F">
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
 		<cfset var renlist ="-1">
+		<!--- If this is from search the file_id should be all --->
+		<cfif arguments.thestruct.file_id EQ "all">
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#arguments.thestruct.sessions.search.searchupc#" searchtext="#arguments.thestruct.sessions.search.searchtext#" searchtype="doc" searchrenditions="#arguments.thestruct.sessions.search.searchrenditions#" searchfolderid="#arguments.thestruct.sessions.search.searchfolderid#" hostid="#arguments.thestruct.sessions.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset arguments.thestruct.file_id = ids>
+		</cfif>
 		<!--- RAZ-2837 :: Update Metadata when renditions exists and rendition's metadata option is True --->
 		<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
 			<!--- Get additional renditions --->
@@ -1447,9 +1461,21 @@
 	<!--- MOVE FILE IN THREADS --->
 	<cffunction name="movethread" output="true">
 		<cfargument name="thestruct" type="struct">
-		<cfparam name="arguments.thestruct.doc_id" default="">
+		<cfparam name="arguments.thestruct.sessions" default="#session#">
 		<!--- Loop over files --->
 		<cfthread intstruct="#arguments.thestruct#">
+
+			<!--- If this is from search the file_id should be all --->
+			<cfif attributes.intstruct.file_id EQ "all">
+				<!--- <cfset consoleoutput(true)>
+				<cfset console(attributes.intstruct.sessions)>
+				<cfset console(attributes.intstruct.sessions.search)> --->
+				<!--- As we have all get all IDS from this search --->
+				<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="doc" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
+					<!--- Set the fileid --->
+					<cfset attributes.intstruct.file_id = ids>
+			</cfif>
+
 			<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
 				<cfset attributes.intstruct.doc_id = "">
 				<cfset attributes.intstruct.doc_id = listfirst(fileid,"-")>

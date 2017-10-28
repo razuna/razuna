@@ -52,7 +52,7 @@
 	</cffunction>
 
 	<!--- SEARCH --->
-	<cffunction name="search" access="remote" output="false" returntype="query">
+	<cffunction name="search" access="remote" output="false" returntype="query" cachedwithin="1" region="razcache">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
@@ -61,6 +61,7 @@
 		<cfargument name="folderid" type="string">
 		<cfargument name="search_type" type="string">
 		<cfargument name="search_rendition" type="string">
+
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->

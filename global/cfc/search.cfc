@@ -137,20 +137,26 @@
 			<cfset var _maxrows = 0>
 		</cfif>
 
+		<cfset session.search.searchupc = false>
+		<cfset session.search.searchtext = arguments.thestruct.searchtext>
+		<cfset session.search.searchtype = thetype>
+		<cfset session.search.searchfolderid = arguments.thestruct.folder_id>
+		<cfset session.search.searchrenditions = arguments.thestruct.prefs.set2_rendition_search>
+
 		<!--- Search in Lucene  --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="#_startrow#" maxrows="#_maxrows#" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene">
 		<!--- <cfset console("--- qry_lucene ---")>
 		<cfset console(qry_lucene)> --->
 
 		<!--- Get all records --->
-		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="0" maxrows="0" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene_all">
+		<!--- <cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#thetype#" hostid="#session.hostid#" startrow="0" maxrows="0" folderid="#arguments.thestruct.list_recfolders#" search_type="#arguments.thestruct.search_type#" search_rendition="#arguments.thestruct.prefs.set2_rendition_search#" returnvariable="qry_lucene_all"> --->
 		<!--- <cfset console("--- qry_lucene_all ---")>
 		<cfset console(qry_lucene_all)> --->
 
 		<!--- Get all ids --->
 		<cfinvoke method="getAllIdsWithType" qry_lucene="#qry_lucene#" iscol="#arguments.thestruct.iscol#" newsearch="#arguments.thestruct.newsearch#" returnvariable="qry_idstype">
 		<!--- <cfset console("--- qry_idstype ---")>
-		<cfset console(qry_idstype)> --->
+		<cfset console(qry_idstype.recordcount)> --->
 
 		<!--- Do we search in all results or only in originals --->
 		<!--- If arguments.thestruct.prefs = f we show all files --->
@@ -266,15 +272,23 @@
 			<cfif qry.recordcount>
 				<cfloop query="qry_lucene">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
-					<!--- Add labels query --->
+					<!--- Get trash or not --->
+					<cfset _in_trash = checkFilesForTrashStatus(type=category, id=categorytree)>
+					<!--- Store only file_ids where folder access is not R --->
+					<cfif theaccess NEQ "R" AND theaccess NEQ "n" AND _in_trash EQ "f">
+						<!--- // <cfset editids = editids & listid & ","> --->
+						<cfset editids = editids & categorytree & "-" & category & ",">
+						<cfset fileids = fileids & categorytree & "-" & category & ",">
+					</cfif>
+					<!--- Set --->
 					<cftry>
 						<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
 						<cfcatch></cfcatch>
 					</cftry>
 				</cfloop>
 			</cfif>
-			<!--- Get proper folderaccess no need for admin --->
-			<cfloop query="qry_lucene_all">
+			<!--- Get proper folderaccess no need for admin
+			<cfloop query="qry_lucene">
 				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
 				<!--- Get trash or not --->
 				<cfset _in_trash = checkFilesForTrashStatus(type=category, id=categorytree)>
@@ -284,7 +298,7 @@
 					<cfset editids = editids & categorytree & "-" & category & ",">
 					<cfset fileids = fileids & categorytree & "-" & category & ",">
 				</cfif>
-			</cfloop>
+			</cfloop> --->
 			<!--- Save the editable ids in a session --->
 			<cfset session.search.edit_ids = editids>
 			<!--- Save fileids into session --->
@@ -392,7 +406,7 @@
 		<cfreturn qry.in_trash>
 	</cffunction>
 
-	<cffunction name="getAllIdsWithType" >
+	<cffunction name="getAllIdsWithType">
 		<cfargument name="qry_lucene" type="query">
 		<cfargument name="iscol" type="string">
 		<cfargument name="newsearch" type="string">
@@ -1451,8 +1465,21 @@
 			<cfset var sortby = "date_change DESC">
 		</cfif>
 
+		<!--- if we come from all set the category --->
+		<cfif arguments.thestruct.thetype EQ "all">
+			<cfset var thetype = "doc,vid,img,aud" />
+		<cfelse>
+			<cfset var thetype = arguments.thestruct.thetype />
+		</cfif>
+
 		<!--- Check rendition search setting --->
 		<cfset var _search_rendition = arguments.thestruct.prefs.set2_rendition_search >
+
+		<cfset session.search.searchupc = true>
+		<cfset session.search.searchtext = arguments.thestruct.search_upc>
+		<cfset session.search.searchtype = thetype>
+		<cfset session.search.searchfolderid = arguments.thestruct.folder_id>
+		<cfset session.search.searchrenditions = arguments.thestruct.prefs.set2_rendition_search>
 
 		<cfset var qry = "">
 			<!--- MySQL Offset --->
@@ -1991,119 +2018,48 @@
 					</cfif>
 				</cfif>
 
-				<cfquery datasource="#application.razuna.datasource#" name="qry_all" cachedWithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#search_upc_files_all */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as listid
-				FROM #session.hostdbprefix#images
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-				AND (
-					<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-					<cfset var currentListPos = 1>
-					<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-						img_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						OR
-						img_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						<cfif currentListPos neq upcListLen> OR </cfif>
-						<cfset currentListPos = currentListPos+1>
-					</cfloop>
-				)
-				<!--- Filter renditions --->
-				<cfif _search_rendition EQ "t">
-					AND ( img_group IS NULL OR img_group = '' )
-				</cfif>
-				UNION ALL
-				SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as listid
-				FROM #session.hostdbprefix#videos
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-				AND (
-					<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-					<cfset var currentListPos = 1>
-					<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-						vid_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						OR
-						vid_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						<cfif currentListPos neq upcListLen> OR </cfif>
-						<cfset currentListPos = currentListPos+1>
-					</cfloop>
-				)
-				<!--- Filter renditions --->
-				<cfif _search_rendition EQ "t">
-					AND ( vid_group IS NULL OR vid_group = '' )
-				</cfif>
-				UNION ALL
-				SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as listid
-				FROM #session.hostdbprefix#audios
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-				AND (
-					<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-					<cfset var currentListPos = 1>
-					<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-						aud_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						OR
-						aud_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						<cfif currentListPos neq upcListLen> OR </cfif>
-						<cfset currentListPos = currentListPos+1>
-					</cfloop>
-				)
-				<!--- Filter renditions --->
-				<cfif _search_rendition EQ "t">
-					AND ( aud_group IS NULL OR aud_group = '' )
-				</cfif>
-				UNION ALL
-				SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as listid
-				FROM #session.hostdbprefix#files
-				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-				AND (
-					<cfset var upcListLen = listlen(arguments.thestruct.search_upc)>
-					<cfset var currentListPos = 1>
-					<cfloop list="#arguments.thestruct.search_upc#" index="single_upc_string">
-						file_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						OR
-						file_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
-						<cfif currentListPos neq upcListLen> OR </cfif>
-						<cfset currentListPos = currentListPos+1>
-					</cfloop>
-				)
-				</cfquery>
+				<!--- <cfset consoleoutput(true)>
+				<cfset console(qry)> --->
+				<!--- <cfset console(qry_all)> --->
+
+				<!--- Init var for new fileid --->
+				<cfset var editids = "0,">
+				<cfset var fileids = "">
 
 				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 					<!--- Get proper folderaccess --->
 					<cfif qry.recordcount>
 						<cfloop query="qry">
 							<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-							<!--- Add labels query --->
+							<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+								<cfset editids = editids & listid & ",">
+							</cfif>
+							<cfset fileids = fileids & listid & ",">
 							<cftry>
 								<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
 								<cfcatch></cfcatch>
 							</cftry>
 						</cfloop>
 					</cfif>
+					<!--- Save the editable ids in a session --->
+					<cfset session.search.edit_ids = editids>
+					<!--- Save fileids into session --->
+					<cfset session.search.search_file_ids = fileids>
+
+					<cfif qry.recordcount>
+						<cfset var _len = listlen(fileids)>
+						<cfset session.search.total_records = _len>
+					</cfif>
 				</cfif>
 
-				<!--- Init var for new fileid --->
-				<cfset var editids = "0,">
-				<cfset var fileids = "">
 				<!--- Get proper folderaccess --->
-				<cfloop query="qry_all">
+				<!--- <cfloop query="qry_all">
 					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-					<!--- Store only file_ids where folder access is not read-only --->
 					<cfif theaccess NEQ "R" AND theaccess NEQ "n">
 						<cfset editids = editids & listid & ",">
 					</cfif>
 					<cfset fileids = fileids & listid & ",">
-				</cfloop>
-				<!--- Save the editable ids in a session --->
-				<cfset session.search.edit_ids = editids>
-				<!--- Save fileids into session --->
-				<cfset session.search.search_file_ids = fileids>
-
-				<cfif qry.recordcount>
-					<cfset var _len = listlen(fileids)>
-					<cfset session.search.total_records = _len>
-				</cfif>
+				</cfloop> --->
 
 				<!--- Qry Return --->
 				<cfreturn qry>
@@ -2126,4 +2082,174 @@
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction>
+
+
+	<!--- Get all ids --->
+	<cffunction name="getAllIdsMain" cachedwithin="1" region="razcache">
+		<cfargument name="searchupc" type="string">
+		<cfargument name="searchtext" type="string">
+		<cfargument name="searchtype" type="string">
+		<cfargument name="searchrenditions" type="string">
+		<cfargument name="searchfolderid" type="string">
+		<cfargument name="hostid" type="numeric">
+
+		<!--- Var --->
+		<cfset var ids = "0,">
+
+		<!--- If UPC search --->
+		<cfif arguments.searchupc EQ "true">
+			<cfset var _func = "getAllIdsUpc">
+		<cfelse>
+			<cfset var _func = "getAllIds">
+		</cfif>
+
+		<cfinvoke component="search" method="#_func#" searchupc="#arguments.searchupc#" searchtext="#arguments.searchtext#" searchtype="#arguments.searchtype#" searchrenditions="#arguments.searchrenditions#" searchfolderid="#arguments.searchfolderid#" hostid="#arguments.hostid#" returnvariable="ids">
+
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(_func)>
+		<cfset console(ids)> --->
+
+		<cfreturn ids>
+
+	</cffunction>
+
+	<!--- Get all ids if search is all --->
+	<cffunction name="getAllIds" cachedwithin="1" region="razcache">
+		<cfargument name="searchtext" type="string">
+		<cfargument name="searchtype" type="string">
+		<cfargument name="searchrenditions" type="string">
+		<cfargument name="searchfolderid" type="string">
+		<cfargument name="hostid" type="numeric">
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(sessions)> --->
+		<!--- Var --->
+		<cfset var qry_lucene ="">
+		<cfset var _ids ="0,">
+		<!--- Get all records --->
+		<cfinvoke component="lucene" method="search" criteria="#arguments.searchtext#" category="#arguments.searchtype#" hostid="#arguments.hostid#" startrow="0" maxrows="0" search_type="" search_rendition="#arguments.searchrenditions#" folderid="#arguments.searchfolderid#" returnvariable="qry_lucene">
+		<!--- Loop over results --->
+		<cfloop query="qry_lucene">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder#" />
+			<!--- Get trash or not --->
+			<!--- <cfset _in_trash = checkFilesForTrashStatus(type=category, id=categorytree)> --->
+			<!--- Store only file_ids where folder access is not R --->
+			<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+				<cfset _ids = _ids & full_id & ",">
+			</cfif>
+		</cfloop>
+		<!--- <cfset consoleoutput(true)> --->
+		<!--- <cfset console(_ids)> --->
+		<!--- <cfset console(listlen(_ids))> --->
+
+		<!--- Return --->
+		<cfreturn _ids>
+	</cffunction>
+
+	<!--- Get all ids if search is all --->
+	<cffunction name="getAllIdsUpc" cachedwithin="1" region="razcache">
+		<cfargument name="searchtext" type="string">
+		<cfargument name="searchtype" type="string">
+		<cfargument name="searchrenditions" type="string">
+		<cfargument name="searchfolderid" type="string">
+		<cfargument name="hostid" type="numeric">
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(sessions)> --->
+		<!--- Var --->
+		<cfset var qry_lucene ="">
+		<cfset var _ids ="0,">
+		<!--- Get the cachetoken for here --->
+		<cfset var _cachetoken = getcachetoken("search")>
+		<!--- Get all records --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_lucene" cachedWithin="1" region="razcache">
+		SELECT /* #_cachetoken#search_upc_files_all */ folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">img_id + '-img'<cfelse>concat(img_id,'-img')</cfif> as listid
+		FROM #session.hostdbprefix#images
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND (
+			<cfset var upcListLen = listlen(arguments.searchtext)>
+			<cfset var currentListPos = 1>
+			<cfloop list="#arguments.searchtext#" index="single_upc_string">
+				img_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				OR
+				img_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				<cfif currentListPos neq upcListLen> OR </cfif>
+				<cfset currentListPos = currentListPos+1>
+			</cfloop>
+		)
+		<!--- Filter renditions --->
+		<cfif arguments.searchrenditions EQ "t">
+			AND ( img_group IS NULL OR img_group = '' )
+		</cfif>
+		UNION ALL
+		SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">vid_id + '-vid'<cfelse>concat(vid_id,'-vid')</cfif> as listid
+		FROM #session.hostdbprefix#videos
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND (
+			<cfset var upcListLen = listlen(arguments.searchtext)>
+			<cfset var currentListPos = 1>
+			<cfloop list="#arguments.searchtext#" index="single_upc_string">
+				vid_filename LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				OR
+				vid_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				<cfif currentListPos neq upcListLen> OR </cfif>
+				<cfset currentListPos = currentListPos+1>
+			</cfloop>
+		)
+		<!--- Filter renditions --->
+		<cfif arguments.searchrenditions EQ "t">
+			AND ( vid_group IS NULL OR vid_group = '' )
+		</cfif>
+		UNION ALL
+		SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">aud_id + '-aud'<cfelse>concat(aud_id,'-aud')</cfif> as listid
+		FROM #session.hostdbprefix#audios
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND (
+			<cfset var upcListLen = listlen(arguments.searchtext)>
+			<cfset var currentListPos = 1>
+			<cfloop list="#arguments.searchtext#" index="single_upc_string">
+				aud_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				OR
+				aud_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				<cfif currentListPos neq upcListLen> OR </cfif>
+				<cfset currentListPos = currentListPos+1>
+			</cfloop>
+		)
+		<!--- Filter renditions --->
+		<cfif arguments.searchrenditions EQ "t">
+			AND ( aud_group IS NULL OR aud_group = '' )
+		</cfif>
+		UNION ALL
+		SELECT folder_id_r, <cfif application.razuna.thedatabase EQ "mssql">file_id + '-doc'<cfelse>concat(file_id,'-doc')</cfif> as listid
+		FROM #session.hostdbprefix#files
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND (
+			<cfset var upcListLen = listlen(arguments.searchtext)>
+			<cfset var currentListPos = 1>
+			<cfloop list="#arguments.searchtext#" index="single_upc_string">
+				file_name LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				OR
+				file_upc_number LIKE <cfqueryparam value="%#single_upc_string#%" cfsqltype="cf_sql_varchar" >
+				<cfif currentListPos neq upcListLen> OR </cfif>
+				<cfset currentListPos = currentListPos+1>
+			</cfloop>
+		)
+		</cfquery>
+		<!--- Loop over results --->
+		<cfloop query="qry_lucene">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#" />
+			<!--- Store only file_ids where folder access is not R --->
+			<cfif theaccess NEQ "R" AND theaccess NEQ "n">
+				<cfset _ids = _ids & listid & ",">
+			</cfif>
+		</cfloop>
+		<!--- <cfset consoleoutput(true)>
+		<cfset console("getAllIdsUpc RESULT: #_ids#")> --->
+
+		<!--- Return --->
+		<cfreturn _ids>
+	</cffunction>
+
 </cfcomponent>

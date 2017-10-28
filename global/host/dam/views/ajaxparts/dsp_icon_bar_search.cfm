@@ -107,18 +107,18 @@
 </table>
 
 <!--- If all is selected show the description --->
-<div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
-	<strong>#myFusebox.getApplicationData().defaults.trans("selectall_files_section")#</strong> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">#myFusebox.getApplicationData().defaults.trans("deselect_all")#</a>
+<div id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;padding-top:20px"><span id="checkall_from_search_desc">
+	All files on this page have been selected. <a href="##" onclick="CheckAllFromSearch()" style="text-decoration:underline;">Select all conversation that match this search</a> or</span> <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">#myFusebox.getApplicationData().defaults.trans("deselect_all")#</a>
 	<br>
 </div>
-<div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;">
-	<em>#myFusebox.getApplicationData().defaults.trans("edit_file_1")# <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" /> #myFusebox.getApplicationData().defaults.trans("edit_file_2")#</em>
+<div id="selectalert<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;width:100%;text-align:center;padding-top:20px;">
+	<em>( #myFusebox.getApplicationData().defaults.trans("edit_file_1")# <img src="#dynpath#/global/host/dam/images/eye.png" width="20" height="20" border="0" align="center" style="margin-top:-8px;" /> #myFusebox.getApplicationData().defaults.trans("edit_file_2")# )</em>
 </div>
 <!--- action with selection --->
 <div id="folderselectionsearchform#attributes.thetype#" class="actiondropdown">
 	<!--- Actions with selection icons --->
 	<cfif cs.show_basket_part AND  cs.button_basket AND (cs.btn_basket_slct EQ "" OR listfind(cs.btn_basket_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.btn_basket_slct,session.thegroupofuser) NEQ "")>
-			<a href="##" onclick="sendtobasket('searchform#attributes.thetype#', 'search');">
+			<a href="##" onclick="sendtobasket('searchform#attributes.thetype#', '');">
 			<div style="float:left;">
 				<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>

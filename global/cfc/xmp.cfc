@@ -83,6 +83,7 @@
 <!--- For writing the XMP below but in a cfthread --->
 <cffunction name="xmpwritethread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<!--- <cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" /> --->
 	<cfthread intstruct="#arguments.thestruct#">
@@ -137,6 +138,13 @@
 	<cfparam default="" name="arguments.thestruct.img_desc">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- If this is from search the file_id should be all --->
+	<cfif arguments.thestruct.file_id EQ "all">
+		<!--- As we have all get all IDS from this search --->
+		<cfinvoke component="search" method="getAllIdsMain" searchupc="#arguments.thestruct.sessions.search.searchupc#" searchtext="#arguments.thestruct.sessions.search.searchtext#" searchtype="img" searchrenditions="#arguments.thestruct.sessions.search.searchrenditions#" searchfolderid="#arguments.thestruct.sessions.search.searchfolderid#" hostid="#arguments.thestruct.sessions.hostid#" returnvariable="ids">
+			<!--- Set the fileid --->
+			<cfset arguments.thestruct.file_id = ids>
+	</cfif>
 	<!--- Loop --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 		<!--- Params --->
@@ -435,6 +443,7 @@
 		</cftry>
 		</cfoutput>
 		<!--- Save XMP to DB --->
+		<cftry>
 			<cftransaction>
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#xmp
@@ -478,6 +487,11 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cftransaction>
+			<cfcatch type="any">
+				<!--- <cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
+			</cfcatch>
+		</cftry>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("search")>
@@ -1812,6 +1826,12 @@
 		</cfloop>
 	<!--- This is coming from a file list --->
 	<cfelse>
+		<cfif session.file_id EQ "all">
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#session.search.searchupc#" searchtext="#session.search.searchtext#" searchtype="#session.search.searchtype#" searchrenditions="#session.search.searchrenditions#" searchfolderid="#session.search.searchfolderid#" hostid="#session.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset session.file_id = ids>
+		</cfif>
 		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Loop over filelist --->
 		<cfloop list="#session.file_id#" delimiters="," index="i">

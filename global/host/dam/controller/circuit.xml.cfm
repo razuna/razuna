@@ -9924,6 +9924,12 @@
 		<if condition="isdefined('attributes.editids')">
 			<true>
 				<set name="session.editids" value="#attributes.editids#" />
+				<if condition="#attributes.editids# EQ 'all'">
+					<true>
+						<set name="session.file_id" value="all" />
+						<set name="session.thefileid" value="all" />
+					</true>
+				</if>
 			</true>
 		</if>
 	</fuseaction>

@@ -103,6 +103,15 @@
 	<!--- Add labels --->
 	<cffunction name="label_add_all_thread" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+
+		<cfif arguments.thestruct.fileid EQ "0">
+			<cfreturn />
+		</cfif>
+		
+		<!--- <cfset consoleoutput(true)>
+		<cfset console("THE ID #arguments.thestruct.fileid#")>
+		<cfset console("THE TYPE #arguments.thestruct.thetype#")> --->
+
 		<cfset var i = "">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
@@ -117,7 +126,7 @@
 			</cfquery>
 		</cfif>
 		<cfif structkeyexists(arguments.thestruct,"labels") AND arguments.thestruct.labels NEQ "null">
-			<!--- Loop over fields --->		
+			<!--- Loop over fields --->
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
 				<!--- Check if same record already exists --->
 				<cfquery datasource="#application.razuna.datasource#" name="lhere">
@@ -126,6 +135,8 @@
 				WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
 				AND ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
 				</cfquery>
+				<cfset consoleoutput(true)>
+				<cfset console(lhere)>
 				<!--- If record is here do not insert --->
 				<cfif lhere.recordcount EQ 0>
 					<!--- Insert into cross table --->
@@ -181,10 +192,10 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
+			<!--- Flush --->
+			<cfset resetcachetoken("search")>
+			<cfset resetcachetoken("labels")>
 		</cfif>
-		<!--- Flush --->
-		<cfset resetcachetoken("search")>
-		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -192,12 +203,28 @@
 	<!--- Add label from batch --->
 	<cffunction name="label_add_batch" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
+		<cfparam name="arguments.thestruct.sessions" default="#session#">
 		<cfset var j = "">
 		<!--- Loop over files_ids --->
 		<cfthread intstruct="#arguments.thestruct#">
-			<cfloop list="#attributes.intstruct.file_ids#" index="j">
+			<!--- <cfset consoleoutput(true)>
+			<cfset console("FIRST !!! attributes.intstruct.file_ids: #attributes.intstruct.file_ids#")> --->
+			<cfif attributes.intstruct.file_ids EQ "all">
+				<!--- <cfset consoleoutput(true)>
+				<cfset console(attributes.intstruct.sessions)>
+				<cfset console(attributes.intstruct.sessions.search)> --->
+				<!--- As we have all get all IDS from this search --->
+				<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="#attributes.intstruct.sessions.search.searchtype#" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
+					<!--- Set the fileid --->
+					<cfset attributes.intstruct.file_ids = ids>
+			</cfif>
+			<!--- <cfset console("AFTER !!! attributes.intstruct.file_ids: #attributes.intstruct.file_ids#")>
+			<cfabort> --->
+			<cfloop list="#attributes.intstruct.file_ids#" index="j" delimiters=",">
+				<!--- <cfset console("J: #j#")> --->
 				<cfset attributes.intstruct.fileid = listfirst(j,"-")>
 				<cfset attributes.intstruct.thetype = listlast(j,"-")>
+				<!--- <cfset console("attributes.intstruct.thetype: #attributes.intstruct.thetype#")> --->
 				<!--- Now pass each asset to the function above to add labels --->
 				<cfinvoke method="label_add_all" thestruct="#attributes.intstruct#" />
 			</cfloop>
@@ -205,7 +232,7 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-		
+
 	<!--- Insert Label --->
 	<cffunction name="label_add" output="false" access="public">
 		<cfargument name="thestruct" type="struct">

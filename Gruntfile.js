@@ -134,6 +134,11 @@ module.exports = function(grunt) {
 						from: '../img/',
 						to: 'images/'
 					}
+					// ,
+					// {
+					// 	from: /([0-9a-z\-\@]+.png)/img,
+					// 	to: 'images/$1'
+					// }
 				]
 			}
 		},
@@ -196,6 +201,13 @@ module.exports = function(grunt) {
 						expand: true,
 						cwd: './global/js/plupload/jquery.plupload.queue/img',
 						src: '**',
+						dest: './global/dist/images'
+					},
+					{
+						nonull: true,
+						expand: true,
+						cwd: './global/js/chosen',
+						src: '*.png',
 						dest: './global/dist/images'
 					}
 				]

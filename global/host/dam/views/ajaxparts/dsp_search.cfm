@@ -29,7 +29,7 @@
 	<cfif structKeyExists(attributes,'search_upc')>
 		<cfset attributes.searchtext = #attributes.search_upc# >
 	</cfif>
-	<cfif !structKeyExists(attributes,'search_upc')  AND attributes.share NEQ 't'>
+	<cfif !structKeyExists(attributes,'search_upc') AND attributes.share NEQ 't'>
 		<div id="save_search" style="padding-bottom:10px;">
 			<a href="##" style="padding-right:20px;" onclick="showRefineSearchPanel();return false;">#myFusebox.getApplicationData().defaults.trans("refine_search")#</a>
 			<cfif attributes.sf_id EQ 0>

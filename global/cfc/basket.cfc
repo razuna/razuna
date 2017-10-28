@@ -29,7 +29,7 @@
 <cfset variables.cachetoken = getcachetoken("general")>
 
 <!--- PUT INTO BASKET --->
-<cffunction name="tobasket" output="false" access="public">
+<cffunction name="tobasket" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.thetype" default="">
@@ -37,7 +37,23 @@
 	<cfparam name="arguments.thestruct.hostdbprefix" default="#session.hostdbprefix#">
 	<cfparam name="arguments.thestruct.datasource" default="#application.razuna.datasource#">
 	<cfparam name="arguments.thestruct.thedatabase" default="#application.razuna.thedatabase#">
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
+<!--- 	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)> --->
+
 	<cfthread intstruct="#arguments.thestruct#">
+
+		<!--- If this is from search the file_id should be all --->
+		<cfif attributes.intstruct.file_id EQ "all">
+			<!--- <cfset consoleoutput(true)>
+			<cfset console(attributes.intstruct.sessions)>
+			<cfset console(attributes.intstruct.sessions.search)> --->
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="#attributes.intstruct.sessions.search.searchtype#" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset attributes.intstruct.file_id = ids>
+		</cfif>
+
 		<cfloop index="thenr" delimiters="," list="#attributes.intstruct.file_id#">
 			<!--- If we come from a overview we have numbers with the type --->
 			<cfset thetype = listlast(thenr,"-")>
@@ -60,18 +76,18 @@
 				<cfif thenr NEQ 0 AND len(thetype) LTE 5>
 					<!--- insert the prodcut to the cart --->
 					<cfquery datasource="#attributes.intstruct.datasource#">
-					<cfif application.razuna.thedatabase EQ "mysql">INSERT IGNORE<cfelse>MERGE</cfif> INTO #session.hostdbprefix#cart
+					<cfif application.razuna.thedatabase EQ "mysql">INSERT IGNORE<cfelse>MERGE</cfif> INTO #attributes.intstruct.sessions.hostdbprefix#cart
 					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
 					VALUES(
-					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#attributes.intstruct.sessions.thecart#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#attributes.intstruct.sessions.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.sessions.hostid#">
 					)
 					</cfquery>
 				</cfif>

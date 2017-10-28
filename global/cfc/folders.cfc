@@ -4425,6 +4425,16 @@
 	<cfset theids.docids = "">
 	<cfset theids.vidids = "">
 	<cfset theids.audids = "">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console("FOLDERS !!! arguments.thestruct.file_id : #arguments.thestruct.file_id #")> --->
+	<cfif arguments.thestruct.file_id EQ "all">
+		<!--- As we have all get all IDS from this search --->
+		<cfinvoke component="search" method="getAllIdsMain" searchupc="#session.search.searchupc#" searchtext="#session.search.searchtext#" searchtype="#session.search.searchtype#" searchrenditions="#session.search.searchrenditions#" searchfolderid="#session.search.searchfolderid#" hostid="#session.hostid#" returnvariable="ids">
+			<!--- Set the fileid --->
+			<cfset arguments.thestruct.id = ids>
+	</cfif>
+	<!--- <cfset console("FOLDERS !!! arguments.thestruct.id : #arguments.thestruct.id #")>
+	<cfabort> --->
 	<!--- Get the ids and put them into the right struct --->
 	<cfloop list="#arguments.thestruct.id#" delimiters="," index="i">
 		<cfif i CONTAINS "-img">
