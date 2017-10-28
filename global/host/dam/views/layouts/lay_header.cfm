@@ -223,7 +223,7 @@
 		$(".chzn-select").chosen({search_contains: true});
 
 		function showaccount(){
-			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
+			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');
 			document.form_account.target='myWin';
 			document.form_account.submit();
 		}
@@ -243,10 +243,11 @@
 						alert("#myFusebox.getApplicationData().defaults.trans('upc_num_check')#");
 					} else {
 						$( this ).dialog( "close" );
+						var _upc = $('##search_upc').val().replace(/\n/g, ",");
 						$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
-						$('##rightside').load('index.cfm?fa=c.searchupc&thetype=all&search_upc='+$('##search_upc').val().replace(/\n/g, ","), function() {
+						$('##rightside').load('index.cfm', { 'fa' : 'c.searchupc', 'thetype' : 'all', 'search_upc' : _upc }, function() {
 								$("##bodyoverlay").remove();
-						});	
+						});
 					}
 				}
 			}

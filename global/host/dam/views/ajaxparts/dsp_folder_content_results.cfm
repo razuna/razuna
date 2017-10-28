@@ -121,6 +121,7 @@
 		<cfelse>
 			<cfset the_query = qry_files>
 		</cfif>
+		<!--- <cfdump var="#the_query#"> --->
 		<cfif session.view EQ "">
 			<tr>
 				<td style="border:0px;">

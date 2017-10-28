@@ -1963,44 +1963,50 @@
 					</cfif>
 				</cfif>
 					<cfif application.razuna.thedatabase EQ "mssql">
-							) sorted_inline_view
-							)select *,
-					    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
-					    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
-					    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult
-					    	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
-							<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
-								AND permfolder IS NOT NULL
-							</cfif>
-							AND kind IS NOT NULL
-							<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
-									AND RowNum >
-										CASE WHEN
-											(
-												SELECT count(RowNum) FROM myresult
-												<cfif arguments.thestruct.thetype NEQ "all" >
-													where kind='#arguments.thestruct.thetype#'
-												</cfif>
-											) > #mysqloffset#
-
-											THEN #mysqloffset#
-											ELSE 0
-											END
-									AND
-									RowNum <=
-										CASE WHEN
-											(
-												SELECT count(RowNum) FROM myresult
-												<cfif arguments.thestruct.thetype NEQ "all" >
-													where kind='#arguments.thestruct.thetype#'
-												</cfif>
-											) > #mysqloffset#
-											THEN #mysqloffset+session.rowmaxpage#
-											ELSE #session.rowmaxpage#
-											END
-							</cfif>
+						) sorted_inline_view
+						)select *,
+				    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
+				    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
+				    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult
+				    	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+						<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
+							AND permfolder IS NOT NULL
 						</cfif>
+						AND kind IS NOT NULL
+						<cfif structKeyExists(arguments.thestruct,'avoidpagination') AND arguments.thestruct.avoidpagination EQ "False">
+								AND RowNum >
+									CASE WHEN
+										(
+											SELECT count(RowNum) FROM myresult
+											<cfif arguments.thestruct.thetype NEQ "all" >
+												where kind='#arguments.thestruct.thetype#'
+											</cfif>
+										) > #mysqloffset#
+
+										THEN #mysqloffset#
+										ELSE 0
+										END
+								AND
+								RowNum <=
+									CASE WHEN
+										(
+											SELECT count(RowNum) FROM myresult
+											<cfif arguments.thestruct.thetype NEQ "all" >
+												where kind='#arguments.thestruct.thetype#'
+											</cfif>
+										) > #mysqloffset#
+										THEN #mysqloffset+session.rowmaxpage#
+										ELSE #session.rowmaxpage#
+										END
+						</cfif>
+					</cfif>
 				</cfquery>
+
+				<!--- <cfset consoleoutput(true)>
+				<cfset console(qry.recordcount)>
+				<cfset console(qry)> --->
+				<!--- <cfabort> --->
+
 
 				<!--- Select only records that are unlocked --->
 				<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
@@ -2018,6 +2024,8 @@
 							<cfset querySetCell(newQuery, qry.kind&"_cnt", val(individualCount))>
 						</cfoutput>
 						<cfset qry =newQuery/>
+						<!--- Total --->
+						<cfset session.search.total_records = qryCount.cnt>
 					</cfif>
 				</cfif>
 
@@ -2060,6 +2068,9 @@
 
 	<cffunction name="search_combine_upc">
 		<cfargument name="thestruct" type="struct">
+		<!--- <cfset consoleoutput(true)> --->
+		<!--- Trim UPC --->
+		<cfset arguments.thestruct.search_upc = ListItemtrim(arguments.thestruct.search_upc, ",")>
 		<!--- Get the all asset results.  --->
 		<cfinvoke method="search_upc" thestruct="#arguments.thestruct#" returnvariable="qry">
 		<cfif structkeyexists(arguments.thestruct,"offset")>
