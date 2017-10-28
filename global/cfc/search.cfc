@@ -1443,7 +1443,10 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="F" name="arguments.thestruct.iscol">
+
 		<cfparam name="session.search.edit_ids" default = "0">
+		<cfparam default="0" name="session.search.total_records">
+
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("search")>
 		<cfset variables.cachetokenlogs = getcachetoken("logs")>
