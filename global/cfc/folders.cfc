@@ -4336,7 +4336,7 @@
 	<cfloop query="arguments.theqry">
 		<cfquery name="qry_cf" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetokengeneral#folder_cf_fields */ CASE WHEN cfv.cf_value IS NULL OR  cfv.cf_value ='' THEN ' ' ELSE cfv.cf_value END as cf_value, cft.cf_text, cft.cf_id_r as cf_id
-		FROM raz1_custom_fields_values cfv RIGHT JOIN raz1_custom_fields_text cft INNER JOIN raz1_custom_fields cf ON cf.cf_id = cft.cf_id_r
+		FROM #session.hostdbprefix#custom_fields_values cfv RIGHT JOIN #session.hostdbprefix#custom_fields_text cft INNER JOIN #session.hostdbprefix#custom_fields cf ON cf.cf_id = cft.cf_id_r
 		ON cft.cf_id_r = cfv.cf_id_r AND cfv.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theqry.id#">
 		<cfif kind EQ "img">
 			AND cfv.cf_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qrycfimg#" list="true">)
@@ -4359,6 +4359,7 @@
 		<cfelseif kind EQ "doc">
 			AND cf.cf_show IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc,all" list="true">)
 		</cfif>
+		GROUP BY cfv.cf_id_r, asset_id_r, cf_value, cfv.host_id
 		</cfquery>
 		<cfloop query="qry_cf">
 			<!--- Put list together --->
