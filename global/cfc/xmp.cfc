@@ -2544,14 +2544,14 @@
 			<cfset f = listFirst(i,":")>
 			<cfset v = listLast(i,":")>
 			<!--- Insert or update --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry_custom">
-			SELECT rec_uuid
-			FROM #session.hostdbprefix#custom_fields_values
-			WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
-			AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
 			<cftransaction>
+				<cfquery datasource="#application.razuna.datasource#" name="qry_custom">
+				SELECT rec_uuid
+				FROM #session.hostdbprefix#custom_fields_values
+				WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
+				AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 				<!--- If record is NOT here --->
 				<cfif qry_custom.recordcount EQ 0>
 					<!--- Insert --->
