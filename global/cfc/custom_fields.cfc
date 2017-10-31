@@ -60,7 +60,7 @@
 	<cfif !structKeyExists(arguments.thestruct,"cf_edit")>
 		<cfset arguments.thestruct.cf_edit = "true">
 	</cfif>
-	<cftransaction>
+	<!--- <cftransaction> --->
 		<!--- Add one up for order --->
 		<cfquery datasource="#application.razuna.datasource#" name="neworder">
 		SELECT 
@@ -84,7 +84,7 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
 		)
 		</cfquery>
-	</cftransaction>
+	<!--- </cftransaction> --->
 	<!--- Add text to related db --->
 	<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 		<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
