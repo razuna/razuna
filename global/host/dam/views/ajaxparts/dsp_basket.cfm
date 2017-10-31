@@ -30,7 +30,7 @@
 <cfelse>
 --->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 <!--- </cfif> --->
 <cfoutput>
 	<cfif qry_basket.recordcount EQ 0>
@@ -101,7 +101,7 @@
 												<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 													<img src="#cloud_url#" border="0" img-tt="img-tt">
 												<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 												<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 												</cfif>

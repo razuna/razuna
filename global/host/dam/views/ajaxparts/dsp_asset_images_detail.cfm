@@ -30,7 +30,7 @@
 	  });
   </script>
 <cfoutput>
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif attributes.folderaccess NEQ "R"> onsubmit="if (formchecks())filesubmit();return false;"</cfif>>
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
@@ -132,7 +132,7 @@
 							<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 								<img src="#qry_detail.detail.cloud_url#" border="0">
 							<cfelse>
-								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?_v=#qry_detail.detail.hashtag#&#uniqueid#" border="0">
+								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#?_v=#qry_detail.detail.hashtag#" border="0">
 							</cfif>
 							<cfif qry_detail.detail.link_kind NEQ "lan"></a></cfif>
 							<cfif qry_detail.detail.link_kind NEQ "">

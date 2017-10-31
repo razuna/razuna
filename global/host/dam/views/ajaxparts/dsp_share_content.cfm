@@ -32,7 +32,7 @@
 	<cfset thefid = 1>
 	<cfset thecolid = attributes.folder_id>
 </cfif>
-<cfset uniqueid = createuuid()>
+<!--- <cfset uniqueid = createuuid()> --->
 <cfoutput>
 <div id="tabs_shared">
 	<!--- Check to see if basket button is not set to hidden --->
@@ -132,7 +132,7 @@
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<img src="#cloud_url#" border="0">
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0">
+													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
 												</cfif>
 											<cfelse>
 												<img src="#link_path_url#" border="0">
@@ -158,7 +158,7 @@
 										<div class="theimg">
 											<cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse>
 											<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-											<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" width="160"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif>
+											<img src="#thestorage##path_to_asset#/#thethumb#" border="0" width="160"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif>
 										</div>
 										<cfif expiry_date EQ '' OR expiry_date GTE now()>
 											<!--- Check to see if basket button is not set to hidden --->
@@ -202,7 +202,7 @@
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>
@@ -284,7 +284,7 @@
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<img src="#cloud_url#" border="0">
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0">
+										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
 									</cfif>
 								<cfelseif link_kind EQ "url">
 									<img src="#link_path_url#" border="0" width="120">
@@ -302,7 +302,7 @@
 										<img src="#cloud_url#" border="0" width="160">
 									<cfelse>
 										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-										<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" width="160">
+										<img src="#thestorage##path_to_asset#/#thethumb#" border="0" width="160">
 									</cfif>
 								<cfelseif link_kind EQ "url">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
@@ -329,7 +329,7 @@
 								<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 									<img src="#cloud_url#" border="0" img-tt="img-tt">
 								<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-									<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+									<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 								</cfif>

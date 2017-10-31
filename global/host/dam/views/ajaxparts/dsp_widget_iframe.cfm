@@ -43,7 +43,7 @@
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js?_v=#attributes.cachetag#"></script>
-<cfset uniqueid = createuuid()>
+<!--- <cfset uniqueid = createuuid()> --->
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
 	<!--- CSS --->
@@ -167,7 +167,7 @@
 													<cfset thev = "o">
 													<cfset theid = theformat>
 												</cfif>
-												<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0"></a>
+												<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0"></a>
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0">
@@ -198,7 +198,7 @@
 												<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" width="160"></a>
+												<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#thethumb#" border="0" width="160"></a>
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -241,7 +241,7 @@
 										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>

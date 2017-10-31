@@ -37,7 +37,7 @@
 <cfelse>
 	<cfset isadmin = false>
 </cfif>
-<cfset uniqueid = createuuid()>
+<!--- <cfset uniqueid = createuuid()> --->
 <!--- Show network path var if present --->
 <cfif evaluate("qry_customization.#session.user_os#_netpath2asset") NEQ "" AND attributes.fromshare EQ "F" AND session.user_os NEQ "unknown">
 	<cfset show_netpath = true>
@@ -585,7 +585,7 @@
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>

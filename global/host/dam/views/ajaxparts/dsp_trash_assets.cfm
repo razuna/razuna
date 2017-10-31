@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<cfif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
 		<!--- set session file id --->
@@ -147,7 +147,7 @@
 										<!--- Images --->
 										<cfif kind EQ "img">
 											<cfif application.razuna.storage EQ 'local' OR application.razuna.storage EQ 'akamai'> 
-												<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#">
+												<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#">
 											<cfelse>
 												<img src="#cloud_url#">
 											</cfif>
@@ -160,7 +160,7 @@
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>
@@ -174,7 +174,7 @@
 											           <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											   </cfif>
 												 <cfelse>
-											  	 <img src="#thestorage##path_to_asset#/#filename_org#?_v=#uniqueid#" border="0">
+											  	 <img src="#thestorage##path_to_asset#/#filename_org#" border="0">
 												 </cfif>
 											<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
