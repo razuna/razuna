@@ -39,7 +39,7 @@
 		<div style="padding-top:5px;">
 			<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("checkout_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_full_remove_all_footer');">#myFusebox.getApplicationData().defaults.trans("clear_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("reload_basket")#</a>
 			<cfif qry_basket.total GT 20>
-				 | <a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');">We only show 20 items here. Click here to see all.</a>
+				 | <a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');">We only show 20 assets in the basket</a>
 			</cfif>
 		</div>
 		<div style="overflow:auto;">

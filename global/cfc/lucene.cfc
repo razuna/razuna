@@ -61,6 +61,7 @@
 		<cfargument name="folderid" type="string">
 		<cfargument name="search_type" type="string">
 		<cfargument name="search_rendition" type="string">
+
 		<!--- Param --->
 		<cfset var _taskserver = "" />
 		<!--- Query settings --->

@@ -42,7 +42,7 @@
 				<cfinvokeargument name="username" value="razuna" />
 				<cfinvokeargument name="password" value="razunadb" />
 				<cfinvokeargument name="sqlstoredprocedures" value="true" />
-				<cfinvokeargument name="hoststring" value="jdbc:h2:#arguments.thestruct.pathoneup#db/razuna;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;LOG=0;CACHE_SIZE=300000;AUTO_SERVER=TRUE" />
+				<cfinvokeargument name="hoststring" value="jdbc:h2:~/#arguments.thestruct.pathoneup#db/razuna;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;LOG=0;CACHE_SIZE=300000;AUTO_SERVER=TRUE" />
 				<cfinvokeargument name="sqlupdate" value="true" />
 				<cfinvokeargument name="sqlselect" value="true" />
 				<cfinvokeargument name="sqlinsert" value="true" />
@@ -637,7 +637,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO users
 			(USER_ID, USER_LOGIN_NAME, USER_EMAIL, USER_FIRST_NAME, USER_LAST_NAME, USER_PASS, USER_ACTIVE, USER_IN_ADMIN, USER_IN_DAM)
-			VALUES ('1', 'admin', 'admin@razuna.com', 'SystemAdmin', 'SystemAdmin', '778509C62BD8904D938FB85644EC4712', 'T', 'T', 'T');
+			VALUES ('1', 'admin', 'admin@razuna.com', 'SystemAdmin', 'SystemAdmin', '0DB43DAFF7B4F9DD595054CE43BCA8B0', 'T', 'T', 'T');
 			</cfquery>
 			<!--- MODULES --->
 			<cfquery datasource="#arguments.thestruct.dsn#">

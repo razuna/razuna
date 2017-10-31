@@ -467,8 +467,8 @@
 		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="general" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while inserting default values in function hosts.insert_default_values">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error while inserting default values in function hosts.insert_default_values">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>	
 	</cftry>
 	<cfreturn />
@@ -676,8 +676,8 @@
 			</cfquery>
 			
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error while removing tables in function hosts.remove">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error while removing tables in function hosts.remove">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Since 1.4 we only remove records in the DB and don't drop tables anymore --->

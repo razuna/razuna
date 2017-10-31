@@ -47,16 +47,12 @@
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
 	<!--- CSS --->
-	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css?_v=#attributes.cachetag#" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
 	<!--- JS --->
-	<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js?_v=#attributes.cachetag#"></script>
-	<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
-	<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
-	<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-	<script type="text/javascript" src="#dynpath#/global/js/masonry.pkgd.min.js?_v=#attributes.cachetag#"></script>
-	<script type="text/javascript" src="#dynpath#/global/js/imagesloaded.pkgd.min.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/dist/vendors_#attributes.cachetag#.min.js"></script>
+	<script type="text/javascript" src="#dynpath#/global/dist/app_#attributes.cachetag#.min.js"></script>
 	<!--- Custom CSS --->
 	<cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
 		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css?_v=#attributes.cachetag#" />

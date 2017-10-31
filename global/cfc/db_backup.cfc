@@ -96,8 +96,8 @@
 				<cfset thecounter = 1>
 				<!--- Catch --->
 				<cfcatch type="any">
-					<cfset cfcatch.custom_message = "Error while creating table in function db_backup.setup">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+					<!--- <cfset cfcatch.custom_message = "Error while creating table in function db_backup.setup">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>

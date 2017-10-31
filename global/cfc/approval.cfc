@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false" extends="extQueryCaching">
-	
+
 	<cfset consoleoutput(true)>
 
 	<!--- INIT --->
@@ -90,12 +90,16 @@
 			<cfset _qry.approval_group_2_all = false>
 			<cfset QueryAddrow( query=qry, data=_qry )>
 		</cfif>
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(qry)> --->
 		<cfreturn qry>
 	</cffunction>
 
 	<!--- Check if approval is enabled --->
 	<cffunction name="check_enabled" access="public" output="true">
 		<cfargument name="folder_id" type="string" required="true" />
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(arguments)> --->
 		<!--- Param --->
 		<cfset var qry = "">
 		<!--- Query --->
@@ -105,16 +109,18 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.folder_id NEQ 0>
 			AND (
-				approval_folders IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folder_id#" list="true">)
+				approval_folders LIKE (<cfqueryparam cfsqltype="cf_sql_varchar" value="%#arguments.folder_id#%">)
 				OR approval_folders_all = <cfqueryparam cfsqltype="cf_sql_double" value="1">
 			)
-		</cfif> 
+		</cfif>
 		</cfquery>
+		<!--- <cfset console(qry)> --->
 		<!--- If no record we have to add default values to qry --->
 		<cfif qry.recordcount EQ 0>
 			<cfset _qry.approval_enabled = false>
 			<cfset QueryAddrow( query=qry, data=_qry )>
 		</cfif>
+		<!--- <cfset console(qry)> --->
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction>
@@ -216,19 +222,19 @@
 
 		<!--- Set is_available and is_indexed --->
 		<cfset set_values(file_id=arguments.file_id, file_type=arguments.file_type, is_available='2', is_indexed='1')>
-		
+
 		<!--- Get the approval values --->
 		<cfset var _qry_approval = admin_get()>
 		<!--- Get all users of this approval process (we want the list of ids and only for group 1) --->
 		<cfset var _qry_users = get_approval_users(false).user_ids>
 		<!--- Send out email to approval group --->
 		<cfset send_message(group_users=_qry_users, kind='request', file_owner=arguments.file_owner, file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal)>
-		
-		<cfset console('DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!')>
+
+		<!--- <cfset console('DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!')> --->
 
 		<cfreturn />
 	</cffunction>
-	
+
 	<!--- Accept --->
 	<cffunction name="approval_accept" access="public" output="true">
 		<cfargument name="thestruct" type="struct" required="true" />
@@ -288,10 +294,10 @@
 			<cfset var _qry_users = get_approval_users(true).user_ids>
 			<!--- Send out email to approval group --->
 			<cfset send_message(group_users=_qry_users, kind='done', file_owner=_qry_file.qry.file_owner, file_id=arguments.thestruct.file_id, file_type=arguments.thestruct.file_type, dynpath=arguments.thestruct.dynpath, urlasset=arguments.thestruct.urlasset, urlglobal=arguments.thestruct.urlglobal)>
-			
+
 			<!--- Execute workflow --->
 			<cfset console("EXECUTE WORKFLOW !!!!!!!!!!!!!")>
-			
+
 			<!--- Set vars for workflow --->
 			<cfset s.folder_id = _qry_file.qry.folder_id_r>
 			<cfset s.fileid = arguments.thestruct.file_id>
@@ -455,7 +461,7 @@
 		<!--- Set the is_available to 2 and index so indexing doesn't occur --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #_db#
-		SET 
+		SET
 		is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.is_available#">,
 		is_indexed = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.is_indexed#">
 		WHERE #_id# = <cfqueryparam value="#arguments.file_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -518,13 +524,13 @@
 		<cfelse>
 			 <cfset _all_approved = qry_approved_users.recordcount>
 		</cfif>
-		
+
 		<!--- If this is still false then send out email to users who need to approve further --->
 		<cfif ! _all_approved>
 			<cfset console("SEND EMAIL !!!!!!")>
 			<cfset send_message(qry_users=qry_approved_users, group_users=_group_users, kind='approval', file_id=arguments.file_id, file_type=arguments.file_type, dynpath=arguments.dynpath, urlasset=arguments.urlasset, urlglobal=arguments.urlglobal)>
 		</cfif>
-			
+
 
 		<!--- <cfset console(arguments.group)>
 		<cfset console(qry_approved_users)>
@@ -603,11 +609,11 @@ We need an approval from you on the following file (#_qry_file.qry.file_name#):
 </p>
 <p>
 	<strong>
-		<a href="#_raz_url#">Click here to get to the approval dashboard</a>	
+		<a href="#_raz_url#">Click here to get to the approval dashboard</a>
 	</strong>
 </p>
 					</cfoutput></cfsavecontent>
-					
+
 				</cfif>
 			<!--- For request for approval --->
 			<cfelseif arguments.kind EQ "request">
@@ -628,11 +634,11 @@ User #qry_owner.user_first_name# #qry_owner.user_last_name# (#qry_owner.user_ema
 </p>
 <p>
 	<strong>
-		<a href="#_raz_url#">Click here to get to the approval dashboard</a>	
+		<a href="#_raz_url#">Click here to get to the approval dashboard</a>
 	</strong>
 </p>
 				</cfoutput></cfsavecontent>
-				
+
 			<!--- done --->
 			<cfelseif arguments.kind EQ "done">
 				<cfset console("File has been released !!!!!!!")>
@@ -651,7 +657,7 @@ This is to let you know that the file (#_qry_file.qry.file_name#) has been fully
 	#trim(_qry_file.thumbnail)#
 </p>
 				</cfoutput></cfsavecontent>
-				
+
 			<!--- reject --->
 			<cfelseif arguments.kind EQ "reject">
 				<cfset console("File has been rejected !!!!!!!")>
@@ -675,7 +681,7 @@ The file (#_qry_file.qry.file_name#) has been rejected by the user (#qry_current
 	<em>The user who uploaded the file has been informed and the file has been removed from the system</em>
 </p>
 				</cfoutput></cfsavecontent>
-				
+
 			</cfif>
 
 			<!--- All set call global send email function (as there could be no user for the "approval" we check of a record has been found) --->
@@ -727,7 +733,7 @@ The file (#_qry_file.qry.file_name#) has been approved and is now available in o
 			<!--- All set call global send email function --->
 			<cfinvoke component="global.cfc.email" method="send_email" to="#qry_owner.user_email#" subject="#_subject_prefix# #_subject#" themessage="#_message#" />
 		</cfif>
-		
+
 
 		<!--- Return --->
 		<cfreturn />

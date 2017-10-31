@@ -97,8 +97,8 @@
 						<cfhttpparam type="url" name="oauth_signature" value="#session.dropbox.appsecret#&#session.dropbox.oauth_token_secret#"/>
 					</cfhttp>
 					<cfcatch type="any">
-						<cfset cfcatch.custom_message = "Error in function dropbox.metadata_and_thumbnails">
-						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+						<!--- <cfset cfcatch.custom_message = "Error in function dropbox.metadata_and_thumbnails">
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					</cfcatch>
 				</cftry>
 				</cfif>
@@ -162,8 +162,8 @@
 				<!--- Call internal function to add the file --->
 				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
 				<cfcatch type="any">
-					<cfset cfcatch.custom_message = "Error while downloading dropbox file in function dropbox.downloadfilesthread">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+					<!--- <cfset cfcatch.custom_message = "Error while downloading dropbox file in function dropbox.downloadfilesthread">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>

@@ -3,10 +3,10 @@
 
 <circuit access="public" xmlns:cf="cf/">
 
-	<!-- Cache Tag for layouts -->
+	<!-- Cache Tag for layouts
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2017.10.17.1" />
-	</fuseaction>
+		<set name="attributes.cachetag" value="201710271" />
+	</fuseaction> -->
 
 	<!--
 		Default fuseaction for application, uses model and view circuits
@@ -22,6 +22,13 @@
 				<set name="session.thehttp" value="http://" />
 			</false>
 		</if>
+
+		<if condition="#session.login# EQ 'T'">
+			<true>
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
+			</true>
+		</if>
+
 		<!-- XFA -->
 		<xfa name="submitform" value="c.dologin" />
 		<xfa name="forgotpass" value="c.forgotpass" />
@@ -53,7 +60,7 @@
 			</true>
 		</if>
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- CFC: Get customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
@@ -369,7 +376,7 @@
 				<!-- Get user groups  -->
 				<invoke object="myFusebox.getApplicationData().groups_users" method="getredirectfolders" returnvariable="redirectfolders" />
 				<!-- Get the Cache tag -->
-				<do action="cachetag" />
+				<!-- <do action="cachetag" /> -->
 				<!-- Show main page -->
 			 	<do action="v.main" />
 			</true>
@@ -1181,6 +1188,7 @@
 	<fuseaction name="basket_full">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<set name="attributes.basket_limit" value="true" overwrite="false" />
 		<set name="qry_folder.share_dl_org" value="F" overwrite="false" />
 		<set name="qry_folder.share_order" value="" overwrite="false" />
 		<!-- CFC: Get settings -->
@@ -1225,7 +1233,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -1275,7 +1283,7 @@
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.noemail" value="true" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<set name="attributes.message" value="attributes.message_#attributes.tmp#" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -1330,7 +1338,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.noemail" value="true" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
 		<set name="attributes.exportname" value="basket_#randrange(1,10000)#" overwrite="false" />
 		<!-- Action: Get asset path -->
@@ -1366,7 +1374,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.what" value="basket" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<!-- Put session into attributes -->
 		<set name="attributes.artofimage" value="#session.artofimage#" />
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
@@ -2315,6 +2323,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_files" />
 	</fuseaction>
@@ -2376,6 +2386,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_images" />
 	</fuseaction>
@@ -2440,6 +2452,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -2517,6 +2531,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- CFC: check enabled -->
+		<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -2585,6 +2601,8 @@
 				<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
+				<!-- CFC: check enabled -->
+				<invoke object="myFusebox.getApplicationData().approval" methodcall="check_enabled(attributes.folder_id)" returnvariable="qry_approval_enabled" />
 			</true>
 		</if>
 		<!-- CFC: Get folder name -->
@@ -3054,7 +3072,7 @@
 			</false>
 		</if>
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
@@ -4042,7 +4060,7 @@
 		<!-- CFC: Serve the file -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="servefile(attributes)" returnvariable="qry_binary" />
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- Show -->
 		<do action="v.serve_asset" />
 	</fuseaction>
@@ -8139,7 +8157,7 @@
 		<!-- Check if folder is shared, secured. If so display log in -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckperm(attributes)" returnvariable="shared" />
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- If ISP (for now) -->
 		<if condition="cgi.http_host CONTAINS 'razuna.com'">
 			<true>
@@ -8223,7 +8241,7 @@
 	<!-- Share Proxy -->
 	<fuseaction name="sharep">
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- Folder id into session -->
 		<if condition="structkeyexists(attributes,'fid')">
 			<true>
@@ -9003,7 +9021,7 @@
 			</true>
 		</if>
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- Get how the widget is being shared -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<!-- Set folder ID -->
@@ -9075,7 +9093,7 @@
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<set name="attributes.cs" value="#cs#" />
@@ -9313,7 +9331,7 @@
 			</true>
 		</if>
 		<!-- Get the Cache tag -->
-		<do action="cachetag" />
+		<!-- <do action="cachetag" /> -->
 		<!-- Show -->
 		<do action="v.login_mini" />
 	</fuseaction>
@@ -9378,7 +9396,7 @@
 				<!-- CFC: Get Breadcrumb -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 				<!-- Get the Cache tag -->
-				<do action="cachetag" />
+				<!-- <do action="cachetag" /> -->
 				<!-- Get View -->
 				<do action="v.mini_browser" />
 			</true>
@@ -9691,7 +9709,7 @@
 		<set name="attributes.what" value="folder" overwrite="false" />
 		<set name="attributes.expwhat" value="folder" overwrite="false" />
 		<set name="attributes.meta_export" value="T" overwrite="false" />
-		<set name="attributes.format" value="csv" overwrite="false" />
+		<set name="attributes.format" value="xls" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.pages" value="download" />
 		<set name="attributes.download_thumbnails" value="false" overwrite="false" />
@@ -9779,6 +9797,46 @@
 		<set name="session.artofvideo" value="#attributes.artofvideo#" />
 		<set name="session.artofaudio" value="#attributes.artofaudio#" />
 		<set name="session.artoffile" value="#attributes.artoffile#" />
+		<if condition="structkeyexists(attributes,'allorg')">
+			<true>
+				<set name="session.allorg" value="#attributes.allorg#" />
+			</true>
+		</if>
+		<if condition="structkeyexists(attributes,'allthumb')">
+			<true>
+				<set name="session.allthumb" value="#attributes.allthumb#" />
+				</true>
+			</if>
+		<if condition="structkeyexists(attributes,'allrend')">
+			<true>
+				<set name="session.allrend" value="#attributes.allrend#" />
+			</true>
+		</if>
+		<if condition="structkeyexists(attributes,'allvers')">
+			<true>
+				<set name="session.allvers" value="#attributes.allvers#" />
+			</true>
+		</if>
+	</fuseaction>
+
+	<!-- Store org values for basket -->
+	<fuseaction name="store_art_values_org_basket">
+		<set name="session.allorg" value="#attributes.allorg#" />
+	</fuseaction>
+
+	<!-- Store thumb values for basket -->
+	<fuseaction name="store_art_values_thumb_basket">
+		<set name="session.allthumb" value="#attributes.allthumb#" />
+	</fuseaction>
+
+	<!-- Store rend values for basket -->
+	<fuseaction name="store_art_values_rend_basket">
+		<set name="session.allrend" value="#attributes.allrend#" />
+	</fuseaction>
+
+	<!-- Store version values for basket -->
+	<fuseaction name="store_art_values_vers_basket">
+		<set name="session.allvers" value="#attributes.allvers#" />
 	</fuseaction>
 
 	<!-- Store fileids and filetypes in session (takes care for more then 75 assets at once) -->
@@ -9866,6 +9924,12 @@
 		<if condition="isdefined('attributes.editids')">
 			<true>
 				<set name="session.editids" value="#attributes.editids#" />
+				<if condition="#attributes.editids# EQ 'all'">
+					<true>
+						<set name="session.file_id" value="all" />
+						<set name="session.thefileid" value="all" />
+					</true>
+				</if>
 			</true>
 		</if>
 	</fuseaction>

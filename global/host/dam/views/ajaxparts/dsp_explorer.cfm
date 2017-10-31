@@ -91,7 +91,7 @@
 		"plugins" : [ "state" ],
 		'core' : {
 			'themes': {
-				'name': 'proton',
+				'name': 'helpmonks-jstree-theme',
 				'responsive': true
 			},
 			'data' : {

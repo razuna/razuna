@@ -504,7 +504,7 @@
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<cfset var qry = "">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, v.vid_height, v.vid_width, v.vid_size vlength, v.vid_name_org, v.path_to_asset, v.cloud_url_org, v.vid_group, v.hashtag
 	FROM #session.hostdbprefix#videos v
 	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -588,8 +588,8 @@
 			</cfif>
 			<!--- cfcatch --->
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in function videos.create_previews">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in function videos.create_previews">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 	</cfif>
@@ -731,6 +731,7 @@
 	<cfset arguments.thestruct.file_id = session.file_id>
 	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
 	<cfset arguments.thestruct.theuserid = session.theuserid>
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="trashvideomanythread" thestruct="#attributes.intstruct#" />
 	</cfthread>
@@ -744,6 +745,13 @@
 	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 	<cfset session.hostid = arguments.thestruct.hostid>
 	<cfset session.theuserid = arguments.thestruct.theuserid>
+	<!--- If this is from search the file_id should be all --->
+	<cfif arguments.thestruct.file_id EQ "all">
+		<!--- As we have all get all IDS from this search --->
+		<cfinvoke component="search" method="getAllIdsMain" searchupc="#arguments.thestruct.sessions.search.searchupc#" searchtext="#arguments.thestruct.sessions.search.searchtext#" searchtype="vid" searchrenditions="#arguments.thestruct.sessions.search.searchrenditions#" searchfolderid="#arguments.thestruct.sessions.search.searchfolderid#" hostid="#arguments.thestruct.sessions.hostid#" returnvariable="ids">
+			<!--- Set the fileid --->
+			<cfset arguments.thestruct.file_id = ids>
+	</cfif>
 	<!--- Loop --->
 	<cfset var i ="">
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
@@ -1101,8 +1109,8 @@
 					<cfinvoke component="amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 				</cfif>
 				<cfcatch type="any">
-					<cfset cfcatch.custom_message = "Error while deleting related folders in function videos.deletefromfilesystem">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+					<!--- <cfset cfcatch.custom_message = "Error while deleting related folders in function videos.deletefromfilesystem">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		</cfloop>
@@ -1218,6 +1226,7 @@
 <!--- UPDATE VIDEOS IN THREAD --->
 <cffunction name="update" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
 	<!--- Set arguments --->
 	<cfset arguments.thestruct.dsn = variables.dsn>
 	<cfset arguments.thestruct.setid = variables.setid>
@@ -1238,6 +1247,13 @@
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
 	<cfset var renlist ="-1">
+	<!--- If this is from search the file_id should be all --->
+	<cfif arguments.thestruct.file_id EQ "all">
+		<!--- As we have all get all IDS from this search --->
+		<cfinvoke component="search" method="getAllIdsMain" searchupc="#arguments.thestruct.sessions.search.searchupc#" searchtext="#arguments.thestruct.sessions.search.searchtext#" searchtype="vid" searchrenditions="#arguments.thestruct.sessions.search.searchrenditions#" searchfolderid="#arguments.thestruct.sessions.search.searchfolderid#" hostid="#arguments.thestruct.sessions.hostid#" returnvariable="ids">
+			<!--- Set the fileid --->
+			<cfset arguments.thestruct.file_id = ids>
+	</cfif>
 	<!--- RAZ-2837:: --->
 	<cfif (structKeyExists(arguments.thestruct,'qry_related') AND arguments.thestruct.qry_related.recordcount NEQ 0) AND (structKeyExists(arguments.thestruct,'option_rendition_meta') AND arguments.thestruct.option_rendition_meta EQ 'true')>
 		<!--- Get additional renditions --->
@@ -2014,9 +2030,9 @@
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("videos")>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error in function videos.convertvideo">
+			<!--- <cfset cfcatch.custom_message = "Error in function videos.convertvideo">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<cfreturn newid>
@@ -2190,8 +2206,21 @@
 <!--- MOVE FILE IN THREADS --->
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
 	<!--- Loop over files --->
 	<cfthread intstruct="#arguments.thestruct#">
+
+		<!--- If this is from search the file_id should be all --->
+		<cfif attributes.intstruct.file_id EQ "all">
+			<!--- <cfset consoleoutput(true)>
+			<cfset console(attributes.intstruct.sessions)>
+			<cfset console(attributes.intstruct.sessions.search)> --->
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="vid" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset attributes.intstruct.file_id = ids>
+		</cfif>
+
 		<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
 			<cfset attributes.intstruct.vid_id = "">
 			<cfset attributes.intstruct.vid_id = listfirst(fileid,"-")>
@@ -2265,8 +2294,8 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in function videos.move">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in function videos.move">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->

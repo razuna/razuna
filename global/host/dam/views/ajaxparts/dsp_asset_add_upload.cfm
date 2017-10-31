@@ -35,11 +35,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <cfparam name="attributes.file_id" default="0">
 <!-- Load Queue widget CSS and jQuery -->
-<link rel="stylesheet" href="#dynpath#/global/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css?_v=#attributes.cachetag#" type="text/css" media="screen" />
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/plupload/plupload.full.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js?_v=#attributes.cachetag#"></script>
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/upload_#attributes.cachetag#.min.css" />
+<script type="text/javascript" src="#dynpath#/global/dist/upload_#attributes.cachetag#.min.js"></script>
 <style type="text/css">
 body {
 	background: white;

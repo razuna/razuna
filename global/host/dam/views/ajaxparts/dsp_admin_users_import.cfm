@@ -35,7 +35,7 @@
 		<div>
 			<div style="float:left;width:150px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_format")#</div>
 			<div style="float:left;">
-				<input type="radio" name="file_format" value="csv" checked="checked"> CSV <input type="radio" name="file_format" value="xlsx"> XLSx <input type="radio" name="file_format" value="xls"> XLS
+				<input type="radio" name="file_format" value="xls" checked="checked"> XLS <input type="radio" name="file_format" value="xlsx"> XLSx <input type="radio" name="file_format" value="csv"> CSV
 			</div>
 			<div style="clear:both;padding-bottom:10px;"></div>
 			<!--- Upload file --->

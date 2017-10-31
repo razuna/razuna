@@ -31,6 +31,12 @@
 <cfoutput>
 	<cfset uniqueid = createuuid()>
 	<cfif attributes.qry_filecount NEQ 0>
+		<!--- Show approval alert --->
+		<!--- <cfdump var="#qry_approval_enabled#"> --->
+		<cfif qry_approval_enabled.approval_enabled>
+			<div style="padding:15px;background-color:cornsilk;">All assets uploaded to this folder will need to be approved before appearing</div>
+			<div style="padding-top:15px"></div>
+		</cfif>
 		<form name="#kind#form" id="#kind#form" action="#self#" onsubmit="combinedsavedoc();return false;">
 		<input type="hidden" name="kind" value="#kind#">
 		<input type="hidden" name="thetype" value="doc">

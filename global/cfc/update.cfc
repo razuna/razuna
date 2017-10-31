@@ -182,6 +182,41 @@
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
+		<!--- If less than 54 (1.9.5) --->
+		<cfif updatenumber.opt_value LT 54>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE users
+				SET user_pass = '0DB43DAFF7B4F9DD595054CE43BCA8B0'
+				WHERE user_id = '1'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE cache
+				SET cache_token = '#createuuid("")#'
+				WHERE cache_type = 'users'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<!--- New cart update --->
+			<cfif application.razuna.thedatabase EQ "mysql">
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM raz1_cart
+					</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+					CREATE UNIQUE INDEX 'idx_raz1_cart_CART_ID_CART_PRODUCT_ID_HOST_ID' ON raz1_cart (CART_ID, CART_PRODUCT_ID, HOST_ID) COMMENT '' ALGORITHM DEFAULT LOCK DEFAULT
+					</cfquery>
+					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+				</cftry>
+			</cfif>
+		</cfif>
+
 		<!--- If less than 53 (1.9.2) --->
 		<cfif updatenumber.opt_value LT 53>
 
@@ -190,7 +225,7 @@
 				<!--- Feedback --->
 				<cfoutput><h1>We are starting with the update now</h1><br><br></cfoutput>
 				<cfflush>
-				
+
 				<cfquery datasource="#application.razuna.datasource#" name="qry_drop">
 				select 
 				concat('alter table ',table_schema,'.',table_name,' DROP FOREIGN KEY ',constraint_name,';') AS dropfk

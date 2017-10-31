@@ -1333,8 +1333,8 @@
 	</Response></cfoutput>
 				</cfsavecontent>
 			</cfif>
-			<cfset cfcatch.custom_message = "Error in API upload in function assets.addassetapi">
-			<cfset errobj.logerrors(cfcatch,false)/>
+			<!--- <cfset cfcatch.custom_message = "Error in API upload in function assets.addassetapi">
+			<cfset errobj.logerrors(cfcatch,false)/> --->
 			<!--- Delete leftover entries --->
 			<!--- <cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 				DELETE FROM #session.hostdbprefix#images WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">

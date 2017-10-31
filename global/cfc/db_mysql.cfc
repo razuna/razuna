@@ -682,7 +682,7 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO #arguments.thestruct.theschema#.users
 			(USER_ID, USER_LOGIN_NAME, USER_EMAIL, USER_FIRST_NAME, USER_LAST_NAME, USER_PASS, USER_ACTIVE, USER_IN_ADMIN, USER_IN_DAM)
-			VALUES ('1', 'admin', 'admin@razuna.com', 'SystemAdmin', 'SystemAdmin', '778509C62BD8904D938FB85644EC4712', 'T', 'T', 'T')
+			VALUES ('1', 'admin', 'admin@razuna.com', 'SystemAdmin', 'SystemAdmin', '0DB43DAFF7B4F9DD595054CE43BCA8B0', 'T', 'T', 'T')
 			</cfquery>
 			<!--- MODULES --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1473,7 +1473,8 @@
 		  KEY #arguments.thestruct.host_db_prefix#cart_id (CART_ID),
 		  KEY #arguments.thestruct.host_db_prefix#cart_user (USER_ID),
 		  KEY #arguments.thestruct.host_db_prefix#cart_done (cart_order_done),
-		  KEY #arguments.thestruct.host_db_prefix#cart_user_r (cart_order_user_r)
+		  KEY #arguments.thestruct.host_db_prefix#cart_user_r (cart_order_user_r),
+		  UNIQUE KEY idx_raz1_cart_CART_PRODUCT_ID_HOST_ID (CART_ID, CART_PRODUCT_ID, HOST_ID),
 		)
 		#this.tableoptions#
 		</cfquery>

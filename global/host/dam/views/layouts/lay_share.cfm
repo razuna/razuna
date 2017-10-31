@@ -38,21 +38,10 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<script type="text/javascript">var dynpath = '#dynpath#';</script>
 		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/app_#attributes.cachetag#.min.css" />
 		<!--- JS --->
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/masonry.pkgd.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/imagesloaded.pkgd.min.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="#dynpath#/global/dist/vendors_#attributes.cachetag#.min.js"></script>
+		<script type="text/javascript" src="#dynpath#/global/dist/app_#attributes.cachetag#.min.js"></script>
 		<!--- Favicon --->
 		<cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
 			<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />

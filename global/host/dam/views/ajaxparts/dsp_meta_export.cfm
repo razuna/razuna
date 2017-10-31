@@ -39,7 +39,7 @@
 		</cfif>
 	</div> 
 	<div style="float:right;">
-		<select id="export_format"><option value="">#myFusebox.getApplicationData().defaults.trans("choose_format")#</option><option value="csv" selected="selected">CSV</option><option value="xls">XLS</option><option value="xlsx">XLSX</option></select><span style="padding-right:7px;"></span><input type="button" value="#myFusebox.getApplicationData().defaults.trans("export")#" onclick="exportfile()" />
+		<select id="export_format"><option value="">#myFusebox.getApplicationData().defaults.trans("choose_format")#</option><option value="xls" selected="selected">XLS</option><option value="xlsx">XLSX</option><option value="csv">CSV</option></select><span style="padding-right:7px;"></span><input type="button" value="#myFusebox.getApplicationData().defaults.trans("export")#" onclick="exportfile()" />
 	</div>
 	<div style="clear:both;"></div>
 	<div style="padding-top:10px;float:right;">

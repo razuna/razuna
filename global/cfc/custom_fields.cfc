@@ -321,9 +321,16 @@
 			<cfset theid = replacenocase("#i#", "cf_", "", "ALL")>
 			<cfset list="">
 			<cfif StructKeyExists(arguments.thestruct,"file_id")>
-				<cfloop list="#arguments.thestruct.file_id#" index="idx">
-					<cfset list = listAppend(list,'#idx#')>
-				</cfloop>
+				<cfif arguments.thestruct.file_id EQ "all">
+					<!--- As we have all get all IDS from this search --->
+					<cfinvoke component="search" method="getAllIdsMain" searchupc="#session.search.searchupc#" searchtext="#session.search.searchtext#" searchtype="#session.search.searchtype#" searchrenditions="#session.search.searchrenditions#" searchfolderid="#session.search.searchfolderid#" hostid="#session.hostid#" returnvariable="ids">
+						<!--- Set the fileid --->
+						<cfset list = ids>
+				<cfelse>
+					<cfloop list="#arguments.thestruct.file_id#" index="idx">
+						<cfset list = listAppend(list,'#idx#')>
+					</cfloop>
+				</cfif>
 			</cfif>
 			<cfif list NEQ ''>
 				<cfloop list="#list#" index="index" delimiters="," >

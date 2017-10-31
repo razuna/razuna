@@ -29,7 +29,7 @@
 <cfset variables.cachetoken = getcachetoken("general")>
 
 <!--- PUT INTO BASKET --->
-<cffunction name="tobasket" output="false" access="public">
+<cffunction name="tobasket" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.thetype" default="">
@@ -37,13 +37,29 @@
 	<cfparam name="arguments.thestruct.hostdbprefix" default="#session.hostdbprefix#">
 	<cfparam name="arguments.thestruct.datasource" default="#application.razuna.datasource#">
 	<cfparam name="arguments.thestruct.thedatabase" default="#application.razuna.thedatabase#">
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
+<!--- 	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)> --->
+
 	<cfthread intstruct="#arguments.thestruct#">
+
+		<!--- If this is from search the file_id should be all --->
+		<cfif attributes.intstruct.file_id EQ "all">
+			<!--- <cfset consoleoutput(true)>
+			<cfset console(attributes.intstruct.sessions)>
+			<cfset console(attributes.intstruct.sessions.search)> --->
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#attributes.intstruct.sessions.search.searchupc#" searchtext="#attributes.intstruct.sessions.search.searchtext#" searchtype="#attributes.intstruct.sessions.search.searchtype#" searchrenditions="#attributes.intstruct.sessions.search.searchrenditions#" searchfolderid="#attributes.intstruct.sessions.search.searchfolderid#" hostid="#attributes.intstruct.sessions.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset attributes.intstruct.file_id = ids>
+		</cfif>
+
 		<cfloop index="thenr" delimiters="," list="#attributes.intstruct.file_id#">
 			<!--- If we come from a overview we have numbers with the type --->
 			<cfset thetype = listlast(thenr,"-")>
 			<cfset thenr = listfirst(thenr,"-")>
 			<!--- First check if the product is not already in this basket --->
-			<cfquery datasource="#attributes.intstruct.datasource#" name="here">
+			<!--- <cfquery datasource="#attributes.intstruct.datasource#" name="here">
 			SELECT user_id
 			FROM #session.hostdbprefix#cart
 			WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
@@ -53,29 +69,29 @@
 			AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
-			</cfquery>
+			</cfquery> --->
 			<!--- If no record has been found continue --->
-			<cfif here.recordcount EQ 0>
+			<!--- <cfif here.recordcount EQ 0> --->
 				<!--- Sometimes we have a 0 in the list, filter this out --->
 				<cfif thenr NEQ 0 AND len(thetype) LTE 5>
 					<!--- insert the prodcut to the cart --->
 					<cfquery datasource="#attributes.intstruct.datasource#">
-					INSERT INTO #session.hostdbprefix#cart
+					<cfif application.razuna.thedatabase EQ "mysql">INSERT IGNORE<cfelse>MERGE</cfif> INTO #attributes.intstruct.sessions.hostdbprefix#cart
 					(cart_id, user_id, cart_product_id, cart_create_date, cart_create_time, cart_change_date, cart_change_time, cart_file_type, host_id)
 					VALUES(
-					<cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#attributes.intstruct.sessions.thecart#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#attributes.intstruct.sessions.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.sessions.hostid#">
 					)
 					</cfquery>
 				</cfif>
-			</cfif>
+			<!--- </cfif> --->
 		</cfloop>
 	</cfthread>
 	<!--- Flush Cache --->
@@ -393,7 +409,7 @@
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY c.cart_file_type
-		<cfif limit>LIMIT 10</cfif>
+		<cfif limit>LIMIT 200</cfif>
 	</cfquery>
 <!--- 	<cfdump var="#qry#">
 	<cfabort> --->
@@ -451,6 +467,9 @@
 <!--- WRITE FILES IN BASKET TO SYSTEM --->
 <cffunction name="writebasket" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct.artofimage)>
+	<cfabort> --->
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.artofimage">
 	<cfparam default="" name="arguments.thestruct.artofvideo">
@@ -485,8 +504,8 @@
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while removing outgoing folders in function basket.writebasket">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error while removing outgoing folders in function basket.writebasket">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<!--- Feedback --->
@@ -522,10 +541,28 @@
 		<!--- <cfset arguments.thestruct.filesize = cart_size/1000000> --->
 		<!--- Set the asset id into a var --->
 		<cfset arguments.thestruct.theid = cart_product_id>
+		<cfset arguments.thestruct.file_id = cart_product_id>
 		<!--- Get the files according to the extension --->
 		<cfswitch expression="#cart_file_type#">
 			<!--- Images --->
 			<cfcase value="img">
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artofimage = cart_product_id & "-original,">
+				</cfif>
+				<cfif session.allthumb EQ "true">
+					<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & cart_product_id & "-thumb,">
+				</cfif>
+				<!--- If rendition download then grab all renditions of this id --->
+				<cfif session.allrend EQ "true">
+					<cfinvoke component="images" method="relatedimages" thestruct="#arguments.thestruct#" returnvariable="qry_related">
+					<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & cart_product_id & "-" & valueList(qry_related.img_id) & ",">
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artofimage = arguments.thestruct.artofimage & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_image# "#filename#"</strong><br><br></cfoutput>
@@ -536,6 +573,23 @@
 			</cfcase>
 			<!--- Videos --->
 			<cfcase value="vid">
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artofvideo = cart_product_id & "-original,">
+				</cfif>
+				<cfif session.allthumb EQ "true">
+					<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & cart_product_id & "-thumb,">
+				</cfif>
+				<!--- If rendition download then grab all renditions of this id --->
+				<cfif session.allrend EQ "true">
+					<cfinvoke component="videos" method="relatedvideos" thestruct="#arguments.thestruct#" returnvariable="qry_related">
+					<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & cart_product_id & "-" & valueList(qry_related.vid_id)>
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artofvideo = arguments.thestruct.artofvideo & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_video# "#filename#"</strong><br><br></cfoutput>
@@ -546,6 +600,23 @@
 			</cfcase>
 			<!--- Audios --->
 			<cfcase value="aud">
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artofaudio = cart_product_id & "-original,">
+				</cfif>
+				<cfif session.allthumb EQ "true">
+					<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & cart_product_id & "-thumb,">
+				</cfif>
+				<!--- If rendition download then grab all renditions of this id --->
+				<cfif session.allrend EQ "true">
+					<cfinvoke component="audios" method="relatedaudios" thestruct="#arguments.thestruct#" returnvariable="qry_related">
+					<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & cart_product_id & "-" & valueList(qry_related.aud_id)>
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artofaudio = arguments.thestruct.artofaudio & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_audio# "#filename#"</strong><br><br></cfoutput>
@@ -556,6 +627,15 @@
 			</cfcase>
 			<!--- All other files --->
 			<cfdefaultcase>
+				<!--- Grab files in basket according to sessions --->
+				<cfif session.allorg EQ "true">
+					<cfset arguments.thestruct.artoffile = cart_product_id & "-original,">
+				</cfif>
+				<!--- If versions download then grab all renditions of this id --->
+				<cfif session.allvers EQ "true">
+					<cfinvoke component="global" method="getAdditionalVersions" thestruct="#arguments.thestruct#" returnvariable="qry_add_versions">
+					<cfset arguments.thestruct.artoffile = arguments.thestruct.artoffile & valueList(qry_add_versions.basket_download_id) & ",">
+				</cfif>
 				<!--- Feedback --->
 				<cfif !arguments.thestruct.noemail>
 					<cfoutput><strong>#getting_file# "#filename#"</strong><br><br></cfoutput>
@@ -588,6 +668,8 @@
 		</cfif>
 		<cfif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv")>
 			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.csv">
+		<cfelseif fileExists("#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.xls")>
+			<cffile action="move" destination="#arguments.thestruct.newpath#" source="#arguments.thestruct.thepath#/outgoing/metadata-export-#suffix#.xls">
 		</cfif>
 	</cfif>
 	<!--- Zip the folder --->
@@ -935,9 +1017,9 @@
 				<cfquery name="qry" datasource="#variables.dsn#">
 					SELECT av.av_id,av.asset_id_r,av.folder_id_r,av.av_type,av.av_link_title,av.av_link_url AS path_to_asset,'' AS img_group,'' AS link_kind, av.folder_id_r, i.img_upc_number upcnum, av.av_link_title thefilename
 					FROM #session.hostdbprefix#additional_versions av LEFT JOIN #session.hostdbprefix#images i ON av.asset_id_r = i.img_id
-					WHERE av.av_id = <cfqueryparam value="#theavid#" cfsqltype="CF_SQL_VARCHAR">
+					WHERE av.host_id = <cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">
 					AND av.av_type = <cfqueryparam value="img" cfsqltype="CF_SQL_VARCHAR">
-					AND av.host_id = <cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">
+					AND av.av_id = <cfqueryparam value="#theavid#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 			<cfelse>
 				<cfquery name="qry" datasource="#variables.dsn#">
@@ -1048,20 +1130,20 @@
 				<cfif theart NEQ "thumb">
 					<cfset var rendition_version ="">
 					<cfif find('.', thefilename)>
-							<cfset rendition_version = listlast(thefilename,'.')>
-							<cfif not isnumeric(rendition_version)>
-								<cfset var rendition_version ="">
-							<cfelse>
-								<cfset var rendition_version ="." & rendition_version>
-							</cfif>
-							<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
-							<cfset fn_last_char = right(listfirst(thefilename,'.'),1)>
-							<cfif not isnumeric(fn_last_char)>
-								<cfset var fn_ischar = true>
-							<cfelse>
-								<cfset var fn_ischar = false>
-								<cfset var fn_last_char = "">
-							</cfif>
+						<cfset rendition_version = listlast(thefilename,'.')>
+						<cfif not isnumeric(rendition_version)>
+							<cfset var rendition_version ="">
+						<cfelse>
+							<cfset var rendition_version ="." & rendition_version>
+						</cfif>
+						<!--- Check if last char is alphabet and if it is then inlcude in filename for download --->
+						<cfset fn_last_char = right(listfirst(thefilename,'.'),1)>
+						<cfif not isnumeric(fn_last_char)>
+							<cfset var fn_ischar = true>
+						<cfelse>
+							<cfset var fn_ischar = false>
+							<cfset var fn_last_char = "">
+						</cfif>
 					</cfif>
 
 					<cfset arguments.thestruct.thefinalname = "#upcinfo.upcprodstr##fn_last_char##rendition_version#">
@@ -1909,8 +1991,8 @@
 	<cftry>
 		<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#thesubject#" themessage="#mailmessage#">
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while sending email in function basket.basket_order">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error while sending email in function basket.basket_order">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<!--- Flush Cache --->

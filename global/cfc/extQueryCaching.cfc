@@ -149,8 +149,8 @@
 		<!--- Flush Cache --->
 		<cfinvoke method="resetcachetoken" type="logs" />
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error in function extQueryCaching.log_assets">
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error in function extQueryCaching.log_assets">
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>

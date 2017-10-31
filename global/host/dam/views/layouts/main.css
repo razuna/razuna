@@ -1022,7 +1022,7 @@ font-weight: bold;
     padding-right : 0;
     word-break: break-all;
 }
-.jstree-proton .jstree-hovered {
+.jstree-helpmonks-jstree-theme .jstree-hovered {
   /*background: #ededed;*/
   /*color: #999;*/
   border-radius: 3px;
@@ -1030,7 +1030,7 @@ font-weight: bold;
   padding-right: 0;
   width: 100%;
 }
-.jstree-proton .jstree-clicked {
+.jstree-helpmonks-jstree-theme .jstree-clicked {
   /*background: #ededed;*/
   /*color: #ffffff;*/
   border-radius: 3px;
@@ -1038,7 +1038,7 @@ font-weight: bold;
   padding-right: 0;
   width: 100%;
 }
-.folders>.jstree-proton .jstree-clicked {
+.folders>.jstree-helpmonks-jstree-theme .jstree-clicked {
   /*background: #ededed;*/
   /*color: #ffffff;*/
   border-radius: 3px;
@@ -1046,7 +1046,7 @@ font-weight: bold;
   padding-right: 0;
   width: 90%;
 }
-.folders>.jstree-proton .jstree-hovered {
+.folders>.jstree-helpmonks-jstree-theme .jstree-hovered {
   /*background: #ededed;*/
   /*color: #999;*/
   border-radius: 3px;

@@ -313,6 +313,12 @@
 <!--- ADD ASSETS FROM LIST --->
 <cffunction name="add_assets_loop" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfif session.file_id EQ "all">
+		<!--- As we have all get all IDS from this search --->
+		<cfinvoke component="search" method="getAllIdsMain" searchupc="#session.search.searchupc#" searchtext="#session.search.searchtext#" searchtype="#session.search.searchtype#" searchrenditions="#session.search.searchrenditions#" searchfolderid="#session.search.searchfolderid#" hostid="#session.hostid#" returnvariable="ids">
+			<!--- Set the fileid --->
+			<cfset session.file_id = ids>
+	</cfif>
 	<!--- Loop over the files ids --->
 	<cfloop list="#session.file_id#" delimiters="," index="fileid">
 		<!--- Get the ID and create thetype --->
@@ -1166,9 +1172,9 @@
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("general")>
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error while moviing item in collection in function collections.move">
+			<!--- <cfset cfcatch.custom_message = "Error while moviing item in collection in function collections.move">
 			<cfset cfcatch.thestruct = arguments.thestruct>
-			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 </cffunction>

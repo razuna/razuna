@@ -4,6 +4,8 @@ bluedragon.xml
 admin/parsed/
 WEB-INF/bluedragon/
 raz1/
+raz3/
+raz6/
 global/config/keys.cfm
 assets/
-
+node_modules/

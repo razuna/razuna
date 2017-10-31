@@ -65,7 +65,7 @@ function batchaction(theform, what, kind, folder_id, theaction){
 	if(what == 'audios')what = 'aud';
 	if(what == 'all')what = 'all';
    	// If this comes from the search or labels we need to swap the session with the file ids since edit function is in session.editids
-   	if (kind === 'search' || kind === 'labels') {
+   	if (kind === 'labels') {
    		$('#div_forall').load('index.cfm?fa=c.swap_store_file_ids');
    	}
 	// Get to work

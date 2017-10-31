@@ -143,8 +143,8 @@
 			<!--- Reset cache --->
 			<!--- <cfset resetcachetoken("settings")> --->
 			<cfcatch type="database">
-				<cfset cfcatch.custom_message = "Database error in function plugins.setplugin">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Database error in function plugins.setplugin">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Return --->

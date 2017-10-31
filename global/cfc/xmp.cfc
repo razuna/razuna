@@ -32,41 +32,41 @@
 		<cfset variables.cachetoken = getcachetoken("images")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="xmp" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#readxmpdb */ 
+		SELECT /* #variables.cachetoken#readxmpdb */
 		id_r,
-		subjectcode iptcsubjectcode, 
-		creator, 
-		title, 
-		authorsposition authorstitle, 
-		captionwriter descwriter, 
-		ciadrextadr iptcaddress, 
-		category, 
-		supplementalcategories categorysub, 
-		urgency, 
-		description, 
-		ciadrcity iptccity, 
-		ciadrctry iptccountry, 
-		location iptclocation, 
-		ciadrpcode iptczip, 
-		ciemailwork iptcemail, 
-		ciurlwork iptcwebsite, 
-		citelwork iptcphone, 
-		intellectualgenre iptcintelgenre, 
-		instructions iptcinstructions, 
-		source iptcsource, 
-		usageterms iptcusageterms, 
-		copyrightstatus copystatus, 
-		transmissionreference iptcjobidentifier, 
-		webstatement copyurl, 
-		headline iptcheadline, 
-		datecreated iptcdatecreated, 
-		city iptcimagecity, 
-		ciadrregion iptcimagestate, 
-		country iptcimagecountry, 
-		countrycode iptcimagecountrycode, 
-		scene iptcscene, 
-		state iptcstate, 
-		credit iptccredit, 
+		subjectcode iptcsubjectcode,
+		creator,
+		title,
+		authorsposition authorstitle,
+		captionwriter descwriter,
+		ciadrextadr iptcaddress,
+		category,
+		supplementalcategories categorysub,
+		urgency,
+		description,
+		ciadrcity iptccity,
+		ciadrctry iptccountry,
+		location iptclocation,
+		ciadrpcode iptczip,
+		ciemailwork iptcemail,
+		ciurlwork iptcwebsite,
+		citelwork iptcphone,
+		intellectualgenre iptcintelgenre,
+		instructions iptcinstructions,
+		source iptcsource,
+		usageterms iptcusageterms,
+		copyrightstatus copystatus,
+		transmissionreference iptcjobidentifier,
+		webstatement copyurl,
+		headline iptcheadline,
+		datecreated iptcdatecreated,
+		city iptcimagecity,
+		ciadrregion iptcimagestate,
+		country iptcimagecountry,
+		countrycode iptcimagecountrycode,
+		scene iptcscene,
+		state iptcstate,
+		credit iptccredit,
 		rights copynotice,
 		colorspace,
 		xres,
@@ -83,6 +83,7 @@
 <!--- For writing the XMP below but in a cfthread --->
 <cffunction name="xmpwritethread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfparam name="arguments.thestruct.sessions" default="#session#">
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<!--- <cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" /> --->
 	<cfthread intstruct="#arguments.thestruct#">
@@ -137,6 +138,13 @@
 	<cfparam default="" name="arguments.thestruct.img_desc">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- If this is from search the file_id should be all --->
+	<cfif arguments.thestruct.file_id EQ "all">
+		<!--- As we have all get all IDS from this search --->
+		<cfinvoke component="search" method="getAllIdsMain" searchupc="#arguments.thestruct.sessions.search.searchupc#" searchtext="#arguments.thestruct.sessions.search.searchtext#" searchtype="img" searchrenditions="#arguments.thestruct.sessions.search.searchrenditions#" searchfolderid="#arguments.thestruct.sessions.search.searchfolderid#" hostid="#arguments.thestruct.sessions.hostid#" returnvariable="ids">
+			<!--- Set the fileid --->
+			<cfset arguments.thestruct.file_id = ids>
+	</cfif>
 	<!--- Loop --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 		<!--- Params --->
@@ -149,7 +157,7 @@
   		x.description, x.ciadrcity, x.ciadrctry, x.location as thelocation, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre,
   		x.instructions, x.source, x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated,
   		x.city, x.ciadrregion, x.country, x.countrycode, x.scene, x.state, x.credit, x.rights, x.colorspace
-		FROM #session.hostdbprefix#images i 
+		FROM #session.hostdbprefix#images i
 		LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id AND x.host_id = i.host_id
 		WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -414,7 +422,7 @@
 -xmp:SubjectCode=#ltrim(subcode)#
 -XMP-iptcCore:SubjectCode=#ltrim(subcode)#
 </cfloop><!--- Iptc Scene ---><cfloop delimiters="," index="scene" list="#arguments.thestruct.iptc_scene#">
--xmp:Scene=#ltrim(scene)# 
+-xmp:Scene=#ltrim(scene)#
 -XMP-iptcCore:Scene=#ltrim(scene)#
 </cfloop>
 -xmp:WebStatement=<cfif arguments.thestruct.xmp_copyright_info_url NEQ "">'#arguments.thestruct.xmp_copyright_info_url#'</cfif>
@@ -429,53 +437,61 @@
 -xmp:UsageTerms=#replacenocase(ParagraphFormat(arguments.thestruct.iptc_status_rights_usage_terms),"<p>","","all")#
 			</cfsavecontent>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		</cfoutput>
 		<!--- Save XMP to DB --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#xmp
-			SET
-			subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_subject_code#">,
-			creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author#">, 
-			title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_document_title#">, 
-			authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author_title#">, 
-			captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_description_writer#">, 
-			ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_address#">, 
-			category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_category#">, 
-			supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_supplemental_categories#">, 
-			urgency = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_origin_urgency#">, 
-			description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.img_desc#">, 
-			ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_city#">, 
-			ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_country#">, 
-			location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_location#">, 
-			ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_postal_code#">, 
-			ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_emails#">, 
-			ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_websites#">, 
-			citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_phones#">, 
-			intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_intellectual_genre#">, 
-			instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_instruction#">, 
-			source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_source#">, 
-			usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_rights_usage_terms#">, 
-			copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_status#">, 
-			transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_job_identifier#">, 
-			webstatement = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_info_url#">, 
-			headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_headline#">, 
-			datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_date_created#">, 
-			city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_city#">, 
-			ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_state_province#">, 
-			country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_country#">, 
-			countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_iso_country_code#">, 
-			scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_scene#">, 
-			state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_state_province#">, 
-			credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_provider#">, 
-			rights  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_notice#">
-			WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+		<cftry>
+			<cftransaction>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#xmp
+				SET
+				subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_subject_code#">,
+				creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author#">,
+				title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_document_title#">,
+				authorsposition = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_author_title#">,
+				captionwriter = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_description_writer#">,
+				ciadrextadr = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_address#">,
+				category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_category#">,
+				supplementalcategories = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_supplemental_categories#">,
+				urgency = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_origin_urgency#">,
+				description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.img_desc#">,
+				ciadrcity = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_city#">,
+				ciadrctry = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_country#">,
+				location = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_location#">,
+				ciadrpcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_postal_code#">,
+				ciemailwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_emails#">,
+				ciurlwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_websites#">,
+				citelwork = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_phones#">,
+				intellectualgenre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_intellectual_genre#">,
+				instructions = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_instruction#">,
+				source = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_source#">,
+				usageterms = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_rights_usage_terms#">,
+				copyrightstatus = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_status#">,
+				transmissionreference = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_job_identifier#">,
+				webstatement = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_info_url#">,
+				headline = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_content_headline#">,
+				datecreated = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_date_created#">,
+				city = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_city#">,
+				ciadrregion = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_contact_state_province#">,
+				country = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_country#">,
+				countrycode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_iso_country_code#">,
+				scene = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_scene#">,
+				state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_image_state_province#">,
+				credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.iptc_status_provider#">,
+				rights  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.xmp_copyright_notice#">
+				WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+				AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cftransaction>
+			<cfcatch type="any">
+				<!--- <cfset cfcatch.custom_message = "Error in writing the XML file to savecontent in function xmp.xmpwrite">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
+			</cfcatch>
+		</cftry>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("search")>
@@ -529,8 +545,8 @@
 					<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 				</cfif>
 				<cfcatch type="any">
-				    <cfset cfcatch.custom_message = "Error writing xml file in function xmp.xmpwrite">
-					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> 
+				   <!---  <cfset cfcatch.custom_message = "Error writing xml file in function xmp.xmpwrite">
+					<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 				</cfcatch>
 			</cftry>
 		<!--- Storage: Nirvanix --->
@@ -586,15 +602,17 @@
 			</cfif>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#images
-		SET 
-		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
-		is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		<cftransaction>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cftransaction>
 	</cfloop>
 </cffunction>
 
@@ -677,10 +695,10 @@
 						<cfset keywords = keywords & ",">
 					</cfif>
 				</cfloop>
-			</cfif>	
-			<!--- 
-			Append the keywords and description to the images_text table. Since XMP is not multilingual we just insert it into 
-			every language there is 
+			</cfif>
+			<!---
+			Append the keywords and description to the images_text table. Since XMP is not multilingual we just insert it into
+			every language there is
 			--->
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<cfset newkeywords = "">
@@ -708,23 +726,25 @@
 						<cfset newdescription = evaluate(userdesc) & " " & description>
 					</cfif>
 					<cftry>
-						<!--- Append to DB --->
-						<cfquery datasource="#application.razuna.datasource#">
-						UPDATE #session.hostdbprefix#images_text
-						SET 
-						<cfif newkeywords EQ ",">
-							img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
-						<cfelse>
-							img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
-						</cfif>,
-						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
-						WHERE <cfif structKeyExists(arguments.thestruct,'newid')> img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR"><cfelse>img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR"></cfif>
-						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						</cfquery>
+						<cftransaction>
+							<!--- Append to DB --->
+							<cfquery datasource="#application.razuna.datasource#">
+							UPDATE #session.hostdbprefix#images_text
+							SET
+							<cfif newkeywords EQ ",">
+								img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+							<cfelse>
+								img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
+							</cfif>,
+							img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
+							WHERE <cfif structKeyExists(arguments.thestruct,'newid')> img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR"><cfelse>img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR"></cfif>
+							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							</cfquery>
+						</cftransaction>
 						<cfcatch type="any">
-							<cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
-							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+							<!--- <cfset cfcatch.custom_message = "Error in image upload keywords in function xmp.xmpwritekeydesc_thread">
+							<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 						</cfcatch>
 					</cftry>
 				</cfif>
@@ -1153,7 +1173,7 @@
 			<cfset xmp.iptcimagecountrycode = trim(#thexml[1]["XMP-iptcCore:CountryCode"].xmltext#)>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
-		
+
 		<cftry>
 			<!--- Get height and width --->
 			<cfset xmp.orgwidth = gettoken(trim(#thexml[1]["Composite:ImageSize"].xmltext#),1,'x')>
@@ -1364,8 +1384,8 @@
 		</cfif>
 		<!--- Catch the error --->
 		<cfcatch type="any">
-			<cfset cfcatch.custom_message = "Error in function xmp.xmpparse">
-		 	<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+			<!--- <cfset cfcatch.custom_message = "Error in function xmp.xmpparse">
+		 	<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 		</cfcatch>
 	</cftry>
 	<!--- Return variable --->
@@ -1405,7 +1425,7 @@
 	<cfset var md5hash = "">
 	<!--- Query the record --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrydetail">
-	SELECT  f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_name, f.file_name_org filenameorg, f.link_path_url, 
+	SELECT  f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_name, f.file_name_org filenameorg, f.link_path_url,
 	f.link_kind, f.lucene_key, f.path_to_asset, f.cloud_url_org
 	FROM #session.hostdbprefix#files f
 	WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -1509,15 +1529,15 @@
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
-				<cffile action="delete" file="#arguments.thestruct.thesh#">	
+				<cffile action="delete" file="#arguments.thestruct.thesh#">
 			</cfif>
 			<!--- MD5 hash file again since it has changed now --->
 			<cfif FileExists(arguments.thestruct.thesource)>
 				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 			</cfif>
 			<cfcatch type="any">
-				<cfset cfcatch.custom_message = "Error in metadata writing for files in function xmp.metatofilethread">
-				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+				<!--- <cfset cfcatch.custom_message = "Error in metadata writing for files in function xmp.metatofilethread">
+				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 	<!--- Storage: Nirvanix --->
@@ -1541,7 +1561,7 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
-		</cfif>	
+		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Write XMP to image with Exiftool --->
@@ -1582,7 +1602,7 @@
 	<!--- Update images db with the new Lucene_Key --->
 	<cfquery datasource="#variables.dsn#">
 	UPDATE #session.hostdbprefix#files
-	SET 
+	SET
 	lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
 	hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">,
 	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -1707,7 +1727,7 @@
 		</cfif>
 		<cfset arguments.thestruct.meta_fields="#listremoveduplicates(arguments.thestruct.meta_fields)#">
 	<cfelse>
-		<cfset arguments.thestruct.meta_fields = "id,type,file_kind,filename,file_url,foldername,folder_id,create_date,change_date,expiry_date,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+		<cfset arguments.thestruct.meta_fields = "id,type,file_kind,filename,file_url,foldername,folder_id,create_date,change_date,expiry_date,labels,keywords,description,upc_number,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	</cfif>
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
@@ -1751,10 +1771,10 @@
 		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
+		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
 		img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#images
-		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
+		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
@@ -1763,7 +1783,7 @@
 		UNION ALL
 		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org, vid_create_time AS create_date, vid_change_time AS change_date, vid_size AS size, vid_width AS width, vid_height AS height, vid_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#videos
-		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
+		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
@@ -1772,7 +1792,7 @@
 		UNION ALL
 		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org, aud_create_time AS create_date, aud_change_time AS change_date, aud_size AS size, NULL AS width, NULL As height, aud_upc_number as upc_number, expiry_date
 		FROM #session.hostdbprefix#audios
-		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
+		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">)
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
@@ -1806,6 +1826,12 @@
 		</cfloop>
 	<!--- This is coming from a file list --->
 	<cfelse>
+		<cfif session.file_id EQ "all">
+			<!--- As we have all get all IDS from this search --->
+			<cfinvoke component="search" method="getAllIdsMain" searchupc="#session.search.searchupc#" searchtext="#session.search.searchtext#" searchtype="#session.search.searchtype#" searchrenditions="#session.search.searchrenditions#" searchfolderid="#session.search.searchfolderid#" hostid="#session.hostid#" returnvariable="ids">
+				<!--- Set the fileid --->
+				<cfset session.file_id = ids>
+		</cfif>
 		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Loop over filelist --->
 		<cfloop list="#session.file_id#" delimiters="," index="i">
@@ -1816,7 +1842,7 @@
 			<!--- Get details about file --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			<cfif arguments.thestruct.filetype EQ 'img'>
-			SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
+			SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r,
 			img_filename as url_file_name, cloud_url_org, img_create_time AS create_date, img_change_time AS change_date, img_size AS size, img_width AS width, img_height AS height, img_upc_number as upc_number, expiry_date
 			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -1863,6 +1889,7 @@
 		</cfloop>
 	</cfif>
 	<!--- We got the query ready, continue export --->
+
 	<!--- CVS --->
 	<cfif arguments.thestruct.format EQ "csv">
 		<cfinvoke method="export_csv" thestruct="#arguments.thestruct#" />
@@ -2013,9 +2040,9 @@
 				<cfset arguments.thestruct.file_url = qry_doc.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
-			<cfif structKeyExists(arguments.thestruct,"doc_columns") AND arguments.thestruct.doc_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>	
+			<cfif structKeyExists(arguments.thestruct,"doc_columns") AND arguments.thestruct.doc_columns NEQ "" OR (structKeyExists(arguments.thestruct,'export_template') AND arguments.thestruct.export_template.recordcount EQ 0)>
 				<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
-			</cfif>	
+			</cfif>
 		</cfdefaultcase>
 	</cfswitch>
 	<!--- Feedback --->
@@ -2073,7 +2100,7 @@
 	<cfif arguments.thestruct.export_template.recordcount NEQ 0>
 		<cfset SpreadsheetFormatColumns(sxls, {dateformat="yyyy-mm-dd"}, '#create_date_pos#')>
 		<cfset SpreadsheetFormatColumns(sxls, {dateformat="yyyy-mm-dd"}, '#change_date_pos#')>
-	<cfelse>	 
+	<cfelse>
 		<cfset SpreadsheetFormatrow(sxls, {alignment="vertical_top"}, 2)>
 	</cfif>
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)>
@@ -2128,64 +2155,64 @@
 		<cfloop query="arguments.thestruct.export_template" >
 			<cfif (structKeyExists(arguments.thestruct,'img_columns') AND "#arguments.thestruct.img_columns#" NEQ "" ) OR (structKeyExists(arguments.thestruct,'doc_columns') AND "#arguments.thestruct.doc_columns#" NEQ "" ) OR (structKeyExists(arguments.thestruct,'vid_columns') AND "#arguments.thestruct.vid_columns#" NEQ "" ) OR (structKeyExists(arguments.thestruct,'aud_columns') AND "#arguments.thestruct.aud_columns#" NEQ "" )>
 				<cfif (#exp_field# EQ "images_metadata") OR (#exp_field# EQ "files_metadata") OR(#exp_field# EQ "videos_metadata") OR (#exp_field# EQ "audios_metadata")>
-					<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," > 
+					<cfloop list="#valueList(arguments.thestruct.export_template.exp_value)#" index="idx" delimiters="," >
 						<!--- Add id --->
-						<cfif ("#idx#" EQ "img_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_id")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+						<cfif ("#idx#" EQ "img_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_id")  AND "#arguments.thestruct.filetype#" EQ "aud">
 							<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
 						</cfif>
 						<!--- Add Type --->
-						<cfif ("#idx#" EQ "img_type" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_type" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_type"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_type")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+						<cfif ("#idx#" EQ "img_type" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_type" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_type"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_type")  AND "#arguments.thestruct.filetype#" EQ "aud">
 							<cfset QuerySetCell(arguments.thestruct.tq, "type", arguments.thestruct.filetype)>
 						</cfif>
 						<!--- Add FolderID --->
-						<cfif ("#idx#" EQ "img_folder_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_folder_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_folder_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_folder_id")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+						<cfif ("#idx#" EQ "img_folder_id" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_folder_id" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_folder_id"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_folder_id")  AND "#arguments.thestruct.filetype#" EQ "aud">
 							<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
 						</cfif>
 						<!--- Add Folder Name --->
-						<cfif ("#idx#" EQ "img_foldername" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_foldername" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_foldername"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_foldername")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+						<cfif ("#idx#" EQ "img_foldername" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_foldername" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_foldername"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_foldername")  AND "#arguments.thestruct.filetype#" EQ "aud">
 							<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
 						</cfif>
 						<!--- Add File URL --->
-						<cfif ("#idx#" EQ "img_file_url" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_file_url" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_file_url"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_file_url")  AND "#arguments.thestruct.filetype#" EQ "aud"> 
+						<cfif ("#idx#" EQ "img_file_url" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_file_url" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_file_url"  AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_file_url")  AND "#arguments.thestruct.filetype#" EQ "aud">
 							<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
 						</cfif>
 						<!--- Add File Name --->
-						<cfif ("#idx#" EQ "img_filename" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_name" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_filename" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_name" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_filename" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_name" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_filename" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_name" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
 						</cfif>
 						<!--- Add create time --->
-						<cfif ("#idx#" EQ "img_create_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_create_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_create_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_create_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_create_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_create_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_create_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_create_time" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "create_date", dateformat(arguments.thestruct.create_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.create_date,'HH:mm:ss'))>
 						</cfif>
 						<!--- Add Change time --->
-						<cfif ("#idx#" EQ "img_change_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_change_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_change_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_change_time" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_change_time" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_change_time" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_change_time" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_change_time" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "change_date", dateformat(arguments.thestruct.change_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.change_date,'HH:mm:ss'))>
 						</cfif>
 						<!--- Add Expiry Date --->
-						<cfif ("#idx#" EQ "img_expiry_date" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_expiry_date" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_expiry_date" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_expiry_date" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_expiry_date" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_expiry_date" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_expiry_date" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_expiry_date" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "expiry_date", dateformat(arguments.thestruct.expiry_date,'#thedateformat#') & " " & timeformat(arguments.thestruct.expiry_date,'HH:mm:ss'))>
 						</cfif>
 						<!--- Add Width --->
-						<cfif ("#idx#" EQ "img_width" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_width" AND "#arguments.thestruct.filetype#" EQ "vid")> 
+						<cfif ("#idx#" EQ "img_width" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_width" AND "#arguments.thestruct.filetype#" EQ "vid")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "width", arguments.thestruct.width)>
 						</cfif>
 						<!--- Add Height --->
-						<cfif ("#idx#" EQ "img_height" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_height" AND "#arguments.thestruct.filetype#" EQ "vid")> 
+						<cfif ("#idx#" EQ "img_height" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "vid_height" AND "#arguments.thestruct.filetype#" EQ "vid")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "height", arguments.thestruct.height)>
 						</cfif>
 						<!--- Add Size --->
-						<cfif ("#idx#" EQ "img_size" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_size" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_size" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_size" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_size" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_size" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_size" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_size" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "size", arguments.thestruct.size)>
 						</cfif>
 						<!--- Add UPC number --->
-						<cfif ("#idx#" EQ "img_upc_number" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_upc_number" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_upc_number" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_upc_number" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_upc_number" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_upc_number" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_upc_number" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_upc_number" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfset QuerySetCell(arguments.thestruct.tq, "upc_number", arguments.thestruct.upc_number)>
 						</cfif>
 						<!--- Add keywords and description --->
 						<cfif arguments.thestruct.qry_text.recordcount NEQ 0>
 							<cfloop query="arguments.thestruct.qry_text">
 								<cfif tid EQ arguments.thestruct.file_id>
-									<cfif ("#idx#" EQ "img_keywords" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_keywords" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_keywords" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_keywords" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+									<cfif ("#idx#" EQ "img_keywords" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_keywords" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_keywords" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_keywords" AND "#arguments.thestruct.filetype#" EQ "aud")>
 										<cfset QuerySetCell(arguments.thestruct.tq, "keywords", arguments.thestruct.qry_text.keywords)>
 									</cfif>
 									<cfif ("#idx#" EQ "img_description" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_desc" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_description" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_description" AND "#arguments.thestruct.filetype#" EQ "aud")>
@@ -2195,7 +2222,7 @@
 							</cfloop>
 						</cfif>
 						<!--- Add Labels --->
-						<cfif ("#idx#" EQ "img_labels" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_labels" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_labels" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_labels" AND "#arguments.thestruct.filetype#" EQ "aud")> 
+						<cfif ("#idx#" EQ "img_labels" AND "#arguments.thestruct.filetype#" EQ "img") OR ("#idx#" EQ "file_labels" AND "#arguments.thestruct.filetype#" EQ "doc") OR ("#idx#" EQ "vid_labels" AND "#arguments.thestruct.filetype#" EQ "vid") OR ("#idx#" EQ "aud_labels" AND "#arguments.thestruct.filetype#" EQ "aud")>
 							<cfif arguments.thestruct.qry_labels NEQ "">
 								<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
 							</cfif>
@@ -2213,9 +2240,9 @@
   						</cfloop>
 					</cfloop>
 				</cfif>
-			</cfif>	
+			</cfif>
 		</cfloop>
-	<cfelse>	
+	<cfelse>
 		<!--- Add row local query --->
 		<cfset QueryAddRow(arguments.thestruct.tq,1)>
 		<!--- Add id --->
@@ -2242,7 +2269,9 @@
 		<cfif arguments.thestruct.qry_labels NEQ "">
 			<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
 		</cfif>
-	
+		<!--- UPC --->
+		<cfset QuerySetCell(arguments.thestruct.tq, "upc_number", arguments.thestruct.upc_number)>
+
 		<!--- Add custom fields --->
 		<cfloop query="arguments.thestruct.qry_cfields">
 			<!--- Replace foreign chars in column names --->
@@ -2442,8 +2471,8 @@
 					WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 					</cfquery>
 					<cfcatch type="database">
-						<cfset cfcatch.custom_message = "Database error while adding keywords and description to asset in function xmp.setmetadata">
-						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/>
+						<!--- <cfset cfcatch.custom_message = "Database error while adding keywords and description to asset in function xmp.setmetadata">
+						<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 					</cfcatch>
 				</cftry>
 			</cfif>
@@ -2458,7 +2487,7 @@
 			AND id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 			</cfquery>
 			<!--- If record is not here then do insert --->
-			<cfif ishere.recordcount EQ 0>	
+			<cfif ishere.recordcount EQ 0>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#xmp
 				(id_r, asset_type, host_id)
@@ -2517,7 +2546,7 @@
 			<!--- Insert or update --->
 			<cftransaction>
 				<cfquery datasource="#application.razuna.datasource#" name="qry_custom">
-				SELECT rec_uuid 
+				SELECT rec_uuid
 				FROM #session.hostdbprefix#custom_fields_values
 				WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
 				AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
@@ -2683,7 +2712,7 @@
 			<cfset console(cfcatch)> --->
 		</cfcatch>
 	</cftry>
-	
+
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

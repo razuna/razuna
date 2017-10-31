@@ -38,12 +38,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.12.4.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/login.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/dist/login_#attributes.cachetag#.min.js"></script>
 <cfif jr_enable EQ "true"><cfinclude template="../../js/janrain.cfm" runonce="true"></cfif>
 <!--- Favicon --->
 <cfif fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>

@@ -8,6 +8,8 @@
 <!--- Dynamic path --->
 <cfset dynpath = cgi.context_path>
 
+<cfinvoke component="global.cfc.settings" method="readPackageJson" thenode="script_version" returnvariable="attributes.cachetag" />
+
 <!--- PATH OF ONE DIR ABOVE THIS ONE --->
 <cfset pathoneup = ExpandPath("../")>
 <cfset pathoneup = replacenocase(pathoneup,"\","/","ALL")>

@@ -106,8 +106,8 @@
 				<!--- Catch --->
 				<cfcatch type="any">
 					<span style="font-weight:bold;color:red;">Oops an error occured: #cfcatch.message# - #cfcatch.detail#</span>
-					<cfset cfcatch.custom_message = "Error in function oauth.authenticate_return">
-					<cfset errobj.logerrors(cfcatch,false)/>
+					<!--- <cfset cfcatch.custom_message = "Error in function oauth.authenticate_return">
+					<cfset errobj.logerrors(cfcatch,false)/> --->
 				</cfcatch>
 			</cftry>
 		</cfif>
