@@ -31,7 +31,7 @@
 </cfif>
 
 <cfoutput>
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If user has read-only access to folder and view chosen is quick edit then switch to default view as user can not access quick edit view on a read only folder --->
 	<cfif attributes.folderaccess EQ "R" AND session.view EQ 'combined'>
@@ -210,7 +210,7 @@
 														<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 													</cfif>
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0" img-tt="img-tt">
+													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0" img-tt="img-tt">
 												</cfif>
 											<cfelse>
 												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -375,7 +375,7 @@
 														</cfif>
 													<cfelse>
 														<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-														<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
+														<img src="#thestorage##path_to_asset#/#thethumb#" border="0">
 													</cfif>
 												<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -679,7 +679,7 @@
 											<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 											</cfif>
@@ -821,7 +821,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -932,7 +932,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -1136,7 +1136,7 @@
 										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
@@ -1266,7 +1266,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0" img-tt="img-tt">
+												<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -1360,7 +1360,7 @@
 												</cfif>
 											<cfelse>
 												<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
-												<img src="#thestorage##path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#thethumb#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -1531,7 +1531,7 @@
 										<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 										</cfif>
