@@ -29,7 +29,7 @@
 	<cfset isadmin = false>
 </cfif>
 <cfoutput>
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 	<cfif attributes.qry_filecount NEQ 0>
 		<!--- Show approval alert --->
 		<!--- <cfdump var="#qry_approval_enabled#"> --->
@@ -133,7 +133,7 @@
 															<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 														</cfif>
 													<cfelse>
-														<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0">
+														<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
 													</cfif>
 												<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -257,7 +257,7 @@
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<img src="#cloud_url#" border="0" width="160">
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0" width="160">
+												<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0" width="160">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
@@ -376,7 +376,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#vid_name_image#?_v=#uniqueid#" border="0">
+												<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

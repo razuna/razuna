@@ -29,7 +29,7 @@
 	<cfset isadmin = false>
 </cfif>
 <cfoutput>
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<form name="label_form" id="label_form">
 	<input type="hidden" id="searchlistids" value="#valuelist(qry_labels_assets.fileidwithtype)#">
@@ -122,7 +122,7 @@
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<img src="#cloud_url#" border="0" img-tt="img-tt">
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?_v=#uniqueid#" border="0">
+													<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
 												</cfif>
 											<cfelse>
 												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
@@ -268,7 +268,7 @@
 											</cfif>
 										</cfloop>
 										<br/><br/>
-										<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#?_v=#uniqueid#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
+										<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#&labelview=yes','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
 										<!--- Icons --->
 										<div style="float:left;padding:6px 0px 3px 0px;">
 											<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('label_form');"<cfif structKeyExists(session,"file_id") AND listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
@@ -577,7 +577,7 @@
 												<cfif application.razuna.storage EQ "amazon" AND cloud_url NEQ "">
 													<img src="#cloud_url#" border="0" img-tt="img-tt">
 												<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" img-tt="img-tt">
+													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 												<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 												</cfif>

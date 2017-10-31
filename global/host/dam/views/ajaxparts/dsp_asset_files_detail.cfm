@@ -30,7 +30,7 @@
 	  });
   </script>
 <cfoutput>
-	<cfset uniqueid = createuuid()>
+	<!--- <cfset uniqueid = createuuid()> --->
 	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif attributes.folderaccess NEQ "R"> onsubmit="if (formchecks())filesubmit();return false;"</cfif>>
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
@@ -120,7 +120,7 @@
 									<cfif application.razuna.storage EQ "amazon" AND qry_detail.detail.cloud_url NEQ "">
 										<img src="#qry_detail.detail.cloud_url#" border="0" img-tt="img-tt">
 									<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") >
-										<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#?_v=#uniqueid#" border="0">
+										<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#" border="0">
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" width="128" height="128" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 									</cfif>
@@ -141,7 +141,7 @@
 															<cfif application.razuna.storage EQ "amazon" AND qry_detail.detail.cloud_url NEQ "">
 																<img src="#qry_detail.detail.cloud_url#" border="0" img-tt="img-tt" style="max-height:50px;max-width:100px;">
 															<cfelseif application.razuna.storage EQ "local" AND FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") >
-																<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#?_v=#uniqueid#" border="0" style="max-height:50px;max-width:100px;">
+																<img src="#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#" border="0" style="max-height:50px;max-width:100px;">
 															<cfelse>
 																<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'" style="max-height:50px;max-width:100px;">
 															</cfif>
