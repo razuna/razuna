@@ -155,6 +155,7 @@
 			<cfset session.user_search_selection = qryuser.user_search_selection>
 			<!--- Set the user ID into a session --->
 			<cfset session.theuserid = qryuser.user_id>
+			<cfset session.user_email = qryuser.user_email>
 			<!--- Set User First and last name --->
 			<cfset session.firstlastname = "#qryuser.user_first_name# #qryuser.user_last_name#">
 			<cfif structKeyExists(arguments.thestruct,"ad_user_name") AND qryuser.user_first_name EQ '' AND qryuser.user_last_name EQ ''>
