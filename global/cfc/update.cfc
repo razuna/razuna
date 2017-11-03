@@ -210,7 +210,7 @@
 				</cftry>
 				<cftry>
 					<cfquery datasource="#application.razuna.datasource#">
-					CREATE UNIQUE INDEX 'idx_raz1_cart_CART_ID_CART_PRODUCT_ID_HOST_ID' ON raz1_cart (CART_ID, CART_PRODUCT_ID, HOST_ID) COMMENT '' ALGORITHM DEFAULT LOCK DEFAULT
+					CREATE UNIQUE INDEX `idx_raz1_cart_CART_ID_CART_PRODUCT_ID_HOST_ID` ON raz1_cart (CART_ID, CART_PRODUCT_ID, HOST_ID) COMMENT '' ALGORITHM DEFAULT LOCK DEFAULT
 					</cfquery>
 					<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
