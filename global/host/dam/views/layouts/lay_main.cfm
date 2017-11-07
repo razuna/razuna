@@ -177,6 +177,7 @@
 		<div id="div_forall" style="display:none;"></div>
 
 		<cfif cgi.http_host CONTAINS "razuna.com">
+			<cfset _email = structKeyExists(session, user_email) ? session.user_email : ''>
 			<script type="text/javascript">
 				var __lc = {};
 				__lc.license = 4481361;
