@@ -184,7 +184,7 @@
 				__lc.group = 4;
 				__lc.params = [
 					{ name: 'livechat_note', value: '' },
-					{ name: 'email', value: '#session.user_email#' },
+					{ name: 'email', value: '#_email#' },
 					{ name: 'User', value: '#session.firstlastname#' },
 					{ name: 'User ID', value: '#session.theuserid#' },
 					{ name: 'Host ID', value: '#session.hostid#' },
