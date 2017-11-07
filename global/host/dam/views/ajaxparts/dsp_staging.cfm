@@ -59,7 +59,7 @@
 			<div id="approval_#id#" class="approval_class">
 				<!--- Thumbnail --->
 				<div style="float:left;padding-right:25px;">
-					<a href="##" onclick="showwindow('#myself#?fa=#_detail_link#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">
+					<a href="##" onclick="showwindow('#myself##_detail_link#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">
 						<cfif application.razuna.storage EQ "amazon">
 							<cfif cloud_url NEQ "">
 								<img src="#cloud_url#" border="0" style="max-width:110px;max-height:110px;">
@@ -99,7 +99,7 @@
 					</p>
 					<br>
 					<p>
-						<a href="##" onclick="showwindow('#myself#?fa=#_detail_link#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">Check details</a>
+						<a href="##" onclick="showwindow('#myself##_detail_link#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">Check details</a>
 					</p>
 					<br>
 					<br>
