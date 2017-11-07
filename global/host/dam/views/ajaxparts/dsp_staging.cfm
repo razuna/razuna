@@ -44,36 +44,40 @@
 			<!--- Set vars --->
 			<cfif kind EQ "img">
 				<cfset _kind = "images">
+				<cfset _detail_link = "c.images_detail">
 			<cfelseif kind EQ "vid">
 				<cfset _kind = "videos">
+				<cfset _detail_link = "c.videos_detail">
 			<cfelseif kind EQ "aud">
-				<cfset _kind = "images">
+				<cfset _kind = "audios">
+				<cfset _detail_link = "c.audios_detail">
 			<cfelse>
 				<cfset _kind = "files">
+				<cfset _detail_link = "c.files_detail">
 			</cfif>
 			<!--- Show files --->
 			<div id="approval_#id#" class="approval_class">
 				<!--- Thumbnail --->
 				<div style="float:left;padding-right:25px;">
-					<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">
+					<a href="##" onclick="showwindow('#myself##_detail_link#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">
 						<cfif application.razuna.storage EQ "amazon">
 							<cfif cloud_url NEQ "">
-								<img src="#cloud_url#" border="0" style="max-width:400px">
+								<img src="#cloud_url#" border="0" style="max-width:110px;max-height:110px;">
 							<cfelse>
-								<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0" style="max-width:400px">
+								<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0" style="max-width:110px;max-height:110px;">
 							</cfif>
 						<cfelse>
 							<cfif kind EQ "img">
-								<img src="#thestorage##path_to_asset#/thumb_#id#.#thumb_extension#?_v=#hashtag#" border="0" style="max-width:400px">
+								<img src="#thestorage##path_to_asset#/thumb_#id#.#thumb_extension#?_v=#hashtag#" border="0" style="max-width:110px;max-height:110px;">
 							<cfelseif kind EQ "vid">
 								<cfset thethumb = replacenocase(filename_org, ".#extension#", ".jpg", "all")>
-								<img src="#thestorage##path_to_asset#/#thethumb#?_v=#hashtag#" border="0" style="max-width:400px">
+								<img src="#thestorage##path_to_asset#/#thethumb#?_v=#hashtag#" border="0" style="max-width:110px;max-height:110px;">
 							<cfelseif kind EQ "aud">
 								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif extension EQ "mp3" OR extension EQ "wav">#extension#<cfelse>aud</cfif>.png" border="0">
 							<cfelse>
 								<cfset thethumb = replacenocase(filename_org, ".#extension#", ".jpg", "all")>
 								<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") >
-									<img src="#thestorage##path_to_asset#/#thethumb#?_v=#hashtag#" border="0" style="max-width:400px">
+									<img src="#thestorage##path_to_asset#/#thethumb#?_v=#hashtag#" border="0" style="max-width:110px;max-height:110px;">
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_#extension#.png" border="0" width="128" height="128" onerror = "this.src='#dynpath#/global/host/dam/images/icons/icon_txt.png'">
 								</cfif>
@@ -95,7 +99,7 @@
 					</p>
 					<br>
 					<p>
-						<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">Check details</a>
+						<a href="##" onclick="showwindow('#myself##_detail_link#&file_id=#id#&what=#_kind#&loaddiv=content&folder_id=#folder_id_r#&showsubfolders=false','',1000,1);return false;">Check details</a>
 					</p>
 					<br>
 					<br>

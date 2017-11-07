@@ -110,6 +110,7 @@
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND cart_order_done IS NULL
 	</cfquery>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#readbasketquick */ '#qry_count.total#' as total, c.cart_product_id, c.cart_file_type,
@@ -146,6 +147,7 @@
 		FROM #session.hostdbprefix#cart c
 		WHERE c.cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="cf_sql_varchar">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND cart_order_done IS NULL
 		ORDER BY c.cart_file_type
 		LIMIT 20
 	</cfquery>
@@ -2008,9 +2010,12 @@
 	SELECT /* #variables.cachetoken#get_orders */ cart_id, cart_order_date, cart_order_done
 	FROM #session.hostdbprefix#cart
 	WHERE cart_order_done IS NOT NULL
-	AND cart_order_user_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+	AND cart_order_done <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">
+	<!--- AND cart_order_user_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#"> --->
 	GROUP BY cart_id, cart_order_date, cart_order_done
 	</cfquery>
+	<!--- <cfset consoleoutput(true)>
+	<cfset console(qry)> --->
 	<cfreturn qry />
 </cffunction>
 
@@ -2024,7 +2029,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
-	<cfoutput>Done!</cfoutput>
+	<cfoutput><h3>The order has been marked as closed and fulfilled</h3></cfoutput>
 	<cfreturn />
 </cffunction>
 

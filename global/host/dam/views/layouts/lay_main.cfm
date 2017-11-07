@@ -177,11 +177,14 @@
 		<div id="div_forall" style="display:none;"></div>
 
 		<cfif cgi.http_host CONTAINS "razuna.com">
+			<cfset _email = structKeyExists(session, "user_email") ? session.user_email : ''>
 			<script type="text/javascript">
 				var __lc = {};
 				__lc.license = 4481361;
 				__lc.group = 4;
 				__lc.params = [
+					{ name: 'livechat_note', value: '' },
+					{ name: 'email', value: '#_email#' },
 					{ name: 'User', value: '#session.firstlastname#' },
 					{ name: 'User ID', value: '#session.theuserid#' },
 					{ name: 'Host ID', value: '#session.hostid#' },

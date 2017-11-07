@@ -463,6 +463,8 @@
 	
 		<!--- JS for the combined view --->
 		<script type="text/javascript">
+			// Call for Masonry
+			callMasonry();
 			<cfif session.file_id NEQ "">
 				enablesub('#attributes.kind#form');
 			</cfif>

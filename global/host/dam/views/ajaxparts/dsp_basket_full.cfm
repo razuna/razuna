@@ -152,9 +152,9 @@
 				</tr>
 			</cfif>
 			<!--- Show order desc --->
-			<cfif qry_basket.cart_order_done NEQ "">
+			<cfif attributes.fromshare EQ "F" AND qry_basket.cart_order_done NEQ "">
 				<tr>
-					<td colspan="4"><strong>This is an order from a user.</strong> Actually, all items below are the order of the customer. You can remove, add or modify the basket. You can choose what you want to do with this order with the button above, e.g. if you want to send the order to the user, simply choose the "eMail Basket" action.
+					<td colspan="4"><h2>This is an order from the email address: #qry_basket.cart_order_email#</h2> You can remove, add or modify the basket. You can choose what you want to do with this order with the button above, e.g. if you want to send the order to the user, simply choose the "eMail Basket" action.
 					<cfif qry_basket.cart_order_message NEQ "">
 						<br><br>
 						The user wrote the below message with this order:
@@ -165,7 +165,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="4">If you have finished processing the order <a href="##" onclick="loadcontent('order_done','#myself#c.order_done&cart_id=#session.thecart#');">please click on here to close the order.</a><div id="order_done"></div></td>
+					<td colspan="4">If you have finished processing the order <a href="##" onclick="loadcontent('order_done','#myself#c.order_done&cart_id=#session.thecart#');">please click here to close the order.</a><div id="order_done"></div></td>
 				</tr>
 			</cfif>
 			<tr>

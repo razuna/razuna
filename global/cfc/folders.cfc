@@ -4359,7 +4359,7 @@
 		<cfelseif kind EQ "doc">
 			AND cf.cf_show IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc,all" list="true">)
 		</cfif>
-		GROUP BY cfv.cf_id_r, asset_id_r, cf_value, cfv.host_id
+		GROUP BY cfv.cf_id_r, asset_id_r, cf_value, cfv.host_id, cft.cf_text, cft.cf_id_r
 		</cfquery>
 		<cfloop query="qry_cf">
 			<!--- Put list together --->

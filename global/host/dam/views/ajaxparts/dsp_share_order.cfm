@@ -68,7 +68,7 @@
 			url: url,
 		   	data: items,
 		   	success: function(){
-		   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
+		   		$("##successemail").html('<p>Your order has been placed. Thank you. You can close this window now.</p>');
 		   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		   	}
 		});

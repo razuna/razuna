@@ -24,13 +24,13 @@
 *
 --->
 <cfoutput>
-<cfif cs.show_basket_part OR cs.show_favorites_part OR qry_orders.recordcount NEQ 0>	
+<cfif cs.show_basket_part OR cs.show_favorites_part OR qry_orders.recordcount NEQ 0>
 	<cfif !cs.show_basket_part>
 		<cfset basket_css  = "display:none;">
 	<cfelse>
 		<cfset basket_css  = "">
 	</cfif>
-	
+
 	<cfif !cs.show_favorites_part>
 		<cfset favorites_css  = "display:none;">
 	<cfelse>

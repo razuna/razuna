@@ -8131,6 +8131,7 @@
 		<set name="attributes.fp" value="F" overwrite="false" />
 		<set name="attributes.perm_password" value="F" />
 		<set name="attributes.qry_news" value="[]" />
+		<set name="session.thecart" value="#createuuid('')#" />
 		<!-- Folder id into session -->
 		<set name="session.fid" value="#attributes.fid#" />
 		<if condition="#attributes.fromcol# EQ 'F' OR NOT structkeyexists(session,'iscol')">

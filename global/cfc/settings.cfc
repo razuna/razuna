@@ -3558,22 +3558,22 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset var grpperm = "">
 	<!--- If user has access to the admin tab or if he is in a group that has access then he can see the admin tab so set its access value to true else set to false --->
 	<cfloop collection="#arguments.thestruct#" item="field">
-		<cfif listfind (structfind(thestruct,field),session.theuserid)>
-			<cfset structupdate (thestruct,field,true)>
+		<cfif listfind (structfind(arguments.thestruct,field),session.theuserid)>
+			<cfset structupdate(arguments.thestruct,field,true)>
 			<cfcontinue>
 		</cfif>
-		<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,field)#" list2 = "#session.thegroupofuser#" returnvariable="grpperm">
+		<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,field)#" list2 = "#session.thegroupofuser#" returnvariable="grpperm">
 		<cfif grpperm NEQ "">
-			<cfset structupdate (thestruct,field,true)>
+			<cfset structupdate(arguments.thestruct,field,true)>
 		<cfelse>
-			<cfset structdelete (thestruct,field)>
+			<cfset structdelete(arguments.thestruct,field)>
 		</cfif>
 	</cfloop>
 	<!--- if user has no access we need to set the access here --->
-	<cfif !structkeyexists(thestruct, 'groups_access')>
-		<cfset thestruct.groups_access = false>
+	<cfif !structkeyexists(arguments.thestruct, 'groups_access')>
+		<cfset arguments.thestruct.groups_access = false>
 	</cfif>
-	<cfreturn thestruct>
+	<cfreturn arguments.thestruct>
 </cffunction>
 
 
@@ -3602,28 +3602,28 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset cs_place_struct.cf_bottom.file="">
 
 	<!--- Images --->
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.top.image">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"images_metadata")#" list2 = "#structfind(thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.bottom.image">
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_top.image">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_images_metadata")#" list2 = "#structfind(thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.image">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"images_metadata")#" list2 = "#structfind(arguments.thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.top.image">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"images_metadata")#" list2 = "#structfind(arguments.thestruct,"images_metadata_top")#" returnvariable="cs_place_struct.bottom.image">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"cf_images_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_top.image">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"cf_images_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_images_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.image">
 
  	<!--- Audios --->
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.top.audio">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"audios_metadata")#" list2 = "#structfind(thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.bottom.audio">
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_top.audio">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_audios_metadata")#" list2 = "#structfind(thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.audio">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"audios_metadata")#" list2 = "#structfind(arguments.thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.top.audio">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"audios_metadata")#" list2 = "#structfind(arguments.thestruct,"audios_metadata_top")#" returnvariable="cs_place_struct.bottom.audio">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"cf_audios_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_top.audio">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"cf_audios_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_audios_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.audio">
 
  	<!--- Videos --->
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.top.video">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"videos_metadata")#" list2 = "#structfind(thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.bottom.video">
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_top.video">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_videos_metadata")#" list2 = "#structfind(thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.video">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"videos_metadata")#" list2 = "#structfind(arguments.thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.top.video">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"videos_metadata")#" list2 = "#structfind(arguments.thestruct,"videos_metadata_top")#" returnvariable="cs_place_struct.bottom.video">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"cf_videos_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_top.video">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"cf_videos_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_videos_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.video">
 
  	<!--- Files --->
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.top.file">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"files_metadata")#" list2 = "#structfind(thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.bottom.file">
- 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_top.file">
- 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(thestruct,"cf_files_metadata")#" list2 = "#structfind(thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.file">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"files_metadata")#" list2 = "#structfind(arguments.thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.top.file">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"files_metadata")#" list2 = "#structfind(arguments.thestruct,"files_metadata_top")#" returnvariable="cs_place_struct.bottom.file">
+ 	<cfinvoke component="global.cfc.global" method="comparelists" list1 = "#structfind(arguments.thestruct,"cf_files_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_top.file">
+ 	<cfinvoke component="global.cfc.global" method="subtractlists" list1 = "#structfind(arguments.thestruct,"cf_files_metadata")#" list2 = "#structfind(arguments.thestruct,"cf_files_metadata_top")#" returnvariable="cs_place_struct.cf_bottom.file">
  	
   	 <cfreturn cs_place_struct>
 </cffunction>

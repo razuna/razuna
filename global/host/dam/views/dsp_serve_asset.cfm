@@ -117,14 +117,16 @@
 					<!--- Default file name when prompted to download, send as utf which modern browsers will honor and older ones will fallback to the filename witbout utf value which is also passed in --->
 					<cfheader name="content-disposition" value="attachment; filename=""#filenamefordownload_clean#""; filename*=UTF-8''#filenamefordownload#" />
 					<!--- Struct for remote --->
-					<!--- <cfset remote = structnew()>
+					<cfset remote = structnew()>
 					<cfset remote.type = "http">
 					<cfset remote.url = qry_binary.theurl>
-					<cfdump var="#remote#"> --->
+					<!--- Serve file --->
+					<cfcontent remote="#remote#" />
+					<!--- <cfdump var="#remote#"> --->
 					<!--- Get file --->
-					<cfhttp url="#qry_binary.theurl#" getasbinary="yes" />
+					<!--- <cfhttp url="#qry_binary.theurl#" getasbinary="yes" /> --->
 					<!--- Serve the file --->
-					<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
+					<!--- <cfcontent type="application/force-download" variable="#cfhttp.FileContent#"> --->
 					<!--- <cfabort> --->
 					<!--- Serve file --->
 					<!--- <cfcontent remote="#remote#" /> --->
