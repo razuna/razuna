@@ -7,7 +7,6 @@
     <assert>true</assert>
     <missingtemplatehandler></missingtemplatehandler>
     <tempdirectory>/WEB-INF/bluedragon/work/temp</tempdirectory>
-    <lastfile>/home/nitai/Documents/repos/razuna/WEB-INF/bluedragon/bluedragon.xml.bak.1</lastfile>
     <runtimelogging>true</runtimelogging>
     <deniedips></deniedips>
     <defaultcharset>UTF-8</defaultcharset>
@@ -35,74 +34,6 @@
     <maxfiles>1000</maxfiles>
     <trustcache>false</trustcache>
   </file>
-  <cfschedule>
-    <task name="razfoldersubscribe">
-      <porttouse>-1</porttouse>
-      <password></password>
-      <resolvelinks>false</resolvelinks>
-      <username></username>
-      <pause>false</pause>
-      <starttime>00:01:00</starttime>
-      <requesttimeout>30</requesttimeout>
-      <proxyport>80</proxyport>
-      <proxypassword></proxypassword>
-      <publishpath></publishpath>
-      <enddate></enddate>
-      <urltouse>http://localhost:8080/razuna/admin/index.cfm?fa=c.folder_subscribe_task</urltouse>
-      <proxyusername></proxyusername>
-      <publish>false</publish>
-      <proxyserver></proxyserver>
-      <publishfile></publishfile>
-      <interval>500</interval>
-      <startdate>11/29/2016</startdate>
-      <endtime>23:59:00</endtime>
-      <name>razfoldersubscribe</name>
-    </task>
-    <task name="razassetexpiry">
-      <porttouse>-1</porttouse>
-      <password></password>
-      <resolvelinks>false</resolvelinks>
-      <username></username>
-      <pause>false</pause>
-      <starttime>00:01:00</starttime>
-      <requesttimeout>30</requesttimeout>
-      <proxyport>80</proxyport>
-      <proxypassword></proxypassword>
-      <publishpath></publishpath>
-      <enddate></enddate>
-      <urltouse>http://localhost:8080/razuna/admin/index.cfm?fa=c.w_asset_expiry_task</urltouse>
-      <proxyusername></proxyusername>
-      <publish>false</publish>
-      <proxyserver></proxyserver>
-      <publishfile></publishfile>
-      <interval>300</interval>
-      <startdate>11/29/2016</startdate>
-      <endtime>23:59:00</endtime>
-      <name>razassetexpiry</name>
-    </task>
-    <task name="razftpnotifications">
-      <porttouse>-1</porttouse>
-      <password></password>
-      <resolvelinks>false</resolvelinks>
-      <username></username>
-      <pause>false</pause>
-      <starttime>00:01:00</starttime>
-      <requesttimeout>30</requesttimeout>
-      <proxyport>80</proxyport>
-      <proxypassword></proxypassword>
-      <publishpath></publishpath>
-      <enddate></enddate>
-      <urltouse>http://localhost:8080/razuna/admin/index.cfm?fa=c.w_ftp_notifications_task</urltouse>
-      <proxyusername></proxyusername>
-      <publish>false</publish>
-      <proxyserver></proxyserver>
-      <publishfile></publishfile>
-      <interval>3600</interval>
-      <startdate>11/29/2016</startdate>
-      <endtime>23:59:00</endtime>
-      <name>razftpnotifications</name>
-    </task>
-  </cfschedule>
   <javacustomtags>
     <classes>/WEB-INF/classes</classes>
   </javacustomtags>
@@ -115,78 +46,6 @@
   </fonts>
   <cfquery>
     <cache>true</cache>
-    <datasource name="oracle">
-      <displayname>oracle</displayname>
-      <password></password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>oracle.jdbc.OracleDriver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <port>1521</port>
-      <server>127.0.0.1</server>
-      <databasename>orcl</databasename>
-      <description></description>
-      <connectstring></connectstring>
-      <logintimeout>120</logintimeout>
-      <initstring></initstring>
-      <hoststring>jdbc:oracle:thin:@127.0.0.1:1521:orcl</hoststring>
-      <maxconnections>24</maxconnections>
-      <name>oracle</name>
-    </datasource>
-    <datasource name="mysql">
-      <displayname>mysql</displayname>
-      <password></password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>com.mysql.jdbc.Driver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <port>3306</port>
-      <server>127.0.0.1</server>
-      <databasename>razuna</databasename>
-      <description></description>
-      <connectstring>noDatetimeStringSync=true&amp;zeroDateTimeBehavior=convertToNull</connectstring>
-      <logintimeout>120</logintimeout>
-      <initstring></initstring>
-      <hoststring>jdbc:mysql://127.0.0.1:3306/razuna?cacheResultSetMetadata=false&amp;autoReconnect=true&amp;noDatetimeStringSync=true&amp;zeroDateTimeBehavior=convertToNull</hoststring>
-      <maxconnections>50</maxconnections>
-      <name>mysql</name>
-    </datasource>
-    <datasource name="psql">
-      <displayname>psql</displayname>
-      <password></password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>org.postgresql.Driver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <port>5432</port>
-      <server>127.0.0.1</server>
-      <databasename>postgres</databasename>
-      <description></description>
-      <connectstring></connectstring>
-      <logintimeout>120</logintimeout>
-      <initstring></initstring>
-      <hoststring>jdbc:postgresql://127.0.0.1:5432/postgres</hoststring>
-      <maxconnections>24</maxconnections>
-      <name>psql</name>
-    </datasource>
     <dbdrivers>
       <driver name="microsoft sql server (jtds)">
         <datasourceconfigpage>sqlserver-jtds.cfm</datasourceconfigpage>
@@ -259,94 +118,6 @@
         <defaultport>5432</defaultport>
       </driver>
     </dbdrivers>
-    <datasource name="h2">
-      <displayname>h2</displayname>
-      <password>E5SRlQSbiM0Ym5Dc</password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>org.h2.Driver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <port>0</port>
-      <server></server>
-      <databasename>razuna</databasename>
-      <description></description>
-      <connectstring>AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE</connectstring>
-      <initstring></initstring>
-      <logintimeout>120</logintimeout>
-      <hoststring>jdbc:h2:/home/nitai/Documents/repos/razuna/db/razuna;IGNORECASE=true;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE</hoststring>
-      <maxconnections>3</maxconnections>
-      <name>h2</name>
-    </datasource>
-    <datasource name="razuna_backup">
-      <displayname>razuna_backup</displayname>
-      <password>E5SRlQSbiM0Ym5ba</password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>org.h2.Driver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <databasename>razuna_backup</databasename>
-      <initstring></initstring>
-      <logintimeout>120</logintimeout>
-      <hoststring>jdbc:h2:/home/nitai/Documents/repos/razuna/admin/backup/razuna_backup;LOG=0;CACHE_SIZE=300000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE</hoststring>
-      <maxconnections>24</maxconnections>
-      <name>razuna_backup</name>
-    </datasource>
-    <datasource name="razuna_default">
-      <displayname>razuna_default</displayname>
-      <password>E5SRlQSbiM0Ym5HXGJyb3w==</password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>org.h2.Driver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <databasename>razuna_default</databasename>
-      <initstring></initstring>
-      <logintimeout>120</logintimeout>
-      <hoststring>jdbc:h2:/home/nitai/Documents/repos/razuna/db/razuna_default;CACHE_SIZE=100000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE</hoststring>
-      <maxconnections>24</maxconnections>
-      <name>razuna_default</name>
-    </datasource>
-    <datasource name="mssql">
-      <displayname>mssql</displayname>
-      <password></password>
-      <connectionretries>0</connectionretries>
-      <sqldelete>true</sqldelete>
-      <sqlupdate>true</sqlupdate>
-      <username>razuna</username>
-      <drivername>net.sourceforge.jtds.jdbc.Driver</drivername>
-      <sqlstoredprocedures>true</sqlstoredprocedures>
-      <perrequestconnections>false</perrequestconnections>
-      <sqlinsert>true</sqlinsert>
-      <sqlselect>true</sqlselect>
-      <connectiontimeout>120</connectiontimeout>
-      <port>1433</port>
-      <server>127.0.0.1</server>
-      <databasename>razuna</databasename>
-      <description></description>
-      <connectstring></connectstring>
-      <initstring></initstring>
-      <logintimeout>120</logintimeout>
-      <hoststring>jdbc:jtds:sqlserver://127.0.0.1:1433/razuna</hoststring>
-      <maxconnections>24</maxconnections>
-      <name>mssql</name>
-    </datasource>
     <datasource name="razuna_client">
       <displayname>razuna_client</displayname>
       <password>E5SRlTLMwf1Ay8CNRw==</password>
