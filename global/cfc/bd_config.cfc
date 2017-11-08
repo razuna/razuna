@@ -441,7 +441,7 @@
 
 				<!--- url format: jdbc:h2:/path_to_database;AUTO_SERVER=TRUE ... --->
 				<!--- note that AUTO_SERVER=TRUE is necessary in order for the embedded database to respond to multiple threads --->
-				<cfset jdbcURL = "jdbc:h2:~/#arguments.filepath##getFileSeparator()##arguments.database#;IGNORECASE=#arguments.h2IgnoreCase#" />
+				<cfset jdbcURL = "jdbc:h2:#arguments.filepath##getFileSeparator()##arguments.database#;IGNORECASE=#arguments.h2IgnoreCase#" />
 				
 				<cfif arguments.h2Mode is not "H2Native">
 					<cfset jdbcURL = jdbcURL & ";MODE=#arguments.h2Mode#" />
