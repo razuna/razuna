@@ -1232,7 +1232,7 @@
 					<cfinvokeargument name="username" value="razuna" />
 					<cfinvokeargument name="password" value="razunaconfig" />
 					<cfinvokeargument name="sqlstoredprocedures" value="true" />
-					<cfinvokeargument name="hoststring" value="jdbc:h2:~/#arguments.pathoneup#db/razuna_default;CACHE_SIZE=100000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE" />
+					<cfinvokeargument name="hoststring" value="jdbc:h2:#arguments.pathoneup#db/razuna_default;CACHE_SIZE=100000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE" />
 					<cfinvokeargument name="sqlupdate" value="true" />
 					<cfinvokeargument name="sqlselect" value="true" />
 					<cfinvokeargument name="sqlinsert" value="true" />
@@ -1312,7 +1312,7 @@
 				<cfinvokeargument name="username" value="razuna" />
 				<cfinvokeargument name="password" value="razunadb" />
 				<cfinvokeargument name="sqlstoredprocedures" value="true" />
-				<cfinvokeargument name="hoststring" value="jdbc:h2:~/#arguments.pathoneup#admin/backup/razuna_backup;LOG=0;CACHE_SIZE=300000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE" />
+				<cfinvokeargument name="hoststring" value="jdbc:h2:#arguments.pathoneup#admin/backup/razuna_backup;LOG=0;CACHE_SIZE=300000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE" />
 				<cfinvokeargument name="sqlupdate" value="true" />
 				<cfinvokeargument name="sqlselect" value="true" />
 				<cfinvokeargument name="sqlinsert" value="true" />

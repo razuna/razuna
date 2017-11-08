@@ -42,7 +42,7 @@
 				<cfinvokeargument name="username" value="razuna" />
 				<cfinvokeargument name="password" value="razunadb" />
 				<cfinvokeargument name="sqlstoredprocedures" value="true" />
-				<cfinvokeargument name="hoststring" value="jdbc:h2:~/#arguments.thestruct.pathoneup#db/razuna;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;LOG=0;CACHE_SIZE=300000;AUTO_SERVER=TRUE" />
+				<cfinvokeargument name="hoststring" value="jdbc:h2:#arguments.thestruct.pathoneup#db/razuna;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;LOG=0;CACHE_SIZE=300000;AUTO_SERVER=TRUE" />
 				<cfinvokeargument name="sqlupdate" value="true" />
 				<cfinvokeargument name="sqlselect" value="true" />
 				<cfinvokeargument name="sqlinsert" value="true" />
