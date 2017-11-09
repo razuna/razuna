@@ -183,7 +183,7 @@
 				__lc.license = 4481361;
 				__lc.group = 4;
 				__lc.params = [
-					{ name: 'livechat_note', value: '' },
+					{ name: 'livechat_note', value: 'Customer information' },
 					{ name: 'email', value: '#_email#' },
 					{ name: 'User', value: '#session.firstlastname#' },
 					{ name: 'User ID', value: '#session.theuserid#' },
