@@ -593,24 +593,6 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
 		</cfquery>
 		<cftry>
-			<!--- REMOVE THE DIRECTORY ON THE FILESYSTEM --->
-			<cftry>
-				<cfset _assets_dir = "#qry_rhost_settings.path_to_assets#/#arguments.thestruct.id#">
-				<cfset console(_assets_dir)>
-				<cfif directoryExists(_assets_dir)>
-					<cfdirectory action="delete" directory="#_assets_dir#" mode="775" recurse="yes">
-				</cfif>
-				<cfcatch>
-					<cfset console("--- Error while removing assets of host ---")>
-					<cfset console(cfcatch)>
-				</cfcatch>
-			</cftry>
-			<!--- Remove the Collection --->
-			<cftry>
-				<cfcollection action="delete" collection="#arguments.thestruct.id#" />
-				<cfcatch></cfcatch>
-			</cftry>
-
 			<!--- Remove the Host entry --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM hosts
@@ -746,6 +728,33 @@
 				<cfset console("--- Error while removing db records host ---")>
 				<cfset console(cfcatch)>
 			</cfcatch>
+		</cftry>
+
+		<!--- REMOVE THE DIRECTORY ON THE FILESYSTEM --->
+		<cfset console("--- Starting to remove assets on file for #arguments.thestruct.id# ---")>
+
+		<cfset _s = StructNew()>
+		<cfset _s.asset_dir = "#qry_rhost_settings.path_to_assets#/#arguments.thestruct.id#">
+
+		<cfset console("--- Directory: #_s.asset_dir# ---")>
+
+		<cfthread intstruct="#_s#">
+			<cftry>
+				<cfset console(attributes.intstruct.asset_dir)>
+				<cfif directoryExists(attributes.intstruct.asset_dir)>
+					<cfdirectory action="delete" directory="#attributes.intstruct.asset_dir#" mode="775" recurse="yes">
+				</cfif>
+				<cfcatch>
+					<cfset console("--- Error while removing assets of host ---")>
+					<cfset console(cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfthread>
+
+		<!--- Remove the Collection --->
+		<cftry>
+			<cfcollection action="delete" collection="#arguments.thestruct.id#" />
+			<cfcatch></cfcatch>
 		</cftry>
 
 		<cfoutput>Host has been removed</cfoutput>
