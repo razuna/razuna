@@ -6276,6 +6276,7 @@
 		<set name="attributes.dsn" value="#application.razuna.datasource#" />
 		<set name="attributes.database" value="#application.razuna.thedatabase#" />
 		<set name="attributes.storage" value="#application.razuna.storage#" />
+		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<!-- CFC: Remove host -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="remove(attributes)" />
 	</fuseaction>

@@ -574,30 +574,43 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Remove Host --->
-<cffunction name="remove" output="false" access="public">
+<cffunction name="remove" output="true" access="public">
 	<cfargument name="thestruct" type="Struct">
+	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
 	<!--- Query host --->
 	<cfquery datasource="#arguments.thestruct.dsn#" name="qry_rhost">
-	SELECT host_path, host_shard_group
+	SELECT host_path, host_shard_group, host_db_prefix
 	FROM hosts
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
 	</cfquery>
 	<!--- Only if we find a record --->
 	<cfif qry_rhost.recordcount EQ 1>
+		<!--- Get settings --->
+		<cfquery datasource="#arguments.thestruct.dsn#" name="qry_rhost_settings">
+		SELECT set2_path_to_assets as path_to_assets
+		FROM #qry_rhost.host_shard_group#settings_2
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
+		</cfquery>
 		<cftry>
 			<!--- REMOVE THE DIRECTORY ON THE FILESYSTEM --->
-			<cfif !application.razuna.isp>
-				<cfset thisdir = "#arguments.thestruct.pathoneup#/#qry_rhost.host_path#">
-				<cfif directoryExists(thisdir)>
-					<cfdirectory action="delete" directory="#arguments.thestruct.pathoneup#/#qry_rhost.host_path#" mode="775" recurse="yes">
+			<cftry>
+				<cfset _assets_dir = "#qry_rhost_settings.path_to_assets#/#arguments.thestruct.id#">
+				<cfset console(_assets_dir)>
+				<cfif directoryExists(_assets_dir)>
+					<cfdirectory action="delete" directory="#_assets_dir#" mode="775" recurse="yes">
 				</cfif>
-			</cfif>
+				<cfcatch>
+					<cfset console("--- Error while removing assets of host ---")>
+					<cfset console(cfcatch)>
+				</cfcatch>
+			</cftry>
 			<!--- Remove the Collection --->
 			<cftry>
 				<cfcollection action="delete" collection="#arguments.thestruct.id#" />
 				<cfcatch></cfcatch>
 			</cftry>
-			 
+
 			<!--- Remove the Host entry --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM hosts
@@ -676,75 +689,21 @@
 			</cfquery>
 			
 			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console("--- Error while removing host ---")>
+				<cfset console(cfcatch)>
+
 				<!--- <cfset cfcatch.custom_message = "Error while removing tables in function hosts.remove">
 				<cfif not isdefined("errobj")><cfobject component="global.cfc.errors" name="errobj"></cfif><cfset errobj.logerrors(cfcatch)/> --->
 			</cfcatch>
 		</cftry>
 		<!--- Since 1.4 we only remove records in the DB and don't drop tables anymore --->
 		
-		<!--- Upper case the sharding group prefix --->
-		<cfset host_shard_group = lcase(qry_rhost.host_shard_group)>
-		
-		<!--- ORACLE --->
-		<cfif arguments.thestruct.database EQ "oracle">
-			<cfquery datasource="#arguments.thestruct.dsn#" name="tbl">
-			SELECT object_name 
-			FROM user_objects 
-			WHERE object_type='TABLE' 
-			AND lower(object_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#host_shard_group#%">
-			</cfquery>
-			<!--- Loop over tables --->
-			<cfloop query="tbl">
-				<!--- Remove Data --->
-				<cftry>
-					<cfquery datasource="#arguments.thestruct.dsn#">
-					DELETE FROM #object_name#
-					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
-					</cfquery>
-					<cfcatch type="any">
-					</cfcatch>
-				</cftry>
-			</cfloop>
-		<!--- DB2 --->
-		<cfelseif arguments.thestruct.database EQ "db2">
-			<!--- Get all foreign key constraints and set them to no enforced --->
-			<cfquery datasource="#arguments.thestruct.dsn#" name="const">
-			SELECT constname, tabname
-			FROM syscat.tabconst
-			WHERE tabschema = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ucase(arguments.thestruct.theschema)#">
-			AND type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="F">
-			</cfquery>
-			<cfloop query="const">
-				<cfquery datasource="#arguments.thestruct.dsn#">
-				ALTER TABLE #ucase(arguments.thestruct.theschema)#.#ucase(tabname)# ALTER FOREIGN KEY #constname# NOT ENFORCED
-				</cfquery>
-			</cfloop>
-			<!--- Get table where to remove records --->
-			<cfquery datasource="#arguments.thestruct.dsn#" name="tbl">
-			SELECT tabname
-			FROM syscat.tables
-			WHERE lower(tabschema) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#host_shard_group#%">
-			</cfquery>
-			<!--- Loop over tables --->
-			<cfloop query="tbl">
-				<!--- Remove Data --->
-				<cftry>
-					<cfquery datasource="#arguments.thestruct.dsn#">
-					DELETE FROM #tabname#
-					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
-					</cfquery>
-					<cfcatch type="any">
-					</cfcatch>
-				</cftry>
-			</cfloop>
-			<!--- Enable constraints --->
-			<cfloop query="const">
-				<cfquery datasource="#arguments.thestruct.dsn#">
-				ALTER TABLE #ucase(arguments.thestruct.theschema)#.#ucase(tabname)# ALTER FOREIGN KEY #constname# ENFORCED
-				</cfquery>
-			</cfloop>
-		<!--- For other DBs --->
-		<cfelse>
+		<cftry>
+
+			<!--- Upper case the sharding group prefix --->
+			<cfset host_shard_group = lcase(qry_rhost.host_shard_group)>
+			
 			<!--- Get tables with this prefix --->
 			<cfquery datasource="#arguments.thestruct.dsn#" name="tbl">
 			SELECT table_name
@@ -781,9 +740,22 @@
 					</cfcatch>
 				</cftry>
 			</cfloop>
-		</cfif>
+
+			<cfcatch>
+				<cfset consoleoutput(true)>
+				<cfset console("--- Error while removing db records host ---")>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
+
+		<cfoutput>Host has been removed</cfoutput>
+
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("general")>
+		<cfset variables.cachetoken = resetcachetokenall()>
+
+	<cfelse>
+		<cfoutput>NO Host found with #arguments.thestruct.id#</cfoutput>
+		<cfreturn "NO Host found with #arguments.thestruct.id#" />
 	</cfif>
 </cffunction>
 
