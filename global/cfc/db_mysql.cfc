@@ -1474,7 +1474,7 @@
 		  KEY #arguments.thestruct.host_db_prefix#cart_user (USER_ID),
 		  KEY #arguments.thestruct.host_db_prefix#cart_done (cart_order_done),
 		  KEY #arguments.thestruct.host_db_prefix#cart_user_r (cart_order_user_r),
-		  UNIQUE KEY idx_raz1_cart_CART_PRODUCT_ID_HOST_ID (CART_ID, CART_PRODUCT_ID, HOST_ID),
+		  UNIQUE KEY idx_raz1_cart_CART_PRODUCT_ID_HOST_ID (CART_ID, CART_PRODUCT_ID, HOST_ID)
 		)
 		#this.tableoptions#
 		</cfquery>
