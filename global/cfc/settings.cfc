@@ -442,8 +442,7 @@
 	<!--- Select --->
 	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_global */ 
-	conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, conf_aka_token,
-	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
+	conf_database, conf_schema, conf_datasource, conf_storage, conf_aka_token, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable
 	FROM razuna_config
 	</cfquery>
 	<!--- Return --->
@@ -489,14 +488,6 @@
 		<cfif commad EQ "T">,</cfif>conf_nirvanix_master_name = <cfqueryparam value="#arguments.thestruct.conf_nirvanix_master_name#" cfsqltype="cf_sql_varchar">
 		<cfset commad = "T">
 	</cfif>
-	<cfif StructKeyExists(#arguments.thestruct#, "conf_nirvanix_appkey")>
-		<cfif commad EQ "T">,</cfif>conf_nirvanix_appkey = <cfqueryparam value="#arguments.thestruct.conf_nirvanix_appkey#" cfsqltype="cf_sql_varchar">
-		<cfset commad = "T">
-	</cfif>
-	<cfif StructKeyExists(#arguments.thestruct#, "conf_nirvanix_master_pass")>
-		<cfif commad EQ "T">,</cfif>conf_nirvanix_master_pass = <cfqueryparam value="#arguments.thestruct.conf_nirvanix_master_pass#" cfsqltype="cf_sql_varchar">
-		<cfset commad = "T">
-	</cfif>
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_database")>
 		<cfif commad EQ "T">,</cfif>conf_database = <cfqueryparam value="#arguments.thestruct.conf_database#" cfsqltype="cf_sql_varchar">
 		<cfset commad = "T">
@@ -521,6 +512,14 @@
 		<cfif commad EQ "T">,</cfif>conf_aws_location = <cfqueryparam value="#arguments.thestruct.conf_aws_location#" cfsqltype="cf_sql_varchar">
 		<cfset commad = "T">
 	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_aws_tenant_in_one_bucket_enable")>
+		<cfif commad EQ "T">,</cfif>conf_aws_tenant_in_one_bucket_enable = <cfqueryparam value="#arguments.thestruct.conf_aws_tenant_in_one_bucket_enable#" cfsqltype="cf_sql_double">
+		<cfset commad = "T">
+	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_aws_tenant_in_one_bucket_name")>
+		<cfif commad EQ "T">,</cfif>conf_aws_tenant_in_one_bucket_name = <cfqueryparam value="#arguments.thestruct.conf_aws_tenant_in_one_bucket_name#" cfsqltype="cf_sql_varchar">
+		<cfset commad = "T">
+	</cfif>
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
 		<cfif commad EQ "T">,</cfif>conf_rendering_farm = <cfqueryparam value="#arguments.thestruct.conf_rendering_farm#" cfsqltype="CF_SQL_DOUBLE">
 		<cfset commad = "T">
@@ -530,14 +529,12 @@
 		<cfset commad = "T">
 	</cfif>
 	</cfquery>
-	<!--- Set application scopes --->
-	<cfif StructKeyExists(#arguments.thestruct#, "conf_nirvanix_appkey")>
-		<cfset application.razuna.nvxappkey = arguments.thestruct.conf_nirvanix_appkey>
-	</cfif>
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_aws_access_key")>
 		<cfset application.razuna.awskey = arguments.thestruct.conf_aws_access_key>
 		<cfset application.razuna.awskeysecret = arguments.thestruct.conf_aws_secret_access_key>
 		<cfset application.razuna.awslocation = arguments.thestruct.conf_aws_location>
+		<cfset application.razuna.awstenaneonebucket = arguments.thestruct.conf_aws_tenant_in_one_bucket_enable>
+		<cfset application.razuna.awstenaneonebucketname = arguments.thestruct.conf_aws_tenant_in_one_bucket_name>
 		<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#arguments.thestruct.conf_aws_access_key#","#arguments.thestruct.conf_aws_secret_access_key#","#arguments.thestruct.conf_aws_location#")>
 	</cfif>
 	<!--- Set rendering setting in application scope --->
@@ -1194,9 +1191,7 @@
 	<!--- Check DB --->
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
-		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
-		conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
+		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -1245,38 +1240,35 @@
 				<cfquery datasource="razuna_default">
 				CREATE TABLE razuna_config
 				(
-					conf_database				VARCHAR(100),
-					conf_schema					VARCHAR(100),
-					conf_datasource				VARCHAR(100),
-					conf_setid					VARCHAR(100),
-					conf_storage				VARCHAR(100),
-					conf_aws_access_key			VARCHAR(100),
-					conf_aws_secret_access_key	VARCHAR(100),
-					conf_aws_location			VARCHAR(100),
-					conf_nirvanix_appkey		VARCHAR(100),
-					conf_nirvanix_master_name	VARCHAR(100),
-					conf_nirvanix_master_pass	VARCHAR(100),
-					conf_nirvanix_url_services	VARCHAR(100),
-					conf_isp					VARCHAR(100),
-					conf_firsttime				BOOLEAN,
-					conf_rendering_farm			BOOLEAN,
-					conf_serverid				VARCHAR(100),
-					conf_wl 					BOOLEAN DEFAULT false,
-					conf_aka_token				VARCHAR(200) DEFAULT ''
+					conf_database							VARCHAR(100),
+					conf_schema								VARCHAR(100),
+					conf_datasource							VARCHAR(100),
+					conf_setid								VARCHAR(100),
+					conf_storage							VARCHAR(100),
+					conf_aws_access_key						VARCHAR(100),
+					conf_aws_secret_access_key				VARCHAR(100),
+					conf_aws_location						VARCHAR(100),
+					conf_aws_tenant_in_one_bucket_name		VARCHAR(100) DEFAULT '',
+					conf_aws_tenant_in_one_bucket_enable	BOOLEAN DEFAULT false,
+					conf_isp								VARCHAR(100),
+					conf_firsttime							BOOLEAN,
+					conf_rendering_farm						BOOLEAN,
+					conf_serverid							VARCHAR(100),
+					conf_wl 								BOOLEAN DEFAULT false,
+					conf_aka_token							VARCHAR(200) DEFAULT ''
 				)
 				</cfquery>
 				<!--- Insert values --->
 				<cfquery datasource="razuna_default">
 				INSERT INTO razuna_config
 				(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage,
-				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid, conf_wl)
+				conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid, conf_wl)
 				VALUES(
 				'h2',
 				'razuna',
 				'h2',
 				'1',
 				'local',
-				'http://services.nirvanix.com',
 				'false',
 				true,
 				false,
@@ -1286,9 +1278,8 @@
 				</cfquery>
 				<!--- Query again --->
 				<cfquery datasource="razuna_default" name="qry">
-				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
-				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
+				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
+				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name
 				FROM razuna_config
 				</cfquery>
 			</cfif>
@@ -1375,11 +1366,11 @@
 	<cfset application.razuna.theschema = qry.conf_schema>
 	<cfset application.razuna.setid = qry.conf_setid>
 	<cfset application.razuna.storage = qry.conf_storage>
-	<cfset application.razuna.nvxappkey = qry.conf_nirvanix_appkey>
-	<cfset application.razuna.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.awslocation = qry.conf_aws_location>
+	<cfset application.razuna.awstenaneonebucket = qry.conf_aws_tenant_in_one_bucket_enable>
+	<cfset application.razuna.awstenaneonebucketname = qry.conf_aws_tenant_in_one_bucket_name>
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.firsttime = qry.conf_firsttime>
 	<cfset application.razuna.rfs = qry.conf_rendering_farm>
@@ -1398,9 +1389,7 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_datasource, conf_setid, conf_storage, 
-	conf_nirvanix_appkey, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
-	conf_rendering_farm, conf_isp, conf_aka_token
+	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_isp, conf_aka_token
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1408,11 +1397,11 @@
 	<cfset application.razuna.api.dsn = qry.conf_datasource>
 	<cfset application.razuna.api.setid = qry.conf_setid>
 	<cfset application.razuna.api.storage = qry.conf_storage>
-	<cfset application.razuna.api.nvxappkey = qry.conf_nirvanix_appkey>
-	<cfset application.razuna.api.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.api.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.api.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.api.awslocation = qry.conf_aws_location>
+	<cfset application.razuna.awstenaneonebucket = qry.conf_aws_tenant_in_one_bucket_enable>
+	<cfset application.razuna.awstenaneonebucketname = qry.conf_aws_tenant_in_one_bucket_name>
 	<cfset application.razuna.api.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.api.isp = qry.conf_isp>
 	<cfset application.razuna.api.akatoken = qry.conf_aka_token>
@@ -1434,8 +1423,7 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_aka_token,
-	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl
+	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_aka_token, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope --->
@@ -1444,11 +1432,11 @@
 	<cfset application.razuna.theschema = qry.conf_schema>
 	<cfset application.razuna.setid = qry.conf_setid>
 	<cfset application.razuna.storage = qry.conf_storage>
-	<cfset application.razuna.nvxappkey = qry.conf_nirvanix_appkey>
-	<cfset application.razuna.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.awslocation = qry.conf_aws_location>
+	<cfset application.razuna.awstenaneonebucket = qry.conf_aws_tenant_in_one_bucket_enable>
+	<cfset application.razuna.awstenaneonebucketname = qry.conf_aws_tenant_in_one_bucket_name>
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>

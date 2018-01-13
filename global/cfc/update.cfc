@@ -186,6 +186,18 @@
 		<!--- If less than 55 (1.9.6) --->
 		<cfif updatenumber.opt_value LT 55>
 			<cftry>
+				<cfquery datasource="razuna_default">
+				alter table razuna_config add conf_aws_tenant_in_one_bucket_enable BOOLEAN DEFAULT false
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="razuna_default">
+				alter table razuna_config add conf_aws_tenant_in_one_bucket_name VARCHAR(100) DEFAULT ''
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
 				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> news_excerpt #thevarchar#(2000) DEFAULT NULL
 				</cfquery>

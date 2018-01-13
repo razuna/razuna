@@ -69,11 +69,11 @@
 		</tr> --->
 		<!--- Amazon --->
 		<tr>
-			<th class="textbold" colspan="3">Amazon S3 or Eucalyptus Storage</th>
+			<th style="padding-top:25px;" class="textbold" colspan="3">Amazon S3 or Eucalyptus Storage</th>
 		</tr>
 		<tr>
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="amazon"<cfif gprefs.conf_storage EQ "amazon"> checked</cfif>></td>
-			<td colspan="2">#defaultsObj.trans("global_storage_amazon_desc")#</td>
+			<td colspan="2" style="padding-bottom:25px;">#defaultsObj.trans("global_storage_amazon_desc")#</td>
 		</tr>
 		<tr>
 			<td></td>
@@ -91,26 +91,55 @@
 			<td>
 				<select name="conf_aws_location" id="conf_aws_location" style="width:310px;">
 					<option value="us-east"<cfif application.razuna.awslocation EQ "" OR application.razuna.awslocation EQ "us-east"> selected="selected"</cfif>>US Standard</option>
+					<option value="us-east-2"<cfif application.razuna.awslocation EQ "" OR application.razuna.awslocation EQ "us-east-2"> selected="selected"</cfif>>US East (Ohio)</option>
 					<option value="us-west-2"<cfif application.razuna.awslocation EQ "us-west-2"> selected="selected"</cfif>>US West (Oregon)</option>
-					<option value="us-west-1"<cfif application.razuna.awslocation EQ "us-west-1"> selected="selected"</cfif>>US West (Northern California)</option>
+					<option value="us-west-1"<cfif application.razuna.awslocation EQ "us-west-1"> selected="selected"</cfif>>US West (N. California)</option>
+					<option value="ca-central-1"<cfif application.razuna.awslocation EQ "ca-central-1"> selected="selected"</cfif>>Canada (Central)</option>
 					<option value="EU"<cfif application.razuna.awslocation EQ "EU"> selected="selected"</cfif>>EU (Ireland)</option>
 					<option value="eu-central-1"<cfif application.razuna.awslocation EQ "eu-central-1"> selected="selected"</cfif>>EU (Frankfurt)</option>
+					<option value="eu-west-2"<cfif application.razuna.awslocation EQ "eu-west-2"> selected="selected"</cfif>>EU (London)</option>
+					<option value="eu-west-3"<cfif application.razuna.awslocation EQ "eu-west-3"> selected="selected"</cfif>>EU (Paris)</option>
 					<option value="ap-southeast-1"<cfif application.razuna.awslocation EQ "ap-southeast-1"> selected="selected"</cfif>>Asia Pacific (Singapore)</option>
 					<option value="ap-southeast-2"<cfif application.razuna.awslocation EQ "ap-southeast-2"> selected="selected"</cfif>>Asia Pacific (Sidney)</option>
 					<option value="ap-northeast-1"<cfif application.razuna.awslocation EQ "ap-northeast-1"> selected="selected"</cfif>>Asia Pacific (Tokyo)</option>
 					<option value="ap-northeast-2"<cfif application.razuna.awslocation EQ "ap-northeast-2"> selected="selected"</cfif>>Asia Pacific (Seoul)</option>
+					<option value="ap-south-1"<cfif application.razuna.awslocation EQ "ap-south-1"> selected="selected"</cfif>>Asia Pacific (Mumbai)</option>
 					<option value="sa-east-1"<cfif application.razuna.awslocation EQ "sa-east-1"> selected="selected"</cfif>>South America (Sao Paulo)</option>
+					<option value="cn-north-1"<cfif application.razuna.awslocation EQ "cn-north-1"> selected="selected"</cfif>>China (Beijing)</option>
+					<option value="cn-northwest-1"<cfif application.razuna.awslocation EQ "cn-northwest-1"> selected="selected"</cfif>>China (Ningxia)</option>
 				</select>
 			</td>
 		</tr>
 		<tr>
 			<td></td>
 			<td></td>
-			<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="valaws();" /><div id="divvalidateaws"></div></td>
+			<td style="padding-bottom:25px;float:right;"><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="valaws();" /><div id="divvalidateaws"></div></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td nowrap="true" valign="top">Tenant in one bucket</td>
+			<td>
+				<input type="radio" name="conf_aws_tenant_in_one_bucket_enable" value="true"<cfif gprefs.conf_aws_tenant_in_one_bucket_enable EQ "true"> checked</cfif>> Yes
+				<input type="radio" name="conf_aws_tenant_in_one_bucket_enable" value="false"<cfif gprefs.conf_aws_tenant_in_one_bucket_enable EQ "false"> checked</cfif>> No
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td colspan="2" class="sub" style="padding-bottom:20px;">By default you have to assign each tenant a S3 bucket. If you select "Yes", then all tenants will be stored in one bucket separated by their ID. Please note: If you enable this on a production system, you will need to move assets MANUALLY in the bucket provided below!</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td nowrap="true" valign="top">Bucket for all tenants</td>
+			<td><input type="text" name="conf_aws_tenant_in_one_bucket_name" id="conf_aws_tenant_in_one_bucket_name" style="width:300px;" value="#gprefs.conf_aws_tenant_in_one_bucket_name#" /></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td class="sub">Provide the name of the bucket if you choose to store all tenants in one bucket</td>
 		</tr>
 		<!--- Akamai --->
 		<tr>
-			<th class="textbold" colspan="3">Akamai</th>
+			<th style="padding-top:25px;" class="textbold" colspan="3">Akamai</th>
 		</tr>
 		<tr>
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="akamai"<cfif gprefs.conf_storage EQ "akamai"> checked</cfif>></td>
@@ -134,7 +163,6 @@
 			var loc = $('##conf_aws_location :selected').val();
 			// Show loading gif
 			loadinggif('divvalidateaws');
-			
 			// Load
 			loadcontent('divvalidateaws','#myself#c.prefs_aws_validate&awskey=' + encodeURIComponent(key) + '&awskeysecret=' + encodeURIComponent(keysecret) + '&awslocation=' + loc);
 		}
