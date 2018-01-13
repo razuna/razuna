@@ -38,6 +38,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/Magnific-Popup-1.1.0/dist/magnific-popup.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/dist/main_#attributes.cachetag#.min.css" />
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/dist/login_#attributes.cachetag#.min.js"></script>

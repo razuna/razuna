@@ -55,8 +55,7 @@
 		<!-- news -->
 		<if condition="application.razuna.whitelabel">
 			<true>
-				<set name="attributes.frontpage" value="true" />
-				<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_news_frontpage()" returnvariable="attributes.qry_news" />
 			</true>
 		</if>
 		<!-- Get the Cache tag -->

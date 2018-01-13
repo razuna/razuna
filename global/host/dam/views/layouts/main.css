@@ -1095,3 +1095,37 @@ a:link .nolink{text-decoration: none;}
 	/* width: 120px; */
 	width: 20%;
 }
+
+.white-popup {
+	position: relative;
+	background: #FFF;
+	padding: 20px;
+	width: auto;
+	max-width: 500px;
+	margin: 20px auto;
+	font-size: 16px;
+}
+
+.news_frontpage {
+	text-align: center;
+}
+.news_frontpage p {
+	text-align: center;
+	font-size: 16px;
+}
+.news {
+	text-align: left;
+}
+.news h2 {
+	text-align: left;
+	font-size: 16px;
+}
+.news p {
+	text-align: left;
+	font-size: 16px;
+}
+
+.sub {
+	font-style: italic;
+	font-size: 90%;
+}

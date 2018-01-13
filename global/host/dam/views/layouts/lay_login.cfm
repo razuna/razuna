@@ -28,15 +28,20 @@
 	<div id="firebugalert" style="display:none;"></div>
 	<div id="outer">
 		<div id="loginform">
-			<cfif application.razuna.whitelabel>
-				<cfparam name="attributes.qry_news.news_title" default="" />
-				<cfparam name="attributes.qry_news.news_text" default="" />
-				<div style="text-align:center;">
-					<h2 style="color:red;">#attributes.qry_news.news_title#</h2>
+			<!--- News --->
+			<cfif attributes.qry_news.recordcount>
+				<div class="news_frontpage">
+					<h2>#attributes.qry_news.news_title#</h2>
+					<p>#attributes.qry_news.news_excerpt#
+					<cfif attributes.qry_news.news_text NEQ "">
+						<p><a href="##news-frontpage-popup" class="open-news-popup">Read more...</a></p>
+					</cfif>
+					</p>
+				</div>
+				<div id="news-frontpage-popup" class="white-popup mfp-hide">
 					#attributes.qry_news.news_text#
 				</div>
 			</cfif>
-			<!--- We apologize, but we are down for a emergency maintenance. <a href="http://twitter.com/razunahq" target="_blank">Follow us on Twitter</a> to get current status --->
 	    	#body#
   		</div>
 	  	<div id="loginformfooter">
@@ -52,3 +57,13 @@
 		</div>
 	</div>
 </cfoutput>
+<script>
+	$(function() {
+		$('.open-news-popup').magnificPopup({
+			type: 'inline',
+			preloader: false,
+			alignTop: true,
+			midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+		});
+	})
+</script>

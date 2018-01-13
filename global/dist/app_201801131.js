@@ -2037,5 +2037,55 @@ function removeLabel(assetID,assetType,labelID,aHrefElement,text){
 function isValidLabel(labelName){
 	var exp = new RegExp(/^[^a-zA-Z0-9]/g);
 	return !exp.test($('#'+labelName).val());
-		
+}
+
+// Editor
+function loadEditor(div, buttons, editor_options) {
+	// Accept options else create default ones
+	var _options = {};
+	_options.height = editor_options && editor_options.height ? editor_options.height : 200;
+	_options.zindex = editor_options && editor_options.zindex ? editor_options.zindex : 1;
+	_options.theme = editor_options && editor_options.theme ? editor_options.theme : 'gray';
+	_options.background = editor_options && editor_options.background ? editor_options.background : '#fff';
+	_options.linebreakertags = editor_options && editor_options.linebreakertags ? editor_options.linebreakertags : ['table', 'hr', 'iframe', 'form', 'dl'];
+	_options.multiline = editor_options && typeof editor_options.multiline !== 'undefined' ? editor_options.multiline : true;
+	_options.iframe = editor_options && typeof editor_options.iframe !== 'undefined' ? editor_options.iframe : false;
+	// Var
+	var _buttons = '';
+	// For news in admin
+	if (buttons === 'news') {
+		_buttons = ['insertImage','insertVideo','insertLink','|','undo','redo','|','bold','italic','underline','strikeThrough','insertHR','color','|', 'fontFamily', 'fontSize', 'paragraphFormat','align','formatOL','formatUL','outdent','indent', 'quote','selectAll','insertTable','spellChecker','clearFormatting', 'html','|','fullscreen'];
+	}
+	// Initialize Editor
+	$('#' + div).froalaEditor({
+		key: '9Rd1Rb1MKF1AKUBWBOR==',
+		imageInsertButtons: ['imageBack', '|', 'imageByURL'],
+		videoInsertButtons: ['videoBack', '|', 'videoByURL', 'videoEmbed'],
+		// initOnClick: true,
+		spellcheck: true,
+		imageMaxSize: 1024 * 1024 * 25,
+		fileMaxSize: 1024 * 1024 * 25,
+		toolbarInline: false,
+		toolbarSticky: true,
+		pastePlain: false,
+		htmlAllowComments: true,
+		htmlUntouched: true,
+		imageDefaultAlign: 'left',
+		imageDefaultWidth: 0,
+		// htmlRemoveTags: ['script', 'style', 'iframe', 'object', 'embed', 'applet', 'link', 'form', 'bgsound'],
+		heightMin: _options.height,
+		theme: _options.theme,
+		multiLine: _options.multiline,
+		iframe: _options.iframe,
+		zIndex: _options.zindex,
+		lineBreakerTags: _options.linebreakertags,
+		placeholderText: '',
+		tabSpaces: 4,
+		// shortcutsEnabled: true,
+		enter: $.FroalaEditor.ENTER_BR,
+		toolbarButtons: _buttons,
+		toolbarButtonsMD: _buttons,
+		toolbarButtonsSM: _buttons,
+		toolbarButtonsXS: _buttons,
+	});
 }

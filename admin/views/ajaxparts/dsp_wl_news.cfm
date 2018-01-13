@@ -54,10 +54,11 @@
 			</cfloop>
 		</table>
 	</cfif>
-	<hr>
+	<!--- <hr>
 	<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss")#</strong><br />
 	#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss_desc")#<br />
 	<input type="text" style="width:600px" name="wl_news_rss" value="#attributes.rss#" /> <input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#"><br />
+	 --->
 	<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
 	<div id="news-confirm" title="Really delete this news entry?" style="display:none;">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 60px 0;"></span>This news entry will be removed. This action can not be un-done. <br /><br />Are you sure that you want to delete this record now?</p>
