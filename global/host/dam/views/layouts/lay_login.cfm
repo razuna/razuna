@@ -28,7 +28,7 @@
 	<div id="firebugalert" style="display:none;"></div>
 	<div id="outer">
 		<div id="loginform">
-			<cfif cgi.http_host CONTAINS "razuna.com">
+			<cfif application.razuna.whitelabel>
 				<cfparam name="attributes.qry_news.news_title" default="" />
 				<cfparam name="attributes.qry_news.news_text" default="" />
 				<div style="text-align:center;">

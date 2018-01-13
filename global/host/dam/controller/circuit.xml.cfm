@@ -53,7 +53,7 @@
 			</true>
 		</if>
 		<!-- news -->
-		<if condition="cgi.http_host CONTAINS 'razuna.com'">
+		<if condition="application.razuna.whitelabel">
 			<true>
 				<set name="attributes.frontpage" value="true" />
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
@@ -315,10 +315,14 @@
 					</true>
 				</if> -->
 	 			<!-- If ISP (for now) -->
-				<if condition="cgi.http_host CONTAINS 'razuna.com'">
+				<if condition="application.razuna.whitelabel">
 					<true>
 						<!-- Get News -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
+					</true>
+				</if>
+				<if condition="cgi.http_host CONTAINS 'razuna.com'">
+					<true>
 						<!-- Get Invoices -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(session.hostid)" returnvariable="res_account" />
 					</true>
@@ -8161,7 +8165,7 @@
 		<!-- Get the Cache tag -->
 		<!-- <do action="cachetag" /> -->
 		<!-- If ISP (for now) -->
-		<if condition="cgi.http_host CONTAINS 'razuna.com'">
+		<if condition="application.razuna.whitelabel">
 			<true>
 				<set name="attributes.frontpage" value="true" />
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />

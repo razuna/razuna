@@ -182,10 +182,11 @@
 							</cfif>
 						</cfif>
 						
-						<!--- Announcement for ISP --->
-						<cfif cgi.http_host CONTAINS "razuna.com">
+						<!--- If WL we show the news section here --->
+						<cfif application.razuna.whitelabel>
+							<!--- Announcement for ISP --->
 							<div class="panelsnew">
-								<h1>Razuna Announcements</h1>
+								<h1>Announcements</h1>
 								<cfloop query="attributes.qry_news">
 									<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
 									<cfif currentrow EQ 1>
@@ -200,9 +201,6 @@
 								</cfloop>
 							</div>
 							<br />
-						</cfif>
-						<!--- If WL we show the news section here --->
-						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
 								<!--- System News --->
 								<cfif isArray(attributes.qry_news) AND arrayisempty(attributes.qry_news) AND attributes.qry_news.news.recordcount NEQ 0>
