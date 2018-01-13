@@ -68,7 +68,7 @@
 
 	<!--- Check for a new version --->
 	<cffunction name="check_update">
-		<cfargument name="thestruct" type="struct">	
+		<cfargument name="thestruct" type="struct">
 		<cfset var v = structnew()>
 		<!--- Set the version file on the server --->
 		<cfset var versionfile = "http://cloud.razuna.com/installers/versionupdate.xml">
@@ -95,7 +95,7 @@
 		<!--- Return --->
 		<cfreturn v>
 	</cffunction>
-	
+
 	<!--- DO DB update --->
 	<cffunction name="update_do">
 		<cfargument name="thestruct" type="struct">
@@ -113,6 +113,7 @@
 		<cfif application.razuna.thedatabase EQ "mysql">
 			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci ROW_FORMAT=DYNAMIC">
 			<cfset var theclob = "longtext">
+			<cfset var theboolean = "tinyint(1)">
 		<cfelseif application.razuna.thedatabase EQ "mssql">
 			<cfset var theclob = "NVARCHAR(max)">
 			<cfset var thetimestamp = "datetime">
@@ -134,7 +135,7 @@
 		</cfquery>
 		<!--- Read config file for dbupdate number --->
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
-		
+
 		<cftry>
 			<!--- Fix language id's if incorrect --->
 			<cfquery datasource="#application.razuna.datasource#">
@@ -182,6 +183,22 @@
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 		</cftry>
 
+		<!--- If less than 55 (1.9.6) --->
+		<cfif updatenumber.opt_value LT 55>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> news_excerpt #thevarchar#(2000) DEFAULT NULL
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#">
+				ALTER TABLE news add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> news_frontpage #theboolean# DEFAULT '0'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+		</cfif>
+
 		<!--- If less than 54 (1.9.5) --->
 		<cfif updatenumber.opt_value LT 54>
 			<cftry>
@@ -227,7 +244,7 @@
 				<cfflush>
 
 				<cfquery datasource="#application.razuna.datasource#" name="qry_drop">
-				select 
+				select
 				concat('alter table ',table_schema,'.',table_name,' DROP FOREIGN KEY ',constraint_name,';') AS dropfk
 				from information_schema.table_constraints
 				where table_schema='razuna'
@@ -235,10 +252,10 @@
 				</cfquery>
 
 				<cfquery datasource="#application.razuna.datasource#" name="qry_alter">
-				select 
+				select
 				concat('alter table ',table_schema,'.',table_name,' CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;') AS altersql
 				from information_schema.tables
-				where table_schema='razuna' 
+				where table_schema='razuna'
 				</cfquery>
 
 				<cfloop query ="qry_drop">
@@ -538,7 +555,7 @@
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
-		
+
 			<!--- Add SAML columns to settings_2 table --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -610,7 +627,7 @@
 
 			<!--- Save FTP Task in CFML scheduling engine --->
 			<cfschedule action="update"
-				task="RazFTPNotifications" 
+				task="RazFTPNotifications"
 				operation="HTTPRequest"
 				url="#taskpath#/index.cfm?fa=c.w_ftp_notifications_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
@@ -684,8 +701,8 @@
 			<!--- Alias db --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-					CREATE TABLE ct_aliases 
-					(	
+					CREATE TABLE ct_aliases
+					(
 						asset_id_r		#thevarchar#(100) DEFAULT NULL,
 						folder_id_r		#thevarchar#(100) DEFAULT NULL,
 						type			#thevarchar#(10) DEFAULT NULL,
@@ -937,7 +954,7 @@
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 				</cftry>
 			</cfif>
-		
+
 			<!--- Add column to store file_size for versions --->
 			<cftry>
 				 <cfquery datasource="#application.razuna.datasource#">
@@ -977,16 +994,16 @@
 			<!--- RAZ-549 Add columns for asset expiry --->
 			<cftry>
 				 <cfquery datasource="#application.razuna.datasource#">
-				 ALTER TABLE raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 ALTER TABLE raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif>
 				 </cfquery>
 				 <cfquery datasource="#application.razuna.datasource#">
-				 ALTER TABLE raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 ALTER TABLE raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif>
 				 </cfquery>
 				 <cfquery datasource="#application.razuna.datasource#">
-				 ALTER TABLE raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 ALTER TABLE raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif>
 				 </cfquery>
 				 <cfquery datasource="#application.razuna.datasource#">
-				 ALTER TABLE raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				 ALTER TABLE raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif>
 				 </cfquery>
 				 <cfcatch type="any">
 				   	<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -1033,15 +1050,15 @@
 			</cfif>
 				<cftry>
 				<cfquery datasource="#application.razuna.datasource#"  name="getdel_sql">
-					select 
+					select
 					<cfif application.razuna.thedatabase NEQ "mssql">
-					concat('alter table ',table_schema,'.',table_name,' #thesql# ',constraint_name, ';') 
+					concat('alter table ',table_schema,'.',table_name,' #thesql# ',constraint_name, ';')
 					<cfelse>
 					'alter table ' + table_schema + '.' + table_name + ' #thesql# ' + constraint_name + ';'
 					</cfif>
 					altersql
 					from information_schema.#thetbl#
-					 where constraint_type='#thetype#' 
+					 where constraint_type='#thetype#'
 					 and (lower(table_name) like '%_images_text'
 					 or  lower(table_name) like '%_audios_text'
 					 or  lower(table_name) like '%_videos_text'
@@ -1082,7 +1099,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-					ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_UPC_ENABLED #thevarchar#(5) DEFAULT 'false' 
+					ALTER TABLE raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> SET2_UPC_ENABLED #thevarchar#(5) DEFAULT 'false'
 				</cfquery>
 			<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
 			</cftry>
@@ -1108,7 +1125,7 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-			
+
 			<!--- RAZ-2207 Set datatype to longtext for set2_labels_users--->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
@@ -1128,22 +1145,22 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-			
+
 			<!--- RAZ-2829: Add an expiration date to a user and disable access when expiration occurs --->
 			       <cftry>
 				         <cfquery datasource="#application.razuna.datasource#">
-				         ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> USER_EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif> 
+				         ALTER TABLE users add <cfif application.razuna.thedatabase NEQ "mssql">COLUMN</cfif> USER_EXPIRY_DATE  DATE<cfif application.razuna.thedatabase EQ "mssql">TIME</cfif>
 				         </cfquery>
 				         <cfcatch type="any">
 				           <cfset thelog(logname=logname,thecatch=cfcatch)>
 				         </cfcatch>
 			       </cftry>
-			
+
 		    	        <cftry>
 				<!--- RAZ-2815 : Folder subscribe --->
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_folder_subscribe 
-				(	
+				CREATE TABLE raz1_folder_subscribe
+				(
 					fs_id 	 					#thevarchar#(100),
 					host_id						#theint#,
 					folder_id					#thevarchar#(100),
@@ -1178,7 +1195,7 @@
 
 			<!--- Save Folder Subscribe scheduled event in CFML scheduling engine --->
 			<cfschedule action="update"
-				task="RazFolderSubscribe" 
+				task="RazFolderSubscribe"
 				operation="HTTPRequest"
 				url="#taskpath#/index.cfm?fa=c.folder_subscribe_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
@@ -1188,7 +1205,7 @@
 			>
 			<!--- RAZ-549 As a user I want to share a file URL with an expiration date --->
 			<cfschedule action="update"
-				task="RazAssetExpiry" 
+				task="RazAssetExpiry"
 				operation="HTTPRequest"
 				url="#taskpath#/index.cfm?fa=c.w_asset_expiry_task"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
@@ -1240,7 +1257,7 @@
 					exp_id				#thevarchar#(100),
 					exp_field			#thevarchar#(200),
 					exp_value			#thevarchar#(2000),
-					exp_timestamp		#thetimestamp#, 
+					exp_timestamp		#thetimestamp#,
 					user_id				#thevarchar#(100),
 					host_id				#theint#,
 					PRIMARY KEY (exp_id)
@@ -1253,7 +1270,7 @@
 			</cftry>
 
 		</cfif>
-		
+
 		<!--- If update number is lower than 17 (v. 1.6.2) --->
 		<cfif updatenumber.opt_value LT 18>
 			<!--- RAZ-2541 Add column SET2_EMAIL_USE_SSL to raz1_settings_2 table --->
@@ -1288,17 +1305,17 @@
 				</cfcatch>
 			</cftry>
 		</cfif>
-		
+
 		<!--- If update number is lower than 15 (v. 1.6) --->
 		<cfif updatenumber.opt_value LT 15>
 
 			<!--- Core DB --->
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_import_templates 
-				(	
-					imp_temp_id #thevarchar#(100), 
-					imp_date_create #thetimestamp#, 
+				CREATE TABLE raz1_import_templates
+				(
+					imp_temp_id #thevarchar#(100),
+					imp_date_create #thetimestamp#,
 					imp_date_update #thetimestamp#,
 					imp_who #thevarchar#(100),
 					imp_active #thevarchar#(1) DEFAULT '0',
@@ -1315,7 +1332,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_import_templates_val 
+				CREATE TABLE raz1_import_templates_val
 				(
 					imp_temp_id_r #thevarchar#(100),
 					rec_uuid #thevarchar#(100),
@@ -1333,7 +1350,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_custom 
+				CREATE TABLE raz1_custom
 				(
 				  custom_id #thevarchar#(200),
 				  custom_value #thevarchar#(100),
@@ -1347,7 +1364,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_users_accounts 
+				CREATE TABLE raz1_users_accounts
 				(
 				  identifier #thevarchar#(200),
 				  provider #thevarchar#(100),
@@ -1364,7 +1381,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE cache 
+				CREATE TABLE cache
 				(
 				  cache_token #thevarchar#(100) DEFAULT NULL,
 				  cache_type #thevarchar#(20) DEFAULT NULL,
@@ -1378,7 +1395,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE ct_plugins_hosts 
+				CREATE TABLE ct_plugins_hosts
 				(
 				  ct_pl_id_r #thevarchar#(100) DEFAULT '',
 				  ct_host_id_r #theint# DEFAULT NULL,
@@ -1392,7 +1409,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE plugins 
+				CREATE TABLE plugins
 				(
 				  p_id #thevarchar#(100) NOT NULL DEFAULT '',
 				  p_path #thevarchar#(500) DEFAULT NULL,
@@ -1415,7 +1432,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE plugins_actions 
+				CREATE TABLE plugins_actions
 				(
 				  action #thevarchar#(200) DEFAULT NULL,
 				  comp #thevarchar#(200) DEFAULT NULL,
@@ -1433,7 +1450,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE options 
+				CREATE TABLE options
 				(
 				  opt_id #thevarchar#(100) NOT NULL DEFAULT '',
 				  opt_value #theclob#,
@@ -1448,7 +1465,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE news 
+				CREATE TABLE news
 				(
 				  news_id #thevarchar#(100) NOT NULL DEFAULT '',
 				  news_title #thevarchar#(500) DEFAULT NULL,
@@ -1465,7 +1482,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_workflow_logs 
+				CREATE TABLE raz1_workflow_logs
 				(
 				  wf_log_id #thevarchar#(100) NOT NULL DEFAULT '',
 				  wf_log_text #theclob#,
@@ -1483,7 +1500,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_wm_templates 
+				CREATE TABLE raz1_wm_templates
 				(
 				  wm_temp_id #thevarchar#(100) NOT NULL DEFAULT '',
 				  wm_name #thevarchar#(200) DEFAULT NULL,
@@ -1499,7 +1516,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_wm_templates_val 
+				CREATE TABLE raz1_wm_templates_val
 				(
 				  wm_temp_id_r #thevarchar#(100) DEFAULT NULL,
 				  wm_use_image #thevarchar#(6) DEFAULT 'false',
@@ -1589,8 +1606,8 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				update raz1_labels 
-				set label_path = label_text 
+				update raz1_labels
+				set label_path = label_text
 				where label_id_r = '0'
 				</cfquery>
 				<cfcatch type="any">
@@ -1856,7 +1873,7 @@
 			</cftry>
 			<cftry>
 				<cfquery datasource="#application.razuna.datasource#">
-				CREATE TABLE raz1_smart_folders 
+				CREATE TABLE raz1_smart_folders
 				(
 					sf_id #thevarchar#(100),
 					sf_name #thevarchar#(500),
@@ -1979,7 +1996,7 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-			
+
 			<!--- MSSQL: Drop constraints --->
 			<cfif application.razuna.thedatabase EQ "mssql">
 				<cftry>
@@ -2002,7 +2019,7 @@
 				<cftry>
 					<cfquery datasource="#application.razuna.datasource#" name="con">
 					SELECT constraint_name
-					FROM information_schema.TABLE_CONSTRAINTS 
+					FROM information_schema.TABLE_CONSTRAINTS
 					WHERE lower(TABLE_NAME) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
 					AND lower(CONSTRAINT_TYPE) = <cfqueryparam cfsqltype="cf_sql_varchar" value="foreign key">
 					</cfquery>
@@ -2186,14 +2203,14 @@
 					<cfset thelog(logname=logname,thecatch=cfcatch)>
 				</cfcatch>
 			</cftry>
-		
-		</cfif>
-		
 
-		<!--- 
+		</cfif>
+
+
+		<!---
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			
+
 			#tableoptions#
 			</cfquery>
 			<cfcatch type="any">
@@ -2202,7 +2219,7 @@
 		</cftry>
 		 --->
 
-		
+
 		<!--- Update value in db --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE options

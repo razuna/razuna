@@ -543,6 +543,8 @@
 			news_title		nvarchar(500),
 			news_active		varchar(6),
 			news_text		NVARCHAR(max),
+			news_excerpt	varchar(2000),
+			news_frontpage	boolean default '0',
 			news_date		varchar(20),
 			host_id 		int default 0,
 			PRIMARY KEY (news_id)

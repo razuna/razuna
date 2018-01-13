@@ -439,6 +439,8 @@
 		(
 			news_id			varchar(100),
 			news_title		varchar(500),
+			news_excerpt	varchar(2000),
+			news_frontpage	tinyint(1) DEFAULT '0',
 			news_active		varchar(6),
 			news_text		text,
 			news_date		varchar(20),

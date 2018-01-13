@@ -406,6 +406,8 @@
 			news_title		varchar(500),
 			news_active		varchar(6),
 			news_text		clob,
+			news_excerpt	varchar(2000),
+			news_frontpage	boolean default '0',
 			news_date		varchar(20),
 			host_id 		bigint default 0,
 			PRIMARY KEY (news_id)
