@@ -102,14 +102,14 @@
 							<!--- Restore selected folders --->
 							<a href="##" onclick="showwindow('#myself#c.restore_selected_folders&type=restoreselectedfolders','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
 								<div style="float:left;">
-									<img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0" style="padding-right:3px;" />
+									<span class="fa fa-refresh fa-lg">
 								</div>
 								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
 							</a>
 							<!--- Remove selected folders --->
 							<a href="##" onclick="showwindow('#myself#ajax.remove_folder&what=trashfolders&loaddiv=folders&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
 								<div style="float:left;">
-									<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
+									<span class="fa fa-trash-o fa-lg"></span>
 								</div>
 								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash_Delete_Permanently")#</div>
 							</a>
@@ -136,10 +136,10 @@
 											</div>
 											<div style="float:right;padding-top:2px;">
 												<!--- restore the folder --->
-												<a href="##" onclick="showwindow('#myself#c.folder_restore&type=restorefolder&id=#id#&what=#what#&loaddiv=folders&folder_id=#id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&folder_level=#folder_level#','#myFusebox.getApplicationData().defaults.trans("restore_folder")#', 550, 1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
+												<a href="##" onclick="showwindow('#myself#c.folder_restore&type=restorefolder&id=#id#&what=#what#&loaddiv=folders&folder_id=#id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&folder_level=#folder_level#','#myFusebox.getApplicationData().defaults.trans("restore_folder")#', 550, 1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><span class="fa fa-refresh fa-lg"></a>
 												<!--- remove the folder --->
 												<cfset url_id = "ajax.remove_folder&folder_id=#id#">
-												<a href="##" onclick="showwindow('#myself##url_id#&what=#what#&loaddiv=folders&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+												<a href="##" onclick="showwindow('#myself##url_id#&what=#what#&loaddiv=folders&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><span class="fa fa-trash-o fa-lg"></span></a>
 											</div>
 										</cfif>
 									</div>
