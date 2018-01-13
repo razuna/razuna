@@ -25,11 +25,6 @@
 --->
 <cfoutput>
 <cfset tmp = createuuid('')>
-<script type="text/javascript"  src='#dynpath#/global/js/ckeditor/ckeditor.js'> </script>
-<!--- Create unique message id to prevent conflicts with other processes that use this same code --->
-<script type="text/javascript">
-	CKEDITOR.replace('message_#tmp#',{height:200}); 
-</script>
 <form name="sendemailform_#tmp#" id="sendemailform_#tmp#" action="#self#" method="post">
 <input type="hidden" name="#theaction#" value="#xfa.submit#">
 <input type="hidden" name="file_id" value="#attributes.file_id#">
@@ -257,7 +252,7 @@
 		<td valign="top" colspan="2">#myFusebox.getApplicationData().defaults.trans("message")#</td>
 	</tr>
 	<tr>
-		<td colspan="2"><textarea name="message_#tmp#" placeholder="#placeholder#">
+		<td colspan="2"><textarea id="message_#tmp#" name="message_#tmp#" placeholder="#placeholder#">
 
 			<cfif attributes.frombasket NEQ "T">
 				<cfset transvalues = arraynew()>
@@ -316,6 +311,7 @@
 </table>
 </form>
 <script type="text/javascript">
+	loadEditor('message_#tmp#', 'news');
 	<cfif attributes.frombasket EQ "F">
 		 function checkzip()
 		 {
@@ -337,7 +333,6 @@
 		<cfif attributes.frombasket EQ "F">
 			checkzip();
 		</cfif>
-		CKEDITOR.instances["message_#tmp#"].updateElement();
 		// Show status
 		$("##successemail_#tmp#").css("display","");
    		$("##successemail_#tmp#").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');

@@ -24,15 +24,6 @@
 *
 --->
 <cfoutput>
-	<script type="text/javascript"  src='#dynpath#/global/js/ckeditor/ckeditor.js'> </script>
-	<script type="text/javascript">
-		CKEDITOR.replace( 'folder_subscribe_body',{height:100} );
-		CKEDITOR.replace( 'asset_expiry_body',{height:100}  );
-		CKEDITOR.replace( 'duplicates_body',{height:100}  );
-		CKEDITOR.replace( 'set2_new_user_email_body' );
-		// Activate Chosen
-		$(".chzn-select").chosen({search_contains: true});
-	</script>
 	#myFusebox.getApplicationData().defaults.trans("email_setup_intro")#<br>
 	#myFusebox.getApplicationData().defaults.trans("email_setup_desc")#
 
@@ -194,13 +185,15 @@
 	</cfform>
 	<!--- JS --->
 	<script type="text/javascript">
+		<!--- Load editor --->
+		loadEditor('folder_subscribe_body', 'news');
+		loadEditor('asset_expiry_body', 'news');
+		loadEditor('duplicates_body', 'news');
+		loadEditor('set2_new_user_email_body', 'news');
+		// Activate Chosen
+		$(".chzn-select").chosen({search_contains: true});
 		// Submit Form
 		$("##form_admin_notification").submit(function(e){
-			// Need to update ckeditor text area before form submit so that the current value is grabbed on submit for AJAX call
-			CKEDITOR.instances["folder_subscribe_body"].updateElement();
-			CKEDITOR.instances["asset_expiry_body"].updateElement();
-			CKEDITOR.instances["duplicates_body"].updateElement();
-			CKEDITOR.instances["set2_new_user_email_body"].updateElement();
 			if ($('##set2_new_user_email_body').val().length >=4000)
 				{
 				alert ('Email body must be less than 4000 characters. '); 

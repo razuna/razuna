@@ -34,9 +34,9 @@
 <cfheader name="Expires" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#"> --->
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css" />

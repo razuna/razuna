@@ -31,9 +31,9 @@
 		<title><cfif application.razuna.whitelabel>#wl_html_title#<cfelse>Razuna Enterprise Digital Asset Management</cfif></title>
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		<!--- Control the cache --->
-		<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+		<!--- <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 		<cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-		<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+		<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#"> --->
 		<cfheader name="P3P" value="CP=\\\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\\\"">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<script type="text/javascript">var dynpath = '#dynpath#';</script>

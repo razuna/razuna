@@ -25,7 +25,7 @@
 --->
 
 <cfheader name="Content-Type"  value="text/octet-stream">
-<cfheader name="Cache-Control" value="no-cache">
+<!--- <cfheader name="Cache-Control" value="no-cache"> --->
 <cfparam name="session.user_os" default="unknown">
 <cfif !isdefined("qry_customization.#session.user_os#_netpath2asset") >
 	<cfparam name= "qry_customization.#session.user_os#_netpath2asset" default="">
