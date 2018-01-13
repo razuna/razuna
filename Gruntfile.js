@@ -26,10 +26,10 @@ module.exports = function(grunt) {
 					'./global/js/jquery.formparams.js',
 					'./global/js/jquery.lazyload.min.js',
 					'./global/js/jquery.scrollstop.js',
-					'./global/js/markitup/markitup/jquery.markitup.js',
-					'./global/js/markitup/markitup/sets/html/set.js',
 					'./global/js/masonry.pkgd.min.js',
 					'./global/js/imagesloaded.pkgd.min.js',
+					'./global/js/editor/js/froala_editor.pkgd.min.js',
+					'./global/js/Magnific-Popup-1.1.0/dist/jquery.magnific-popup.min.js',
 				],
 				dest: './global/dist/vendors_<%= pkg.script_version %>.js'
 			},
@@ -44,6 +44,7 @@ module.exports = function(grunt) {
 					'./global/js/jquery-1.12.4.min.js',
 					'./global/js/jquery.validate.min.js',
 					'./global/js/jquery.form.min.js',
+					'./global/js/Magnific-Popup-1.1.0/dist/jquery.magnific-popup.min.js',
 					'./global/host/dam/js/login.js',
 				],
 				dest: './global/dist/login_<%= pkg.script_version %>.js'
@@ -77,13 +78,15 @@ module.exports = function(grunt) {
 				src: [
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.min.css',
 					'./global/js/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css',
-					'./global/js/chosen/chosen.css',
+					'./global/stylesheets/font-awesome-4.7.0/css/font-awesome.min.css',
 					'./global/videoplayer/css/multiple-instances.css',
 					'./global/js/tag/css/jquery.tagit.css',
 					'./global/host/dam/views/layouts/tagit.css',
 					'./global/js/notification/sticky.min.css',
-					'./global/js/markitup/markitup/skins/simple/style.css',
-					'./global/js/markitup/markitup/sets/html/style.css',
+					'./global/js/chosen/chosen.css',
+					'./global/js/editor/css/froala_editor.pkgd.min.css',
+					'./global/js/editor/css/froala_style.min.css',
+					'./global/js/Magnific-Popup-1.1.0/dist/magnific-popup.css',
 					'./global/stylesheets/helpmonks-jstree-theme/style.css',
 					'./global/host/dam/views/layouts/main.css',
 				],
@@ -98,9 +101,9 @@ module.exports = function(grunt) {
 				files: [
 					// {
 					// 	expand: true,
-					// 	cwd: './global/stylesheets',
+					// 	cwd: './public/stylesheets',
 					// 	src: ['*.css', '!*.min.css', '!radio-checkbox.css', '!notes-theme.css', '!editor.css'],
-					// 	dest: './global/dist',
+					// 	dest: './public/dist',
 					// 	ext: '.min.css'
 					// },
 					{
@@ -209,7 +212,14 @@ module.exports = function(grunt) {
 						cwd: './global/js/chosen',
 						src: '*.png',
 						dest: './global/dist/images'
-					}
+					},
+					{
+						nonull: true,
+						expand: true,
+						cwd: './global/stylesheets/font-awesome-4.7.0/fonts/',
+						src: '*',
+						dest: './global/dist/fonts/'
+					},
 				]
 			},
 			dev: {

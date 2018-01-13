@@ -1786,7 +1786,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfquery>
 		<!--- Catch --->
 		<cfcatch type="any">
-			<cfset qry = queryNew("news_title, news_text, news_text_long, news_date")>
+			<cfset qry = queryNew("news_title, news_text, news_text_long, news_date, news_frontpage")>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
@@ -2959,17 +2959,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfif arguments.thestruct.add>
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO news
-		(news_id, news_active, host_id)
+		(news_id, news_active, host_id, news_frontpage)
 		VALUES (
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="false">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_double" value="false">
 		)
 		</cfquery>
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q">
-	SELECT news_id, news_active, news_text, news_date, news_title
+	SELECT news_id, news_active, news_text, news_excerpt, news_date, news_title, news_frontpage
 	FROM news
 	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">
 	</cfquery>
@@ -2986,12 +2987,32 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	SET
 	news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_active#">, 
 	news_text = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_text#">, 
+	news_excerpt = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_excerpt#">, 
 	news_date = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_date#">, 
-	news_title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_title#">
+	news_title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_title#">,
+	news_frontpage = <cfqueryparam cfsqltype="cf_sql_double" value="#arguments.thestruct.news_active#">
 	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn />
+</cffunction>
+
+<!--- Get news --->
+<cffunction name="get_news_frontpage" output="false" returntype="query">
+	<cfargument name="hostid" type="numeric" required="false" default="0">
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q">
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>news_title, news_text, news_excerpt
+	FROM news
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	ORDER BY news_date DESC
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 1</cfif>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn q />
 </cffunction>
 
 <!--- Get news --->
@@ -3002,7 +3023,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset var q = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q">
-	SELECT <cfif arguments.news_main AND application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title<cfif arguments.news_main>, news_text</cfif>
+	SELECT <cfif arguments.news_main AND application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_frontpage, news_active, news_date, news_title<cfif arguments.news_main>, news_text, news_excerpt</cfif>
 	FROM news
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 	<cfif arguments.news_main>
@@ -3021,21 +3042,21 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset var qry = structnew()>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry.news_host">
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title, news_text
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 3 </cfif>news_id, news_active, news_date, news_title, news_text, news_excerpt
 	FROM news
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	ORDER BY news_date DESC
-	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 3</cfif>
 	</cfquery>
 	<!--- Query system news --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry.news">
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title, news_text
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 3 </cfif>news_id, news_active, news_date, news_title, news_text, news_excerpt
 	FROM news
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="0">
 	AND news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
 	ORDER BY news_date DESC
-	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	<cfif application.razuna.thedatabase NEQ "mssql">LIMIT 3</cfif>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry />

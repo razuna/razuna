@@ -29,7 +29,11 @@
 	<input type="hidden" name="news_id" value="#attributes.news_id#">
 		<strong>Title</strong><br />
 		<p><input type="text" style="width:600px;" name="news_title" id="news_title" value="#qry_news_edit.news_title#" /></p>
+		<strong>Excerpt</strong><br />
+		<span class="sub">This is shown on the login page and also as a preview in the news section</span>
+		<p><textarea name="news_excerpt" id="news_excerpt" style="width:600px;height:100px;">#qry_news_edit.news_excerpt#</textarea></p>
 		<strong>Message</strong><br />
+		<span class="sub">This is shown when the user clicks on "Read more"</span>
 		<p><textarea name="news_text" id="news_text" style="width:600px;height:200px;">#qry_news_edit.news_text#</textarea></p>
 		<strong>Date (US format)</strong><br />
 		<p><input type="text" style="width:600px;" name="news_date" id="news_date" value="<cfif attributes.add>#dateformat(now(), "mm-dd-yyyy")# #timeformat(now(), "hh:mm tt")#<cfelse>#qry_news_edit.news_date#</cfif>" /></p>
@@ -40,7 +44,8 @@
 		<div id="wlfeedbacknews" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
  	</form>
  	<script type="text/javascript">
- 		$('##news_text').markItUp(mySettings);
+ 		loadEditor('news_excerpt','news', { 'height' : 100 });
+ 		loadEditor('news_text','news', { 'height' : 200 });
  		// Save this form
 		$("##form_wl_news").submit(function(e){
 			// Get values

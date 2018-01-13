@@ -26,37 +26,47 @@
 <cfoutput>
 	<p>#myFusebox.getApplicationData().defaults.trans("header_wl_news")#</p>
 	<hr>
-	<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss")#</strong><br />
-	#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss_desc")#<br />
-	<input type="text" style="width:600px" name="wl_news_rss" value="#attributes.rss#" /> <input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#"><br />
-	<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
-	<hr>
 	<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_news_section")#</strong><br />
 	#myFusebox.getApplicationData().defaults.trans("header_wl_news_section_desc")#<br />
 	<p><input type="button" name="createnew" value="#myFusebox.getApplicationData().defaults.trans("header_wl_news_new")#" onclick="showwindow('#myself#c.wl_news_edit&add=true','News record',750,1);"></p>
 	<!--- List of news --->
-	<table border="0" width="700px">
-		<tr>
-			<th>Title</th>
-			<th>Date (US format)</th>
-			<th></th>
-		</tr>
-		<!--- Loop --->
-		<cfloop query="qry_news">
+	<!--- <cfdump var="#qry_news#"> --->
+	<cfif qry_news.recordcount>
+		<table border="0" width="700px">
 			<tr>
-				<td><a href="##" onclick="showwindow('#myself#c.wl_news_edit&news_id=#news_id#','News record',750,1);">#news_title#</a></td>
-				<td>#news_date#</td>
-				<td><a href="##" onclick="nDelete('#news_id#');return false;">Delete</a></td>
+				<th>Title</th>
+				<th>Date (US format)</th>
+				<th>Shows</th>
+				<th>Show on login</th>
+				<th></th>
 			</tr>
-		</cfloop>
-	</table>
+			<!--- Loop --->
+			<cfloop query="qry_news">
+				<cfset _login = news_frontpage ? 'Yes' : 'No'>
+				<cfset _shows = news_active ? 'Yes' : 'No'>
+				<tr>
+					<td><a href="##" onclick="showwindow('#myself#c.wl_news_edit&news_id=#news_id#','News record',750,1);">#news_title#</a></td>
+					<td>#news_date#</td>
+					<td>#_shows#</td>
+					<td>#_login#</td>
+					<td><a href="##" onclick="nDelete('#news_id#');return false;">Delete</a></td>
+				</tr>
+			</cfloop>
+		</table>
+	</cfif>
+	<!--- <hr>
+	<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss")#</strong><br />
+	#myFusebox.getApplicationData().defaults.trans("header_wl_news_rss_desc")#<br />
+	<input type="text" style="width:600px" name="wl_news_rss" value="#attributes.rss#" /> <input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#"><br />
+	 --->
+	<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
 	<div id="news-confirm" title="Really delete this news entry?" style="display:none;">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 60px 0;"></span>This news entry will be removed. This action can not be un-done. <br /><br />Are you sure that you want to delete this record now?</p>
 	</div>
 	<script type="text/javascript">
 		// Delete Workflow
 		function nDelete(nid){
-			
+
 			// http://stackoverflow.com/questions/15763909/jquery-ui-dialog-check-if-exists-by-instance-method
 			if ($("##news-confirm").hasClass('ui-dialog-content')) {
 				$( "##news-confirm" ).dialog( "destroy" );

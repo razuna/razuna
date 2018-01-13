@@ -515,3 +515,8 @@ input:focus, textarea:focus {
 	margin-top: -50px;
 	z-index: 9999;
 }
+
+.sub {
+	font-style: italic;
+	font-size: 90%;
+}
