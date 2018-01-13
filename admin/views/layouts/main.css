@@ -515,3 +515,17 @@ input:focus, textarea:focus {
 	margin-top: -50px;
 	z-index: 9999;
 }
+
+.sub {
+	font-style: italic;
+	font-size: 90%;
+}
+
+.white-popup {
+	position: relative;
+	background: #FFF;
+	padding: 20px;
+	width: auto;
+	max-width: 500px;
+	margin: 20px auto;
+}

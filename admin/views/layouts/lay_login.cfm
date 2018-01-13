@@ -32,6 +32,20 @@
 		<div id="outer">
 			<div id="loginform">
 	</cfif>
+		<!--- News --->
+		<cfif attributes.qry_news.recordcount>
+			<div style="text-align:center" class="news_frontpage">
+				<h2>#attributes.qry_news.news_title#</h2>
+				<p>#attributes.qry_news.news_excerpt#
+				<cfif attributes.qry_news.news_text NEQ "">
+					<p><a href="##news-frontpage-popup" class="open-news-popup">Read more...</a></p>
+				</cfif>
+				</p>
+			</div>
+			<div id="news-frontpage-popup" class="white-popup mfp-hide">
+				#attributes.qry_news.news_text#
+			</div>
+		</cfif>
 	    #body#
 	  	</div>
 	<cfif NOT application.razuna.firsttime>
@@ -44,3 +58,13 @@
 	</cfif>
 	</div>
 </cfoutput>
+<script>
+	$(function() {
+		$('.open-news-popup').magnificPopup({
+			type: 'inline',
+			preloader: false,
+			alignTop: true,
+			midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+		});
+	})
+</script>

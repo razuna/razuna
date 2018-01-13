@@ -36,6 +36,12 @@
 			<false>
 				<!-- CFC: check if db update is there -->
 				<do action="update" />
+				<!-- news -->
+				<if condition="application.razuna.whitelabel">
+					<true>
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_news_frontpage()" returnvariable="attributes.qry_news" />
+					</true>
+				</if>
 				<!-- Show login page -->
 				<do action="v.login" />
 			</false>

@@ -231,3 +231,20 @@ a.first_time_hoover:hover{
 	-moz-border-radius: 8px;
 	border-radius: 8px;
 }
+
+.white-popup {
+	position: relative;
+	background: #FFF;
+	padding: 20px;
+	width: auto;
+	max-width: 500px;
+	margin: 20px auto;
+}
+
+.news_frontpage {
+	text-align: center;
+}
+.news_frontpage p {
+	text-align: center;
+	font-size: 16px;
+}
