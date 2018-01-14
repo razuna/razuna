@@ -2123,28 +2123,36 @@
 <!--- Remove selected files in trash --->
 <cffunction name="trashfiles_remove" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
+	<cfset arguments.thestruct.hostid = session.hostid>
+	<cfset arguments.thestruct.theuserid = session.theuserid>
 	<cfset arguments.thestruct.ids = arguments.thestruct.id>
 	<cfthread instruct="#arguments.thestruct#" priority="high">
-		<cfloop list="#attributes.instruct.ids#" index="i" delimiters=",">
-			<!--- get images --->
-			<cfif i CONTAINS "-img">
-				<!--- set image id --->
-				<cfset attributes.instruct.id = listFirst(i,'-')>
-				<cfinvoke component="images" method="removeimage"  thestruct="#attributes.instruct#" />
-			<cfelseif i CONTAINS "-aud">
-				<!--- set audio id --->
-				<cfset attributes.instruct.id = listFirst(i,'-')>
-				<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct#" />
-			<cfelseif i CONTAINS "-vid">
-				<!--- set video id --->
-				<cfset attributes.instruct.id = listFirst(i,'-')>
-				<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct#" />
-			<cfelseif i CONTAINS "-doc">
-				<!--- set file id --->
-				<cfset attributes.instruct.id = listFirst(i,'-')>
-				<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct#" />
-			</cfif>
-		</cfloop>
+		<!--- Get all files in trash --->
+		<cfif attributes.instruct.ids EQ "all_files_in_trash">
+			<cfinvoke component="folders" method="trash_file_values_thread"  thestruct="#attributes.instruct#" />
+		<cfelse>
+			<cfloop list="#attributes.instruct.ids#" index="i" delimiters=",">
+				<!--- get images --->
+				<cfif i CONTAINS "-img">
+					<!--- set image id --->
+					<cfset attributes.instruct.id = listFirst(i,'-')>
+					<cfinvoke component="images" method="removeimage"  thestruct="#attributes.instruct#" />
+				<cfelseif i CONTAINS "-aud">
+					<!--- set audio id --->
+					<cfset attributes.instruct.id = listFirst(i,'-')>
+					<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct#" />
+				<cfelseif i CONTAINS "-vid">
+					<!--- set video id --->
+					<cfset attributes.instruct.id = listFirst(i,'-')>
+					<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct#" />
+				<cfelseif i CONTAINS "-doc">
+					<!--- set file id --->
+					<cfset attributes.instruct.id = listFirst(i,'-')>
+					<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct#" />
+				</cfif>
+			</cfloop>
+		</cfif>
 	</cfthread>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
@@ -7189,8 +7197,12 @@
 					<cfthread action="join" name="copyfolderimg#newimgid#"  />
 					<cfpause interval="5" />
 					<cfthread name="renamethumb#newimgid#" intupstruct="#arguments.thestruct#">
-						<cfset var renobj = createObject("component","global.cfc.s3").init(accessKeyId=application.razuna.awskey,secretAccessKey=application.razuna.awskeysecret,storagelocation = application.razuna.awslocation)>
-						<cfset  renobj.renameObject(oldBucketName='#attributes.intupstruct.awsbucket#', newBucketName ="#attributes.intupstruct.awsbucket#", oldFileKey = "#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.select_images.img_id#.jpg",  newFileKey = "#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.newimgid#.jpg")>
+						<cfinvoke component="amazon" method="renameObject">
+							<cfinvokeargument name="oldBucketName" value="#attributes.intupstruct.awsbucket#">
+							<cfinvokeargument name="newBucketName" value="#attributes.intupstruct.awsbucket#">
+							<cfinvokeargument name="oldFileKey" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.select_images.img_id#.jpg">
+							<cfinvokeargument name="newFileKey" value="#attributes.intupstruct.newfolderid#/img/#attributes.intupstruct.newimgid#/thumb_#attributes.intupstruct.newimgid#.jpg">
+						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="renamethumb#newimgid#" />
 					<cfpause interval="5" />

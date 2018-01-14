@@ -768,8 +768,8 @@
 	<!-- Remove the selected files in trash-->
 	<fuseaction name="trashfiles_remove">
 		<!-- Param -->
-	    	<set name="attributes.hostid" value="#session.hostid#" />
-	    	<set name="attributes.id" value="#session.file_id#" />
+    	<set name="attributes.hostid" value="#session.hostid#" />
+    	<set name="attributes.id" value="#session.file_id#" />
 		<set name="attributes.trashkind" value="assets" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
