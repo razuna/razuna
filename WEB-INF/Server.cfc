@@ -30,7 +30,7 @@
 	--->
 
 	<!--- REDIS --->
-	<cftry>
+	<!--- <cftry>
 		<cfset cacheregionnew(
 			region="razcache",
 			props=
@@ -45,7 +45,7 @@
 			<cfset console("------------ REDIS error !!!!!!!!!!!!!!!!!!!!!!!!!")>
 			<cfset console(cfcatch)>
 		</cfcatch>
-	</cftry>
+	</cftry> --->
 	<!--- MongoDB --->
 	<!---
 	<cfset cacheregionnew(
