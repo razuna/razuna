@@ -212,6 +212,52 @@
 		<cfreturn thekeys />
 	</cffunction>
 
+	<!--- FUNCTION: List all files --->
+	<cffunction name="listFiles" access="public" output="false">
+		<cfargument name="host_id" type="numeric" required="true" />
+		<cfargument name="awsbucket" type="string" required="true" />
+		<cfargument name="tenant_enable" type="string" required="true" />
+		<cfargument name="tenant_bucket" type="string" required="true" />
+		<cfargument name="config" type="query" required="true" />
+		<cfargument name="from_cron" type="string" required="true" default="false" />
+		<cfargument name="one" type="string" required="false" default="false" />
+		<cfargument name="aws_prefix" type="string" required="false" default="" />
+		<cfargument name="s3ds" type="string" required="false" default="" />
+		<cfargument name="keys" type="array" required="false" />
+
+		<!--- If we store all files in one bucket --->
+		<cfif arguments.one>
+			<cfset arguments = tenantCheck(arguments)>
+			<cfset arguments.s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location )>
+			<!--- New array --->
+			<cfset arguments.keys = ArrayNew()>
+		</cfif>
+
+		<cfset arguments.aws_prefix = arguments.one ? arguments.aws_prefix & "/" : arguments.aws_prefix>
+
+		<!--- Get keys --->
+		<cfset thekeys = AmazonS3list( datasource=arguments.s3ds, bucket=arguments.awsbucket, prefix=arguments.aws_prefix )>
+		<!--- <cfset consoleoutput(true)> --->
+
+		<cfloop query="thekeys">
+			<!--- If size is 0 --->
+			<cfif size EQ 0>
+				<!--- Call this function again to get next key --->
+				<cfset arguments.keys = listFiles( host_id=arguments.host_id, awsbucket=arguments.awsbucket, tenant_enable=arguments.tenant_enable, tenant_bucket=arguments.tenant_bucket, config=arguments.config, from_cron=arguments.from_cron, one="false", aws_prefix=key, s3ds=arguments.s3ds, keys=arguments.keys )>
+			<cfelse>
+				<!--- Append to array --->
+				<cfset ArrayAppend( arguments.keys, key )>
+				<!--- <cfset console(key)> --->
+			</cfif>
+		</cfloop>
+
+		<!--- <cfset console(arguments.keys)> --->
+
+
+		<!--- Return --->
+		<cfreturn arguments.keys />
+	</cffunction>
+
 	<!--- FUNCTION: Delete folder --->
 	<cffunction name="deletefolder" access="public" output="true">
 		<cfargument name="folderpath" type="string" required="true" />
@@ -221,18 +267,13 @@
 		<cfargument name="config" type="query" required="false" />
 		<cfargument name="from_cron" type="string" required="false" default="false" />
 
-		<cfset var _from_cron = false>
+		<cfset var _s3ds = getDataSource( from_cron=arguments.from_cron, conf_aws_access_key=arguments.config.conf_aws_access_key, conf_aws_secret_access_key=arguments.config.conf_aws_secret_access_key, conf_aws_location=arguments.config.conf_aws_location )>
 
-		<!--- Check from_cron --->
-		<cfif structkeyexists(arguments, "from_cron")>
-			<cfset var _from_cron = arguments.from_cron>
-		</cfif>
-
-		<cfif _from_cron>
+		<!--- <cfif _from_cron>
 			<cfset var _s3ds = AmazonRegisterDataSource("aws","#arguments.config.conf_aws_access_key#","#arguments.config.conf_aws_secret_access_key#","#arguments.config.conf_aws_location#")>
 		<cfelse>
 			<cfset var _s3ds = application.razuna.s3ds>
-		</cfif>
+		</cfif> --->
 
 		<!--- If we store all files in one bucket --->
 		<cfset arguments = tenantCheck(arguments)>
@@ -494,8 +535,8 @@
 			<cfset var _from_cron = arguments.thestruct.from_cron>
 		</cfif>
 		
-		<cfset console(arguments.thestruct)>
-		<cfset console(_from_cron)>
+		<!--- <cfset console(arguments.thestruct)>
+		<cfset console(_from_cron)> --->
 		<!--- If application scope exists --->
 		<cfif ! _from_cron>
 			<cfset arguments.thestruct.tenant_enable = application.razuna.awstenaneonebucket>
@@ -505,6 +546,8 @@
 		<!--- <cfset console(arguments.thestruct)> --->
 		<!--- If one bucket for all tenants --->
 		<cfif arguments.thestruct.tenant_enable>
+			<!--- For listing return host_id --->
+			<cfset arguments.thestruct.aws_prefix = arguments.thestruct.host_id>
 			<!--- Overwrite the bucket --->
 			<cfset arguments.thestruct.awsbucket = arguments.thestruct.tenant_bucket>
 			<!--- Check if key start with / --->
@@ -513,7 +556,7 @@
 				<cfset var _add_to_key = _start EQ "/" ? '/' & arguments.thestruct.host_id : '/' & arguments.thestruct.host_id & '/'>
 				<!--- Tag on host_id to key --->
 				<cfset arguments.thestruct.key = _add_to_key & arguments.thestruct.key>
-				<cfset console(#arguments.thestruct.key#)>
+				<!--- <cfset console(#arguments.thestruct.key#)> --->
 			</cfif>
 			<!--- Check if folderpath start with / --->
 			<cfif structKeyExists(arguments.thestruct, "folderpath")>
@@ -521,7 +564,7 @@
 				<cfset var _add_to_key = _start EQ "/" ? '/' & arguments.thestruct.host_id : '/' & arguments.thestruct.host_id & '/'>
 				<!--- Tag on host_id to key --->
 				<cfset arguments.thestruct.folderpath = _add_to_key & arguments.thestruct.folderpath>
-				<cfset console(#arguments.thestruct.folderpath#)>
+				<!--- <cfset console(#arguments.thestruct.folderpath#)> --->
 			</cfif>
 			<!--- Check if folderpathdest start with / --->
 			<cfif structKeyExists(arguments.thestruct, "folderpathdest")>
@@ -529,7 +572,7 @@
 				<cfset var _add_to_key = _start EQ "/" ? '/' & arguments.thestruct.host_id : '/' & arguments.thestruct.host_id & '/'>
 				<!--- Tag on host_id to key --->
 				<cfset arguments.thestruct.folderpathdest = _add_to_key & arguments.thestruct.folderpathdest>
-				<cfset console(#arguments.thestruct.folderpathdest#)>
+				<!--- <cfset console(#arguments.thestruct.folderpathdest#)> --->
 			</cfif>
 			<!--- Check if oldFileKey start with / --->
 			<cfif structKeyExists(arguments.thestruct, "oldFileKey")>
@@ -537,7 +580,7 @@
 				<cfset var _add_to_key = _start EQ "/" ? '/' & arguments.thestruct.host_id : '/' & arguments.thestruct.host_id & '/'>
 				<!--- Tag on host_id to key --->
 				<cfset arguments.thestruct.oldFileKey = _add_to_key & arguments.thestruct.oldFileKey>
-				<cfset console(#arguments.thestruct.oldFileKey#)>
+				<!--- <cfset console(#arguments.thestruct.oldFileKey#)> --->
 			</cfif>
 			<!--- Check if newFileKey start with / --->
 			<cfif structKeyExists(arguments.thestruct, "newFileKey")>
@@ -545,12 +588,36 @@
 				<cfset var _add_to_key = _start EQ "/" ? '/' & arguments.thestruct.host_id : '/' & arguments.thestruct.host_id & '/'>
 				<!--- Tag on host_id to key --->
 				<cfset arguments.thestruct.newFileKey = _add_to_key & arguments.thestruct.newFileKey>
-				<cfset console(#arguments.thestruct.newFileKey#)>
+				<!--- <cfset console(#arguments.thestruct.newFileKey#)> --->
 			</cfif>
-			<cfset console(#arguments.thestruct.awsbucket#)>
+			<!--- <cfset console(#arguments.thestruct.awsbucket#)> --->
 		</cfif>
 		<!--- Return --->
 		<cfreturn arguments.thestruct />
+	</cffunction>
+
+	<!--- Function to create key and bucket --->
+	<cffunction name="getDataSource" access="public">
+		<cfargument name="from_cron" required="true" type="string">
+		<cfargument name="conf_aws_access_key" required="true" type="string">
+		<cfargument name="conf_aws_secret_access_key" required="true" type="string">
+		<cfargument name="conf_aws_location" required="true" type="string">
+
+		<cfset var _from_cron = false>
+
+		<!--- Check from_cron --->
+		<cfif structkeyexists(arguments, "from_cron")>
+			<cfset var _from_cron = arguments.from_cron>
+		</cfif>
+
+		<cfif _from_cron>
+			<cfset var _s3ds = AmazonRegisterDataSource("aws","#arguments.conf_aws_access_key#","#arguments.conf_aws_secret_access_key#","#arguments.conf_aws_location#")>
+		<cfelse>
+			<cfset var _s3ds = application.razuna.s3ds>
+		</cfif>
+
+		<cfreturn _s3ds />
+
 	</cffunction>
 
 </cfcomponent>
