@@ -16,9 +16,9 @@
 	<div class="container cf">
 
 		<h1>Caching</h1>
-		
+
 		<cfinclude template="pages/sidebar_advanced.inc" />
-	
+
 		<div class="section">
 
 <h2>Cache Functions</h2>
@@ -157,7 +157,7 @@ Configuring a region is done using the CacheRegionXXX() functions.  The properti
 <h2>Cache Engines</h2>
 
 <p>
-	The following cache engines are available to you within OpenBD: memorydisk, memcached, mongo and null.
+	The following cache engines are available to you within OpenBD: memorydisk, memcached, mongo, redis and null.
 	This section highlights how you can configure each of these types.  These sample blocks are what you pass into
 	<a href="./?/function/cacheregionnew">CacheRegionNew</a> function.  Normally you would create these at the start
 	of your application (such as <a href="./?/app_server_cfc">/Server.cfc</a>).
@@ -240,6 +240,31 @@ Configuring a region is done using the CacheRegionXXX() functions.  The properti
 <p>
 	Depending on the data being cached, it will be stored as either a raw UTF string (best performance) or as a byte array representing
 	the serialized object.  This cache engine supports partial delete keys (for example delete everything that starts with 'xyz').
+</p>
+
+<h3>type : 'redis'</h3>
+
+<p>
+This cache uses a Redis cache server that uses an in-memory data structure as its storage mechanism.
+The size of this cache is controlled by the server, with items being auto-aged to make room for new items.
+</p>
+
+<pre>{
+  type : 'redis',
+  server : 'redis://127.0.0.1:6379',
+  waittimeseconds : 5
+}</pre>
+
+<p>
+	<strong>server</strong> (required) is the URI for the redis master the cache will connect to.
+	<strong>waittimeseconds</strong> (optional) is the time that OpenBD will wait for before cancelling the operation to the server.
+	If all the servers go away, then the system will operate as normal, except the cache will simply return nothing.
+</p>
+
+<p>
+	Note that current redis implementation was built on top of AWS ElasticCache with a configuration comprising one shard with two nodes, master and slave, and cluster mode disabled.
+	It should scale for additional nodes.
+	However, it provides no guarantees for configurations with additional shards or cluster mode enabled.
 </p>
 
 <h3>type : 'null'</h3>

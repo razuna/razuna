@@ -8,5 +8,6 @@
 		<li <cfif request.page.title == "Salesforce Plugin">class="active"</cfif> ><a href="./?/plugin_salesforce">SalesForce</a></li>
 		<li <cfif request.page.title == "Exchange Plugin">class="active"</cfif> ><a href="./?/plugin_exchange">Microsoft Exchange</a></li>
 		<li <cfif request.page.title == "Login Extension">class="active"</cfif> ><a href="./?/plugin_login">Login &ndash; Security</a></li>
+		<li <cfif request.page.title == "SVN Repository Plugin">class="active"</cfif> ><a href="./?/plugin_svn">SVN Repository</a></li>
 	</ul>
 </div><!--- .sidebar --->

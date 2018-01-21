@@ -16,33 +16,33 @@
 	<div class="container cf">
 
 		<h1>PlugIn Overview</h1>
-		
+
 		<cfinclude template="pages/sidebar_plugin.inc" />
-		
+
 		<div class="section">
-		
+
 			<p>Plugin functionality is a factor of any modern day software package. From the humble desktop apps, right through to powerful scalable
 			enterprise sysems, they all offer the ability to extend their core functionality by adding small pieces of functionality. OpenBD offers
 			this powerful paradiagm to the CFML developer.</p>
-			
+
 			<p>Plugins allow us to develop custom features that would not necessarily have a broad appeal to every one. These targetted small chunks of
 			functionality allow you to custom build your web application setup without all the bloat that is usually associated with mature software.</p>
-			
+
 			<h2>Installation</h2>
-			
+
 			<p>Installation of a plugin could not be easier. Simply drop the plugin JAR file into the <strong>/WEB-INF/lib/</strong> folder and
 			restart the web server.  No complicated configuration files to wrestle with. If you need to remove a plugin simply delete the file and
 			restart.</p>
-			
+
 			<p>You can validate the loading of any plugin by looking at the <strong>bluedragon.log</strong> and you will see a line to note it was loaded.</p>
-			
+
 			<p>If you have a custom setup for your J2EE application server, then it is generally recommended to place the plugin JAR in the same directory
 			as the main <strong>OpenBlueDragon.jar</strong> file.</p>
-			
+
 			<h2>Official PlugIns</h2>
-			
+
 			<p>The following plugins are available from the main <a href="http://openbd.org/download/">OpenBD website</a>.</p>
-			
+
 			<table class="zebra-striped">
 			<thead>
 				<tr>
@@ -82,9 +82,13 @@
 					<td><a href="./?/plugin_exchange">Microsoft Exchange</a></td>
 					<td>Interact with Microsoft Exchange server, including tasks, events, contacts etc</td>
 				</tr>
+				<tr>
+					<td><a href="./?/plugin_svn">SVN Repository</a></td>
+					<td>SVN Repository plugin makes it really easy and quick interacting with a SVN Repository without the overhead</td>
+				</tr>
 			</tbody>
 			</table>
-			
+
 		</div><!--- .section --->
 
 	</div><!--- .container --->
