@@ -28,6 +28,13 @@
 		}
 	)>
 	--->
+
+	<!--- REDIS --->
+	{
+		type : 'redis',
+		server : 'redis://127.0.0.1:6379',
+		waittimeseconds : 5
+	}
 	
 	<!--- MongoDB --->
 	<!--- 
