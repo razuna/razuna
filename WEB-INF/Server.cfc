@@ -3,21 +3,21 @@
   <cffunction name="onServerStart">
 	<cfset consoleoutput(true)>
 	<cfset console("------------SERVER STARTUP------------------")>
-	
+
 	<cfset console("---START: Cache Setup---")>
 	<!--- Create the cache --->
-	<cfset cacheregionnew(
+	<!--- <cfset cacheregionnew(
 	  region="razcache",
 	  props=
 	  {
 		type : 'memorydisk'
 	  }
-	)>
+	)> --->
 
 	<!--- READ the documentation at http://wiki.razuna.com/display/ecp/Configure+Caching !!! --->
 
 	<!--- Memcached / CouchBase --->
-	<!--- 
+	<!---
 	<cfset cacheregionnew(
 	region="razcache",
 	props=
@@ -28,9 +28,26 @@
 		}
 	)>
 	--->
-	
+
+	<!--- REDIS --->
+	<!--- <cftry>
+		<cfset cacheregionnew(
+			region="razcache",
+			props=
+				{
+					type : 'redis',
+					server : 'redis://127.0.0.1:6379',
+					waittimeseconds : 5
+				}
+		)>
+		<cfcatch type="any">
+			<cfset consoleoutput(true)>
+			<cfset console("------------ REDIS error !!!!!!!!!!!!!!!!!!!!!!!!!")>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry> --->
 	<!--- MongoDB --->
-	<!--- 
+	<!---
 	<cfset cacheregionnew(
 	region="razcache",
 	props=

@@ -29,7 +29,7 @@
 			<td>#defaultsObj.trans("header_backup_restore_desc")#</td>
 		</tr>
 		<tr>
-			<td style="background-color:yellow;font-weight:bold;">During a Backup or Restore operation your server will become unresponsive to any requests! Do these operation when no one is accessing your server.</td>
+			<td style="background-color:yellow;font-weight:bold;">During a Backup or Restore operation your server will become unresponsive to any requests! Do these operation when no one is accessing your server.<p>We highly recommend to NOT use the backup option here, but instead use the native backup option for your database, e.g. mysqldump.</td>
 		</tr>
 		<tr>
 			<td class="list"></td>

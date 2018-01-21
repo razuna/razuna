@@ -10,7 +10,7 @@
 
 	<!--- Get database --->
 	<cfquery datasource="razuna_default" name="_config">
-	SELECT conf_datasource, conf_database, conf_datasource, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location
+	SELECT conf_datasource, conf_database, conf_datasource, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable
 	FROM razuna_config
 	</cfquery>
 
@@ -395,9 +395,9 @@
 			<!--- Amazon --->
 			<cfelseif _storage EQ "amazon">
 				<cfif arguments.file_data.path_to_asset NEQ "">
-					<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.file_data.path_to_asset#" awsbucket="#arguments.host_settings.set2_aws_bucket#" />
+					<cfinvoke component="global.cfc.amazon" method="deletefolder" folderpath="#arguments.file_data.path_to_asset#" awsbucket="#arguments.host_settings.set2_aws_bucket#" tenant_enable="#_config.conf_aws_tenant_in_one_bucket_enable#" tenant_bucket="#_config.conf_aws_tenant_in_one_bucket_name#" from_cron="true" config="#_config#" host_id="#arguments.host_id#" />
 					<!--- Versions --->
-					<cfinvoke component="amazon" method="deletefolder" folderpath="versions/img/#arguments.file_data.id#" awsbucket="#arguments.host_settings.set2_aws_bucket#" />
+					<cfinvoke component="global.cfc.amazon" method="deletefolder" folderpath="versions/img/#arguments.file_data.id#" awsbucket="#arguments.host_settings.set2_aws_bucket#" tenant_enable="#_config.conf_aws_tenant_in_one_bucket_enable#" tenant_bucket="#_config.conf_aws_tenant_in_one_bucket_name#" from_cron="true" config="#_config#" host_id="#arguments.host_id#" />
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
@@ -437,7 +437,7 @@
 							<cfdirectory action="delete" directory="#arguments.host_settings.set2_path_to_assets#/#arguments.host_id#/#path_to_asset#" recurse="true">
 						</cfif>
 					<cfelseif _storage EQ "amazon" AND path_to_asset NEQ "">
-						<cfinvoke component="amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.host_settings.set2_aws_bucket#" />
+						<cfinvoke component="global.cfc.amazon" method="deletefolder" folderpath="#path_to_asset#" awsbucket="#arguments.host_settings.set2_aws_bucket#" tenant_enable="#_config.conf_aws_tenant_in_one_bucket_enable#" tenant_bucket="#_config.conf_aws_tenant_in_one_bucket_name#" from_cron="true" config="#_config#" host_id="#arguments.host_id#" />
 					</cfif>
 					<cfcatch type="any">
 						<cfset console("#now()# ---------------------- Error in trash file remove cron job")>
