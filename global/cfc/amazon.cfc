@@ -172,6 +172,10 @@
 	</cffunction>
 
 	<!--- FUNCTION: SIGNED URL --->
+	<!--- Need to change this to accept full URLS now --->
+	<!--- S3 URL schema should be: https://nitai.s3.amazonaws.com/2.jpg --->
+	<!--- nitai = bucket --->
+	<!--- All S3 region URL are like: s3.us-east-2.amazonaws.com --->
 	<cffunction name="signedurl" access="public" output="true">
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
