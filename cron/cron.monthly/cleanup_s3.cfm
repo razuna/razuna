@@ -1,7 +1,9 @@
+<cfabort>
+
 <cftry>
 
 	<cfset consoleoutput(true)>
-	<cfset console("#now()# --- Executing cron job to clean up trash")>
+	<cfset console("#now()# --- Executing cron job to clean up S3")>
 
 	<!--- Path --->
 	<cfset _path = expandPath("../..")>
@@ -25,7 +27,16 @@
 	GROUP BY host_id, host_shard_group
 	</cfquery>
 
-	<cfinvoke component="global.cfc.global" method="_lockFile" qry="#_qry_hosts#" type="trash" returnvariable="_hosts" />
+	<!--- Do http call --->
+
+	<!--- If all good, extract file_id and type from URL --->
+
+	<!--- Grab record in DB --->
+
+	<!--- If not found remove file on S3 --->
+
+
+	<cfinvoke component="global.cfc.global" method="_lockFile" qry="#_qry_hosts#" type="s3" returnvariable="_hosts" />
 
 	<cfloop query="_hosts">
 
@@ -37,19 +48,18 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
 		</cfquery>
 
+		<cfset _awsList( host_id = host_id, host_settings = qry_host_settings, config=_config )>
+
 		<!--- Images --->
-		<cfquery datasource="#_db#" name="qry_img">
-		SELECT img_id as id, path_to_asset
+		<!--- <cfquery datasource="#_db#" name="qry_img">
+		SELECT img_id as id, path_to_asset, cloud_url_org, cloud_url
 		FROM #host_shard_group#images
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-		AND img_change_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#_removetime#">
-		ORDER BY img_id
-		LIMIT 100
+		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
 		</cfquery>
 		<!--- If found --->
 		<cfif qry_img.recordcount>
-			<cfset console('#now()# ---------------------- Found #qry_img.recordcount# images to remove in the trash')>
-			<cfset _deleteImages( file_qry = qry_img, prefix = host_shard_group, host_id = host_id, host_settings = qry_host_settings )>
+			<cfset console('#now()# ---------------------- Found #qry_img.recordcount# images to check')>
+			<cfset _checkImages( file_qry = qry_img, prefix = host_shard_group, host_id = host_id, host_settings = qry_host_settings )>
 		</cfif>
 
 		<!--- Videos --->
@@ -95,12 +105,43 @@
 		<cfif qry_doc.recordcount>
 			<cfset console('#now()# ---------------------- Found #qry_doc.recordcount# documents to remove in the trash')>
 			<cfset _deleteDocs( file_qry = qry_doc, prefix = host_shard_group, host_id = host_id, host_settings = qry_host_settings )>
-		</cfif>
-
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="search" host_id="#host_id#"/>
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="folders" host_id="#host_id#"/>
+		</cfif> --->
 
 	</cfloop>
+
+	<cffunction name="_awsList">
+		<cfargument name="host_id" type="numeric">
+		<cfargument name="host_settings" type="query">
+		<cfargument name="config" type="query">
+		<!--- Call Amazon function to list all files --->
+		<cfinvoke component="global.cfc.amazon" method="listFiles" host_id="#arguments.host_id#" awsbucket="#host_settings.set2_aws_bucket#" from_cron="true" tenant_enable="#_config.conf_aws_tenant_in_one_bucket_enable#" tenant_bucket="#_config.conf_aws_tenant_in_one_bucket_name#" config="#arguments.config#" one="true" returnvariable="awsFiles" />
+		<cfset consoleoutput(true)>
+		<!--- <cfset console(awsFiles)> --->
+		<!--- Loop over array --->
+		<cfloop from="1" to="#ArrayLen(awsFiles)#" index="key">
+			<!--- <cfset console( awsFiles[key] )> --->
+			<!--- Split by / --->
+			<cfset var _key = awsFiles[key].split("/")>
+			<!--- <cfset console( _key[3] )>
+			<cfset console( _key[4] )> --->
+			<cfset var _file_type = _key[3]>
+			<cfset var _file_id = _key[4]>
+			<!--- Now check DB --->
+			
+		</cfloop>
+		<cfinvoke component="global.cfc.global" method="_removeLockFile" qry_remove_lock="#_qry_hosts#" type="s3"/>
+		<cfabort>
+	</cffunction>
+
+	<cffunction name="_checkDb">
+		<cfargument name="file_qry" type="query">
+		<cfargument name="prefix" type="string">
+		<cfargument name="host_id" type="numeric">
+		<cfargument name="host_settings" type="query">
+		<cfset consoleoutput(true)>
+		<cfset console(arguments.file_qry)>
+		<cfabort>
+	</cffunction>
 
 	<cffunction name="_deleteImages">
 		<cfargument name="file_qry" type="query">
@@ -165,7 +206,9 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "img")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="images" host_id="#arguments.host_id#"/>
+		<cfset _resetCache( type = 'search', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'folders', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'images', host_id = arguments.host_id )>
 	</cffunction>
 
 	<cffunction name="_deleteVideos">
@@ -231,7 +274,9 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "vid")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="videos" host_id="#arguments.host_id#"/>
+		<cfset _resetCache( type = 'search', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'folders', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'videos', host_id = arguments.host_id )>
 	</cffunction>
 
 	<cffunction name="_deleteAudios">
@@ -297,7 +342,9 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "aud")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="audios" host_id="#arguments.host_id#"/>
+		<cfset _resetCache( type = 'search', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'folders', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'audios', host_id = arguments.host_id )>
 	</cffunction>
 
 	<cffunction name="_deleteDocs">
@@ -358,7 +405,9 @@
 			<cfset _deleteFile(file_data = s, prefix = arguments.prefix, host_id = arguments.host_id, host_settings = arguments.host_settings, category = "doc")>
 		</cfloop>
 		<!--- Reset cache --->
-		<cfinvoke component="global.cfc.global" method="resetCacheExternal" type="files" host_id="#arguments.host_id#"/>
+		<cfset _resetCache( type = 'search', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'folders', host_id = arguments.host_id )>
+		<cfset _resetCache( type = 'files', host_id = arguments.host_id )>
 	</cffunction>
 
 	<!--- Filesytem remove --->
@@ -456,12 +505,33 @@
 		<cfreturn />
 	</cffunction>
 
-	<cfinvoke component="global.cfc.global" method="_removeLockFile" qry_remove_lock="#_qry_hosts#" type="trash"/>
+	<cffunction name="_resetCache" output="false" returntype="void">
+		<cfargument name="type" type="string" required="yes">
+		<cfargument name="host_id" type="string" required="yes">
+		<!--- Create token --->
+		<cfset var t = createuuid('')>
+		<!--- Update DB --->
+		<cftry>
+			<cfquery dataSource="#_db#">
+			UPDATE cache
+			SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
+			WHERE cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam value="#arguments.host_id#" CFSQLType="CF_SQL_NUMERIC">
+			</cfquery>
+			<cfcatch type="any">
+				<cfset console("#now()# ---------------------- Error in trash file resetting cache cron job")>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cfreturn />
+	</cffunction>
 
-	<cfset console("#now()# --- Finished cron job to clean up trash")>
+	<cfinvoke component="global.cfc.global" method="_removeLockFile" qry_remove_lock="#_qry_hosts#" type="s3"/>
+
+	<cfset console("#now()# --- Finished cron job to clean up S3")>
 
 	<cfcatch type="any">
-		<cfset console("#now()# ---------------------- Error in trash remove cron job")>
+		<cfset console("#now()# ---------------------- Error in S3 cron job")>
 		<cfset console(cfcatch)>
 	</cfcatch>
 </cftry>

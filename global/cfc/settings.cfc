@@ -442,7 +442,7 @@
 	<!--- Select --->
 	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#get_global */ 
-	conf_database, conf_schema, conf_datasource, conf_storage, conf_aka_token, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable
+	conf_database, conf_schema, conf_datasource, conf_storage, conf_aka_token, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_url_assets
 	FROM razuna_config
 	</cfquery>
 	<!--- Return --->
@@ -518,6 +518,10 @@
 	</cfif>
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_aws_tenant_in_one_bucket_name")>
 		<cfif commad EQ "T">,</cfif>conf_aws_tenant_in_one_bucket_name = <cfqueryparam value="#arguments.thestruct.conf_aws_tenant_in_one_bucket_name#" cfsqltype="cf_sql_varchar">
+		<cfset commad = "T">
+	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_url_assets")>
+		<cfif commad EQ "T">,</cfif>conf_url_assets = <cfqueryparam value="#arguments.thestruct.conf_url_assets#" cfsqltype="cf_sql_varchar">
 		<cfset commad = "T">
 	</cfif>
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
@@ -1191,7 +1195,7 @@
 	<!--- Check DB --->
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
-		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
+		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token, conf_url_assets
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -1255,7 +1259,8 @@
 					conf_rendering_farm						BOOLEAN,
 					conf_serverid							VARCHAR(100),
 					conf_wl 								BOOLEAN DEFAULT false,
-					conf_aka_token							VARCHAR(200) DEFAULT ''
+					conf_aka_token							VARCHAR(200) DEFAULT '',
+					conf_url_assets							VARCHAR(500) DEFAULT 'http://127.0.0.1'
 				)
 				</cfquery>
 				<!--- Insert values --->
@@ -1279,7 +1284,7 @@
 				<!--- Query again --->
 				<cfquery datasource="razuna_default" name="qry">
 				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
-				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name
+				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name, conf_url_assets
 				FROM razuna_config
 				</cfquery>
 			</cfif>
@@ -1389,7 +1394,7 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_isp, conf_aka_token
+	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_isp, conf_aka_token, conf_url_assets
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1423,7 +1428,7 @@
 	<cfset var qry = "">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_aka_token, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name
+	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_aka_token, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name, conf_url_assets
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope --->
@@ -3394,10 +3399,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 </cffunction>
 
 <cffunction name="get_notifications" returntype="query" hint="Get notificaiton settings">
+	<cfargument name="datasource" type="string" required="false" default="">
+	<cfargument name="dbprefix" type="string" required="false" default="">
+	<cfargument name="host_id" type="numeric" required="false" default="0">
+	<!--- Decide what to take --->
+	<cfif ! arguments.host_id>
+		<cfset arguments.datasource = application.razuna.datasource>
+		<cfset arguments.host_id = session.hostid>
+		<cfset arguments.dbprefix = session.hostdbprefix>
+	</cfif>
 	<!--- Cache --->
 	<cfset var cachetoken = getcachetoken("settings")>
 	<!--- Update db --->
-	<cfquery dataSource="#application.razuna.datasource#" name="notification_qry" cachedwithin="1" region="razcache">
+	<cfquery dataSource="#arguments.datasource#" name="notification_qry" cachedwithin="1" region="razcache">
 	SELECT /* #cachetoken#get_notifications */
 		set2_folder_subscribe_email_sub,
 		set2_folder_subscribe_email_body,
@@ -3413,9 +3427,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		set2_new_user_email_sub, 
 		set2_new_user_email_body,
 		set2_email_from
-	FROM #session.hostdbprefix#settings_2 
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #arguments.dbprefix#settings_2 
+	WHERE set2_id = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
 	</cfquery>
 	<cfreturn notification_qry>
 </cffunction>
@@ -3424,7 +3438,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="getmeta_asset"  hint="Retrieves relevant meta information from a given asset from the specified meta fields in raz1_settings_2" returntype="query">
 	<cfargument name="assetid" type="string" required="true">
 	<cfargument name="metafields" type="string" required="true" hint="fields to extract">
-	<cfparam name="session.thelangid" default="1">
+	<cfargument name="datasource" type="string" required="false" default="">
+	<cfargument name="dbprefix" type="string" required="false" default="">
+	<cfargument name="host_id" type="numeric" required="false" default="0">
+	<cfargument name="thelangid" type="numeric" required="false" default="1">
+	<!--- Decide what to take --->
+	<cfif ! arguments.host_id>
+		<cfset arguments.datasource = application.razuna.datasource>
+		<cfset arguments.host_id = session.hostid>
+		<cfset arguments.dbprefix = session.hostdbprefix>
+	</cfif>
 	<cfset var data = queryNew(1)>
 	<!--- Extract fields --->
 	<cfset var cf_fields = "">
@@ -3445,21 +3468,21 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset doc_fields = listsort(doc_fields,'text','asc')>
 	<!--- Extract data for asset for specified fields --->
 	<cfset var img_data = querynew(#img_fields#)>
-	<cfquery dataSource="#application.razuna.datasource#" name="img_data">
+	<cfquery dataSource="#arguments.datasource#" name="img_data">
 		SELECT #preservesinglequotes(img_fields)# 
-		FROM #session.hostdbprefix#xmp
+		FROM #arguments.dbprefix#xmp
 		WHERE id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
 	</cfquery>
 	<cfif img_data.recordcount EQ 0>
 		<cfset var tmp = queryAddRow(img_data,1)>
 	</cfif>
 
 	<cfset var doc_data = querynew(#doc_fields#)>
-	<cfquery dataSource="#application.razuna.datasource#" name="doc_data">
-		SELECT #preservesinglequotes(doc_fields)# FROM #session.hostdbprefix#files_xmp
+	<cfquery dataSource="#arguments.datasource#" name="doc_data">
+		SELECT #preservesinglequotes(doc_fields)# FROM #arguments.dbprefix#files_xmp
 		WHERE asset_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
 	</cfquery>
 	<cfif doc_data.recordcount EQ 0>
 		<cfset var tmp = queryAddRow(doc_data,1)>
@@ -3468,16 +3491,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfquery dbtype="query" name="data">SELECT * FROM img_data, doc_data</cfquery>
 	<!--- Add custom fields to data set --->
 	<cfloop list="#cf_fields#" index="cf">
-		<cfquery dataSource="#application.razuna.datasource#" name="cf_col">
-			SELECT ct.cf_text FROM  #session.hostdbprefix#custom_fields_text ct
+		<cfquery dataSource="#arguments.datasource#" name="cf_col">
+			SELECT ct.cf_text FROM  #arguments.dbprefix#custom_fields_text ct
 			WHERE ct.cf_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf#" >
-			AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
+			AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thelangid#">
 		</cfquery>
-		<cfquery dataSource="#application.razuna.datasource#" name="cf_data">
-			SELECT  cv.cf_value FROM #session.hostdbprefix#custom_fields_values cv
+		<cfquery dataSource="#arguments.datasource#" name="cf_data">
+			SELECT  cv.cf_value FROM #arguments.dbprefix#custom_fields_values cv
 			WHERE cv.cf_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cf#" >
 			AND cv.asset_id_r  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
-			AND cv.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND cv.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
 		</cfquery>
 		<cfset var tmp = queryAddColumn(data,'#cf_col.cf_text#','varchar',[])>
 		<cfif cf_data.RecordCount NEQ 0>

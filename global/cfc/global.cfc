@@ -2253,4 +2253,25 @@ Comment:<br>
 		<cfreturn />
 	</cffunction>
 
+	<cffunction name="resetCacheExternal" access="public" output="false" returntype="void">
+		<cfargument name="type" type="string" required="yes">
+		<cfargument name="host_id" type="string" required="yes">
+		<!--- Create token --->
+		<cfset var t = createuuid('')>
+		<!--- Update DB --->
+		<cftry>
+			<cfquery dataSource="#_db#">
+			UPDATE cache
+			SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
+			WHERE cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam value="#arguments.host_id#" CFSQLType="CF_SQL_NUMERIC">
+			</cfquery>
+			<cfcatch type="any">
+				<cfset console("#now()# ---------------------- Error in resetCacheExternal")>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

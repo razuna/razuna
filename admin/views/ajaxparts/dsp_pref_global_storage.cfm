@@ -39,7 +39,17 @@
 			<td align="center" valign="top"><input type="radio" name="conf_storage" value="local"<cfif gprefs.conf_storage EQ "local"> checked</cfif>></td>
 			<td colspan="2">#defaultsObj.trans("global_storage_local_desc")#</td>
 		</tr>
-		<!--- Nirvanix Storage --->
+		<!--- <tr>
+			<td></td>
+			<td nowrap="true" valign="top">URL to your asset</td>
+			<td><input type="text" name="conf_url_assets" id="conf_url_assets" style="width:300px;" value="#gprefs.conf_url_assets#" /></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td class="sub">This URL is being used in background jobs like sending out emails on asset expiration emails. Define only the first part of the URL, e.g. if your assets are accessible with https://mydomain.com/assets/1/.... then you only need to enter here https://mydomain.com. However, if your assets are accessible with https://mydomain.com/razuna/assets/1/... then enter https://mydomain.com/razuna</td>
+		</tr> --->
+		<!--- Nirvanix Storage #gprefs.conf_url_assets# --->
 		<!--- <tr>
 			<th class="textbold" colspan="3">Nirvanix Storage</th>
 		</tr>

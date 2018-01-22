@@ -107,7 +107,8 @@
 <cffunction name="trans" output="false" returntype="string" hint="Get the correct translation">
 	<cfargument name="transid" default="" required="yes" type="string">
 	<cfargument name="values" hint="Array of values to substitute for $1, $2 etc in the resource string" type="array" required="false" default="#arrayNew(1)#" />
-	<cfargument name="thetransfile" default="#session.thelang#" required="false" type="string">
+	<cfargument name="thelang" default="#session.thelang#" required="false" type="string">
+	<cfargument name="thetransfile" default="#arguments.thelang#" required="false" type="string">
 	<!--- init function internal vars --->
 	<!---<cfset var xmlFile=expandpath("translations/#arguments.thetransfile#")/>
 	<cfset var xmlVar = "">
@@ -213,14 +214,23 @@
 
 <!--- GET THE DATE FORMAT OF THIS HOST --->
 <cffunction hint="GET THE DATE FORMAT OF THIS HOST" name="getdateformat" output="false" returntype="string">
+	<cfargument name="datasource" type="string" required="false" default="">
+	<cfargument name="dbprefix" type="string" required="false" default="">
+	<cfargument name="host_id" type="numeric" required="false" default="0">
+	<!--- Decide what to take --->
+	<cfif ! arguments.host_id>
+		<cfset arguments.datasource = application.razuna.datasource>
+		<cfset arguments.host_id = session.hostid>
+		<cfset arguments.dbprefix = session.hostdbprefix>
+	</cfif>
 	<!--- init function internal vars --->
 	<cfset var qDateFormat = 0>
 	<cfset var mydate = "">
-	<cfquery datasource="#application.razuna.datasource#" name="qDateFormat">
+	<cfquery datasource="#arguments.datasource#" name="qDateFormat">
 	SELECT set2_date_format, set2_date_format_del
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #arguments.dbprefix#settings_2
+	WHERE set2_id = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.host_id#">
 	</cfquery>
 	<cfswitch expression="#qDateFormat.set2_date_format#">
 		<cfcase value="euro">

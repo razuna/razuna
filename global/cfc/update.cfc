@@ -187,6 +187,12 @@
 		<cfif updatenumber.opt_value LT 55>
 			<cftry>
 				<cfquery datasource="razuna_default">
+				alter table razuna_config add conf_url_assets VARCHAR(500) DEFAULT 'http://127.0.0.1'
+				</cfquery>
+				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
+			</cftry>
+			<cftry>
+				<cfquery datasource="razuna_default">
 				alter table razuna_config add conf_aws_tenant_in_one_bucket_enable BOOLEAN DEFAULT false
 				</cfquery>
 				<cfcatch><cfset thelog(logname=logname,thecatch=cfcatch)></cfcatch>
