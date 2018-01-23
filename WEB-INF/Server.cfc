@@ -6,13 +6,13 @@
 
 	<cfset console("---START: Cache Setup---")>
 	<!--- Create the cache --->
-	<!--- <cfset cacheregionnew(
+	<cfset cacheregionnew(
 	  region="razcache",
 	  props=
 	  {
 		type : 'memorydisk'
 	  }
-	)> --->
+	)>
 
 	<!--- READ the documentation at http://wiki.razuna.com/display/ecp/Configure+Caching !!! --->
 

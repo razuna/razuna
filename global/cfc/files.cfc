@@ -1864,4 +1864,47 @@
 		<cfreturn qry_data>
 	</cffunction>
 
+	<!--- Create renditions --->
+	<cffunction name="createRenditions" output="false" returnformat="json">
+		<cfargument name="thestruct" type="struct">
+		<cfset consoleoutput(true)>
+		<cfset console(arguments.thestruct)>
+		<cfset console(session.file_id)>
+		<cfset console( 'arguments.thestruct.template_img: ' & arguments.thestruct.template_img )>
+
+		<!--- Images --->
+		<!--- Do any of the fileids contain img? --->
+		<cfif ListContains(session.file_id, '-img', ',')>
+			<!--- Loop over the file_ids --->
+			<cfloop list="#session.file_id#" delimiters="," index="id">
+				<cfif listlast(id,"-") == 'img'>
+					<!--- Sore file_id --->
+					<cfset arguments.thestruct.file_id = listfirst(id,"-")>
+					<cfset console('arguments.thestruct.file_id:' & arguments.thestruct.file_id)>
+					<!--- Check if we have a upload template --->
+					<cfif arguments.thestruct.template_img>
+
+					<cfelse>
+
+						<!--- Loop over images format --->
+						<cfloop list="#arguments.thestruct.convert_img#" delimiters="," index="format">
+							<!--- Grab fields for this format --->
+							<cfset var _width_field = "convert_width_#format#">
+							<cfset var _width = arguments.thestruct[_width_field]>
+							<cfset var _height_field = "convert_height_#format#">
+							<cfset var _height = arguments.thestruct[_height_field]>
+							<cfset console("FORMAT: #format#")>
+							<cfset console("FORMAT _width: #_width#")>
+							<cfset console("FORMAT _height: #_height#")>
+						</cfloop>
+
+					</cfif>
+				</cfif>
+			</cfloop>
+
+		</cfif>
+
+		<cfreturn true>
+	</cffunction>
+
 </cfcomponent>

@@ -10869,5 +10869,31 @@
 		<do action = "previewimage_activate" />
 	</fuseaction>
 
+	<!-- Create renditions -->
+	<fuseaction name="create_renditions">
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- Show -->
+		<do action="ajax.create_renditions" />
+	</fuseaction>
+	<!-- Create renditions do -->
+	<fuseaction name="create_renditions_do">
+		<!-- Param -->
+		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.fromconverting" value="T" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: Get image settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- Rendition metadata settings -->
+		<set name="attributes.option_rendition_meta" value="#attributes.qry_settings_image.set2_rendition_metadata#" />
+		<!-- CFC: Get values -->
+		<invoke object="myFusebox.getApplicationData().files" methodcall="createRenditions(attributes)" />
+	</fuseaction>
 
 </circuit>
