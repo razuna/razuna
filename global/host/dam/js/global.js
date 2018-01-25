@@ -86,6 +86,19 @@ function formserialize(theid) {
 	return theser;
 }
 
+// Check if any form values are empty
+function formEmptyValues(items) {
+	var _empty = true;
+	var _values = items.split('&');
+	$.each(_values, function(i, v) {
+		var _v = v.split('=');
+		// if value is there
+		if ( _v[1] ) _empty = false;
+	});
+	// Return
+	return _empty;
+}
+
 // Jump to a folder and refresh left side
 function goToFolder(folderid) {
 	// Load folder on the right side
@@ -114,6 +127,11 @@ function clickcbk(theform,thefield,which) {
 	else{
 		document.forms[theform].elements[thefield][which].checked = false;
 	}
+}
+function clickcbk2(the_checkbox) {
+	var _elem = $('#' + the_checkbox);
+	if (_elem.is(":checked")) return _elem.prop('checked', false);
+	return _elem.prop('checked', true);
 }
 // Remove Record
 function removerecord(what,id){
@@ -153,7 +171,6 @@ function gotos(gotourl){
 function toggleDiv(mydiv){
 	//alert(document.getElementById(mydiv));
 	var t = document.getElementById(mydiv);
-	
 	if(t.style.display == "none"){
 		t.style.display = "";
 	}else{

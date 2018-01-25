@@ -1213,6 +1213,7 @@
 	<cfset var forTransparentImages = " -background white -flatten ">
 	<cfparam name="arguments.thestruct.xres" default="">
 	<cfparam name="arguments.thestruct.yres" default="">
+	<cfparam name="arguments.thestruct.link_kind" default="">
 	<cfparam name="arguments.thestruct.upl_template" default="0">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -1329,8 +1330,9 @@
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 		<!--- Create tempid --->
 		<cfset arguments.thestruct.newid = createuuid("")>
-		<!--- Watermark variable might not always exists thus create it here --->
+		<!--- Initiate fields that might not be passed --->
 		<cfparam name="convert_wm_#theformat#" default="" />
+		<cfparam name="convert_dpi_#theformat#" default="" />
 		<!--- Put together the name --->
 		<cfset arguments.thestruct.thenamenoext = arguments.thestruct.thenamenoext & "_" & arguments.thestruct.newid>
 		<!--- If from upload templates we select width and height of image --->
@@ -1557,9 +1559,28 @@
 		</cfswitch>
 		<!--- Convert image to desired format --->
 		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.thesh#" timeout="180" />
+			<cfexecute name="#attributes.intstruct.thesh#" timeout="500" variable="thread.exe_result" errorVariable="thread.exe_error" />
 		</cfthread>
 		<cfthread action="join" name="1#thescript#" />
+		<cfset var _convert_error = cfthread["1#thescript#"].exe_error>
+		<cfset var _is_error = ! FindNocase('error', _convert_error) ? false : true>
+		<cfif _is_error>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='ERROR converting: #thename# to #arguments.thestruct.thenamenoext#.#theformat# #_convert_error#',logfiletype='img',assetid='#arguments.thestruct.file_id#',folderid='#arguments.thestruct.qry_detail.folder_id_r#')>
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#arguments.thestruct.thesh#">
+			<!--- Get user --->
+			<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+			SELECT user_email
+			FROM users
+			WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+			</cfquery>
+			<cfset var transvalues = arraynew()>
+			<cfset transvalues[1] = "#ucase(theformat)#">
+			<cfinvoke component="defaults" method="trans" transid="image_convert_error_subject" values="#transvalues#" returnvariable="convert_error_sub" />
+			<cfinvoke component="defaults" method="trans" transid="image_convert_error_message" values="#transvalues#" returnvariable="convert_error_msg" />
+			<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="#convert_error_sub#" themessage="#convert_error_msg#">
+			<cfcontinue>
+		</cfif>
 		<!--- Before we create thumb apply watermark if any --->
 		<cfif structKeyExists(arguments.thestruct,"convert_wm_#theformat#") AND #arguments.thestruct["convert_wm_" & #theformat#]# NEQ "">
 			<cfif "convert_wm_#theformat#" NEQ "" >

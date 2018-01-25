@@ -109,7 +109,7 @@ function batchaction(theform, what, kind, folder_id, theaction){
 			showwindow('index.cfm?fa=ajax.recreate_previews&thetype=' + what, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#</cfoutput>', 550, 1);
 			break;
 		case "renditions":
-			showwindow('index.cfm?fa=c.create_renditions', '<cfoutput>#myFusebox.getApplicationData().defaults.trans("create_renditions")#</cfoutput>', 500, 1);
+			showwindow('index.cfm?fa=c.create_renditions&thetype=' + what, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("create_renditions")#</cfoutput>', 500, 1);
 			break;
 	}
 }

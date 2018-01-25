@@ -1865,43 +1865,169 @@
 	</cffunction>
 
 	<!--- Create renditions --->
-	<cffunction name="createRenditions" output="false" returnformat="json">
+	<cffunction name="createRenditions" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
-		<cfset consoleoutput(true)>
+		<!--- <cfset consoleoutput(true)>
 		<cfset console(arguments.thestruct)>
-		<cfset console(session.file_id)>
-		<cfset console( 'arguments.thestruct.template_img: ' & arguments.thestruct.template_img )>
+		<cfset console(session.file_id)> --->
+
+		<cfparam name="arguments.thestruct.convert_img" default="">
+		<cfparam name="arguments.thestruct.convert_vid" default="">
+		<cfparam name="arguments.thestruct.convert_aud" default="">
+
+		<!--- Feedback --->
+		<cfoutput><h2>Creating your renditions now</h2><br></cfoutput>
+		<cfflush>
+
+		<!--- Current date for query of log --->
+		<cfset var _date_now = now()>
 
 		<!--- Images --->
-		<!--- Do any of the fileids contain img? --->
 		<cfif ListContains(session.file_id, '-img', ',')>
+			<!--- Feedback --->
+			<cfoutput><h3>Doing images</h3></cfoutput>
+			<cfflush>
 			<!--- Loop over the file_ids --->
 			<cfloop list="#session.file_id#" delimiters="," index="id">
+				<!--- Feedback --->
+				<cfoutput>.</cfoutput>
+				<cfflush>
 				<cfif listlast(id,"-") == 'img'>
-					<!--- Sore file_id --->
+					<!--- Store file_id --->
 					<cfset arguments.thestruct.file_id = listfirst(id,"-")>
-					<cfset console('arguments.thestruct.file_id:' & arguments.thestruct.file_id)>
 					<!--- Check if we have a upload template --->
-					<cfif arguments.thestruct.template_img>
-
+					<cfif arguments.thestruct.template_img NEQ "0">
+						<cfset arguments.thestruct.upl_template = arguments.thestruct.template_img>
+						<!--- Query template formats --->
+						<cfinvoke component="global.cfc.global" method="upl_template_detail" upl_temp_id="#arguments.thestruct.upl_template#" upl_temp_type="img" only_first_format="true" returnvariable="qry_template">
+						<!--- We just need the format --->
+						<cfset arguments.thestruct.convert_to = valuelist(qry_template.uplval.upl_temp_value)>
 					<cfelse>
-
-						<!--- Loop over images format --->
-						<cfloop list="#arguments.thestruct.convert_img#" delimiters="," index="format">
-							<!--- Grab fields for this format --->
-							<cfset var _width_field = "convert_width_#format#">
-							<cfset var _width = arguments.thestruct[_width_field]>
-							<cfset var _height_field = "convert_height_#format#">
-							<cfset var _height = arguments.thestruct[_height_field]>
-							<cfset console("FORMAT: #format#")>
-							<cfset console("FORMAT _width: #_width#")>
-							<cfset console("FORMAT _height: #_height#")>
-						</cfloop>
-
+						<!--- To field --->
+						<cfset arguments.thestruct.convert_to = arguments.thestruct.convert_img>
 					</cfif>
+					<!--- Call function to convert --->
+					<cfset var _t_name = "rend_#arguments.thestruct.file_id#">
+					<cfthread name="#_t_name#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="global.cfc.images" method="convertImagethread" thestruct="#attributes.intstruct#" returnvariable="the_rendition">
+					</cfthread>
+					<!--- Join --->
+					<cfthread action="join" name="#_t_name#" />
+					<!--- Here we should query the logs --->
+					<cfinvoke component="global.cfc.log" method="getLogSpecific" file_id="#arguments.thestruct.file_id#" timestamp="#_date_now#" log_action="convert" fields="log_desc" returnvariable="qry_log">
+					<!--- <cfdump var="#qry_log#"> --->
+					<!--- Loop over log result and print --->
+					<cfloop query="qry_log">
+						<!--- Feedback --->
+						<cfset _color = ! FindNocase('error', log_desc) ? 'green' : 'red'>
+						<!--- <cfset _color = 'green'> --->
+						<cfoutput><br><span style="color:#_color#">#log_desc#</span><br></cfoutput>
+						<cfflush>
+					</cfloop>
 				</cfif>
 			</cfloop>
 
+		<!--- Videos --->
+		<cfelseif ListContains(session.file_id, '-vid', ',') AND arguments.thestruct.convert_vid NEQ "">
+			<!--- Feedback --->
+			<cfoutput><h3>Doing videos</h3></cfoutput>
+			<cfflush>
+			<!--- Loop over the file_ids --->
+			<cfloop list="#session.file_id#" delimiters="," index="id">
+				<!--- Feedback --->
+				<cfoutput>.</cfoutput>
+				<cfflush>
+				<cfif listlast(id,"-") == 'vid'>
+					<!--- Store file_id --->
+					<cfset arguments.thestruct.file_id = listfirst(id,"-")>
+					<!--- Check if we have a upload template --->
+					<cfif arguments.thestruct.template_vid NEQ "0">
+						<cfset arguments.thestruct.upl_template = arguments.thestruct.template_vid>
+						<!--- Query template formats --->
+						<cfinvoke component="global.cfc.global" method="upl_template_detail" upl_temp_id="#arguments.thestruct.upl_template#" upl_temp_type="vid" only_first_format="true" returnvariable="qry_template">
+						<!--- We just need the format --->
+						<cfset arguments.thestruct.convert_to = valuelist(qry_template.uplval.upl_temp_value)>
+						<cfset console(arguments.thestruct.convert_to)>
+					<cfelse>
+						<!--- To field --->
+						<cfset arguments.thestruct.convert_to = arguments.thestruct.convert_vid>
+					</cfif>
+					<!--- Call function to convert --->
+					<!--- Call function to convert --->
+					<cfset var _t_name = "rend_#arguments.thestruct.file_id#">
+					<cfthread name="#_t_name#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="global.cfc.videos" method="convertvideo" thestruct="#attributes.intstruct#" returnvariable="the_rendition">
+					</cfthread>
+					<!--- Join --->
+					<cfthread action="join" name="#_t_name#" />
+					<!--- Here we should query the logs --->
+					<cfinvoke component="global.cfc.log" method="getLogSpecific" file_id="#arguments.thestruct.file_id#" timestamp="#_date_now#" log_action="convert" fields="log_desc" returnvariable="qry_log">
+					<!--- <cfdump var="#qry_log#"> --->
+					<!--- Loop over log result and print --->
+					<cfloop query="qry_log">
+						<!--- Feedback --->
+						<cfset _color = ! FindNocase('error', log_desc) ? 'green' : 'red'>
+						<!--- <cfset _color = 'green'> --->
+						<cfoutput><br><span style="color:#_color#">#log_desc#</span><br></cfoutput>
+						<cfflush>
+					</cfloop>
+				</cfif>
+			</cfloop>
+
+		<!--- Audios --->
+		<cfelseif ListContains(session.file_id, '-aud', ',') AND arguments.thestruct.convert_aud NEQ "">
+			<!--- Feedback --->
+			<cfoutput><h3>Doing audios</h3></cfoutput>
+			<cfflush>
+			<!--- Loop over the file_ids --->
+			<cfloop list="#session.file_id#" delimiters="," index="id">
+				<!--- Feedback --->
+				<cfoutput>.</cfoutput>
+				<cfflush>
+				<cfif listlast(id,"-") == 'aud'>
+					<!--- Store file_id --->
+					<cfset arguments.thestruct.file_id = listfirst(id,"-")>
+					<!--- Check if we have a upload template --->
+					<cfif arguments.thestruct.template_aud NEQ "0">
+						<cfset arguments.thestruct.upl_template = arguments.thestruct.template_aud>
+						<!--- Query template formats --->
+						<cfinvoke component="global.cfc.global" method="upl_template_detail" upl_temp_id="#arguments.thestruct.upl_template#" upl_temp_type="aud" only_first_format="true" returnvariable="qry_template">
+						<!--- We just need the format --->
+						<cfset arguments.thestruct.convert_to = valuelist(qry_template.uplval.upl_temp_value)>
+					<cfelse>
+						<!--- To field --->
+						<cfset arguments.thestruct.convert_to = arguments.thestruct.convert_aud>
+					</cfif>
+					<!--- Call function to convert --->
+					<cfset var _t_name = "rend_#arguments.thestruct.file_id#">
+					<cfthread name="#_t_name#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="global.cfc.audios" method="convertaudiothread" thestruct="#attributes.intstruct#" returnvariable="the_rendition">
+					</cfthread>
+					<!--- Join --->
+					<cfthread action="join" name="#_t_name#" />
+					<!--- Here we should query the logs --->
+					<cfinvoke component="global.cfc.log" method="getLogSpecific" file_id="#arguments.thestruct.file_id#" timestamp="#_date_now#" log_action="convert" fields="log_desc" returnvariable="qry_log">
+					<!--- <cfdump var="#qry_log#"> --->
+					<!--- Loop over log result and print --->
+					<cfloop query="qry_log">
+						<!--- Feedback --->
+						<cfset _color = ! FindNocase('error', log_desc) ? 'green' : 'red'>
+						<!--- <cfset _color = 'green'> --->
+						<cfoutput><br><span style="color:#_color#">#log_desc#</span><br></cfoutput>
+						<cfflush>
+					</cfloop>
+				</cfif>
+			</cfloop>
+
+		</cfif>
+
+		<!--- Feedback --->
+		<cfif arguments.thestruct.convert_img EQ "" AND arguments.thestruct.convert_vid EQ "" AND arguments.thestruct.convert_aud EQ "" AND arguments.thestruct.template_img EQ "0" AND arguments.thestruct.template_vid EQ "0" AND arguments.thestruct.template_aud EQ "0">
+			<cfoutput><h2 style="color:red;">I did not receive any formats to convert!</h2><br></cfoutput>
+			<cfflush>
+		<cfelse>
+			<cfoutput><h2 style="color:green;">All renditions are now available!</h2><br></cfoutput>
+			<cfflush>
 		</cfif>
 
 		<cfreturn true>

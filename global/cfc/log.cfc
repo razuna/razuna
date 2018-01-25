@@ -716,4 +716,25 @@
 	<cfreturn qry>
 </cffunction>
 
+<!--- Get specific log according to timestamp and assetId --->
+<cffunction name="getLogSpecific" output="false" access="public">
+	<cfargument name="file_id" required="true" type="string">
+	<cfargument name="timestamp" required="true" type="date">
+	<cfargument name="fields" required="true" type="string">
+	<cfargument name="log_action" required="true" type="string">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("logs")>
+	<!--- Qry --->
+	<cfset var qry ="">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getLogSpecific */ #arguments.fields#
+	FROM #session.hostdbprefix#log_assets
+	WHERE asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.file_id#">
+	AND log_action = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.log_action#">
+	AND log_timestamp > <cfqueryparam CFSQLType="cf_sql_timestamp" value="#arguments.timestamp#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
+
 </cfcomponent>
