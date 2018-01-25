@@ -366,7 +366,7 @@
 		<cfset actions = true>
 	</cfif>
 	<cfif attributes.folderaccess IS NOT "R">
-		
+
 		<!--- Aliases --->
 		<cfif cs.icon_alias  AND (isadmin OR  cs.icon_alias_slct EQ "" OR listfind(cs.icon_alias_slct,session.theuserid) OR myFusebox.getApplicationData().global.comparelists(cs.icon_alias_slct,session.thegroupofuser) NEQ "")>
 			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','alias');return false;">
@@ -419,6 +419,15 @@
 					<img src="#dynpath#/global/host/dam/images/picture-go.png" width="16" height="16" border="0" style="padding-right:2px;" />
 				</div>
 				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#</div>
+			</a>
+		</cfif>
+		<!--- Create renditions --->
+		<cfif kind EQ "all" OR kind EQ "img" OR kind EQ "vid" OR kind EQ "aud">
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','renditions');return false;">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/wiz_16.png" width="16" height="16" border="0" style="padding-right:2px;" />
+				</div>
+				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("create_renditions")#</div>
 			</a>
 		</cfif>
 		<!--- Trash --->

@@ -950,6 +950,10 @@
 		<include template="dsp_wl_news_edit" />
 	</fuseaction>
 
+	<fuseaction name="create_renditions">
+		<include template="dsp_create_renditions" />
+	</fuseaction>
+
 	<!-- Just for Json output -->
 	<fuseaction name="json">
 		<include template="dsp_json" />

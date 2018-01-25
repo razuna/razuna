@@ -723,6 +723,8 @@ Comment:<br>
 <!--- Get DETAILED Upload Templates ---------------------------------------------------------------------->
 	<cffunction name="upl_template_detail" output="false">
 		<cfargument name="upl_temp_id" type="string" required="true">
+		<cfargument name="upl_temp_type" type="string" required="false" default="">
+		<cfargument name="only_first_format" type="boolean" required="false" default="false">
 		<!--- New struct --->
 		<cfset var qry = structnew()>
 		<!--- Query --->
@@ -738,6 +740,13 @@ Comment:<br>
 		FROM #session.hostdbprefix#upload_templates_val
 		WHERE upl_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.upl_temp_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.upl_temp_type NEQ "">
+			AND upl_temp_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.upl_temp_type#">
+		</cfif>
+		<cfif arguments.only_first_format>
+			AND upl_temp_value NOT LIKE "%\_%"
+			AND upl_temp_field = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="convert_to">
+		</cfif>
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
