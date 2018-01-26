@@ -1289,8 +1289,7 @@
 				</cfquery>
 				<!--- Query again --->
 				<cfquery datasource="razuna_default" name="qry">
-				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
-				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token, conf_aws_tenant_in_one_bucket_enable, conf_aws_tenant_in_one_bucket_name, conf_url_assets
+				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_aws_tenant_in_one_bucket_name, conf_aws_tenant_in_one_bucket_enable, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token, conf_url_assets
 				FROM razuna_config
 				</cfquery>
 			</cfif>
