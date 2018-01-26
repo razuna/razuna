@@ -805,7 +805,7 @@ Comment:<br>
 			<!--- Save the additional values --->
 			<cfloop collection="#arguments.thestruct#" item="col">
 				<cfif col EQ "convert_bitrate_#theformat#" OR col EQ "convert_height_#theformat#" OR col EQ "convert_width_#theformat#" OR col EQ "convert_dpi_#theformat#" OR col EQ "convert_wm_#theformat#">
-					<cfset tf = lcase(col)>
+					<cfset tf = col>
 					<cfset tv = evaluate(tf)>
 					<cfif tv NEQ "">
 						<cfquery datasource="#application.razuna.datasource#">

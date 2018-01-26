@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false" extends="authentication">
-		
+
 	<!--- Get all custom fields --->
 	<cffunction name="getall" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -57,7 +57,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-		
+
 	<!--- Add custom field --->
 	<cffunction name="setfield" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -100,7 +100,7 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Set Custom Field Value --->
 	<cffunction name="setfieldvalue" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
@@ -108,7 +108,6 @@
 		<cfargument name="field_values" required="true">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
-		<cfset var qry = "">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Deserialize the JSON back into a struct --->
@@ -121,6 +120,8 @@
 				<cfif folderaccess EQ "W" OR folderaccess EQ "X">
 					<!--- Loop over struct --->
 					<cfloop array="#thejson#" index="f">
+						<!--- Var --->
+						<cfset var qry = "">
 						<!--- Check to see if there is a record --->
 						<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 						SELECT cf_id_r
@@ -178,6 +179,7 @@
 						<!--- End Anthony Rodriguez Edit --->
 						<!--- Nick Ryan Edit --->
 						<!--- Check to see if item is part of select list --->
+						<cfset var qry2 = "">
 						<cfquery datasource="#application.razuna.api.dsn#" name="qry2">
 						SELECT cf_id, cf_select_list
 						FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields
@@ -194,14 +196,14 @@
 								WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
 								AND cf_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="select">
 								</cfquery>
-							</cfif>						
+							</cfif>
 						</cfif>
 						<!--- End Nick Ryan Edit --->
 					</cfloop>
 					<!--- update change date (since we don't know the type we simply update all) --->
 					<cfquery datasource="#application.razuna.api.dsn#">
 					Update #application.razuna.api.prefix["#arguments.api_key#"]#images
-					SET 
+					SET
 					img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -209,7 +211,7 @@
 					</cfquery>
 					<cfquery datasource="#application.razuna.api.dsn#">
 					Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
-					SET 
+					SET
 					vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -217,7 +219,7 @@
 					</cfquery>
 					<cfquery datasource="#application.razuna.api.dsn#">
 					Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
-					SET 
+					SET
 					aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -225,7 +227,7 @@
 					</cfquery>
 					<cfquery datasource="#application.razuna.api.dsn#">
 					Update #application.razuna.api.prefix["#arguments.api_key#"]#files
-					SET 
+					SET
 					file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
@@ -256,25 +258,30 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 	<!--- Set Custom Field Value in bulk --->
 	<cffunction name="setfieldvaluebulk" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="field_values" required="true">
+		<!--- <cfset consoleoutput(true)>
+		<cfset console(arguments)> --->
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set thread --->
-			<cfthread action="run" name="#createuuid()#" intstruct="#arguments#">
+			<cfthread name="#arguments.api_key#" intstruct="#arguments#">
 				<!--- Grab the json and deserialize it --->
 				<cfset j = DeserializeJSON(attributes.intstruct.field_values)>
+				<!--- <cfset j = DeserializeJSON(arguments.field_values)> --->
 				<!--- Loop over the array --->
 				<cfloop array="#j#" index="id">
 					<!--- This is the first array containing the assetid --->
-					<cfset assetid = id[1]>
+					<cfset var assetid = id[1]>
+					<!--- <cfset console("assetid : " & assetid)> --->
 					<!--- This is the second value containing another array --->
-					<cfset fieldvalues = SerializeJSON(id[2])>
+					<cfset var fieldvalues = SerializeJSON(id[2])>
+					<!--- <cfset console("fieldvalues : " & fieldvalues)> --->
 					<!--- Call internal function --->
 					<cfinvoke method="setfieldvalue">
 						<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
@@ -322,5 +329,5 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
 </cfcomponent>
