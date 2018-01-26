@@ -101,7 +101,7 @@
 			<td>
 				<select name="conf_aws_location" id="conf_aws_location" style="width:310px;">
 					<option value="us-east"<cfif application.razuna.awslocation EQ "" OR application.razuna.awslocation EQ "us-east"> selected="selected"</cfif>>US Standard</option>
-					<option value="us-east-2"<cfif application.razuna.awslocation EQ "" OR application.razuna.awslocation EQ "us-east-2"> selected="selected"</cfif>>US East (Ohio)</option>
+					<option value="us-east-2"<cfif application.razuna.awslocation EQ "us-east-2"> selected="selected"</cfif>>US East (Ohio)</option>
 					<option value="us-west-2"<cfif application.razuna.awslocation EQ "us-west-2"> selected="selected"</cfif>>US West (Oregon)</option>
 					<option value="us-west-1"<cfif application.razuna.awslocation EQ "us-west-1"> selected="selected"</cfif>>US West (N. California)</option>
 					<option value="ca-central-1"<cfif application.razuna.awslocation EQ "ca-central-1"> selected="selected"</cfif>>Canada (Central)</option>
