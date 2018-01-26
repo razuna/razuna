@@ -56,7 +56,7 @@
 				</td>
 				<td width="10"></td>
 				<td valign="top">
-					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)  [#img_filename#]<br />
+					<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><!--- <cfif img_meta NEQ "">, #img_meta# dpi</cfif> --->)  [#img_filename#]<br />
 					<cfif attributes.s EQ "F">
 						<a href="//#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 					<cfelse>

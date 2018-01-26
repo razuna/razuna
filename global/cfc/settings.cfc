@@ -1115,6 +1115,7 @@
 <!--- Get specific setting --->
 <cffunction hint="Get specific setting" name="thissetting" output="false" returntype="string">
 	<cfargument name="thefield" type="string" default="" required="yes">
+	<cfset var sett = "">
 	<cfquery datasource="#application.razuna.datasource#" name="sett">
 	SELECT set_pref
 	FROM #session.hostdbprefix#settings
@@ -1125,7 +1126,12 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfif>
 	</cfquery>
-	<cfreturn trim(sett.set_pref)>
+	<cfset var _return = "">
+	<!--- If not found --->
+	<cfif sett.recordcount>
+		<cfset var _return = sett.set_pref>
+	</cfif>
+	<cfreturn trim(_return)>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
