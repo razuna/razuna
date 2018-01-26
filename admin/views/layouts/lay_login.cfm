@@ -33,7 +33,7 @@
 			<div id="loginform">
 	</cfif>
 		<!--- News --->
-		<cfif ! application.razuna.firsttime AND attributes.qry_news.recordcount>
+		<cfif ! application.razuna.firsttime AND structKeyExists(attributes, "qry_news") AND attributes.qry_news.recordcount>
 			<div style="text-align:center" class="news_frontpage">
 				<h2>#attributes.qry_news.news_title#</h2>
 				<p>#attributes.qry_news.news_excerpt#

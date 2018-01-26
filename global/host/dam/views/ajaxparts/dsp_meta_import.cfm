@@ -24,7 +24,7 @@
 *
 --->
 
-<cfoutput>	
+<cfoutput>
 <div>
 	<form name="form_meta_imp" id="form_meta_imp" method="post" action="#self#" target="_blank">
 	<input type="hidden" name="#theaction#" value="c.meta_imp_do">
@@ -111,5 +111,5 @@
 		}
 	</script>
 */
---->	
+--->
 </cfoutput>

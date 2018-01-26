@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent hint="Serves as parent only!" output="false">
-	
+
 <!--- Errors Object --->
 <cfobject component="global.cfc.errors" name="errobj">
 
@@ -93,7 +93,7 @@
 </cffunction>
 
 <!--- Log Search --->
-<cffunction name="log_search" output="false" access="public">
+<cffunction name="log_search" output="false" access="public" returntype="void">
 	<cfargument name="theuserid" type="string" required="yes" />
 	<cfargument name="searchfor" type="string" required="yes" />
 	<cfargument name="foundtotal" type="Numeric" required="yes" />
@@ -109,7 +109,7 @@
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theuserid#">,
 		<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.searchfor#">,	
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.searchfor#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.foundtotal#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.searchfrom#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
@@ -121,7 +121,7 @@
 </cffunction>
 
 <!--- Log Assets --->
-<cffunction name="log_assets" output="false" access="public">
+<cffunction name="log_assets" output="false" access="public" returntype="void">
 	<cfargument name="theuserid" type="string" required="yes" />
 	<cfargument name="logaction" type="string" required="yes" />
 	<cfargument name="logdesc" type="string" required="yes" />
@@ -138,7 +138,7 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logaction#">,
 			<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
 			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logdesc#">,	
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logdesc#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logfiletype#">,
 			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -156,7 +156,7 @@
 </cffunction>
 
 <!--- Log Folders --->
-<cffunction name="log_folders" output="false" access="public">
+<cffunction name="log_folders" output="false" access="public" returntype="void">
 	<cfargument name="theuserid" type="string" required="yes" />
 	<cfargument name="logaction" type="string" required="yes" />
 	<cfargument name="logdesc" type="string" required="yes" />
@@ -181,7 +181,7 @@
 </cffunction>
 
 <!--- LOG USERS --->
-<cffunction name="log_users" output="false" access="public">
+<cffunction name="log_users" output="false" access="public" returntype="void">
 	<cfargument name="theuserid" type="string" required="yes" />
 	<cfargument name="logaction" type="string" required="yes" />
 	<cfargument name="logdesc" type="string" required="yes" />

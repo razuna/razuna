@@ -72,7 +72,7 @@
 		</cfquery>
 		<cfreturn qry />
 	</cffunction>
-	
+
 	<!--- Get template value ---------------------------------------------------------------------->
 	<cffunction name="gettemplatevalue" output="false">
 		<cfargument name="imp_temp_id" type="string" required="true">
@@ -87,10 +87,10 @@
 		</cfquery>
 		<cfreturn q.imp_field />
 	</cffunction>
-	
-	
+
+
 	<!--- Save Upload Templates ---------------------------------------------------------------------->
-	<cffunction name="settemplate" output="false">
+	<cffunction name="settemplate" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.imp_active" default="0">
@@ -153,7 +153,7 @@
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#se_value#">
-			<cfif arguments.thestruct.radio_key EQ i>, 				
+			<cfif arguments.thestruct.radio_key EQ i>,
 				<cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="true">
 			</cfif>
 			)
@@ -164,7 +164,7 @@
 	</cffunction>
 
 	<!--- Remove Templates ---------------------------------------------------------------------->
-	<cffunction name="removetemplate" output="false">
+	<cffunction name="removetemplate" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -179,7 +179,7 @@
 		</cfquery>
 		<cfreturn  />
 	</cffunction>
-	
+
 	<!--- Upload ---------------------------------------------------------------------->
 	<cffunction name="upload" output="false" returntype="String">
 		<cfargument name="thestruct" type="struct">
@@ -195,9 +195,9 @@
 		<!--- Return --->
 		<cfreturn ext />
 	</cffunction>
-	
+
 	<!--- Do the Import ---------------------------------------------------------------------->
-	<cffunction name="doimport" output="false">
+	<cffunction name="doimport" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Check if file exists if not show error message --->
 		<cfif NOT isdefined("session.importfilename") OR !FileExists("#GetTempdirectory()#/#session.importfilename#")>
@@ -248,19 +248,13 @@
 		<cfoutput><strong style="color:green;">#import_success#</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
-		<cfset resetcachetoken("general")> 
+		<cfset resetcachetokenall()>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<!---Import: Loop over tables ---------------------------------------------------------------------->
-	<cffunction name="doimporttables" output="false">
+	<cffunction name="doimporttables" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Is a header template there --->
 		<cfif arguments.thestruct.impp_template EQ "">
@@ -288,9 +282,9 @@
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
-	
+
 	<!---Import: Images ---------------------------------------------------------------------->
-	<cffunction name="doimportimages" output="false">
+	<cffunction name="doimportimages" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
 		<cfset var c_theid = "img_id" />
@@ -360,10 +354,11 @@
 					<cfoutput><strong><font color="##CD5C5C">#id_missing#</font></strong></cfoutput>
 					<cfflush>
 					<cfabort>
-				</cfif> 
+				</cfif>
 
 				<!--- Query for existence of the record --->
 				<cftry>
+					<cfset var found = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="found">
 					SELECT img_id, path_to_asset, img_filename AS filenameorg, lucene_key, link_path_url
 					FROM #session.hostdbprefix#images
@@ -437,6 +432,7 @@
 					</cfif>
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
+					<cfset var khere = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.img_id_r, i.img_id, it.img_keywords, it.img_description
 					FROM #session.hostdbprefix#images i JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND i.host_id = it.host_id
@@ -500,7 +496,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#images_text
-							SET 
+							SET
 							img_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tkeywords)#">,
 							img_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tdescription)#">
 							WHERE img_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">
@@ -510,6 +506,7 @@
 					</cfif>
 					<!--- Images: XMP --->
 					<!--- Check if record is here --->
+					<cfset var xmphere = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="xmphere">
 					SELECT id_r
 					FROM #session.hostdbprefix#xmp
@@ -717,18 +714,18 @@
 			</cftry>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
+		<!--- <cfset resetcachetoken("images")>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("audios")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("search")> --->
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
-	
+
 	<!---Import: Videos ---------------------------------------------------------------------->
-	<cffunction name="doimportvideos" output="false">
+	<cffunction name="doimportvideos" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
 		<cfset var c_theid = "vid_id" />
@@ -758,6 +755,7 @@
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cftry>
+				<cfset var found = "">
 				<cfquery dataSource="#application.razuna.datasource#" name="found">
 				SELECT vid_id, path_to_asset, vid_filename AS filenameorg, lucene_key, link_path_url
 				FROM #session.hostdbprefix#videos
@@ -803,7 +801,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#videos
-							SET 
+							SET
 							vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
 							is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
@@ -816,6 +814,7 @@
 					</cfif>
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
+					<cfset var khere = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.vid_id_r, i.vid_id, it.vid_keywords, it.vid_description
 					FROM #session.hostdbprefix#videos i JOIN #session.hostdbprefix#videos_text it ON i.vid_id = it.vid_id_r AND v.host_id = it.host_id
@@ -879,7 +878,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#videos_text
-							SET 
+							SET
 							vid_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 							vid_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
 							WHERE vid_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">
@@ -911,18 +910,18 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
+		<!--- <cfset resetcachetoken("images")>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("audios")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("search")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<!---Import: Audios ---------------------------------------------------------------------->
-	<cffunction name="doimportaudios" output="false">
+	<cffunction name="doimportaudios" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
 		<cfset var c_theid = "aud_id" />
@@ -952,6 +951,7 @@
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cftry>
+				<cfset var found = "">
 				<cfquery dataSource="#application.razuna.datasource#" name="found">
 				SELECT aud_id, path_to_asset, aud_name AS filenameorg, lucene_key, link_path_url
 				FROM #session.hostdbprefix#audios
@@ -997,7 +997,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#audios
-							SET 
+							SET
 							aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
 							is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
@@ -1010,6 +1010,7 @@
 					</cfif>
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
+					<cfset var khere = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.aud_id_r, i.aud_id, it.aud_keywords, it.aud_description
 					FROM #session.hostdbprefix#audios i JOIN #session.hostdbprefix#audios_text it ON i.aud_id = it.aud_id_r AND i.host_id = it.host_id
@@ -1073,7 +1074,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#audios_text
-							SET 
+							SET
 							aud_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 							aud_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
 							WHERE aud_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">
@@ -1105,18 +1106,18 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
+		<!--- <cfset resetcachetoken("images")>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("audios")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("search")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
-	
+
 	<!---Import: Docs ---------------------------------------------------------------------->
-	<cffunction name="doimportdocs" output="false">
+	<cffunction name="doimportdocs" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
 		<cfset var c_theid = "file_id" />
@@ -1131,7 +1132,7 @@
 		<cfset var c_thepdf_authorsposition = "pdf_authorsposition" />
 		<cfset var c_thepdf_captionwriter = "pdf_captionwriter" />
 		<cfset var c_thepdf_webstatement = "pdf_webstatement" />
-		<cfset var c_thepdf_rightsmarked = "pdf_rightsmarked" />	
+		<cfset var c_thepdf_rightsmarked = "pdf_rightsmarked" />
 		<!--- Feedback --->
 		<cfinvoke component="defaults" method="trans" transid="import_docs" returnvariable="import_docs" />
 		<cfoutput><strong>#import_docs#</strong><br><br></cfoutput>
@@ -1153,6 +1154,7 @@
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cftry>
+				<cfset var found = "">
 				<cfquery dataSource="#application.razuna.datasource#" name="found">
 				SELECT file_id, path_to_asset, file_name AS filenameorg, lucene_key, link_path_url
 				FROM #session.hostdbprefix#files
@@ -1199,7 +1201,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#files
-							SET 
+							SET
 							file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
 							is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 							WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
@@ -1212,6 +1214,7 @@
 					</cfif>
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
+					<cfset var khere = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
 					SELECT it.file_id_r, i.file_id, it.file_keywords, it.file_desc
 					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_desc it ON i.file_id = it.file_id_r AND i.host_id = it.host_id
@@ -1275,7 +1278,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#files_desc
-							SET 
+							SET
 							file_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
 							file_desc = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
 							WHERE file_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">
@@ -1285,6 +1288,7 @@
 					</cfif>
 					<!--- Files: XMP --->
 					<!--- Check if record is here --->
+					<cfset var xmphere = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="xmphere">
 					SELECT it.asset_id_r, i.file_id, it.author, it.rights, it.authorsposition, it.captionwriter, it.webstatement, it.rightsmarked
 					FROM #session.hostdbprefix#files i JOIN #session.hostdbprefix#files_xmp it ON i.file_id = it.asset_id_r
@@ -1338,13 +1342,13 @@
 									<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 								</cfif>
 						  	  	<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
-						  	  	<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#"> 	
+						  	  	<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 						  	)
 							</cfquery>
 						</cftransaction>
 					<cfelse>
 						<!--- If append --->
-						<cfif arguments.thestruct.imp_write EQ "add">	
+						<cfif arguments.thestruct.imp_write EQ "add">
 							<cfif c_thepdf_author NEQ "">
 								<cfset tpdf_author = xmphere.author & " " & evaluate(c_thepdf_author)>
 							<cfelse>
@@ -1410,7 +1414,7 @@
 						<cftransaction>
 							<cfquery dataSource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#files_xmp
-							SET 
+							SET
 							author = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_author#">,
 		  				  	rights = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_rights#">,
 						  	authorsposition = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tpdf_authorsposition#">,
@@ -1446,18 +1450,18 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
+		<!--- <cfset resetcachetoken("images")>
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("audios")>
 		<cfset resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("search")> --->
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
-	
+
 	<!---Import: Labels ---------------------------------------------------------------------->
-	<cffunction name="doimportlabels" output="false">
+	<cffunction name="doimportlabels" output="false" returntype="void">
 		<cfargument name="labels" type="string">
 		<cfargument name="assetid" type="string">
 		<cfargument name="kind" type="string">
@@ -1475,6 +1479,7 @@
 		<!--- Label is usually a list, thus loop it --->
 		<cfloop list="#arguments.labels#" delimiters="," index="i">
 			<!--- Check if label is in the label db --->
+			<cfset var labhere = "">
 			<cfquery dataSource="#application.razuna.datasource#" name="labhere">
 			SELECT label_id
 			FROM #session.hostdbprefix#labels
@@ -1499,6 +1504,7 @@
 					<!--- Set Label path --->
 					<cfset label_path_list = listappend(label_path_list,'#idx#','/')>
 					<!--- Check if Label path already exists --->
+					<cfset var checklabelpath = "">
 					<cfquery dataSource="#application.razuna.datasource#" name="checklabelpath">
 					SELECT label_id, label_text, label_path
 					FROM #session.hostdbprefix#labels
@@ -1563,20 +1569,19 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("labels")> 
+		<!--- <cfset resetcachetoken("labels")> --->
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
-	
+
 	<!---Import: Custom Fields ---------------------------------------------------------------------->
-	<cffunction name="doimportcustomfields" output="false">
+	<cffunction name="doimportcustomfields" output="false" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<cfargument name="assetid" type="string">
 		<cfargument name="thecurrentRow" type="string">
 		<!--- Param --->
 		<cfset var doloop = false>
 		<cfset var theid = "">
-		<cfset var qry = "">
 		<!--- Get the columlist --->
 		<cfloop list="#arguments.thestruct.theimport.columnList#" delimiters="," index="i">
 			<!--- If template --->
@@ -1590,7 +1595,7 @@
 				</cfloop>
 			<cfelseif i contains ":">
 				<!--- The ID --->
-				<cfset var theid = ucase(listLast(i,":"))>
+				<cfset var theid = listLast(i,":")>
 				<cfset var doloop = true>
 			</cfif>
 			<!--- Custom fields magic --->
@@ -1598,17 +1603,19 @@
 				<!--- The value --->
 				<cfset var cfvalue = ltrim(arguments.thestruct.theimport[i][arguments.thecurrentRow])>
 				<!--- Insert or update --->
+				<cfset var qry = "">
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT v.cf_id_r, v.cf_value, f.cf_type
 				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields f
 				WHERE v.cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-				AND v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.assetid)#">
+				AND v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND v.cf_id_r = f.cf_id
 				</cfquery>
 				<!--- Make sure custom field id exists --->
+				<cfset var iscf = "">
 				<cfquery datasource="#application.razuna.datasource#" name="iscf">
 				SELECT 1
-				FROM #session.hostdbprefix#custom_fields 
+				FROM #session.hostdbprefix#custom_fields
 				WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				</cfquery>
 

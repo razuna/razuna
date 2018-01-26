@@ -6,13 +6,15 @@ if (isIE()) {
 }
 
 function callMasonry() {
-	$('.grid-masonry').imagesLoaded( function() {
+	// $('.grid-masonry').imagesLoaded( function() {
 		$('.grid-masonry').masonry({
 			itemSelector: '.grid-masonry-item',
 			horizontalOrder: true,
-			percentPosition: true
+			percentPosition: true,
+			// fitWidth: true,
+			transitionDuration: '0.2s'
 		});
-	});
+	// });
 }
 
 function clearMasonry() {
